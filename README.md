@@ -11,9 +11,14 @@ and whether Homebrew is on the Intelbrew forks.
 package's status; the `tankard` CLI prints it (step 1). **Tankard.app** shows the same data
 in a window and runs `brew update` and `brew upgrade` for you (step 2).
 
+**v0.2** adds **Discover** (search every formula and cask, install), **Uninstall**, a
+**welcome screen** when Homebrew isn't installed, and **themes** (Dark, Light, System,
+Tankard).
+
 The CLI and the app's status reads never change your Homebrew: they run with
-`HOMEBREW_NO_AUTO_UPDATE=1`. Only two things in the app change it, and only when you click:
-the refresh button (`brew update`) and the Upgrade buttons (`brew upgrade`).
+`HOMEBREW_NO_AUTO_UPDATE=1`. Only four things in the app change it, and only when you click:
+the refresh button (`brew update`), the Upgrade buttons (`brew upgrade`), Install in
+Discover (`brew install`) and Uninstall after its confirmation (`brew uninstall`).
 
 ## Build and test
 
@@ -42,9 +47,11 @@ open dist/Tankard.app
 Command Line Tools only: SwiftPM builds the `TankardApp` executable, and the script wraps it
 in an `.app` (Info.plist, resources, `codesign -s -`). There is no Xcode project, asset
 catalog or string catalog. The app icon is a plain `Resources/AppIcon.icns`
-(`CFBundleIconFile`), committed; `Scripts/make-icon.sh` rebuilds it from the pixel-art
-logo (nearest-neighbour scaling only, on a drawn plate) with ffmpeg, `swiftc` and
-`iconutil`. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
+(`CFBundleIconFile`), committed; `Scripts/make-icon.sh` rebuilds it from Tankard's
+pixel-art mark (`Sources/TankardApp/Resources/tankard-mark.png`; nearest-neighbour
+scaling only, on a drawn plate) with ffmpeg, `swiftc` and `iconutil`. In Intelbrew mode
+the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.png`) on
+the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
 else the default in `bundle-app.sh`, kept in step with `tankard --version`. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
 
@@ -68,9 +75,11 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
 
 ### What it shows
 
-- **Toolbar:** Tankard's pixel-art mug in every mode, with "Intelbrew" and "Intel bottles
-  for macOS 14+" in Intelbrew mode, "Tankard" and "Homebrew" otherwise. Refresh (⌘R) and search (name,
-  full name, description).
+- **Toolbar:** the logo depends on the mode: the Intelbrew "i" mug with "Intelbrew" and
+  "Intel bottles for macOS 14+" in Intelbrew mode (the Dock icon switches to the same mug),
+  Tankard's amber tankard with "Tankard" and "Homebrew" otherwise. The Installed | Discover
+  switch (⌘1, ⌘2), Refresh (⌘R), and search (name, full name, description; in Discover it
+  searches Homebrew).
 - **Summary strip:** the counts, the upgrades-ready line, and the All / Upgrades / From
   source / Newer filter with counts.
 - **Table:** package (with a `dep` tag for dependencies and a second line when there is
@@ -84,7 +93,10 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
 - **Detail pane:** versions, kegs, bottle tag, bottle origin, requested or dependency,
   install date, tap, where it came from, the exact upgrade command with a copy button, and
   "Open release page" for bottles on GitHub releases (the Intelbrew fork). ghcr.io bottles
-  have no page, so there is no link.
+  have no page, so there is no link. **Uninstall…** opens a confirmation with the exact
+  `brew uninstall --formula|--cask <tap>/<name>` command. When other installed packages
+  need it (from their receipts' runtime dependencies, or a cask's `depends_on`), uninstall
+  is blocked and the pane and dialog list them. brew refuses such an uninstall too.
 - **Status bar:** the fork status in Intelbrew mode (green: core and brew on the forks and
   brew on its newest tag; orange: brew on upstream or behind; red: core not on the fork),
   "Updated N min ago" (hover for the time, and whether it came from the cache), and
@@ -95,7 +107,27 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
   the running brew and everything it started), and "Hide" (the run continues; the status
   bar has a button to bring it back). The full log is appended to
   `~/Library/Logs/Tankard/upgrade.log`.
-- Light and dark follow the system appearance.
+- **Discover:** search every formula and cask (debounced, ranked: exact name, then name
+  prefix, other names, name contains, description). Each row has the name, description,
+  version, kind, an "installed" mark, and a bottle badge: "Bottle for your Mac", "Intelbrew
+  bottle ✓" (Intelbrew mode, bottle on d4rkwyng/intelbrew-core) or "Builds from source".
+  The detail pane has the homepage, licence, dependencies (installed ones ticked), the exact
+  `brew install --formula|--cask <tap>/<name>` command with a copy button, and Install,
+  which runs through the same queue and live-log sheet as upgrades. Where the data comes
+  from depends on the mode; see *Network* below.
+- **Welcome screen:** when no brew is found (or brew is there but `brew --version` fails,
+  with what it printed), the window shows what Homebrew is and how to install it. On an
+  Intel Mac (`uname -m` x86_64, not translated by Rosetta, `hw.optional.arm64` 0) the first
+  option is Intelbrew, then standard Homebrew; on Apple silicon only Homebrew. Each shows
+  the exact one-liner (copyable). "Open in Terminal" writes it to a temporary `.command`
+  file and opens that, because the installers ask for a password and wait for Return;
+  nothing is run inside the app. "Check again", or bringing the window to the front,
+  looks for brew again.
+- **Themes:** Settings (⌘,) → Appearance: **Dark** (the default), Light, System (follows
+  macOS), and **Tankard**: deep purples from the icon plate (#1f0d3d to #4a2580), amber
+  (#f2a93b) for buttons, progress and the table selection, foam-white text, badges
+  re-tinted. Every Tankard text colour pair is checked against WCAG AA (4.5:1) by a test.
+  Saved in UserDefaults (`appearance`), applied app-wide including sheets.
 
 ### How it behaves
 
@@ -115,8 +147,28 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
   shows it needed sudo, the app says so and gives the exact command to run in Terminal.
 - **One queue.** `brew update` and every `brew upgrade` go through one strict FIFO queue,
   so two brews never run at once. Status reads stay off the queue.
-- **No network calls of its own, no telemetry.** Everything comes from brew and git on
-  this Mac. The only links out are ones you click (release pages).
+- **Network: one call of its own, only when you open Discover in normal mode; no
+  telemetry.** Everything else comes from brew and git on this Mac. The links out are ones
+  you click (release pages, homepages).
+  - *Normal mode:* Discover fetches `https://formulae.brew.sh/api/formula.json` and
+    `cask.json` (about 32 MB and 19 MB, gzip on the wire) the first time it is opened,
+    never at launch. They are kept in `~/Library/Caches/net.mindtricks.tankard/api/` with
+    their ETag. Within an hour Tankard uses that copy without asking; after an hour it
+    revalidates with `If-None-Match` (a 304 costs no download). If the request fails, the
+    saved copy is used and a banner says so. No other host is contacted. Search is in
+    memory.
+  - *Intelbrew mode:* formulae.brew.sh is never used, because it describes upstream
+    Homebrew, not the fork this Mac installs from. Discover lists the local taps
+    (`<repository>/Library/Taps/*/*`: file names, the `desc` line, Aliases) and asks
+    `brew info --json=v2 --formula <tap>/<name>…` for versions, bottles and licences in
+    batches of up to 40, for the rows on screen and the selection. brew 7 refuses
+    `--eval-all` and won't evaluate every formula of an untrusted tap, so
+    `brew search --desc` can't do this; reading the files is also faster. Measured on the
+    Intel macOS 14 VM (8,732 formulae, debug build): index 0.41 s once per Discover open,
+    search 27 ms, `brew info` for the top 30 rows 0.6 s, for one row 0.54 s. For
+    comparison, one `brew search --formula python` takes 0.56 s and returns names only. If
+    homebrew/cask isn't tapped, Discover says "Casks aren't enabled: run `brew tap
+    homebrew/cask` (about 620 MB)".
 
 ### Demo mode and screenshots
 
@@ -132,17 +184,29 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_UPGRADE=1` | Demo only: start the upgrade sheet on launch. |
 | `TANKARD_DEMO_PACE=0.5` | Demo only: speed of the scripted log (lower is faster). |
 | `TANKARD_SELECT=<name>` | Select a package on launch (any mode). |
-| `TANKARD_APPEARANCE=light\|dark` | Force an appearance (otherwise the system's). |
+| `TANKARD_APPEARANCE=dark\|light\|system\|tankard` | Use this theme for this run (not saved; otherwise the one from Settings). |
+| `TANKARD_TAB=discover` | Open on Discover (any mode; normal mode then fetches the catalogue). |
+| `TANKARD_DISCOVER=<query>` | Open Discover and search. `TANKARD_DISCOVER_SELECT=<name>` selects a result. |
+| `TANKARD_DEMO_INSTALL=1` | Demo only: install the Discover selection (scripted log). |
+| `TANKARD_DEMO_UNINSTALL=<name>` | Demo only: open the uninstall confirmation for an installed package. |
+| `TANKARD_DEMO_NOBREW=intel\|arm64` | The welcome screen as on an Intel Mac or Apple silicon (nothing is opened). |
 | `TANKARD_SNAPSHOT=<file.png>` | Write a 2x PNG of the window (and an open sheet) after `TANKARD_SNAPSHOT_DELAY` seconds (default 4); `TANKARD_SNAPSHOT_QUIT=1` quits after; `TANKARD_SNAPSHOT_SIZE=1040x620` sets the content size. The window draws itself, so this works without Screen Recording permission and while the screen is locked. |
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
 
+Demo Discover uses fixtures too: a slice of formulae.brew.sh (normal mode) and `brew info`
+captured read-only on the Intel VM (Intelbrew mode), with no cask tap. Nothing is fetched.
+
 `Scripts/screenshots.sh [OUT_DIR]` takes the standard set (Intelbrew demo light and dark,
-the upgrade sheet, the arm64 demo, and this Mac's real data; `SKIP_REAL=1` skips the last).
+the upgrade sheet, the arm64 demo, the four themes, Discover in both modes, the install
+sheet, the uninstall confirmation and its blocked form, the welcome screen on Intel and
+Apple silicon, and this Mac's real data; `SKIP_REAL=1` skips the last).
 
 ### Architecture
 
 ```
 TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew detection,
+                 the Discover catalogue (CatalogEntry, ranking, bottle badges), the tap
+                 index, dependents,
                  brew's environment, ProcessRunner, and StreamingProcessRunner (merged
                  stdout/stderr in chunks, same no-shell / clean-env / process-group rules)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
@@ -153,6 +217,14 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   LineAssembler    bytes → lines, CR-aware (redraws replace the line), CRLF and UTF-8
                    split across reads, ANSI stripped
   StatusCache      the cached StatusReport JSON
+  DiscoverStore    @Observable: catalogue loading (on open, TTL), debounced search,
+                   coalesced `brew info` batches for the rows on screen
+  CatalogSources   APIFetcher/APICatalog (formulae.brew.sh, ETag + 1 h TTL) and
+                   TapCatalog (local taps + `brew info`, Intelbrew mode)
+  Welcome          MacHardware (Intel or Apple silicon), the installer one-liners and
+                   their .command scripts, HomebrewState
+  Appearance       themes, their UserDefaults persistence, the Tankard palette and its
+                   WCAG contrast check
   Demo             fake runners and the bundled fixture copies
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
@@ -433,7 +505,9 @@ the output.
       "bottleURL": "https://github.com/…/xz-5.8.4.sonoma.bottle.tar.gz",  // formulae with a pourable bottle
       "installedAt": "2026-11-14T10:31:21Z",       // when brew recorded it
       "upgradeHasBottle": true,                    // formulae with an upgrade only
-      "autoUpdates": true                          // casks only
+      "autoUpdates": true,                         // casks only
+      "dependencies": ["lz4"],                     // 0.2+: formulae it needs (receipt runtime deps; casks: depends_on formulae)
+      "caskDependencies": []                       // 0.2+, casks only: depends_on casks
     }
   ],
   "timingsMs": { "detect": 13, "info": 623, "git": 26, "total": 637 },   // Intel VM, 20 formulae
@@ -485,6 +559,18 @@ process group killed through the queue), the store (fresh and stale cache, faile
 keeps data, `brew update` first on manual refresh, sudo, brew not found, filters and
 search), upgrades (qualified commands in order, log file, reconcile, stop after current,
 stop now, sudo failure, refresh queued behind an upgrade), and demo mode end to end.
+
+v0.2 adds: search ranking and filtering, bottle badges, the tap index (a temporary tap
+tree), dependents, the API cache (a fake `URLProtocol`: ETag, If-None-Match, 304, TTL,
+fallback to the stale copy), Intelbrew-mode search through a fake runner (batched,
+qualified `brew info`, retry without an unknown name), install and uninstall command
+building and runs, dependents blocking uninstall, theme persistence, the Tankard palette's
+WCAG AA check, Mac detection, the `.command` scripts, and welcome → main once brew appears.
+
+Two live canaries are off by default: `TANKARD_LIVE_SEARCH=<query>` times Intelbrew-mode
+Discover against this Mac's brew (read-only), and `TANKARD_LIVE_API_DIR=<dir>` times
+decoding a saved formula.json and cask.json (no network). Run them with
+`Scripts/test.sh --filter LiveSearchCanary` / `--filter LiveAPIDecodeCanary`.
 
 ## Licence
 
