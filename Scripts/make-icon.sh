@@ -1,6 +1,6 @@
 #!/bin/bash
 # Rebuilds Resources/AppIcon.icns from the pixel-art logo
-# (Sources/TankardApp/Resources/tankard-logo.png, 128x128).
+# (Sources/TankardApp/Resources/tankard-mark.png, 128x128; LOGO=<png> to use another).
 #
 #   Scripts/make-icon.sh [--keep DIR]    --keep: also leave the .iconset in DIR
 #
@@ -17,6 +17,8 @@
 # which one it keeps decides whether the outline, handle and "i" survive. At
 # 32 and 16 px the logo is shifted by a few source pixels first (the phase
 # below), chosen by eye for legibility; the shift is under one output pixel.
+# Defaults are for the Tankard mark (32: 2, 16: 5); the Intelbrew "i" mug
+# reads best at PHASE32=3 PHASE16=2.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -30,8 +32,8 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-LOGO=Sources/TankardApp/Resources/tankard-logo.png
-OUT=Resources/AppIcon.icns
+LOGO=${LOGO:-Sources/TankardApp/Resources/tankard-mark.png}
+OUT=${OUT:-Resources/AppIcon.icns}
 command -v ffmpeg >/dev/null || { echo "make-icon.sh: needs ffmpeg (brew install ffmpeg)" >&2; exit 1; }
 
 WORK=$(mktemp -d)
@@ -51,8 +53,8 @@ render 512 384 0
 render 256 192 0
 render 128 96 0
 render 64 48 0
-render 32 32 3
-render 16 16 2
+render 32 32 ${PHASE32:-2}
+render 16 16 ${PHASE16:-5}
 
 SET="$WORK/AppIcon.iconset"
 mkdir -p "$SET"

@@ -35,7 +35,7 @@ let package = Package(
         .executableTarget(
             name: "TankardApp",
             dependencies: ["TankardCore", "TankardAppModel"],
-            resources: [.copy("Resources/tankard-logo.png")]
+            resources: [.copy("Resources/intelbrew-mug.png"), .copy("Resources/tankard-mark.png")]
         ),
 
         .testTarget(

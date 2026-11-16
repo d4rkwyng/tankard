@@ -29,7 +29,8 @@ struct BadgePalette {
     var foreground: Color
     var dot: Color
 
-    static func of(_ kind: BadgeKind) -> BadgePalette {
+    /// The system (Dark / Light / System) badges.
+    static func standard(_ kind: BadgeKind) -> BadgePalette {
         switch kind {
         case .bottle:
             return BadgePalette(background: Color(light: NSColor(hex: 0xe3f5e6), dark: NSColor(hex: 0x30d158, alpha: 0.16)),
@@ -53,17 +54,128 @@ struct BadgePalette {
                                 dot: Color(light: NSColor(hex: 0xaf52de), dark: NSColor(hex: 0xbf5af2)))
         }
     }
+
+    /// The Tankard theme's badges, re-tinted for the purple background
+    /// (values and their contrast check live in `TankardPalette`).
+    static func tankard(_ kind: BadgeKind) -> BadgePalette {
+        let b: TankardPalette.Badge
+        switch kind {
+        case .bottle: b = TankardPalette.bottle
+        case .source: b = TankardPalette.source
+        case .newer: b = TankardPalette.newer
+        case .noBottle: b = TankardPalette.noBottle
+        case .cask: b = TankardPalette.cask
+        }
+        return BadgePalette(background: Color(hex: b.tint, alpha: b.tintAlpha), foreground: Color(hex: b.text), dot: Color(hex: b.dot))
+    }
 }
 
-enum Theme {
-    static let strip = Color(light: NSColor(hex: 0xfbfbfb), dark: NSColor(hex: 0x232323))
-    static let pane = Color(light: NSColor(hex: 0xfafafa), dark: NSColor(hex: 0x232323))
-    static let bar = Color(light: NSColor(hex: 0xf6f6f6), dark: NSColor(hex: 0x2c2c2c))
-    static let logBackground = Color(light: NSColor(hex: 0xfbfbfb), dark: NSColor(hex: 0x161616))
-    static let logText = Color(light: NSColor(hex: 0x2b2b2b), dark: NSColor(hex: 0xe2e2e2))
-    static let logArrow = Color(light: NSColor(hex: 0x2f7ef0), dark: NSColor(hex: 0x5ea0ff))
-    static let logGood = Color(light: NSColor(hex: 0x2b9a46), dark: NSColor(hex: 0x5fdc7c))
-    static let chip = Color(light: NSColor(white: 0, alpha: 0.06), dark: NSColor(white: 1, alpha: 0.07))
+/// The colours a view draws with, for the chosen appearance. Read from the
+/// environment (`@Environment(\.theme)`), so sheets and the Settings window
+/// follow a change at once.
+struct Theme {
+    var kind: AppTheme
+    var strip: Color
+    var pane: Color
+    var bar: Color
+    var logBackground: Color
+    var logText: Color
+    var logArrow: Color
+    var logGood: Color
+    var chip: Color
+    var accent: Color
+    /// Text on an accent-filled button or selection.
+    var onAccent: Color
+    /// The window/table background; nil = the system's.
+    var window: Color?
+    var isTankard: Bool { kind == .tankard }
+
+    func badge(_ kind: BadgeKind) -> BadgePalette {
+        isTankard ? BadgePalette.tankard(kind) : BadgePalette.standard(kind)
+    }
+
+    static let standard = Theme(
+        kind: .dark,
+        strip: Color(light: NSColor(hex: 0xfbfbfb), dark: NSColor(hex: 0x232323)),
+        pane: Color(light: NSColor(hex: 0xfafafa), dark: NSColor(hex: 0x232323)),
+        bar: Color(light: NSColor(hex: 0xf6f6f6), dark: NSColor(hex: 0x2c2c2c)),
+        logBackground: Color(light: NSColor(hex: 0xfbfbfb), dark: NSColor(hex: 0x161616)),
+        logText: Color(light: NSColor(hex: 0x2b2b2b), dark: NSColor(hex: 0xe2e2e2)),
+        logArrow: Color(light: NSColor(hex: 0x2f7ef0), dark: NSColor(hex: 0x5ea0ff)),
+        logGood: Color(light: NSColor(hex: 0x2b9a46), dark: NSColor(hex: 0x5fdc7c)),
+        chip: Color(light: NSColor(white: 0, alpha: 0.06), dark: NSColor(white: 1, alpha: 0.07)),
+        accent: .accentColor,
+        onAccent: .white,
+        window: nil)
+
+    static let tankard = Theme(
+        kind: .tankard,
+        strip: Color(hex: TankardPalette.strip),
+        pane: Color(hex: TankardPalette.pane),
+        bar: Color(hex: TankardPalette.bar),
+        logBackground: Color(hex: TankardPalette.log),
+        logText: Color(hex: TankardPalette.foam),
+        logArrow: Color(hex: TankardPalette.amber),
+        logGood: Color(hex: TankardPalette.bottle.text),
+        chip: Color(hex: TankardPalette.plate, alpha: 0.55),
+        accent: Color(hex: TankardPalette.amber),
+        onAccent: Color(hex: TankardPalette.onAmber),
+        window: Color(hex: TankardPalette.window))
+
+    static func of(_ t: AppTheme) -> Theme {
+        if t == .tankard { return tankard }
+        var s = standard
+        s.kind = t
+        return s
+    }
+}
+
+private struct ThemeKey: EnvironmentKey {
+    static let defaultValue = Theme.standard
+}
+
+extension EnvironmentValues {
+    var theme: Theme {
+        get { self[ThemeKey.self] }
+        set { self[ThemeKey.self] = newValue }
+    }
+}
+
+/// Applies a theme to a view tree: the environment value, the accent
+/// (`tint`), and for Tankard the text hierarchy and backgrounds. Used on
+/// the main window, every sheet and the Settings window.
+struct Themed: ViewModifier {
+    var theme: Theme
+
+    func body(content: Content) -> some View {
+        if theme.isTankard {
+            content
+                .environment(\.theme, theme)
+                .tint(theme.accent)
+                .foregroundStyle(Color(hex: TankardPalette.foam), Color(hex: TankardPalette.lavender), Color(hex: TankardPalette.muted))
+                .background(theme.window ?? .clear)
+                .toolbarBackground(theme.window ?? .clear, for: .windowToolbar)
+                .toolbarBackground(.visible, for: .windowToolbar)
+        } else {
+            content
+                .environment(\.theme, theme)
+        }
+    }
+}
+
+extension View {
+    func themed(_ theme: Theme) -> some View { modifier(Themed(theme: theme)) }
+}
+
+/// Sets the app's NSAppearance for a theme: forced dark (Dark, Tankard),
+/// forced light, or the system's (nil).
+@MainActor
+func applyAppearance(_ t: AppTheme) {
+    switch t.forcesDark {
+    case true?: NSApp.appearance = NSAppearance(named: .darkAqua)
+    case false?: NSApp.appearance = NSAppearance(named: .aqua)
+    case nil: NSApp.appearance = nil
+    }
 }
 
 /// The coloured capsule in the Source column.
@@ -71,38 +183,43 @@ struct SourceBadge: View {
     var kind: BadgeKind
     var label: String
     @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
 
     var body: some View {
-        let p = BadgePalette.of(kind)
-        let selected = prominence == .increased
+        let p = theme.badge(kind)
+        // Tankard's selection is a dark amber blend: badges keep their colours.
+        let selected = prominence == .increased && !theme.isTankard
+        let onSelection = Color.white
         HStack(spacing: 5) {
-            Circle().fill(selected ? Color.white : p.dot).frame(width: 6, height: 6)
+            Circle().fill(selected ? onSelection : p.dot).frame(width: 6, height: 6)
             Text(label)
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(selected ? Color.white : p.foreground)
+                .foregroundStyle(selected ? onSelection : p.foreground)
                 .lineLimit(1)
         }
         .padding(.leading, 7)
         .padding(.trailing, 8)
         .frame(height: 19)
-        .background(Capsule().fill(selected ? Color.white.opacity(0.22) : p.background))
+        .background(Capsule().fill(selected ? onSelection.opacity(0.16) : p.background))
         .fixedSize()
     }
 }
 
-/// Tankard's logo, the pixel-art mug, in every mode. Drawn with no
-/// interpolation so the pixels stay sharp; sizes of 32 and 64 points are a
-/// whole-number fraction or multiple of its 128 px on 1x and 2x screens.
+/// The logo in the toolbar and sheets: the Intelbrew "i" mug in Intelbrew
+/// mode, Tankard's own mark otherwise. Drawn with no interpolation so the
+/// pixels stay sharp; sizes of 32, 64 and 128 points are a whole-number
+/// fraction or multiple of the 128 px art on 1x and 2x screens.
 struct BrandMark: View {
     var size: CGFloat = 32
+    var intelbrew = false
 
     var body: some View {
-        if let logo = AppResources.logo {
+        if let logo = intelbrew ? AppResources.intelbrewMug : AppResources.tankardMark {
             Image(nsImage: logo)
                 .resizable()
                 .interpolation(.none)
                 .frame(width: size, height: size)
-                .accessibilityLabel("Tankard")
+                .accessibilityLabel(intelbrew ? "Intelbrew" : "Tankard")
         } else {
             Image(systemName: "mug.fill")
                 .font(.system(size: size * 0.62, weight: .semibold))
@@ -158,6 +275,7 @@ func copyToPasteboard(_ s: String) {
 /// A command in monospace with a copy button.
 struct CommandBox: View {
     var command: String
+    @Environment(\.theme) private var theme
     // `State(...)` rather than `@State`: in the macOS 27 SDK `@State` is a
     // macro whose plugin (SwiftUIMacros) ships with Xcode, not the Command
     // Line Tools. The struct itself works the same way everywhere.
@@ -191,6 +309,6 @@ struct CommandBox: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
-        .background(RoundedRectangle(cornerRadius: 6).fill(Theme.chip))
+        .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))
     }
 }

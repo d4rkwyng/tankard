@@ -7,9 +7,10 @@ struct DetailPane: View {
 
     var body: some View {
         if let p = store.selectedPackage {
-            PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.isUpgrading) {
-                store.startUpgrade([p])
-            }
+            PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.isUpgrading,
+                          dependents: store.dependents(of: p),
+                          upgrade: { store.startUpgrade([p]) },
+                          uninstall: { store.requestUninstall(p) })
             .id(p.id)
         } else {
             VStack(spacing: 8) {
@@ -25,7 +26,11 @@ struct PackageDetail: View {
     var package: Package
     var intelbrew: Bool
     var canUpgrade: Bool
+    /// Installed packages that need this one (uninstall is blocked).
+    var dependents: [Package]
     var upgrade: () -> Void
+    var uninstall: () -> Void
+    @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
 
@@ -48,16 +53,16 @@ struct PackageDetail: View {
 
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {
-                        Image(systemName: "arrow.up.circle").foregroundStyle(Color.accentColor)
+                        Image(systemName: "arrow.up.circle").foregroundStyle(theme.accent)
                         (Text("Upgrade ready: ") + Text("\(p.installedVersion) → \(p.currentVersion ?? "?")")
-                            .foregroundColor(.accentColor).fontWeight(.semibold))
+                            .foregroundColor(theme.accent).fontWeight(.semibold))
                             .font(.system(size: 12))
                             .lineLimit(2)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentColor.opacity(0.10)))
+                    .background(RoundedRectangle(cornerRadius: 8).fill(theme.accent.opacity(0.12)))
                 }
 
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {
@@ -96,6 +101,8 @@ struct PackageDetail: View {
                             .disabled(!canUpgrade)
                     }
                 }
+
+                UninstallSection(package: p, dependents: dependents, enabled: canUpgrade, uninstall: uninstall)
 
                 if let page = p.releasePageURL {
                     Link(destination: page) {
@@ -140,7 +147,7 @@ struct PackageDetail: View {
         HStack(alignment: .top, spacing: 8) {
             switch p.status {
             case .bottle:
-                Image(systemName: "checkmark.circle").foregroundStyle(BadgePalette.of(.bottle).dot)
+                Image(systemName: "checkmark.circle").foregroundStyle(theme.badge(.bottle).dot)
                 if let repo = p.bottleRepository {
                     (Text("Poured from ") + Text(repo).font(.system(size: 11, design: .monospaced)) + Text(" release"))
                 } else if p.bottleOrigin == .homebrew {
@@ -149,19 +156,53 @@ struct PackageDetail: View {
                     Text("Poured from a bottle")
                 }
             case .source:
-                Image(systemName: "hammer").foregroundStyle(BadgePalette.of(.source).dot)
+                Image(systemName: "hammer").foregroundStyle(theme.badge(.source).dot)
                 Text(p.currentHasBottle == true ? "Built from source; a bottle exists for the current version" : "Built from source")
             case .newer:
-                Image(systemName: "arrow.up.forward.circle").foregroundStyle(BadgePalette.of(.newer).dot)
+                Image(systemName: "arrow.up.forward.circle").foregroundStyle(theme.badge(.newer).dot)
                 Text("Installed version is newer than the tap's \(p.currentVersion ?? "?"). brew won't downgrade it.")
             case .noBottle:
-                Image(systemName: "exclamationmark.circle").foregroundStyle(BadgePalette.of(.noBottle).dot)
+                Image(systemName: "exclamationmark.circle").foregroundStyle(theme.badge(.noBottle).dot)
                 Text("No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
             case .cask:
-                Image(systemName: "macwindow").foregroundStyle(BadgePalette.of(.cask).dot)
+                Image(systemName: "macwindow").foregroundStyle(theme.badge(.cask).dot)
                 Text("Cask: installs the vendor's app; no bottles.")
             }
         }
         .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+/// The bottom of the Installed detail pane: Uninstall…, or why not.
+struct UninstallSection: View {
+    var package: Package
+    var dependents: [Package]
+    var enabled: Bool
+    var uninstall: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Divider().padding(.bottom, 4)
+            if dependents.isEmpty {
+                Button("Uninstall \(package.name)…", role: .destructive, action: uninstall)
+                    .controlSize(.small)
+                    .disabled(!enabled)
+                    .help(BrewCommands.display(BrewCommands.uninstallArguments(for: package)))
+            } else {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "lock").foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Can't uninstall: needed by \(dependents.count) installed package\(dependents.count == 1 ? "" : "s")")
+                            .font(.system(size: 11.5, weight: .medium))
+                        Text(dependents.map(\.name).joined(separator: ", "))
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                }
+                .font(.system(size: 12))
+            }
+        }
+        .padding(.top, 4)
     }
 }

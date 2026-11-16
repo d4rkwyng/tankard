@@ -5,11 +5,12 @@ import TankardCore
 struct UpgradeSheet: View {
     var session: UpgradeSession
     @Bindable var store: AppStore
+    @Environment(\.theme) private var theme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                BrandMark(size: 64)
+                BrandMark(size: 64, intelbrew: store.intelbrewMode)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(session.title).font(.system(size: 14, weight: .bold))
                     Text(session.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
@@ -84,11 +85,13 @@ struct UpgradeSheet: View {
         .padding(.top, 20)
         .padding(.bottom, 16)
         .frame(width: 600)
+        .background(theme.window ?? .clear)
     }
 }
 
 struct Chip: View {
     var item: UpgradeSession.Item
+    @Environment(\.theme) private var theme
 
     var body: some View {
         let name = item.package.name + (item.package.kind == .formula && item.package.upgradeHasBottle != true ? " · source" : "")
@@ -117,8 +120,8 @@ struct Chip: View {
 
     private var foreground: Color {
         switch item.state {
-        case .done: return BadgePalette.of(.bottle).foreground
-        case .running: return .accentColor
+        case .done: return theme.badge(.bottle).foreground
+        case .running: return theme.accent
         case .failed: return .red
         default: return .secondary
         }
@@ -126,10 +129,10 @@ struct Chip: View {
 
     private var background: Color {
         switch item.state {
-        case .done: return BadgePalette.of(.bottle).background
-        case .running: return Color.accentColor.opacity(0.12)
+        case .done: return theme.badge(.bottle).background
+        case .running: return theme.accent.opacity(0.14)
         case .failed: return Color.red.opacity(0.12)
-        default: return Theme.chip
+        default: return theme.chip
         }
     }
 }
@@ -137,6 +140,7 @@ struct Chip: View {
 /// brew's output, monospace, following the end.
 struct LogView: View {
     var assembler: LineAssembler
+    @Environment(\.theme) private var theme
 
     var body: some View {
         let lines = assembler.displayLines
@@ -145,7 +149,7 @@ struct LogView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(lines.enumerated()), id: \.offset) { i, line in
-                        LogLine(text: line, isCurrent: i == lines.count - 1)
+                        LogLine(text: line, isCurrent: i == lines.count - 1, theme: theme)
                             .id(offset + i)
                     }
                 }
@@ -161,8 +165,8 @@ struct LogView: View {
             }
         }
         .font(.system(size: 11, design: .monospaced))
-        .foregroundStyle(Theme.logText)
-        .background(RoundedRectangle(cornerRadius: 8).fill(Theme.logBackground))
+        .foregroundStyle(theme.logText)
+        .background(RoundedRectangle(cornerRadius: 8).fill(theme.logBackground))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.1), lineWidth: 0.5))
         .textSelection(.enabled)
     }
@@ -171,6 +175,7 @@ struct LogView: View {
 struct LogLine: View {
     var text: String
     var isCurrent: Bool
+    var theme: Theme
 
     var body: some View {
         styled
@@ -193,13 +198,13 @@ struct LogLine: View {
         let dim = text.hasPrefix("==> Fetching") || text.hasPrefix("==> Downloading") || text.hasPrefix("Removing:")
             || text.hasPrefix("#") || text.hasPrefix("Already up-to-date")
         if dim {
-            return Text(text).foregroundColor(Theme.logText.opacity(0.55))
+            return Text(text).foregroundColor(theme.logText.opacity(0.62))
         }
         if text.hasPrefix("==>") {
-            return Text("==>").foregroundColor(Theme.logArrow).fontWeight(.bold) + Text(text.dropFirst(3))
+            return Text("==>").foregroundColor(theme.logArrow).fontWeight(.bold) + Text(text.dropFirst(3))
         }
         if text.hasPrefix("🍺") {
-            return Text("🍺").foregroundColor(Theme.logGood) + Text(text.dropFirst(1))
+            return Text("🍺").foregroundColor(theme.logGood) + Text(text.dropFirst(1))
         }
         return Text(text)
     }

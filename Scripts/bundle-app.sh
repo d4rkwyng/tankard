@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-VERSION=${TANKARD_VERSION:-0.1.1}
+VERSION=${TANKARD_VERSION:-0.2.0}
 BUILD=$(git rev-list --count HEAD 2>/dev/null || echo 1)
 
 LIPO_FROM=()

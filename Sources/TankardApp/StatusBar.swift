@@ -4,6 +4,7 @@ import TankardCore
 
 struct StatusBar: View {
     @Bindable var store: AppStore
+    @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(spacing: 8) {
@@ -61,10 +62,11 @@ struct StatusBar: View {
                         Text("\(n)")
                             .font(.system(size: 11, weight: .semibold))
                             .padding(.horizontal, 6)
-                            .background(Capsule().fill(Color.white.opacity(0.25)))
+                            .background(Capsule().fill((theme.isTankard ? theme.onAccent : Color.white).opacity(0.22)))
                     }
                 }
                 .fontWeight(.semibold)
+                .modifier(OnAccentLabel(theme: theme))
             }
             .buttonStyle(.borderedProminent)
             .disabled(n == 0 || store.isUpgrading || store.isRefreshing)
@@ -75,7 +77,7 @@ struct StatusBar: View {
         .padding(.leading, 16)
         .padding(.trailing, 10)
         .frame(height: 44)
-        .background(Theme.bar)
+        .background(theme.bar)
     }
 
     private var separator: some View {
@@ -84,9 +86,18 @@ struct StatusBar: View {
 
     private func color(_ l: ForkSummary.Level) -> Color {
         switch l {
-        case .ok: return BadgePalette.of(.bottle).dot
+        case .ok: return theme.badge(.bottle).dot
         case .warning: return .orange
         case .problem: return .red
         }
+    }
+}
+
+/// Tankard's prominent buttons are amber, so their labels are dark; other
+/// themes keep the system's label colour.
+struct OnAccentLabel: ViewModifier {
+    var theme: Theme
+    func body(content: Content) -> some View {
+        if theme.isTankard { content.foregroundStyle(theme.onAccent) } else { content }
     }
 }

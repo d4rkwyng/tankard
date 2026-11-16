@@ -5,73 +5,153 @@ import TankardCore
 struct ContentView: View {
     @Bindable var store: AppStore
     var options: LaunchOptions
+    var appearance: AppearanceSettings
     @Environment(\.controlActiveState) private var activeState
 
     var body: some View {
-        VStack(spacing: 0) {
-            SummaryStrip(store: store)
-            Divider()
-            if let error = store.error {
-                ErrorBanner(error: error) { store.dismissError() }
-                Divider()
+        let theme = Theme.of(appearance.theme)
+        Group {
+            if store.homebrewState.needsWelcome {
+                WelcomeView(store: store, isDemo: options.isDemo)
+            } else {
+                main(theme)
             }
-            HStack(spacing: 0) {
-                PackageTable(store: store)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                Divider()
-                DetailPane(store: store)
-                    .frame(width: 272)
-                    .frame(maxHeight: .infinity)
-                    .background(Theme.pane)
-            }
-            Divider()
-            StatusBar(store: store)
         }
         .navigationTitle(store.intelbrewMode ? "Intelbrew" : "Tankard")
         .navigationSubtitle(store.intelbrewMode ? "Intel bottles for macOS 14+" : "Homebrew")
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                BrandMark(size: 32)
+                BrandMark(size: 32, intelbrew: store.intelbrewMode)
                     .padding(.horizontal, 4)
             }
-            ToolbarItem(placement: .primaryAction) {
-                if store.isRefreshing {
-                    ProgressView().controlSize(.small).frame(width: 28)
-                        .help(store.refreshPhase ?? "Refreshing")
-                } else {
-                    Button {
-                        Task { await store.refresh(manual: true) }
-                    } label: {
-                        Label("Refresh", systemImage: "arrow.clockwise")
+            if !store.homebrewState.needsWelcome {
+                ToolbarItem(placement: .principal) {
+                    Picker("View", selection: $store.tab) {
+                        ForEach(MainTab.allCases) { t in Text(t.title).tag(t) }
                     }
-                    .help("brew update, then re-read installed packages (⌘R)")
-                    .disabled(store.isUpgrading)
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                    .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    if store.isRefreshing {
+                        ProgressView().controlSize(.small).frame(width: 28)
+                            .help(store.refreshPhase ?? "Refreshing")
+                    } else {
+                        Button {
+                            Task { await store.refresh(manual: true) }
+                        } label: {
+                            Label("Refresh", systemImage: "arrow.clockwise")
+                        }
+                        .help("brew update, then re-read installed packages (⌘R)")
+                        .disabled(store.isUpgrading)
+                    }
                 }
             }
         }
-        .searchable(text: $store.search, placement: .toolbar, prompt: "Search packages")
         .sheet(isPresented: $store.showUpgradeSheet) {
             if let session = store.upgrade {
-                UpgradeSheet(session: session, store: store)
+                UpgradeSheet(session: session, store: store).themed(theme)
             }
         }
         .task {
             await store.start()
-            await applyDemoOptions()
+            await applyLaunchOptions()
         }
         .onChange(of: activeState) { _, state in
             if state == .key { store.revalidateIfStale() }
         }
+        .onChange(of: store.tab) { _, tab in
+            if tab == .discover { openDiscover() }
+        }
+        .onChange(of: store.intelbrewMode, initial: true) { _, intelbrew in
+            AppResources.updateDockIcon(intelbrew: intelbrew)
+        }
+        .themed(theme)
         .background(SnapshotHook(request: options.snapshot))
     }
 
+    @ViewBuilder
+    private func main(_ theme: Theme) -> some View {
+        VStack(spacing: 0) {
+            if store.tab == .installed {
+                SummaryStrip(store: store)
+                Divider()
+                if let error = store.error {
+                    ErrorBanner(error: error) { store.dismissError() }
+                    Divider()
+                }
+                HStack(spacing: 0) {
+                    PackageTable(store: store)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    Divider()
+                    DetailPane(store: store)
+                        .frame(width: 272)
+                        .frame(maxHeight: .infinity)
+                        .background(theme.pane)
+                }
+            } else if let discover = store.discover {
+                DiscoverView(store: store, discover: discover)
+            } else {
+                ContentUnavailableView("Discover needs Homebrew's status first", systemImage: "magnifyingglass",
+                                       description: Text("Waiting for brew…"))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            Divider()
+            StatusBar(store: store)
+        }
+        .sheet(item: $store.uninstallCandidate) { p in
+            UninstallSheet(store: store, package: p).themed(theme)
+        }
+        // Here, not on the window: the welcome screen has nothing to search.
+        .searchable(text: searchBinding, placement: .toolbar,
+                    prompt: store.tab == .installed ? "Search installed" : "Search Homebrew")
+    }
+
+    /// The toolbar search field searches the tab on screen.
+    private var searchBinding: Binding<String> {
+        Binding(
+            get: { store.tab == .installed ? store.search : (store.discover?.query ?? "") },
+            set: { v in
+                if store.tab == .installed { store.search = v } else { store.discover?.query = v }
+            })
+    }
+
+    /// Discover loads its catalog when first opened, never at launch.
+    private func openDiscover() {
+        guard let d = store.openDiscover() else { return }
+        Task { await d.activate() }
+    }
+
     @MainActor
-    private func applyDemoOptions() async {
+    private func applyLaunchOptions() async {
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
+        }
+        if options.demo != nil, let name = options.demoUninstall,
+           let p = store.packages.first(where: { $0.name == name }) {
+            store.selection = p.id
+            store.requestUninstall(p)
+        }
+        if options.tab == .discover {
+            store.tab = .discover
+            guard let d = store.openDiscover() else { return }
+            await d.activate()
+            if let q = options.discoverQuery {
+                d.query = q
+                await d.searchNow()
+            }
+            if let name = options.discoverSelect, let e = d.results.first(where: { $0.name == name }) {
+                d.selection = e.id
+                await d.waitForDetails()
+                if options.demo != nil && options.demoInstall, let e = d.selectedEntry {
+                    store.startInstall(e)
+                }
+            }
         }
     }
 }
@@ -80,6 +160,7 @@ struct ContentView: View {
 
 struct SummaryStrip: View {
     @Bindable var store: AppStore
+    @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
@@ -92,8 +173,8 @@ struct SummaryStrip: View {
                         .truncationMode(.tail)
                     HStack(spacing: 6) {
                         if let (ready, detail) = SummaryText.upgrades(report.summary) {
-                            Circle().fill(Color.accentColor).frame(width: 7, height: 7)
-                            Text(ready).fontWeight(.semibold).foregroundStyle(Color.accentColor)
+                            Circle().fill(theme.accent).frame(width: 7, height: 7)
+                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.accent)
                             Text(detail).foregroundStyle(.secondary)
                         } else {
                             Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
@@ -122,7 +203,7 @@ struct SummaryStrip: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Theme.strip)
+        .background(theme.strip)
     }
 }
 
@@ -161,6 +242,7 @@ struct ErrorBanner: View {
 
 struct PackageTable: View {
     @Bindable var store: AppStore
+    @Environment(\.theme) private var theme
     // `State(...)` rather than `@State`: in the macOS 27 SDK `@State` is a
     // macro whose plugin (SwiftUIMacros) ships with Xcode, not the Command
     // Line Tools. The struct itself works the same way everywhere.
@@ -168,6 +250,13 @@ struct PackageTable: View {
 
     var rows: [Package] {
         store.visiblePackages.sorted(using: sortState.wrappedValue)
+    }
+
+    private var rowsToken: Int {
+        var h = Hasher()
+        h.combine(store.selection)
+        h.combine(rows.map(\.id))
+        return h.finalize()
     }
 
     var body: some View {
@@ -209,7 +298,10 @@ struct PackageTable: View {
             }
             .width(min: 120, ideal: 170)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: true))
+        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
+        .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
+        .background(theme.window ?? .clear)
+        .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {
                 ContentUnavailableView(store.search.isEmpty ? "Nothing here" : "No matches",
@@ -225,6 +317,7 @@ struct PackageTable: View {
 struct AvailableCell: View {
     var package: Package
     @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
 
     var body: some View {
         let v = package.currentVersion ?? "–"
@@ -233,11 +326,13 @@ struct AvailableCell: View {
                 Image(systemName: "arrow.up").font(.system(size: 10, weight: .bold))
                 Text(v).fontWeight(.semibold).monospacedDigit()
             }
-            .foregroundStyle(prominence == .increased ? Color.white : Color.accentColor)
+            .foregroundStyle(prominence == .increased && !theme.isTankard ? Color.white : theme.accent)
             .lineLimit(1)
             .help("Upgrade available")
         } else {
-            Text(v).foregroundStyle(.tertiary).monospacedDigit().lineLimit(1).truncationMode(.middle)
+            // Tankard's selected row: secondary, so it stays AA on the amber blend.
+            Text(v).foregroundStyle(prominence == .increased && theme.isTankard ? HierarchicalShapeStyle.secondary : .tertiary)
+                .monospacedDigit().lineLimit(1).truncationMode(.middle)
         }
     }
 }

@@ -10,8 +10,22 @@ struct LaunchOptions {
     var demoPace: Double = 1
     var select: String?
     var demoUpgrade = false
-    var appearance: String?
+    var appearance: AppTheme?
     var snapshot: SnapshotRequest?
+    /// TANKARD_TAB=discover: open on Discover.
+    var tab: MainTab = .installed
+    /// TANKARD_DISCOVER=<query>: search Discover on launch.
+    var discoverQuery: String?
+    /// TANKARD_DISCOVER_SELECT=<name>: select a Discover row.
+    var discoverSelect: String?
+    /// Demo only: TANKARD_DEMO_INSTALL=1 installs the Discover selection.
+    var demoInstall = false
+    /// Demo only: TANKARD_DEMO_UNINSTALL=<name> opens the uninstall confirmation.
+    var demoUninstall: String?
+    /// TANKARD_DEMO_NOBREW=intel|arm64: the welcome screen, as on that Mac.
+    var noBrew: MacHardware?
+
+    var isDemo: Bool { demo != nil || noBrew != nil }
 
     static func fromEnvironment(_ env: [String: String] = ProcessInfo.processInfo.environment) -> LaunchOptions {
         var o = LaunchOptions()
@@ -22,8 +36,19 @@ struct LaunchOptions {
         if o.demo != nil {
             o.demoPace = env["TANKARD_DEMO_PACE"].flatMap(Double.init) ?? 1
             o.demoUpgrade = env["TANKARD_DEMO_UPGRADE"] == "1"
+            o.demoInstall = env["TANKARD_DEMO_INSTALL"] == "1"
+            o.demoUninstall = env["TANKARD_DEMO_UNINSTALL"].flatMap { $0.isEmpty ? nil : $0 }
         }
-        o.appearance = env["TANKARD_APPEARANCE"]
+        switch env["TANKARD_DEMO_NOBREW"]?.lowercased() {
+        case "intel": o.noBrew = .intel
+        case "arm64", "applesilicon": o.noBrew = .appleSilicon
+        default: break
+        }
+        o.appearance = AppTheme(name: env["TANKARD_APPEARANCE"])
+        o.tab = env["TANKARD_TAB"]?.lowercased() == "discover" ? .discover : .installed
+        o.discoverQuery = env["TANKARD_DISCOVER"].flatMap { $0.isEmpty ? nil : $0 }
+        if o.discoverQuery != nil { o.tab = .discover }
+        o.discoverSelect = env["TANKARD_DISCOVER_SELECT"]
         o.snapshot = SnapshotRequest(environment: env)
         return o
     }
@@ -37,17 +62,26 @@ struct TankardApp: App {
     // SwiftUI creates the App struct once.
     private let store: AppStore
     private let options: LaunchOptions
+    private let appearance: AppearanceSettings
 
     init() {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
-        let deps = options.demo.map { Demo.dependencies($0, pace: options.demoPace) } ?? .live()
+        let deps: AppStore.Dependencies
+        if let hw = options.noBrew {
+            deps = Demo.noBrewDependencies(hardware: hw)
+        } else {
+            deps = options.demo.map { Demo.dependencies($0, pace: options.demoPace) } ?? .live()
+        }
         store = AppStore(deps: deps)
+        appearance = AppearanceSettings(override: options.appearance)
+        AppDelegate.initialTheme = appearance.theme
+        appearance.onChange = { theme in applyAppearance(theme) }
     }
 
     var body: some Scene {
-        WindowGroup(options.demo == nil ? "Tankard" : "Tankard (demo)", id: "main") {
-            ContentView(store: store, options: options)
+        WindowGroup(options.isDemo ? "Tankard (demo)" : "Tankard", id: "main") {
+            ContentView(store: store, options: options, appearance: appearance)
                 .frame(minWidth: 820, minHeight: 480)
         }
         .defaultSize(width: 1040, height: 660)
@@ -58,20 +92,27 @@ struct TankardApp: App {
                 Button("Refresh") { Task { await store.refresh(manual: true) } }
                     .keyboardShortcut("r", modifiers: .command)
                     .disabled(store.isRefreshing)
+                Divider()
+                Button("Installed") { store.tab = .installed }
+                    .keyboardShortcut("1", modifiers: .command)
+                Button("Discover") { store.tab = .discover }
+                    .keyboardShortcut("2", modifiers: .command)
             }
+        }
+
+        Settings {
+            SettingsView(appearance: appearance)
         }
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    @MainActor static var initialTheme: AppTheme = .default
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Under `swift run` there is no bundle to say "regular app".
         NSApp.setActivationPolicy(.regular)
-        switch ProcessInfo.processInfo.environment["TANKARD_APPEARANCE"]?.lowercased() {
-        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
-        case "light": NSApp.appearance = NSAppearance(named: .aqua)
-        default: break // follow the system
-        }
+        MainActor.assumeIsolated { applyAppearance(Self.initialTheme) }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -99,6 +140,49 @@ enum AppResources {
         return NSImage(contentsOf: url)
     }
 
-    /// The 128x128 pixel-art mug: Tankard's logo (and the app icon's art).
-    static let logo = image("tankard-logo")
+    /// The Intelbrew "i" mug (128x128 pixel art), shown in Intelbrew mode.
+    static let intelbrewMug = image("intelbrew-mug")
+    /// Tankard's own mark (128x128 pixel art), shown otherwise.
+    static let tankardMark = image("tankard-mark")
+
+    /// The Dock icon for Intelbrew mode: the "i" mug on the app icon's
+    /// purple plate, scaled 3x with nearest neighbour onto 512 px (the same
+    /// layout as Scripts/make-icon.sh). nil if the art is missing.
+    static let intelbrewDockIcon: NSImage? = {
+        guard let mug = intelbrewMug?.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+        let n = 512
+        let space = CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let ctx = CGContext(data: nil, width: n, height: n, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        func color(_ v: UInt32) -> CGColor {
+            CGColor(srgbRed: CGFloat((v >> 16) & 255) / 255, green: CGFloat((v >> 8) & 255) / 255, blue: CGFloat(v & 255) / 255, alpha: 1)
+        }
+        let size = CGFloat(n)
+        let side = (size * 824 / 1024).rounded()
+        let inset = ((size - side) / 2).rounded()
+        let plate = CGRect(x: inset, y: inset, width: side, height: side)
+        let path = CGPath(roundedRect: plate, cornerWidth: side * 0.225, cornerHeight: side * 0.225, transform: nil)
+        ctx.saveGState()
+        ctx.setShadow(offset: CGSize(width: 0, height: -size * 0.01), blur: size * 0.02, color: CGColor(gray: 0, alpha: 0.35))
+        ctx.addPath(path)
+        ctx.setFillColor(color(TankardPalette.window))
+        ctx.fillPath()
+        ctx.restoreGState()
+        ctx.saveGState()
+        ctx.addPath(path)
+        ctx.clip()
+        let gradient = CGGradient(colorsSpace: space, colors: [color(TankardPalette.plate), color(TankardPalette.window)] as CFArray, locations: [0, 1])!
+        ctx.drawLinearGradient(gradient, start: CGPoint(x: 0, y: plate.maxY), end: CGPoint(x: 0, y: plate.minY), options: [])
+        ctx.restoreGState()
+        ctx.interpolationQuality = .none
+        let m = 384 // 3 x 128, whole pixels
+        ctx.draw(mug, in: CGRect(x: (n - m) / 2, y: (n - m) / 2, width: m, height: m))
+        guard let image = ctx.makeImage() else { return nil }
+        return NSImage(cgImage: image, size: NSSize(width: n, height: n))
+    }()
+
+    /// Intelbrew mode: the Dock shows the "i" mug; otherwise the bundle's icon.
+    static func updateDockIcon(intelbrew: Bool) {
+        NSApp.applicationIconImage = intelbrew ? intelbrewDockIcon : nil
+    }
 }
