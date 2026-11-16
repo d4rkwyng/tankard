@@ -165,13 +165,13 @@ enum AppResources {
         ctx.saveGState()
         ctx.setShadow(offset: CGSize(width: 0, height: -size * 0.01), blur: size * 0.02, color: CGColor(gray: 0, alpha: 0.35))
         ctx.addPath(path)
-        ctx.setFillColor(color(TankardPalette.window))
+        ctx.setFillColor(color(TankardPalette.iconWindow))
         ctx.fillPath()
         ctx.restoreGState()
         ctx.saveGState()
         ctx.addPath(path)
         ctx.clip()
-        let gradient = CGGradient(colorsSpace: space, colors: [color(TankardPalette.plate), color(TankardPalette.window)] as CFArray, locations: [0, 1])!
+        let gradient = CGGradient(colorsSpace: space, colors: [color(TankardPalette.iconPlate), color(TankardPalette.iconWindow)] as CFArray, locations: [0, 1])!
         ctx.drawLinearGradient(gradient, start: CGPoint(x: 0, y: plate.maxY), end: CGPoint(x: 0, y: plate.minY), options: [])
         ctx.restoreGState()
         ctx.interpolationQuality = .none

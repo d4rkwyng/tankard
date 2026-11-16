@@ -26,13 +26,9 @@ struct ContentView: View {
             }
             if !store.homebrewState.needsWelcome {
                 ToolbarItem(placement: .principal) {
-                    Picker("View", selection: $store.tab) {
-                        ForEach(MainTab.allCases) { t in Text(t.title).tag(t) }
-                    }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .fixedSize()
-                    .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
+                    ThemedSegmentedPicker(title: "View", selection: $store.tab, options: MainTab.allCases, label: \.title)
+                        .environment(\.theme, Theme.of(appearance.theme))
+                        .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
@@ -192,14 +188,9 @@ struct SummaryStrip: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Picker("Filter", selection: $store.filter) {
-                ForEach(PackageFilter.allCases) { f in
-                    Text("\(f.title)  \(store.count(f))").tag(f)
-                }
+            ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.allCases) { f in
+                "\(f.title)  \(store.count(f))"
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -300,7 +291,7 @@ struct PackageTable: View {
         }
         .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
         .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
-        .background(theme.window ?? .clear)
+        .background(theme.table ?? .clear)
         .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {

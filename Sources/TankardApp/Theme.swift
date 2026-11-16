@@ -86,8 +86,10 @@ struct Theme {
     var accent: Color
     /// Text on an accent-filled button or selection.
     var onAccent: Color
-    /// The window/table background; nil = the system's.
+    /// The window background; nil = the system's.
     var window: Color?
+    /// The table's background (its rows); nil = the system's.
+    var table: Color?
     var isTankard: Bool { kind == .tankard }
 
     func badge(_ kind: BadgeKind) -> BadgePalette {
@@ -106,7 +108,8 @@ struct Theme {
         chip: Color(light: NSColor(white: 0, alpha: 0.06), dark: NSColor(white: 1, alpha: 0.07)),
         accent: .accentColor,
         onAccent: .white,
-        window: nil)
+        window: nil,
+        table: nil)
 
     static let tankard = Theme(
         kind: .tankard,
@@ -120,7 +123,8 @@ struct Theme {
         chip: Color(hex: TankardPalette.plate, alpha: 0.55),
         accent: Color(hex: TankardPalette.amber),
         onAccent: Color(hex: TankardPalette.onAmber),
-        window: Color(hex: TankardPalette.window))
+        window: Color(hex: TankardPalette.window),
+        table: Color(hex: TankardPalette.table))
 
     static func of(_ t: AppTheme) -> Theme {
         if t == .tankard { return tankard }
@@ -310,5 +314,53 @@ struct CommandBox: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))
+    }
+}
+
+/// A segmented picker. The system one (NSSegmentedControl) draws its
+/// selected segment in a fixed grey that ignores `.tint` and
+/// `selectedSegmentBezelColor` under SwiftUI, so the Tankard theme draws
+/// its own: an amber selected segment on a purple track. Other themes get
+/// the system control.
+struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
+    var title: String
+    @Binding var selection: Value
+    var options: [Value]
+    var label: (Value) -> String
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        if theme.isTankard {
+            HStack(spacing: 2) {
+                ForEach(options) { option in
+                    let selected = option == selection
+                    Button {
+                        selection = option
+                    } label: {
+                        Text(label(option))
+                            .font(.system(size: 12, weight: selected ? .semibold : .regular))
+                            .foregroundStyle(selected ? theme.onAccent : Color(hex: TankardPalette.foam))
+                            .padding(.horizontal, 10)
+                            .frame(height: 20)
+                            .background(RoundedRectangle(cornerRadius: 5).fill(selected ? theme.accent : .clear))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(selected ? .isSelected : [])
+                }
+            }
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: 7).fill(Color(hex: TankardPalette.plate, alpha: TankardPalette.segmentTrackAlpha)))
+            .fixedSize()
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(title)
+        } else {
+            Picker(title, selection: $selection) {
+                ForEach(options) { option in Text(label(option)).tag(option) }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+        }
     }
 }

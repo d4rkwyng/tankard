@@ -21,7 +21,7 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
         case .dark: return "Always dark."
         case .light: return "Always light."
         case .system: return "Follows macOS."
-        case .tankard: return "Deep purple and amber, like the icon. Dark underneath."
+        case .tankard: return "Purple and amber, like the icon. Dark underneath."
         }
     }
 
@@ -69,32 +69,176 @@ public final class AppearanceSettings {
     }
 }
 
-/// The Tankard theme's colours (sRGB hex), kept here so the contrast test
-/// can check them. The app turns them into SwiftUI colours.
-public enum TankardPalette {
-    // Backgrounds: the icon plate's purples, darkest to lightest.
-    public static let log: UInt32 = 0x170a2e
-    public static let window: UInt32 = 0x1f0d3d
-    public static let pane: UInt32 = 0x28124d
-    public static let strip: UInt32 = 0x2c1556
-    public static let bar: UInt32 = 0x331a62
-    public static let plate: UInt32 = 0x4a2580
-    public static let rowAlternate: UInt32 = 0x251148
+/// One complete set of Tankard theme colours (sRGB hex). Every candidate
+/// is a full set, so switching palettes is the one line in
+/// `TankardPalette.active`; the contrast test checks them all.
+public struct TankardColors: Sendable {
+    public var name: String
+
+    // Backgrounds.
+    /// The upgrade/install log.
+    public var log: UInt32
+    /// Window, toolbar and sheets.
+    public var window: UInt32
+    /// The detail pane.
+    public var pane: UInt32
+    /// The summary strip above the table.
+    public var strip: UInt32
+    /// The status bar.
+    public var bar: UInt32
+    /// The brightest purple: command chips, the selected segment, gradients.
+    public var plate: UInt32
+    /// Table rows, and every other row's stripe.
+    public var table: UInt32
+    public var rowAlternate: UInt32
+    /// The table's column header.
+    public var header: UInt32
 
     // Text.
-    public static let foam: UInt32 = 0xfff6e6       // primary
-    public static let lavender: UInt32 = 0xd6c8f0   // secondary
-    public static let muted: UInt32 = 0xab9bd0      // tertiary
-    // Accent: selection, buttons, progress, the upgrade arrow.
-    public static let amber: UInt32 = 0xf2a93b
+    public var foam: UInt32       // primary
+    public var lavender: UInt32   // secondary
+    public var muted: UInt32      // tertiary
+    // Accent: buttons, progress, the upgrade arrow.
+    public var amber: UInt32
     /// Text on amber.
-    public static let onAmber: UInt32 = 0x1f0d3d
-    /// Table selection (key window): amber at 30% over the window purple.
-    /// Selected rows keep their own text and badge colours (all AA on it);
-    /// tertiary text is drawn as secondary there.
-    public static let selection: UInt32 = blend(amber, alpha: 0.30, over: window)
-    /// Table selection when the window isn't key: amber at 18%.
-    public static let selectionInactive: UInt32 = blend(amber, alpha: 0.18, over: window)
+    public var onAmber: UInt32
+
+    /// Table selection: `selectionTint` at `selectionAlpha` over the rows
+    /// (`selectionInactiveAlpha` when the window isn't key). On the lighter
+    /// palettes the tint is a deeper amber, so the rows' own light text,
+    /// amber and badges stay AA on it.
+    public var selectionTint: UInt32
+    public var selectionAlpha: Double
+    public var selectionInactiveAlpha: Double
+
+    // Badges.
+    public var bottle: TankardPalette.Badge
+    public var source: TankardPalette.Badge
+    public var newer: TankardPalette.Badge
+    public var noBottle: TankardPalette.Badge
+    public var cask: TankardPalette.Badge
+
+    public var badges: [TankardPalette.Badge] { [bottle, source, newer, noBottle, cask] }
+
+    public var selection: UInt32 { TankardPalette.blend(selectionTint, alpha: selectionAlpha, over: table) }
+    public var selectionInactive: UInt32 { TankardPalette.blend(selectionTint, alpha: selectionInactiveAlpha, over: table) }
+
+    /// Every text/background pair the theme draws, for the AA check.
+    public var textPairs: [(String, UInt32, UInt32)] {
+        var pairs: [(String, UInt32, UInt32)] = []
+        let backgrounds = [("window", window), ("pane", pane), ("strip", strip), ("bar", bar), ("table", table),
+                           ("row", rowAlternate), ("log", log)]
+        for (bgName, bg) in backgrounds {
+            pairs.append(("foam on \(bgName)", foam, bg))
+            pairs.append(("lavender on \(bgName)", lavender, bg))
+            pairs.append(("muted on \(bgName)", muted, bg))
+            pairs.append(("amber on \(bgName)", amber, bg))
+        }
+        // The column header carries only titles (primary/secondary) and the sort arrow.
+        pairs.append(("foam on header", foam, header))
+        pairs.append(("lavender on header", lavender, header))
+        pairs.append(("text on amber", onAmber, amber))
+        pairs.append(("foam on plate", foam, plate))
+        pairs.append(("foam on selection", foam, selection))
+        pairs.append(("lavender on selection", lavender, selection))
+        pairs.append(("foam on inactive selection", foam, selectionInactive))
+        pairs.append(("lavender on inactive selection", lavender, selectionInactive))
+        pairs.append(("amber on selection", amber, selection))
+        pairs.append(("amber on inactive selection", amber, selectionInactive))
+        // The segmented picker: unselected labels on its track (in the
+        // toolbar and the summary strip); the selected one is text on amber.
+        for (bgName, bg) in [("window", window), ("strip", strip)] {
+            pairs.append(("foam on segment track over \(bgName)", foam, TankardPalette.blend(plate, alpha: TankardPalette.segmentTrackAlpha, over: bg)))
+        }
+        for (i, b) in badges.enumerated() {
+            for (bgName, bg) in backgrounds.filter({ $0.0 != "log" }) + [("selection", selection), ("inactive selection", selectionInactive)] {
+                pairs.append(("badge \(i) on \(bgName)", b.text, TankardPalette.blend(b.tint, alpha: b.tintAlpha, over: bg)))
+            }
+        }
+        return pairs.map { ("\(name): \($0.0)", $0.1, $0.2) }
+    }
+}
+
+/// The Tankard theme's colours, kept here so the contrast test can check
+/// them. The app turns them into SwiftUI colours.
+public enum TankardPalette {
+    /// The palette the app draws with. Switching palettes is this one line.
+    public static let active = lighter
+
+    /// v0.2's original: the icon plate's deep purples (#1f0d3d…#4a2580).
+    public static let deep = TankardColors(
+        name: "deep",
+        log: 0x170a2e, window: 0x1f0d3d, pane: 0x28124d, strip: 0x2c1556, bar: 0x331a62, plate: 0x4a2580,
+        table: 0x1f0d3d, rowAlternate: 0x251148, header: 0x2c1556,
+        foam: 0xfff6e6, lavender: 0xd6c8f0, muted: 0xab9bd0, amber: 0xf2a93b, onAmber: 0x1f0d3d,
+        selectionTint: 0xf2a93b, selectionAlpha: 0.30, selectionInactiveAlpha: 0.18,
+        bottle: Badge(text: 0x8fe8a8, dot: 0x4ad97a, tint: 0x30d158, tintAlpha: 0.16),
+        source: Badge(text: 0xffc46e, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17),
+        newer: Badge(text: 0xb0ccff, dot: 0x6fa4ff, tint: 0x408cff, tintAlpha: 0.20),
+        noBottle: Badge(text: 0xd2c8e4, dot: 0xa595c4, tint: 0xffffff, tintAlpha: 0.09),
+        cask: Badge(text: 0xf3c2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18))
+
+    /// L1, moderately lighter: still a rich purple, a step or two up.
+    public static let lighter = TankardColors(
+        name: "L1",
+        log: 0x2e1b54, window: 0x3a2366, pane: 0x4a2d80, strip: 0x4d2f86, bar: 0x52338e, plate: 0x6a42a8,
+        table: 0x432873, rowAlternate: 0x4d2e85, header: 0x52338e,
+        foam: 0xfff8ec, lavender: 0xe2d8f5, muted: 0xc4b8e2, amber: 0xf6b24a, onAmber: 0x2a1650,
+        selectionTint: 0xa85d08, selectionAlpha: 0.35, selectionInactiveAlpha: 0.20,
+        bottle: Badge(text: 0x9cf0b4, dot: 0x4ad97a, tint: 0x30d158, tintAlpha: 0.16),
+        source: Badge(text: 0xffcd85, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17),
+        newer: Badge(text: 0xc2d8ff, dot: 0x6fa4ff, tint: 0x408cff, tintAlpha: 0.20),
+        noBottle: Badge(text: 0xe0d8ef, dot: 0xb3a5cf, tint: 0xffffff, tintAlpha: 0.09),
+        cask: Badge(text: 0xf7d2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18))
+
+    /// L2, "lavender dusk": a mid purple. Text and badges go paler to stay AA.
+    public static let lavenderDusk = TankardColors(
+        name: "L2",
+        log: 0x4c3283, window: 0x5b3d94, pane: 0x6a4aa6, strip: 0x6d4dab, bar: 0x6a4aa6, plate: 0x8462c4,
+        table: 0x634499, rowAlternate: 0x6a4ba0, header: 0x6d4dab,
+        foam: 0xffffff, lavender: 0xf0eafb, muted: 0xe2d9f4, amber: 0xffd68a, onAmber: 0x2a1650,
+        selectionTint: 0x7a3e08, selectionAlpha: 0.45, selectionInactiveAlpha: 0.25,
+        bottle: Badge(text: 0xb4f7c8, dot: 0x5be08a, tint: 0x30d158, tintAlpha: 0.16),
+        source: Badge(text: 0xffe8c6, dot: 0xffb04d, tint: 0xff9f0a, tintAlpha: 0.17),
+        newer: Badge(text: 0xdfeaff, dot: 0x8ab6ff, tint: 0x408cff, tintAlpha: 0.20),
+        noBottle: Badge(text: 0xf5f1fb, dot: 0xc4b8de, tint: 0xffffff, tintAlpha: 0.09),
+        cask: Badge(text: 0xfde9ff, dot: 0xe4a8ff, tint: 0xd98cff, tintAlpha: 0.18))
+
+    /// The custom segmented picker's track: `plate` at this alpha.
+    public static let segmentTrackAlpha = 0.55
+
+    /// Every defined palette (the contrast test checks each).
+    public static let all = [deep, lighter, lavenderDusk]
+
+    /// The icon's own plate colours, for the Intelbrew Dock icon: brand art,
+    /// independent of the window palette.
+    public static let iconWindow: UInt32 = deep.window
+    public static let iconPlate: UInt32 = deep.plate
+
+    // The active palette's colours, by name.
+    public static var log: UInt32 { active.log }
+    public static var window: UInt32 { active.window }
+    public static var pane: UInt32 { active.pane }
+    public static var strip: UInt32 { active.strip }
+    public static var bar: UInt32 { active.bar }
+    public static var plate: UInt32 { active.plate }
+    public static var table: UInt32 { active.table }
+    public static var rowAlternate: UInt32 { active.rowAlternate }
+    public static var header: UInt32 { active.header }
+    public static var foam: UInt32 { active.foam }
+    public static var lavender: UInt32 { active.lavender }
+    public static var muted: UInt32 { active.muted }
+    public static var amber: UInt32 { active.amber }
+    public static var onAmber: UInt32 { active.onAmber }
+    public static var selection: UInt32 { active.selection }
+    public static var selectionInactive: UInt32 { active.selectionInactive }
+    public static var bottle: Badge { active.bottle }
+    public static var source: Badge { active.source }
+    public static var newer: Badge { active.newer }
+    public static var noBottle: Badge { active.noBottle }
+    public static var cask: Badge { active.cask }
+    public static var badges: [Badge] { active.badges }
+    public static var textPairs: [(String, UInt32, UInt32)] { all.flatMap(\.textPairs) }
 
     /// Badge text and its background tint (alpha over the row).
     public struct Badge: Sendable {
@@ -103,13 +247,6 @@ public enum TankardPalette {
         public var tint: UInt32
         public var tintAlpha: Double
     }
-
-    public static let bottle = Badge(text: 0x8fe8a8, dot: 0x4ad97a, tint: 0x30d158, tintAlpha: 0.16)
-    public static let source = Badge(text: 0xffc46e, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17)
-    public static let newer = Badge(text: 0xb0ccff, dot: 0x6fa4ff, tint: 0x408cff, tintAlpha: 0.20)
-    public static let noBottle = Badge(text: 0xd2c8e4, dot: 0xa595c4, tint: 0xffffff, tintAlpha: 0.09)
-    public static let cask = Badge(text: 0xf3c2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18)
-    public static let badges = [bottle, source, newer, noBottle, cask]
 
     // MARK: contrast (WCAG 2.x)
 
@@ -134,33 +271,5 @@ public enum TankardPalette {
             return UInt32((t * alpha + b * (1 - alpha)).rounded()) << shift
         }
         return mix(16) | mix(8) | mix(0)
-    }
-
-    /// Every text/background pair the theme draws, for the AA check.
-    public static var textPairs: [(String, UInt32, UInt32)] {
-        var pairs: [(String, UInt32, UInt32)] = []
-        for (bgName, bg) in [("window", window), ("pane", pane), ("strip", strip), ("bar", bar), ("row", rowAlternate), ("log", log)] {
-            pairs.append(("foam on \(bgName)", foam, bg))
-            pairs.append(("lavender on \(bgName)", lavender, bg))
-            pairs.append(("muted on \(bgName)", muted, bg))
-            pairs.append(("amber on \(bgName)", amber, bg))
-        }
-        pairs.append(("text on amber", onAmber, amber))
-        pairs.append(("foam on plate", foam, plate))
-        pairs.append(("foam on selection", foam, selection))
-        pairs.append(("lavender on selection", lavender, selection))
-        pairs.append(("foam on inactive selection", foam, selectionInactive))
-        pairs.append(("lavender on inactive selection", lavender, selectionInactive))
-        pairs.append(("amber on selection", amber, selection))
-        for (i, b) in badges.enumerated() {
-            pairs.append(("badge \(i) on selection", b.text, blend(b.tint, alpha: b.tintAlpha, over: selection)))
-            pairs.append(("badge \(i) on inactive selection", b.text, blend(b.tint, alpha: b.tintAlpha, over: selectionInactive)))
-        }
-        for (i, b) in badges.enumerated() {
-            for (bgName, bg) in [("window", window), ("row", rowAlternate), ("pane", pane)] {
-                pairs.append(("badge \(i) on \(bgName)", b.text, blend(b.tint, alpha: b.tintAlpha, over: bg)))
-            }
-        }
-        return pairs
     }
 }

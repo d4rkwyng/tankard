@@ -60,12 +60,7 @@ struct DiscoverStrip: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Picker("Kind", selection: $discover.kind) {
-                ForEach(CatalogKindFilter.allCases) { k in Text(k.title).tag(k) }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
+            ThemedSegmentedPicker(title: "Kind", selection: $discover.kind, options: CatalogKindFilter.allCases, label: \.title)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -150,7 +145,7 @@ struct DiscoverTable: View {
         }
         .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
         .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
-        .background(theme.window ?? .clear)
+        .background(theme.table ?? .clear)
         .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
         .overlay { overlay }
     }
