@@ -30,17 +30,22 @@ public struct BrewClient: Sendable {
     /// Defaults to EnvironmentSources.load for the installation's prefix.
     public var sources: EnvironmentSources
     public var gitPath: String
+    /// Checks whether a path exists (the core tap's .git). Injectable so a
+    /// fake installation (tests, demo mode) can claim a tap checkout.
+    public var fileExists: @Sendable (String) -> Bool
 
     public init(installation: BrewInstallation,
                 platform: BottlePlatform? = nil,
                 runner: CommandRunning = ProcessRunner(),
                 sources: EnvironmentSources? = nil,
-                gitPath: String = "/usr/bin/git") {
+                gitPath: String = "/usr/bin/git",
+                fileExists: @escaping @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }) {
         self.installation = installation
         self.platform = platform ?? BottlePlatform.current(prefix: installation.prefix)
         self.runner = runner
         self.sources = sources ?? EnvironmentSources.load(prefix: installation.prefix)
         self.gitPath = gitPath
+        self.fileExists = fileExists
     }
 
     /// Locates brew (override path, else the standard locations).
@@ -72,7 +77,7 @@ public struct BrewClient: Sendable {
 
     /// homebrew/core's configured origin URL, or nil in API mode.
     public func coreOrigin() async -> String? {
-        guard FileManager.default.fileExists(atPath: installation.coreTapPath + "/.git") else { return nil }
+        guard fileExists(installation.coreTapPath + "/.git") else { return nil }
         return await git(installation.coreTapPath, "config", "--get", "remote.origin.url")
     }
 
@@ -96,7 +101,7 @@ public struct BrewClient: Sendable {
     public func forkStatus(checkRemote: Bool = false) async -> ForkStatus {
         let core = installation.coreTapPath
         let repo = installation.repository
-        let hasCore = FileManager.default.fileExists(atPath: core + "/.git")
+        let hasCore = fileExists(core + "/.git")
 
         async let coreOrigin = hasCore ? git(core, "config", "--get", "remote.origin.url") : nil
         async let coreBranch = hasCore ? git(core, "rev-parse", "--abbrev-ref", "HEAD") : nil

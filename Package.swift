@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "TankardCore", targets: ["TankardCore"]),
         .executable(name: "tankard", targets: ["tankard"]),
+        .executable(name: "TankardApp", targets: ["TankardApp"]),
     ],
     targets: [
         // Models, brew JSON decoding, status classification, version
@@ -19,6 +20,27 @@ let package = Package(
         .executableTarget(
             name: "tankard",
             dependencies: ["TankardCore"]
+        ),
+
+        // The app's state and plumbing, without SwiftUI views: the
+        // @Observable store, the FIFO command queue, the CR-aware log line
+        // assembler, the status cache and demo mode. Tested on its own.
+        .target(
+            name: "TankardAppModel",
+            dependencies: ["TankardCore"],
+            resources: [.copy("Resources/Demo")]
+        ),
+
+        // The SwiftUI app. Scripts/bundle-app.sh wraps it in Tankard.app.
+        .executableTarget(
+            name: "TankardApp",
+            dependencies: ["TankardCore", "TankardAppModel"],
+            resources: [.copy("Resources/intelbrew-logo.png"), .copy("Resources/intelbrew-logo-512.png")]
+        ),
+
+        .testTarget(
+            name: "TankardAppModelTests",
+            dependencies: ["TankardAppModel", "TankardCore"]
         ),
 
         .testTarget(

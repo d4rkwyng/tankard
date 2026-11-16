@@ -1,0 +1,1135 @@
+{
+  "formulae": [
+    {
+      "name": "ca-certificates",
+      "full_name": "ca-certificates",
+      "tap": "homebrew/core",
+      "desc": "Mozilla CA certificate store",
+      "versions": {
+        "stable": "2026-11-05",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "all": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/ca-certificates/blobs/sha256:8a5a35e1a3223e6bc6ca7c853e0ac3d2568de2cc329b61688682bdf57165dab9",
+              "sha256": "8a5a35e1a3223e6bc6ca7c853e0ac3d2568de2cc329b61688682bdf57165dab9"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "2026-11-05",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851446,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "2026-11-05",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "curl-impersonate",
+      "full_name": "curl-impersonate",
+      "tap": "homebrew/core",
+      "desc": "Curl build that makes HTTP requests look like they came from a real browser",
+      "versions": {
+        "stable": "2.3.2",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 1,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/curl-impersonate-2.3.2",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/curl-impersonate-2.3.2/curl-impersonate-2.3.2.sonoma.bottle.1.tar.gz",
+              "sha256": "b873d855271d57d8f4e20bfecc564b649e985e2143fcb41ff4647c1faa5b5473"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "2.3.2",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853643,
+          "runtime_dependencies": [
+            {
+              "full_name": "ca-certificates",
+              "version": "2026-11-05",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "2026-11-05",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "2.3.2",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "expat",
+      "full_name": "expat",
+      "tap": "homebrew/core",
+      "desc": "XML 1.0 parser",
+      "versions": {
+        "stable": "2.10.0",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/expat-2.10.0",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/expat-2.10.0/expat-2.10.0.sonoma.bottle.tar.gz",
+              "sha256": "e6cf2b6f1f0517f9a89bce68c16f304a23c14e7d2216a7eb3770860f887bc9a6"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "2.10.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853265,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": false,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "gettext",
+      "full_name": "gettext",
+      "tap": "homebrew/core",
+      "desc": "GNU internationalization (i18n) and localization (l10n) library",
+      "versions": {
+        "stable": "1.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 3,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/gettext-1.0",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/gettext-1.0/gettext-1.0.sonoma.bottle.3.tar.gz",
+              "sha256": "9a278a1b98b67d8141050f9ba9b0eb64752ade2b2c366f002b4f0acf67c180db"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853260,
+          "runtime_dependencies": [
+            {
+              "full_name": "json-c",
+              "version": "0.19",
+              "revision": 0,
+              "bottle_rebuild": 2,
+              "pkg_version": "0.19",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "json-c",
+      "full_name": "json-c",
+      "tap": "homebrew/core",
+      "desc": "JSON parser for C",
+      "versions": {
+        "stable": "0.19",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 2,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/json-c-0.19",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/json-c-0.19/json-c-0.19.sonoma.bottle.2.tar.gz",
+              "sha256": "91895e6468f06b33d090fadc44762a3b145c0a41849508b4056ff41a6dc8b410"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "0.19",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853257,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "0.19",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "libsodium",
+      "full_name": "libsodium",
+      "tap": "homebrew/core",
+      "desc": "NaCl networking and cryptography library",
+      "versions": {
+        "stable": "1.0.22",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:392bcb752afb9cefda3485186b6c008efa9dc2367245e74cda7b9caf93443fe5",
+              "sha256": "392bcb752afb9cefda3485186b6c008efa9dc2367245e74cda7b9caf93443fe5"
+            },
+            "arm64_tahoe": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:665929906297818edf15955cf4e4faefca7d717271c9fa448291989d2511d266",
+              "sha256": "665929906297818edf15955cf4e4faefca7d717271c9fa448291989d2511d266"
+            },
+            "arm64_sequoia": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:b231db8b0f993cb764b57560b69f484efe059ec87e47887505aa2d5872cc5a01",
+              "sha256": "b231db8b0f993cb764b57560b69f484efe059ec87e47887505aa2d5872cc5a01"
+            },
+            "arm64_sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:92072108ab857b6ac1318afd28e5f1a1c3b34fb3e87f7c26c39a817721e0899b",
+              "sha256": "92072108ab857b6ac1318afd28e5f1a1c3b34fb3e87f7c26c39a817721e0899b"
+            },
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:366ac240d3c97376401ae84c87d8c13852f42b037b6896b402b22336af3f8e32",
+              "sha256": "366ac240d3c97376401ae84c87d8c13852f42b037b6896b402b22336af3f8e32"
+            },
+            "arm64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:e73b320fdc416cedb028595212ff6b47f473a0c6e1d7d0aec84cc679734d87bf",
+              "sha256": "e73b320fdc416cedb028595212ff6b47f473a0c6e1d7d0aec84cc679734d87bf"
+            },
+            "x86_64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/libsodium/blobs/sha256:985f3f49a2187467eec50c288bb7d71ecd056cdec615441c1a12d8fa77db678a",
+              "sha256": "985f3f49a2187467eec50c288bb7d71ecd056cdec615441c1a12d8fa77db678a"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.0.22",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853284,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.0.22",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "libunistring",
+      "full_name": "libunistring",
+      "tap": "homebrew/core",
+      "desc": "C string library for manipulating Unicode strings",
+      "versions": {
+        "stable": "1.5",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 1,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/libunistring-1.5",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/libunistring-1.5/libunistring-1.5.sonoma.bottle.1.tar.gz",
+              "sha256": "c23e808498232723bffc32c124753815429062bc31ff38e1e38fc273a73b0a15"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.5",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853258,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.5",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "libyaml",
+      "full_name": "libyaml",
+      "tap": "homebrew/core",
+      "desc": "YAML Parser",
+      "versions": {
+        "stable": "0.2.5",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:afaaa073d70a7e69f0ff53dcdf1ee08d1ac594eb2e458afa665403adf4209078",
+              "sha256": "afaaa073d70a7e69f0ff53dcdf1ee08d1ac594eb2e458afa665403adf4209078"
+            },
+            "arm64_tahoe": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:5cd5a1875da18599e25283465b2fb8735eb8717ee7158ef17f8f4260205404f2",
+              "sha256": "5cd5a1875da18599e25283465b2fb8735eb8717ee7158ef17f8f4260205404f2"
+            },
+            "arm64_sequoia": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:0ec9bf8082245c008803b42dcae3e6a0c8cd7a67aed589d9b6482b115c0a543b",
+              "sha256": "0ec9bf8082245c008803b42dcae3e6a0c8cd7a67aed589d9b6482b115c0a543b"
+            },
+            "arm64_sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:98c0cf81bcdf7577d5fdc8cc18732970b9ae7e0e7423a733f88f0f566ba483ad",
+              "sha256": "98c0cf81bcdf7577d5fdc8cc18732970b9ae7e0e7423a733f88f0f566ba483ad"
+            },
+            "arm64_ventura": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:11239e8f5066c6d0d0718208d4eab518da00c7289f33c9c76c0a09ba5c0417c9",
+              "sha256": "11239e8f5066c6d0d0718208d4eab518da00c7289f33c9c76c0a09ba5c0417c9"
+            },
+            "arm64_monterey": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:a436da33a05f805258c5951a365dec4e8d70a908dbe5dacdeb6b2ecd0efd5024",
+              "sha256": "a436da33a05f805258c5951a365dec4e8d70a908dbe5dacdeb6b2ecd0efd5024"
+            },
+            "arm64_big_sur": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:fe1082f3475a144261b41e2c3e0728b9331911b1cbfadfbc1f3d70d454709154",
+              "sha256": "fe1082f3475a144261b41e2c3e0728b9331911b1cbfadfbc1f3d70d454709154"
+            },
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:4d6e02ce3a82b60033bc7e55bef841dcfef0c05c051176d96accb50744136c6d",
+              "sha256": "4d6e02ce3a82b60033bc7e55bef841dcfef0c05c051176d96accb50744136c6d"
+            },
+            "ventura": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:b49e62f014b3e7d85a169b422b7521356700c7caaaea9f4901086cafe692a86e",
+              "sha256": "b49e62f014b3e7d85a169b422b7521356700c7caaaea9f4901086cafe692a86e"
+            },
+            "monterey": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:dbd54ce703c6d8eb77e708f75b4730ad2653d28f6291c4a26dc22158beb3f210",
+              "sha256": "dbd54ce703c6d8eb77e708f75b4730ad2653d28f6291c4a26dc22158beb3f210"
+            },
+            "big_sur": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:83547fba540a38c30705a59a2e746952c68857212e823c6ee97c186e088f75cd",
+              "sha256": "83547fba540a38c30705a59a2e746952c68857212e823c6ee97c186e088f75cd"
+            },
+            "arm64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:c725eb08fc7ab6aad7f744a30b230f9b9efa33f8d694849a2d4aadfabb203df3",
+              "sha256": "c725eb08fc7ab6aad7f744a30b230f9b9efa33f8d694849a2d4aadfabb203df3"
+            },
+            "x86_64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/libyaml/blobs/sha256:354677a745b6c62109e792ddbd0cbdaf9e6a471d84fdbde3a7d9bae36d832da8",
+              "sha256": "354677a745b6c62109e792ddbd0cbdaf9e6a471d84fdbde3a7d9bae36d832da8"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "0.2.5",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853270,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "0.2.5",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "lua",
+      "full_name": "lua",
+      "tap": "homebrew/core",
+      "desc": "Powerful, lightweight programming language",
+      "versions": {
+        "stable": "5.5.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:058cec4331d0939089cf953851a35bd4bd108d932e0356d30636ad08327d2183",
+              "sha256": "058cec4331d0939089cf953851a35bd4bd108d932e0356d30636ad08327d2183"
+            },
+            "arm64_tahoe": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:494c75d37ed889cd4deaf7cb40613e8ba2206b53af68a5ab3d47167c22138b50",
+              "sha256": "494c75d37ed889cd4deaf7cb40613e8ba2206b53af68a5ab3d47167c22138b50"
+            },
+            "arm64_sequoia": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:4dc6f450952c63886e1293adb7798fb8bfe9093c72400471ba160561affe6dc4",
+              "sha256": "4dc6f450952c63886e1293adb7798fb8bfe9093c72400471ba160561affe6dc4"
+            },
+            "arm64_sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:e102957f67a1fe9dc8bfd0d6409c4c776791daacb75f28910e28f0a13d1a438b",
+              "sha256": "e102957f67a1fe9dc8bfd0d6409c4c776791daacb75f28910e28f0a13d1a438b"
+            },
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:13ba70d9eeb49a39ed8d44b688f38cee7185bbe2ca88b400796a76a482833423",
+              "sha256": "13ba70d9eeb49a39ed8d44b688f38cee7185bbe2ca88b400796a76a482833423"
+            },
+            "arm64_linux": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:352ef08beb2cb7694bf37e7aa62152ea8b9d60172a7a65ff57c00c1c91dd53e9",
+              "sha256": "352ef08beb2cb7694bf37e7aa62152ea8b9d60172a7a65ff57c00c1c91dd53e9"
+            },
+            "x86_64_linux": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/lua/blobs/sha256:d221d3bf5b1ac55775e12cb147d995e6b29dc46a3e5dfc33bc3c6295fed1561e",
+              "sha256": "d221d3bf5b1ac55775e12cb147d995e6b29dc46a3e5dfc33bc3c6295fed1561e"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "5.5.1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853262,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "5.5.1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "lz4",
+      "full_name": "lz4",
+      "tap": "homebrew/core",
+      "desc": "Extremely Fast Compression algorithm",
+      "versions": {
+        "stable": "1.11.1",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/lz4-1.11.1",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/lz4-1.11.1/lz4-1.11.1.sonoma.bottle.tar.gz",
+              "sha256": "3a574a8059fdd7fcf81a07e8b0e5875a24b5c1fafe58385a773aca482f9f2ee2"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.11.1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.11.1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "mpdecimal",
+      "full_name": "mpdecimal",
+      "tap": "homebrew/core",
+      "desc": "Library for decimal floating point arithmetic",
+      "versions": {
+        "stable": "4.0.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 2,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/mpdecimal-4.0.1",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/mpdecimal-4.0.1/mpdecimal-4.0.1.sonoma.bottle.2.tar.gz",
+              "sha256": "81b3ed298944d60db242ba6d203b6859868ed0220d672ae5b1993534fe9c244f"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.0.1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853264,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "4.0.1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "ncurses",
+      "full_name": "ncurses",
+      "tap": "homebrew/core",
+      "desc": "Text-based UI library",
+      "versions": {
+        "stable": "6.6",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:36a1f053f1be8ce8dce8a92b68395fb1483b077d313077e9c8f4b20b6f712602",
+              "sha256": "36a1f053f1be8ce8dce8a92b68395fb1483b077d313077e9c8f4b20b6f712602"
+            },
+            "arm64_tahoe": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:b43443ba3c3c8728e79413c7c3fed4a0eb293bd77c8492c1ec4c5d05233a97f1",
+              "sha256": "b43443ba3c3c8728e79413c7c3fed4a0eb293bd77c8492c1ec4c5d05233a97f1"
+            },
+            "arm64_sequoia": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:3fe0a6d4482023f880e9542af63e9229c6fcd7456b46e88b5d2d4703eb2ec943",
+              "sha256": "3fe0a6d4482023f880e9542af63e9229c6fcd7456b46e88b5d2d4703eb2ec943"
+            },
+            "arm64_sonoma": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:d4df00300346955c4703c7deecd3affca58a0a27477087d6ff387beb30a3ac9f",
+              "sha256": "d4df00300346955c4703c7deecd3affca58a0a27477087d6ff387beb30a3ac9f"
+            },
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:3981626d4214e14e1d01528b4652e0c9ac470c0a63fc2c995b875cd39efd1976",
+              "sha256": "3981626d4214e14e1d01528b4652e0c9ac470c0a63fc2c995b875cd39efd1976"
+            },
+            "arm64_linux": {
+              "cellar": "/home/linuxbrew/.linuxbrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:02abc7eacf7d1f27c992888494a19a397bd4911fc6a92c34db232714488aec12",
+              "sha256": "02abc7eacf7d1f27c992888494a19a397bd4911fc6a92c34db232714488aec12"
+            },
+            "x86_64_linux": {
+              "cellar": "/home/linuxbrew/.linuxbrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/ncurses/blobs/sha256:12c037b176c3300398cc53f0f278ba14195ae525cb6188dc085fd07236e5db48",
+              "sha256": "12c037b176c3300398cc53f0f278ba14195ae525cb6188dc085fd07236e5db48"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "6.6",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853286,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": false,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "openssl@4",
+      "full_name": "openssl@4",
+      "tap": "homebrew/core",
+      "desc": "Cryptography and SSL/TLS Toolkit",
+      "versions": {
+        "stable": "4.1.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/openssl@4-4.1.0",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/openssl@4-4.1.0/openssl%404-4.1.0.sonoma.bottle.tar.gz",
+              "sha256": "137067229a341b9104aa2337449dc006122808cccb4e2c4abfd6d386615204d4"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.1.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851457,
+          "runtime_dependencies": [
+            {
+              "full_name": "ca-certificates",
+              "version": "2026-11-05",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "2026-11-05",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "4.1.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "python@3.15",
+      "full_name": "python@3.15",
+      "tap": "homebrew/core",
+      "desc": "Interpreted, interactive, object-oriented programming language",
+      "versions": {
+        "stable": "3.15.2",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/python@3.15-3.15.2",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/python@3.15-3.15.2/python%403.15-3.15.2.sonoma.bottle.tar.gz",
+              "sha256": "91fe704d228da0bccc250bb9b8e161053c5d27cdaa6b5845bba292d45e777a46"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.15.2",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853267,
+          "runtime_dependencies": [
+            {
+              "full_name": "ca-certificates",
+              "version": "2026-11-05",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "2026-11-05",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "3.15.2",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "readline",
+      "full_name": "readline",
+      "tap": "homebrew/core",
+      "desc": "Library for command-line editing",
+      "versions": {
+        "stable": "8.3.6",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 1,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/readline-8.3.6",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/readline-8.3.6/readline-8.3.6.sonoma.bottle.1.tar.gz",
+              "sha256": "e6e1784cc8f079e5410cd8df66af88878c9201397a5632549d8c88e1c62d445b"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "8.3.6",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851364,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": false,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "ruby",
+      "full_name": "ruby",
+      "tap": "homebrew/core",
+      "desc": "Powerful, clean, object-oriented scripting language",
+      "versions": {
+        "stable": "4.0.9",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/ruby-4.0.9",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/ruby-4.0.9/ruby-4.0.9.sonoma.bottle.tar.gz",
+              "sha256": "4ed7e3ab20a3c9ceaa53eb7a9b143deb5f0031c7d9d2aced23d2e08ad5991cd3"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.0.9",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794853274,
+          "runtime_dependencies": [
+            {
+              "full_name": "libyaml",
+              "version": "0.2.5",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "0.2.5",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "4.0.9",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "sqlite",
+      "full_name": "sqlite",
+      "tap": "homebrew/core",
+      "desc": "Command-line interface for SQLite",
+      "versions": {
+        "stable": "3.54.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 1,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/sqlite-3.54.1",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/sqlite-3.54.1/sqlite-3.54.1.sonoma.bottle.1.tar.gz",
+              "sha256": "ac1ff9dd0b0f35f00ef1f4393f8b942f36a4b0096cae9d96f64d194688b9b448"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.54.1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851481,
+          "runtime_dependencies": [
+            {
+              "full_name": "readline",
+              "version": "8.3.6",
+              "revision": 0,
+              "bottle_rebuild": 1,
+              "pkg_version": "8.3.6",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": false,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "vim",
+      "full_name": "vim",
+      "tap": "homebrew/core",
+      "desc": "Vi 'workalike' with many additional features",
+      "versions": {
+        "stable": "9.2.1355",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/vim-9.2.1355",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/vim-9.2.1355/vim-9.2.1355.sonoma.bottle.tar.gz",
+              "sha256": "246f68cd78fff32885bafef2c47437fa9563d2f1d8ee27c013a12fffce86155f"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "9.2.1355",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": false,
+          "time": 1794853330,
+          "runtime_dependencies": [
+            {
+              "full_name": "libsodium",
+              "version": "1.0.22",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "1.0.22",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "9.2.1355",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "xz",
+      "full_name": "xz",
+      "tap": "homebrew/core",
+      "desc": "General-purpose data compression with high compression ratio",
+      "versions": {
+        "stable": "5.8.4",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 1,
+      "bottle": {
+        "stable": {
+          "rebuild": 1,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/xz-5.8.4",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/xz-5.8.4/xz-5.8.4.sonoma.bottle.1.tar.gz",
+              "sha256": "a72d414ff1913c0f5f141422005945b3a0649d94716064e7c0c84be985959545"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "5.8.4",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851466,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "5.8.4",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "zstd",
+      "full_name": "zstd",
+      "tap": "homebrew/core",
+      "desc": "Zstandard is a real-time compression algorithm",
+      "versions": {
+        "stable": "1.5.7",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 1,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:7fb4af03304cc4897326168cdcd53290311c5543150f5502a61c3e84b6d62765",
+              "sha256": "7fb4af03304cc4897326168cdcd53290311c5543150f5502a61c3e84b6d62765"
+            },
+            "arm64_tahoe": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:628a4ef53428d0078e3d76d297171ce8d0294f5ec1de3f20305e08c4dd333565",
+              "sha256": "628a4ef53428d0078e3d76d297171ce8d0294f5ec1de3f20305e08c4dd333565"
+            },
+            "arm64_sequoia": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:d72adf48460a8384b256f88061cd7b9df4977df7fa2e0794051d427db754a565",
+              "sha256": "d72adf48460a8384b256f88061cd7b9df4977df7fa2e0794051d427db754a565"
+            },
+            "arm64_sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:35b5150b27512a94ebaee7b4399aaa8adf42d247e6968319e4aeac3c05365281",
+              "sha256": "35b5150b27512a94ebaee7b4399aaa8adf42d247e6968319e4aeac3c05365281"
+            },
+            "tahoe": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:90c345a174a631a157f7ea056fe41205fb77778e65d4bdc91097a3fb3a62faa6",
+              "sha256": "90c345a174a631a157f7ea056fe41205fb77778e65d4bdc91097a3fb3a62faa6"
+            },
+            "sequoia": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:8b2443dfa62b9d28cf0321e0e670bb096b2680fe72739999228291f36018311f",
+              "sha256": "8b2443dfa62b9d28cf0321e0e670bb096b2680fe72739999228291f36018311f"
+            },
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:8b8656acd6f30bcbbb9a033ae840afea299c9f0852f71b7540492b0fe7a36742",
+              "sha256": "8b8656acd6f30bcbbb9a033ae840afea299c9f0852f71b7540492b0fe7a36742"
+            },
+            "arm64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:575617c1532fe90e212c052fb14fcd4fa295890e3bc9ac69dc52404a04a95855",
+              "sha256": "575617c1532fe90e212c052fb14fcd4fa295890e3bc9ac69dc52404a04a95855"
+            },
+            "x86_64_linux": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:3d5ca8948526a2e3a487db0cd0acec9f4b415d5a4b08cffe27e2ea0c339c9dbe",
+              "sha256": "3d5ca8948526a2e3a487db0cd0acec9f4b415d5a4b08cffe27e2ea0c339c9dbe"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.5.7_1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851468,
+          "runtime_dependencies": [
+            {
+              "full_name": "lz4",
+              "version": "1.11.1",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "1.11.1",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.5.7_1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    }
+  ],
+  "casks": []
+}

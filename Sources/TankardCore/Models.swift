@@ -71,6 +71,10 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// installed version equals the current version (otherwise what was poured
     /// is unknown: receipts don't record the bottle URL).
     public var bottleOrigin: BottleOrigin?
+    /// Formulae: URL of the bottle the current version would pour (set with `bottleTag`).
+    public var bottleURL: String?
+    /// When the newest installed keg (or the cask) was installed, if brew recorded it.
+    public var installedAt: Date?
 
     /// brew's own `outdated` flag from `brew info --json=v2 --installed`.
     public var upgradeAvailable: Bool

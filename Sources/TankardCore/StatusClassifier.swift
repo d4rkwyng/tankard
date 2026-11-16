@@ -98,6 +98,8 @@ public struct StatusClassifier: Sendable {
             currentHasBottle: currentHasBottle,
             bottleTag: match?.usable == true ? match?.tag : nil,
             bottleOrigin: origin,
+            bottleURL: match?.usable == true ? match?.url : nil,
+            installedAt: latest.time.map { Date(timeIntervalSince1970: $0) },
             upgradeAvailable: outdated,
             upgradeHasBottle: outdated ? currentHasBottle : nil,
             autoUpdates: nil
@@ -133,6 +135,8 @@ public struct StatusClassifier: Sendable {
             currentHasBottle: nil,
             bottleTag: nil,
             bottleOrigin: nil,
+            bottleURL: nil,
+            installedAt: c.installedTime.map { Date(timeIntervalSince1970: $0) },
             upgradeAvailable: outdated,
             upgradeHasBottle: nil,
             autoUpdates: c.autoUpdates

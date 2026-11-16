@@ -63,3 +63,45 @@ struct ProcessRunnerTests {
         #expect(kill(child, 0) != 0, "grandchild sleep survived cancellation")
     }
 }
+
+/// The streaming runner used for brew update / upgrade.
+struct StreamingProcessRunnerTests {
+    final class Sink: @unchecked Sendable {
+        private let lock = NSLock()
+        private var data = Data()
+        private(set) var chunks = 0
+        func add(_ d: Data) { lock.withLock { data.append(d); chunks += 1 } }
+        var text: String { lock.withLock { String(decoding: data, as: UTF8.self) } }
+    }
+
+    @Test func mergesStdoutAndStderrInOrder() async throws {
+        let sink = Sink()
+        let code = try await StreamingProcessRunner().stream(
+            "/bin/sh", ["-c", "echo one; echo two >&2; sleep 0.05; printf 'three\\r'; exit 4"],
+            environment: ["ONLY": "x"]) { sink.add($0) }
+        #expect(code == 4)
+        #expect(sink.text == "one\ntwo\nthree\r")
+    }
+
+    @Test func outputArrivesBeforeExit() async throws {
+        // A chunk must be delivered while the process is still running.
+        let sink = Sink()
+        let task = Task {
+            try await StreamingProcessRunner().stream("/bin/sh", ["-c", "echo early; sleep 2"], environment: [:]) { sink.add($0) }
+        }
+        var sawEarly = false
+        for _ in 0..<100 {
+            if sink.text == "early\n" { sawEarly = true; break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(sawEarly)
+        task.cancel()
+        _ = try? await task.value
+    }
+
+    @Test func cleanEnvironment() async throws {
+        let sink = Sink()
+        _ = try await StreamingProcessRunner().stream("/usr/bin/env", [], environment: ["ONLY": "this"]) { sink.add($0) }
+        #expect(sink.text == "ONLY=this\n")
+    }
+}
