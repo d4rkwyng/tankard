@@ -13,7 +13,8 @@
 # hands multi-arch builds to xcbuild, which ships only with Xcode. Then the
 # script builds each architecture on its own and joins them with lipo.
 #
-# Version: TANKARD_VERSION (default from the latest v* git tag, else 0.2.0).
+# Version: TANKARD_VERSION (the release workflow sets it from the tag), else
+# the one below; keep that in step with `tankard --version` (Sources/tankard/main.swift).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -33,8 +34,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-VERSION=${TANKARD_VERSION:-$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null | sed 's/^v//' || true)}
-VERSION=${VERSION:-0.2.0}
+VERSION=${TANKARD_VERSION:-0.1.1}
 BUILD=$(git rev-list --count HEAD 2>/dev/null || echo 1)
 
 LIPO_FROM=()
@@ -59,6 +59,9 @@ fi
 APP="$OUT/Tankard.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+# The app icon (Finder, Dock, About). Made by Scripts/make-icon.sh, committed.
+[ -f Resources/AppIcon.icns ] || { echo "bundle-app.sh: missing Resources/AppIcon.icns" >&2; exit 1; }
+cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 if [ ${#LIPO_FROM[@]} -gt 0 ]; then
     lipo -create "${LIPO_FROM[@]}" -output "$APP/Contents/MacOS/Tankard"
 else
@@ -89,6 +92,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <string>Tankard</string>
     <key>CFBundleExecutable</key>
     <string>Tankard</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

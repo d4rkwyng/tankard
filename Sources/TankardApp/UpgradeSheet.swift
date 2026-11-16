@@ -9,7 +9,7 @@ struct UpgradeSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                BrandMark(intelbrew: session.intelbrewMode, size: 48)
+                BrandMark(size: 64)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(session.title).font(.system(size: 14, weight: .bold))
                     Text(session.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)

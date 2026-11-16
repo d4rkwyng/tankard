@@ -90,18 +90,19 @@ struct SourceBadge: View {
     }
 }
 
-/// The toolbar mark: the Intelbrew logo in Intelbrew mode, a mug otherwise.
+/// Tankard's logo, the pixel-art mug, in every mode. Drawn with no
+/// interpolation so the pixels stay sharp; sizes of 32 and 64 points are a
+/// whole-number fraction or multiple of its 128 px on 1x and 2x screens.
 struct BrandMark: View {
-    var intelbrew: Bool
-    var size: CGFloat = 28
+    var size: CGFloat = 32
 
     var body: some View {
-        if intelbrew, let logo = (size > 40 ? AppResources.intelbrewLogoLarge : AppResources.intelbrewLogo) {
+        if let logo = AppResources.logo {
             Image(nsImage: logo)
                 .resizable()
-                .interpolation(size > 40 ? .high : .none)
+                .interpolation(.none)
                 .frame(width: size, height: size)
-                .accessibilityLabel("Intelbrew")
+                .accessibilityLabel("Tankard")
         } else {
             Image(systemName: "mug.fill")
                 .font(.system(size: size * 0.62, weight: .semibold))

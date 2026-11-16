@@ -99,6 +99,6 @@ enum AppResources {
         return NSImage(contentsOf: url)
     }
 
-    static let intelbrewLogo = image("intelbrew-logo")
-    static let intelbrewLogoLarge = image("intelbrew-logo-512")
+    /// The 128x128 pixel-art mug: Tankard's logo (and the app icon's art).
+    static let logo = image("tankard-logo")
 }

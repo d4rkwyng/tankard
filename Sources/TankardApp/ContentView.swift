@@ -31,7 +31,7 @@ struct ContentView: View {
         .navigationSubtitle(store.intelbrewMode ? "Intel bottles for macOS 14+" : "Homebrew")
         .toolbar {
             ToolbarItem(placement: .navigation) {
-                BrandMark(intelbrew: store.intelbrewMode, size: 30)
+                BrandMark(size: 32)
                     .padding(.horizontal, 4)
             }
             ToolbarItem(placement: .primaryAction) {

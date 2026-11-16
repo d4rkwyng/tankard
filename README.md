@@ -41,7 +41,11 @@ open dist/Tankard.app
 
 Command Line Tools only: SwiftPM builds the `TankardApp` executable, and the script wraps it
 in an `.app` (Info.plist, resources, `codesign -s -`). There is no Xcode project, asset
-catalog or string catalog. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
+catalog or string catalog. The app icon is a plain `Resources/AppIcon.icns`
+(`CFBundleIconFile`), committed; `Scripts/make-icon.sh` rebuilds it from the pixel-art
+logo (nearest-neighbour scaling only, on a drawn plate) with ffmpeg, `swiftc` and
+`iconutil`. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
+else the default in `bundle-app.sh`, kept in step with `tankard --version`. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
 
 **Universal builds.** `--universal` first tries one `swift build --arch x86_64 --arch
@@ -64,8 +68,8 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
 
 ### What it shows
 
-- **Toolbar:** the Intelbrew logo, "Intelbrew" and "Intel bottles for macOS 14+" in
-  Intelbrew mode; a mug, "Tankard" and "Homebrew" otherwise. Refresh (⌘R) and search (name,
+- **Toolbar:** Tankard's pixel-art mug in every mode, with "Intelbrew" and "Intel bottles
+  for macOS 14+" in Intelbrew mode, "Tankard" and "Homebrew" otherwise. Refresh (⌘R) and search (name,
   full name, description).
 - **Summary strip:** the counts, the upgrades-ready line, and the All / Upgrades / From
   source / Newer filter with counts.
@@ -152,7 +156,7 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   Demo             fake runners and the bundled fixture copies
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
-TankardApp       the SwiftUI views (App lifecycle), resources (Intelbrew logo), snapshots
+TankardApp       the SwiftUI views (App lifecycle), resources (the logo), snapshots
 ```
 
 **Why the queue isn't just an actor.** Actors are re-entrant: at every `await` another
