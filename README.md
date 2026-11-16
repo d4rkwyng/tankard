@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/tankard-logo.png" alt="Tankard logo: a pixel-art amber tankard" width="128" height="128"></p>
+
 # Tankard
 
 A native macOS app for Homebrew, for macOS 14 Sonoma and later. Intel comes first; an
