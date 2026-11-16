@@ -484,4 +484,4 @@ stop now, sudo failure, refresh queued behind an upgrade), and demo mode end to 
 
 ## Licence
 
-TBD (owner to choose).
+BSD-2-Clause, the same licence as Homebrew and Intelbrew. See [LICENSE](LICENSE).
