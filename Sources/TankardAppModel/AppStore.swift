@@ -17,6 +17,13 @@ public struct StoreError: Equatable, Sendable {
     }
 }
 
+/// The window's top-level switch.
+public enum MainTab: String, CaseIterable, Identifiable, Sendable {
+    case installed, discover
+    public var id: String { rawValue }
+    public var title: String { self == .installed ? "Installed" : "Discover" }
+}
+
 /// The app's state. One per window.
 ///
 /// - Cache-first, stale-while-revalidate: `start()` shows the cached report
@@ -38,19 +45,37 @@ public final class AppStore {
         public var logURL: URL?
         public var ttl: TimeInterval
         public var now: @Sendable () -> Date
+        /// Discover's data source for this brew. Called when Discover is
+        /// first opened, never at launch.
+        public var makeCatalog: @Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding
+        /// The Mac, for the welcome screen's install options.
+        public var hardware: MacHardware
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
                     cache: StatusCache?,
                     logURL: URL?,
                     ttl: TimeInterval = 3600,
-                    now: @escaping @Sendable () -> Date = { Date() }) {
+                    now: @escaping @Sendable () -> Date = { Date() },
+                    makeCatalog: (@Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding)? = nil,
+                    hardware: MacHardware = .current()) {
             self.makeClient = makeClient
             self.streamRunner = streamRunner
             self.cache = cache
             self.logURL = logURL
             self.ttl = ttl
             self.now = now
+            self.makeCatalog = makeCatalog ?? Self.liveCatalog
+            self.hardware = hardware
+        }
+
+        /// Intelbrew mode (or any brew told not to use the API) searches the
+        /// local taps; otherwise formulae.brew.sh.
+        public static let liveCatalog: @Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding = { client, detection in
+            if detection.detected || client.sources.effective(Intelbrew.noAPIKey) != nil {
+                return TapCatalog(client: client, detection: detection)
+            }
+            return APICatalog(fetcher: APIFetcher(), platform: client.platform)
         }
 
         /// The real thing: brew from its standard locations (or
@@ -77,7 +102,14 @@ public final class AppStore {
     public private(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
     public var showUpgradeSheet = false
+    /// Whether brew was found and runs (the welcome screen otherwise).
+    public private(set) var homebrewState: HomebrewState = .checking
+    /// The package the uninstall confirmation is open for.
+    public var uninstallCandidate: Package?
+    /// Discover's store, made when Discover is first opened.
+    public private(set) var discover: DiscoverStore?
 
+    public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
     public var search = ""
     public var selection: Package.ID?
@@ -122,6 +154,9 @@ public final class AppStore {
     }
 
     public var upgradable: [Package] { packages.filter(\.upgradeAvailable) }
+    /// Ids of everything installed (Discover's "installed" mark).
+    public var installedIDs: Set<String> { Set(packages.map(\.id)) }
+    public var hasBrew: Bool { client != nil }
     public var isUpgrading: Bool { upgrade.map { !$0.isFinished } ?? false }
 
     // MARK: loading
@@ -140,8 +175,18 @@ public final class AppStore {
 
     /// Re-reads status if the data is older than the TTL (window became active).
     public func revalidateIfStale() {
+        if homebrewState.needsWelcome, !isRefreshing {
+            Task { await checkAgain() }
+            return
+        }
         guard isStale, !isRefreshing, !isUpgrading else { return }
         Task { await refresh(manual: false) }
+    }
+
+    /// The welcome screen's "Check again": look for brew afresh and read status.
+    public func checkAgain() async {
+        client = nil
+        await refresh(manual: false)
     }
 
     /// `manual`: the refresh button. Runs `brew update` first.
@@ -174,6 +219,11 @@ public final class AppStore {
             client = try resolvedClient()
         } catch {
             self.error = StoreError(title: "Homebrew not found", detail: String(describing: error))
+            if case BrewClientError.brewNotFound(let searched) = error {
+                homebrewState = .missing(searched: searched)
+            } else {
+                homebrewState = .missing(searched: BrewInstallation.candidates)
+            }
             return
         }
 
@@ -190,9 +240,15 @@ public final class AppStore {
             reportFromCache = false
             try? deps.cache?.save(fresh)
             error = updateError
+            homebrewState = .ready
         } catch {
             // Keep what's on screen; say what went wrong.
             self.error = updateError ?? StoreError(title: "Refresh failed", detail: String(describing: error))
+            if let broken = await Self.probeBroken(client) {
+                homebrewState = broken
+            } else if homebrewState != .ready {
+                homebrewState = .ready
+            }
         }
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
@@ -225,14 +281,71 @@ public final class AppStore {
         }
     }
 
+    /// After a failed status read: does `brew --version` run at all? A brew
+    /// that can't start (missing Ruby, broken checkout) gets the welcome
+    /// screen with what it printed; one that runs keeps the normal error.
+    static func probeBroken(_ client: BrewClient) async -> HomebrewState? {
+        let path = client.installation.brewPath
+        do {
+            let r = try await client.runner.run(path, ["--version"], environment: client.environment(for: await client.detectIntelbrew()))
+            guard r.exitCode != 0 else { return nil }
+            let text = (r.stderrString + "\n" + r.stdoutString).trimmingCharacters(in: .whitespacesAndNewlines)
+            let tail = text.split(separator: "\n").suffix(8).joined(separator: "\n")
+            return .broken(path: path, detail: tail.isEmpty ? "brew --version exited \(r.exitCode)" : tail)
+        } catch {
+            return .broken(path: path, detail: String(describing: error))
+        }
+    }
+
     public func dismissError() { error = nil }
+
+    // MARK: Discover
+
+    /// Discover's store for this brew, made on first use. Loading the
+    /// catalog is up to the caller (`DiscoverStore.activate()`), so nothing
+    /// is fetched until Discover is opened.
+    @discardableResult
+    public func openDiscover() -> DiscoverStore? {
+        if let discover { return discover }
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
+        let d = DiscoverStore(provider: deps.makeCatalog(client, detection), ttl: deps.ttl, now: deps.now)
+        discover = d
+        return d
+    }
+
+    /// Installs one package from Discover through the queue and the sheet.
+    public func startInstall(_ entry: CatalogEntry) {
+        guard !installedIDs.contains(entry.id) else { return }
+        startSession(.install, packages: [entry.asPackage()])
+    }
+
+    /// Installed packages that need `p` (uninstall is blocked while any do).
+    public func dependents(of p: Package) -> [Package] {
+        Dependents.of(p, among: packages)
+    }
+
+    /// Opens the uninstall confirmation.
+    public func requestUninstall(_ p: Package) {
+        uninstallCandidate = p
+    }
+
+    /// Runs `brew uninstall` for a package nothing depends on.
+    public func startUninstall(_ p: Package) {
+        uninstallCandidate = nil
+        guard dependents(of: p).isEmpty else { return }
+        startSession(.uninstall, packages: [p])
+    }
 
     // MARK: upgrades
 
     /// Queues `brew upgrade` for each package, in order, and opens the sheet.
     public func startUpgrade(_ packages: [Package]? = nil) {
+        startSession(.upgrade, packages: (packages ?? upgradable).filter(\.upgradeAvailable))
+    }
+
+    /// One sheet run of `action` over `targets`, each a queued command.
+    func startSession(_ action: SessionAction, packages targets: [Package]) {
         guard !isUpgrading, let client = try? resolvedClient() else { return }
-        let targets = (packages ?? upgradable).filter(\.upgradeAvailable)
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
@@ -240,9 +353,9 @@ public final class AppStore {
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
         let brew = client.installation.brewPath
         upgrade = UpgradeSession(
-            packages: targets, intelbrewMode: detection.detected, queue: queue,
+            packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { p in
-                let args = BrewCommands.upgradeArguments(for: p)
+                let args = BrewCommands.arguments(action, for: p)
                 return QueuedCommand(executable: brew, arguments: args, environment: env, display: BrewCommands.display(args))
             },
             logURL: deps.logURL,

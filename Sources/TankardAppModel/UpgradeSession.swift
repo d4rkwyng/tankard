@@ -2,6 +2,24 @@ import Foundation
 import Observation
 import TankardCore
 
+/// What a sheet run does to its packages.
+public enum SessionAction: String, Sendable {
+    case upgrade, install, uninstall
+
+    /// "Upgrade", "Install", "Uninstall"
+    public var verb: String { rawValue.prefix(1).uppercased() + rawValue.dropFirst() }
+    /// "Upgrading", "Installing", "Uninstalling"
+    public var gerund: String {
+        switch self {
+        case .upgrade: return "Upgrading"
+        case .install: return "Installing"
+        case .uninstall: return "Uninstalling"
+        }
+    }
+    /// "upgraded", "installed", "uninstalled"
+    public var past: String { rawValue + "ed" }
+}
+
 /// One run of the upgrade sheet: a queued `brew upgrade` per package, the
 /// live log, and per-package state.
 ///
@@ -38,6 +56,7 @@ public final class UpgradeSession: Identifiable {
     public private(set) var stopRequested = false
     public private(set) var isFinished = false
     public let intelbrewMode: Bool
+    public let action: SessionAction
     public let logURL: URL?
 
     @ObservationIgnored private let queue: CommandQueue
@@ -47,10 +66,11 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var commandLines: [String] = []
     @ObservationIgnored private var consumer: Task<Void, Never>?
 
-    init(packages: [Package], intelbrewMode: Bool, queue: CommandQueue,
+    init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.intelbrewMode = intelbrewMode
+        self.action = action
         self.queue = queue
         self.logURL = logURL
         self.logFile = logURL.map(LogFile.init)
@@ -87,23 +107,34 @@ public final class UpgradeSession: Identifiable {
         total == 0 ? 1 : Double(completedCount) / Double(total)
     }
 
-    /// "Upgrading 5 packages"
+    /// "Upgrading 5 packages" / "Installing xz"
     public var title: String {
+        let verb = action.verb
         if isFinished {
-            if stopRequested && items.contains(where: { $0.state == .cancelled }) { return "Upgrade stopped" }
-            return failedItems.isEmpty ? "Upgrade complete" : "Upgrade finished with errors"
+            if stopRequested && items.contains(where: { $0.state == .cancelled }) { return "\(verb) stopped" }
+            return failedItems.isEmpty ? "\(verb) complete" : "\(verb) finished with errors"
         }
-        return "Upgrading \(total) package\(total == 1 ? "" : "s")"
+        if action != .upgrade && total == 1 { return "\(action.gerund) \(items[0].package.name)" }
+        return "\(action.gerund) \(total) package\(total == 1 ? "" : "s")"
     }
 
     /// "4 bottles from Intelbrew · 1 build from source (rust)"
     public var subtitle: String {
+        if action == .uninstall {
+            return "Its dependencies stay installed (brew autoremove removes unused ones)"
+        }
         let formulae = items.map(\.package).filter { $0.kind == .formula }
         let bottles = formulae.filter { $0.upgradeHasBottle == true }
         let compiles = formulae.filter { $0.upgradeHasBottle != true }
         let casks = items.count - formulae.count
         var parts: [String] = []
-        if !bottles.isEmpty {
+        if !bottles.isEmpty && action == .install && intelbrewMode {
+            // Installs know whose bottle it is (from the catalogue).
+            let ib = bottles.filter { $0.bottleOrigin == .intelbrew }.count
+            if ib > 0 { parts.append("\(ib) bottle\(ib == 1 ? "" : "s") from Intelbrew") }
+            let other = bottles.count - ib
+            if other > 0 { parts.append("\(other) Homebrew bottle\(other == 1 ? "" : "s")") }
+        } else if !bottles.isEmpty {
             let from = intelbrewMode ? " from Intelbrew" : ""
             parts.append("\(bottles.count) bottle\(bottles.count == 1 ? "" : "s")\(from)")
         }
@@ -117,9 +148,9 @@ public final class UpgradeSession: Identifiable {
 
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
     public var statusLine: String {
-        if let c = current { return "Upgrading \(c.package.name)…" }
+        if let c = current { return "\(action.gerund) \(c.package.name)…" }
         if isFinished {
-            var parts = ["\(succeededCount) upgraded"]
+            var parts = ["\(succeededCount) \(action.past)"]
             if !failedItems.isEmpty { parts.append("\(failedItems.count) failed") }
             let skipped = items.filter { $0.state == .cancelled }.count
             if skipped > 0 { parts.append("\(skipped) stopped") }

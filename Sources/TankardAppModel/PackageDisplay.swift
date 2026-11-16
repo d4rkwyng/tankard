@@ -120,6 +120,29 @@ public enum BrewCommands {
         ["upgrade", p.kind == .cask ? "--cask" : "--formula", p.qualifiedName]
     }
 
+    /// `brew install --formula homebrew/core/xz` (or `--cask`).
+    public static func installArguments(kind: PackageKind, qualifiedName: String) -> [String] {
+        ["install", kind == .cask ? "--cask" : "--formula", qualifiedName]
+    }
+
+    public static func installArguments(for e: CatalogEntry) -> [String] {
+        installArguments(kind: e.kind, qualifiedName: e.qualifiedName)
+    }
+
+    /// `brew uninstall --formula homebrew/core/xz` (or `--cask`). No
+    /// `--ignore-dependencies`: brew refuses too if something needs it.
+    public static func uninstallArguments(for p: Package) -> [String] {
+        ["uninstall", p.kind == .cask ? "--cask" : "--formula", p.qualifiedName]
+    }
+
+    public static func arguments(_ action: SessionAction, for p: Package) -> [String] {
+        switch action {
+        case .upgrade: return upgradeArguments(for: p)
+        case .install: return installArguments(kind: p.kind, qualifiedName: p.qualifiedName)
+        case .uninstall: return uninstallArguments(for: p)
+        }
+    }
+
     public static func display(_ arguments: [String]) -> String {
         (["brew"] + arguments.map(shellQuoted)).joined(separator: " ")
     }
@@ -229,4 +252,30 @@ public func updatedAgo(_ date: Date, now: Date) -> String {
         let d = Int(s / 86400)
         return "\(d) day\(d == 1 ? "" : "s") ago"
     }
+}
+
+public extension CatalogEntry {
+    /// Discover's bottle badge colour.
+    var badgeKind: BadgeKind {
+        switch bottle {
+        case .forThisMac, .intelbrew: return .bottle
+        case .fromSource: return .source
+        case .cask: return .cask
+        case .unknown: return .noBottle
+        }
+    }
+
+    /// Discover's bottle badge text.
+    var badgeLabel: String {
+        switch bottle {
+        case .forThisMac: return "Bottle for your Mac"
+        case .intelbrew: return "Intelbrew bottle ✓"
+        case .fromSource: return "Builds from source"
+        case .cask: return "Cask"
+        case .unknown: return detailsLoaded ? "Unknown" : "Checking…"
+        }
+    }
+
+    /// `brew install --formula homebrew/core/xz`
+    var installDisplay: String { BrewCommands.display(BrewCommands.installArguments(for: self)) }
 }

@@ -17,11 +17,14 @@ public struct StatusCache: Sendable {
             .appendingPathComponent("status.json")
     }
 
-    /// nil when missing, unreadable, or from another schema version.
+    /// nil when missing, unreadable, or from another schema version. Also
+    /// nil for a report written before Tankard 0.2 (no dependency lists):
+    /// uninstall's dependents check needs them, so that cache is re-read.
     public func load() -> StatusReport? {
         guard let data = try? Data(contentsOf: url),
               let report = try? StatusReport.jsonDecoder().decode(StatusReport.self, from: data),
-              report.schemaVersion == StatusReport.currentSchemaVersion else { return nil }
+              report.schemaVersion == StatusReport.currentSchemaVersion,
+              report.packages.allSatisfy({ $0.dependencies != nil }) else { return nil }
         return report
     }
 

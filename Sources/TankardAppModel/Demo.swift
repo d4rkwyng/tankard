@@ -41,12 +41,27 @@ public enum Demo {
         "zstd": Tweak(installed: "1.5.8", outdated: false), // newer than the tap
     ]
 
-    /// Packages the demo has "upgraded" (shared by both fake runners).
+    /// What the demo has changed (shared by both fake runners).
     final class State: Sendable {
         let upgraded = OSAllocatedUnfairLock<Set<String>>(initialState: [])
+        /// Installed from Discover: short name → kind and catalog JSON.
+        let installed = OSAllocatedUnfairLock<[String: (PackageKind, Data)]>(initialState: [:])
+        let removed = OSAllocatedUnfairLock<Set<String>>(initialState: [])
+
+        func info(_ variant: Variant, base: Data) -> Data {
+            Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
+                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 })
+        }
     }
 
-    public static func dependencies(_ variant: Variant, pace: Double = 1) -> AppStore.Dependencies {
+    /// The welcome screen with no brew found, on the given Mac.
+    public static func noBrewDependencies(hardware: MacHardware) -> AppStore.Dependencies {
+        AppStore.Dependencies(makeClient: { throw BrewClientError.brewNotFound(searched: BrewInstallation.candidates) },
+                              streamRunner: ScriptRunner(variant: .intelbrew, state: State(), info: Data(), pace: 1),
+                              cache: nil, logURL: nil, hardware: hardware)
+    }
+
+    public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil) -> AppStore.Dependencies {
         let state = State()
         let installation: BrewInstallation
         let platform: BottlePlatform
@@ -66,8 +81,65 @@ public enum Demo {
             makeClient: { client },
             streamRunner: ScriptRunner(variant: variant, state: state, info: fixtureInfo(variant), pace: pace),
             cache: nil,
-            logURL: nil
+            logURL: nil,
+            makeCatalog: { client, detection in
+                switch variant {
+                case .intelbrew:
+                    return TapCatalog(client: client, detection: detection, indexer: FixtureTapIndexer())
+                case .arm64:
+                    return FixtureAPICatalog(platform: client.platform)
+                }
+            },
+            hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
+    }
+
+    /// Intelbrew demo: the tap "listing" is the names and descriptions in
+    /// the captured `brew info` fixture (VM, read-only), with no cask tap.
+    struct FixtureTapIndexer: TapIndexing {
+        func index() -> TapIndex {
+            let info = (try? JSONDecoder().decode(BrewInfoJSON.self, from: Demo.fixtureData("discover-intelbrew-info")))
+            let entries = (info?.formulae ?? []).map {
+                TapIndexEntry(kind: .formula, name: $0.name, tap: $0.tap ?? "homebrew/core", desc: $0.desc, otherNames: $0.aliases ?? [])
+            }
+            return TapIndex(entries: entries, taps: ["homebrew/core"])
+        }
+    }
+
+    /// Normal-mode demo: a slice of formulae.brew.sh's formula.json and
+    /// cask.json, decoded the same way, with no network.
+    struct FixtureAPICatalog: CatalogProviding {
+        var platform: BottlePlatform
+        var isLocalTaps: Bool { false }
+
+        func load() async throws -> CatalogLoad {
+            try await Task.sleep(for: .milliseconds(300))
+            var load = try APICatalog.build(formulaJSON: Demo.fixtureData("discover-api-formula"),
+                                            caskJSON: Demo.fixtureData("discover-api-cask"),
+                                            builder: CatalogBuilder(platform: platform, intelbrewMode: false))
+            load.source = "formulae.brew.sh (demo slice) · " + load.source.components(separatedBy: " · ").dropFirst().joined(separator: " · ")
+            load.fetchedAt = Date().addingTimeInterval(-180)
+            return load
+        }
+
+        func details(_ entries: [CatalogEntry]) async -> [CatalogEntry] { entries }
+    }
+
+    /// The catalog JSON of one package from the Discover fixtures (for a
+    /// demo install).
+    static func catalogJSON(_ variant: Variant, kind: PackageKind, name: String) -> Data? {
+        let file: String
+        switch (variant, kind) {
+        case (.intelbrew, .formula): file = "discover-intelbrew-info"
+        case (.intelbrew, .cask): return nil
+        case (.arm64, .formula): file = "discover-api-formula"
+        case (.arm64, .cask): file = "discover-api-cask"
+        }
+        let root = try? JSONSerialization.jsonObject(with: fixtureData(file))
+        let list = (root as? [[String: Any]]) ?? ((root as? [String: Any])?["formulae"] as? [[String: Any]]) ?? []
+        let key = kind == .cask ? "token" : "name"
+        guard let e = list.first(where: { $0[key] as? String == name }) else { return nil }
+        return try? JSONSerialization.data(withJSONObject: e)
     }
 
     /// The demo resources bundle. Inside Tankard.app it is copied to
@@ -93,10 +165,34 @@ public enum Demo {
     }
 
     /// The `brew info` JSON as the demo shows it now: fixture, plus the
-    /// Intel tweaks, minus whatever was "upgraded" (back to current).
-    static func currentInfo(_ variant: Variant, base: Data, upgraded: Set<String>) -> Data {
+    /// Intel tweaks, minus whatever was "upgraded" (back to current), plus
+    /// demo installs, minus demo uninstalls.
+    static func currentInfo(_ variant: Variant, base: Data, upgraded: Set<String>,
+                            installed: [String: (PackageKind, Data)] = [:], removed: Set<String> = []) -> Data {
         guard var root = (try? JSONSerialization.jsonObject(with: base)) as? [String: Any] else { return base }
         var formulae = root["formulae"] as? [[String: Any]] ?? []
+        var extraCasks: [[String: Any]] = []
+        for (name, (kind, json)) in installed.sorted(by: { $0.key < $1.key }) {
+            guard var e = (try? JSONSerialization.jsonObject(with: json)) as? [String: Any] else { continue }
+            if kind == .formula {
+                let stable = (e["versions"] as? [String: Any])?["stable"] as? String ?? "1.0"
+                let rev = e["revision"] as? Int ?? 0
+                e["installed"] = [["version": rev > 0 ? "\(stable)_\(rev)" : stable, "poured_from_bottle": true,
+                                   "installed_on_request": true, "time": Date().timeIntervalSince1970,
+                                   "runtime_dependencies": (e["dependencies"] as? [String] ?? []).map { ["full_name": $0] }]]
+                e["outdated"] = false
+                e["pinned"] = false
+                e["keg_only"] = false
+                formulae.removeAll { $0["name"] as? String == name }
+                formulae.append(e)
+            } else {
+                e["installed"] = e["version"]
+                e["installed_time"] = Date().timeIntervalSince1970
+                e["outdated"] = false
+                extraCasks.append(e)
+            }
+        }
+        formulae.removeAll { removed.contains($0["name"] as? String ?? "") }
         for i in formulae.indices {
             let name = formulae[i]["name"] as? String ?? ""
             let stable = (formulae[i]["versions"] as? [String: Any])?["stable"] as? String ?? ""
@@ -112,7 +208,8 @@ public enum Demo {
             formulae[i]["outdated"] = t.outdated
             if t.dropBottle { formulae[i]["bottle"] = [String: Any]() }
         }
-        var casks = root["casks"] as? [[String: Any]] ?? []
+        var casks = (root["casks"] as? [[String: Any]] ?? []) + extraCasks
+        casks.removeAll { removed.contains($0["token"] as? String ?? "") }
         for i in casks.indices where upgraded.contains(casks[i]["token"] as? String ?? "") {
             casks[i]["installed"] = casks[i]["version"]
             casks[i]["outdated"] = false
@@ -137,9 +234,14 @@ public enum Demo {
         func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
             if executable.hasSuffix("/brew") {
                 try await Task.sleep(for: .milliseconds(350)) // brew is never instant
+                if arguments.first == "--version" {
+                    return ProcessResult(exitCode: 0, stdout: Data("Homebrew 7.0.14\n".utf8), stderr: Data())
+                }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
-                let upgraded = state.upgraded.withLock { $0 }
-                return ProcessResult(exitCode: 0, stdout: Demo.currentInfo(variant, base: info, upgraded: upgraded), stderr: Data())
+                if arguments.contains("--installed") {
+                    return ProcessResult(exitCode: 0, stdout: state.info(variant, base: info), stderr: Data())
+                }
+                return Demo.catalogInfo(variant, arguments: arguments)
             }
             let isCore = arguments.count > 1 && arguments[1].hasSuffix("homebrew-core")
             let rest = Array(arguments.dropFirst(2))
@@ -161,6 +263,23 @@ public enum Demo {
         }
     }
 
+    /// `brew info --json=v2 --formula|--cask <names>` from the Discover
+    /// fixture; like brew, an unknown name fails the whole call.
+    static func catalogInfo(_ variant: Variant, arguments: [String]) -> ProcessResult {
+        let kind: PackageKind = arguments.contains("--cask") ? .cask : .formula
+        var formulae: [Any] = [], casks: [Any] = []
+        for q in arguments.dropFirst() where !q.hasPrefix("--") {
+            let name = q.split(separator: "/").last.map(String.init) ?? q
+            guard let d = catalogJSON(variant, kind: kind, name: name), let e = try? JSONSerialization.jsonObject(with: d) else {
+                return ProcessResult(exitCode: 1, stdout: Data(),
+                                     stderr: Data("Error: No available \(kind.rawValue) with the name \"\(q)\".\n".utf8))
+            }
+            if kind == .formula { formulae.append(e) } else { casks.append(e) }
+        }
+        let out = (try? JSONSerialization.data(withJSONObject: ["formulae": formulae, "casks": casks])) ?? Data()
+        return ProcessResult(exitCode: 0, stdout: out, stderr: Data())
+    }
+
     /// Plays a scripted `brew update` / `brew upgrade` log.
     struct ScriptRunner: StreamingCommandRunning {
         var variant: Variant
@@ -179,13 +298,28 @@ public enum Demo {
                 try await say("Already up-to-date.\n", 50)
                 return 0
             }
+            let cellar = variant == .intelbrew ? "/usr/local/Cellar" : "/opt/homebrew/Cellar"
+            if arguments.first == "install", let qualified = arguments.last {
+                return try await install(qualified, cask: arguments.contains("--cask"), cellar: cellar, say: say, output: output)
+            }
+            if arguments.first == "uninstall", let qualified = arguments.last {
+                let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
+                let entry = Demo.entry(named: name, in: state.info(variant, base: info))
+                if entry.cask {
+                    try await say("==> Uninstalling Cask \(name)\n", 500)
+                    try await say("==> Removing App '/Applications/\(name).app'\n", 600)
+                } else {
+                    try await say("Uninstalling \(cellar)/\(name)/\(entry.installed)... (412 files, 9.6MB)\n", 900)
+                }
+                state.removed.withLock { _ = $0.insert(name) }
+                state.installed.withLock { _ = $0.removeValue(forKey: name) }
+                return 0
+            }
             guard arguments.first == "upgrade", let qualified = arguments.last else { return 1 }
             let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
-            let upgraded = state.upgraded.withLock { $0 }
-            let data = Demo.currentInfo(variant, base: info, upgraded: upgraded)
+            let data = state.info(variant, base: info)
             let entry = Demo.entry(named: name, in: data)
 
-            let cellar = variant == .intelbrew ? "/usr/local/Cellar" : "/opt/homebrew/Cellar"
             try await say("==> Fetching downloads for: \(name)\n", 400)
             if entry.cask {
                 try await say("==> Downloading \(name) \(entry.current)\n", 200)
@@ -215,6 +349,46 @@ public enum Demo {
                 try await say("🍺  \(cellar)/\(name)/\(entry.current): 9,881 files, 61.4MB, built in 2 minutes 4 seconds\n", 400)
             }
             state.upgraded.withLock { _ = $0.insert(name) }
+            return 0
+        }
+
+        func install(_ qualified: String, cask: Bool, cellar: String,
+                     say: (String, Double) async throws -> Void,
+                     output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
+            let kind: PackageKind = cask ? .cask : .formula
+            guard let json = Demo.catalogJSON(variant, kind: kind, name: name),
+                  let e = (try? JSONSerialization.jsonObject(with: json)) as? [String: Any] else {
+                try await say("Error: No available \(kind.rawValue) with the name \"\(qualified)\".\n", 200)
+                return 1
+            }
+            try await say("==> Fetching downloads for: \(name)\n", 400)
+            if cask {
+                let version = e["version"] as? String ?? "?"
+                try await say("==> Downloading \(name) \(version)\n", 200)
+                try await progress(output)
+                try await say("==> Installing Cask \(name)\n", 500)
+                try await say("==> Moving App to '/Applications'\n", 500)
+                try await say("🍺  \(name) was successfully installed!\n", 400)
+            } else {
+                let stable = (e["versions"] as? [String: Any])?["stable"] as? String ?? "?"
+                let rev = e["revision"] as? Int ?? 0
+                let version = rev > 0 ? "\(stable)_\(rev)" : stable
+                let deps = e["dependencies"] as? [String] ?? []
+                if !deps.isEmpty {
+                    try await say("==> Installing dependencies for \(name): \(deps.joined(separator: ", "))\n", 300)
+                }
+                let files = ((e["bottle"] as? [String: Any])?["stable"] as? [String: Any])?["files"] as? [String: Any]
+                let url = files?.values.compactMap { ($0 as? [String: Any])?["url"] as? String }.first ?? "\(name)-\(version).tar.gz"
+                try await say("==> Downloading \(url)\n", 200)
+                try await progress(output)
+                try await say("==> Installing \(name)\n", 300)
+                let tag = variant == .intelbrew ? "sonoma" : "arm64_golden_gate"
+                try await say("==> Pouring \(name)--\(version).\(tag).bottle.tar.gz\n", 1000)
+                try await say("🍺  \(cellar)/\(name)/\(version): 312 files, 6.1MB\n", 400)
+            }
+            state.removed.withLock { _ = $0.remove(name) }
+            state.installed.withLock { $0[name] = (kind, json) }
             return 0
         }
 
