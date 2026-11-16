@@ -1,0 +1,569 @@
+{
+  "formulae": [
+    {
+      "name": "newer-from-api",
+      "full_name": "newer-from-api",
+      "tap": "homebrew/core",
+      "desc": "synthetic: newer-from-api",
+      "versions": {
+        "stable": "1.2.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-from-api-1.2.0",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-from-api-1.2.0/newer-from-api-1.2.0.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.3.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.3.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "newer-revision",
+      "full_name": "newer-revision",
+      "tap": "homebrew/core",
+      "desc": "synthetic: newer-revision",
+      "versions": {
+        "stable": "2.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 2,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-revision-2.0",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-revision-2.0/newer-revision-2.0_2.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "2.0_3",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "2.0_3",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "upgrade-no-bottle",
+      "full_name": "upgrade-no-bottle",
+      "tap": "homebrew/core",
+      "desc": "synthetic: upgrade-no-bottle",
+      "versions": {
+        "stable": "3.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/upgrade-no-bottle-3.1",
+          "files": {
+            "arm64_sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/upgrade-no-bottle-3.1/upgrade-no-bottle-3.1.arm64_sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "arm64_sequoia": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/upgrade-no-bottle-3.1/upgrade-no-bottle-3.1.arm64_sequoia.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "3.0",
+      "pinned": false,
+      "outdated": true,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "upgrade-with-bottle",
+      "full_name": "upgrade-with-bottle",
+      "tap": "homebrew/core",
+      "desc": "synthetic: upgrade-with-bottle",
+      "versions": {
+        "stable": "4.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/upgrade-with-bottle-4.1",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/upgrade-with-bottle-4.1/upgrade-with-bottle-4.1.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "4.0",
+      "pinned": false,
+      "outdated": true,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "current-no-bottle",
+      "full_name": "current-no-bottle",
+      "tap": "homebrew/core",
+      "desc": "synthetic: current-no-bottle",
+      "versions": {
+        "stable": "5.0",
+        "head": null,
+        "bottle": false
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/current-no-bottle-5.0",
+          "files": {}
+        }
+      },
+      "installed": [
+        {
+          "version": "5.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "5.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "source-built",
+      "full_name": "source-built",
+      "tap": "homebrew/core",
+      "desc": "synthetic: source-built",
+      "versions": {
+        "stable": "6.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/source-built-6.0",
+          "files": {
+            "sonoma": {
+              "cellar": "/usr/local/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/source-built-6.0/source-built-6.0.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "6.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": false,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "6.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "head-build",
+      "full_name": "head-build",
+      "tap": "homebrew/core",
+      "desc": "synthetic: head-build",
+      "versions": {
+        "stable": "7.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/head-build-7.0",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/head-build-7.0/head-build-7.0.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "HEAD-abc1234",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": false,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "HEAD-abc1234",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "multi-keg",
+      "full_name": "multi-keg",
+      "tap": "homebrew/core",
+      "desc": "synthetic: multi-keg",
+      "versions": {
+        "stable": "8.1",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/multi-keg-8.1",
+          "files": {
+            "sonoma": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/multi-keg-8.1/multi-keg-8.1.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "8.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        },
+        {
+          "version": "8.1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "8.1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "older-os-bottle",
+      "full_name": "older-os-bottle",
+      "tap": "homebrew/core",
+      "desc": "synthetic: older-os-bottle",
+      "versions": {
+        "stable": "9.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/older-os-bottle-9.0",
+          "files": {
+            "ventura": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/older-os-bottle-9.0/older-os-bottle-9.0.ventura.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "monterey": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/older-os-bottle-9.0/older-os-bottle-9.0.monterey.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "9.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "9.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "cellar-mismatch",
+      "full_name": "cellar-mismatch",
+      "tap": "homebrew/core",
+      "desc": "synthetic: cellar-mismatch",
+      "versions": {
+        "stable": "10.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/cellar-mismatch-10.0",
+          "files": {
+            "sonoma": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/cellar-mismatch-10.0/cellar-mismatch-10.0.sonoma.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "10.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "10.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "all-bottle",
+      "full_name": "all-bottle",
+      "tap": "homebrew/core",
+      "desc": "synthetic: all-bottle",
+      "versions": {
+        "stable": "11.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "all": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/all-bottle-11.0.all.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "11.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "11.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "newer-bottle-only",
+      "full_name": "newer-bottle-only",
+      "tap": "homebrew/core",
+      "desc": "synthetic: newer-bottle-only",
+      "versions": {
+        "stable": "12.0",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-bottle-only-12.0",
+          "files": {
+            "sequoia": {
+              "cellar": ":any",
+              "url": "https://github.com/d4rkwyng/intelbrew-core/releases/download/newer-bottle-only-12.0/newer-bottle-only-12.0.sequoia.bottle.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "12.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1794851465,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "12.0",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    }
+  ],
+  "casks": [
+    {
+      "token": "newer-cask",
+      "full_token": "newer-cask",
+      "name": [
+        "Newer Cask"
+      ],
+      "desc": "synthetic",
+      "tap": "homebrew/cask",
+      "version": "2.0",
+      "installed": "2.1",
+      "installed_time": 1794000000,
+      "outdated": false,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "token": "latest-cask",
+      "full_token": "latest-cask",
+      "name": [
+        "Latest Cask"
+      ],
+      "desc": "synthetic",
+      "tap": "homebrew/cask",
+      "version": "latest",
+      "installed": "latest",
+      "installed_time": 1794000000,
+      "outdated": false,
+      "auto_updates": null,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    }
+  ]
+}

@@ -1,0 +1,518 @@
+{
+  "formulae": [
+    {
+      "name": "ada-url",
+      "full_name": "ada-url",
+      "tap": "homebrew/core",
+      "desc": "WHATWG-compliant and fast URL parser written in modern C++",
+      "versions": {
+        "stable": "4.0.0",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 2,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/ada-url/blobs/sha256:0301940cf2332dffce80cf23a186226baacf1573198b836251ffc86cf3224427",
+              "sha256": "0301940cf2332dffce80cf23a186226baacf1573198b836251ffc86cf3224427"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.0.0_1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1792692794,
+          "runtime_dependencies": [
+            {
+              "full_name": "fmt",
+              "version": "12.2.0",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "12.2.0",
+              "declared_directly": true,
+              "compatibility_version": 2
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "4.0.0_1",
+      "pinned": false,
+      "outdated": true,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "blake3",
+      "full_name": "blake3",
+      "tap": "homebrew/core",
+      "desc": "C implementation of the BLAKE3 cryptographic hash function",
+      "versions": {
+        "stable": "1.8.7",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/blake3/blobs/sha256:12bd2a0bace675c7bc0d680da15f491b6c4ca0de2aed04ee6d6394390f804667",
+              "sha256": "12bd2a0bace675c7bc0d680da15f491b6c4ca0de2aed04ee6d6394390f804667"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.8.7",
+          "used_options": [],
+          "built_as_bottle": false,
+          "poured_from_bottle": false,
+          "time": null,
+          "runtime_dependencies": null,
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.8.7",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "cmake",
+      "full_name": "cmake",
+      "tap": "homebrew/core",
+      "desc": "Cross-platform make",
+      "versions": {
+        "stable": "4.5.0",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://ghcr.io/v2/homebrew/core/cmake/blobs/sha256:23f036b5ff4bffe8ff1ab4d511f41897ae0b4706b65296474a2714d1fa013b71",
+              "sha256": "23f036b5ff4bffe8ff1ab4d511f41897ae0b4706b65296474a2714d1fa013b71"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "4.4.5",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1793199811,
+          "runtime_dependencies": [],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "4.4.5",
+      "pinned": false,
+      "outdated": true,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "libffi",
+      "full_name": "libffi",
+      "tap": "homebrew/core",
+      "desc": "Portable Foreign Function Interface library",
+      "versions": {
+        "stable": "3.8.1",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/libffi/blobs/sha256:9e9863c6a383c3d0d12166ffcbc52647287bad5215542ea5ec73233d69c7828a",
+              "sha256": "9e9863c6a383c3d0d12166ffcbc52647287bad5215542ea5ec73233d69c7828a"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.8.0",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1787004235,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": true,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "openssl@3",
+      "full_name": "openssl@3",
+      "tap": "homebrew/core",
+      "desc": "Cryptography and SSL/TLS Toolkit",
+      "versions": {
+        "stable": "3.5.9",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 1,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/openssl/3/blobs/sha256:dcc989315a2efd06ca4a3fac5c33c237897a1059ed74f35c464a8967ffbb8aaf",
+              "sha256": "dcc989315a2efd06ca4a3fac5c33c237897a1059ed74f35c464a8967ffbb8aaf"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.5.9",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1792692762,
+          "runtime_dependencies": [
+            {
+              "full_name": "ca-certificates",
+              "version": "2026-10-20",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "2026-10-20",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": null,
+      "pinned": false,
+      "outdated": false,
+      "keg_only": true,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "pkgconf",
+      "full_name": "pkgconf",
+      "tap": "homebrew/core",
+      "desc": "Package compiler and linker metadata toolkit",
+      "versions": {
+        "stable": "3.0.10",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/pkgconf/blobs/sha256:b58197e979bb9d4fd7ccdb1d74ca838745473a2e48efcfb76f6cde66ff5ff81e",
+              "sha256": "b58197e979bb9d4fd7ccdb1d74ca838745473a2e48efcfb76f6cde66ff5ff81e"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.0.10",
+          "used_options": [],
+          "built_as_bottle": false,
+          "poured_from_bottle": false,
+          "time": 1792692418,
+          "runtime_dependencies": [],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "3.0.10",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "python@3.14",
+      "full_name": "python@3.14",
+      "tap": "homebrew/core",
+      "desc": "Interpreted, interactive, object-oriented programming language",
+      "versions": {
+        "stable": "3.14.10",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": "/opt/homebrew/Cellar",
+              "url": "https://ghcr.io/v2/homebrew/core/python/3.14/blobs/sha256:8a4a8cb5daccdbd74863492b9a811a18ecc99254234a4a96167dba81edac6a8f",
+              "sha256": "8a4a8cb5daccdbd74863492b9a811a18ecc99254234a4a96167dba81edac6a8f"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "3.14.10",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1793543178,
+          "runtime_dependencies": [
+            {
+              "full_name": "ca-certificates",
+              "version": "2026-10-20",
+              "revision": 0,
+              "bottle_rebuild": 0,
+              "pkg_version": "2026-10-20",
+              "declared_directly": true,
+              "compatibility_version": 1
+            }
+          ],
+          "installed_on_request": true
+        }
+      ],
+      "linked_keg": "3.14.10",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "xz",
+      "full_name": "xz",
+      "tap": "homebrew/core",
+      "desc": "General-purpose data compression with high compression ratio",
+      "versions": {
+        "stable": "5.8.4",
+        "head": null,
+        "bottle": true
+      },
+      "revision": 0,
+      "version_scheme": 1,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/xz/blobs/sha256:b2b5d6523153be05c20bcc51cd358ea3dd1f4bf893748fdedb779ab508ea63ce",
+              "sha256": "b2b5d6523153be05c20bcc51cd358ea3dd1f4bf893748fdedb779ab508ea63ce"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "5.8.4",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1789575003,
+          "runtime_dependencies": [],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "5.8.4",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "name": "zstd",
+      "full_name": "zstd",
+      "tap": "homebrew/core",
+      "desc": "Zstandard is a real-time compression algorithm",
+      "versions": {
+        "stable": "1.5.7",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "revision": 1,
+      "version_scheme": 0,
+      "bottle": {
+        "stable": {
+          "rebuild": 0,
+          "root_url": "https://ghcr.io/v2/homebrew/core",
+          "files": {
+            "arm64_golden_gate": {
+              "cellar": ":any",
+              "url": "https://ghcr.io/v2/homebrew/core/zstd/blobs/sha256:7fb4af03304cc4897326168cdcd53290311c5543150f5502a61c3e84b6d62765",
+              "sha256": "7fb4af03304cc4897326168cdcd53290311c5543150f5502a61c3e84b6d62765"
+            }
+          }
+        }
+      },
+      "installed": [
+        {
+          "version": "1.5.7_1",
+          "used_options": [],
+          "built_as_bottle": true,
+          "poured_from_bottle": true,
+          "time": 1770412961,
+          "runtime_dependencies": [
+            {
+              "full_name": "lz4",
+              "version": "1.10.0",
+              "revision": 0,
+              "bottle_rebuild": 1,
+              "pkg_version": "1.10.0",
+              "declared_directly": true
+            }
+          ],
+          "installed_on_request": false
+        }
+      ],
+      "linked_keg": "1.5.7_1",
+      "pinned": false,
+      "outdated": false,
+      "keg_only": false,
+      "deprecated": false,
+      "disabled": false
+    }
+  ],
+  "casks": [
+    {
+      "token": "google-chrome",
+      "full_token": "google-chrome",
+      "name": [
+        "Google Chrome"
+      ],
+      "desc": "Web browser",
+      "tap": "homebrew/cask",
+      "version": "157.0.8103.79",
+      "installed": "157.0.8103.51",
+      "installed_time": 1794368601,
+      "outdated": true,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "token": "iterm2",
+      "full_token": "iterm2",
+      "name": [
+        "iTerm2"
+      ],
+      "desc": "Terminal emulator as alternative to Apple's Terminal app",
+      "tap": "homebrew/cask",
+      "version": "3.7.7",
+      "installed": "3.7.7",
+      "installed_time": 1794196433,
+      "outdated": false,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "token": "lm-studio",
+      "full_token": "lm-studio",
+      "name": [
+        "LM Studio"
+      ],
+      "desc": "Discover, download, and run local LLMs",
+      "tap": "homebrew/cask",
+      "version": "0.4.28,2",
+      "installed": "0.4.28,2",
+      "installed_time": 1793525526,
+      "outdated": false,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "token": "tailscale-app",
+      "full_token": "tailscale-app",
+      "name": [
+        "Tailscale"
+      ],
+      "desc": "Mesh VPN based on WireGuard",
+      "tap": "homebrew/cask",
+      "version": "1.104.7",
+      "installed": "1.104.5",
+      "installed_time": 1794196439,
+      "outdated": false,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    },
+    {
+      "token": "visual-studio-code",
+      "full_token": "visual-studio-code",
+      "name": [
+        "Microsoft Visual Studio Code",
+        "VS Code"
+      ],
+      "desc": "Open-source code editor",
+      "tap": "homebrew/cask",
+      "version": "1.146.0",
+      "installed": "1.145.2",
+      "installed_time": 1794196446,
+      "outdated": true,
+      "auto_updates": true,
+      "pinned": false,
+      "deprecated": false,
+      "disabled": false
+    }
+  ]
+}
