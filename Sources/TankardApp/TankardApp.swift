@@ -84,6 +84,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// Images shipped with the app. Inside Tankard.app the SwiftPM resource
 /// bundle sits in Contents/Resources (bundle-app.sh puts it there); under
 /// `swift run`, Bundle.module finds it next to the binary.
+@MainActor
 enum AppResources {
     static let bundle: Bundle = {
         if let url = Bundle.main.resourceURL?.appendingPathComponent("tankard_TankardApp.bundle"),

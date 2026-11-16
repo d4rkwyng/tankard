@@ -7,10 +7,13 @@ and whether Homebrew is on the Intelbrew forks.
 
 ## Status
 
-**Step 1 of 2: core library and CLI.** `TankardCore` reads brew's JSON and works out each
-package's status. The `tankard` CLI prints it. The SwiftUI app (step 2) will use the same
-library. Nothing here changes your Homebrew: every brew call is read-only and runs with
-`HOMEBREW_NO_AUTO_UPDATE=1`.
+**Step 2 of 2: the SwiftUI app.** `TankardCore` reads brew's JSON and works out each
+package's status; the `tankard` CLI prints it (step 1). **Tankard.app** shows the same data
+in a window and runs `brew update` and `brew upgrade` for you (step 2).
+
+The CLI and the app's status reads never change your Homebrew: they run with
+`HOMEBREW_NO_AUTO_UPDATE=1`. Only two things in the app change it, and only when you click:
+the refresh button (`brew update`) and the Upgrade buttons (`brew upgrade`).
 
 ## Build and test
 
@@ -25,6 +28,196 @@ Scripts/test.sh                  # unit tests (Swift Testing)
 `Scripts/test.sh` runs `swift test`. With only the Command Line Tools installed, it also
 adds the search and rpath flags Swift Testing needs, because CLT keeps the framework in a
 non-default place. With Xcode, plain `swift test` works too.
+
+## The app
+
+### Build and run
+
+```sh
+Scripts/bundle-app.sh              # dist/Tankard.app for this Mac's architecture, ad-hoc signed
+Scripts/bundle-app.sh --universal  # x86_64 + arm64 in one binary
+open dist/Tankard.app
+```
+
+Command Line Tools only: SwiftPM builds the `TankardApp` executable, and the script wraps it
+in an `.app` (Info.plist, resources, `codesign -s -`). There is no Xcode project, asset
+catalog or string catalog. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
+Sandbox (brew can't run inside one).
+
+**Universal builds.** `--universal` first tries one `swift build --arch x86_64 --arch
+arm64`. Newer SwiftPM (6.1 and later) does that with the CLT alone. SwiftPM 6.0 (CLT 16.x,
+as on a macOS 14 Mac) hands multi-arch builds to `xcbuild`, which only comes with Xcode; the
+script then builds each architecture separately and joins them with `lipo`. Both paths are
+tested: the first on macOS 27 (Swift 6.4), the second on the Intel macOS 14 VM (Swift 6.0.3).
+
+`swift run TankardApp` also works for development (the window opens from the terminal).
+
+**Downloaded builds are quarantined.** An ad-hoc signed app from a zip or a browser
+download is blocked by Gatekeeper ("can't be opened because Apple cannot check it…").
+Either right-click → Open once, or clear the flag:
+
+```sh
+xattr -dr com.apple.quarantine Tankard.app
+```
+
+A release signed with a Developer ID and notarized (below) doesn't need this.
+
+### What it shows
+
+- **Toolbar:** the Intelbrew logo, "Intelbrew" and "Intel bottles for macOS 14+" in
+  Intelbrew mode; a mug, "Tankard" and "Homebrew" otherwise. Refresh (⌘R) and search (name,
+  full name, description).
+- **Summary strip:** the counts, the upgrades-ready line, and the All / Upgrades / From
+  source / Newer filter with counts.
+- **Table:** package (with a `dep` tag for dependencies and a second line when there is
+  something to say: pinned, deprecated, "upgrade builds from source", "tap has X" for
+  newer, "updates itself" for casks), installed version, available version (↑ in blue when
+  brew calls it outdated), and the source badge: green bottle ("Intelbrew bottle" or
+  "Homebrew bottle" in Intelbrew mode, from `bottleOrigin`; "Bottle" otherwise), orange
+  built from source, blue newer, grey no bottle yet, purple cask. A package whose installed
+  version is older than the tap's shows plain "Bottle": receipts don't record which bottle
+  was poured, so Tankard doesn't guess whose it was.
+- **Detail pane:** versions, kegs, bottle tag, bottle origin, requested or dependency,
+  install date, tap, where it came from, the exact upgrade command with a copy button, and
+  "Open release page" for bottles on GitHub releases (the Intelbrew fork). ghcr.io bottles
+  have no page, so there is no link.
+- **Status bar:** the fork status in Intelbrew mode (green: core and brew on the forks and
+  brew on its newest tag; orange: brew on upstream or behind; red: core not on the fork),
+  "Updated N min ago" (hover for the time, and whether it came from the cache), and
+  "Upgrade N".
+- **Upgrade sheet:** progress, a chip per package, the exact command running, the live log
+  (monospace; `\r` progress redraws collapse into one line), "Stop After Current" (lets
+  the running package finish and skips the rest; it then becomes "Stop Now", which stops
+  the running brew and everything it started), and "Hide" (the run continues; the status
+  bar has a button to bring it back). The full log is appended to
+  `~/Library/Logs/Tankard/upgrade.log`.
+- Light and dark follow the system appearance.
+
+### How it behaves
+
+- **Cache first.** The last report is kept in
+  `~/Library/Caches/net.mindtricks.tankard/status.json`. On launch the window shows it at
+  once; if it is older than an hour, Tankard asks brew again in the background
+  (stale-while-revalidate), and again when the window comes back to the front. If a
+  refresh fails, the data on screen stays and a banner says what went wrong.
+- **Refresh runs `brew update` first**, then re-reads status. Automatic revalidation
+  never runs `brew update`.
+- **Upgrades** run one `brew upgrade --formula <tap>/<name>` (or `--cask`) per package,
+  fully qualified so a formula and a cask with the same name can't be confused. They run
+  with `HOMEBREW_NO_AUTO_UPDATE=1`, so you get exactly the versions the list showed (the
+  refresh button is where `brew update` happens). Failures don't stop the rest. After the
+  run, Tankard re-reads status rather than assuming what changed.
+- **sudo.** Tankard can't type a password (brew's stdin is `/dev/null`). When brew's output
+  shows it needed sudo, the app says so and gives the exact command to run in Terminal.
+- **One queue.** `brew update` and every `brew upgrade` go through one strict FIFO queue,
+  so two brews never run at once. Status reads stay off the queue.
+- **No network calls of its own, no telemetry.** Everything comes from brew and git on
+  this Mac. The only links out are ones you click (release pages).
+
+### Demo mode and screenshots
+
+```sh
+open -n --env TANKARD_DEMO=1 dist/Tankard.app
+TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a terminal
+```
+
+| variable | effect |
+|---|---|
+| `TANKARD_DEMO=1` | Fake brew fed by the Intel VM fixture, in Intelbrew mode. That Mac had nothing to upgrade, so demo mode makes five versions older and one newer (`Demo.intelTweaks`). Upgrades play a scripted brew log and then show as current. Nothing is spawned. |
+| `TANKARD_DEMO=arm64` | The arm64 fixture as captured: API mode, normal (non-Intelbrew) look, 14 packages including casks, 5 of them outdated. |
+| `TANKARD_DEMO_UPGRADE=1` | Demo only: start the upgrade sheet on launch. |
+| `TANKARD_DEMO_PACE=0.5` | Demo only: speed of the scripted log (lower is faster). |
+| `TANKARD_SELECT=<name>` | Select a package on launch (any mode). |
+| `TANKARD_APPEARANCE=light\|dark` | Force an appearance (otherwise the system's). |
+| `TANKARD_SNAPSHOT=<file.png>` | Write a 2x PNG of the window (and an open sheet) after `TANKARD_SNAPSHOT_DELAY` seconds (default 4); `TANKARD_SNAPSHOT_QUIT=1` quits after; `TANKARD_SNAPSHOT_SIZE=1040x620` sets the content size. The window draws itself, so this works without Screen Recording permission and while the screen is locked. |
+| `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
+
+`Scripts/screenshots.sh [OUT_DIR]` takes the standard set (Intelbrew demo light and dark,
+the upgrade sheet, the arm64 demo, and this Mac's real data; `SKIP_REAL=1` skips the last).
+
+### Architecture
+
+```
+TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew detection,
+                 brew's environment, ProcessRunner, and StreamingProcessRunner (merged
+                 stdout/stderr in chunks, same no-shell / clean-env / process-group rules)
+TankardAppModel  no SwiftUI; everything the app does, tested on its own
+  AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
+                   cache-first loading, errors that keep data, starting upgrades
+  CommandQueue     strict FIFO for mutating brew commands (see below)
+  UpgradeSession   one upgrade run: per-package state, live log, log file, stop controls
+  LineAssembler    bytes → lines, CR-aware (redraws replace the line), CRLF and UTF-8
+                   split across reads, ANSI stripped
+  StatusCache      the cached StatusReport JSON
+  Demo             fake runners and the bundled fixture copies
+  PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
+                   fork summary, sudo detection
+TankardApp       the SwiftUI views (App lifecycle), resources (Intelbrew logo), snapshots
+```
+
+**Why the queue isn't just an actor.** Actors are re-entrant: at every `await` another
+caller can run, so an actor method that starts brew and awaits it doesn't stop a second
+brew from starting. `CommandQueue.enqueue` is synchronous (its order is the call order); it
+appends to an `AsyncStream` under a lock, and one worker task runs each command to the end
+before taking the next. Cancelling a waiting command skips it; cancelling the running one
+cancels its task, and the runner sends SIGTERM to brew's whole process group, then SIGKILL
+after 2 s.
+
+Events from the queue arrive on background threads. Each upgrade session feeds them
+through its own `AsyncStream` to one main-actor consumer, so they are applied in order.
+
+Build notes for the CLT: the views use `State(initialValue:)` instead of `@State`, because
+in the macOS 27 SDK `@State` is a macro whose plugin (SwiftUIMacros) ships with Xcode, not
+the Command Line Tools. Resources are SwiftPM bundles copied into `Contents/Resources`, and
+looked up there first, then through `Bundle.module` (for `swift run`).
+
+## Signing a release
+
+Two ways, sharing `Scripts/release.sh`:
+
+**On your Mac** (Developer ID certificate in your login keychain). Once, store the notary
+credentials in the keychain:
+
+```sh
+xcrun notarytool store-credentials tankard
+# Apple ID, Team ID, and an app-specific password made at appleid.apple.com
+```
+
+Then:
+
+```sh
+Scripts/release.sh --dry-run   # print every step
+Scripts/release.sh             # dist/Tankard.app (signed, notarized, stapled) and dist/Tankard.zip
+```
+
+It builds universal (`--host-arch` for this Mac's architecture only), finds the
+"Developer ID Application:" identity with `security find-identity -v -p codesigning`
+(override: `TANKARD_SIGN_ID`), signs nested code first and then the app with
+`codesign --force --options runtime --timestamp` (no `--deep`), checks it with
+`codesign --verify --strict --deep`, submits a zip with `notarytool --wait` (profile name:
+`TANKARD_NOTARY_PROFILE`, default `tankard`), fails unless the status is Accepted, staples,
+checks with `spctl -a -vv`, and zips the stapled app with `ditto -c -k --keepParent`.
+`--skip-notarize` stops after signing.
+
+The hardened runtime needs no entitlements: the app is plain Swift with no third-party
+libraries, plug-ins or JIT, and brew is a child process started with `posix_spawn`, which
+the parent's runtime doesn't restrict. (Checked on the arm64 Mac: an ad-hoc,
+hardened-runtime build reads real brew data.)
+
+**On GitHub.** `.github/workflows/release.yml` runs on a `v*` tag push (or by hand with a
+tag), on `macos-15`: tests, imports the certificate, runs `Scripts/release.sh`, and
+attaches `Tankard.zip` to the release. Actions are pinned by commit SHA. The owner must add
+five repository secrets first (the workflow stops with a clear message if any is missing):
+
+| secret | value |
+|---|---|
+| `CERT_P12_BASE64` | `base64 -i DeveloperID.p12` of the exported Developer ID Application certificate and key |
+| `CERT_P12_PASSWORD` | the .p12 password |
+| `NOTARY_APPLE_ID` | Apple ID |
+| `NOTARY_TEAM_ID` | Team ID |
+| `NOTARY_PASSWORD` | app-specific password |
+
+No secrets live in the repository.
 
 ## Usage
 
@@ -233,6 +426,8 @@ the output.
       "currentHasBottle": true,                    // formulae only
       "bottleTag": "sonoma",                       // formulae with a pourable bottle
       "bottleOrigin": "intelbrew",                 // intelbrew | homebrew | other; only when installed == current
+      "bottleURL": "https://github.com/…/xz-5.8.4.sonoma.bottle.tar.gz",  // formulae with a pourable bottle
+      "installedAt": "2026-11-14T10:31:21Z",       // when brew recorded it
       "upgradeHasBottle": true,                    // formulae with an upgrade only
       "autoUpdates": true                          // casks only
     }
@@ -246,7 +441,7 @@ Formula versions include the `_N` revision. `bottleOrigin` is only set when the 
 version equals the current one. Receipts don't record which bottle URL was poured, so for
 an older keg Tankard can't know.
 
-## Library shape (for step 2)
+## Library shape
 
 - `BrewClient`: `Sendable`, `async`. `status()` returns a `StatusReport`. Brew is found
   with `BrewClient.locate(override:)`. Command execution goes through `CommandRunning`
@@ -255,9 +450,12 @@ an older keg Tankard can't know.
   environment is exactly what is given, and the child gets its own session
   (`POSIX_SPAWN_SETSID`). Cancelling the Swift task sends SIGTERM to the whole process
   group, then SIGKILL after 2 s.
-- Reads run concurrently. Step 1 has no mutating commands. When install or upgrade
-  arrive, they need a strict FIFO queue, not just an actor, because actors are
-  re-entrant.
+- `StreamingProcessRunner` (`StreamingCommandRunning`): the same rules, with stdout and
+  stderr merged and handed over in chunks as they arrive, for `brew update` and
+  `brew upgrade`.
+- Reads run concurrently. Mutating commands go through the app's strict FIFO
+  `CommandQueue` (see the app's architecture).
+- `BrewClient.fileExists` is injectable, so tests and demo mode can claim a core tap.
 - Pure, testable pieces: `StatusClassifier`, `BottlePlatform`, `BrewVersion`,
   `PkgVersion`, `IntelbrewDetector`, `BrewEnvironment`, `EnvFileParser`.
 - Requires macOS 14. Locks use `OSAllocatedUnfairLock`, not `Mutex` (which needs macOS
@@ -272,6 +470,17 @@ an older keg Tankard can't know.
 | `sonoma-intelbrew-*.json` | Real output from an Intel macOS 14 VM with core on the Intelbrew fork: 20 formulae, one built from source (vim). Trimmed to the keys Tankard reads. |
 | `arm64-api-*.json` | Real output from an arm64 Mac in API mode: a subset with outdated formulae, source builds, and casks (one auto-updating cask that brew doesn't count as outdated). |
 | `synthetic-intel-*.json` | The same JSON shape with made-up values, for cases neither machine had: newer, newer by revision only, no bottle (arm64-only, missing, wrong Cellar, newer macOS only), HEAD, several kegs, an older-macOS bottle, an `all` bottle, a newer cask, and a `latest` cask. |
+
+Demo mode ships copies of the two `*-info.json` real fixtures in
+`Sources/TankardAppModel/Resources/Demo/`; a test checks they stay byte-identical.
+
+`Tests/TankardAppModelTests/` covers the app's logic with fake runners: the line assembler
+(CR redraws, CRLF and UTF-8 split across reads, ANSI), the command queue (FIFO order under
+concurrent enqueues, one at a time, cancelling waiting and running commands, a real
+process group killed through the queue), the store (fresh and stale cache, failed refresh
+keeps data, `brew update` first on manual refresh, sudo, brew not found, filters and
+search), upgrades (qualified commands in order, log file, reconcile, stop after current,
+stop now, sudo failure, refresh queued behind an upgrade), and demo mode end to end.
 
 ## Licence
 
