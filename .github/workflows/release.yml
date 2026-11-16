@@ -1,0 +1,83 @@
+name: Release
+
+# Builds a universal Tankard.app, signs it with the owner's Developer ID
+# (hardened runtime, secure timestamp), notarizes and staples it, and
+# attaches Tankard.zip to the GitHub Release for the tag.
+#
+# Needs these repository secrets (Settings → Secrets and variables → Actions):
+#   CERT_P12_BASE64    base64 of the exported "Developer ID Application" .p12
+#   CERT_P12_PASSWORD  that .p12's password
+#   NOTARY_APPLE_ID    Apple ID used for notarization
+#   NOTARY_TEAM_ID     10-character Team ID
+#   NOTARY_PASSWORD    app-specific password from appleid.apple.com
+#
+# The signing and notarizing steps are Scripts/release.sh, the same script
+# the owner can run locally.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build and attach to (e.g. v0.2.0)"
+        required: true
+
+permissions: {}
+
+jobs:
+  release:
+    runs-on: macos-15
+    permissions:
+      contents: write  # create the release and upload Tankard.zip
+    env:
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    steps:
+      - name: Check secrets
+        env:
+          CERT_P12_BASE64: ${{ secrets.CERT_P12_BASE64 }}
+          CERT_P12_PASSWORD: ${{ secrets.CERT_P12_PASSWORD }}
+          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          missing=""
+          for s in CERT_P12_BASE64 CERT_P12_PASSWORD NOTARY_APPLE_ID NOTARY_TEAM_ID NOTARY_PASSWORD; do
+            [ -n "${!s}" ] || missing="$missing $s"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. Add them under Settings → Secrets and variables → Actions (see the README, 'Signing a release')."
+            exit 1
+          fi
+
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0  # build number = commit count; version = tag
+
+      - name: Import signing certificate
+        uses: apple-actions/import-codesign-certs@288b8ec97b82c66b6f2a6baaf7acc8dfbcbe331c  # v7
+        with:
+          p12-file-base64: ${{ secrets.CERT_P12_BASE64 }}
+          p12-password: ${{ secrets.CERT_P12_PASSWORD }}
+
+      - name: Tests
+        run: swift test
+
+      - name: Build, sign, notarize, staple
+        env:
+          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          export TANKARD_VERSION="${TAG#v}"
+          ./Scripts/release.sh
+
+      - name: Upload to the release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3  # v3
+        with:
+          tag_name: ${{ env.TAG }}
+          files: dist/Tankard.zip
+          body: |
+            Tankard ${{ env.TAG }}: a native Homebrew app for macOS 14 Sonoma and later
+            (universal: Intel and Apple silicon). Signed with Developer ID and notarized.

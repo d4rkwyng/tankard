@@ -8,7 +8,7 @@ import TankardCore
 struct LaunchOptions {
     var demo: Demo.Variant?
     var demoPace: Double = 1
-    var demoSelect: String?
+    var select: String?
     var demoUpgrade = false
     var appearance: String?
     var snapshot: SnapshotRequest?
@@ -16,9 +16,11 @@ struct LaunchOptions {
     static func fromEnvironment(_ env: [String: String] = ProcessInfo.processInfo.environment) -> LaunchOptions {
         var o = LaunchOptions()
         o.demo = Demo.Variant(environmentValue: env["TANKARD_DEMO"])
+        // Selecting a row at launch is harmless, so it works in any mode
+        // (for screenshots of real data).
+        o.select = env["TANKARD_SELECT"]
         if o.demo != nil {
             o.demoPace = env["TANKARD_DEMO_PACE"].flatMap(Double.init) ?? 1
-            o.demoSelect = env["TANKARD_DEMO_SELECT"]
             o.demoUpgrade = env["TANKARD_DEMO_UPGRADE"] == "1"
         }
         o.appearance = env["TANKARD_APPEARANCE"]

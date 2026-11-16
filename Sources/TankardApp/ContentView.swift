@@ -67,11 +67,10 @@ struct ContentView: View {
 
     @MainActor
     private func applyDemoOptions() async {
-        guard options.demo != nil else { return }
-        if let name = options.demoSelect, let p = store.packages.first(where: { $0.name == name }) {
+        if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
-        if options.demoUpgrade {
+        if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
         }
     }

@@ -7,3 +7,4 @@ Package.resolved
 .DS_Store
 .env
 *.env.local
+dist/

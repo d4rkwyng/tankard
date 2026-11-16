@@ -6,6 +6,7 @@ import SwiftUI
 ///   TANKARD_SNAPSHOT=/path/out.png   write the window (and an open sheet) here
 ///   TANKARD_SNAPSHOT_DELAY=4         seconds after launch (default 4)
 ///   TANKARD_SNAPSHOT_QUIT=1          quit after writing
+///   TANKARD_SNAPSHOT_SIZE=1040x620   content size to set first
 ///
 /// The window draws itself into a bitmap (`cacheDisplay`), so this works
 /// without Screen Recording permission and while the screen is locked,
@@ -15,12 +16,19 @@ struct SnapshotRequest {
     var path: String
     var delay: Double
     var quit: Bool
+    var width: CGFloat = 1040
+    var height: CGFloat = 620
 
     init?(environment env: [String: String]) {
         guard let p = env["TANKARD_SNAPSHOT"], !p.isEmpty else { return nil }
         path = p
         delay = env["TANKARD_SNAPSHOT_DELAY"].flatMap(Double.init) ?? 4
         quit = env["TANKARD_SNAPSHOT_QUIT"] == "1"
+        if let s = env["TANKARD_SNAPSHOT_SIZE"]?.split(separator: "x"), s.count == 2,
+           let w = Double(s[0]), let h = Double(s[1]) {
+            width = w
+            height = h
+        }
     }
 }
 
@@ -30,6 +38,11 @@ struct SnapshotHook: NSViewRepresentable {
     func makeNSView(context: Context) -> NSView {
         let v = NSView()
         if let request {
+            // A fixed size, so shots are comparable whatever frame the
+            // window restored.
+            DispatchQueue.main.async { [weak v] in
+                v?.window?.setContentSize(NSSize(width: request.width, height: request.height))
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in
                 guard let window = v?.window else { return }
                 Snapshot.write(window: window, to: request.path)
