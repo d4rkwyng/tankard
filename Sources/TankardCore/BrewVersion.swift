@@ -61,14 +61,13 @@ public struct BrewVersion: Comparable, Sendable, CustomStringConvertible {
     }
 
     // Same alternation order as brew's SCAN_PATTERN.
-    nonisolated(unsafe) private static let scanPattern = try! NSRegularExpression(
+    private static let scanPattern = try! NSRegularExpression(
         pattern: "alpha[0-9]*|a[0-9]+|beta[0-9]*|b[0-9]+|pre[0-9]*|rc[0-9]*|p[0-9]*|.post[0-9]+|[0-9]+|[a-z]+",
         options: [.caseInsensitive]
     )
 
-    // Same order as brew's Token.create. (nonisolated(unsafe): older SDKs,
-    // such as CLT 16's, don't mark NSRegularExpression Sendable.)
-    nonisolated(unsafe) private static let classifiers: [(Kind, NSRegularExpression)] = {
+    // Same order as brew's Token.create.
+    private static let classifiers: [(Kind, NSRegularExpression)] = {
         let table: [(Kind, String)] = [
             (.alpha, "alpha[0-9]*|a[0-9]+"),
             (.beta, "beta[0-9]*|b[0-9]+"),

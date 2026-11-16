@@ -33,17 +33,22 @@ tankard status [--json] [--filter upgrades|source|newer|nobottle|casks]
                [--remote] [--timings] [--brew PATH]
 ```
 
+Real output from the Intel test VM (core on the fork, brew still on upstream), trimmed:
+
 ```
-NAME             INSTALLED  CURRENT    STATUS            NOTES
-vim              9.2.1355   9.2.1355   source
-xz               5.8.4      5.8.4      Intelbrew bottle  dep
-ca-certificates  2026-11-05 2026-11-05 Homebrew bottle   dep
+NAME              INSTALLED   CURRENT     STATUS            NOTES
+ca-certificates   2026-11-05  2026-11-05  Homebrew bottle   dep
+curl-impersonate  2.3.2       2.3.2       Intelbrew bottle
+python@3.15       3.15.2      3.15.2      Intelbrew bottle
+vim               9.2.1355    9.2.1355    source
+xz                5.8.4       5.8.4       Intelbrew bottle  dep
+zstd              1.5.7_1     1.5.7_1     Homebrew bottle   dep
 
 20 installed · 19 bottled · 1 source · 0 newer · 0 upgrades (0 with bottles)
 
 Intelbrew mode (homebrew/core origin is https://github.com/d4rkwyng/intelbrew-core)
-  core: https://github.com/d4rkwyng/intelbrew-core, branch main — Intelbrew fork
-  brew: https://github.com/d4rkwyng/brew at 7.0.14 — fork, on its newest tag (7.0.14, local)
+  core: https://github.com/d4rkwyng/intelbrew-core, branch intelbrew-staging — Intelbrew fork
+  brew: https://github.com/Homebrew/brew at 7.0.14 — NOT the d4rkwyng/brew fork
 ```
 
 - The status counts add up to "installed". The no-bottle and cask counts only appear when
@@ -75,8 +80,8 @@ has a bottle, requested or dependency, pinned, keg-only, and formula or cask.
 
 **Upgrade available** is brew's own `outdated` flag from `brew info --json=v2
 --installed`. Tankard never decides that a package is outdated by comparing versions
-itself. On both machines tested, the flag listed exactly the same packages as
-`brew outdated --json=v2`, so Tankard skips that second brew call. One consequence: a
+itself. On the arm64 Mac (23 outdated) and the Intel VM (none), the flag listed exactly
+the same packages as `brew outdated --json=v2`, so Tankard skips that second brew call. One consequence: a
 cask with `auto_updates true` that is behind the tap is not outdated, which is brew's
 rule. `upgradeHasBottle` is whether the current version has a pourable bottle.
 
@@ -232,7 +237,7 @@ the output.
       "autoUpdates": true                          // casks only
     }
   ],
-  "timingsMs": { "detect": 9, "info": 610, "git": 40, "total": 620 },
+  "timingsMs": { "detect": 13, "info": 623, "git": 26, "total": 637 },   // Intel VM, 20 formulae
   "warnings": []
 }
 ```
