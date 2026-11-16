@@ -27,9 +27,17 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var kegOnly: Bool
         public var deprecated: Bool?
         public var disabled: Bool?
+        /// Declared runtime dependencies (formula names, tap-qualified when not in core).
+        public var dependencies: [String]?
+        public var homepage: String?
+        /// SPDX expression, flattened to text ("MIT", "Apache-2.0 or MIT").
+        public var license: String?
+        public var aliases: [String]?
+        public var oldnames: [String]?
 
         enum CodingKeys: String, CodingKey {
             case name, tap, desc, versions, revision, bottle, installed, pinned, outdated, deprecated, disabled
+            case dependencies, homepage, license, aliases, oldnames
             case fullName = "full_name"
             case versionScheme = "version_scheme"
             case linkedKeg = "linked_keg"
@@ -53,6 +61,11 @@ public struct BrewInfoJSON: Decodable, Sendable {
             kegOnly = try c.decodeIfPresent(Bool.self, forKey: .kegOnly) ?? false
             deprecated = try c.decodeIfPresent(Bool.self, forKey: .deprecated)
             disabled = try c.decodeIfPresent(Bool.self, forKey: .disabled)
+            dependencies = try c.decodeIfPresent([String].self, forKey: .dependencies)
+            homepage = try c.decodeIfPresent(String.self, forKey: .homepage)
+            license = (try? c.decodeIfPresent(LicenseExpression.self, forKey: .license))?.topLevel
+            aliases = try? c.decodeIfPresent([String].self, forKey: .aliases)
+            oldnames = try? c.decodeIfPresent([String].self, forKey: .oldnames)
         }
 
         /// stable version plus `_revision`, as brew prints it ("1.5.7_1").
@@ -116,9 +129,17 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// Older brews only; current brew removed the field (always use installedOnRequest).
         public var installedAsDependency: Bool?
         public var time: Double?
+        /// Every runtime dependency this keg was linked against (recursive), from its receipt.
+        public var runtimeDependencies: [RuntimeDependency]?
+
+        public struct RuntimeDependency: Decodable, Sendable {
+            public var fullName: String
+            enum CodingKeys: String, CodingKey { case fullName = "full_name" }
+        }
 
         enum CodingKeys: String, CodingKey {
             case version, time
+            case runtimeDependencies = "runtime_dependencies"
             case pouredFromBottle = "poured_from_bottle"
             case builtAsBottle = "built_as_bottle"
             case installedOnRequest = "installed_on_request"
@@ -140,9 +161,36 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var pinned: Bool?
         public var deprecated: Bool?
         public var disabled: Bool?
+        public var homepage: String?
+        public var dependsOn: DependsOn?
+
+        /// The parts of `depends_on` Tankard reads: other packages.
+        public struct DependsOn: Decodable, Sendable {
+            public var formula: [String]
+            public var cask: [String]
+
+            public init(formula: [String] = [], cask: [String] = []) {
+                self.formula = formula
+                self.cask = cask
+            }
+
+            enum CodingKeys: String, CodingKey { case formula, cask }
+
+            public init(from decoder: Decoder) throws {
+                let c = try decoder.container(keyedBy: CodingKeys.self)
+                func list(_ k: CodingKeys) -> [String] {
+                    if let a = try? c.decodeIfPresent([String].self, forKey: k) { return a }
+                    if let s = try? c.decodeIfPresent(String.self, forKey: k) { return [s] }
+                    return []
+                }
+                formula = list(.formula)
+                cask = list(.cask)
+            }
+        }
 
         enum CodingKeys: String, CodingKey {
-            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled
+            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage
+            case dependsOn = "depends_on"
             case fullToken = "full_token"
             case installedTime = "installed_time"
             case autoUpdates = "auto_updates"
@@ -163,7 +211,54 @@ public struct BrewInfoJSON: Decodable, Sendable {
             pinned = try c.decodeIfPresent(Bool.self, forKey: .pinned)
             deprecated = try c.decodeIfPresent(Bool.self, forKey: .deprecated)
             disabled = try c.decodeIfPresent(Bool.self, forKey: .disabled)
+            homepage = try? c.decodeIfPresent(String.self, forKey: .homepage)
+            dependsOn = try? c.decodeIfPresent(DependsOn.self, forKey: .dependsOn)
         }
+    }
+}
+
+/// brew's `license` field: an SPDX id, or nested `any_of` / `all_of`
+/// objects, or `{"GPL-2.0-only": {"with": "exception"}}`.
+struct LicenseExpression: Decodable {
+    var text: String
+
+    init(from decoder: Decoder) throws {
+        if let s = try? decoder.singleValueContainer().decode(String.self) {
+            text = s
+            return
+        }
+        struct Key: CodingKey {
+            var stringValue: String
+            var intValue: Int? { nil }
+            init(stringValue: String) { self.stringValue = stringValue }
+            init?(intValue: Int) { nil }
+        }
+        let c = try decoder.container(keyedBy: Key.self)
+        var parts: [String] = []
+        for key in c.allKeys.sorted(by: { $0.stringValue < $1.stringValue }) {
+            switch key.stringValue {
+            case "any_of", "all_of":
+                let items = (try? c.decode([LicenseExpression].self, forKey: key))?.map(\.text) ?? []
+                let joined = items.joined(separator: key.stringValue == "any_of" ? " or " : " and ")
+                parts.append(items.count > 1 ? "(\(joined))" : joined)
+            default:
+                struct With: Decodable { var with: String? }
+                let with = (try? c.decode(With.self, forKey: key))?.with
+                parts.append(with.map { "\(key.stringValue) with \($0)" } ?? key.stringValue)
+            }
+        }
+        text = parts.joined(separator: " and ")
+    }
+
+    /// The text without the outer brackets of a top-level `any_of`/`all_of`.
+    var topLevel: String {
+        guard text.hasPrefix("("), text.hasSuffix(")") else { return text }
+        var depth = 0
+        for (i, ch) in text.enumerated() {
+            if ch == "(" { depth += 1 } else if ch == ")" { depth -= 1 }
+            if depth == 0 && i < text.count - 1 { return text } // "(a) and (b)"
+        }
+        return String(text.dropFirst().dropLast())
     }
 }
 

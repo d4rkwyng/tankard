@@ -82,6 +82,13 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     public var upgradeHasBottle: Bool?
     /// Casks: the app updates itself (brew skips these in `outdated` unless --greedy).
     public var autoUpdates: Bool?
+    /// Formulae this package needs: for a formula, the newest keg's receipt
+    /// (recursive runtime dependencies), else its declared dependencies; for
+    /// a cask, `depends_on` formulae. Names as brew gives them. nil only in
+    /// reports written before Tankard 0.2.
+    public var dependencies: [String]? = nil
+    /// Casks: `depends_on` casks. nil for formulae.
+    public var caskDependencies: [String]? = nil
 
     public var isDependency: Bool { !requested }
 }

@@ -160,6 +160,16 @@ public struct BrewClient: Sendable {
         try await brewJSON(BrewInfoJSON.self, ["info", "--json=v2", "--installed"], env: env).0
     }
 
+    /// `brew info --json=v2 --formula|--cask <names…>`: details for
+    /// packages that may not be installed (Discover in Intelbrew mode).
+    public func info(_ names: [String], kind: PackageKind, env: [String: String]) async throws -> BrewInfoJSON {
+        try await brewJSON(BrewInfoJSON.self, Self.infoArguments(names, kind: kind), env: env).0
+    }
+
+    public static func infoArguments(_ names: [String], kind: PackageKind) -> [String] {
+        ["info", "--json=v2", kind == .cask ? "--cask" : "--formula"] + names
+    }
+
     public func outdated(env: [String: String]) async throws -> BrewOutdatedJSON {
         try await brewJSON(BrewOutdatedJSON.self, ["outdated", "--json=v2"], env: env).0
     }

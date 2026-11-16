@@ -102,7 +102,8 @@ public struct StatusClassifier: Sendable {
             installedAt: latest.time.map { Date(timeIntervalSince1970: $0) },
             upgradeAvailable: outdated,
             upgradeHasBottle: outdated ? currentHasBottle : nil,
-            autoUpdates: nil
+            autoUpdates: nil,
+            dependencies: latest.runtimeDependencies.map { $0.map(\.fullName) } ?? f.dependencies ?? []
         )
     }
 
@@ -139,7 +140,9 @@ public struct StatusClassifier: Sendable {
             installedAt: c.installedTime.map { Date(timeIntervalSince1970: $0) },
             upgradeAvailable: outdated,
             upgradeHasBottle: nil,
-            autoUpdates: c.autoUpdates
+            autoUpdates: c.autoUpdates,
+            dependencies: c.dependsOn?.formula ?? [],
+            caskDependencies: c.dependsOn?.cask ?? []
         )
     }
 

@@ -1,7 +1,7 @@
 import Foundation
 import TankardCore
 
-let version = "0.1.1" // keep in step with Scripts/bundle-app.sh
+let version = TankardVersion.string // keep in step with Scripts/bundle-app.sh
 
 let usage = """
 usage: tankard status [--json] [--filter upgrades|source|newer|nobottle|casks]
