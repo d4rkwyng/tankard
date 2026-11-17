@@ -93,7 +93,9 @@ public enum HomebrewManagement {
 ///    `~/.bash_profile` (or `.bash_login` / `.profile`) and `~/.bashrc`, and
 ///    rewrites existing assignments in any zsh or bash startup file
 ///    (docs/installer.md, "Shell profile"). Each file that has one is backed
-///    up first, next to itself.
+///    up first, next to itself. A profile that is a symlink (a dotfiles
+///    repo) is edited and backed up at its real path: BSD `sed -i` refuses
+///    symlinks ("in-place editing only works for regular files").
 /// 2. Point Homebrew/brew's origin back at upstream:
 ///    `git -C "$(brew --repository)" remote set-url origin https://github.com/Homebrew/brew`.
 /// 3. `brew update`.
@@ -105,10 +107,16 @@ public enum HomebrewManagement {
 /// `brew untap homebrew/core` is mentioned, not run.
 public struct RevertPlan: Equatable, Sendable {
     public struct ProfileEdit: Equatable, Sendable, Identifiable {
-        /// Absolute path.
+        /// Absolute path of the startup file the shell reads.
         public var path: String
         /// "~/.zshenv"
         public var label: String
+        /// `path` with symlinks resolved: the regular file that is backed
+        /// up and edited. Equal to `path` unless the profile is a symlink.
+        public var target: String
+        /// "~/dotfiles/zshenv"
+        public var targetLabel: String
+        public var isSymlink: Bool { target != path }
         /// The lines that will be removed, exactly as they are in the file.
         public var lines: [String]
         public var id: String { path }
@@ -151,12 +159,18 @@ public struct RevertPlan: Equatable, Sendable {
 
     public static func make(home: String, zdotdir: String?, repository: String, brewPath: String,
                             brewEnvFiles: [(String, [String: String])], date: Date = Date(),
-                            read: (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }) -> RevertPlan {
+                            read: (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) },
+                            resolve: (String) -> String = RevertPlan.realPath) -> RevertPlan {
         let tilde = { (p: String) -> String in p.hasPrefix(home + "/") ? "~" + p.dropFirst(home.count) : p }
-        let edits: [ProfileEdit] = candidatePaths(home: home, zdotdir: zdotdir).compactMap { path in
+        var seenTargets = Set<String>()
+        let edits: [ProfileEdit] = candidatePaths(home: home, zdotdir: zdotdir).compactMap { path -> ProfileEdit? in
             guard let text = read(path) else { return nil }
             let lines = text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init).filter(matches)
-            return lines.isEmpty ? nil : ProfileEdit(path: path, label: tilde(path), lines: lines)
+            guard !lines.isEmpty else { return nil }
+            // Two profiles linked to one file: edit it once.
+            let target = resolve(path)
+            guard seenTargets.insert(target).inserted else { return nil }
+            return ProfileEdit(path: path, label: tilde(path), target: target, targetLabel: tilde(target), lines: lines)
         }
         let notes = brewEnvFiles.flatMap { (label, vars) in
             keys.filter { vars[$0] != nil }.map { "\(label): \($0)" }
@@ -165,13 +179,23 @@ public struct RevertPlan: Equatable, Sendable {
                           backupSuffix: HomebrewManagement.backupSuffix(date))
     }
 
+    /// When `path` itself is a symlink, the file it finally points to
+    /// (realpath(3)); otherwise `path` unchanged (a symlinked parent such as
+    /// /var doesn't matter to sed, and a missing file stays as it is).
+    public static func realPath(_ path: String) -> String {
+        var st = stat()
+        guard lstat(path, &st) == 0, (st.st_mode & S_IFMT) == S_IFLNK, let r = realpath(path, nil) else { return path }
+        defer { free(r) }
+        return String(cString: r)
+    }
+
     /// Every command the script runs, in order, as shown in the sheet.
     public var commands: [String] {
         let q = BrewCommands.shellQuoted
         var out: [String] = []
         for e in edits {
-            out.append("cp -p \(q(e.path)) \(q(e.path + "." + backupSuffix))")
-            out.append("/usr/bin/sed -i '' -E \(q("/" + Self.sedPattern + "/d")) \(q(e.path))")
+            out.append("cp -p \(q(e.target)) \(q(e.target + "." + backupSuffix))")
+            out.append("/usr/bin/sed -i '' -E \(q("/" + Self.sedPattern + "/d")) \(q(e.target))")
         }
         out.append("unset " + Self.keys.joined(separator: " "))
         out.append("git -C \(q(repository)) remote set-url origin \(HomebrewManagement.upstreamBrewRemote)")

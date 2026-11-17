@@ -371,11 +371,28 @@ struct HomebrewManagementTests {
 
         """
         try original.write(to: zshenv, atomically: true, encoding: .utf8)
+        // ~/.bashrc is a symlink into a dotfiles repo: BSD sed -i refuses
+        // symlinks, so the real file is backed up and edited, and the link stays.
+        let dotfiles = dir.appendingPathComponent("dotfiles")
+        try FileManager.default.createDirectory(at: dotfiles, withIntermediateDirectories: true)
+        let realBashrc = dotfiles.appendingPathComponent("bashrc")
+        let bashrcText = "alias ll='ls -l'\nexport HOMEBREW_CORE_GIT_REMOTE=https://github.com/d4rkwyng/intelbrew-core\n"
+        try bashrcText.write(to: realBashrc, atomically: true, encoding: .utf8)
+        let bashrc = dir.appendingPathComponent(".bashrc")
+        try FileManager.default.createSymbolicLink(atPath: bashrc.path, withDestinationPath: "dotfiles/bashrc")
         let p = RevertPlan.make(home: dir.path, zdotdir: nil, repository: "/nonexistent", brewPath: "/nonexistent/brew",
                                 brewEnvFiles: [], date: Date(timeIntervalSince1970: 1_800_000_000))
-        #expect(p.edits.count == 1)
+        #expect(p.edits.count == 2)
         #expect(p.edits[0].lines.count == 3)
-        let fileCommands = p.commands.prefix(2).joined(separator: "\n")
+        #expect(!p.edits[0].isSymlink)
+        let linked = try #require(p.edits.first { $0.label == "~/.bashrc" })
+        #expect(linked.isSymlink)
+        #expect(try FileManager.default.attributesOfItem(atPath: linked.target)[.type] as? FileAttributeType == .typeRegular)
+        #expect(RevertPlan.realPath(realBashrc.path) == realBashrc.path)  // not a link: unchanged
+        #expect(linked.target.hasSuffix("/dotfiles/bashrc"))
+        #expect(p.commands.contains { $0.hasPrefix("/usr/bin/sed ") && $0.hasSuffix(linked.target) })
+        #expect(!p.commands.contains { $0.hasSuffix(" " + bashrc.path) })
+        let fileCommands = p.commands.prefix(4).joined(separator: "\n")
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/bin/bash")
         proc.arguments = ["-c", "set -e\n" + fileCommands]
@@ -389,6 +406,22 @@ struct HomebrewManagementTests {
         let backup = dir.appendingPathComponent(".zshenv.\(p.backupSuffix)")
         let backedUp = try String(contentsOf: backup, encoding: .utf8)
         #expect(backedUp == original)
+        // The symlink is still a symlink, its target lost only the Intelbrew
+        // line, and the backup sits next to the target.
+        #expect((try? FileManager.default.destinationOfSymbolicLink(atPath: bashrc.path)) == "dotfiles/bashrc")
+        #expect(try String(contentsOf: realBashrc, encoding: .utf8) == "alias ll='ls -l'\n")
+        #expect(try String(contentsOfFile: linked.target + "." + p.backupSuffix, encoding: .utf8) == bashrcText)
+    }
+
+    @Test func linkedProfilesAreEditedOnce() {
+        // .bash_profile and .bashrc both link to one file: one backup, one edit.
+        let p = RevertPlan.make(home: home, zdotdir: nil, repository: "/r", brewPath: "/b", brewEnvFiles: [],
+                                date: Date(timeIntervalSince1970: 1_800_000_000),
+                                read: { $0.hasSuffix("bash_profile") || $0.hasSuffix("bashrc") ? "export HOMEBREW_BREW_GIT_REMOTE=x\n" : nil },
+                                resolve: { $0.hasPrefix(home + "/.bash") ? home + "/dotfiles/bash" : $0 })
+        #expect(p.edits.map(\.label) == ["~/.bash_profile"])
+        #expect(p.edits[0].targetLabel == "~/dotfiles/bash")
+        #expect(p.commands[0] == "cp -p /Users/test/dotfiles/bash /Users/test/dotfiles/bash.\(p.backupSuffix)")
     }
 
     @Test func scriptsShowWaitAndUseTheOfficialCommand() {

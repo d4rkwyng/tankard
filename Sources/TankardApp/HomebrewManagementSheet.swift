@@ -96,6 +96,11 @@ struct HomebrewManagementSheet: View {
             ForEach(plan.edits) { e in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(e.label).font(.system(size: 11.5, weight: .semibold, design: .monospaced))
+                    if e.isSymlink {
+                        Text("a symlink to \(e.targetLabel): that file is backed up and edited")
+                            .font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
+                            .lineLimit(1).truncationMode(.middle).textSelection(.enabled)
+                    }
                     ForEach(Array(e.lines.enumerated()), id: \.offset) { _, l in
                         Text(l).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
                             .lineLimit(1).truncationMode(.middle).textSelection(.enabled)
