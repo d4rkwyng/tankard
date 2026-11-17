@@ -65,7 +65,10 @@ TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew 
                  CompileClassifier (BuildPlan: bottle or compile?, one answer for every
                  view), CleanupDryRun (parses `brew cleanup -n`), BottleReplacement,
                  brew's environment, ProcessRunner, and StreamingProcessRunner (merged
-                 stdout/stderr in chunks, same no-shell / clean-env / process-group rules)
+                 stdout/stderr in chunks, same no-shell / clean-env / process-group rules),
+                 0.4: BrewVulnsJSON and VulnerabilityScan (`brew vulns --json`, stdout
+                 only), DiskSizes (parses `brew info --sizes`), SelfUpdatingCasks
+                 (`brew outdated --greedy --cask`)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
                    cache-first loading, errors that keep data, starting upgrades
@@ -89,6 +92,11 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   CleanupStore     the Cleanup sheet's dry run, cache size and run (0.3)
   AppManagement    which steps need it, the block matcher, the settings links (0.3)
   ContextMenus     which right-click items appear, as pure functions (0.3)
+  Insights         InsightsStore (the background `brew vulns --json` and `brew info
+                   --sizes`, their cache, decorating the report), InsightSettings,
+                   PostInstallNotes, VulnerabilityNotice, VulnerabilityUpgrades and
+                   its `isHeld` hook (pins), Caveats (0.4)
+  InsightColors    the vulnerability warning's colours per theme, AA-checked (0.4)
   Demo             fake runners and the bundled fixture copies
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
@@ -249,13 +257,18 @@ the output.
       "upgradeHasBottle": true,                    // formulae with an upgrade only
       "autoUpdates": true,                         // casks only
       "dependencies": ["lz4"],                     // 0.2+: formulae it needs (receipt runtime deps; casks: depends_on formulae)
-      "caskDependencies": []                       // 0.2+, casks only: depends_on casks
+      "caskDependencies": [],                      // 0.2+, casks only: depends_on casks
+      "caveats": "…"                               // 0.4: brew's caveats, when there are any
     }
   ],
   "timingsMs": { "detect": 13, "info": 623, "git": 26, "total": 637 },   // Intel VM, 20 formulae
   "warnings": []
 }
 ```
+
+The app also keeps `diskBytes`, `vulnerabilities` and `selfUpdatingUpgrade` on its own
+copies of packages (0.4); `tankard status` never sets them, so they are left out of its
+JSON.
 
 Formula versions include the `_N` revision. `bottleOrigin` is only set when the installed
 version equals the current one. Receipts don't record which bottle URL was poured, so for
@@ -295,11 +308,19 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_LOG_FRAMES=1` | Print every window move or resize, and the table's identity, scroll and column widths each second. |
 | `TANKARD_SWITCH_APPEARANCE=<theme>@<s>` | Switch theme at runtime, as Settings does (not saved). |
 | `TANKARD_RESELECT=<name>@<s>` | Select another row later, as a click would. |
+| `TANKARD_FILTER=vulnerable\|notes` | 0.4: the Vulnerable or Has notes filter on launch. |
+| `TANKARD_DEMO_NOTES=1` | 0.4, demo only: upgrade everything, close the finished sheet; the post-install notes follow. |
+| `TANKARD_DEMO_VULN_NOTICE=1` | 0.4, demo only: the menu-bar vulnerability notice on, with nothing seen yet. |
+| `TANKARD_SELF_UPDATING=1` | 0.4, demo only: "Include self-updating apps" on. |
+| `TANKARD_SNAPSHOT_VIEW=settings-upgrades` | 0.4: Settings → Upgrades. |
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
 
 Demo runs and snapshot runs use throwaway settings, never the real UserDefaults. Demo
 Discover uses fixtures too: a slice of formulae.brew.sh (normal mode) and `brew info`
 captured read-only on the Intel VM (Intelbrew mode), with no cask tap. Nothing is fetched.
+
+`SET=v0.4b Scripts/screenshots.sh OUT_DIR` takes the 0.4 vulnerability, notes, size,
+self-updating, settings and menu-bar notice shots in Dark and Tankard.
 
 `Scripts/screenshots.sh [OUT_DIR]` takes the standard set (Intelbrew demo light and dark,
 the upgrade sheet, the arm64 demo, the five themes, Discover in both modes, the install
@@ -348,6 +369,18 @@ Two live canaries are off by default: `TANKARD_LIVE_SEARCH=<query>` times Intelb
 Discover against this Mac's brew (read-only), and `TANKARD_LIVE_API_DIR=<dir>` times
 decoding a saved formula.json and cask.json (no network). Run them with
 `Scripts/test.sh --filter LiveSearchCanary` / `--filter LiveAPIDecodeCanary`.
+
+v0.4 (part B) adds: `brew vulns --json` captured read-only on the arm64 Mac and the Intel
+VM (`*-vulns.json`, with the arm64 run's stderr in `arm64-vulns-stderr.txt`, which shows
+why only stdout is decoded), `brew info --sizes` (`sonoma-intelbrew-sizes.txt` as printed;
+`arm64-sizes.txt` trimmed to the arm64 fixture's packages with its totals recomputed),
+`brew outdated --greedy --cask --json=v2` (`*-outdated-greedy.json`, arm64 trimmed the same
+way), and the caveats of both `*-info.json` fixtures (from the same machines' current
+`brew info`). Tests: decoding, severity order, partial-scan reasons, version matching,
+size parsing and formatting, greedy marking and unmarking, the store's decoration,
+filters and cache, scan failures, "Upgrade vulnerable" (and its hold hook), post-install
+notes, the no-quit environment and command, the menu-bar notice, and the warning colours'
+contrast in every theme. Demo mode answers the three reads from copies of these fixtures.
 
 v0.3 adds: the compile classification and plan, the formula scanner against `brew info`,
 the cleanup dry-run parser (read-only captures from this Mac and the Intel VM, home

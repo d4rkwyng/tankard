@@ -4,6 +4,17 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.4.0]
+
+### Added
+- **Vulnerability scan** with Homebrew 7's `brew vulns`: vulnerable formulae get a ⚠ tag with the severity, the detail pane lists each advisory (linked to OSV.dev) with "fixed in", a Vulnerable filter, and "Upgrade vulnerable packages" through the normal upgrade path (pinned packages left out). Runs after each refresh (cached for an hour, can be turned off) and on demand; when brew couldn't check every formula, Tankard says "partial scan" and why. brew itself sends each formula's source repository and version to OSV.dev; casks aren't scanned.
+- Optional **menu-bar notice for new vulnerabilities** (off by default).
+- **Notes from brew** (caveats) in the detail pane, a "Has notes" filter, and a one-time "Post-install notes" sheet after an install or upgrade.
+- **Size on disk**: a sortable Size column and the total in the summary strip, from `brew info --sizes`, measured in the background.
+- **Include self-updating apps** setting (off by default): also lists casks that update themselves, as `brew outdated --greedy` does.
+- **Don't quit running apps during upgrades** setting (off by default): cask upgrades run with `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, shown in the command.
+- Settings → Upgrades for these options.
+
 ## [0.3.0]
 
 ### Added
