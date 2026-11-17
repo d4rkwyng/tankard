@@ -194,6 +194,7 @@ struct ContentView: View {
             }
         }
         await applyV06ALaunchOptions(store: store, options: options)
+        await applyTapsLaunchOptions(store: store, options: options)
         if options.demo != nil, let mode = options.demoAutoUpdate {
             await AutoUpdateDemo.apply(mode, store: store)
         }

@@ -183,6 +183,8 @@ public final class AppStore {
     @ObservationIgnored public let history: HistoryLog
     /// 0.6: Brewfile export, check and restore.
     @ObservationIgnored public let brewfile = BrewfileStore()
+    /// 0.7: the Taps sheet (TapsStore.swift).
+    @ObservationIgnored public let taps = TapsStore()
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 

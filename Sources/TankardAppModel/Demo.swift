@@ -57,6 +57,8 @@ public enum Demo {
         let v04a: V04AState
         /// 0.6: `brew autoremove` ran (the dry run is empty after).
         let autoremoved = OSAllocatedUnfairLock(initialState: false)
+        /// 0.7: taps added, removed, trusted (Demo+Taps.swift).
+        let taps = TapsDemoState()
 
         init(failAppManagement: Bool = false, pinned: Set<String> = []) {
             self.failAppManagement = failAppManagement
@@ -325,6 +327,7 @@ public enum Demo {
                 }
                 if let r = Demo.v04aRead(variant, state: state, arguments: arguments) { return r }
                 if let r = try await Demo.v06aRead(variant, state: state, arguments: arguments) { return r }
+                if let r = try await Demo.tapsRead(variant, state: state.taps, arguments: arguments) { return r }
                 if let r = try await Demo.brewfile(variant, state: state, info: info, arguments: arguments) { return r }
                 if let r = try await Demo.insight(variant, state: state, arguments: arguments) { return r }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
@@ -428,6 +431,7 @@ public enum Demo {
             }
             if let code = try await Demo.v04aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if let code = try await Demo.v06aStream(variant, state: state, arguments: arguments, say: say) { return code }
+            if let code = try await Demo.tapsStream(variant, state: state.taps, arguments: arguments, say: say) { return code }
             if arguments.first == "update" {
                 try await say("==> Updating Homebrew...\n", 900)
                 try await say("Already up-to-date.\n", 50)

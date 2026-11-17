@@ -11,6 +11,8 @@ public enum SessionAction: String, Sendable {
     case cleanup
     /// 0.6: `brew autoremove` (one command, no packages).
     case autoremove
+    /// 0.7: `brew tap` / `brew untap` (one command; the row is the tap).
+    case tap, untap
 
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
@@ -21,6 +23,8 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "Reinstall"
         case .cleanup: return "Cleanup"
         case .autoremove: return "Remove unused"
+        case .tap: return "Add tap"
+        case .untap: return "Remove tap"
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
@@ -32,6 +36,8 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "Reinstalling"
         case .cleanup: return "Cleaning up"
         case .autoremove: return "Removing unused dependencies"
+        case .tap: return "Adding tap"
+        case .untap: return "Removing tap"
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -45,6 +51,8 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "reinstalled"
         case .cleanup: return "done"
         case .autoremove: return "done"
+        case .tap: return "tapped"
+        case .untap: return "untapped"
         }
     }
 }

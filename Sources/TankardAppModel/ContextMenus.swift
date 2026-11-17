@@ -227,9 +227,12 @@ public enum ContextMenus {
 public enum RelatedSearch: Equatable, Sendable {
     case dependencies(of: String)
     case dependents(of: String)
+    /// 0.7: "tap:user/repo", the Taps sheet's Show Installed.
+    case tap(String)
 
     public static let dependenciesPrefix = "deps:"
     public static let dependentsPrefix = "uses:"
+    public static let tapPrefix = "tap:"
 
     public init?(_ query: String) {
         let q = query.trimmingCharacters(in: .whitespaces)
@@ -241,6 +244,10 @@ public enum RelatedSearch: Equatable, Sendable {
             let name = String(q.dropFirst(Self.dependentsPrefix.count)).trimmingCharacters(in: .whitespaces)
             guard !name.isEmpty else { return nil }
             self = .dependents(of: name)
+        } else if q.lowercased().hasPrefix(Self.tapPrefix) {
+            let name = String(q.dropFirst(Self.tapPrefix.count)).trimmingCharacters(in: .whitespaces)
+            guard !name.isEmpty else { return nil }
+            self = .tap(name)
         } else {
             return nil
         }
@@ -250,12 +257,13 @@ public enum RelatedSearch: Equatable, Sendable {
         switch self {
         case .dependencies(let n): return Self.dependenciesPrefix + n
         case .dependents(let n): return Self.dependentsPrefix + n
+        case .tap(let n): return Self.tapPrefix + n
         }
     }
 
     var name: String {
         switch self {
-        case .dependencies(let n), .dependents(let n): return n
+        case .dependencies(let n), .dependents(let n), .tap(let n): return n
         }
     }
 
@@ -270,10 +278,12 @@ public enum RelatedSearch: Equatable, Sendable {
 
     /// The rows to show; nil when the token names nothing installed.
     public func rows(in packages: [Package], selected: Package?) -> [Package]? {
+        if case .tap(let n) = self { return packages.filter { $0.tap?.lowercased() == n.lowercased() } }
         guard let t = target(in: packages, selected: selected) else { return nil }
         switch self {
         case .dependencies: return Dependents.dependencies(of: t, among: packages)
         case .dependents: return Dependents.of(t, among: packages)
+        case .tap: return nil
         }
     }
 }

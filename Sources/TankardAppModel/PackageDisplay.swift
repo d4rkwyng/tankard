@@ -197,6 +197,8 @@ public enum BrewCommands {
         case .replaceBottle: return replaceWithBottleArguments(for: p)
         case .cleanup: return cleanupArguments
         case .autoremove: return AutoremovePlan.runArguments
+        case .tap: return TapCommands.tap(p.fullName, url: p.desc)
+        case .untap: return TapCommands.untap(p.fullName)
         }
     }
 

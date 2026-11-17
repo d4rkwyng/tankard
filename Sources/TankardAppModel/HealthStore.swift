@@ -10,6 +10,8 @@ import TankardCore
 /// The sheets opened from the Homebrew menu in 0.6.
 public enum ToolSheet: String, Identifiable, Sendable {
     case health, history, autoremove
+    /// 0.7: Homebrew ▸ Taps… (TapsStore.swift).
+    case taps
     public var id: String { rawValue }
 }
 

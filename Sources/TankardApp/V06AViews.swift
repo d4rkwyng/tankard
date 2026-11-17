@@ -80,7 +80,7 @@ struct RetiredDetail: View {
 }
 
 /// A sheet's title row: icon, title, one line under it.
-private struct SheetHeader: View {
+struct SheetHeader: View {
     var icon: String
     var title: String
     var subtitle: String
@@ -110,6 +110,8 @@ struct ToolSheetView: View {
             HistorySheet(store: store, history: store.history)
         case .autoremove:
             if let a = store.autoremove { AutoremoveSheet(store: store, autoremove: a) }
+        case .taps:
+            TapsSheet(store: store, taps: store.taps)
         }
     }
 }
@@ -437,6 +439,7 @@ func applyV06ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     case .health?: store.openHealth()
     case .history?: store.openHistory()
     case .autoremove?: store.openAutoremove()
+    case .taps?: store.openTaps()
     case nil: break
     }
 }

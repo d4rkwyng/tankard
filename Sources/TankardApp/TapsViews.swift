@@ -1,0 +1,233 @@
+import SwiftUI
+import TankardAppModel
+import TankardCore
+
+// v0.7: Homebrew ▸ Taps…. The list from `brew tap-info --installed --json`,
+// Add (brew tap), Remove (brew untap, blocked while packages from the tap
+// are installed), Trust (brew trust --tap), and Show Installed.
+//
+//   TANKARD_DEMO_SHEET=taps          demo: open the sheet
+//   TANKARD_DEMO_TAP_SELECT=<name>   demo: select a tap
+//   TANKARD_DEMO_TAP_ADD=<user/repo> demo: open Add's confirmation
+//   TANKARD_DEMO_TAP_REMOVE=1        demo: ask to remove the selection
+
+/// The Homebrew menu item. A view, so its store reads aren't tracked by App.body.
+struct TapsCommands: View {
+    var store: AppStore
+
+    var body: some View {
+        Button("Taps…") { store.openTaps() }
+            .disabled(store.report == nil)
+    }
+}
+
+/// An alert binding that writes nothing when unchanged.
+@MainActor
+private func pendingBinding(_ isSet: @escaping @MainActor () -> Bool, _ cancel: @escaping @MainActor () -> Void) -> Binding<Bool> {
+    Binding(get: { isSet() }, set: { if !$0 && isSet() { cancel() } })
+}
+
+/// Add's confirmation: the third-party warning and the exact command.
+/// Shared by the Taps sheet and the Brewfile restore plan.
+struct TapAddConfirmation: ViewModifier {
+    var store: AppStore
+    var taps: TapsStore
+
+    func body(content: Content) -> some View {
+        content.alert(taps.pendingAdd.map { "Add \($0.name)?" } ?? "Add tap?",
+                      isPresented: pendingBinding({ taps.pendingAdd != nil }, { taps.cancelPending() }),
+                      presenting: taps.pendingAdd) { _ in
+            Button("Cancel", role: .cancel) { taps.cancelPending() }
+            Button("Add Tap") { store.confirmAddTap() }
+        } message: { req in
+            Text(req.warning + "\n\nTankard runs: " + req.command)
+        }
+    }
+}
+
+struct TapsSheet: View {
+    @Bindable var store: AppStore
+    var taps: TapsStore
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
+    private let name = State(initialValue: "")
+    private let url = State(initialValue: "")
+    private let problem = State<String?>(initialValue: nil)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SheetHeader(icon: "point.3.connected.trianglepath.dotted", title: "Taps",
+                        subtitle: "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.")
+            HStack(spacing: 8) {
+                ThemedSegmentedPicker(title: "Show", selection: Binding(get: { taps.filter }, set: { taps.setFilter($0) }),
+                                      options: TapsFilter.allCases, label: \.title)
+                Spacer()
+                Text("\(taps.visibleTaps.count) of \(taps.taps.count)").font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            list
+            if let tap = taps.selectedTap { actions(tap) }
+            addRow
+            HStack {
+                Image(systemName: "info.circle").foregroundStyle(.secondary)
+                    .help("brew tap-info --installed --json. Official taps in API mode are read from Homebrew's API and aren't tapped. Trust is brew 7's (brew trust --tap): \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" Tankard never runs brew untap --force.")
+                Text("Add, Remove and Trust go through Tankard's queue and History.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                Spacer()
+                Button("Done") { store.closeToolSheet() }
+                    .buttonStyle(.primaryAction)
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(width: 720, height: 580, alignment: .top)
+        .background(theme.window ?? .clear)
+        .modifier(TapAddConfirmation(store: store, taps: taps))
+        .modifier(TapsAlerts(store: store, taps: taps))
+    }
+
+    @ViewBuilder
+    private var list: some View {
+        switch taps.phase {
+        case .idle, .loading where taps.taps.isEmpty:
+            HStack(spacing: 8) {
+                ProgressView().controlSize(.small)
+                Text("Reading taps…").font(.system(size: 12)).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .failed(let message) where taps.taps.isEmpty:
+            Text(message).font(.system(size: 12)).foregroundStyle(theme.warning(scheme).text).textSelection(.enabled)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        default:
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 4) {
+                    ForEach(taps.visibleTaps) { t in row(t) }
+                }
+            }
+            .frame(maxHeight: .infinity)
+        }
+    }
+
+    private func chip(_ text: String, _ color: Color) -> some View {
+        Text(text).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(color)
+            .padding(.horizontal, 6).padding(.vertical, 1)
+            .background(RoundedRectangle(cornerRadius: 4).fill(theme.chip))
+    }
+
+    private func row(_ t: TapInfo) -> some View {
+        let selected = taps.selection == t.id
+        let installed = store.installedCount(from: t)
+        var facts = ["\(t.formulaCount) formula\(t.formulaCount == 1 ? "" : "e")", "\(t.caskCount) cask\(t.caskCount == 1 ? "" : "s")",
+                     "\(installed) installed from it"]
+        if let last = t.lastCommit { facts.append("updated \(last)") }
+        return Button {
+            taps.select(selected ? nil : t.id)
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(t.name).font(.system(size: 12.5, weight: .semibold, design: .monospaced))
+                    chip(t.originLabel, t.official ? theme.accent : .secondary)
+                    if !t.official, let trusted = t.trusted {
+                        chip(trusted ? "Trusted" : "Not trusted", trusted ? theme.accent : theme.warning(scheme).text)
+                    }
+                    if !t.tapped { chip("API", .secondary).help("Read from Homebrew's API; not tapped locally.") }
+                    if t.isPrivate { chip("Private", .secondary) }
+                    Spacer()
+                }
+                Text(t.remote ?? "Homebrew's API (formulae.brew.sh)")
+                    .font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+                Text(facts.joined(separator: " · ")).font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 8).padding(.vertical, 5)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 6).fill(selected ? theme.chip : .clear))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func actions(_ t: TapInfo) -> some View {
+        let removal = TapRemoval.check(t, packages: store.packages)
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Text(t.name).font(.system(size: 12, weight: .semibold, design: .monospaced))
+                Spacer()
+                Button("Show Installed") { store.showInstalled(from: t) }
+                    .disabled(store.installedCount(from: t) == 0)
+                    .help("The Installed list, filtered to this tap (tap:\(t.name))")
+                if !t.official, t.trusted != nil {
+                    Button(t.trusted == true ? "Untrust…" : "Trust…") { taps.requestTrust(t) }
+                        .disabled(store.isBusy)
+                }
+                Button("Remove…") { _ = taps.requestRemove(t, packages: store.packages) }
+                    .disabled(!removal.isAllowed || store.isBusy)
+            }
+            if let reason = removal.reason {
+                Text(reason).font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 6).strokeBorder(theme.chip))
+    }
+
+    private var addRow: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                TextField("user/repo", text: name.projectedValue).frame(width: 200)
+                TextField("URL (optional)", text: url.projectedValue)
+                Button("Add Tap…") {
+                    let p = taps.requestAdd(name: name.wrappedValue, url: url.wrappedValue)
+                    problem.wrappedValue = p?.description
+                    if p == nil { name.wrappedValue = ""; url.wrappedValue = "" }
+                }
+                .disabled(name.wrappedValue.trimmingCharacters(in: .whitespaces).isEmpty || store.isBusy)
+            }
+            .font(.system(size: 12))
+            if let p = problem.wrappedValue ?? TapInput.problem(name: name.wrappedValue, url: url.wrappedValue)
+                .flatMap({ $0 == .emptyName ? nil : $0.description }) {
+                Text(p).font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
+            }
+        }
+    }
+}
+
+/// Remove's and Trust's confirmations.
+struct TapsAlerts: ViewModifier {
+    var store: AppStore
+    var taps: TapsStore
+
+    func body(content: Content) -> some View {
+        content
+            .alert(taps.pendingRemove.map { "Remove \($0.name)?" } ?? "Remove tap?",
+                   isPresented: pendingBinding({ taps.pendingRemove != nil }, { taps.cancelPending() }),
+               presenting: taps.pendingRemove) { _ in
+            Button("Cancel", role: .cancel) { taps.cancelPending() }
+            Button("Remove", role: .destructive) { store.confirmRemoveTap() }
+        } message: { t in
+            Text("Nothing installed comes from it. brew deletes its local copy; you can add it again later.\n\nTankard runs: "
+                 + BrewCommands.display(TapCommands.untap(t.name)))
+        }
+            .alert(taps.pendingTrust.map { ($0.trusted == true ? "Stop trusting " : "Trust ") + $0.name + "?" } ?? "Trust?",
+               isPresented: pendingBinding({ taps.pendingTrust != nil }, { taps.cancelPending() }),
+               presenting: taps.pendingTrust) { t in
+            Button("Cancel", role: .cancel) { taps.cancelPending() }
+            Button(t.trusted == true ? "Untrust" : "Trust") { store.confirmTrustTap() }
+        } message: { t in
+            Text((t.trusted == true
+                  ? "brew no longer counts this tap as trusted (brew untrust: \"Stop trusting non-official tap formulae, casks or commands\")."
+                  : "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust.")
+                 + "\n\nTankard runs: " + BrewCommands.display(TapCommands.trust(t.name, t.trusted != true)))
+        }
+    }
+}
+
+/// 0.7 demo launch options.
+@MainActor
+func applyTapsLaunchOptions(store: AppStore, options: LaunchOptions) async {
+    guard options.demo != nil, options.demoSheet == .taps else { return }
+    let env = ProcessInfo.processInfo.environment
+    await store.taps.load()
+    if let s = env["TANKARD_DEMO_TAP_SELECT"] { store.taps.select(s.lowercased()) }
+    if let a = env["TANKARD_DEMO_TAP_ADD"] { store.taps.requestAdd(name: a) }
+    if env["TANKARD_DEMO_TAP_REMOVE"] == "1", let t = store.taps.selectedTap { _ = store.taps.requestRemove(t, packages: store.packages) }
+}

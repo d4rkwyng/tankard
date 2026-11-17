@@ -87,6 +87,7 @@ struct BrewfileSheet: View {
         .padding(20)
         .frame(width: 560)
         .background(theme.window ?? .clear)
+        .modifier(TapAddConfirmation(store: store, taps: store.taps))
     }
 
     private func header(_ icon: String, _ color: Color, _ title: String, _ subtitle: String?) -> some View {
@@ -231,7 +232,7 @@ struct BrewfileSheet: View {
                 Button("Install with Tankard") { store.installBrewfilePlan(p) }
                     .keyboardShortcut(.defaultAction)
                     .disabled(p.queued.isEmpty || store.isBusy)
-                    .help("One brew install per formula and cask, through Tankard's queue and log. Taps aren't added.")
+                    .help("One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap….")
             }
         }
     }
@@ -250,8 +251,12 @@ struct BrewfileSheet: View {
             }
             Spacer()
             if e.kind == .tap {
-                CommandBox(command: BrewfileCommands.tapDisplay(e.name)).frame(maxWidth: 250)
-                    .help("Tankard doesn't add taps. Run this in Terminal first, or use the Terminal command below.")
+                // 0.7: Add Tap… asks first (the third-party warning), then
+                // runs brew tap through the queue and the live log.
+                Button("Add Tap…") { store.taps.requestAdd(name: e.name, source: .brewfile) }
+                    .controlSize(.small)
+                    .disabled(store.isBusy || TapInput.problem(name: e.name) != nil)
+                    .help(BrewfileCommands.tapDisplay(e.name) + ", after you confirm")
             } else if !item.throughQueue {
                 Text("Terminal only").font(.system(size: 10.5)).foregroundStyle(.secondary)
             }

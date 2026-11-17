@@ -206,6 +206,7 @@ struct TankardApp: App {
             CommandMenu("Homebrew") {
                 HomebrewCommands(store: store)
                 HealthCommands(store: store)
+                TapsCommands(store: store)
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }

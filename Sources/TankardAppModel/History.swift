@@ -77,6 +77,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         case .uninstall: return "Uninstall again from the package's details; it asks first."
         case .cleanup: return "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first."
         case .install, .reinstall: return "Install again from Discover or the package's details."
+        case .taps: return "Run it again from Homebrew ▸ Taps…; it asks first."
         default: return nil
         }
     }
@@ -103,6 +104,8 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
 /// view's filter.
 public enum HistoryCategory: String, CaseIterable, Identifiable, Sendable {
     case install, upgrade, uninstall, reinstall, pin, services, cleanup, update, other
+    /// 0.7: tap, untap, trust, untrust.
+    case taps
     public var id: String { rawValue }
 
     public init(arguments: [String]) {
@@ -115,6 +118,7 @@ public enum HistoryCategory: String, CaseIterable, Identifiable, Sendable {
         case "services": self = .services
         case "cleanup", "autoremove": self = .cleanup
         case "update": self = .update
+        case "tap", "untap", "trust", "untrust": self = .taps
         default: self = .other
         }
     }
@@ -130,6 +134,7 @@ public enum HistoryCategory: String, CaseIterable, Identifiable, Sendable {
         case .cleanup: return "Clean up"
         case .update: return "Update"
         case .other: return "Other"
+        case .taps: return "Taps"
         }
     }
 }
@@ -158,7 +163,7 @@ public enum HistoryFilter: Hashable, Sendable, Identifiable {
     }
 
     public static let menu: [HistoryFilter] = [.all, .failed, .autoUpdate]
-        + [HistoryCategory.install, .upgrade, .uninstall, .reinstall, .pin, .services, .cleanup, .update].map { .category($0) }
+        + [HistoryCategory.install, .upgrade, .uninstall, .reinstall, .pin, .services, .cleanup, .update, .taps].map { .category($0) }
 
     public func includes(_ e: HistoryEntry) -> Bool {
         switch self {
