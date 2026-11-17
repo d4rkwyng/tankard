@@ -223,8 +223,8 @@ public final class ScriptContext {
     }
 
     /// A mid-step PNG (e.g. the finished activity sheet before Done).
-    public func snapshot(_ label: String) async {
-        await runner.snapshot(label: label)
+    public func snapshot(_ label: String, settle: Double = 0.7) async {
+        await runner.snapshot(label: label, settle: settle)
     }
 
     /// Polls `condition` until true; throws after `timeout` seconds.
@@ -323,9 +323,9 @@ public final class ScriptRunner {
         if !watched.contains(name) { watched.append(name) }
     }
 
-    func snapshot(label: String) async {
+    func snapshot(label: String, settle: Double = 0.7) async {
         // Let SwiftUI draw what just changed (a sheet appearing, a row).
-        try? await Task.sleep(for: .milliseconds(700))
+        try? await Task.sleep(for: .seconds(settle))
         let file = String(format: "%02d-%@%@.png", stepIndex, stepVerb, label.isEmpty ? "" : "-" + label)
         let path = outputDirectory.appendingPathComponent(file).path
         if await writeSnapshot(path) { stepSnapshots.append(file) }

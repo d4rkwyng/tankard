@@ -56,7 +56,10 @@ extension ScriptRunner {
             let line = session.statusLine(behindBrewUpdate: s.sessionWaitsForBrewUpdate)
             c.check("the update was still running", s.backgroundUpdating)
             c.check("the sheet says it waits for brew update", line == String(localized: "Waiting for brew update to finish…"), line)
-            await c.snapshot("waiting")
+            // A quick shot: an update with nothing new to fetch can end
+            // within a second. Whether it still showed the line is noted.
+            await c.snapshot("waiting", settle: 0.15)
+            c.check("waiting shot", true, s.sessionWaitsForBrewUpdate ? "taken while still waiting" : "the update had already ended")
             try await c.waitUntil("upgrade \(name) to finish", timeout: 900) { session.isFinished }
             try await c.settle()
             await c.snapshot("sheet")
