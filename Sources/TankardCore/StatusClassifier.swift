@@ -147,7 +147,9 @@ public struct StatusClassifier: Sendable {
             dependencies: c.dependsOn?.formula ?? [],
             caskDependencies: c.dependsOn?.cask ?? [],
             homepage: c.homepage,
-            caveats: c.caveats
+            caveats: c.caveats,
+            appPaths: c.appPaths,
+            quitBundleIDs: c.quitBundleIDs
         )
     }
 

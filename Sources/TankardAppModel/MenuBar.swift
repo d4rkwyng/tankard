@@ -50,6 +50,14 @@ public struct MenuBarSummary: Equatable, Sendable {
 
     /// The number next to the mug; nil (icon only) when there are none.
     public var badge: String? { count > 0 ? "\(count)" : nil }
+
+    /// 0.5: "Tankard 0.6.0 available" when brew lists an upgrade for
+    /// Tankard's own cask (the status read already has it). Tankard never
+    /// upgrades itself; that stays with brew.
+    public static func selfUpdateLine(_ packages: [Package]?) -> String? {
+        guard let p = packages?.first(where: { AutoUpdateSafeMode.isTankard($0) && $0.upgradeAvailable }) else { return nil }
+        return "Tankard \(p.currentVersion ?? "update") available"
+    }
 }
 
 /// Decides whether a background check should post a notification: only
@@ -260,17 +268,45 @@ public final class BackgroundChecker {
         loop = nil
     }
 
-    /// One step: runs a check if due. Returns seconds until the next look.
+    /// One step of the shared timer (0.3 notifications, 0.5 automatic
+    /// updates): runs whatever is due. Returns seconds until the next look.
+    /// With both off it just looks again in 5 minutes.
     @discardableResult
     public func tick() async -> TimeInterval {
-        guard settings.notifyNewUpgrades else { return 300 }
+        var waits: [TimeInterval] = []
+        if store.autoUpdate.settings.enabled {
+            let (wait, ran) = await autoUpdateStep()
+            // A run just did brew update and re-read: leave the notification
+            // check for the next tick rather than run brew update again.
+            if ran { return wait }
+            waits.append(wait)
+        }
+        if settings.notifyNewUpgrades { waits.append(await notificationStep()) }
+        return waits.min() ?? 300
+    }
+
+    /// The 0.3 check: due by its interval.
+    private func notificationStep() async -> TimeInterval {
         let schedule = BackgroundSchedule(intervalHours: settings.checkIntervalHours)
         let t = now()
         let next = schedule.nextCheck(lastCheck: settings.lastBackgroundCheck, launchedAt: launchedAt)
         guard next <= t else { return next.timeIntervalSince(t) }
-        guard !store.isUpgrading, !store.isRefreshing, !store.homebrewState.needsWelcome else { return BackgroundSchedule.busyRetry }
+        guard !store.isBusy, !store.isRefreshing, !store.homebrewState.needsWelcome else { return BackgroundSchedule.busyRetry }
         await runCheck()
         return schedule.interval
+    }
+
+    /// 0.5: an automatic update, when AutoUpdatePolicy says so.
+    private func autoUpdateStep() async -> (TimeInterval, Bool) {
+        let t = now()
+        switch store.autoUpdate.decide(store: store, launchedAt: launchedAt, now: t) {
+        case .off: return (300, false)
+        case .notDue(let next): return (max(5, next.timeIntervalSince(t)), false)
+        case .waiting(_, let retry): return (retry, false)
+        case .run:
+            await store.autoUpdate.run(store: store, notifier: notifier, now: { [now] in now() })
+            return (AutoUpdatePolicy.recheck, true)
+        }
     }
 
     /// `brew update` (through the queue), re-read, compare, maybe notify.

@@ -62,11 +62,36 @@ public enum Demo {
         }
 
         func info(_ variant: Variant, base: Data) -> Data {
-            Demo.applyPins(Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
+            Demo.addCaskApps(Demo.applyPins(Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
                                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 },
                                             replaced: replaced.withLock { $0 }),
-                           pinned: v04a.pinned.withLock { $0 }, variant: variant)
+                           pinned: v04a.pinned.withLock { $0 }, variant: variant))
         }
+    }
+
+    /// 0.5: the captured fixtures predate Tankard reading cask artifacts;
+    /// give each cask the app brew lists for it (as `brew info` prints
+    /// `artifacts`), so auto-update's running-app check has something to match.
+    static let demoCaskApps: [String: (app: String, bundleID: String)] = [
+        "google-chrome": ("Google Chrome.app", "com.google.Chrome"),
+        "iterm2": ("iTerm.app", "com.googlecode.iterm2"),
+        "lm-studio": ("LM Studio.app", "ai.elementlabs.lmstudio"),
+        "tailscale-app": ("Tailscale.app", "io.tailscale.ipn.macsys"),
+        "visual-studio-code": ("Visual Studio Code.app", "com.microsoft.VSCode"),
+    ]
+
+    static func addCaskApps(_ data: Data) -> Data {
+        guard var root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              var casks = root["casks"] as? [[String: Any]], !casks.isEmpty else { return data }
+        for i in casks.indices where casks[i]["artifacts"] == nil {
+            let token = casks[i]["token"] as? String ?? ""
+            let name = (casks[i]["name"] as? [String])?.first ?? token
+            let app = demoCaskApps[token] ?? (name + ".app", "com.example." + token)
+            casks[i]["artifacts"] = [["app": [app.app], "target": "/Applications/" + app.app],
+                                     ["uninstall": [["quit": app.bundleID]]]]
+        }
+        root["casks"] = casks
+        return (try? JSONSerialization.data(withJSONObject: root)) ?? data
     }
 
     /// The welcome screen with no brew found, on the given Mac.

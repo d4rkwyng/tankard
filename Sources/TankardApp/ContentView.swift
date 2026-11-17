@@ -85,6 +85,16 @@ struct ContentView: View {
                     .frame(width: 460)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
+            case "settings-autoupdate":
+                // 0.5: Settings → Upgrades with its Automatic updates section.
+                return AnyView(UpgradeSettings(settings: store.insights.settings, autoUpdater: store.autoUpdate, appSettings: store.settings)
+                    .frame(width: 460)
+                    .themed(theme)
+                    .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
+            case "autoupdate-log":
+                return AnyView(AutoUpdateLogView(log: store.autoUpdate.log)
+                    .themed(theme)
+                    .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "settings-upgrades":
                 return AnyView(UpgradeSettings(settings: store.insights.settings)
                     .frame(width: 460)
@@ -136,6 +146,9 @@ struct ContentView: View {
         .sheet(item: $store.managementSheet) { kind in
             HomebrewManagementSheet(store: store, kind: kind, isDemo: options.isDemo).themed(theme)
         }
+        .sheet(isPresented: $store.showAutoUpdateLog) {
+            AutoUpdateLogView(log: store.autoUpdate.log) { store.showAutoUpdateLog = false }.themed(theme)
+        }
         .sheet(item: Bindable(store.insights).postInstallNotes) { n in
             PostInstallNotesSheet(notes: n) { store.insights.postInstallNotes = nil }.themed(theme)
         }
@@ -181,6 +194,9 @@ struct ContentView: View {
                 try? await Task.sleep(for: .seconds(delay))
                 if let p = store.packages.first(where: { $0.name == name }) { store.selection = p.id }
             }
+        }
+        if options.demo != nil, let mode = options.demoAutoUpdate {
+            await AutoUpdateDemo.apply(mode, store: store)
         }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()

@@ -68,6 +68,8 @@ public final class AppStore {
         public var buildTimes: BuildTimeSource?
         /// 0.4: where the vulnerability scan and sizes are cached (nil: memory only).
         public var insightsCache: InsightsCache?
+        /// 0.5: the Auto-update log file (nil: memory only).
+        public var autoUpdateLogURL: URL?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -108,6 +110,7 @@ public final class AppStore {
             )
             d.appManagementGate = true
             d.insightsCache = InsightsCache(url: InsightsCache.defaultURL)
+            d.autoUpdateLogURL = AutoUpdateLog.defaultURL
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -148,6 +151,8 @@ public final class AppStore {
     public internal(set) var services: ServicesStore?
     /// 0.4a: the Homebrew menu's sheet (revert to standard Homebrew, uninstall).
     public var managementSheet: HomebrewManagement.Kind?
+    /// 0.5: the Auto-update log sheet on the main window.
+    public var showAutoUpdateLog = false
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -160,6 +165,8 @@ public final class AppStore {
     @ObservationIgnored public let settings: AppSettings
     /// 0.4: vulnerabilities, sizes, caveats' notes, self-updating apps.
     @ObservationIgnored public let insights: InsightsStore
+    /// 0.5: automatic updates (settings, log, the run itself).
+    @ObservationIgnored public let autoUpdate: AutoUpdater
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
@@ -169,6 +176,8 @@ public final class AppStore {
         self.settings = settings ?? AppSettings.ephemeral()
         self.insights = InsightsStore(settings: InsightSettings(defaults: self.settings.defaults),
                                       cache: deps.insightsCache, ttl: deps.ttl, now: deps.now)
+        self.autoUpdate = AutoUpdater(settings: AutoUpdateSettings(defaults: self.settings.defaults, now: deps.now),
+                                      log: AutoUpdateLog(url: deps.autoUpdateLogURL))
         wireInsights()
     }
 
@@ -541,7 +550,8 @@ public final class AppStore {
 
     /// One sheet run of `action` over `targets`, each a queued command.
     func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false) {
-        guard !isUpgrading, let client = try? resolvedClient() else { return }
+        // 0.5: an automatic run has the queue; its commands go first.
+        guard !isUpgrading, !autoUpdate.isRunning, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
         if deps.appManagementGate, !skipGate, !isRetry, !settings.appManagementExplained,
            targets.contains(where: { AppManagement.modifiesApps(action, $0) }) {

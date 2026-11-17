@@ -327,7 +327,7 @@ for Return; nothing runs inside the app. Demo mode opens nothing.
 
 ## About and Help
 
-Tankard → About Tankard shows "Version 0.4.0" (no build number), "Made by d4rkwyng", links
+Tankard → About Tankard shows "Version 0.5.0" (no build number), "Made by d4rkwyng", links
 to the project and to Intelbrew (in Intelbrew mode, "Intelbrew bottles from
 d4rkwyng/intelbrew"), the licence, and that Tankard is an independent app for
 [Homebrew](https://brew.sh), not affiliated with or endorsed by the Homebrew project. The

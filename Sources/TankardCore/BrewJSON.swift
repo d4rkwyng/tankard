@@ -184,6 +184,13 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var dependsOn: DependsOn?
         /// 0.4: the cask's caveats, as text.
         public var caveats: String?
+        /// 0.5: the apps the cask installs (`artifacts` → `app`: the
+        /// target path brew gives, e.g. "/Applications/Cursor.app"), and
+        /// the bundle ids its `uninstall` stanza quits. Auto-update uses
+        /// them to tell whether the app is running. Empty when the cask
+        /// lists none (fonts, CLI tools); nil when brew gave no artifacts.
+        public var appPaths: [String]?
+        public var quitBundleIDs: [String]?
 
         /// The parts of `depends_on` Tankard reads: other packages.
         public struct DependsOn: Decodable, Sendable {
@@ -210,7 +217,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         }
 
         enum CodingKeys: String, CodingKey {
-            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage, caveats
+            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage, caveats, artifacts
             case dependsOn = "depends_on"
             case fullToken = "full_token"
             case installedTime = "installed_time"
@@ -235,6 +242,70 @@ public struct BrewInfoJSON: Decodable, Sendable {
             homepage = try? c.decodeIfPresent(String.self, forKey: .homepage)
             dependsOn = try? c.decodeIfPresent(DependsOn.self, forKey: .dependsOn)
             caveats = Formula.nonEmpty(try? c.decodeIfPresent(String.self, forKey: .caveats))
+            if let list = try? c.decodeIfPresent([Artifact].self, forKey: .artifacts) {
+                appPaths = list.flatMap(\.appPaths)
+                quitBundleIDs = list.flatMap(\.quit)
+            }
+        }
+
+        /// One entry of `artifacts`: an object with one stanza key ("app",
+        /// "binary", "uninstall", "zap", …) and sometimes "target". Only
+        /// `app` and `uninstall`'s `quit` are read; anything else, or any
+        /// shape not expected here, is ignored rather than failing the cask.
+        struct Artifact: Decodable {
+            var appPaths: [String] = []
+            var quit: [String] = []
+
+            struct Key: CodingKey {
+                var stringValue: String
+                var intValue: Int? { nil }
+                init(stringValue: String) { self.stringValue = stringValue }
+                init?(intValue: Int) { nil }
+            }
+
+            /// `"app": ["Foo.app"]` or `["Foo.app", {"target": "Bar.app"}]`.
+            struct AppItem: Decodable {
+                var name: String?
+                var target: String?
+                init(from decoder: Decoder) throws {
+                    if let s = try? decoder.singleValueContainer().decode(String.self) {
+                        name = s
+                    } else if let c = try? decoder.container(keyedBy: Key.self) {
+                        target = try? c.decodeIfPresent(String.self, forKey: Key(stringValue: "target"))
+                    }
+                }
+            }
+
+            /// `"uninstall": [{"quit": "com.example.app"}]` (a string or a list).
+            struct Uninstall: Decodable {
+                var quit: [String] = []
+                init(from decoder: Decoder) throws {
+                    guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                    let k = Key(stringValue: "quit")
+                    if let a = try? c.decodeIfPresent([String].self, forKey: k) { quit = a }
+                    else if let s = try? c.decodeIfPresent(String.self, forKey: k) { quit = [s] }
+                }
+            }
+
+            init(from decoder: Decoder) throws {
+                guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                if let items = try? c.decodeIfPresent([AppItem].self, forKey: Key(stringValue: "app")) {
+                    // brew writes the installed path as "target"; a renamed
+                    // app's item carries its own target name.
+                    let top = try? c.decodeIfPresent(String.self, forKey: Key(stringValue: "target"))
+                    if let top {
+                        appPaths = [top]
+                    } else {
+                        // A renamed app: the target is its installed name.
+                        let targets = items.compactMap(\.target)
+                        appPaths = (targets.isEmpty ? items.compactMap(\.name) : targets)
+                            .map { $0.hasPrefix("/") ? $0 : "/Applications/" + $0 }
+                    }
+                }
+                if let u = try? c.decodeIfPresent([Uninstall].self, forKey: Key(stringValue: "uninstall")) {
+                    quit = u.flatMap(\.quit)
+                }
+            }
         }
     }
 }

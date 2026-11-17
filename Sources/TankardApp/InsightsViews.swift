@@ -366,9 +366,20 @@ struct PostInstallNotesSheet: View {
 /// Settings → Upgrades: self-updating apps, quitting apps, vulnerabilities.
 struct UpgradeSettings: View {
     @Bindable var settings: InsightSettings
+    /// 0.5: the Automatic updates section (nil: not shown).
+    var autoUpdater: AutoUpdater? = nil
+    var notifier: SystemNotifier? = nil
+    var appSettings: AppSettings? = nil
+    private let showLog = State(initialValue: false)
 
     var body: some View {
         Form {
+            if let autoUpdater {
+                AutoUpdateSettingsSection(updater: autoUpdater, notifier: notifier, appSettings: appSettings) {
+                    showLog.wrappedValue = true
+                }
+                Divider().padding(.vertical, 4)
+            }
             Toggle("Include self-updating apps", isOn: $settings.includeSelfUpdatingApps)
             Text("Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -390,6 +401,11 @@ struct UpgradeSettings: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(20)
+        .sheet(isPresented: showLog.projectedValue) {
+            if let autoUpdater {
+                AutoUpdateLogView(log: autoUpdater.log) { showLog.wrappedValue = false }
+            }
+        }
     }
 }
 

@@ -11,6 +11,8 @@ import TankardCore
 struct MenuBarContent: View {
     @Bindable var store: AppStore
     var openMain: () -> Void
+    /// 0.5: the "Last auto-update" line opens the log.
+    var openAutoUpdateLog: () -> Void = {}
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -63,6 +65,7 @@ struct MenuBarContent: View {
             }
 
             VulnerabilityMenuNotice(store: store, openMain: openMain)
+            AutoUpdateMenuLine(store: store, openLog: openAutoUpdateLog)
 
             Divider()
             VStack(alignment: .leading, spacing: 1) {

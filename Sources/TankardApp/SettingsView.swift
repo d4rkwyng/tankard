@@ -9,14 +9,17 @@ struct SettingsView: View {
     var loginItem: LoginItem
     /// 0.4: Settings → Upgrades.
     var insightSettings: InsightSettings?
+    /// 0.5: Settings → Upgrades → Automatic updates.
+    var autoUpdater: AutoUpdater?
     private let tab: State<String>
 
     /// `initialTab`: which tab shows first ("general", "appearance"; snapshots).
     init(appearance: AppearanceSettings, settings: AppSettings, notifier: SystemNotifier, loginItem: LoginItem,
-         insightSettings: InsightSettings? = nil, initialTab: String = "general") {
+         insightSettings: InsightSettings? = nil, autoUpdater: AutoUpdater? = nil, initialTab: String = "general") {
         self.appearance = appearance
         self.settings = settings
         self.insightSettings = insightSettings
+        self.autoUpdater = autoUpdater
         self.notifier = notifier
         self.loginItem = loginItem
         tab = State(initialValue: initialTab)
@@ -28,7 +31,7 @@ struct SettingsView: View {
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag("general")
             if let insightSettings {
-                UpgradeSettings(settings: insightSettings)
+                UpgradeSettings(settings: insightSettings, autoUpdater: autoUpdater, notifier: notifier, appSettings: settings)
                     .tabItem { Label("Upgrades", systemImage: "arrow.up.circle") }
                     .tag("upgrades")
             }

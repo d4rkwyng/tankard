@@ -110,6 +110,11 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// updates itself, or is `version :latest`). Filled in by the app when
     /// "Include self-updating apps" is on.
     public var selfUpdatingUpgrade: Bool? = nil
+    /// 0.5, casks: where its apps are installed ("/Applications/Cursor.app")
+    /// and the bundle ids it quits on uninstall, from `brew info`'s
+    /// artifacts. nil for formulae and in reports written before 0.5.
+    public var appPaths: [String]? = nil
+    public var quitBundleIDs: [String]? = nil
 
     public var isDependency: Bool { !requested }
 

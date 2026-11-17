@@ -56,6 +56,9 @@ struct LaunchOptions {
     var demoVulnNotice = false
     /// 0.4, demo only: TANKARD_SELF_UPDATING=1 turns "Include self-updating apps" on.
     var demoSelfUpdating = false
+    /// 0.5, demo only: TANKARD_DEMO_AUTOUPDATE=1 turns auto-update on with
+    /// sample runs in its log; =run also runs it once through the fake brew.
+    var demoAutoUpdate: String?
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -79,6 +82,7 @@ struct LaunchOptions {
             o.demoNotes = env["TANKARD_DEMO_NOTES"] == "1"
             o.demoVulnNotice = env["TANKARD_DEMO_VULN_NOTICE"] == "1"
             o.demoSelfUpdating = env["TANKARD_SELF_UPDATING"] == "1"
+            o.demoAutoUpdate = env["TANKARD_DEMO_AUTOUPDATE"].flatMap { $0.isEmpty || $0 == "0" ? nil : $0.lowercased() }
         }
         switch env["TANKARD_FILTER"]?.lowercased() {
         case "upgrades": o.filter = .upgrades
@@ -153,6 +157,9 @@ struct TankardApp: App {
         self.settings = settings
         store = AppStore(deps: deps, settings: settings)
         if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
+        // 0.5: the real power, idle and running-app checks. Demo runs keep
+        // the default (never on AC), so nothing runs unless asked for.
+        if !options.isDemo && options.snapshot == nil { store.autoUpdate.conditions = SystemConditions() }
         appearance = AppearanceSettings(override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
@@ -207,7 +214,7 @@ struct TankardApp: App {
 
         Settings {
             SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem,
-                         insightSettings: store.insights.settings)
+                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate)
         }
     }
 }
@@ -267,7 +274,10 @@ struct MenuBarPanel: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        MenuBarContent(store: store, openMain: openMain)
+        MenuBarContent(store: store, openMain: openMain, openAutoUpdateLog: {
+            openMain()
+            store.showAutoUpdateLog = true
+        })
             .themed(Theme.of(appearance.theme))
     }
 
