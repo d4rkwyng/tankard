@@ -179,11 +179,18 @@ struct V061ScanProgressTests {
 
 struct V061SettingsHelpTests {
     @Test func everyExplanationHasText() {
-        #expect(SettingsHelp.all.count == 12)  // 0.8: + backgroundUpdate
+        #expect(SettingsHelp.all.count == 13)  // 0.8: + backgroundUpdate, keepPreviousVersion (its ⓘ)
         for text in SettingsHelp.all {
             #expect(text.trimmingCharacters(in: .whitespacesAndNewlines).count > 20)
         }
         #expect(SettingsHelp.scanOnRefresh.contains(InsightSettings.scanPrivacyNote))
         #expect(SettingsHelp.safeMode.hasPrefix("Safe mode (always on):"))
+    }
+
+    /// Keep the previous version's ⓘ: the text its tooltip had in 0.7, with
+    /// the env var it sets.
+    @Test func keepPreviousVersionExplainsTheEnvVar() {
+        #expect(SettingsHelp.keepPreviousVersion.hasPrefix("Off by default."))
+        #expect(SettingsHelp.keepPreviousVersion.contains(RollbackSettings.noInstallCleanupKey))
     }
 }

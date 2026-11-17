@@ -206,6 +206,7 @@
 "Auto-update log" = "自動アップデートのログ";
 "Auto-update: brew update" = "自動アップデート: brew update";
 "Auto-update: upgrading %@" = "自動アップデート: %@ をアップグレード中";
+"Automatic updates" = "自動アップデート";
 "Automatically upgrade:" = "自動的にアップグレード:";
 "Available" = "利用可能";
 "BSD-2-Clause licence" = "BSD-2-Clauseライセンス";
@@ -908,6 +909,7 @@
 "Version %@" = "バージョン%@";
 "Version %@ is skipped" = "バージョン%@はスキップされています";
 "View" = "表示";
+"Vulnerability scan" = "脆弱性スキャン";
 "Vulnerable" = "脆弱性あり";
 "Vulnerable: %@" = "脆弱性あり: %@";
 "Wait for the running brew to finish" = "実行中のbrewが終了するのを待つ";
@@ -917,6 +919,7 @@
 "What brew printed" = "brewの出力";
 "What installing the missing items would do, before anything runs" = "不足している項目をインストールした場合の内容（何も実行される前に確認）";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "このリストの作成後に、インストール済みの内容が変わりました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。";
+"When upgrading" = "アップグレード時";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrewがformulaとcaskを取得する場所です。tapをクリックすると、そこからインストールしたものが表示されます。";
 "Who updates %@" = "%@ のアップデート担当";
 "With the dependencies nothing else needs" = "ほかに必要とされていない依存関係も含みます";

@@ -35,14 +35,12 @@ struct AutoUpdateRulesRows: View {
     @Bindable var rules: UpgradeRulesSettings
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ExplainedRow(help: SettingsHelp.bumpRule) {
-                Picker("Automatically upgrade:", selection: $rules.bumpRule) {
-                    ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
-                }
-                .fixedSize()
+        // Snooze sits with the log button (Settings → Upgrades).
+        ExplainedRow(help: SettingsHelp.bumpRule) {
+            Picker("Automatically upgrade:", selection: $rules.bumpRule) {
+                ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
             }
-            AutoUpdateSnoozeControl(rules: rules)
+            .fixedSize()
         }
     }
 }

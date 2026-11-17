@@ -76,8 +76,15 @@ struct ContentView: View {
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "settings":
-                // The General tab's content (an off-screen TabView draws no tab bar).
-                return AnyView(GeneralSettings(settings: store.settings, notifier: SystemNotifier(), loginItem: LoginItem())
+                // A Settings tab's content (an off-screen TabView draws no tab
+                // bar): General, or TANKARD_SETTINGS_TAB=upgrades for the whole
+                // Upgrades tab as the Settings window shows it.
+                let content: AnyView = ProcessInfo.processInfo.environment["TANKARD_SETTINGS_TAB"] == "upgrades"
+                    ? AnyView(UpgradeSettings(settings: store.insights.settings, autoUpdater: store.autoUpdate, notifier: SystemNotifier(),
+                                              appSettings: store.settings, rollbackSettings: store.restorePoints.settings, store: store))
+                    : AnyView(GeneralSettings(settings: store.settings, notifier: SystemNotifier(), loginItem: LoginItem(),
+                                              backgroundUpdateOptOut: store.backgroundUpdateOptOut))
+                return AnyView(content
                     .frame(width: 460)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))

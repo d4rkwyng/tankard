@@ -18,6 +18,8 @@ public enum SettingsHelp {
     public static let includeSelfUpdatingApps = String(localized: "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
     public static let dontQuitApps = String(localized: "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
     public static let scanOnRefresh = String(localized: "Runs brew vulns after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default.")
+    /// 0.7: Keep the previous version after upgrades.
+    public static let keepPreviousVersion = String(localized: "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.")
     public static let notifyNewVulnerabilities = String(localized: "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.")
 
     // Upgrades → Automatic updates
@@ -28,7 +30,7 @@ public enum SettingsHelp {
     /// Every explanation (tests: none is empty).
     public static var all: [String] {
         [showMenuBarIcon, backgroundUpdate, notifyNewUpgrades, checkInterval, openAtLogin,
-         includeSelfUpdatingApps, dontQuitApps, scanOnRefresh, notifyNewVulnerabilities,
+         includeSelfUpdatingApps, dontQuitApps, keepPreviousVersion, scanOnRefresh, notifyNewVulnerabilities,
          autoUpgrade, safeMode, bumpRule]
     }
 }

@@ -75,31 +75,41 @@ struct AutoUpdateSettingsSection: View {
                         }
                     }))
             }
-            AutoUpdateScheduleRow(settings: settings)
-                .disabled(!settings.enabled)
-            AutoUpdateRulesRows(rules: updater.rules)
-                .disabled(!settings.enabled)
-            Text(statusLine(settings))
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-            if appSettings?.showMenuBarIcon == false {
-                Text("The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.")
-                    .font(.system(size: 11)).foregroundStyle(.orange)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            // One short line; the full safe-mode rules are in the tooltip.
-            ExplainedRow(help: SettingsHelp.safeMode) {
-                Text("Safe mode: bottles only; skips pinned packages and running apps.")
+            // Everything below belongs to the checkbox: indented under its title.
+            VStack(alignment: .leading, spacing: 8) {
+                AutoUpdateScheduleRow(settings: settings)
+                    .disabled(!settings.enabled)
+                AutoUpdateRulesRows(rules: updater.rules)
+                    .disabled(!settings.enabled)
+                Text(statusLine(settings))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
-            }
-            if let note = notificationNote.wrappedValue {
-                Text(note).font(.system(size: 11)).foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
+                if appSettings?.showMenuBarIcon == false {
+                    Text("The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.")
+                        .font(.system(size: 11)).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                // One short line; the full safe-mode rules are in the ⓘ.
+                ExplainedRow(help: SettingsHelp.safeMode) {
+                    Text("Safe mode: bottles only; skips pinned packages and running apps.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                if let note = notificationNote.wrappedValue {
+                    Text(note).font(.system(size: 11)).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let line = AutoUpdateText.lastLine(updater.log.latest, now: Date()) {
+                    Text(line).font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                HStack(spacing: 8) {
+                    Button("Show Auto-update Log…", action: showLog)
+                        .controlSize(.small)
+                    AutoUpdateSnoozeControl(rules: updater.rules)
+                        .disabled(!settings.enabled)
+                }
             }
-            if let line = AutoUpdateText.lastLine(updater.log.latest, now: Date()) {
-                Text(line).font(.system(size: 11)).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Button("Show Auto-update Log…", action: showLog)
+            .padding(.leading, SettingsNote.indent)
         }
     }
 

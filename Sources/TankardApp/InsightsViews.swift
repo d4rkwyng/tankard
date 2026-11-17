@@ -185,8 +185,9 @@ struct ExplainedRow<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
             content.help(help)
+                .fixedSize(horizontal: false, vertical: true)
             InfoButton(text: help)
         }
     }
@@ -446,62 +447,100 @@ struct UpgradeSettings: View {
     private let showLog = State(initialValue: false)
 
     var body: some View {
-        Form {
-            if let autoUpdater {
-                AutoUpdateSettingsSection(updater: autoUpdater, notifier: notifier, appSettings: appSettings) {
-                    showLog.wrappedValue = true
-                }
-                Divider().padding(.vertical, 4)
-            }
+        VStack(alignment: .leading, spacing: 8) {
+            SettingsSectionHeader("When upgrading")
             ExplainedRow(help: SettingsHelp.includeSelfUpdatingApps) {
                 Toggle("Include self-updating apps", isOn: $settings.includeSelfUpdatingApps)
             }
-
-            Divider().padding(.vertical, 4)
-
             ExplainedRow(help: SettingsHelp.dontQuitApps) {
                 Toggle("Don't quit running apps during upgrades", isOn: $settings.dontQuitAppsDuringUpgrade)
             }
-
             if let rollbackSettings {
                 KeepPreviousVersionToggle(settings: rollbackSettings)
             }
 
-            Divider().padding(.vertical, 4)
-
-            HStack(spacing: 6) {
-                Toggle("Scan for vulnerabilities when refreshing", isOn: $settings.scanVulnerabilitiesOnRefresh)
-                    .help(SettingsHelp.scanOnRefresh)
-                InfoButton(text: SettingsHelp.scanOnRefresh)
-                if let store {
-                    Spacer(minLength: 8)
-                    Button("Scan Now") { store.scanVulnerabilitiesNow() }
-                        .controlSize(.small)
-                        .disabled(store.insights.scanState == .running || store.report == nil)
-                        .help("Runs brew vulns once now. " + InsightSettings.scanPrivacyNote)
+            if let autoUpdater {
+                SettingsSectionDivider()
+                SettingsSectionHeader("Automatic updates")
+                AutoUpdateSettingsSection(updater: autoUpdater, notifier: notifier, appSettings: appSettings) {
+                    showLog.wrappedValue = true
                 }
             }
-            Text(InsightSettings.scanPrivacyNote)
-                .font(.system(size: 11)).foregroundStyle(.secondary)
+
+            SettingsSectionDivider()
+            SettingsSectionHeader("Vulnerability scan")
+            ExplainedRow(help: SettingsHelp.scanOnRefresh) {
+                Toggle("Scan for vulnerabilities when refreshing", isOn: $settings.scanVulnerabilitiesOnRefresh)
+            }
+            SettingsNote(InsightSettings.scanPrivacyNote)
             if let store {
-                ScanProgressView(store: store)
-                if store.insights.scanState != .running, store.insights.scanOutcome == nil,
-                   let scan = store.insights.vulnerabilityScan {
-                    Text("Vulnerabilities: " + VulnerabilityText.scanLine(scan))
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                        .help(scan.partialReason ?? "")
+                HStack(spacing: 8) {
+                    if store.insights.scanState != .running {
+                        Button("Scan Now") { store.scanVulnerabilitiesNow() }
+                            .controlSize(.small)
+                            .disabled(store.report == nil)
+                            .help("Runs brew vulns once now. " + InsightSettings.scanPrivacyNote)
+                    }
+                    ScanProgressView(store: store)
+                    if store.insights.scanState != .running, store.insights.scanOutcome == nil,
+                       let scan = store.insights.vulnerabilityScan {
+                        Text("Vulnerabilities: " + VulnerabilityText.scanLine(scan))
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .help(scan.partialReason ?? "")
+                    }
                 }
+                .padding(.leading, SettingsNote.indent)
             }
             ExplainedRow(help: SettingsHelp.notifyNewVulnerabilities) {
                 Toggle("Show new vulnerabilities in the menu bar", isOn: $settings.notifyNewVulnerabilities)
             }
         }
         .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(isPresented: showLog.projectedValue) {
             if let autoUpdater {
                 AutoUpdateLogView(log: autoUpdater.log) { showLog.wrappedValue = false }
             }
         }
+    }
+}
+
+/// A Settings section's title ("Automatic updates").
+struct SettingsSectionHeader: View {
+    var title: LocalizedStringKey
+    init(_ title: LocalizedStringKey) { self.title = title }
+
+    var body: some View {
+        Text(title)
+            .font(.system(size: 13, weight: .semibold))
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// The line between two Settings sections.
+struct SettingsSectionDivider: View {
+    var body: some View { Divider().padding(.vertical, 6) }
+}
+
+/// A setting's small note, under its checkbox and lined up with the
+/// checkbox's title. Wraps rather than truncating (German).
+struct SettingsNote: View {
+    /// A checkbox's width plus its gap: where its title starts.
+    static let indent: CGFloat = 20
+    var text: String
+    var color: Color = .secondary
+    init(_ text: String, color: Color = .secondary) {
+        self.text = text
+        self.color = color
+    }
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 11))
+            .foregroundStyle(color)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.leading, Self.indent)
     }
 }
 

@@ -206,6 +206,7 @@
 "Auto-update log" = "Auto-Update-Protokoll";
 "Auto-update: brew update" = "Auto-Update: brew update";
 "Auto-update: upgrading %@" = "Auto-Update: %@ wird aktualisiert";
+"Automatic updates" = "Automatische Updates";
 "Automatically upgrade:" = "Automatisch aktualisieren:";
 "Available" = "Verfügbar";
 "BSD-2-Clause licence" = "BSD-2-Clause-Lizenz";
@@ -908,6 +909,7 @@
 "Version %@" = "Version %@";
 "Version %@ is skipped" = "Version %@ wird übersprungen";
 "View" = "Darstellung";
+"Vulnerability scan" = "Schwachstellen-Scan";
 "Vulnerable" = "Verwundbar";
 "Vulnerable: %@" = "Verwundbar: %@";
 "Wait for the running brew to finish" = "Auf das Ende des laufenden brew warten";
@@ -917,6 +919,7 @@
 "What brew printed" = "Ausgabe von brew";
 "What installing the missing items would do, before anything runs" = "Was die Installation der fehlenden Objekte bewirken würde, bevor etwas läuft";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "Was installiert ist, hat sich seit dem Erstellen dieser Liste geändert. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“.";
+"When upgrading" = "Beim Upgrade";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Woher Homebrew Formulae und Casks bezieht. Klicke auf einen Tap, um zu sehen, was du daraus installiert hast.";
 "Who updates %@" = "Wer %@ aktualisiert";
 "With the dependencies nothing else needs" = "Samt nicht mehr benötigter Abhängigkeiten";
