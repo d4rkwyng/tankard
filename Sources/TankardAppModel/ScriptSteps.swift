@@ -445,23 +445,41 @@ extension ScriptContext {
         }
     }
 
-    /// Command lines of running processes that contain `text` (not this one's).
+    /// Command lines of this app's descendant processes that contain
+    /// `text`. Only descendants: another run's (or the user's own) brew on
+    /// the same Mac isn't this run's leftover. e2e.sh checks for orphans
+    /// after the app quit (the pids it saw under the app).
     nonisolated static func processes(matching text: String) -> [String] {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: "/bin/ps")
-        p.arguments = ["-axww", "-o", "pid=,command="]
+        p.arguments = ["-axww", "-o", "pid=,ppid=,command="]
         let pipe = Pipe()
         p.standardOutput = pipe
         do { try p.run() } catch { return ["ps failed: \(error)"] }
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         p.waitUntilExit()
-        let me = ProcessInfo.processInfo.processIdentifier
-        return String(decoding: data, as: UTF8.self).split(separator: "\n").compactMap { line in
-            let l = line.trimmingCharacters(in: .whitespaces)
-            guard l.contains(text) else { return nil }
-            let pid = Int32(l.split(separator: " ").first ?? "") ?? 0
-            guard pid != me, pid != p.processIdentifier else { return nil }
-            return l
+        return processes(matching: text, psOutput: String(decoding: data, as: UTF8.self),
+                         root: ProcessInfo.processInfo.processIdentifier, excluding: [p.processIdentifier])
+    }
+
+    /// `ps -o pid=,ppid=,command=` lines: those under `root` (not root
+    /// itself) whose command contains `text`, as "pid command".
+    nonisolated static func processes(matching text: String, psOutput: String, root: Int32, excluding: Set<Int32> = []) -> [String] {
+        var rows: [(pid: Int32, ppid: Int32, command: String)] = []
+        for line in psOutput.split(separator: "\n") {
+            let f = line.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
+            guard f.count == 3, let pid = Int32(f[0]), let ppid = Int32(f[1]) else { continue }
+            rows.append((pid, ppid, String(f[2])))
         }
+        var children: [Int32: [Int32]] = [:]
+        for r in rows { children[r.ppid, default: []].append(r.pid) }
+        var under = Set<Int32>()
+        var stack = children[root] ?? []
+        while let pid = stack.popLast() {
+            guard under.insert(pid).inserted else { continue }
+            stack += children[pid] ?? []
+        }
+        return rows.filter { under.contains($0.pid) && !excluding.contains($0.pid) && $0.command.contains(text) }
+            .map { "\($0.pid) \($0.command)" }
     }
 }

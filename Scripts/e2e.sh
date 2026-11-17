@@ -181,7 +181,12 @@ run_phase() {
     env "$@" TANKARD_E2E=1 TANKARD_E2E_SUITE="$SUITE" TANKARD_SCRIPT="$dir/steps.txt" TANKARD_SCRIPT_OUT="$dir" \
         TANKARD_E2E_STATE="$OUT/$sc/state" "$BIN" -ApplePersistenceIgnoreState YES >"$dir/app.log" 2>&1 &
     local pid=$! waited=0
-    while kill -0 "$pid" 2>/dev/null && [ $waited -lt "$PHASE_TIMEOUT" ]; do sleep 2; waited=$((waited + 2)); done
+    while kill -0 "$pid" 2>/dev/null && [ $waited -lt "$PHASE_TIMEOUT" ]; do
+        # WATCH_RE: note this app's own matching descendants (security's
+        # leftover check after quit looks only at these pids).
+        [ -n "${WATCH_RE:-}" ] && descendants_matching "$pid" "$WATCH_RE" >> "$dir/watched-procs.txt"
+        sleep 1; waited=$((waited + 1))
+    done
     if kill -0 "$pid" 2>/dev/null; then
         kill "$pid" 2>/dev/null; sleep 2; kill -9 "$pid" 2>/dev/null
         wait "$pid" 2>/dev/null
@@ -218,7 +223,30 @@ autoremove_clean() {
     fi
 }
 
-vulns_procs() { ps -axww -o pid=,command= | grep -E 'brew(\.rb)?[^|]* vulns' | grep -v grep || true; }
+VULNS_RE='brew(\.rb)?[^|]* vulns'
+vulns_procs() { ps -axww -o pid=,command= | grep -E "$VULNS_RE" | grep -v grep || true; }
+
+# "pid command" of ROOT's descendants whose command matches the ERE.
+descendants_matching() { # root regex
+    ps -axww -o pid=,ppid=,command= | awk -v root="$1" -v re="$2" '
+        { pid = $1; par[pid] = $2; $1 = ""; $2 = ""; sub(/^ +/, ""); cmd[pid] = $0 }
+        END {
+            for (p in par) {
+                q = par[p]; n = 0
+                while (q != root && (q in par) && q > 1 && n < 64) { q = par[q]; n++ }
+                if (q == root && cmd[p] ~ re && cmd[p] !~ /awk -v root/) print p, cmd[p]
+            }
+        }'
+}
+
+# Of the pids noted in FILE, those still running a matching command.
+still_running() { # file regex
+    [ -f "$1" ] || return 0
+    local p
+    for p in $(cut -d' ' -f1 "$1" | sort -u); do
+        ps -p "$p" -o pid=,command= 2>/dev/null | grep -E "$2" || true
+    done
+}
 
 # MARK: scenarios
 
@@ -341,8 +369,8 @@ scenario_security() {
     fresh_state security
     local before
     before=$(vulns_procs)
-    [ -n "$before" ] && echo "    note: brew vulns already running before the test: $before" >&2
-    run_phase security 1-scan <<'STEPS'
+    [ -n "$before" ] && echo "    note: brew vulns already running before the test (not ours, not counted): $before" >&2
+    WATCH_RE=$VULNS_RE run_phase security 1-scan <<'STEPS'
 expect-ready
 scan-vulns
 expect no-process " vulns --json"
@@ -354,10 +382,16 @@ scan-vulns
 expect no-process " vulns --json"
 STEPS
     sleep 3
-    local after
-    after=$(vulns_procs)
-    if [ -n "$after" ]; then record "security/after-quit: FAIL (brew vulns still running: $after)"
-    else record "security/after-quit: PASS (no brew vulns process left)"; fi
+    # Only the scans this run's app started (seen under its pid while it
+    # ran): another run's or the user's own `brew vulns` isn't ours.
+    local f="$OUT/security/1-scan/watched-procs.txt" after seen=0 others
+    [ -f "$f" ] && seen=$(cut -d' ' -f1 "$f" | sort -u | wc -l | tr -d ' ')
+    after=$(still_running "$f" "$VULNS_RE")
+    if [ -n "$after" ]; then record "security/after-quit: FAIL (the app's brew vulns still running: $after)"
+    elif [ "$seen" = 0 ]; then record "security/after-quit: FAIL (no brew vulns process seen under the app: did the scans run?)"
+    else record "security/after-quit: PASS (none of the app's $seen brew vulns processes left)"; fi
+    others=$(vulns_procs)
+    [ -n "$others" ] && echo "    note: other brew vulns processes on this Mac (not this run's): $others" >&2
 }
 
 scenario_settings() {
