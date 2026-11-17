@@ -222,8 +222,12 @@ public enum CatalogSearch {
     /// a bottle for this Mac come before unknown ones, and those before
     /// formulae that compile. `bottledOnly` drops formulae known to compile
     /// (unknown ones and casks stay).
+    /// `popularity` (0.8, id → 30-day installs): within the same tier (and
+    /// bottle rank), more installs first, before the name-length tie-break.
+    /// Packages without a count rank as 0.
     public static func search(_ query: String, in entries: [CatalogEntry], kind: CatalogKindFilter = .all,
-                              limit: Int = 200, preferBottled: Bool = false, bottledOnly: Bool = false) -> [CatalogEntry] {
+                              limit: Int = 200, preferBottled: Bool = false, bottledOnly: Bool = false,
+                              popularity: [String: Int] = [:]) -> [CatalogEntry] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
@@ -236,6 +240,10 @@ public enum CatalogSearch {
             if preferBottled {
                 let x = bottleRank(a.1), y = bottleRank(b.1)
                 if x != y { return x < y }
+            }
+            if !popularity.isEmpty {
+                let x = popularity[a.1.id] ?? 0, y = popularity[b.1.id] ?? 0
+                if x != y { return x > y }
             }
             if a.1.name.count != b.1.name.count { return a.1.name.count < b.1.name.count }
             if a.1.name != b.1.name { return a.1.name < b.1.name }

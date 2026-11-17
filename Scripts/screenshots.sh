@@ -12,6 +12,8 @@
 #   SET=v0.6a Scripts/screenshots.sh [OUT_DIR] the 0.6 part A shots (deprecated, Health, History, autoremove)
 #   SET=v0.6b Scripts/screenshots.sh [OUT_DIR] skip version, Brewfile export/check/plan
 #   SET=v0.7-taps Scripts/screenshots.sh [OUT_DIR] the Taps sheet, Add, blocked Remove, Show Installed
+#   SET=v0.8-adopt Scripts/screenshots.sh [OUT_DIR] Adopt Apps (demo, its confirmation, after a run), the self-update choice
+#   (REAL=1 adds the Adopt sheet on this Mac's real apps: read-only scan)
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -142,6 +144,22 @@ v07taps() {
     done
 }
 
+v08adopt() {
+    # v0.8: Homebrew > Adopt Apps…: the demo's apps in their four groups,
+    # the confirmation, the list after adopting, and a self-updating
+    # cask's "who updates it" choice in the details.
+    for t in dark tankard; do
+        shot "adopt-sheet-$t" 4 TANKARD_DEMO=arm64 TANKARD_DEMO_ADOPT=1 TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+        shot "adopt-confirm-$t" 4 TANKARD_DEMO=arm64 TANKARD_DEMO_ADOPT=confirm TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+        shot "self-update-choice-$t" 3 TANKARD_DEMO=arm64 TANKARD_SELECT=google-chrome TANKARD_SNAPSHOT_SIZE=1040x860 TANKARD_APPEARANCE=$t
+    done
+    shot "adopt-run-done-dark" 9 TANKARD_DEMO=arm64 TANKARD_DEMO_ADOPT=run TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=dark
+    if [ "${REAL:-0}" = 1 ]; then
+        shot "adopt-sheet-real" 12 TANKARD_ADOPT=1 TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=dark
+    fi
+}
+
+if [ "${SET:-all}" = v0.8-adopt ]; then v08adopt; exit 0; fi
 if [ "${SET:-all}" = v0.7-taps ]; then v07taps; exit 0; fi
 if [ "${SET:-all}" = v0.6b ]; then v06b; exit 0; fi
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi

@@ -15,6 +15,8 @@ public enum SessionAction: String, Sendable {
     case tap, untap
     /// 0.7: a restore point's plan (reinstall, uninstall + link, pin).
     case restore
+    /// 0.8: `brew install --cask --adopt` of an app already in /Applications.
+    case adopt
 
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
@@ -28,6 +30,7 @@ public enum SessionAction: String, Sendable {
         case .tap: return String(localized: "Add tap")
         case .untap: return String(localized: "Remove tap")
         case .restore: return String(localized: "Restore")
+        case .adopt: return String(localized: "Adopt")
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
@@ -42,6 +45,7 @@ public enum SessionAction: String, Sendable {
         case .tap: return String(localized: "Adding tap")
         case .untap: return String(localized: "Removing tap")
         case .restore: return String(localized: "Restoring")
+        case .adopt: return String(localized: "Adopting")
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -58,6 +62,7 @@ public enum SessionAction: String, Sendable {
         case .tap: return String(localized: "tapped")
         case .untap: return String(localized: "untapped")
         case .restore: return String(localized: "done")
+        case .adopt: return String(localized: "adopted")
         }
     }
 }

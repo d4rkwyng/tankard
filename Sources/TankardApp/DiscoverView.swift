@@ -294,6 +294,9 @@ struct DiscoverDetail: View {
             }
             .font(.system(size: 12))
 
+            InstallCountsView(counts: discover.installCounts(e.id), phase: discover.analyticsPhase,
+                              endDate: discover.analytics?.endDate)
+
             if let home = e.homepage, let url = URL(string: home) {
                 Link(destination: url) {
                     HStack(spacing: 3) {
@@ -385,6 +388,72 @@ struct DiscoverDetail: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .textSelection(.enabled)
         }
+    }
+}
+
+/// 0.8: 30/90/365-day installs from formulae.brew.sh's analytics.
+/// Nothing at all in Intelbrew mode (`.unavailable`) or before Discover
+/// has asked; a quiet line when they couldn't be loaded.
+struct InstallCountsView: View {
+    var counts: InstallCounts?
+    var phase: DiscoverStore.AnalyticsPhase
+    var endDate: String?
+
+    var body: some View {
+        switch phase {
+        case .idle, .unavailable:
+            EmptyView()
+        case .failed(let message):
+            Text("Install counts unavailable")
+                .font(.system(size: 11)).foregroundStyle(.tertiary)
+                .help(message)
+        case .loading:
+            section {
+                HStack(spacing: 6) {
+                    ProgressView().controlSize(.mini)
+                    Text("Loading install counts…").font(.system(size: 11.5)).foregroundStyle(.secondary)
+                }
+            }
+        case .ready:
+            section {
+                if let counts {
+                    HStack(alignment: .top, spacing: 8) {
+                        ForEach(AnalyticsPeriod.allCases) { period in
+                            stat(counts[period], period)
+                        }
+                    }
+                } else {
+                    Text("No installs recorded")
+                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private func section<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Installs").font(.system(size: 11)).foregroundStyle(.secondary)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .help(endDate.map { String(localized: "Homebrew's anonymous install analytics (formulae.brew.sh), to \($0)") }
+              ?? String(localized: "Homebrew's anonymous install analytics (formulae.brew.sh)"))
+    }
+
+    private func stat(_ n: Int, _ period: AnalyticsPeriod) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(verbatim: InstallCounts.number(n))
+                .font(.system(size: 13, weight: .semibold).monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            Text(period.title)
+                .font(.system(size: 10.5)).foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(InstallCounts.sentence(n, period))
+        .help(InstallCounts.sentence(n, period))
     }
 }
 

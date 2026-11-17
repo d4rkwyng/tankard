@@ -127,6 +127,11 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// offer. Filled in by the app; auto-update and the upgrade counts
     /// leave it out, a manual Upgrade still works.
     public var versionSkipped: Bool? = nil
+    /// 0.8, casks that update themselves: the user chose "App updates
+    /// itself" for this one, so Upgrade all, the counts and auto-update
+    /// leave its upgrade out (a manual Upgrade still works). Filled in by
+    /// the app.
+    public var selfUpdateHeld: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

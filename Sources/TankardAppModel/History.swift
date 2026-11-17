@@ -73,6 +73,8 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     /// Where to run a failed entry again when Retry isn't offered.
     public var rerunHint: String? {
         guard isFailure, !canRetry else { return nil }
+        // 0.8: brew install --cask --adopt.
+        if arguments.contains("--adopt") { return String(localized: "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first.") }
         switch category {
         case .uninstall: return String(localized: "Uninstall again from the package's details; it asks first.")
         case .cleanup: return String(localized: "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first.")

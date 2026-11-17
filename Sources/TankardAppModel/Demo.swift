@@ -144,6 +144,8 @@ public enum Demo {
             hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
         deps.appManagementGate = true
+        // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
+        deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {
             // Illustrative build times from a bundled file; nothing is fetched.
             let times = BuildTimeSource(fetch: { (Demo.fixtureData("demo-build-times"), 200) }, cacheURL: nil)
@@ -186,6 +188,26 @@ public enum Demo {
         }
 
         func details(_ entries: [CatalogEntry]) async -> [CatalogEntry] { entries }
+
+        /// 0.8: the six bulk analytics files cut down to the slice's
+        /// packages (real counts, captured 2026-11-17; firefox@cn has none).
+        func analytics() async throws -> InstallAnalytics? {
+            try await Task.sleep(for: .milliseconds(200))
+            return try Demo.fixtureAnalytics()
+        }
+    }
+
+    /// `discover-api-analytics.json`: {"formula"|"cask": {"30d"|"90d"|"365d": <bulk file>}}.
+    static func fixtureAnalytics() throws -> InstallAnalytics {
+        let all = try JSONSerialization.jsonObject(with: Demo.fixtureData("discover-api-analytics")) as? [String: [String: Any]] ?? [:]
+        var files: [(PackageKind, AnalyticsPeriod, Data)] = []
+        for kind in [PackageKind.formula, .cask] {
+            for period in AnalyticsPeriod.allCases {
+                guard let doc = all[kind.rawValue]?[period.rawValue] else { continue }
+                files.append((kind, period, try JSONSerialization.data(withJSONObject: doc)))
+            }
+        }
+        return try InstallAnalytics.decode(files)
     }
 
     /// The catalog JSON of one package from the Discover fixtures (for a
@@ -439,6 +461,7 @@ public enum Demo {
             if let code = try await Demo.v04aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if let code = try await Demo.v06aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if let code = try await Demo.tapsStream(variant, state: state.taps, arguments: arguments, say: say) { return code }
+            if let code = try await Demo.adoptStream(state: state, arguments: arguments, say: say) { return code }
             if arguments.first == "update" {
                 try await say("==> Updating Homebrew...\n", 900)
                 try await say("Already up-to-date.\n", 50)

@@ -17,6 +17,13 @@ public final class DiscoverStore {
         case failed(String)
     }
 
+    /// 0.8: install counts. `unavailable` in Intelbrew mode (formulae.brew.sh
+    /// isn't asked there).
+    public enum AnalyticsPhase: Equatable, Sendable {
+        case idle, loading, ready, unavailable
+        case failed(String)
+    }
+
     public private(set) var phase: Phase = .idle
     public private(set) var results: [CatalogEntry] = []
     /// The query `results` answer (the field can be ahead while debouncing).
@@ -29,6 +36,9 @@ public final class DiscoverStore {
     public private(set) var loadedAt: Date?
     /// Bumped whenever entries change, so views reading `entry(_:)` update.
     public private(set) var revision = 0
+    /// 0.8: install counts, loaded after the catalog without blocking it.
+    public private(set) var analyticsPhase: AnalyticsPhase = .idle
+    public private(set) var analytics: InstallAnalytics?
 
     public var query = "" {
         didSet { if query != oldValue { scheduleSearch() } }
@@ -64,6 +74,10 @@ public final class DiscoverStore {
     @ObservationIgnored private var pendingDetails: [String] = []
     @ObservationIgnored private var requestedDetails: Set<String> = []
     @ObservationIgnored private var detailsTask: Task<Void, Never>?
+    @ObservationIgnored private var analyticsTask: Task<Void, Never>?
+    @ObservationIgnored private var analyticsLoadedAt: Date?
+    /// 30-day installs by id: search's tie-break within a relevance tier.
+    @ObservationIgnored private var popularity: [String: Int] = [:]
     /// How many rows from the top get details right after a search.
     @ObservationIgnored public var prefetch = 30
 
@@ -101,6 +115,7 @@ public final class DiscoverStore {
     /// Loads the catalog if it isn't loaded or is older than the TTL.
     /// Returns when loaded.
     public func activate() async {
+        defer { loadAnalyticsIfNeeded() }
         if let running = loadTask {
             await running.value
             return
@@ -151,6 +166,52 @@ public final class DiscoverStore {
         revision += 1
     }
 
+    // MARK: install counts (0.8)
+
+    /// The counts for an entry or installed package id; nil until loaded,
+    /// and for a package formulae.brew.sh has no installs of.
+    public func installCounts(_ id: String) -> InstallCounts? {
+        analytics?[id]
+    }
+
+    /// Starts loading the counts once the catalog is ready, unless loaded
+    /// within the TTL, already loading, or unavailable. Never awaited by
+    /// Discover itself.
+    func loadAnalyticsIfNeeded() {
+        guard phase == .ready, analyticsTask == nil, analyticsPhase != .unavailable else { return }
+        if analytics != nil, let t = analyticsLoadedAt, now().timeIntervalSince(t) < ttl { return }
+        if analytics == nil { analyticsPhase = .loading }
+        analyticsTask = Task { [weak self] in await self?.performAnalyticsLoad() }
+    }
+
+    /// Resolves when a running counts load has finished (tests).
+    public func waitForAnalytics() async {
+        while let t = analyticsTask { await t.value }
+    }
+
+    private func performAnalyticsLoad() async {
+        let provider = self.provider
+        do {
+            let loaded = try await Task.detached(priority: .utility) { try await provider.analytics() }.value
+            guard let loaded else {
+                analyticsPhase = .unavailable
+                analyticsTask = nil
+                return
+            }
+            let pop = loaded.popularity
+            analytics = loaded
+            popularity = pop
+            analyticsLoadedAt = now()
+            analyticsPhase = .ready
+            analyticsTask = nil
+            // Re-rank what's on screen with the tie-break.
+            if !resultsQuery.isEmpty { await runSearch() }
+        } catch {
+            if analytics == nil { analyticsPhase = .failed(String(describing: error)) }
+            analyticsTask = nil
+        }
+    }
+
     // MARK: search
 
     private func scheduleSearch(immediately: Bool = false) {
@@ -170,9 +231,9 @@ public final class DiscoverStore {
     }
 
     private func runSearch() async {
-        let q = query, k = kind, entries = all, only = bottledOnly
+        let q = query, k = kind, entries = all, only = bottledOnly, pop = popularity
         let found = await Task.detached(priority: .userInitiated) {
-            CatalogSearch.search(q, in: entries, kind: k, preferBottled: true, bottledOnly: only)
+            CatalogSearch.search(q, in: entries, kind: k, preferBottled: true, bottledOnly: only, popularity: pop)
         }.value
         guard q == query, k == kind, only == bottledOnly else { return } // superseded
         results = found

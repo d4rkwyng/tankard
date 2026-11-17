@@ -34,6 +34,13 @@ public protocol CatalogProviding: Sendable {
     func details(_ entries: [CatalogEntry]) async -> [CatalogEntry]
     /// Intelbrew mode (labels say so).
     var isLocalTaps: Bool { get }
+    /// Install counts (0.8), or nil where there are none to show (the local
+    /// taps: formulae.brew.sh's numbers describe upstream Homebrew).
+    func analytics() async throws -> InstallAnalytics?
+}
+
+public extension CatalogProviding {
+    func analytics() async throws -> InstallAnalytics? { nil }
 }
 
 // MARK: formulae.brew.sh
@@ -56,8 +63,10 @@ public struct APICache: Sendable {
         StatusCache.defaultURL.deletingLastPathComponent().appendingPathComponent("api", isDirectory: true)
     }
 
-    func dataURL(_ name: String) -> URL { directory.appendingPathComponent(name) }
-    func metaURL(_ name: String) -> URL { directory.appendingPathComponent(name + ".meta.json") }
+    /// "analytics/install/30d.json" is kept as "analytics-install-30d.json".
+    func file(_ name: String) -> String { name.replacingOccurrences(of: "/", with: "-") }
+    func dataURL(_ name: String) -> URL { directory.appendingPathComponent(file(name)) }
+    func metaURL(_ name: String) -> URL { directory.appendingPathComponent(file(name) + ".meta.json") }
 
     public func load(_ name: String) -> (Data, Meta)? {
         guard let meta = try? Data(contentsOf: metaURL(name)),
@@ -94,8 +103,8 @@ public enum APIFetchError: Error, CustomStringConvertible {
 }
 
 /// Fetches formulae.brew.sh/api/<name> with a 1 h TTL and
-/// ETag/If-None-Match revalidation. The one network call Tankard makes
-/// itself, and only when Discover is opened in normal mode.
+/// ETag/If-None-Match revalidation. Tankard's own requests in normal mode,
+/// and only once Discover is opened.
 public struct APIFetcher: Sendable {
     public static let baseURL = URL(string: "https://formulae.brew.sh/api/")!
 
@@ -156,13 +165,40 @@ public struct APIFetcher: Sendable {
 /// Discover in normal mode: formula.json and cask.json from formulae.brew.sh.
 public final class APICatalog: CatalogProviding {
     public let fetcher: APIFetcher
+    /// The install-count files: the same cache, kept for a day (they are
+    /// regenerated daily).
+    public let analyticsFetcher: APIFetcher
     public let builder: CatalogBuilder
     /// The last outcome per file (for tests and the status line).
     public let outcomes = OSAllocatedUnfairLock<[String: APIFetchOutcome]>(initialState: [:])
 
-    public init(fetcher: APIFetcher, platform: BottlePlatform) {
+    public static let analyticsTTL: TimeInterval = 86_400
+
+    public init(fetcher: APIFetcher, platform: BottlePlatform, analyticsFetcher: APIFetcher? = nil) {
         self.fetcher = fetcher
+        var a = fetcher
+        a.ttl = Self.analyticsTTL
+        self.analyticsFetcher = analyticsFetcher ?? a
         self.builder = CatalogBuilder(platform: platform, intelbrewMode: false)
+    }
+
+    /// The six bulk analytics files, fetched together (a failed one is
+    /// an error; a stale cached copy is fine).
+    public func analytics() async throws -> InstallAnalytics? {
+        let fetcher = analyticsFetcher
+        let wanted = [PackageKind.formula, .cask].flatMap { k in AnalyticsPeriod.allCases.map { (k, $0) } }
+        let files = try await withThrowingTaskGroup(of: (Int, Data, APIFetchOutcome).self) { group in
+            for (i, (kind, period)) in wanted.enumerated() {
+                group.addTask { let (d, _, o) = try await fetcher.fetch(period.endpoint(kind)); return (i, d, o) }
+            }
+            var out: [(Int, Data, APIFetchOutcome)] = []
+            for try await r in group { out.append(r) }
+            return out.sorted { $0.0 < $1.0 }
+        }
+        outcomes.withLock { o in
+            for (i, _, outcome) in files { o[wanted[i].1.endpoint(wanted[i].0)] = outcome }
+        }
+        return try InstallAnalytics.decode(files.map { (wanted[$0.0].0, wanted[$0.0].1, $0.1) })
     }
 
     public var isLocalTaps: Bool { false }
@@ -172,7 +208,7 @@ public final class APICatalog: CatalogProviding {
         async let c = fetcher.fetch("cask.json")
         let (fData, fDate, fOutcome) = try await f
         let (cData, cDate, cOutcome) = try await c
-        outcomes.withLock { $0 = ["formula.json": fOutcome, "cask.json": cOutcome] }
+        outcomes.withLock { $0["formula.json"] = fOutcome; $0["cask.json"] = cOutcome }
         var load = try Self.build(formulaJSON: fData, caskJSON: cData, builder: builder)
         load.fetchedAt = min(fDate, cDate)
         for case .staleAfterError(let e) in [fOutcome, cOutcome] {

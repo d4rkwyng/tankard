@@ -204,6 +204,8 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     /// 0.6: the bump rule leaves it out ("major", or "unknown" when the
     /// versions can't be compared).
     case bumpRule(from: String, to: String, bump: String)
+    /// 0.8: the user chose "App updates itself" for this cask.
+    case appUpdatesItself
 
     public var text: String {
         switch self {
@@ -216,6 +218,7 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .appUnknown: return String(localized: "couldn't tell whether its app is running")
         case .tankardItself: return String(localized: "Tankard updates itself through brew")
         case .versionSkipped(let v): return String(localized: "you chose to skip \(v)")
+        case .appUpdatesItself: return String(localized: "set to update itself")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
                 return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")
@@ -348,7 +351,7 @@ public enum AutoUpdateSafeMode {
         String(localized: "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand."),
         String(localized: "Pinned packages are skipped, and so are packages whose dependencies are pinned."),
         String(localized: "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)."),
-        String(localized: "Self-updating apps are included only when \"Include self-updating apps\" is on."),
+        String(localized: "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"."),
         String(localized: "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard."),
     ]
 }

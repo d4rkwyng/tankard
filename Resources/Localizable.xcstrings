@@ -157,6 +157,58 @@
         }
       }
     },
+    " (one per app)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (eine pro App)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (un par app)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (uno por app)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（アプリごとに1つ）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（每个 App 一个）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (um por app)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (uno per app)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (앱당 하나)"
+          }
+        }
+      }
+    },
     " Asking VS Code for its extensions can hang brew bundle dump.": {
       "localizations": {
         "de": {
@@ -725,6 +777,58 @@
           "stringUnit": {
             "state": "translated",
             "value": " · 소스"
+          }
+        }
+      }
+    },
+    "%@\nThis deletes the app that is there and installs the cask's version in its place.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\nDie vorhandene App wird gelöscht und durch die Version aus dem Cask ersetzt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\nL'app existante est supprimée et remplacée par la version du cask."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\nEsto elimina la app existente e instala en su lugar la versión del cask."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\n既存のアプリを削除し、代わりに cask のバージョンをインストールします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\n这会删除现有的 App，并在原位置安装 cask 的版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\nIsso apaga o app existente e instala a versão do cask no lugar dele."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\nL'app esistente viene eliminata e al suo posto viene installata la versione del cask."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@\n기존 앱을 삭제하고 그 자리에 cask 버전을 설치합니다."
           }
         }
       }
@@ -1713,6 +1817,162 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@에는 더 업그레이드할 항목이 없습니다."
+          }
+        }
+      }
+    },
+    "%@ installs in the last 30 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Installationen in 30 Tagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installations ces 30 derniers jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalaciones en los últimos 30 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "過去30日間に%@回インストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去 30 天安装 %@ 次"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalações nos últimos 30 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installazioni negli ultimi 30 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최근 30일간 %@회 설치"
+          }
+        }
+      }
+    },
+    "%@ installs in the last 365 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Installationen in 365 Tagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installations ces 365 derniers jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalaciones en los últimos 365 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "過去365日間に%@回インストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去 365 天安装 %@ 次"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalações nos últimos 365 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installazioni negli ultimi 365 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최근 365일간 %@회 설치"
+          }
+        }
+      }
+    },
+    "%@ installs in the last 90 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Installationen in 90 Tagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installations ces 90 derniers jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalaciones en los últimos 90 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "過去90日間に%@回インストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去 90 天安装 %@ 次"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalações nos últimos 90 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installazioni negli ultimi 90 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최근 90일간 %@회 설치"
           }
         }
       }
@@ -2913,6 +3173,58 @@
         }
       }
     },
+    "%lld already from Homebrew": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld schon von Homebrew"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld déjà via Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ya de Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld個は Homebrew から導入済み"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已来自 Homebrew"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld já do Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld già da Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개는 이미 Homebrew에서 설치됨"
+          }
+        }
+      }
+    },
     "%lld bottle": {
       "localizations": {
         "de": {
@@ -4005,6 +4317,58 @@
         }
       }
     },
+    "%lld from Apple": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von Apple"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld d'Apple"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de Apple"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld個は Apple 製"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个来自 Apple"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld da Apple"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld da Apple"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개는 Apple 앱"
+          }
+        }
+      }
+    },
     "%lld from an untrusted tap": {
       "localizations": {
         "de": {
@@ -4105,6 +4469,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "소스에서 설치 %lld개"
+          }
+        }
+      }
+    },
+    "%lld from the App Store": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld aus dem App Store"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de l'App Store"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld del App Store"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld個は App Store から"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个来自 App Store"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld da App Store"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dall'App Store"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개는 App Store에서 설치됨"
           }
         }
       }
@@ -7073,6 +7489,162 @@
         }
       }
     },
+    "30 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Tage"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30日"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 天"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30일"
+          }
+        }
+      }
+    },
+    "365 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 Tage"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365日"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 天"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "365일"
+          }
+        }
+      }
+    },
+    "90 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 Tage"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 jours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 días"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90日"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 天"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 dias"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90 giorni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "90일"
+          }
+        }
+      }
+    },
     "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n": {
       "localizations": {
         "de": {
@@ -7957,6 +8529,630 @@
         }
       }
     },
+    "Adopt": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übernehmen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぐ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기"
+          }
+        }
+      }
+    },
+    "Adopt %@?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ übernehmen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter %@ ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Adoptar %@?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を引き継ぎますか？"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管“%@”？"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar %@?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adottare %@?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 앱을 가져오겠습니까?"
+          }
+        }
+      }
+    },
+    "Adopt %lld Apps…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Apps übernehmen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter %lld apps…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar %lld apps…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld個のアプリを引き継ぐ…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管 %lld 个 App…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar %lld apps…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta %lld app…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 %lld개 가져오기…"
+          }
+        }
+      }
+    },
+    "Adopt %lld apps?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Apps übernehmen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter %lld apps ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Adoptar %lld apps?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld個のアプリを引き継ぎますか？"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管 %lld 个 App？"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar %lld apps?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adottare %lld app?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 %lld개를 가져오겠습니까?"
+          }
+        }
+      }
+    },
+    "Adopt 1 App…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 App übernehmen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter 1 app…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar 1 app…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1個のアプリを引き継ぐ…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管 1 个 App…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar 1 app…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta 1 app…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 1개 가져오기…"
+          }
+        }
+      }
+    },
+    "Adopt Apps": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps übernehmen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter des apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar apps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを引き継ぐ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管 App"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar apps"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 가져오기"
+          }
+        }
+      }
+    },
+    "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Apps übernehmen“ liest die Cask-Liste von formulae.brew.sh, die Tankard mit diesem Homebrew nicht nutzt (Intelbrew oder HOMEBREW_NO_INSTALL_FROM_API)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter des apps lit la liste des casks Homebrew sur formulae.brew.sh, que Tankard n'utilise pas avec ce Homebrew (Intelbrew, ou HOMEBREW_NO_INSTALL_FROM_API)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar apps lee la lista de casks de Homebrew en formulae.brew.sh, que Tankard no usa con este Homebrew (Intelbrew, o HOMEBREW_NO_INSTALL_FROM_API)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「アプリを引き継ぐ」は formulae.brew.sh から Homebrew の cask 一覧を読み込みますが、この Homebrew（Intelbrew、または HOMEBREW_NO_INSTALL_FROM_API）では Tankard はそれを使用しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“接管 App”会从 formulae.brew.sh 读取 Homebrew 的 cask 列表，而 Tankard 在此 Homebrew（Intelbrew 或 HOMEBREW_NO_INSTALL_FROM_API）下不使用该列表。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar apps lê a lista de casks do Homebrew em formulae.brew.sh, que o Tankard não usa com este Homebrew (Intelbrew ou HOMEBREW_NO_INSTALL_FROM_API)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta app legge l'elenco dei cask di Homebrew da formulae.brew.sh, che Tankard non usa con questo Homebrew (Intelbrew, o HOMEBREW_NO_INSTALL_FROM_API)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 가져오기는 formulae.brew.sh에서 Homebrew의 cask 목록을 읽는데, 이 Homebrew(Intelbrew 또는 HOMEBREW_NO_INSTALL_FROM_API)에서는 Tankard가 이를 사용하지 않습니다."
+          }
+        }
+      }
+    },
+    "Adopt Apps…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps übernehmen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopter des apps…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptar apps…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを引き継ぐ…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管 App…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotar apps…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotta app…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 가져오기…"
+          }
+        }
+      }
+    },
+    "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über Homebrew ▸ Apps übernehmen… erneut übernehmen; es wird vorher gefragt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptez-la à nouveau via Homebrew ▸ Adopter des apps… ; une confirmation est demandée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuelve a adoptarla desde Homebrew ▸ Adoptar apps…; pide confirmación antes."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ アプリを引き継ぐ… から再度引き継げます。実行前に確認があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可通过 Homebrew ▸ 接管 App… 再次接管；操作前会先询问。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adote-o de novo em Homebrew ▸ Adotar apps…; ele pergunta antes."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adottala di nuovo da Homebrew ▸ Adotta app…; chiede prima conferma."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ 앱 가져오기…에서 다시 가져올 수 있습니다. 먼저 확인을 묻습니다."
+          }
+        }
+      }
+    },
+    "Adopting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übernahme"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoption"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptando"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎ中"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管中"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotando"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adozione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오는 중"
+          }
+        }
+      }
+    },
+    "Adopting runs through Tankard's queue and History.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Übernahme läuft über die Warteschlange und den Verlauf von Tankard."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'adoption passe par la file d'attente et l'Historique de Tankard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La adopción pasa por la cola y el Historial de Tankard."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎは Tankard のキューと履歴を通じて実行されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管通过 Tankard 的队列和历史记录进行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A adoção passa pela fila e pelo Histórico do Tankard."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'adozione passa per la coda e la Cronologia di Tankard."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기는 Tankard의 대기열과 기록을 통해 실행됩니다."
+          }
+        }
+      }
+    },
+    "After adopting:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Übernahme:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Après l'adoption :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tras adoptar:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎ後:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接管后："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Após adotar:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo l'adozione:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 후:"
+          }
+        }
+      }
+    },
     "All": {
       "localizations": {
         "de": {
@@ -8213,6 +9409,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 분기에 이미 위에 있음"
+          }
+        }
+      }
+    },
+    "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schon Apps aus dem Web? Sobald Homebrew läuft, kann brew sie über Homebrew ▸ Apps übernehmen… aktuell halten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous avez déjà des apps téléchargées sur le web ? Une fois Homebrew en place, Homebrew ▸ Adopter des apps… permet à brew de les tenir à jour."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Ya tienes apps descargadas de la web? Cuando Homebrew esté listo, Homebrew ▸ Adoptar apps… permite que brew las mantenga al día."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web から入手したアプリがありますか？ Homebrew が動作したら、Homebrew ▸ アプリを引き継ぐ… で brew に最新の状態を保たせることができます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已有从网上下载的 App？Homebrew 运行后，可通过 Homebrew ▸ 接管 App… 让 brew 为其保持最新。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já tem apps baixados da web? Quando o Homebrew estiver rodando, Homebrew ▸ Adotar apps… deixa o brew mantê-los atualizados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hai già app scaricate dal web? Quando Homebrew è attivo, Homebrew ▸ Adotta app… permette a brew di tenerle aggiornate."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "웹에서 받은 앱이 있나요? Homebrew가 실행되면 Homebrew ▸ 앱 가져오기…로 brew가 앱을 최신 상태로 유지하게 할 수 있습니다."
           }
         }
       }
@@ -8737,6 +9985,58 @@
         }
       }
     },
+    "App updates itself": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App selbst"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'app elle-même"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La propia app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリが更新"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App 自行更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O próprio app"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'app stessa"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱이 직접 업데이트"
+          }
+        }
+      }
+    },
     "Appearance": {
       "localizations": {
         "de": {
@@ -8785,6 +10085,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "외관"
+          }
+        }
+      }
+    },
+    "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selbstaktualisierende Apps aktualisieren sich weiter selbst. Wer welche App aktualisiert, wird mit der Übernahme gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les apps qui se mettent à jour seules continuent de le faire. Votre choix de qui met à jour chaque app est enregistré avec l'adoption."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las apps que se actualizan solas lo siguen haciendo. Lo que elijas sobre quién actualiza cada una se guarda con la adopción."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自己更新するアプリは引き続き自分で更新します。各アプリを誰が更新するかの選択は、引き継ぎと一緒に保存されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自行更新的 App 会继续自行更新。你为每个 App 选择的更新方式会随接管一起保存。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps que se atualizam sozinhos continuam fazendo isso. Sua escolha de quem atualiza cada um é salva com a adoção."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le app che si aggiornano da sole continuano a farlo. La scelta di chi aggiorna ciascuna app viene salvata con l'adozione."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자체 업데이트하는 앱은 계속 스스로 업데이트합니다. 각 앱을 누가 업데이트할지 선택한 내용은 가져오기와 함께 저장됩니다."
+          }
+        }
+      }
+    },
+    "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selbst installierte Apps, die auch ein Homebrew-Cask installiert. Nach der Übernahme aktualisiert brew sie, ohne Neuinstallation."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps installées par vous qu'un cask Homebrew installe aussi. Les adopter permet à brew de les mettre à jour, sans réinstallation."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps que instalaste tú y que un cask de Homebrew también instala. Adoptarlas permite que brew las actualice, sin reinstalar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分でインストールしたアプリのうち、Homebrew の cask でもインストールされるもの。引き継ぐと、再インストールせずに brew で更新できます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你自行安装、且 Homebrew cask 也会安装的 App。接管后 brew 即可更新它们，无需重新安装。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps que você mesmo instalou e que um cask do Homebrew também instala. Adotá-los permite que o brew os atualize, sem reinstalar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App installate da te che un cask di Homebrew installa anche. Adottarle permette a brew di aggiornarle, senza reinstallarle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "직접 설치한 앱 중 Homebrew cask로도 설치되는 앱입니다. 가져오면 재설치 없이 brew로 업데이트할 수 있습니다."
           }
         }
       }
@@ -10449,6 +11853,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "되돌릴 수 있음"
+          }
+        }
+      }
+    },
+    "Can't adopt": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht übernehmbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non adoptables"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No adoptables"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎ不可"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法接管"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não adotáveis"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non adottabili"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져올 수 없음"
           }
         }
       }
@@ -12221,6 +13677,58 @@
         }
       }
     },
+    "Copy Command": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Befehl kopieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier la commande"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar comando"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コマンドをコピー"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拷贝命令"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar comando"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia comando"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "명령어 복사"
+          }
+        }
+      }
+    },
     "Copy Install Command": {
       "localizations": {
         "de": {
@@ -13001,6 +14509,58 @@
         }
       }
     },
+    "Couldn't read Homebrew's cask list: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask-Liste von Homebrew nicht lesbar: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de lire la liste des casks Homebrew : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo leer la lista de casks de Homebrew: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew の cask 一覧を読み込めませんでした: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取 Homebrew 的 cask 列表：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler a lista de casks do Homebrew: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile leggere l'elenco dei cask di Homebrew: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew의 cask 목록을 읽을 수 없음: %@"
+          }
+        }
+      }
+    },
     "Couldn't read the casks' details, so admin passwords aren't marked.": {
       "localizations": {
         "de": {
@@ -13621,6 +15181,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "데모 모드: 로그 파일을 쓰지 않았습니다"
+          }
+        }
+      }
+    },
+    "Demo · %@ casks": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo · %@ Casks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démo · %@ casks"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo · %@ casks"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デモ · %@ 個の cask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "演示 · %@ 个 cask"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo · %@ casks"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo · %@ cask"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데모 · cask %@개"
           }
         }
       }
@@ -16537,6 +18149,58 @@
         }
       }
     },
+    "Follow the setting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie eingestellt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivre le réglage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Según el ajuste"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定に従う"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟随设置"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir o ajuste"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segui l'impostazione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설정 따르기"
+          }
+        }
+      }
+    },
     "Follows macOS.": {
       "localizations": {
         "de": {
@@ -16689,6 +18353,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "1주 동안"
+          }
+        }
+      }
+    },
+    "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für jede App lädt brew das Cask, prüft den Download gegen die vorhandene App und vermerkt das Cask dann als installiert. Die App bleibt, wo sie ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour chaque app, brew télécharge le cask, vérifie le téléchargement par rapport à l'app présente, puis enregistre le cask comme installé. L'app reste où elle est."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para cada app, brew descarga el cask, comprueba la descarga con la app existente y luego registra el cask como instalado. La app se queda donde está."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew はアプリごとに cask をダウンロードし、既存のアプリと照合してから、cask をインストール済みとして記録します。アプリ自体はその場所に残ります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对每个 App，brew 会下载 cask，将下载内容与现有 App 比对，然后将 cask 记录为已安装。App 本身保留在原位置。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para cada app, o brew baixa o cask, confere o download com o app existente e então registra o cask como instalado. O app continua onde está."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per ogni app, brew scarica il cask, confronta il download con l'app presente e poi registra il cask come installato. L'app resta dov'è."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew는 앱마다 cask를 다운로드하고, 다운로드를 기존 앱과 대조한 뒤 cask를 설치됨으로 기록합니다. 앱 자체는 그대로 있습니다."
           }
         }
       }
@@ -17469,6 +19185,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew/install README(\"Uninstall Homebrew\")의 방법이며, --path 옵션으로 Tankard가 표시 중인 Homebrew만 제거합니다. 터미널에서 실행되며 제거 전에 한 번 더 확인합니다."
+          }
+        }
+      }
+    },
+    "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danach gehören diese Apps Homebrew: brew upgrade ersetzt sie durch die Cask-Version, und das Deinstallieren des Casks (in Tankard oder mit brew uninstall) löscht die App."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dès lors, Homebrew gère ces apps : brew upgrade les remplace par la version du cask, et désinstaller le cask (dans Tankard ou avec brew uninstall) supprime l'app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A partir de ahí, Homebrew gestiona estas apps: brew upgrade las reemplaza por la versión del cask, y desinstalar el cask (en Tankard o con brew uninstall) elimina la app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以降、これらのアプリは Homebrew が管理します。brew upgrade で cask のバージョンに置き換えられ、cask をアンインストールすると（Tankard でも brew uninstall でも）アプリは削除されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此后这些 App 归 Homebrew 管理：brew upgrade 会将其替换为 cask 的版本，卸载 cask（在 Tankard 中或使用 brew uninstall）会删除该 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A partir daí, o Homebrew passa a gerenciar esses apps: brew upgrade os substitui pela versão do cask, e desinstalar o cask (no Tankard ou com brew uninstall) apaga o app."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da quel momento Homebrew gestisce queste app: brew upgrade le sostituisce con la versione del cask, e disinstallare il cask (in Tankard o con brew uninstall) elimina l'app."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이후 이 앱들은 Homebrew가 관리합니다. brew upgrade는 앱을 cask 버전으로 교체하며, cask를 제거하면(Tankard에서든 brew uninstall로든) 앱이 삭제됩니다."
           }
         }
       }
@@ -18461,6 +20229,110 @@
         }
       }
     },
+    "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew hat ein Cask für diese Apps und die installierte Version passt (oder die App aktualisiert sich selbst, dann vergleicht brew nicht)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew a un cask pour ces apps et la version installée correspond (ou l'app se met à jour seule, donc brew ne compare pas)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew tiene un cask para estas apps y la versión instalada coincide (o la app se actualiza sola, así que brew no compara)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これらのアプリには Homebrew の cask があり、インストール済みのバージョンが一致しています（またはアプリが自己更新するため brew は比較しません）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew tem um cask para esses apps e a versão instalada confere (ou o app se atualiza sozinho, então o brew não compara)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha un cask per queste app e la versione installata corrisponde (oppure l'app si aggiorna da sola, quindi brew non confronta)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew에 이 앱들의 cask가 있고 설치된 버전이 일치합니다(또는 앱이 자체 업데이트하므로 brew가 비교하지 않습니다)."
+          }
+        }
+      }
+    },
+    "Homebrew has disabled this cask.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew hat dieses Cask deaktiviert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew a désactivé ce cask."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha desactivado este cask."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこの cask を無効にしています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已停用此 cask。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew desativou este cask."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha disattivato questo cask."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 이 cask를 비활성화했습니다."
+          }
+        }
+      }
+    },
     "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first.": {
       "localizations": {
         "de": {
@@ -18929,6 +20801,58 @@
         }
       }
     },
+    "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew führt sie als %@; bei selbstaktualisierenden Apps vergleicht brew keine Versionen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew l'enregistre comme %@ ; brew ne compare pas les versions des apps qui se mettent à jour seules."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew la registra como %@; brew no compara versiones de apps que se actualizan solas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew は %@ として記録します。自己更新するアプリについて brew はバージョンを比較しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 记录的版本为 %@；对于自行更新的 App，brew 不比较版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew o registra como %@; o brew não compara versões de apps que se atualizam sozinhos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew la registra come %@; brew non confronta le versioni delle app che si aggiornano da sole."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew에는 %@(으)로 기록됩니다. 자체 업데이트하는 앱은 brew가 버전을 비교하지 않습니다."
+          }
+        }
+      }
+    },
     "Homebrew still has it, but will disable it later.": {
       "localizations": {
         "de": {
@@ -18977,6 +20901,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew에는 아직 있지만 나중에 비활성화할 예정입니다."
+          }
+        }
+      }
+    },
+    "Homebrew updates it": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が更新"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由 Homebrew 更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 업데이트"
           }
         }
       }
@@ -19081,6 +21057,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew API(formulae.brew.sh)"
+          }
+        }
+      }
+    },
+    "Homebrew's anonymous install analytics (formulae.brew.sh)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrews anonyme Installationsstatistik (formulae.brew.sh)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiques d'installation anonymes de Homebrew (formulae.brew.sh)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estadísticas anónimas de instalación de Homebrew (formulae.brew.sh)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew の匿名インストール統計（formulae.brew.sh）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 匿名安装统计（formulae.brew.sh）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estatísticas anônimas de instalação do Homebrew (formulae.brew.sh)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiche anonime di installazione di Homebrew (formulae.brew.sh)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 익명 설치 통계(formulae.brew.sh)"
+          }
+        }
+      }
+    },
+    "Homebrew's anonymous install analytics (formulae.brew.sh), to %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrews anonyme Installationsstatistik (formulae.brew.sh), bis %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiques d'installation anonymes de Homebrew (formulae.brew.sh), jusqu'au %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estadísticas anónimas de instalación de Homebrew (formulae.brew.sh), hasta el %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew の匿名インストール統計（formulae.brew.sh）、%@ まで"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 匿名安装统计（formulae.brew.sh），截至 %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estatísticas anônimas de instalação do Homebrew (formulae.brew.sh), até %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiche anonime di installazione di Homebrew (formulae.brew.sh), fino al %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 익명 설치 통계(formulae.brew.sh), %@까지"
           }
         }
       }
@@ -19341,6 +21421,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "완료했음"
+          }
+        }
+      }
+    },
+    "If a download doesn't match, brew stops for that app and leaves it as it was.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt ein Download nicht, bricht brew für diese App ab und lässt sie unverändert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si un téléchargement ne correspond pas, brew s'arrête pour cette app et la laisse telle quelle."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si una descarga no coincide, brew se detiene para esa app y la deja como estaba."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果下载内容不一致，brew 会停止处理该 App 并保持原样。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se um download não conferir, o brew para naquele app e o deixa como estava."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se un download non corrisponde, brew si ferma per quell'app e la lascia com'era."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다."
           }
         }
       }
@@ -19813,6 +21945,58 @@
         }
       }
     },
+    "Install counts unavailable": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installationszahlen nicht verfügbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre d'installations indisponible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuento de instalaciones no disponible"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール数を取得できません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法获取安装次数"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contagem de instalações indisponível"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numero di installazioni non disponibile"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치 횟수를 불러올 수 없음"
+          }
+        }
+      }
+    },
     "Install standard Homebrew": {
       "localizations": {
         "de": {
@@ -19965,6 +22149,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치됨"
+          }
+        }
+      }
+    },
+    "Installed %@; the cask installs %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installiert: %1$@; das Cask installiert %2$@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installée : %1$@ ; le cask installe %2$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalada: %1$@; el cask instala %2$@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール済み: %1$@。cask がインストールするのは %2$@ です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已安装 %1$@；cask 安装的是 %2$@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado: %1$@; o cask instala %2$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installata: %1$@; il cask installa %2$@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치된 버전 %1$@, cask가 설치하는 버전 %2$@."
           }
         }
       }
@@ -20329,6 +22565,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치하면 소스에서 컴파일되며 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "Installs": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installationen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installations"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalaciones"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール数"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装次数"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalações"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installazioni"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치 횟수"
           }
         }
       }
@@ -21685,6 +23973,58 @@
         }
       }
     },
+    "Left to the app: %@ isn't in Upgrade all or auto-update.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der App überlassen: %@ ist nicht in „Alle upgraden“ oder Auto-Update."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laissée à l'app : %@ n'est pas inclus dans Tout mettre à niveau ni dans la mise à jour auto."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La gestiona la app: %@ no está en Actualizar todo ni en la actualización automática."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリに任せる: %@ は「すべてアップグレード」と自動アップデートの対象外です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "交由 App：%@ 不在“全部升级”或自动更新中。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deixado ao app: %@ não está em Atualizar tudo nem na atualização automática."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lasciata all'app: %@ non è in Aggiorna tutto né nell'aggiornamento automatico."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱에 맡김: %@은(는) 모두 업그레이드 및 자동 업데이트에 포함되지 않습니다."
+          }
+        }
+      }
+    },
     "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them.": {
       "localizations": {
         "de": {
@@ -21893,6 +24233,58 @@
         }
       }
     },
+    "Likely match": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wahrscheinlich"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probable"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probable"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一致の可能性大"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可能匹配"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provável"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probabile"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유력한 일치"
+          }
+        }
+      }
+    },
     "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)": {
       "localizations": {
         "de": {
@@ -22045,6 +24437,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "formulae.brew.sh 불러오는 중…"
+          }
+        }
+      }
+    },
+    "Loading install counts…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lade Installationszahlen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chargement des installations…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando instalaciones…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール数を読み込み中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载安装次数…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregando instalações…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caricamento installazioni…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치 횟수 불러오는 중…"
           }
         }
       }
@@ -22881,6 +25325,110 @@
         }
       }
     },
+    "Name only": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Name"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom seul"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo nombre"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前のみ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅名称"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só o nome"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo nome"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름만 일치"
+          }
+        }
+      }
+    },
+    "Needs update first": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erst updaten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À mettre à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar antes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に更新が必要"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需先更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar antes"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da aggiornare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 업데이트"
+          }
+        }
+      }
+    },
     "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).": {
       "localizations": {
         "de": {
@@ -23297,6 +25845,58 @@
         }
       }
     },
+    "No Homebrew cask installs these apps.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Homebrew-Cask installiert diese Apps."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun cask Homebrew n'installe ces apps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún cask de Homebrew instala estas apps."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これらのアプリをインストールする Homebrew の cask はありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有 Homebrew cask 会安装这些 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum cask do Homebrew instala esses apps."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun cask di Homebrew installa queste app."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱들을 설치하는 Homebrew cask가 없습니다."
+          }
+        }
+      }
+    },
     "No Homebrew status to work from": {
       "localizations": {
         "de": {
@@ -23397,6 +25997,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "아직 Intelbrew bottle이 없습니다."
+          }
+        }
+      }
+    },
+    "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts zu übernehmen: Alles unter Programme stammt von Homebrew, aus dem App Store oder von Apple."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune app à adopter : tout le contenu d'Applications vient de Homebrew, de l'App Store ou d'Apple."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay apps que adoptar: todo lo que hay en Aplicaciones es de Homebrew, del App Store o de Apple."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぐアプリはありません。アプリケーション内はすべて Homebrew、App Store、または Apple のものです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可接管的 App：“应用程序”中的所有内容都来自 Homebrew、App Store 或 Apple。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum app para adotar: tudo em Aplicativos vem do Homebrew, da App Store ou da Apple."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna app da adottare: tutto in Applicazioni proviene da Homebrew, dall'App Store o da Apple."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져올 앱이 없습니다. 응용 프로그램의 모든 항목이 Homebrew, App Store 또는 Apple에서 왔습니다."
           }
         }
       }
@@ -23817,6 +26469,58 @@
         }
       }
     },
+    "No cask": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Cask"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun cask"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin cask"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask なし"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无 cask"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem cask"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun cask"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask 없음"
+          }
+        }
+      }
+    },
     "No data yet": {
       "localizations": {
         "de": {
@@ -23969,6 +26673,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "나열된 수정 없음"
+          }
+        }
+      }
+    },
+    "No installs recorded": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Installationen erfasst"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune installation enregistrée"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin instalaciones registradas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールの記録なし"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有安装记录"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma instalação registrada"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna installazione registrata"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치 기록 없음"
           }
         }
       }
@@ -24957,6 +27713,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "링크되지 않음: 명령이 Homebrew의 bin에 없습니다. `brew link %@`로 링크하세요."
+          }
+        }
+      }
+    },
+    "Not listed: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht aufgeführt: %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non listées : %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No listadas: %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一覧にないもの: %@。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未列出：%@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não listados: %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non elencate: %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "목록에 없음: %@."
           }
         }
       }
@@ -26833,6 +29641,58 @@
         }
       }
     },
+    "Only the app's name matches. It may be a different app with the same name: check before adopting.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur der Name passt. Es kann eine andere App gleichen Namens sein – vor dem Übernehmen prüfen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seul le nom de l'app correspond. Il peut s'agir d'une autre app du même nom : vérifiez avant d'adopter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo coincide el nombre de la app. Puede ser otra app con el mismo nombre: compruébalo antes de adoptar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリ名だけが一致しています。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só o nome do app confere. Pode ser outro app com o mesmo nome: verifique antes de adotar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrisponde solo il nome dell'app. Potrebbe essere un'altra app con lo stesso nome: controlla prima di adottare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 이름만 일치합니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요."
+          }
+        }
+      }
+    },
     "Open Homepage": {
       "localizations": {
         "de": {
@@ -27509,6 +30369,58 @@
         }
       }
     },
+    "Or have Homebrew replace it, in Terminal:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oder von Homebrew ersetzen lassen, im Terminal:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ou laissez Homebrew la remplacer, dans Terminal :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O deja que Homebrew la reemplace, en Terminal:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "または、ターミナルで Homebrew に置き換えさせます:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "或者在终端中让 Homebrew 替换它："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ou deixe o Homebrew substituí-lo, no Terminal:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oppure fai sostituire l'app da Homebrew, nel Terminal:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "또는 터미널에서 Homebrew로 교체하세요:"
+          }
+        }
+      }
+    },
     "Other": {
       "localizations": {
         "de": {
@@ -27713,6 +30625,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "패키지"
+          }
+        }
+      }
+    },
+    "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teil des Ordners %@, den das Cask als Ganzes installiert; brew würde jede Datei vergleichen und bei Abweichungen ablehnen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait partie du dossier %@, que le cask installe en entier ; brew comparerait chaque fichier et refuserait à la moindre différence."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forma parte de la carpeta %@, que el cask instala completa; brew compararía cada archivo y se negaría si algo difiere."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ フォルダの一部で、cask はこのフォルダ全体をインストールします。brew はすべてのファイルを比較し、違いがあれば拒否します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "属于 %@ 文件夹，cask 会整体安装该文件夹；brew 会比较每个文件，有任何不同就会拒绝。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faz parte da pasta %@, que o cask instala inteira; o brew compararia cada arquivo e recusaria se algo for diferente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fa parte della cartella %@, che il cask installa per intero; brew confronterebbe ogni file e rifiuterebbe se qualcosa è diverso."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 폴더의 일부이며, cask는 이 폴더 전체를 설치합니다. brew는 모든 파일을 비교하고 다른 부분이 있으면 거부합니다."
           }
         }
       }
@@ -29065,6 +32029,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "로컬 tap 읽는 중…"
+          }
+        }
+      }
+    },
+    "Reading your apps and Homebrew's casks…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps und Homebrew-Casks werden gelesen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture de vos apps et des casks Homebrew…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leyendo tus apps y los casks de Homebrew…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリと Homebrew の cask を読み込み中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在读取你的 App 和 Homebrew 的 cask…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lendo seus apps e os casks do Homebrew…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lettura delle app e dei cask di Homebrew…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱과 Homebrew cask를 읽는 중…"
+          }
+        }
+      }
+    },
+    "Ready to adopt": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übernehmbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêtes à adopter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listas para adoptar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎ可能"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可以接管"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prontos para adotar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adottabili"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져오기 가능"
           }
         }
       }
@@ -32709,6 +35777,58 @@
         }
       }
     },
+    "Scan Again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neu prüfen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réanalyser"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a analizar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再スキャン"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新扫描"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analisar de novo"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripeti scansione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 스캔"
+          }
+        }
+      }
+    },
     "Scan Now": {
       "localizations": {
         "de": {
@@ -33749,54 +36869,54 @@
         }
       }
     },
-    "Self-updating apps are included only when \"Include self-updating apps\" is on.": {
+    "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\".": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sich selbst aktualisierende Apps werden nur einbezogen, wenn „Sich selbst aktualisierende Apps einbeziehen“ an ist."
+            "value": "Selbstaktualisierende Apps sind nur dabei, wenn „Selbstaktualisierende Apps einbeziehen“ an ist oder für die App „Homebrew“ gewählt wurde; nie bei „App selbst“."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les apps à mise à jour automatique ne sont incluses que si « Inclure les apps à mise à jour automatique » est activé."
+            "value": "Les apps qui se mettent à jour seules ne sont incluses que si « Inclure les apps à mise à jour automatique » est activé, ou si vous avez choisi « Homebrew » pour cette app ; jamais si vous avez choisi « L'app elle-même »."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las apps con actualización propia solo se incluyen si \"Incluir apps con actualización propia\" está activado."
+            "value": "Las apps que se actualizan solas solo se incluyen si «Incluir apps que se actualizan solas» está activado, o si elegiste «Homebrew» para esa app; nunca si elegiste «La propia app»."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "自己アップデートするアプリは、「自己アップデートするアプリを含める」がオンの場合にのみ含まれます。"
+            "value": "自己更新するアプリが含まれるのは、「自己更新するアプリを含める」がオンのとき、またはそのアプリで「Homebrew が更新」を選んだときだけです。「アプリが更新」を選んだ場合は含まれません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "仅当“包含可自行更新的 App”开启时，才包含可自行更新的 App。"
+            "value": "只有开启“包含自行更新的 App”，或为该 App 选择了“由 Homebrew 更新”时，才会包含自行更新的 App；选择“App 自行更新”时则永不包含。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apps com atualização própria só são incluídos quando \"Incluir apps com atualização própria\" está ativado."
+            "value": "Apps que se atualizam sozinhos só entram quando \"Incluir apps que se atualizam sozinhos\" está ativado, ou quando você escolheu \"Homebrew\" para aquele app; nunca quando escolheu \"O próprio app\"."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le app che si aggiornano da sole sono incluse solo se \"Includi le app che si aggiornano da sole\" è attivo."
+            "value": "Le app che si aggiornano da sole sono incluse solo se \"Includi app che si aggiornano da sole\" è attivo, o se per quell'app hai scelto \"Homebrew\"; mai se hai scelto \"L'app stessa\"."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"자체 업데이트 앱 포함\"이 켜져 있을 때만 자체 업데이트 앱이 포함됩니다."
+            "value": "자체 업데이트 앱은 \"자체 업데이트 앱 포함\"이 켜져 있거나 해당 앱에 \"Homebrew가 업데이트\"를 선택한 경우에만 포함됩니다. \"앱이 직접 업데이트\"를 선택한 경우에는 포함되지 않습니다."
           }
         }
       }
@@ -34005,6 +37125,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "서비스"
+          }
+        }
+      }
+    },
+    "Several casks install an app with this name. Pick the one you have.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehrere Casks installieren eine App mit diesem Namen. Wähle deine aus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plusieurs casks installent une app portant ce nom. Choisissez celui que vous avez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varios casks instalan una app con este nombre. Elige la que tienes."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有多个 cask 会安装同名 App。请选择你所用的那个。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vários casks instalam um app com este nome. Escolha o que você tem."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più cask installano un'app con questo nome. Scegli quella che hai."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 이름의 앱을 설치하는 cask가 여러 개 있습니다. 가지고 있는 것을 선택하세요."
           }
         }
       }
@@ -36505,6 +39677,58 @@
         }
       }
     },
+    "Sure match": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicher"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sûre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segura"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確実に一致"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确定匹配"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certa"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicura"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확실한 일치"
+          }
+        }
+      }
+    },
     "Swaps source build for bottle": {
       "localizations": {
         "de": {
@@ -37021,6 +40245,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요."
+          }
+        }
+      }
+    },
+    "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard lässt Upgrades dieser App aus „Alle upgraden“, den Zählern und Auto-Update heraus. Ihr eigener Updater hält sie aktuell. brew upgrade im Terminal kann sie weiterhin upgraden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard exclut les mises à niveau de cette app de Tout mettre à niveau, des compteurs et de la mise à jour auto. Son propre outil de mise à jour la garde à jour. brew upgrade dans Terminal peut toujours la mettre à niveau."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard deja las actualizaciones de esta app fuera de Actualizar todo, los recuentos y la actualización automática. Su propio actualizador la mantiene al día. brew upgrade en Terminal aún puede actualizarla."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard deixa as atualizações deste app fora de Atualizar tudo, das contagens e da atualização automática. O próprio atualizador do app o mantém em dia. brew upgrade no Terminal ainda pode atualizá-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard esclude gli aggiornamenti di questa app da Aggiorna tutto, dai conteggi e dall'aggiornamento automatico. Il suo programma di aggiornamento la mantiene aggiornata. brew upgrade nel Terminal può comunque aggiornarla."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다."
+          }
+        }
+      }
+    },
+    "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard zeigt jede neuere Version dieses Casks, upgradet es mit „Alle upgraden“ und Auto-Update und ersetzt die App wie brew."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard liste chaque nouvelle version de ce cask, le met à niveau avec Tout mettre à niveau et la mise à jour auto, et remplace l'app comme le fait brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard muestra cada versión nueva de este cask, lo actualiza con Actualizar todo y la actualización automática, y reemplaza la app como lo hace brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard lista cada versão nova deste cask, o atualiza com Atualizar tudo e a atualização automática, e substitui o app como o brew faz."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard elenca ogni nuova versione di questo cask, lo aggiorna con Aggiorna tutto e l'aggiornamento automatico, e sostituisce l'app come fa brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard는 이 cask의 모든 새 버전을 표시하고, 모두 업그레이드와 자동 업데이트로 업그레이드하며, brew와 같은 방식으로 앱을 교체합니다."
           }
         }
       }
@@ -38013,6 +41341,266 @@
         }
       }
     },
+    "The app has no version brew can compare.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die App hat keine Version, die brew vergleichen kann."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'app n'a pas de version que brew peut comparer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La app no tiene una versión que brew pueda comparar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリには brew が比較できるバージョンがありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该 App 没有 brew 可比较的版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O app não tem uma versão que o brew possa comparar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'app non ha una versione che brew possa confrontare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱에는 brew가 비교할 수 있는 버전이 없습니다."
+          }
+        }
+      }
+    },
+    "The app's bundle id is one the cask names.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bundle-ID der App ist eine der im Cask genannten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'identifiant de bundle de l'app figure parmi ceux du cask."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El bundle id de la app es uno de los que indica el cask."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリのバンドル ID が cask に記載されたものと一致します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该 App 的 bundle ID 是 cask 中列出的之一。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O bundle id do app é um dos que o cask indica."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il bundle id dell'app è uno di quelli indicati dal cask."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱의 번들 ID가 cask에 명시된 것 중 하나입니다."
+          }
+        }
+      }
+    },
+    "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Cask lädt immer die neueste Version, also vergleicht brew nach dem Download; bei Abweichung bleibt die App unangetastet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask télécharge toujours la version la plus récente, donc brew compare après le téléchargement ; en cas de différence, il ne touche pas à l'app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask siempre descarga la versión más reciente, así que brew compara después de descargar; si difieren, no toca la app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この cask は常に最新バージョンをダウンロードするため、brew はダウンロード後に比較します。違いがあればアプリには手を付けません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 cask 总是下载最新版本，因此 brew 会在下载后比较；如果不同，就不会改动该 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask sempre baixa a versão mais recente, então o brew compara depois de baixar; se forem diferentes, ele não mexe no app."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask scarica sempre la versione più recente, quindi brew confronta dopo il download; se sono diverse, non tocca l'app."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 cask는 항상 최신 버전을 다운로드하므로 brew는 다운로드 후 비교합니다. 다르면 앱을 건드리지 않습니다."
+          }
+        }
+      }
+    },
+    "The cask installs to %@; brew adopts only an app at that exact place.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Cask installiert nach %@; brew übernimmt nur eine App genau an diesem Ort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask installe dans %@ ; brew n'adopte qu'une app située exactement à cet endroit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask instala en %@; brew solo adopta una app en esa ubicación exacta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この cask は %@ にインストールします。brew はその場所にあるアプリだけを引き継ぎます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 cask 安装到 %@；brew 只接管正好位于该位置的 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask instala em %@; o brew só adota um app exatamente nesse local."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask installa in %@; brew adotta solo un'app che si trova esattamente lì."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 cask는 %@에 설치합니다. brew는 정확히 그 위치에 있는 앱만 가져옵니다."
+          }
+        }
+      }
+    },
+    "The cask says this app updates itself (auto_updates).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laut Cask aktualisiert sich diese App selbst (auto_updates)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask indique que cette app se met à jour seule (auto_updates)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask indica que esta app se actualiza sola (auto_updates)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask によると、このアプリは自己更新します（auto_updates）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 cask 声明该 App 会自行更新（auto_updates）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask diz que este app se atualiza sozinho (auto_updates)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask indica che questa app si aggiorna da sola (auto_updates)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask에 따르면 이 앱은 자체 업데이트합니다(auto_updates)."
+          }
+        }
+      }
+    },
     "The disk is full": {
       "localizations": {
         "de": {
@@ -38429,6 +42017,58 @@
         }
       }
     },
+    "The vendor matches, but the cask doesn't name this exact bundle id.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Hersteller passt, aber das Cask nennt nicht genau diese Bundle-ID."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'éditeur correspond, mais le cask ne nomme pas cet identifiant de bundle exact."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El desarrollador coincide, pero el cask no indica este bundle id exacto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開発元は一致しますが、cask にはこのバンドル ID が記載されていません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开发者匹配，但 cask 未列出这个确切的 bundle ID。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O desenvolvedor confere, mas o cask não indica este bundle id exato."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo sviluppatore corrisponde, ma il cask non indica questo esatto bundle id."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다."
+          }
+        }
+      }
+    },
     "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.": {
       "localizations": {
         "de": {
@@ -38637,6 +42277,58 @@
         }
       }
     },
+    "These match a cask, but brew install --adopt wouldn't take them over.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese passen zu einem Cask, aber brew install --adopt würde sie nicht übernehmen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elles correspondent à un cask, mais brew install --adopt ne les prendrait pas en charge."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coinciden con un cask, pero brew install --adopt no las asumiría."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask と一致しますが、brew install --adopt では引き継げません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这些 App 与某个 cask 匹配，但 brew install --adopt 不会接管它们。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estes conferem com um cask, mas brew install --adopt não os assumiria."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrispondono a un cask, ma brew install --adopt non le prenderebbe in carico."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask와 일치하지만 brew install --adopt로는 가져올 수 없습니다."
+          }
+        }
+      }
+    },
     "Third-party": {
       "localizations": {
         "de": {
@@ -38737,6 +42429,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요."
+          }
+        }
+      }
+    },
+    "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Cask führt ein Installationspaket aus, das --adopt ignoriert: brew würde das Installationsprogramm erneut ausführen, mit deinem Passwort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce cask exécute un paquet d'installation, qui ignore --adopt : brew relancerait l'installation, avec votre mot de passe."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este cask ejecuta un paquete de instalación, que ignora --adopt: brew volvería a ejecutar el instalador, con tu contraseña."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この cask はインストーラパッケージを実行し、--adopt を無視します。brew はパスワードを使ってインストーラを再実行することになります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este cask executa um pacote de instalação, que ignora --adopt: o brew executaria o instalador de novo, com sua senha."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo cask esegue un pacchetto di installazione, che ignora --adopt: brew rieseguirebbe il programma di installazione, con la tua password."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다."
           }
         }
       }
@@ -40769,6 +44513,58 @@
         }
       }
     },
+    "Updates": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mises à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizaciones"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップデート"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizações"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiornamenti"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업데이트"
+          }
+        }
+      }
+    },
     "Updates itself": {
       "localizations": {
         "de": {
@@ -41909,6 +45705,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드"
+          }
+        }
+      }
+    },
+    "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrades erscheinen, wenn brew sie auflistet, und jede neuere Version, wenn „Selbstaktualisierende Apps einbeziehen“ an ist (Einstellungen ▸ Upgrades)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à niveau apparaissent quand brew les liste, et chaque nouvelle version quand « Inclure les apps à mise à jour automatique » est activé (Réglages ▸ Mises à niveau)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las actualizaciones aparecen cuando brew las lista, y cada versión nueva cuando «Incluir apps que se actualizan solas» está activado (Ajustes ▸ Actualizaciones)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレードは brew が一覧に挙げたときに表示されます。「自己更新するアプリを含める」がオンなら新しいバージョンをすべて表示します（設定 ▸ アップグレード）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 列出升级时即会显示；开启“包含自行更新的 App”后会显示每个新版本（设置 ▸ 升级）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As atualizações aparecem quando o brew as lista, e cada versão nova quando \"Incluir apps que se atualizam sozinhos\" está ativado (Ajustes ▸ Atualizações)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gli aggiornamenti compaiono quando brew li elenca, e ogni nuova versione quando \"Includi app che si aggiornano da sole\" è attivo (Impostazioni ▸ Aggiornamenti)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드는 brew가 목록에 표시할 때 나타나며, \"자체 업데이트 앱 포함\"이 켜져 있으면 모든 새 버전이 나타납니다(설정 ▸ 업그레이드)."
           }
         }
       }
@@ -43421,6 +47269,110 @@
         }
       }
     },
+    "adopted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "übernommen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "adoptée(s)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "adoptadas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き継ぎ済み"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已接管"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "adotados"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "adottate"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져옴"
+          }
+        }
+      }
+    },
+    "and %lld more": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "und %lld weitere"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "et %lld de plus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "y %lld más"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ほか%lld個"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "及另外 %lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e mais %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e altre %lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "외 %lld개"
+          }
+        }
+      }
+    },
     "and %lld more…": {
       "localizations": {
         "de": {
@@ -43781,6 +47733,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew --version이 %d(으)로 종료됨"
+          }
+        }
+      }
+    },
+    "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew übernimmt nur genau die Version, die das Cask installiert. Aktualisiere die App mit ihrem eigenen Updater, dann „Neu prüfen“. Tankard ersetzt die App nicht für dich."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew n'adopte que la version exacte installée par le cask. Mettez à jour l'app avec son propre outil, puis Réanalyser. Tankard ne remplace pas l'app à votre place."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y luego Volver a analizar. Tankard no reemplaza la app por ti."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew は cask がインストールするのと同じバージョンしか引き継ぎません。アプリ自身のアップデート機能で更新してから「再スキャン」してください。Tankard がアプリを置き換えることはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 只接管与 cask 安装版本完全相同的版本。请先用 App 自带的更新程序更新，然后点按“重新扫描”。Tankard 不会替你替换该 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew só adota a versão exata que o cask instala. Atualize o app com o próprio atualizador e depois use Analisar de novo. O Tankard não substitui o app por você."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew adotta solo la versione esatta installata dal cask. Aggiorna l'app con il suo programma di aggiornamento, poi Ripeti scansione. Tankard non sostituisce l'app al posto tuo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew는 cask가 설치하는 버전과 정확히 같은 버전만 가져옵니다. 앱 자체 업데이터로 업데이트한 다음 다시 스캔하세요. Tankard가 대신 앱을 교체하지 않습니다."
           }
         }
       }
@@ -44665,6 +48669,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 %lld(으)로 종료됨"
+          }
+        }
+      }
+    },
+    "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: brew lädt das Cask, vergleicht die Version der App (Kurzversion und Build) mit der installierten und vermerkt das Cask bei Übereinstimmung, ohne die App zu verschieben. Apps aus dem App Store und von Apple sowie Apps, die Homebrew schon verwaltet, werden nicht aufgeführt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt : brew télécharge le cask, compare la version de l'app (version courte et build) avec celle déjà installée et, si elles correspondent, enregistre le cask sans déplacer l'app. Les apps de l'App Store et d'Apple, et celles déjà gérées par Homebrew, ne sont pas listées."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: brew descarga el cask, compara la versión de la app (versión corta y build) con la ya instalada y, si coinciden, registra el cask sin mover la app. Las apps del App Store y de Apple, y las que Homebrew ya gestiona, no se muestran."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: brew は cask をダウンロードし、アプリのバージョン（短いバージョンとビルド）をインストール済みのものと比較して、一致すればアプリを移動せずに cask を記録します。App Store と Apple のアプリ、および Homebrew が管理済みのアプリは表示されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt：brew 会下载 cask，将 App 的版本（短版本号和构建号）与已安装的版本比较，一致时记录该 cask 而不移动 App。来自 App Store 和 Apple 的 App，以及 Homebrew 已管理的 App，不会列出。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: o brew baixa o cask, compara a versão do app (versão curta e build) com a já instalada e, se conferirem, registra o cask sem mover o app. Apps da App Store e da Apple, e apps que o Homebrew já gerencia, não são listados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: brew scarica il cask, confronta la versione dell'app (versione breve e build) con quella già installata e, se corrispondono, registra il cask senza spostare l'app. Le app dell'App Store e di Apple, e quelle già gestite da Homebrew, non sono elencate."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew install --cask --adopt: brew는 cask를 다운로드하고 앱 버전(짧은 버전 및 빌드)을 설치된 버전과 비교하여, 일치하면 앱을 옮기지 않고 cask를 기록합니다. App Store 및 Apple 앱과 Homebrew가 이미 관리하는 앱은 표시되지 않습니다."
           }
         }
       }
@@ -47113,6 +51169,58 @@
         }
       }
     },
+    "formulae.brew.sh · %@ casks": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ Casks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ casks"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ casks"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ 個の cask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ 个 cask"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ casks"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · %@ cask"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "formulae.brew.sh · cask %@개"
+          }
+        }
+      }
+    },
     "formulae.brew.sh · %@ formulae · %@ casks": {
       "localizations": {
         "de": {
@@ -48929,6 +53037,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "재설치됨"
+          }
+        }
+      }
+    },
+    "set to update itself": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aktualisiert sich selbst"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "réglée pour se mettre à jour seule"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "configurada para actualizarse sola"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自己更新に設定"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设为自行更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "configurado para se atualizar sozinho"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "impostata per aggiornarsi da sola"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자체 업데이트로 설정됨"
           }
         }
       }
