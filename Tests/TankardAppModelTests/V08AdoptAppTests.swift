@@ -379,4 +379,16 @@ struct V08AdoptAppTests {
         // Never outside "Needs update first".
         #expect(a.rows(.ready).allSatisfy { !a.offersReplace($0) })
     }
+    /// QA: a cask with two apps is two rows but one adopt.
+    @Test func twoAppsOfOneCaskAdoptOnce() throws {
+        let apps = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app"),
+                    BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo Helper.app", target: "/Applications/Foo Helper.app")]
+        let c = AdoptCask(token: "foo", version: "1.0", apps: apps, bundleIDs: ["com.foo.foo", "com.foo.helper"])
+        let a = adoptStore([c], [Self.app("Foo.app", "com.foo.foo", "1.0"), Self.app("Foo Helper.app", "com.foo.helper", "1.0")])
+        #expect(a.rows(.ready).count == 2 && a.rows(.ready).allSatisfy(a.isTicked))
+        #expect(a.plan.map(\.token) == ["foo"])
+        a.requestAdopt()
+        #expect(a.pendingConfirm?.count == 1)
+        #expect(AdoptStore.commandsText(a.pendingConfirm ?? []) == "brew install --cask --adopt homebrew/cask/foo")
+    }
 }

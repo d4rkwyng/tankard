@@ -251,15 +251,26 @@ public final class AdoptStore {
 
     // MARK: adopting
 
-    /// The ticked apps, as the queue will run them.
+    /// The ticked apps, as the queue will run them: one item per cask. A
+    /// cask with two apps (two rows) is adopted once; the item names the
+    /// first app, takes the weaker confidence and a self-update choice
+    /// that isn't automatic.
     public var plan: [AdoptPlanItem] {
-        rows(.ready).filter(isTicked).compactMap { row in
-            guard let c = cask(row) else { return nil }
-            return AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
-                                 appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
-                                 policy: c.autoUpdates ? policy(row) : .automatic,
-                                 confidence: confidence(row) ?? .low)
+        var out: [AdoptPlanItem] = []
+        for row in rows(.ready).filter(isTicked) {
+            guard let c = cask(row) else { continue }
+            let item = AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
+                                     appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
+                                     policy: c.autoUpdates ? policy(row) : .automatic,
+                                     confidence: confidence(row) ?? .low)
+            if let i = out.firstIndex(where: { $0.qualifiedName == item.qualifiedName }) {
+                out[i].confidence = min(out[i].confidence, item.confidence)
+                if out[i].policy == .automatic { out[i].policy = item.policy }
+            } else {
+                out.append(item)
+            }
         }
+        return out
     }
 
     /// "Adopt N Apps…": the confirmation.
