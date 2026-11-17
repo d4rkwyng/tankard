@@ -421,9 +421,9 @@ struct VersionText: View {
 }
 
 /// The primary action button (Upgrade, Install, the upgrade sheet's Done):
-/// filled with the theme's green whatever the system accent, focus or key
-/// window, so it looks the same live and in snapshots. Disabled, it stays
-/// green but muted.
+/// filled with the palette theme's action colour (Tankard amber, Dracula green), or the
+/// Mac's accent colour in Dark/Light/System, so it looks the same live and in
+/// snapshots. Disabled, it stays filled but muted.
 struct PrimaryActionStyle: ButtonStyle {
     @Environment(\.theme) private var theme
     @Environment(\.isEnabled) private var isEnabled
@@ -431,10 +431,12 @@ struct PrimaryActionStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(theme.onAction)
+            .foregroundStyle(theme.isCustom ? theme.onAction : Color.white)
             .padding(.horizontal, 11)
             .frame(minHeight: 24)
-            .background(RoundedRectangle(cornerRadius: 6).fill(theme.action))
+            // Palette themes use their own colour (Tankard amber, Dracula
+            // green); Dark/Light/System use the Mac's accent colour, as before.
+            .background(RoundedRectangle(cornerRadius: 6).fill(theme.isCustom ? theme.action : Color.accentColor))
             .overlay(RoundedRectangle(cornerRadius: 6).fill(Color.black.opacity(configuration.isPressed ? 0.15 : 0)))
             .opacity(isEnabled ? 1 : 0.45)
             .saturation(isEnabled ? 1 : 0.6)
@@ -455,8 +457,8 @@ struct ActionCountPill: View {
         Text("\(count)")
             .font(.system(size: 11, weight: .semibold))
             .monospacedDigit()
-            .foregroundStyle(theme.actionPillText)
+            .foregroundStyle(theme.isCustom ? theme.actionPillText : Color.white)
             .padding(.horizontal, 6)
-            .background(Capsule().fill(theme.actionPill))
+            .background(Capsule().fill(theme.isCustom ? theme.actionPill : Color.black.opacity(0.25)))
     }
 }
