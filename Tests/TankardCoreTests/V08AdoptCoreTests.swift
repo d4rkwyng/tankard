@@ -318,4 +318,31 @@ struct V08AdoptCoreTests {
         plain.isSymlink = false
         #expect(AdoptMatcher.row(for: plain, index: AdoptIndex(casks: [c])).verdicts["foo"] == .ready)
     }
+    /// QA: an installed cask's zap ids name other apps (choosy's zap lists
+    /// Opera's preferences); a hand-installed Opera must not be hidden as
+    /// "already from Homebrew".
+    @Test func zapIDsDontHideOtherApps() throws {
+        let json = #"""
+        [{"token":"choosy","full_token":"choosy","tap":"homebrew/cask","version":"2.6","artifacts":[
+          {"uninstall":[{"quit":"com.choosyosx.choosy"}]},{"app":["Choosy.app"],"target":"/Applications/Choosy.app"},
+          {"zap":[{"trash":["~/Library/Preferences/com.operasoftware.Opera.plist","~/Library/Preferences/com.choosyosx.choosy.plist"]}]}]},
+         {"token":"opera","full_token":"opera","tap":"homebrew/cask","version":"120.0","auto_updates":true,"artifacts":[
+          {"uninstall":[{"quit":"com.operasoftware.Opera"}]},{"app":["Opera.app"],"target":"/Applications/Opera.app"}]}]
+        """#
+        let casks = try JSONDecoder().decode([BrewInfoJSON.Cask].self, from: Data(json.utf8))
+        let idx = AdoptIndex(casks: casks.map(AdoptCask.init))
+        #expect(idx.byToken["choosy"]?.bundleIDs.contains("com.operasoftware.opera") == true) // still a matching hint
+        var choosy = Package.command("choosy")
+        choosy.kind = .cask
+        choosy.appPaths = ["/Applications/Choosy.app"]
+        choosy.quitBundleIDs = casks[0].quitBundleIDs
+        let managed = ManagedApps(packages: [choosy], index: idx)
+        let opera = Self.app("Opera.app", "com.operasoftware.Opera", "119.0")
+        #expect(!managed.owns(opera))
+        #expect(managed.owns(Self.app("Choosy.app", "com.choosyosx.choosy", "2.6")))
+        // Moved, same quit id: still Homebrew's.
+        #expect(managed.owns(Self.app("Choosy Moved.app", "com.choosyosx.choosy", "2.6")))
+        let scan = AdoptMatcher.match([opera], index: idx, managed: managed)
+        #expect(scan.skipped.managed.isEmpty && scan.rows.first?.bestToken == "opera")
+    }
 }

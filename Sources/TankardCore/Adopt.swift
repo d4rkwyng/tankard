@@ -376,11 +376,16 @@ public struct ManagedApps: Sendable {
         self.tokens = tokens
     }
 
-    /// From the installed casks Tankard already read (`brew info`).
+    /// From the installed casks Tankard already read (`brew info`): their
+    /// app paths, and the bundle ids their `uninstall` quits (the apps
+    /// themselves). Not the ids in `zap` or the rest of `uninstall`: those
+    /// name other apps too (choosy's zap lists Opera's, tidgi's VS Code's,
+    /// microsoft-office's OneDrive's in cask.json, 2026-11-17), and an app
+    /// installed by hand would be hidden as "already from Homebrew". `index`
+    /// is kept for the call sites; it adds nothing now.
     public init(packages: [Package], index: AdoptIndex?) {
         let casks = packages.filter { $0.kind == .cask }
-        var ids = Set(casks.flatMap { $0.quitBundleIDs ?? [] })
-        for c in casks { ids.formUnion(index?.byToken[c.name]?.bundleIDs ?? []) }
+        let ids = Set(casks.flatMap { $0.quitBundleIDs ?? [] })
         self.init(paths: Set(casks.flatMap { $0.appPaths ?? [] }), bundleIDs: ids, tokens: Set(casks.map(\.name)))
     }
 
