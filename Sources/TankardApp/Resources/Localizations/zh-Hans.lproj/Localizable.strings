@@ -504,7 +504,7 @@
 "OK" = "好";
 "Off" = "关";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "默认关闭。当扫描发现以前没有的漏洞时，在菜单栏菜单中显示通知。随时可在此处点按“立即扫描”，或使用 Homebrew ▸ 扫描漏洞 来执行一次扫描。";
-"Off by default. Tankard's formula upgrades then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "默认关闭。此时 Tankard 的 formula 升级会带 HOMEBREW_NO_INSTALL_CLEANUP=1 运行（会显示在命令中），因此 brew 会在磁盘上保留旧版本，恢复点即可回滚。保留的每个版本都会占用磁盘空间，直到“清理”将其移除。Tankard 之外由 brew 自身执行的定期清理也可能将其移除。Cask 始终会替换旧版本。";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "默认关闭。此时 Tankard 的升级、安装和重新安装（手动和自动更新）会带 HOMEBREW_NO_INSTALL_CLEANUP=1 运行（会显示在命令中），因此 brew 会在磁盘上保留旧版本，恢复点即可回滚。保留的每个版本都会占用磁盘空间，直到“清理”将其移除。Tankard 之外由 brew 自身执行的定期清理也可能将其移除。Cask 始终会替换旧版本。";
 "Off for Tankard in System Settings → Notifications" = "在“系统设置 → 通知”中，Tankard 的通知已关闭";
 "Official" = "官方";
 "Old version was cleaned up" = "旧版本已被清理";

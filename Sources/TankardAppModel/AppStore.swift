@@ -606,7 +606,8 @@ public final class AppStore {
                             keep = restorePoints.settings.keepPreviousVersion] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
-                // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP for formulae.
+                // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
+                // upgrade, install and reinstall (any of them can run brew's periodic cleanup).
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
                     .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
                 return QueuedCommand(executable: brew, arguments: args, environment: env.merging(extra) { $1 },

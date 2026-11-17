@@ -278,7 +278,7 @@ struct KeepPreviousVersionToggle: View {
         Toggle("Keep the previous version after upgrades", isOn: Binding(
             get: { settings.keepPreviousVersion },
             set: { if settings.keepPreviousVersion != $0 { settings.keepPreviousVersion = $0 } }))
-            .help("Off by default. Tankard's formula upgrades then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.")
+            .help("Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.")
         Text("Uses disk space until Clean Up removes old versions.")
             .font(.system(size: 11)).foregroundStyle(.secondary)
     }

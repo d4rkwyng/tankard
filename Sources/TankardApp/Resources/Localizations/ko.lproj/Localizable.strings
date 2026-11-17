@@ -504,7 +504,7 @@
 "OK" = "확인";
 "Off" = "끔";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "기본값은 꺼짐입니다. 검사에서 이전에 없던 취약점이 발견되면 메뉴 막대 메뉴에 알림을 표시합니다. 지금 검사(여기) 또는 Homebrew ▸ 취약점 검사를 누르면 언제든 한 번 검사합니다.";
-"Off by default. Tankard's formula upgrades then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "기본값은 꺼짐입니다. 켜면 Tankard의 formula 업그레이드가 HOMEBREW_NO_INSTALL_CLEANUP=1(명령에 표시됨)로 실행되어, brew가 이전 버전을 디스크에 남기고 복원 지점으로 되돌릴 수 있습니다. 남겨 둔 각 버전은 정리로 제거할 때까지 디스크 공간을 차지합니다. Tankard 밖에서 brew가 자체적으로 수행하는 주기적 정리도 이를 제거할 수 있습니다. cask는 항상 이전 버전을 교체합니다.";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "기본값은 꺼짐입니다. 켜면 Tankard의 업그레이드, 설치, 재설치(수동 및 자동 업데이트)가 HOMEBREW_NO_INSTALL_CLEANUP=1(명령에 표시됨)로 실행되어, brew가 이전 버전을 디스크에 남기고 복원 지점으로 되돌릴 수 있습니다. 남겨 둔 각 버전은 정리로 제거할 때까지 디스크 공간을 차지합니다. Tankard 밖에서 brew가 자체적으로 수행하는 주기적 정리도 이를 제거할 수 있습니다. cask는 항상 이전 버전을 교체합니다.";
 "Off for Tankard in System Settings → Notifications" = "시스템 설정 → 알림에서 Tankard가 꺼져 있음";
 "Official" = "공식";
 "Old version was cleaned up" = "이전 버전이 정리되었습니다";

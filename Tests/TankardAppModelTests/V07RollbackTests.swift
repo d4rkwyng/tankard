@@ -241,13 +241,20 @@ struct RollbackSettingsTests {
         #expect(RollbackSettings(defaults: d).keepPreviousVersion)
     }
 
-    @Test func environmentOnlyForFormulaUpgradesWhenOn() {
+    @Test func environmentForEveryUpgradeInstallAndReinstallWhenOn() {
+        // Any of them can run brew's periodic cleanup, which removes every
+        // formula's old kegs, so casks and installs get it too.
         let f = at("xz", "5.8.3"), c = at("iterm2", "3.6", kind: .cask)
-        #expect(RollbackSettings.extraEnvironment(.upgrade, f, keep: true) == ["HOMEBREW_NO_INSTALL_CLEANUP": "1"])
-        #expect(RollbackSettings.extraEnvironment(.upgrade, f, keep: false).isEmpty)
-        #expect(RollbackSettings.extraEnvironment(.upgrade, c, keep: true).isEmpty)
-        #expect(RollbackSettings.extraEnvironment(.install, f, keep: true).isEmpty)
-        #expect(RollbackSettings.extraEnvironment(.cleanup, f, keep: true).isEmpty)
+        let on = ["HOMEBREW_NO_INSTALL_CLEANUP": "1"]
+        for action in [SessionAction.upgrade, .install, .replaceBottle] {
+            #expect(RollbackSettings.extraEnvironment(action, f, keep: true) == on, "\(action)")
+            #expect(RollbackSettings.extraEnvironment(action, c, keep: true) == on, "\(action)")
+            #expect(RollbackSettings.extraEnvironment(action, f, keep: false).isEmpty, "\(action)")
+            #expect(RollbackSettings.extraEnvironment(action, c, keep: false).isEmpty, "\(action)")
+        }
+        for action in [SessionAction.uninstall, .cleanup, .autoremove, .tap, .untap, .restore] {
+            #expect(RollbackSettings.extraEnvironment(action, f, keep: true).isEmpty, "\(action)")
+        }
     }
 }
 
@@ -269,6 +276,15 @@ struct RestoreStoreTests {
         let cmd = try #require(store.upgrade?.items.first?.command)
         #expect(cmd.environment["HOMEBREW_NO_INSTALL_CLEANUP"] == "1")
         #expect(cmd.display.hasPrefix("HOMEBREW_NO_INSTALL_CLEANUP=1 brew upgrade"))
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        // A cask install in the same session gets it too (brew install can
+        // run the periodic cleanup that removes the formula's old keg).
+        store.closeUpgrade()
+        store.startSession(.install, packages: [Package.placeholder(kind: .cask, name: "iterm2")])
+        let install = try #require(store.upgrade?.items.first?.command)
+        #expect(install.arguments.first == "install")
+        #expect(install.environment["HOMEBREW_NO_INSTALL_CLEANUP"] == "1")
+        #expect(install.display.hasPrefix("HOMEBREW_NO_INSTALL_CLEANUP=1 brew install --cask"))
         #expect(await waitUntil { store.upgrade?.isFinished == true })
     }
 

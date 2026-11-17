@@ -491,12 +491,15 @@ public final class RestorePointStore {
 
 /// "Keep the previous version after upgrades" (off by default).
 ///
-/// On: Tankard's own formula upgrades (the sheet and auto-update) run with
-/// HOMEBREW_NO_INSTALL_CLEANUP=1, so brew keeps the old keg (Homebrew FAQ,
-/// "How do I keep old versions of a formula when upgrading?"). That old keg
-/// is what makes an automatic rollback possible. It costs disk space until
-/// Clean Up (`brew cleanup`) removes it; brew's own 30-day cleanup, run by an
-/// install or upgrade outside Tankard, can remove it too.
+/// On: every upgrade, install and reinstall Tankard runs (formulae and
+/// casks, the sheet and auto-update) has HOMEBREW_NO_INSTALL_CLEANUP=1, so
+/// brew keeps the old keg (Homebrew FAQ, "How do I keep old versions of a
+/// formula when upgrading?"). Not only formula upgrades: any install,
+/// upgrade or reinstall can trigger brew's periodic cleanup, which removes
+/// every formula's old kegs, not just its own. That old keg is what makes an
+/// automatic rollback possible. It costs disk space until Clean Up
+/// (`brew cleanup`) removes it; brew's own 30-day cleanup, run by an install
+/// or upgrade outside Tankard, can remove it too.
 @Observable @MainActor
 public final class RollbackSettings {
     enum Key {
@@ -524,9 +527,18 @@ public final class RollbackSettings {
 
     public nonisolated static let noInstallCleanupKey = "HOMEBREW_NO_INSTALL_CLEANUP"
 
-    /// The variable for one step: formula upgrades only, and only when on.
+    /// The variable for one step: every upgrade, install and reinstall
+    /// (formula or cask), only when on.
     public nonisolated static func extraEnvironment(_ action: SessionAction, _ p: Package, keep: Bool) -> [String: String] {
-        guard keep, action == .upgrade, p.kind == .formula else { return [:] }
+        guard keep, appliesTo(action) else { return [:] }
         return [noInstallCleanupKey: "1"]
+    }
+
+    /// The brew commands that can run brew's periodic cleanup.
+    public nonisolated static func appliesTo(_ action: SessionAction) -> Bool {
+        switch action {
+        case .upgrade, .install, .replaceBottle: return true
+        case .uninstall, .cleanup, .autoremove, .tap, .untap, .restore: return false
+        }
     }
 }
