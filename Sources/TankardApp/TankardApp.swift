@@ -152,7 +152,7 @@ struct TankardApp: App {
         } else {
             deps = options.demo.map {
                 Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
-                                  pinned: V04ALaunch.demoPinned())
+                                  pinned: V04ALaunch.demoPinned(), replaced: V04ALaunch.demoReplaced())
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }

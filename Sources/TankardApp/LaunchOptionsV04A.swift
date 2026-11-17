@@ -11,6 +11,8 @@ import TankardCore
 //   TANKARD_SERVICE_SELECT=<name>    select a service
 //   TANKARD_TREE=all                 open every dependency-tree row
 //   TANKARD_DEMO_PINNED=a,b          demo only: these start pinned
+//   TANKARD_DEMO_REPLACED=a,b        demo only (0.8.2): these source builds start
+//                                    reinstalled from a bottle (Bottle available 0)
 //   TANKARD_DEMO_MANAGE=revert|uninstall   demo only: open that sheet
 //   TANKARD_DEMO_TYPED=<word>        demo only: pre-type the confirmation
 //   TANKARD_DEMO_SCAN=1|slow|off     demo only (0.6.1): scan for vulnerabilities
@@ -22,6 +24,10 @@ enum V04ALaunch {
 
     static func demoPinned(_ env: [String: String] = env) -> Set<String> {
         Set((env["TANKARD_DEMO_PINNED"] ?? "").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty })
+    }
+
+    static func demoReplaced(_ env: [String: String] = env) -> Set<String> {
+        Set((env["TANKARD_DEMO_REPLACED"] ?? "").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty })
     }
 
     static func filter(_ env: [String: String] = env) -> PackageFilter? {

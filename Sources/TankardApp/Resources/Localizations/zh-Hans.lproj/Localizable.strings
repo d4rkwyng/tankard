@@ -463,6 +463,7 @@
 "Installed %@; the cask installs %@." = "已安装 %1$@；cask 安装的是 %2$@。";
 "Installed as" = "安装为";
 "Installed as a dependency" = "作为依赖项安装";
+"Installed by you" = "你安装的";
 "Installed on" = "安装于";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "已安装的软件包，或搜索 Homebrew 的全部内容（⌘1、⌘2）";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "已安装的版本比 tap 的 %@ 更新。brew 不会降级它。";
@@ -523,7 +524,7 @@
 "Missing dependencies" = "缺失的依赖项";
 "More" = "更多";
 "More filters" = "更多筛选";
-"More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "更多筛选：已固定（brew 不会升级的软件包）、仅限主动安装（你自己安装且没有其他软件依赖的软件包，brew leaves -r）、存在漏洞、有说明、已弃用";
+"More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "更多筛选：存在漏洞、已固定（brew 不会升级的软件包）、你安装的（你自己安装的软件包，而不是作为依赖项装入的）、有说明、已弃用";
 "Name" = "名称";
 "Name only" = "仅名称";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "仅名称匹配：%@。只有名称一致，可能是另一个 App；若是如此，brew upgrade 会替换它，卸载该 Cask 会删除它。";
@@ -636,6 +637,8 @@
 "Other packages need it" = "其他软件包需要它";
 "PID" = "PID";
 "Package" = "软件包";
+"Packages brew won't upgrade (brew pin)" = "brew 不会升级的软件包（brew pin）";
+"Packages you installed yourself, not ones pulled in as dependencies" = "你自己安装的软件包，而不是作为依赖项装入的";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "属于 %@ 文件夹，cask 会整体安装该文件夹；brew 会比较每个文件，有任何不同就会拒绝。";
 "Partial scan" = "部分扫描";
 "Patch only" = "仅补丁";
@@ -700,7 +703,6 @@
 "Replacement: " = "替代项： ";
 "Report an Issue…" = "报告问题…";
 "Requested" = "已请求";
-"Requested only" = "仅已请求";
 "Restart" = "重新启动";
 "Restore" = "恢复";
 "Restore Plan…" = "恢复计划…";

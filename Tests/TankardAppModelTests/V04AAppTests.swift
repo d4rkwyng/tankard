@@ -160,17 +160,19 @@ struct PinTests {
 
 @MainActor
 struct LeavesAndLinksTests {
-    @Test func requestedOnlyFilter() async throws {
+    @Test func installedByYouFilter() async throws {
         let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0))
         await store.start()
-        // The demo fixture: requested formulae nothing else needs.
-        let graph = store.dependencyGraph
-        let expected = store.packages.filter { $0.requested && graph.dependents(of: $0).isEmpty }.map(\.name).sorted()
+        // 0.8.2: brew's installed-on-request, whether or not something
+        // else needs it (was `brew leaves -r`, "Requested only").
+        let expected = store.packages.filter(\.requested).map(\.name).sorted()
         store.filter = .leaves
         #expect(store.visiblePackages.map(\.name).sorted() == expected)
         #expect(store.count(.leaves) == expected.count)
         #expect(!expected.isEmpty)
-        #expect(PackageFilter.leaves.title == "Requested only")
+        // A dependency brew installed for something else isn't in it.
+        #expect(store.packages.contains { !$0.requested })
+        #expect(PackageFilter.leaves.title == "Installed by you")
         #expect(PackageFilter.segmented.count == 5)
         #expect(Set(PackageFilter.segmented + PackageFilter.more) == Set(PackageFilter.allCases))
     }

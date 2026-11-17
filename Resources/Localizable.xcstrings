@@ -24417,6 +24417,58 @@
         }
       }
     },
+    "Installed by you": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selbst installiert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installés par vous"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalados por ti"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分でインストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你安装的"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalados por você"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installati da te"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "직접 설치함"
+          }
+        }
+      }
+    },
     "Installed on": {
       "localizations": {
         "de": {
@@ -27537,54 +27589,54 @@
         }
       }
     },
-    "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated": {
+    "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Weitere Filter: Angeheftet (Pakete, die brew nicht aktualisiert), Nur angefordert (was du selbst installiert hast und nichts anderes braucht, brew leaves -r), Schwachstellen, Hat Hinweise, Veraltet"
+            "value": "Weitere Filter: Verwundbar, Fixiert (Pakete, die brew nicht aktualisiert), Selbst installiert (Pakete, die du selbst installiert hast, keine Abhängigkeiten), Hat Hinweise, Veraltet"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plus de filtres : Épinglés (paquets que brew ne met pas à niveau), Demandés uniquement (ce que vous avez installé vous-même et dont rien d’autre n’a besoin, brew leaves -r), Vulnérables, Avec notes, Obsolètes"
+            "value": "Plus de filtres : Vulnérables, Épinglés (paquets que brew ne met pas à niveau), Installés par vous (paquets installés vous-même, pas ceux ajoutés comme dépendances), Avec notes, Obsolètes"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Más filtros: Fijados (paquetes que brew no actualizará), Solo solicitados (lo que instalaste tú y nada más necesita, brew leaves -r), Vulnerables, Con notas, Obsoletos"
+            "value": "Más filtros: Vulnerables, Fijados (paquetes que brew no actualizará), Instalados por ti (paquetes que instalaste tú, no los que llegaron como dependencias), Con notas, Obsoletos"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "その他のフィルタ: ピン留め(brewがアップグレードしないパッケージ)、要求したもののみ(自分でインストールし、他に必要とされないもの、brew leaves -r)、脆弱、メモあり、非推奨"
+            "value": "その他のフィルタ: 脆弱性あり、ピン留め(brewがアップグレードしないパッケージ)、自分でインストール(依存関係ではなく自分でインストールしたパッケージ)、メモあり、非推奨"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "更多筛选：已固定（brew 不会升级的软件包）、仅限主动安装（你自己安装且没有其他软件依赖的软件包，brew leaves -r）、存在漏洞、有说明、已弃用"
+            "value": "更多筛选：存在漏洞、已固定（brew 不会升级的软件包）、你安装的（你自己安装的软件包，而不是作为依赖项装入的）、有说明、已弃用"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mais filtros: Fixados (pacotes que o brew não atualiza), Somente solicitados (o que você instalou e nada mais precisa, brew leaves -r), Vulneráveis, Com notas, Obsoletos"
+            "value": "Mais filtros: Vulneráveis, Fixados (pacotes que o brew não atualiza), Instalados por você (pacotes que você instalou, não os que vieram como dependências), Com notas, Obsoletos"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Altri filtri: Bloccati (pacchetti che brew non aggiorna), Solo richiesti (ciò che hai installato tu e di cui nient'altro ha bisogno, brew leaves -r), Vulnerabili, Con note, Obsoleti"
+            "value": "Altri filtri: Vulnerabili, Bloccati (pacchetti che brew non aggiorna), Installati da te (pacchetti che hai installato tu, non quelli arrivati come dipendenze), Con note, Obsoleti"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "필터 더 보기: 고정됨(brew가 업그레이드하지 않는 패키지), 요청한 것만(직접 설치했고 다른 항목이 필요로 하지 않는 것, brew leaves -r), 취약, 노트 있음, 지원 중단됨"
+            "value": "필터 더 보기: 취약함, 고정됨(brew가 업그레이드하지 않는 패키지), 직접 설치함(의존성이 아니라 직접 설치한 패키지), 노트 있음, 지원 중단됨"
           }
         }
       }
@@ -33413,6 +33465,110 @@
         }
       }
     },
+    "Packages brew won't upgrade (brew pin)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pakete, die brew nicht aktualisiert (brew pin)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paquets que brew ne met pas à niveau (brew pin)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paquetes que brew no actualizará (brew pin)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew がアップグレードしないパッケージ(brew pin)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 不会升级的软件包（brew pin）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pacotes que o brew não atualiza (brew pin)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pacchetti che brew non aggiorna (brew pin)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 업그레이드하지 않는 패키지(brew pin)"
+          }
+        }
+      }
+    },
+    "Packages you installed yourself, not ones pulled in as dependencies": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pakete, die du selbst installiert hast, keine als Abhängigkeit mitinstallierten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paquets que vous avez installés vous-même, pas ceux ajoutés comme dépendances"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paquetes que instalaste tú, no los que llegaron como dependencias"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "依存関係として入ったものではなく、自分でインストールしたパッケージ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你自己安装的软件包，而不是作为依赖项装入的"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pacotes que você instalou, não os que vieram como dependências"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pacchetti che hai installato tu, non quelli arrivati come dipendenze"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "의존성으로 함께 설치된 것이 아니라 직접 설치한 패키지"
+          }
+        }
+      }
+    },
     "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs.": {
       "localizations": {
         "de": {
@@ -36737,58 +36893,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "요청됨"
-          }
-        }
-      }
-    },
-    "Requested only": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur angeforderte"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demandés uniquement"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo solicitados"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "リクエスト済みのみ"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅已请求"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Somente solicitados"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo richiesti"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "요청된 것만"
           }
         }
       }

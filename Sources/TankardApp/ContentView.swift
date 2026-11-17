@@ -340,7 +340,7 @@ struct SummaryStrip: View {
 
             FilterActions(store: store)
 
-            ThemedSegmentedPicker(title: String(localized: "Filter"), selection: $store.filter, options: PackageFilter.segmented) { f in
+            ThemedSegmentedPicker(title: String(localized: "Filter"), selection: $store.filter, options: store.visibleSegmentedFilters) { f in
                 "\(f.title)  \(store.count(f))"
             }
             MoreFiltersPicker(store: store)
