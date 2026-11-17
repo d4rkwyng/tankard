@@ -4,7 +4,7 @@
 # TANKARD_SCRIPT; see Sources/TankardApp/ScriptLaunch.swift and
 # Sources/TankardAppModel/ScriptRunner.swift for the step vocabulary).
 #
-#   Scripts/e2e.sh [--no-build] [--app PATH] [--out DIR] SCENARIO...
+#   Scripts/e2e.sh [--no-build] [--app PATH] [--out DIR] [--wait] SCENARIO...
 #   Scripts/e2e.sh all                 every scenario below
 #   Scripts/e2e.sh --list              the scenarios
 #   Scripts/e2e.sh --steps             the step vocabulary
@@ -38,10 +38,16 @@
 # results.jsonl (one JSON line per step: pass/fail, checks, model state),
 # summary.json and app.log. The summary at the end says PASS/FAIL per phase.
 #
-# Isolation: settings go to the `net.mindtricks.tankard.e2e` defaults suite
-# (deleted at the start of each scenario: a first launch), Tankard's files
-# to OUT/<scenario>/state. Your own settings, cache, History and restore
+# Isolation: settings go to a defaults suite of this run's own,
+# `net.mindtricks.tankard.e2e.<pid>` (emptied at the start of each scenario:
+# a first launch; deleted at the end), Tankard's files to
+# OUT/<scenario>/state. Your own settings, cache, History and restore
 # points are not read or written.
+#
+# One run at a time on this Mac: the scenarios share the real brew (and its
+# packages), so a run holds the lock /tmp/net.mindtricks.tankard.e2e.lock
+# (a directory with the holder's pid; a dead holder's lock is taken over).
+# A second run refuses with the holder's pid, or with --wait waits for it.
 #
 # What it changes on this Mac: it installs and removes the scenario's own
 # throwaway packages (hello, luarocks + lua, font-press-start-2p, tankard-e2e-probe) and
@@ -69,9 +75,10 @@ while [ $# -gt 0 ]; do
         --no-build) BUILD=0 ;;
         --app) APP=${2%/}; BUILD=0; shift ;;
         --out) OUT=$2; shift ;;
+        --wait) WAIT_LOCK=1 ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,56p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,62p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -96,6 +103,52 @@ if [ "${STEPS_HELP:-0}" = 1 ]; then
 fi
 [ ${#SCENARIOS[@]} -gt 0 ] || { echo "e2e.sh: name a scenario (--list), or all" >&2; exit 2; }
 
+# MARK: one run at a time (machine-wide)
+
+LOCK=/tmp/net.mindtricks.tankard.e2e.lock
+lock_holder() { cat "$LOCK/pid" 2>/dev/null; }
+release_lock() { [ "$(lock_holder)" = "$$" ] && rm -rf "$LOCK"; }
+take_lock() {
+    local waited=0 holder empty=0
+    while ! mkdir "$LOCK" 2>/dev/null; do
+        holder=$(lock_holder)
+        if [ -z "$holder" ]; then
+            # Another run made it a moment ago and is writing its pid; or a
+            # crash left it empty. Take it over after a few seconds.
+            empty=$((empty + 1))
+            [ $empty -ge 5 ] && rm -rf "$LOCK"
+            sleep 1
+            continue
+        fi
+        empty=0
+        if ! kill -0 "$holder" 2>/dev/null; then
+            echo "e2e.sh: taking over a stale lock (pid $holder is gone)" >&2
+            rm -rf "$LOCK"
+        elif [ "${WAIT_LOCK:-0}" != 1 ]; then
+            echo "e2e.sh: another e2e run (pid $holder, in $(cat "$LOCK/where" 2>/dev/null || echo '?')) is using brew and the app." >&2
+            echo "        Wait for it to finish, or pass --wait to queue behind it. (Lock: $LOCK)" >&2
+            exit 3
+        else
+            [ $((waited % 60)) = 0 ] && echo "e2e.sh: waiting for the e2e run pid $holder to finish ($LOCK)" >&2
+            sleep 5
+            waited=$((waited + 5))
+        fi
+    done
+    echo $$ > "$LOCK/pid"
+    echo "$ROOT" > "$LOCK/where"
+    trap 'release_lock' EXIT
+    trap 'release_lock; exit 130' INT TERM
+}
+take_lock
+
+# This run's own settings suite (ScriptLaunch.swift accepts only names under
+# net.mindtricks.tankard.e2e.), so even a stray parallel launch can't empty it.
+SUITE=net.mindtricks.tankard.e2e.$$
+delete_suite() {
+    defaults delete "$SUITE" >/dev/null 2>&1 || true
+    rm -f ~/Library/Preferences/"$SUITE".plist
+}
+
 BREW=$(command -v brew || true)
 [ -n "$BREW" ] || { echo "e2e.sh: no brew on PATH" >&2; exit 1; }
 # The shell's own brew calls: never update, never clean up, never autoremove.
@@ -105,7 +158,7 @@ RESULTS=()
 record() { RESULTS+=("$1"); echo "==> $1"; }
 
 fresh_state() { # scenario
-    defaults delete net.mindtricks.tankard.e2e >/dev/null 2>&1 || true
+    delete_suite
     rm -rf "${OUT:?}/$1"
     mkdir -p "$OUT/$1/state"
 }
@@ -121,7 +174,7 @@ run_phase() {
         record "$sc/$ph: FAIL (another $APP is running; quit it first)"
         return 1
     fi
-    env "$@" TANKARD_E2E=1 TANKARD_SCRIPT="$dir/steps.txt" TANKARD_SCRIPT_OUT="$dir" \
+    env "$@" TANKARD_E2E=1 TANKARD_E2E_SUITE="$SUITE" TANKARD_SCRIPT="$dir/steps.txt" TANKARD_SCRIPT_OUT="$dir" \
         TANKARD_E2E_STATE="$OUT/$sc/state" "$BIN" -ApplePersistenceIgnoreState YES >"$dir/app.log" 2>&1 &
     local pid=$! waited=0
     while kill -0 "$pid" 2>/dev/null && [ $waited -lt "$PHASE_TIMEOUT" ]; do sleep 2; waited=$((waited + 2)); done
@@ -460,7 +513,7 @@ for sc in "${SCENARIOS[@]}"; do
         record "$sc: FAIL (no such scenario; --list)"
     fi
 done
-defaults delete net.mindtricks.tankard.e2e >/dev/null 2>&1 || true
+delete_suite
 
 echo
 echo "e2e summary ($OUT):"

@@ -16,9 +16,13 @@ import TankardCore
 ///                                 the phases of one scenario; empty it for a
 ///                                 first launch.
 ///   TANKARD_SCRIPT_STAY=1         keep the app open after the script
+///   TANKARD_E2E_SUITE=name        the defaults suite for settings (default
+///                                 `net.mindtricks.tankard.e2e`); only names
+///                                 under that prefix are accepted. e2e.sh
+///                                 gives each run its own.
 ///
 /// A script run never reads or writes the real settings or Tankard's real
-/// files: settings live in the `net.mindtricks.tankard.e2e` defaults suite
+/// files: settings live in an `net.mindtricks.tankard.e2e…` defaults suite
 /// (e2e.sh deletes it for a first launch), files in TANKARD_E2E_STATE. It
 /// runs the REAL brew (or the demo's, with TANKARD_DEMO), so it really
 /// installs and removes what the script says. No background check and no
@@ -27,6 +31,8 @@ struct ScriptLaunch {
     static let defaultsSuite = "net.mindtricks.tankard.e2e"
 
     var scriptPath: String
+    /// The settings suite: `defaultsSuite`, or a per-run one below it.
+    var suiteName: String
     var outputDirectory: URL
     var stateDirectory: URL
     var stay: Bool
@@ -39,9 +45,18 @@ struct ScriptLaunch {
         stateDirectory = env["TANKARD_E2E_STATE"].flatMap { $0.isEmpty ? nil : URL(fileURLWithPath: $0, isDirectory: true) }
             ?? outputDirectory.appendingPathComponent("state", isDirectory: true)
         stay = env["TANKARD_SCRIPT_STAY"] == "1"
+        suiteName = Self.suite(env["TANKARD_E2E_SUITE"])
     }
 
-    var defaults: UserDefaults { UserDefaults(suiteName: Self.defaultsSuite) ?? .standard }
+    /// A per-run suite name, never the real settings' domain or anything
+    /// outside the e2e prefix.
+    static func suite(_ requested: String?) -> String {
+        guard let r = requested, r.hasPrefix(defaultsSuite + "."), r.count > defaultsSuite.count + 1,
+              r.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" || $0 == "_" }) else { return defaultsSuite }
+        return r
+    }
+
+    var defaults: UserDefaults { UserDefaults(suiteName: suiteName) ?? .standard }
 
     /// The live dependencies with every file Tankard keeps moved into the state folder.
     func dependencies(_ live: AppStore.Dependencies) -> AppStore.Dependencies {
