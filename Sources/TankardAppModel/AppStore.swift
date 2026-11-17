@@ -184,6 +184,7 @@ public final class AppStore {
         self.autoUpdate = AutoUpdater(settings: AutoUpdateSettings(defaults: self.settings.defaults, now: deps.now),
                                       log: AutoUpdateLog(url: deps.autoUpdateLogURL))
         wireInsights()
+        wireUpgradeRules()
     }
 
     // MARK: derived
@@ -434,7 +435,7 @@ public final class AppStore {
 
     /// Queues `brew upgrade` for each package, in order, and opens the sheet.
     public func startUpgrade(_ packages: [Package]? = nil) {
-        startSession(.upgrade, packages: (packages ?? upgradable).filter(\.isUpgradeTarget))
+        startSession(.upgrade, packages: packages?.filter(\.isManualUpgradeTarget) ?? upgradable)
     }
 
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
@@ -442,7 +443,7 @@ public final class AppStore {
     /// that would compile"; otherwise it starts at once, as before.
     public func requestUpgrade(_ packages: [Package]? = nil) {
         guard !isUpgrading else { return }
-        let targets = (packages ?? upgradable).filter(\.isUpgradeTarget)
+        let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
         let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
         if plan.hasCompiling {

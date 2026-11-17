@@ -133,6 +133,8 @@ public enum AutoUpdateDecision: Equatable, Sendable {
     }
 
     case off
+    /// 0.6: snoozed until this time (nil: until turned back on).
+    case snoozed(until: Date?)
     /// This slot already ran (or the schedule started after it).
     case notDue(next: Date)
     /// Due, but a condition isn't met; look again after `retry` seconds.
@@ -159,8 +161,10 @@ public enum AutoUpdatePolicy {
     ///   replaces it (it never runs twice to catch up).
     public static func decide(enabled: Bool, schedule: AutoUpdateSchedule, since: Date?, lastRun: Date?,
                               launchedAt: Date, now: Date, onAC: Bool?, idle: TimeInterval?, busy: Bool,
+                              snoozed: Bool = false, snoozeEnds: Date? = nil,
                               calendar: Calendar = .current) -> AutoUpdateDecision {
         guard enabled else { return .off }
+        if snoozed { return .snoozed(until: snoozeEnds) }
         let slot = schedule.latestSlot(atOrBefore: now, calendar: calendar)
         if let since, slot <= since { return .notDue(next: schedule.nextSlot(after: max(now, since), calendar: calendar)) }
         if let lastRun, slot <= lastRun { return .notDue(next: schedule.nextSlot(after: max(now, lastRun), calendar: calendar)) }
@@ -195,6 +199,11 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     case appUnknown
     /// Tankard's own cask: that update stays with brew.
     case tankardItself
+    /// 0.6: the user skipped exactly this version.
+    case versionSkipped(String)
+    /// 0.6: the bump rule leaves it out ("major", or "unknown" when the
+    /// versions can't be compared).
+    case bumpRule(from: String, to: String, bump: String)
 
     public var text: String {
         switch self {
@@ -206,6 +215,12 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .appRunning(let a): return "\(a) is running"
         case .appUnknown: return "couldn't tell whether its app is running"
         case .tankardItself: return "Tankard updates itself through brew"
+        case .versionSkipped(let v): return "you chose to skip \(v)"
+        case .bumpRule(let a, let b, let bump):
+            if bump == VersionBump.unknown.title {
+                return "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand"
+            }
+            return "\(a) → \(b): \(bump) version; upgrade by hand"
         }
     }
 }
@@ -254,7 +269,8 @@ public enum AutoUpdateSafeMode {
     /// run, not listed as skipped). The dependency checks still see every
     /// installed package.
     public static func plan(_ packages: [Package], classifier: CompileClassifier, running: [RunningApp],
-                            dontQuitApps: Bool, only: Set<String>? = nil) -> AutoUpdatePlan {
+                            dontQuitApps: Bool, only: Set<String>? = nil,
+                            rules: UpgradeRuleSnapshot = UpgradeRuleSnapshot()) -> AutoUpdatePlan {
         let graph = DependencyGraph(packages)
         var run: [Package] = []
         var skipped: [(Package, AutoUpdateSkip)] = []
@@ -263,6 +279,8 @@ public enum AutoUpdateSafeMode {
         for p in outdated {
             if p.isHeld { skipped.append((p, .pinned)); continue }
             if isTankard(p) { skipped.append((p, .tankardItself)); continue }
+            // 0.6: skip this version, then the bump rule.
+            if let reason = rules.skipReason(p) { skipped.append((p, reason)); continue }
             if p.kind == .formula {
                 if compiles(p) { skipped.append((p, .compiles)); continue }
                 if let reason = dependencyProblem(p, graph: graph, compiles: compiles) { skipped.append((p, reason)); continue }
@@ -273,7 +291,7 @@ public enum AutoUpdateSafeMode {
                 if p.appPaths == nil && p.quitBundleIDs == nil { skipped.append((p, .appUnknown)); continue }
                 if let app = runningApp(p, running: running) { skipped.append((p, .appRunning(app))); continue }
             }
-            guard p.isUpgradeTarget else { continue }
+            guard p.isManualUpgradeTarget else { continue }
             run.append(p)
         }
         return AutoUpdatePlan(run: run, skipped: skipped.map { (package: $0.0, reason: $0.1) })
@@ -641,6 +659,7 @@ public enum AutoUpdateText {
     public static func status(_ d: AutoUpdateDecision, now: Date, calendar: Calendar = .current) -> String {
         switch d {
         case .off: return "Off"
+        case .snoozed(let until): return snoozed(until: until, now: now, calendar: calendar)
         case .notDue(let next): return "Next run: \(when(next, now: now, calendar: calendar))"
         case .run: return "Due now"
         case .waiting(let w, _):
@@ -661,6 +680,8 @@ public enum AutoUpdateText {
 @Observable @MainActor
 public final class AutoUpdater {
     @ObservationIgnored public let settings: AutoUpdateSettings
+    /// 0.6: skip this version, snooze, bump rules.
+    @ObservationIgnored public let rules: UpgradeRulesSettings
     public let log: AutoUpdateLog
     /// Set by the app (IOKit, NSWorkspace). Defaults to never-AC.
     @ObservationIgnored public var conditions: AutoUpdateConditions
@@ -670,8 +691,10 @@ public final class AutoUpdater {
     /// "Auto-update: brew upgrade --formula homebrew/core/xz" while it runs.
     public private(set) var activity: String?
 
-    public init(settings: AutoUpdateSettings, log: AutoUpdateLog, conditions: AutoUpdateConditions = NeverConditions()) {
+    public init(settings: AutoUpdateSettings, log: AutoUpdateLog, conditions: AutoUpdateConditions = NeverConditions(),
+                rules: UpgradeRulesSettings? = nil) {
         self.settings = settings
+        self.rules = rules ?? UpgradeRulesSettings(defaults: settings.defaults)
         self.log = log
         self.conditions = conditions
     }
@@ -681,6 +704,7 @@ public final class AutoUpdater {
                                 lastRun: settings.lastRun, launchedAt: launchedAt, now: now,
                                 onAC: conditions.onACPower(), idle: conditions.idleSeconds(),
                                 busy: isRunning || store.isBusy || store.isRefreshing || store.homebrewState.needsWelcome,
+                                snoozed: rules.isSnoozed(now: now), snoozeEnds: rules.snoozeEnds,
                                 calendar: calendar)
     }
 
@@ -716,7 +740,7 @@ public final class AutoUpdater {
         let plan = AutoUpdateSafeMode.plan(store.packages, classifier: store.deps.classifier,
                                            running: conditions.runningApps(),
                                            dontQuitApps: store.insights.settings.dontQuitAppsDuringUpgrade,
-                                           only: settings.only)
+                                           only: settings.only, rules: rules.snapshot)
         record.skipped = plan.skipped.map { .init(name: $0.package.name, isCask: $0.package.kind == .cask, detail: $0.reason.text) }
         if settings.dryRun {
             record.upgraded = plan.run.map { .init(name: $0.name, isCask: $0.kind == .cask, detail: Self.versions($0)) }

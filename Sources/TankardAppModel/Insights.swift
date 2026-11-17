@@ -303,8 +303,11 @@ public final class InsightsStore {
             r.packages[i].vulnerabilities = vulnerabilityScan?.vulnerabilities(for: r.packages[i])
             r.packages[i].diskBytes = sizes?.bytes(for: r.packages[i])
         }
-        return r
+        return extraDecoration?(r) ?? r
     }
+
+    /// 0.6: laid over after the insights (skipped versions).
+    @ObservationIgnored public var extraDecoration: ((StatusReport) -> StatusReport)?
 
     /// Total bytes of the packages listed (nil before the first measurement).
     public func totalBytes(_ packages: [Package]) -> Int64? {

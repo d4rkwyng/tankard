@@ -115,6 +115,10 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// artifacts. nil for formulae and in reports written before 0.5.
     public var appPaths: [String]? = nil
     public var quitBundleIDs: [String]? = nil
+    /// 0.6: the user chose "Skip this version" for exactly the version on
+    /// offer. Filled in by the app; auto-update and the upgrade counts
+    /// leave it out, a manual Upgrade still works.
+    public var versionSkipped: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

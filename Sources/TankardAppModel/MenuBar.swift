@@ -310,6 +310,7 @@ public final class BackgroundChecker {
         let t = now()
         switch store.autoUpdate.decide(store: store, launchedAt: launchedAt, now: t) {
         case .off: return (300, false)
+        case .snoozed: return (300, false)
         case .notDue(let next): return (max(5, next.timeIntervalSince(t)), false)
         case .waiting(_, let retry): return (retry, false)
         case .run:
