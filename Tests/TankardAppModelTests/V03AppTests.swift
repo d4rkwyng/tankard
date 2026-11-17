@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import Testing
 import TankardCore
@@ -731,4 +732,124 @@ struct BuildTimesTests {
         #expect(counter.count == 1)
         #expect(store.deps.classifier.upgradeWarning(ruby)?.text == "No bottle: will compile from source (at least ~24 min on the Intelbrew builder)")
     }
+}
+
+// MARK: review fixes
+
+struct BuildTimesHardeningTests {
+    func table(_ json: String) throws -> IntelbrewBuildTimes {
+        try JSONDecoder().decode(IntelbrewBuildTimes.self, from: Data(json.utf8))
+    }
+
+    @Test func outOfRangeTimesAreNoData() throws {
+        let t = try table("""
+        {"schema":1,"formulae":{
+          "huge":{"median_seconds":1e30},
+          "huge-then-last":{"median_seconds":1e30,"last_seconds":600},
+          "negative":{"median_seconds":-5,"last_seconds":-1},
+          "zero":{"median_seconds":0},
+          "limit":{"median_seconds":10000000},
+          "fine":{"median_seconds":9999999}
+        }}
+        """)
+        #expect(t.seconds("huge") == nil)
+        #expect(t.seconds("huge-then-last") == 600)
+        #expect(t.seconds("negative") == nil)
+        #expect(t.seconds("zero") == nil)
+        #expect(t.seconds("limit") == nil)
+        #expect(t.seconds("fine") == 9_999_999)
+        // JSON has no NaN or Infinity: JSONDecoder refuses them, so such a file is no data at all.
+        #expect(throws: (any Error).self) { try table(#"{"schema":1,"formulae":{"x":{"median_seconds":NaN}}}"#) }
+        #expect(throws: (any Error).self) { try table(#"{"schema":1,"formulae":{"x":{"median_seconds":Infinity}}}"#) }
+        #expect(BuildTimeSource.decode(Data(#"{"schema":1,"formulae":{"x":{"median_seconds":NaN}}}"#.utf8)) == nil)
+    }
+
+    @Test func estimateTextNeverTraps() {
+        for bad in [1e30, Double.nan, Double.infinity, -Double.infinity, -60, 0, 1e7, Double.greatestFiniteMagnitude] {
+            #expect(CompileWarning(context: .install, estimatedSeconds: bad).estimateText == nil)
+        }
+        #expect(CompileWarning(context: .install, estimatedSeconds: 9_999_999).estimateText == "at least ~2778 h on the Intelbrew builder")
+    }
+
+    @Test func emptyTableKeepsTheCache() async throws {
+        let dir = try tempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let file = dir.appendingPathComponent("bt.json")
+        let clock = TestClock()
+        let good = BuildTimeSource(fetch: { (BuildTimesTests.fixture, 200) }, cacheURL: file, now: { clock.now })
+        await good.refreshIfNeeded()
+        let onDisk = try Data(contentsOf: file)
+        clock.advance(25 * 3600)
+        let empty = BuildTimeSource(fetch: { (Data(#"{"schema":1,"generated_at":"x","formulae":{}}"#.utf8), 200) },
+                                    cacheURL: file, now: { clock.now })
+        await empty.refreshIfNeeded()
+        #expect(empty.estimatedSeconds(forFormula: "ruby") == 1412.4) // in memory
+        #expect(try Data(contentsOf: file) == onDisk)                 // on disk
+    }
+
+    @Test func oversizeResponseIsRejected() async throws {
+        let dir = try tempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let file = dir.appendingPathComponent("bt.json")
+        let clock = TestClock()
+        await BuildTimeSource(fetch: { (BuildTimesTests.fixture, 200) }, cacheURL: file, now: { clock.now }).refreshIfNeeded()
+        let onDisk = try Data(contentsOf: file)
+        // A valid table padded past the 5 MB cap.
+        var big = #"{"schema":1,"formulae":{"ruby":{"median_seconds":60}},"pad":""#
+        big += String(repeating: "x", count: BuildTimeSource.maxBytes)
+        big += #""}"#
+        let payload = Data(big.utf8)
+        #expect(payload.count > BuildTimeSource.maxBytes)
+        clock.advance(25 * 3600)
+        let src = BuildTimeSource(fetch: { (payload, 200) }, cacheURL: file, now: { clock.now })
+        await src.refreshIfNeeded()
+        #expect(src.estimatedSeconds(forFormula: "ruby") == 1412.4)
+        #expect(try Data(contentsOf: file) == onDisk)
+        #expect(BuildTimeSource.resourceTimeout == 30)
+    }
+}
+
+@MainActor
+struct NotificationReviewTests {
+    @Test func turnedOffDuringTheCheckPostsNothing() async throws {
+        let log = CallLog()
+        let runner = MutableInfoRunner(log: log, info: Demo.currentInfo(.intelbrew, base: Demo.fixtureInfo(.intelbrew), upgraded: ["xz"]))
+        let client = makeClient(runner)
+        let settings = testSettings()
+        // `brew update` is where the user switches notifications off.
+        let stream = FakeStreamRunner(log: log) { args, _ in
+            if args.first == "update", await MainActor.run(body: { settings.notifiedUpgrades != nil }) {
+                await MainActor.run { settings.notifyNewUpgrades = false }
+            }
+            return 0
+        }
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: stream, cache: nil, logURL: nil),
+                             settings: settings)
+        await store.start()
+        let notifier = FakeNotifier()
+        let checker = BackgroundChecker(store: store, settings: settings, notifier: notifier, launchedAt: Date().addingTimeInterval(-3600))
+        settings.notifyNewUpgrades = true
+        await checker.runCheck() // baseline (4 upgrades)
+        #expect(settings.notifiedUpgrades?.count == 4)
+        runner.info = demoIntelInfo() // a new upgrade appears…
+        await checker.runCheck()      // …but notifications go off during brew update
+        #expect(!settings.notifyNewUpgrades)
+        #expect(notifier.posted.isEmpty)
+        #expect(log.count("update") == 2)
+    }
+
+    @Test func identifierIsStableAcrossLaunches() {
+        let a = UpgradeNotificationDiff.Message(title: "t", body: "b", newKeys: ["formula:homebrew/core/xz@5.8.4", "formula:homebrew/core/ruby@4.0.9"])
+        let b = UpgradeNotificationDiff.Message(title: "other", body: "other", newKeys: ["formula:homebrew/core/ruby@4.0.9", "formula:homebrew/core/xz@5.8.4"])
+        #expect(a.identifier == b.identifier) // same set, any order
+        // SHA-256 of the sorted keys joined by newlines: fixed, not Hasher's per-launch seed.
+        #expect(a.identifier == "upgrades-" + sha256Hex("formula:homebrew/core/ruby@4.0.9\nformula:homebrew/core/xz@5.8.4"))
+        #expect(a.identifier.count == "upgrades-".count + 64)
+        let c = UpgradeNotificationDiff.Message(title: "t", body: "b", newKeys: ["formula:homebrew/core/xz@5.8.5"])
+        #expect(c.identifier != a.identifier)
+    }
+}
+
+func sha256Hex(_ s: String) -> String {
+    SHA256.hash(data: Data(s.utf8)).map { String(format: "%02x", $0) }.joined()
 }

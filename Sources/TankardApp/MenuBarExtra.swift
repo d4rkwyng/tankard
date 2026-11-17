@@ -162,8 +162,7 @@ final class SystemNotifier: UpgradeNotifying {
         let content = UNMutableNotificationContent()
         content.title = message.title
         content.body = message.body
-        let id = "upgrades-" + String(message.newKeys.sorted().joined(separator: ",").hashValue)
-        center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
+        center.add(UNNotificationRequest(identifier: message.identifier, content: content, trigger: nil))
     }
 }
 

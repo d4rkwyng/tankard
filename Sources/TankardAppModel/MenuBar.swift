@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import Observation
 import TankardCore
@@ -64,6 +65,14 @@ public enum UpgradeNotificationDiff {
         public var body: String
         /// The new keys (for tests and the notification's identifier).
         public var newKeys: Set<String>
+
+        /// "upgrades-<sha256 of the sorted keys>": the same set gives the
+        /// same id in every launch, so the system replaces rather than
+        /// stacks a repeat.
+        public var identifier: String {
+            let digest = SHA256.hash(data: Data(newKeys.sorted().joined(separator: "\n").utf8))
+            return "upgrades-" + digest.map { String(format: "%02x", $0) }.joined()
+        }
     }
 
     /// nil = post nothing. `previous == nil` is the first check after
@@ -134,8 +143,9 @@ public final class AppSettings {
     public var notifyNewUpgrades: Bool {
         didSet {
             defaults.set(notifyNewUpgrades, forKey: Key.notifyNewUpgrades)
-            // Turning it on starts from a fresh baseline.
-            if notifyNewUpgrades != oldValue { notifiedUpgrades = nil }
+            // Turning it on starts from a fresh baseline (turning it off
+            // keeps the set; runCheck checks the toggle before posting).
+            if notifyNewUpgrades && !oldValue { notifiedUpgrades = nil }
         }
     }
     /// Hours between background checks (1–48). Default 6.
@@ -248,6 +258,8 @@ public final class BackgroundChecker {
         await store.refresh(manual: true)
         settings.lastBackgroundCheck = now()
         guard store.report != nil, store.error == nil else { return } // keep the old baseline on failure
+        // Turned off while brew update ran: post nothing, keep no baseline.
+        guard settings.notifyNewUpgrades else { return }
         let keys = UpgradeNotificationDiff.keys(store.packages)
         if let message = UpgradeNotificationDiff.decide(previous: settings.notifiedUpgrades, current: keys, packages: store.packages) {
             notifier?.post(message)

@@ -63,7 +63,8 @@ public struct CompileWarning: Sendable, Equatable {
     /// estimate. Rounded up, and never a precise single number: the builder
     /// is a fast Mac, older Macs take longer.
     public var estimateText: String? {
-        guard let s = estimatedSeconds, s > 0 else { return nil }
+        // Finite and below ~116 days, or no estimate: Int() traps on huge values.
+        guard let s = estimatedSeconds, s.isFinite, s > 0, s < 1e7 else { return nil }
         let min = Int((s / 60).rounded(.up))
         let amount = min >= 90 ? "~\(Int((s / 3600).rounded(.up))) h" : "~\(max(1, min)) min"
         return "at least \(amount) on the Intelbrew builder"
