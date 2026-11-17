@@ -351,8 +351,12 @@ struct CommandBox: View {
             Text(command)
                 .font(.system(size: 11, design: .monospaced))
                 .textSelection(.enabled)
-                .lineLimit(2)
-                .truncationMode(.middle)
+                // 0.8: wraps in full (up to 5 lines, then cut at the end).
+                // A 2-line limit with .middle drew one line cut mid-word
+                // ("brew ins…ll --cask --adopt") in the upgrade sheet.
+                .lineLimit(5)
+                .truncationMode(.tail)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Button {
                 copyToPasteboard(command)
