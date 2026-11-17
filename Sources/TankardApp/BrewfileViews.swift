@@ -204,18 +204,28 @@ struct BrewfileSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(height: min(CGFloat(p.items.count) * 27, 270))
+            // These notes wrap rather than cut off: German and French run a
+            // third longer than English and the sheet doesn't widen. The
+            // tooltip has the full sentence too.
             if !p.compiling.isEmpty {
-                Label(p.compiling.count == 1
-                      ? String(localized: "1 would compile from source: no bottle for this Mac. That can take a long time.")
-                      : String(localized: "\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time."),
-                      systemImage: "hammer.fill")
+                let text = p.compiling.count == 1
+                    ? String(localized: "1 would compile from source: no bottle for this Mac. That can take a long time.")
+                    : String(localized: "\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time.")
+                Label(text, systemImage: "hammer.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.orange)
+                    .lineLimit(2...3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .help(text)
             }
             if !p.adminCasks.isEmpty {
-                Label(p.adminCasks.count == 1 ? "\(p.adminCasks.count) cask runs a pkg installer: macOS asks for an administrator password." : "\(p.adminCasks.count) casks run a pkg installer: macOS asks for an administrator password.",
-                      systemImage: "lock.fill")
+                let text = p.adminCasks.count == 1
+                    ? String(localized: "\(p.adminCasks.count) cask runs a pkg installer: macOS asks for an administrator password.")
+                    : String(localized: "\(p.adminCasks.count) casks run a pkg installer: macOS asks for an administrator password.")
+                Label(text, systemImage: "lock.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
-                    .help("Marked from the cask's pkg artifact. Other casks may still ask for a password.")
+                    .lineLimit(2...3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .help(text + "\n" + String(localized: "Marked from the cask's pkg artifact. Other casks may still ask for a password."))
             }
             if let note {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
