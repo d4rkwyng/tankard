@@ -4,6 +4,14 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Added
+- **Skip this version** (detail pane and right-click menu): Upgrade all, the menu-bar count and auto-update leave that exact version out; a manual Upgrade still works, and a newer version clears the skip.
+- **Snooze automatic updates** for 1 day, 1 week or until turned back on, from Settings → Upgrades and the menu bar.
+- **Bump rules** (Settings → Upgrades): automatically upgrade all versions, minor and patch only, or patch only. Packages that don't qualify are skipped and logged ("2.4 → 3.0: major version; upgrade by hand"); versions that can't be compared (dates, letters) upgrade automatically only under All versions. Safe mode is unchanged and still applies first.
+- Brewfile groundwork: `brew bundle dump`/`check`/`list` commands, the check-output parser and the restore plan (model and tests only; no menu items yet).
+
 ## [0.5.0]
 
 ### Added
