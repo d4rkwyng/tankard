@@ -178,9 +178,11 @@ too); they share one timer.
     `HOMEBREW_NO_AUTO_UPDATE=1` and `HOMEBREW_NO_ASK=1`.
   - Bottles only: a formula with no bottle is skipped, and so is one whose outdated
     dependencies (which brew would upgrade with it) have none. After an upgrade, brew
-    also upgrades outdated dependents; when one of those (or anything that chain would
-    reach) has no bottle, the upgrade runs with `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1`
-    and the log says so. That dependent keeps the older dependency until you upgrade it.
+    also upgrades (or rebuilds) outdated dependents; when one of those (or anything that
+    chain would reach) has no bottle, the formula is skipped too, logged as "upgrading X
+    would need Y rebuilt from source; upgrade by hand", and stays in the Upgrades list.
+    brew's installed-dependents check is never turned off: doing so could leave Y linked
+    to the old keg's library after a library bump.
   - Pinned packages are skipped (the 0.4 rule), and so are packages with a pinned
     outdated dependency.
   - Casks never quit an app: a cask whose app is running is skipped (matched by the app
@@ -191,7 +193,8 @@ too); they share one timer.
   - Tankard's own cask is never upgraded automatically. When brew lists an upgrade for it,
     the menu-bar menu shows "Tankard 0.x available" (`brew upgrade --cask tankard`).
 - **Reporting**: a notification after a run that upgraded or failed something (with the
-  notification permission above; nothing when there was nothing to do), the
+  notification permission above; nothing when there was nothing to do or everything was
+  skipped), the
   **Auto-update log** (Settings → Upgrades → Show Auto-update Log…, or click the menu-bar
   line): the last 20 runs, each with the time, what was upgraded (old → new), what was
   skipped and why, and failures. It is kept in
@@ -200,6 +203,9 @@ too); they share one timer.
   menu-bar menu shows "Last auto-update: today 03:04 · 4 upgraded".
 - Testing hook: `defaults write net.mindtricks.tankard autoUpdateDryRun -bool true` makes a
   due run plan and log what it would do without running any brew command.
+  `defaults write net.mindtricks.tankard autoUpdateOnly -array xz` limits a run to the
+  named packages (everything else is out of scope); `defaults delete … autoUpdateOnly`
+  removes the limit.
 
 ## Open at login
 

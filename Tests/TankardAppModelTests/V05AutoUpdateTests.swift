@@ -186,22 +186,36 @@ struct AutoUpdateSafeModeTests {
         #expect(r.run.isEmpty)
         #expect(reasons(r) == ["lib": .compiles, "app": .dependencyCompiles("lib")])
         // lib2 is bottled but its outdated dependent tool compiles, and
-        // brew's dependents check would upgrade tool too: lib2 runs with
-        // that check off.
+        // brew's dependents check would upgrade tool too: lib2 is skipped
+        // (brew's check is never turned off).
         let r2 = plan([pkg("lib2"), pkg("tool", bottle: false, deps: ["lib2"])])
-        #expect(reasons(r2) == ["tool": .compiles])
-        #expect(r2.run.map(\.name) == ["lib2"])
-        #expect(r2.noDependentsCheck == ["formula:homebrew/core/lib2": "tool"])
-        #expect(AutoUpdateSafeMode.environment(for: pkg("lib2"), noDependentsCheck: true)["HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"] == "1")
+        #expect(r2.run.isEmpty)
+        #expect(reasons(r2) == ["tool": .compiles, "lib2": .dependentCompiles(package: "lib2", dependent: "tool")])
+        #expect(AutoUpdateSkip.dependentCompiles(package: "lib2", dependent: "tool").text
+                == "upgrading lib2 would need tool rebuilt from source; upgrade by hand")
         #expect(AutoUpdateSafeMode.environment(for: pkg("lib2"))["HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"] == nil)
         // Further along the chain: lib4 → mid (outdated) → its dependent app4 compiles.
         let r4 = plan([pkg("lib4"), pkg("mid", deps: ["lib4"]), pkg("app4", bottle: false, deps: ["mid", "lib4"])])
-        #expect(r4.run.map(\.name) == ["lib4", "mid"])
-        #expect(r4.noDependentsCheck.count == 2)
+        #expect(r4.run.isEmpty)
+        #expect(reasons(r4)["lib4"] == .dependentCompiles(package: "lib4", dependent: "app4"))
+        #expect(reasons(r4)["mid"] == .dependentCompiles(package: "mid", dependent: "app4"))
         // A current (not outdated) compiling dependent doesn't matter.
         let r3 = plan([pkg("lib3"), pkg("tool3", outdated: false, bottle: false, deps: ["lib3"])])
         #expect(r3.run.map(\.name) == ["lib3"])
-        #expect(r3.noDependentsCheck.isEmpty)
+        #expect(r3.skipped.isEmpty)
+    }
+
+    @Test func onlyLimitsTheScope() {
+        let all = [pkg("xz"), pkg("lib"), pkg("app", deps: ["lib"]), pkg("ruby", bottle: false)]
+        let r = AutoUpdateSafeMode.plan(all, classifier: classifier, running: [], dontQuitApps: false, only: ["xz"])
+        #expect(r.run.map(\.name) == ["xz"])
+        #expect(r.skipped.isEmpty) // ruby is out of scope, not "skipped"
+        // The checks still see packages out of scope: lib's dependent tool compiles.
+        let r2 = AutoUpdateSafeMode.plan([pkg("lib"), pkg("tool", bottle: false, deps: ["lib"])], classifier: classifier,
+                                         running: [], dontQuitApps: false, only: ["lib"])
+        #expect(r2.run.isEmpty)
+        #expect(reasons(r2) == ["lib": .dependentCompiles(package: "lib", dependent: "tool")])
+        #expect(plan(all).run.count == 3)
     }
 
     @Test func pinnedIsSkipped() {
@@ -444,8 +458,11 @@ struct RecordingRunner: StreamingCommandRunning {
 struct AutoUpdateRunTests {
     /// The Intelbrew demo (the fake brew that really "upgrades" its
     /// fixture), recording every queued command.
-    func rig(pinned: Set<String> = [], fail: Set<String> = []) async -> (AppStore, EnvLog, FakeNotifier) {
+    /// ruby (no bottle) depends on the fixture's other outdated formulae,
+    /// so it is pinned by default: otherwise safe mode skips them all.
+    func rig(pinned: Set<String> = ["ruby"], fail: Set<String> = [], logURL: URL? = nil) async -> (AppStore, EnvLog, FakeNotifier) {
         var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: pinned)
+        deps.logURL = logURL
         let envs = EnvLog()
         let demoRunner = deps.streamRunner
         let failing = FakeStreamRunner(log: CallLog()) { args, out in
@@ -471,26 +488,24 @@ struct AutoUpdateRunTests {
         let upgrades = calls.filter { $0.0.first == "upgrade" }
         #expect(upgrades.map { $0.0.last ?? "" } == ["homebrew/core/openssl@4", "homebrew/core/python@3.15", "homebrew/core/sqlite", "homebrew/core/xz"])
         #expect(upgrades.allSatisfy { $0.1["HOMEBREW_NO_AUTO_UPDATE"] == "1" && $0.1["HOMEBREW_NO_ASK"] == "1" })
-        // In this fixture ruby (no bottle) depends on the others, so brew's
-        // dependents check would compile it: each runs with that check off.
-        let noCheck = upgrades.filter { $0.1["HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"] == "1" }.map { $0.0.last ?? "" }
-        #expect(noCheck == upgrades.map { $0.0.last ?? "" })
+        // brew's installed-dependents check is never turned off.
+        #expect(calls.allSatisfy { $0.1["HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"] == nil })
         #expect(!calls.contains { $0.0.contains("homebrew/core/ruby") })
         #expect(run.upgraded.map(\.name) == ["openssl@4", "python@3.15", "sqlite", "xz"])
-        #expect(run.upgraded.first { $0.name == "xz" }?.detail == "5.8.3 → 5.8.4 (brew's dependents check off: ruby has no bottle)")
+        #expect(run.upgraded.first { $0.name == "xz" }?.detail == "5.8.3 → 5.8.4")
         #expect(run.skipped.map(\.name) == ["ruby"])
         #expect(run.failed.isEmpty)
         #expect(run.finishedAt != nil)
         #expect(store.autoUpdate.log.latest == run)
         #expect(store.autoUpdate.settings.lastRun == run.startedAt)
         #expect(notifier.posted.map(\.title) == ["Tankard upgraded 4 packages"])
-        #expect(store.upgradable.map(\.name) == ["ruby"]) // re-read after the run
+        #expect(store.upgradable.isEmpty) // re-read after the run (ruby is pinned)
         #expect(!store.autoUpdate.isRunning && store.autoUpdate.activity == nil)
         #expect(!store.showUpgradeSheet) // no sheet for an automatic run
     }
 
     @Test func pinnedAndFailuresAreLogged() async throws {
-        let (store, _, notifier) = await rig(pinned: ["sqlite"], fail: ["xz"])
+        let (store, _, notifier) = await rig(pinned: ["ruby", "sqlite"], fail: ["xz"])
         store.autoUpdate.settings.enabled = true
         let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
         #expect(run.skipped.map(\.name).contains("sqlite"))
@@ -498,6 +513,41 @@ struct AutoUpdateRunTests {
         #expect(run.failed.map(\.name) == ["xz"])
         #expect(run.failed.first?.detail.hasPrefix("brew exited 1") == true)
         #expect(notifier.posted.first?.body.contains("Failed: xz") == true)
+    }
+
+    @Test func compilingDependentSkipsAllWithoutNotification() async throws {
+        // ruby not pinned: its upgrade compiles, and every other outdated
+        // formula would make brew upgrade it too. All skipped, no upgrade
+        // command, no notification.
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let logURL = dir.appendingPathComponent("upgrade.log")
+        let (store, envs, notifier) = await rig(pinned: [], logURL: logURL)
+        store.autoUpdate.settings.enabled = true
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(envs.calls.filter { $0.0.first == "upgrade" }.isEmpty)
+        #expect(run.upgraded.isEmpty && run.failed.isEmpty)
+        #expect(run.skipped.map(\.name) == ["openssl@4", "python@3.15", "ruby", "sqlite", "xz"])
+        #expect(run.skipped.first { $0.name == "xz" }?.detail == "upgrading xz would need ruby rebuilt from source; upgrade by hand")
+        #expect(run.summary == "Nothing upgraded · 5 skipped")
+        #expect(notifier.posted.isEmpty)
+        let text = try String(contentsOf: logURL, encoding: .utf8)
+        #expect(text.contains("tankard: skipped xz: upgrading xz would need ruby rebuilt from source; upgrade by hand"))
+        #expect(store.upgradable.map(\.name).contains("xz")) // still in Upgrades
+    }
+
+    @Test func onlyHookLimitsARealRun() async throws {
+        let (store, envs, notifier) = await rig()
+        let suite = store.autoUpdate.settings.defaults
+        suite.set(["xz"], forKey: "autoUpdateOnly")
+        defer { suite.removeObject(forKey: "autoUpdateOnly") }
+        #expect(store.autoUpdate.settings.only == ["xz"])
+        store.autoUpdate.settings.enabled = true
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(envs.calls.filter { $0.0.first == "upgrade" }.map { $0.0.last ?? "" } == ["homebrew/core/xz"])
+        #expect(run.upgraded.map(\.name) == ["xz"])
+        #expect(run.skipped.isEmpty)
+        #expect(notifier.posted.map(\.title) == ["Tankard upgraded 1 package"])
     }
 
     @Test func dryRunRunsNoBrewCommand() async throws {
@@ -560,7 +610,8 @@ struct AutoUpdateRunTests {
 @MainActor
 struct AutoUpdateCheckerTests {
     @Test func tickRunsOnceWhenDueAndConditionsHold() async throws {
-        var deps = Demo.dependencies(.intelbrew, pace: 0)
+        // ruby pinned, so the other four aren't skipped for its sake.
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
         let envs = EnvLog()
         deps.streamRunner = RecordingRunner(inner: deps.streamRunner, log: envs)
         let clock = DateBox(at(3, 30))

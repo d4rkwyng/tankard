@@ -92,7 +92,14 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    auto-update), UpgradeNotificationDiff (0.3)
   AutoUpdate       0.5: AutoUpdateSchedule and AutoUpdatePolicy (pure: due, AC,
                    idle, one run per slot), AutoUpdateSafeMode (the plan),
-                   AutoUpdateSettings, AutoUpdateLog, AutoUpdater (one run)
+                   AutoUpdateSettings, AutoUpdateLog, AutoUpdater (one run).
+                   Hidden test hooks (defaults, no UI): autoUpdateDryRun (Bool:
+                   plan and log, run no brew command) and autoUpdateOnly
+                   ([String]: only these package names are in scope; the
+                   dependency checks still see everything). brew's installed-
+                   dependents check is never turned off: a formula whose
+                   upgrade would make brew upgrade or rebuild a dependent with
+                   no bottle is skipped instead.
   BuildTimes       IntelbrewBuildTimes, BuildTimeSource (fetch, 24 h cache, bounds) (0.3)
   CleanupStore     the Cleanup sheet's dry run, cache size and run (0.3)
   AppManagement    which steps need it, the block matcher, the settings links (0.3)

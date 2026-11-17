@@ -186,6 +186,9 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     case dependencyCompiles(String)
     /// A dependency it needs is pinned and has an upgrade waiting.
     case dependencyPinned(String)
+    /// brew's installed-dependents check would go on to upgrade (or
+    /// rebuild) this dependent, and it has no bottle.
+    case dependentCompiles(package: String, dependent: String)
     /// The cask's app is running (and "Don't quit running apps" is off).
     case appRunning(String)
     /// A cask whose apps brew didn't list, with "Don't quit running apps" off.
@@ -199,6 +202,7 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .compiles: return "no bottle, would compile from source"
         case .dependencyCompiles(let d): return "its dependency \(d) would compile from source"
         case .dependencyPinned(let d): return "its dependency \(d) is pinned"
+        case .dependentCompiles(let p, let d): return "upgrading \(p) would need \(d) rebuilt from source; upgrade by hand"
         case .appRunning(let a): return "\(a) is running"
         case .appUnknown: return "couldn't tell whether its app is running"
         case .tankardItself: return "Tankard updates itself through brew"
@@ -209,14 +213,9 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
 public struct AutoUpdatePlan: Equatable, Sendable {
     public var run: [Package]
     public var skipped: [(package: Package, reason: AutoUpdateSkip)]
-    /// Package id → the outdated dependent that would compile if brew's
-    /// installed-dependents check upgraded it. These run with
-    /// HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 (see `pulledInProblem`).
-    public var noDependentsCheck: [String: String] = [:]
 
     public static func == (a: Self, b: Self) -> Bool {
         a.run == b.run && a.skipped.map(\.package) == b.skipped.map(\.package) && a.skipped.map(\.reason) == b.skipped.map(\.reason)
-            && a.noDependentsCheck == b.noDependentsCheck
     }
 }
 
@@ -249,13 +248,17 @@ public enum AutoUpdateSafeMode {
     /// Upgrade targets are what Upgrade all uses (`isUpgradeTarget`: not
     /// pinned; self-updating casks only when that setting lists them); a
     /// pinned upgrade shows in `skipped` so the log says why.
+    ///
+    /// `only` (the hidden `autoUpdateOnly` test hook): when set, only
+    /// packages named in it are considered; the rest are out of scope (not
+    /// run, not listed as skipped). The dependency checks still see every
+    /// installed package.
     public static func plan(_ packages: [Package], classifier: CompileClassifier, running: [RunningApp],
-                            dontQuitApps: Bool) -> AutoUpdatePlan {
+                            dontQuitApps: Bool, only: Set<String>? = nil) -> AutoUpdatePlan {
         let graph = DependencyGraph(packages)
         var run: [Package] = []
         var skipped: [(Package, AutoUpdateSkip)] = []
-        var noDependentsCheck: [String: String] = [:]
-        let outdated = packages.filter(\.upgradeAvailable).sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        let outdated = packages.filter { p in p.upgradeAvailable && (only?.contains(p.name) ?? true) }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         func compiles(_ p: Package) -> Bool { classifier.upgradeMethod(p).compiles }
         for p in outdated {
             if p.isHeld { skipped.append((p, .pinned)); continue }
@@ -263,7 +266,9 @@ public enum AutoUpdateSafeMode {
             if p.kind == .formula {
                 if compiles(p) { skipped.append((p, .compiles)); continue }
                 if let reason = dependencyProblem(p, graph: graph, compiles: compiles) { skipped.append((p, reason)); continue }
-                if let d = dependentThatCompiles(p, graph: graph, compiles: compiles) { noDependentsCheck[p.id] = d.name }
+                if let d = dependentThatCompiles(p, graph: graph, compiles: compiles) {
+                    skipped.append((p, .dependentCompiles(package: p.name, dependent: d.name))); continue
+                }
             } else if !dontQuitApps {
                 if p.appPaths == nil && p.quitBundleIDs == nil { skipped.append((p, .appUnknown)); continue }
                 if let app = runningApp(p, running: running) { skipped.append((p, .appRunning(app))); continue }
@@ -271,8 +276,7 @@ public enum AutoUpdateSafeMode {
             guard p.isUpgradeTarget else { continue }
             run.append(p)
         }
-        return AutoUpdatePlan(run: run, skipped: skipped.map { (package: $0.0, reason: $0.1) },
-                              noDependentsCheck: noDependentsCheck.filter { id, _ in run.contains { $0.id == id } })
+        return AutoUpdatePlan(run: run, skipped: skipped.map { (package: $0.0, reason: $0.1) })
     }
 
     /// `brew upgrade <p>` also upgrades p's outdated dependencies (the
@@ -288,12 +292,11 @@ public enum AutoUpdateSafeMode {
     /// After an upgrade, brew's installed-dependents check upgrades the
     /// outdated dependents of what it upgraded (and their dependencies,
     /// and so on; pinned ones are left alone). The first one in that chain
-    /// that would compile, or nil. When there is one, safe mode doesn't
-    /// skip p (one compile-only formula would otherwise block everything
-    /// connected to it); it runs p with that check off instead, so brew
-    /// touches only p and its dependencies. That dependent then stays on
-    /// the older dependency until it is upgraded by hand, as it would be
-    /// if it were pinned.
+    /// that would compile, or nil. When there is one, safe mode skips p:
+    /// turning brew's check off instead (HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK)
+    /// could leave that dependent linked against the removed old keg's
+    /// library after a library bump, breaking it overnight. p stays in the
+    /// Upgrades list to upgrade by hand.
     static func dependentThatCompiles(_ p: Package, graph: DependencyGraph, compiles: (Package) -> Bool) -> Package? {
         var seen: Set<String> = [p.id]
         var queue = [p]
@@ -314,19 +317,17 @@ public enum AutoUpdateSafeMode {
     /// `brew update` first), and never quits an app: casks always get
     /// HOMEBREW_NO_UPGRADE_QUIT_CASKS=1, so an app opened after the plan was
     /// made keeps running too.
-    public static func environment(for p: Package, noDependentsCheck: Bool = false) -> [String: String] {
+    /// brew's installed-dependents check always stays on.
+    public static func environment(for p: Package) -> [String: String] {
         var env = ["HOMEBREW_NO_AUTO_UPDATE": "1", "HOMEBREW_NO_ASK": "1"]
         if p.kind == .cask { env[InsightSettings.noQuitKey] = "1" }
-        if noDependentsCheck { env[noDependentsCheckKey] = "1" }
         return env
     }
-
-    public static let noDependentsCheckKey = "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"
 
     /// The lines Settings shows: exactly what safe mode does.
     public static let rules: [String] = [
         "Runs brew update first, then upgrades one package at a time through Tankard's queue.",
-        "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. When brew would go on to upgrade a dependent that has no bottle, the upgrade runs with HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 so it doesn't.",
+        "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand.",
         "Pinned packages are skipped, and so are packages whose dependencies are pinned.",
         "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).",
         "Self-updating apps are included only when \"Include self-updating apps\" is on.",
@@ -352,6 +353,7 @@ public final class AutoUpdateSettings {
         static let since = "autoUpdateScheduleSince"
         static let lastRun = "autoUpdateLastRun"
         static let dryRun = "autoUpdateDryRun"
+        static let only = "autoUpdateOnly"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -453,6 +455,15 @@ public final class AutoUpdateSettings {
         }
     }
     @ObservationIgnored private var _dryRun: Bool
+
+    /// Hidden test hook (`defaults write net.mindtricks.tankard
+    /// autoUpdateOnly -array xz`): when set, a run considers only the
+    /// formulae and casks named here; everything else is out of scope.
+    /// Read at each run, no UI.
+    public var only: Set<String>? {
+        guard let names = defaults.array(forKey: Key.only) as? [String] else { return nil }
+        return Set(names)
+    }
 
     public var schedule: AutoUpdateSchedule {
         AutoUpdateSchedule(frequency: frequency, hour: hour, minute: minute, weekday: weekday)
@@ -704,7 +715,8 @@ public final class AutoUpdater {
         }
         let plan = AutoUpdateSafeMode.plan(store.packages, classifier: store.deps.classifier,
                                            running: conditions.runningApps(),
-                                           dontQuitApps: store.insights.settings.dontQuitAppsDuringUpgrade)
+                                           dontQuitApps: store.insights.settings.dontQuitAppsDuringUpgrade,
+                                           only: settings.only)
         record.skipped = plan.skipped.map { .init(name: $0.package.name, isCask: $0.package.kind == .cask, detail: $0.reason.text) }
         if settings.dryRun {
             record.upgraded = plan.run.map { .init(name: $0.name, isCask: $0.kind == .cask, detail: Self.versions($0)) }
@@ -723,12 +735,8 @@ public final class AutoUpdater {
             }
             let item = AutoUpdateRun.Item(name: p.name, isCask: p.kind == .cask, detail: Self.versions(p))
             activity = "Auto-update: upgrading \(p.name)"
-            let noCheck = plan.noDependentsCheck[p.id]
-            if let d = noCheck { logFile?.append(["tankard: \(p.name): brew's dependents check off (\(d) would compile from source)"]) }
-            let (code, lines) = await runUpgrade(p, noDependentsCheck: noCheck != nil, store: store, logFile: logFile)
+            let (code, lines) = await runUpgrade(p, store: store, logFile: logFile)
             if code == 0 {
-                var item = item
-                if let d = noCheck { item.detail += " (brew's dependents check off: \(d) has no bottle)" }
                 record.upgraded.append(item)
             } else {
                 let tail = lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
@@ -761,16 +769,16 @@ public final class AutoUpdater {
 
     /// `brew upgrade` for one package through the queue (the same strict
     /// FIFO as every other brew command), with safe mode's environment.
-    private func runUpgrade(_ p: Package, noDependentsCheck: Bool, store: AppStore, logFile: LogFile?) async -> (Int32, [String]) {
+    private func runUpgrade(_ p: Package, store: AppStore, logFile: LogFile?) async -> (Int32, [String]) {
         guard let client = try? store.resolvedClient(), let detection = store.report?.intelbrew else {
             return (-1, ["brew not found"])
         }
         let args = BrewCommands.upgradeArguments(for: p)
-        let extra = AutoUpdateSafeMode.environment(for: p, noDependentsCheck: noDependentsCheck)
+        let extra = AutoUpdateSafeMode.environment(for: p)
         let env = client.environment(for: detection, readOnly: false).merging(extra) { $1 }
         let cmd = QueuedCommand(executable: client.installation.brewPath, arguments: args, environment: env,
                                 display: BrewCommands.display(args, environment: extra.filter {
-                                    $0.key == InsightSettings.noQuitKey || $0.key == AutoUpdateSafeMode.noDependentsCheckKey
+                                    $0.key == InsightSettings.noQuitKey
                                 }))
         logFile?.append(["$ \(cmd.display)"])
         let collector = OutputCollector()
