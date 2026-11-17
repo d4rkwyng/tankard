@@ -115,6 +115,14 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// artifacts. nil for formulae and in reports written before 0.5.
     public var appPaths: [String]? = nil
     public var quitBundleIDs: [String]? = nil
+    /// 0.6: brew's deprecation and disable details (dates, reason,
+    /// replacement). nil when brew gives none, and in older reports.
+    public var lifecycle: PackageLifecycle? = nil
+    /// 0.6, formulae: why it's keg-only (`keg_only_reason`, in words), and
+    /// whether a keg is linked into the prefix (`linked_keg`). nil for
+    /// casks and in older reports.
+    public var kegOnlyReason: String? = nil
+    public var linked: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

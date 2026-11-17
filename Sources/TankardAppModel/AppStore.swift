@@ -70,6 +70,8 @@ public final class AppStore {
         public var insightsCache: InsightsCache?
         /// 0.5: the Auto-update log file (nil: memory only).
         public var autoUpdateLogURL: URL?
+        /// 0.6: the History file (nil: memory only).
+        public var historyURL: URL?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -111,6 +113,7 @@ public final class AppStore {
             d.appManagementGate = true
             d.insightsCache = InsightsCache(url: InsightsCache.defaultURL)
             d.autoUpdateLogURL = AutoUpdateLog.defaultURL
+            d.historyURL = HistoryLog.defaultURL
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -158,6 +161,10 @@ public final class AppStore {
     public var managementSheet: HomebrewManagement.Kind?
     /// 0.5: the Auto-update log sheet on the main window.
     public var showAutoUpdateLog = false
+    /// 0.6: Health, History or Remove Unused Dependencies (HealthStore.swift).
+    public var toolSheet: ToolSheet?
+    public internal(set) var health: HealthStore?
+    public internal(set) var autoremove: AutoremoveStore?
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -172,18 +179,25 @@ public final class AppStore {
     @ObservationIgnored public let insights: InsightsStore
     /// 0.5: automatic updates (settings, log, the run itself).
     @ObservationIgnored public let autoUpdate: AutoUpdater
+    /// 0.6: every queued command, recorded by the queue's observer.
+    @ObservationIgnored public let history: HistoryLog
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
     public init(deps: Dependencies, settings: AppSettings? = nil) {
         self.deps = deps
-        self.queue = CommandQueue(runner: deps.streamRunner)
+        let recorder = HistoryRecorder()
+        self.queue = CommandQueue(runner: deps.streamRunner, observer: { id, command, event in
+            recorder.observe(id, command, event)
+        })
+        self.history = HistoryLog(url: deps.historyURL)
         self.settings = settings ?? AppSettings.ephemeral()
         self.insights = InsightsStore(settings: InsightSettings(defaults: self.settings.defaults),
                                       cache: deps.insightsCache, ttl: deps.ttl, now: deps.now)
         self.autoUpdate = AutoUpdater(settings: AutoUpdateSettings(defaults: self.settings.defaults, now: deps.now),
                                       log: AutoUpdateLog(url: deps.autoUpdateLogURL))
         wireInsights()
+        recorder.setSink { [weak self] e in self?.historyRecorded(e) }
     }
 
     // MARK: derived
@@ -350,6 +364,9 @@ public final class AppStore {
             if SudoDetector.needsSudo(lines) {
                 return StoreError(title: "brew update needs administrator rights",
                                   detail: "Run this in Terminal:", terminalCommand: cmd.display)
+            }
+            if let kind = BrewFailure.classify(lines) {
+                return StoreError(title: kind.title, detail: kind.explanation + "\n\n" + tail, terminalCommand: cmd.display)
             }
             return StoreError(title: "brew update failed (exit \(code))", detail: tail, terminalCommand: cmd.display)
         } catch {

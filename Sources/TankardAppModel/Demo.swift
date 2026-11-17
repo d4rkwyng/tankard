@@ -55,6 +55,8 @@ public enum Demo {
         let failAppManagement: Bool
         /// 0.4a: pins and services (Demo+V04A.swift).
         let v04a: V04AState
+        /// 0.6: `brew autoremove` ran (the dry run is empty after).
+        let autoremoved = OSAllocatedUnfairLock(initialState: false)
 
         init(failAppManagement: Bool = false, pinned: Set<String> = []) {
             self.failAppManagement = failAppManagement
@@ -62,10 +64,10 @@ public enum Demo {
         }
 
         func info(_ variant: Variant, base: Data) -> Data {
-            Demo.addCaskApps(Demo.applyPins(Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
+            Demo.markRetired(Demo.addCaskApps(Demo.applyPins(Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
                                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 },
                                             replaced: replaced.withLock { $0 }),
-                           pinned: v04a.pinned.withLock { $0 }, variant: variant))
+                           pinned: v04a.pinned.withLock { $0 }, variant: variant)))
         }
     }
 
@@ -322,6 +324,7 @@ public enum Demo {
                     return ProcessResult(exitCode: 0, stdout: Data(Demo.cleanupText(variant).utf8), stderr: Data())
                 }
                 if let r = Demo.v04aRead(variant, state: state, arguments: arguments) { return r }
+                if let r = try await Demo.v06aRead(variant, state: state, arguments: arguments) { return r }
                 if let r = try await Demo.insight(variant, state: state, arguments: arguments) { return r }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
                 if arguments.contains("--installed") {
@@ -423,6 +426,7 @@ public enum Demo {
                 try await Task.sleep(for: .milliseconds(Int(ms * pace)))
             }
             if let code = try await Demo.v04aStream(variant, state: state, arguments: arguments, say: say) { return code }
+            if let code = try await Demo.v06aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if arguments.first == "update" {
                 try await say("==> Updating Homebrew...\n", 900)
                 try await say("Already up-to-date.\n", 50)

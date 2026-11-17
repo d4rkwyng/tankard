@@ -1,0 +1,2 @@
+Error: Another `brew upgrade` process is already running.
+Please wait for it to finish or terminate it to continue.

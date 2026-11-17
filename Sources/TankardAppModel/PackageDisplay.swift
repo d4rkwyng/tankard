@@ -13,13 +13,15 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     case leaves
     /// 0.4: open vulnerabilities from `brew vulns`; caveats from `brew info`.
     case vulnerable, hasNotes
+    /// 0.6: deprecated or disabled by Homebrew.
+    case deprecated
 
     public var id: String { rawValue }
 
     /// The segmented control's filters; the others are in its "More" menu.
     public static let segmented: [PackageFilter] = [.all, .upgrades, .source, .newer, .bottleAvailable]
     /// 0.4: the "More" menu next to the segmented control.
-    public static let more: [PackageFilter] = [.pinned, .leaves, .vulnerable, .hasNotes]
+    public static let more: [PackageFilter] = [.pinned, .leaves, .vulnerable, .hasNotes, .deprecated]
 
     /// Whether `includes` needs the other packages (leaves do).
     public var needsGraph: Bool { self == .leaves }
@@ -41,6 +43,7 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .leaves: return "Requested only"
         case .vulnerable: return "Vulnerable"
         case .hasNotes: return "Has notes"
+        case .deprecated: return "Deprecated"
         }
     }
 
@@ -57,6 +60,7 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .leaves: return p.requested
         case .vulnerable: return p.isVulnerable
         case .hasNotes: return p.hasCaveats
+        case .deprecated: return p.isRetired
         }
     }
 }
@@ -192,6 +196,7 @@ public enum BrewCommands {
         case .uninstall: return uninstallArguments(for: p)
         case .replaceBottle: return replaceWithBottleArguments(for: p)
         case .cleanup: return cleanupArguments
+        case .autoremove: return AutoremovePlan.runArguments
         }
     }
 

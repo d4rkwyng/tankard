@@ -39,8 +39,19 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// 0.4: what brew prints after installing ("To start…", PATH notes).
         /// brew writes the prefix as `$HOMEBREW_PREFIX`.
         public var caveats: String?
+        /// 0.6: deprecation/disable dates, reasons and replacements.
+        public var lifecycle: PackageLifecycle?
+        /// 0.6: `keg_only_reason` in words ("macOS provides BSD libedit",
+        /// or brew's symbol turned into words).
+        public var kegOnlyReason: String?
+
+        struct KegOnlyReason: Decodable {
+            var reason: String?
+            var explanation: String?
+        }
 
         enum CodingKeys: String, CodingKey {
+            case kegOnlyReason = "keg_only_reason"
             case name, tap, desc, versions, revision, bottle, installed, pinned, outdated, deprecated, disabled
             case dependencies, homepage, license, aliases, oldnames, caveats
             case fullName = "full_name"
@@ -74,6 +85,22 @@ public struct BrewInfoJSON: Decodable, Sendable {
             aliases = try? c.decodeIfPresent([String].self, forKey: .aliases)
             oldnames = try? c.decodeIfPresent([String].self, forKey: .oldnames)
             caveats = Self.nonEmpty(try? c.decodeIfPresent(String.self, forKey: .caveats))
+            lifecycle = PackageLifecycle.decodeBrew(from: decoder)
+            if kegOnly, let r = (try? c.decodeIfPresent(KegOnlyReason.self, forKey: .kegOnlyReason)) ?? nil {
+                kegOnlyReason = Self.kegOnlyText(reason: r.reason, explanation: r.explanation)
+            }
+        }
+
+        /// brew's explanation when it gives one, else its reason symbol in words.
+        static func kegOnlyText(reason: String?, explanation: String?) -> String? {
+            if let e = nonEmpty(explanation) { return e }
+            guard let r = nonEmpty(reason) else { return nil }
+            switch r {
+            case ":provided_by_macos": return "macOS already provides this software"
+            case ":shadowed_by_macos": return "macOS provides a similar version, which this would shadow"
+            case ":versioned_formula": return "it is a versioned formula"
+            default: return r.hasPrefix(":") ? String(r.dropFirst()).replacingOccurrences(of: "_", with: " ") : r
+            }
         }
 
         static func nonEmpty(_ s: String?) -> String? {
@@ -191,6 +218,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// lists none (fonts, CLI tools); nil when brew gave no artifacts.
         public var appPaths: [String]?
         public var quitBundleIDs: [String]?
+        /// 0.6: deprecation/disable dates, reasons and replacements.
+        public var lifecycle: PackageLifecycle?
 
         /// The parts of `depends_on` Tankard reads: other packages.
         public struct DependsOn: Decodable, Sendable {
@@ -242,6 +271,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
             homepage = try? c.decodeIfPresent(String.self, forKey: .homepage)
             dependsOn = try? c.decodeIfPresent(DependsOn.self, forKey: .dependsOn)
             caveats = Formula.nonEmpty(try? c.decodeIfPresent(String.self, forKey: .caveats))
+            lifecycle = PackageLifecycle.decodeBrew(from: decoder)
             if let list = try? c.decodeIfPresent([Artifact].self, forKey: .artifacts) {
                 appPaths = list.flatMap(\.appPaths)
                 quitBundleIDs = list.flatMap(\.quit)

@@ -1,0 +1,382 @@
+import Foundation
+
+// v0.6 (part A): deprecated/disabled data, `brew doctor` warnings, brew's
+// failure messages, and the `brew autoremove --dry-run` plan. All parsing,
+// no process: shapes taken from brew 7.0.14 (arm64 Mac, read-only runs and
+// the Library/Homebrew sources: deprecate_disable.rb, cmd/doctor.rb,
+// cleanup.rb, exceptions.rb, utils/lock.sh).
+
+/// brew's deprecation and disable data for a formula or cask, from
+/// `brew info --json=v2`: `deprecation_date`, `deprecation_reason`,
+/// `deprecation_replacement_formula`, `deprecation_replacement_cask`, and
+/// the same four for `disable_`. A date can be set in the future while the
+/// flag is still false (openssl@3: deprecated 2030), so the flags in
+/// `Package` decide; this only explains them.
+public struct PackageLifecycle: Codable, Sendable, Equatable {
+    public var deprecationDate: String?
+    public var deprecationReason: String?
+    public var deprecationReplacementFormula: String?
+    public var deprecationReplacementCask: String?
+    public var disableDate: String?
+    public var disableReason: String?
+    public var disableReplacementFormula: String?
+    public var disableReplacementCask: String?
+
+    public init(deprecationDate: String? = nil, deprecationReason: String? = nil,
+                deprecationReplacementFormula: String? = nil, deprecationReplacementCask: String? = nil,
+                disableDate: String? = nil, disableReason: String? = nil,
+                disableReplacementFormula: String? = nil, disableReplacementCask: String? = nil) {
+        self.deprecationDate = deprecationDate
+        self.deprecationReason = deprecationReason
+        self.deprecationReplacementFormula = deprecationReplacementFormula
+        self.deprecationReplacementCask = deprecationReplacementCask
+        self.disableDate = disableDate
+        self.disableReason = disableReason
+        self.disableReplacementFormula = disableReplacementFormula
+        self.disableReplacementCask = disableReplacementCask
+    }
+
+    enum JSONKeys: String, CodingKey {
+        case deprecationDate = "deprecation_date"
+        case deprecationReason = "deprecation_reason"
+        case deprecationReplacementFormula = "deprecation_replacement_formula"
+        case deprecationReplacementCask = "deprecation_replacement_cask"
+        case disableDate = "disable_date"
+        case disableReason = "disable_reason"
+        case disableReplacementFormula = "disable_replacement_formula"
+        case disableReplacementCask = "disable_replacement_cask"
+    }
+
+    /// From a formula or cask object of `brew info --json=v2`. nil when
+    /// none of the fields is set.
+    static func decodeBrew(from decoder: Decoder) -> PackageLifecycle? {
+        guard let c = try? decoder.container(keyedBy: JSONKeys.self) else { return nil }
+        func s(_ k: JSONKeys) -> String? {
+            guard let v = (try? c.decodeIfPresent(String.self, forKey: k)) ?? nil, !v.isEmpty else { return nil }
+            return v
+        }
+        let l = PackageLifecycle(deprecationDate: s(.deprecationDate), deprecationReason: s(.deprecationReason),
+                                 deprecationReplacementFormula: s(.deprecationReplacementFormula),
+                                 deprecationReplacementCask: s(.deprecationReplacementCask),
+                                 disableDate: s(.disableDate), disableReason: s(.disableReason),
+                                 disableReplacementFormula: s(.disableReplacementFormula),
+                                 disableReplacementCask: s(.disableReplacementCask))
+        return l == PackageLifecycle() ? nil : l
+    }
+
+    /// brew's reason symbols in words (DeprecateDisable's two tables, brew
+    /// 7.0.14). Anything else is brew's own free text and shown as is.
+    public static let reasonText: [String: String] = [
+        "does_not_build": "does not build",
+        "no_license": "has no license",
+        "repo_archived": "has an archived upstream repository",
+        "repo_removed": "has a removed upstream repository",
+        "unmaintained": "is not maintained upstream",
+        "unreachable": "is no longer reliably reachable upstream",
+        "unsupported": "is not supported upstream",
+        "deprecated_upstream": "is deprecated upstream",
+        "versioned_formula": "is a versioned formula",
+        "checksum_mismatch": "was built from a source file whose checksum changed upstream",
+        "discontinued": "is discontinued upstream",
+        "moved_to_mas": "is now only on the Mac App Store",
+        "no_longer_available": "is no longer available upstream",
+        "no_longer_meets_criteria": "no longer meets the criteria for casks",
+        "fails_gatekeeper_check": "does not pass the macOS Gatekeeper check",
+    ]
+
+    public static func describe(reason: String?) -> String? {
+        guard let r = reason?.trimmingCharacters(in: .whitespaces), !r.isEmpty else { return nil }
+        let key = r.hasPrefix(":") ? String(r.dropFirst()) : r
+        return reasonText[key] ?? r
+    }
+}
+
+/// A replacement brew names for a deprecated or disabled package.
+public struct PackageReplacement: Equatable, Sendable {
+    public var name: String
+    public var kind: PackageKind
+    public init(name: String, kind: PackageKind) {
+        self.name = name
+        self.kind = kind
+    }
+}
+
+// MARK: - brew's failures
+
+/// Why a brew command failed, when its output says so in a way Tankard
+/// recognises. The raw output is always shown too.
+public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
+    /// brew's lock: another brew is running (utils/lock.sh, or
+    /// OperationInProgressError in exceptions.rb).
+    case locked
+    case network
+    case diskFull
+    case permissions
+
+    public var title: String {
+        switch self {
+        case .locked: return "Another Homebrew command is running"
+        case .network: return "Homebrew couldn't reach the network"
+        case .diskFull: return "The disk is full"
+        case .permissions: return "Homebrew couldn't write to its folders"
+        }
+    }
+
+    public var explanation: String {
+        switch self {
+        case .locked:
+            return "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry."
+        case .network:
+            return "A download failed. Check the internet connection (or a VPN or proxy), then retry."
+        case .diskFull:
+            return "There's no space left to download or unpack. Free some space (Clean Up helps), then retry."
+        case .permissions:
+            return "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it."
+        }
+    }
+}
+
+public enum BrewFailure {
+    /// The first kind the lines match, most specific first (a lock message
+    /// also says "process", a disk-full error can mention a path).
+    public static func classify<S: Sequence>(_ lines: S) -> BrewFailureKind? where S.Element == String {
+        let text = lines.joined(separator: "\n").lowercased()
+        if text.contains("process is already running") || text.contains("process has already locked")
+            || text.contains("another active homebrew") || text.contains("operationinprogresserror")
+            || (text.contains("flock") && text.contains("lock")) {
+            return .locked
+        }
+        if text.contains("no space left on device") || text.contains("disk full") || text.contains("enospc") {
+            return .diskFull
+        }
+        if text.contains("could not resolve host") || text.contains("failed to connect to")
+            || text.contains("network is unreachable") || text.contains("connection timed out")
+            || text.contains("operation timed out") || text.contains("curl: (6)") || text.contains("curl: (7)")
+            || text.contains("curl: (28)") || text.contains("curl: (35)") || text.contains("temporary failure in name resolution") {
+            return .network
+        }
+        if text.contains("permission denied") || text.contains("operation not permitted")
+            || text.contains("is not writable") || text.contains("eacces") {
+            return .permissions
+        }
+        return nil
+    }
+}
+
+// MARK: - brew doctor
+
+/// One `Warning:` block of `brew doctor`.
+public struct DoctorWarning: Equatable, Sendable, Identifiable {
+    public var id: Int
+    /// brew's first line, without "Warning: ".
+    public var headline: String
+    /// The whole block as brew printed it (headline included).
+    public var raw: String
+    public var kind: DoctorWarningKind?
+
+    /// A plain-English title (brew's headline when the kind isn't known).
+    public var title: String { kind?.title ?? headline }
+    public var explanation: String? { kind?.explanation }
+
+    /// The command to fix it, shown and never run: the first indented
+    /// command line in brew's block, else the kind's own.
+    public var fixCommand: String? {
+        for line in raw.split(separator: "\n").dropFirst() {
+            let t = line.trimmingCharacters(in: .whitespaces)
+            guard line.hasPrefix("  "), !t.isEmpty else { continue }
+            if t.hasPrefix("brew ") || t.hasPrefix("sudo ") || t.hasPrefix("printf ") || t.hasPrefix("echo ")
+                || t.hasPrefix("export ") || t.hasPrefix("xcode-select") || t.hasPrefix("git ")
+                || t.hasPrefix("rm ") || t.hasPrefix("chown ") || t.hasPrefix("softwareupdate") {
+                return t
+            }
+        }
+        return kind?.defaultCommand
+    }
+}
+
+/// The doctor warnings Tankard explains. Matched on brew 7.0.14's wording
+/// (Library/Homebrew/diagnostic.rb and extend/os/mac/diagnostic.rb).
+public enum DoctorWarningKind: String, Sendable, Equatable, CaseIterable {
+    case deprecatedDisabled
+    case pathOrder
+    case sbinNotInPath
+    case unlinkedKegs
+    case brokenSymlinks
+    case strayFiles
+    case outdatedCLT
+    case outdatedXcode
+    case unsupportedMacOS
+    case missingDependencies
+    case untrustedTaps
+    case gitDirty
+    case notWritable
+
+    static func match(_ headline: String) -> DoctorWarningKind? {
+        let h = headline.lowercased()
+        if h.contains("deprecated or disabled") { return .deprecatedDisabled }
+        if h.contains("\"sbin\" was not found in your path") { return .sbinNotInPath }
+        if h.contains("/usr/bin occurs before") || h.contains("is not in your path") { return .pathOrder }
+        if h.contains("unlinked kegs") { return .unlinkedKegs }
+        if h.contains("broken symlinks") { return .brokenSymlinks }
+        if h.contains("unbrewed") { return .strayFiles }
+        if h.contains("command line tools") && (h.contains("outdated") || h.contains("too old")) { return .outdatedCLT }
+        if h.contains("xcode") && (h.contains("outdated") || h.contains("too old")) { return .outdatedXcode }
+        if h.contains("you are using macos") || h.contains("unsupported") { return .unsupportedMacOS }
+        if h.contains("missing dependencies") { return .missingDependencies }
+        if h.contains("untrusted") { return .untrustedTaps }
+        if h.contains("uncommitted modifications") || h.contains("not on the main branch") { return .gitDirty }
+        if h.contains("not writable") { return .notWritable }
+        return nil
+    }
+
+    public var title: String {
+        switch self {
+        case .deprecatedDisabled: return "Some packages are deprecated or disabled"
+        case .pathOrder: return "Your PATH finds other tools before Homebrew's"
+        case .sbinNotInPath: return "Homebrew's sbin folder isn't in your PATH"
+        case .unlinkedKegs: return "Some packages are installed but not linked"
+        case .brokenSymlinks: return "There are broken links in Homebrew's folders"
+        case .strayFiles: return "Files Homebrew didn't install are in its folders"
+        case .outdatedCLT: return "The Command Line Tools are out of date"
+        case .outdatedXcode: return "Xcode is out of date"
+        case .unsupportedMacOS: return "This macOS version isn't supported by Homebrew"
+        case .missingDependencies: return "Some packages are missing dependencies"
+        case .untrustedTaps: return "Some taps aren't trusted"
+        case .gitDirty: return "Homebrew's own files have local changes"
+        case .notWritable: return "Some Homebrew folders aren't writable"
+        }
+    }
+
+    public var explanation: String {
+        switch self {
+        case .deprecatedDisabled:
+            return "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one."
+        case .pathOrder:
+            return "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this."
+        case .sbinNotInPath:
+            return "Some installed tools put commands in sbin; your shell won't find them by name until it's in PATH."
+        case .unlinkedKegs:
+            return "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted."
+        case .brokenSymlinks:
+            return "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them."
+        case .strayFiles:
+            return "Another installer put files in Homebrew's prefix. They can confuse builds from source."
+        case .outdatedCLT:
+            return "Formulae that build from source may fail. Software Update installs the new version."
+        case .outdatedXcode:
+            return "Formulae that build from source may fail. The App Store updates Xcode."
+        case .unsupportedMacOS:
+            return "Bottles may be missing and Homebrew won't help with issues. Things often still work."
+        case .missingDependencies:
+            return "A package needs something that isn't installed. Installing the missing ones fixes it."
+        case .untrustedTaps:
+            return "brew won't load formulae from third-party taps until you trust them."
+        case .gitDirty:
+            return "Edits in Homebrew's checkout can stop brew update. Resetting it discards them."
+        case .notWritable:
+            return "brew can't update or install while it can't write there."
+        }
+    }
+
+    /// A command when brew's block gives none.
+    public var defaultCommand: String? {
+        switch self {
+        case .brokenSymlinks: return "brew cleanup"
+        case .missingDependencies: return "brew missing"
+        case .outdatedCLT: return "softwareupdate --list"
+        default: return nil
+        }
+    }
+}
+
+public struct DoctorReport: Equatable, Sendable {
+    public var warnings: [DoctorWarning]
+    /// brew's note that the warnings are for Homebrew maintainers.
+    public var maintainersNote: Bool
+    /// `Your system is ready to brew.`
+    public var ready: Bool
+
+    public static let maintainersMarker = "these warnings are just used to help the Homebrew maintainers"
+
+    /// Parses the merged stdout and stderr of `brew doctor` (it exits 1
+    /// whenever it warns; that's normal).
+    public static func parse(_ text: String) -> DoctorReport {
+        var warnings: [DoctorWarning] = []
+        var current: [String]?
+        func close() {
+            guard var block = current else { return }
+            while let last = block.last, last.trimmingCharacters(in: .whitespaces).isEmpty { block.removeLast() }
+            let headline = String(block.first?.dropFirst("Warning: ".count) ?? "")
+            warnings.append(DoctorWarning(id: warnings.count, headline: headline,
+                                          raw: block.joined(separator: "\n"), kind: DoctorWarningKind.match(headline)))
+            current = nil
+        }
+        for raw in text.components(separatedBy: "\n") {
+            let line = raw.replacingOccurrences(of: "\r", with: "")
+            if line.hasPrefix("Warning: ") {
+                close()
+                current = [line]
+            } else if current != nil {
+                current?.append(line)
+            }
+        }
+        close()
+        // brew's headline can wrap onto the next line; take the first sentence's lines.
+        for i in warnings.indices where warnings[i].kind == nil {
+            let joined = warnings[i].raw.split(separator: "\n", omittingEmptySubsequences: false).prefix(2).joined(separator: " ")
+            if let k = DoctorWarningKind.match(joined) { warnings[i].kind = k }
+        }
+        return DoctorReport(warnings: warnings,
+                            maintainersNote: text.contains(maintainersMarker),
+                            ready: text.contains("Your system is ready to brew"))
+    }
+}
+
+/// `brew missing`: "<formula>: <missing> <missing>" lines.
+public enum MissingDependencies {
+    public static func parse(_ text: String) -> [(formula: String, missing: [String])] {
+        text.split(separator: "\n").compactMap { line in
+            let parts = line.split(separator: ":", maxSplits: 1)
+            guard parts.count == 2 else { return nil }
+            let missing = parts[1].split(separator: " ").map(String.init)
+            guard !missing.isEmpty else { return nil }
+            return (String(parts[0]).trimmingCharacters(in: .whitespaces), missing)
+        }
+    }
+}
+
+// MARK: - brew autoremove
+
+/// What `brew autoremove --dry-run` would uninstall. brew 7.0.14
+/// (cleanup.rb) prints `==> Would autoremove N unneeded formula(e):` and
+/// then one full name per line; nothing at all when there is nothing.
+public struct AutoremovePlan: Equatable, Sendable {
+    public var formulae: [String]
+
+    public init(formulae: [String]) { self.formulae = formulae }
+
+    public static let dryRunArguments = ["autoremove", "--dry-run"]
+    public static let runArguments = ["autoremove"]
+
+    public static func parse(_ text: String) -> AutoremovePlan {
+        var names: [String] = []
+        var inList = false
+        for raw in text.split(separator: "\n", omittingEmptySubsequences: false) {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("==>") {
+                inList = line.lowercased().contains("would autoremove")
+                continue
+            }
+            guard inList else { continue }
+            if line.isEmpty { inList = false; continue }
+            if line.hasPrefix("Warning:") || line.hasPrefix("Error:") { inList = false; continue }
+            names.append(line)
+        }
+        return AutoremovePlan(formulae: names)
+    }
+
+    /// The command that keeps one of them: mark it installed on request.
+    public static func keepCommand(_ name: String) -> String {
+        "brew tab --installed-on-request \(name)"
+    }
+}

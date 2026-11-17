@@ -106,7 +106,10 @@ public struct StatusClassifier: Sendable {
             dependencies: latest.runtimeDependencies.map { $0.map(\.fullName) } ?? f.dependencies ?? [],
             homepage: f.homepage,
             directDependencies: Self.directDependencies(latest.runtimeDependencies, declared: f.dependencies),
-            caveats: f.caveats
+            caveats: f.caveats,
+            lifecycle: f.lifecycle,
+            kegOnlyReason: f.kegOnlyReason,
+            linked: f.linkedKeg != nil
         )
     }
 
@@ -149,7 +152,8 @@ public struct StatusClassifier: Sendable {
             homepage: c.homepage,
             caveats: c.caveats,
             appPaths: c.appPaths,
-            quitBundleIDs: c.quitBundleIDs
+            quitBundleIDs: c.quitBundleIDs,
+            lifecycle: c.lifecycle
         )
     }
 

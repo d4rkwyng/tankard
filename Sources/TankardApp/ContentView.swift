@@ -140,6 +140,9 @@ struct ContentView: View {
         .sheet(isPresented: $store.showAutoUpdateLog) {
             AutoUpdateLogView(log: store.autoUpdate.log) { store.showAutoUpdateLog = false }.themed(theme)
         }
+        .sheet(item: $store.toolSheet) { s in
+            ToolSheetView(store: store, sheet: s).themed(theme)
+        }
         .sheet(item: Bindable(store.insights).postInstallNotes) { n in
             PostInstallNotesSheet(notes: n) { store.insights.postInstallNotes = nil }.themed(theme)
         }
@@ -186,6 +189,7 @@ struct ContentView: View {
                 if let p = store.packages.first(where: { $0.name == name }) { store.selection = p.id }
             }
         }
+        await applyV06ALaunchOptions(store: store, options: options)
         if options.demo != nil, let mode = options.demoAutoUpdate {
             await AutoUpdateDemo.apply(mode, store: store)
         }
@@ -409,6 +413,7 @@ struct PackageTable: View {
                                 .help("Installed as a dependency")
                         }
                         if p.pinned { PinnedBadge() }
+                        RetiredBadge(package: p)
                         VulnerabilityTag(package: p)
                     }
                     if let w = store.deps.classifier.upgradeWarning(p) {

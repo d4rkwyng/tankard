@@ -146,6 +146,11 @@ public extension AppStore {
                               terminalCommand: sudoCommand ?? "sudo " + display)
         }
         let tail = result.lines.suffix(6).joined(separator: "\n")
+        // 0.6: brew's lock, no network, a full disk, permissions.
+        if let kind = BrewFailure.classify(result.lines) {
+            return StoreError(title: "\(verb) \(name): \(kind.title)", detail: kind.explanation + "\n\n" + tail,
+                              terminalCommand: display)
+        }
         return StoreError(title: "\(verb) \(name) failed (exit \(result.exitCode))", detail: tail, terminalCommand: display)
     }
 }

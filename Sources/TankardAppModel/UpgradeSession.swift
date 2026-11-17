@@ -9,6 +9,8 @@ public enum SessionAction: String, Sendable {
     case replaceBottle
     /// 0.3: `brew cleanup` (one command, no packages).
     case cleanup
+    /// 0.6: `brew autoremove` (one command, no packages).
+    case autoremove
 
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
@@ -18,6 +20,7 @@ public enum SessionAction: String, Sendable {
         case .uninstall: return "Uninstall"
         case .replaceBottle: return "Reinstall"
         case .cleanup: return "Cleanup"
+        case .autoremove: return "Remove unused"
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
@@ -28,6 +31,7 @@ public enum SessionAction: String, Sendable {
         case .uninstall: return "Uninstalling"
         case .replaceBottle: return "Reinstalling"
         case .cleanup: return "Cleaning up"
+        case .autoremove: return "Removing unused dependencies"
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -40,6 +44,7 @@ public enum SessionAction: String, Sendable {
         case .uninstall: return "uninstalled"
         case .replaceBottle: return "reinstalled"
         case .cleanup: return "done"
+        case .autoremove: return "done"
         }
     }
 }
@@ -79,6 +84,8 @@ public final class UpgradeSession: Identifiable {
     public private(set) var sudoCommand: String?
     /// 0.3: cask steps macOS blocked (App Management), by item id.
     public private(set) var appManagementBlocked: [UUID] = []
+    /// 0.6: recognised failures (brew's lock, network, disk, permissions), in order.
+    public private(set) var failureKinds: [BrewFailureKind] = []
     /// 0.3: this run is the one retry after the App Management sheet.
     public var isRetry = false
     public private(set) var stopRequested = false
@@ -246,6 +253,11 @@ public final class UpgradeSession: Identifiable {
                 if AppManagement.modifiesApps(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {
                     appManagementBlocked.append(items[i].id)
                     note("macOS blocked changing the app (App Management permission)")
+                }
+                // 0.6: say why in words when brew's output shows it; the raw log stays above.
+                if let kind = BrewFailure.classify(commandLines) {
+                    failureKinds.append(kind)
+                    note("\(kind.title). \(kind.explanation)")
                 }
                 note("brew exited with status \(code)")
             }

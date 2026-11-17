@@ -44,6 +44,8 @@ public enum CommandEvent: Sendable, Equatable {
 /// Read-only queries (`brew info`, git) do not use the queue.
 public final class CommandQueue: Sendable {
     public typealias Handler = @Sendable (CommandEvent) -> Void
+    /// 0.6: sees every command's events (History), before its handler.
+    public typealias Observer = @Sendable (UUID, QueuedCommand, CommandEvent) -> Void
 
     struct Job: Sendable {
         var id: UUID
@@ -60,8 +62,10 @@ public final class CommandQueue: Sendable {
     private let state = OSAllocatedUnfairLock(initialState: State())
     private let continuation: AsyncStream<Job>.Continuation
     private let worker: Task<Void, Never>
+    private let observer: Observer?
 
-    public init(runner: StreamingCommandRunning) {
+    public init(runner: StreamingCommandRunning, observer: Observer? = nil) {
+        self.observer = observer
         let (stream, continuation) = AsyncStream.makeStream(of: Job.self, bufferingPolicy: .unbounded)
         self.continuation = continuation
         let state = self.state
@@ -81,6 +85,14 @@ public final class CommandQueue: Sendable {
     /// for it arrive on `handler`, from a background thread.
     @discardableResult
     public func enqueue(_ command: QueuedCommand, id: UUID = UUID(), handler: @escaping Handler) -> UUID {
+        var handler = handler
+        if let observer {
+            let inner = handler
+            handler = { event in
+                observer(id, command, event)
+                inner(event)
+            }
+        }
         // Append and yield under the lock, so the stream order is exactly
         // the order of enqueue calls even from different threads.
         state.withLockUnchecked { s in

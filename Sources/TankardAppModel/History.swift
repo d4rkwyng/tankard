@@ -1,0 +1,294 @@
+import Foundation
+import Observation
+import os
+import TankardCore
+
+// v0.6 (part A): History. Every command that goes through the queue
+// (install, upgrade, uninstall, reinstall, pin, services, cleanup,
+// autoremove, brew update, and auto-update's runs) is recorded by the
+// queue's observer: when, the command, the result and how long it took.
+// Kept in Application Support as JSON, newest first, the last 500, in the
+// same format as the Auto-update log (StatusReport's encoder, ISO dates).
+
+/// One command Tankard ran.
+public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
+    public enum Outcome: String, Codable, Sendable {
+        case succeeded, failed, cancelled
+        /// brew couldn't be started at all.
+        case notStarted
+    }
+
+    public enum Origin: String, Codable, Sendable {
+        case user, autoUpdate
+    }
+
+    public var id: UUID
+    public var startedAt: Date
+    public var duration: TimeInterval
+    /// What the user sees and can copy (`QueuedCommand.display`).
+    public var command: String
+    /// brew's arguments, for Retry (the environment is rebuilt then).
+    public var arguments: [String]
+    public var outcome: Outcome
+    public var exitCode: Int32?
+    public var origin: Origin
+    /// A recognised failure (`BrewFailureKind.rawValue`).
+    public var failure: String?
+    /// brew's last lines, for a failed command.
+    public var outputTail: [String]
+
+    public init(id: UUID = UUID(), startedAt: Date, duration: TimeInterval, command: String, arguments: [String],
+                outcome: Outcome, exitCode: Int32? = nil, origin: Origin = .user, failure: String? = nil,
+                outputTail: [String] = []) {
+        self.id = id
+        self.startedAt = startedAt
+        self.duration = duration
+        self.command = command
+        self.arguments = arguments
+        self.outcome = outcome
+        self.exitCode = exitCode
+        self.origin = origin
+        self.failure = failure
+        self.outputTail = outputTail
+    }
+
+    public var category: HistoryCategory { HistoryCategory(arguments: arguments) }
+    public var failureKind: BrewFailureKind? { failure.flatMap(BrewFailureKind.init(rawValue:)) }
+    public var isFailure: Bool { outcome == .failed || outcome == .notStarted }
+
+    /// Retry runs the same brew arguments again, through the queue.
+    public var canRetry: Bool { isFailure && category != .other && !arguments.isEmpty }
+
+    /// "succeeded", "failed (exit 1)", "stopped", "didn't start".
+    public var resultText: String {
+        switch outcome {
+        case .succeeded: return "succeeded"
+        case .failed: return exitCode.map { "failed (exit \($0))" } ?? "failed"
+        case .cancelled: return "stopped"
+        case .notStarted: return "didn't start"
+        }
+    }
+
+    /// "0.4 s", "12 s", "3 min 5 s".
+    public var durationText: String {
+        if duration < 10 { return String(format: "%.1f s", max(0, duration)) }
+        let s = Int(duration.rounded())
+        return s < 60 ? "\(s) s" : "\(s / 60) min \(s % 60) s"
+    }
+}
+
+/// What a History entry did, from brew's first argument. The History
+/// view's filter.
+public enum HistoryCategory: String, CaseIterable, Identifiable, Sendable {
+    case install, upgrade, uninstall, reinstall, pin, services, cleanup, update, other
+    public var id: String { rawValue }
+
+    public init(arguments: [String]) {
+        switch arguments.first {
+        case "install": self = .install
+        case "upgrade": self = .upgrade
+        case "uninstall": self = .uninstall
+        case "reinstall": self = .reinstall
+        case "pin", "unpin": self = .pin
+        case "services": self = .services
+        case "cleanup", "autoremove": self = .cleanup
+        case "update": self = .update
+        default: self = .other
+        }
+    }
+
+    public var title: String {
+        switch self {
+        case .install: return "Install"
+        case .upgrade: return "Upgrade"
+        case .uninstall: return "Uninstall"
+        case .reinstall: return "Reinstall"
+        case .pin: return "Pin"
+        case .services: return "Services"
+        case .cleanup: return "Clean up"
+        case .update: return "Update"
+        case .other: return "Other"
+        }
+    }
+}
+
+/// The History view's filter.
+public enum HistoryFilter: Hashable, Sendable, Identifiable {
+    case all, failed, autoUpdate
+    case category(HistoryCategory)
+
+    public var id: String {
+        switch self {
+        case .all: return "all"
+        case .failed: return "failed"
+        case .autoUpdate: return "auto"
+        case .category(let c): return c.rawValue
+        }
+    }
+
+    public var title: String {
+        switch self {
+        case .all: return "All"
+        case .failed: return "Failed"
+        case .autoUpdate: return "Auto-update"
+        case .category(let c): return c.title
+        }
+    }
+
+    public static let menu: [HistoryFilter] = [.all, .failed, .autoUpdate]
+        + [HistoryCategory.install, .upgrade, .uninstall, .reinstall, .pin, .services, .cleanup, .update].map { .category($0) }
+
+    public func includes(_ e: HistoryEntry) -> Bool {
+        switch self {
+        case .all: return true
+        case .failed: return e.isFailure
+        case .autoUpdate: return e.origin == .autoUpdate
+        case .category(let c): return e.category == c
+        }
+    }
+}
+
+/// The persistent list. `url` nil: memory only (tests, demo).
+@Observable @MainActor
+public final class HistoryLog {
+    public nonisolated static let maxEntries = 500
+
+    public private(set) var entries: [HistoryEntry]
+    @ObservationIgnored public let url: URL?
+
+    public nonisolated static var defaultURL: URL {
+        AutoUpdateLog.defaultURL.deletingLastPathComponent().appendingPathComponent("history.json")
+    }
+
+    public init(url: URL?) {
+        self.url = url
+        entries = url.flatMap(Self.load) ?? []
+    }
+
+    public func record(_ e: HistoryEntry) {
+        var list = entries.filter { $0.id != e.id }
+        list.insert(e, at: 0)
+        list.sort { $0.startedAt > $1.startedAt }
+        entries = Array(list.prefix(Self.maxEntries))
+        save()
+    }
+
+    /// Demo: show these without saving.
+    public func seed(_ list: [HistoryEntry]) {
+        entries = Array(list.sorted { $0.startedAt > $1.startedAt }.prefix(Self.maxEntries))
+    }
+
+    public func clear() {
+        guard !entries.isEmpty else { return }
+        entries = []
+        save()
+    }
+
+    public func filtered(_ f: HistoryFilter, search: String = "") -> [HistoryEntry] {
+        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
+        return entries.filter { f.includes($0) && (q.isEmpty || $0.command.lowercased().contains(q)) }
+    }
+
+    nonisolated static func load(_ url: URL) -> [HistoryEntry]? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return (try? StatusReport.jsonDecoder().decode([HistoryEntry].self, from: data)).map { Array($0.prefix(maxEntries)) }
+    }
+
+    private func save() {
+        guard let url else { return }
+        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? StatusReport.jsonEncoder().encode(entries).write(to: url, options: .atomic)
+    }
+}
+
+/// The queue's observer: follows each command from start to end on the
+/// queue's threads and hands the finished entry to the main actor.
+public final class HistoryRecorder: @unchecked Sendable {
+    struct Running {
+        var command: QueuedCommand
+        var started: Date
+        var output = Data()
+    }
+
+    /// Output kept per command for the failure tail (the end only).
+    static let keepBytes = 16_384
+    static let tailLines = 12
+
+    private let lock = OSAllocatedUnfairLock(initialState: [UUID: Running]())
+    private let sinkLock = OSAllocatedUnfairLock<(@MainActor @Sendable (HistoryEntry) -> Void)?>(initialState: nil)
+    private let clock: @Sendable () -> Date
+
+    public init(clock: @escaping @Sendable () -> Date = { Date() }) {
+        self.clock = clock
+    }
+
+    /// Where finished entries go (set once the store exists).
+    public func setSink(_ sink: @escaping @MainActor @Sendable (HistoryEntry) -> Void) {
+        sinkLock.withLock { $0 = sink }
+    }
+
+    public func observe(_ id: UUID, _ command: QueuedCommand, _ event: CommandEvent) {
+        let now = clock()
+        let finished: (Running, HistoryEntry.Outcome, Int32?)? = lock.withLock { map in
+            switch event {
+            case .started:
+                map[id] = Running(command: command, started: now)
+                return nil
+            case .output(let d):
+                guard var r = map[id] else { return nil }
+                r.output.append(d)
+                if r.output.count > Self.keepBytes { r.output = Data(r.output.suffix(Self.keepBytes)) }
+                map[id] = r
+                return nil
+            case .finished(let code):
+                let r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
+                return (r, code == 0 ? .succeeded : .failed, code)
+            case .cancelled:
+                // A command cancelled before it started never ran: not history.
+                guard let r = map.removeValue(forKey: id) else { return nil }
+                return (r, .cancelled, nil)
+            case .failed(let message):
+                var r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
+                r.output.append(Data("Could not run brew: \(message)\n".utf8))
+                return (r, .notStarted, nil)
+            }
+        }
+        guard let (r, outcome, code) = finished else { return }
+        var assembler = LineAssembler()
+        assembler.feed(r.output)
+        assembler.finish()
+        let lines = assembler.lines
+        let failed = outcome == .failed || outcome == .notStarted
+        let entry = HistoryEntry(id: id, startedAt: r.started, duration: now.timeIntervalSince(r.started),
+                                 command: r.command.display, arguments: r.command.arguments, outcome: outcome,
+                                 exitCode: code, failure: failed ? BrewFailure.classify(lines)?.rawValue : nil,
+                                 outputTail: failed ? Array(lines.suffix(Self.tailLines)) : [])
+        guard let sink = sinkLock.withLock({ $0 }) else { return }
+        Task { @MainActor in sink(entry) }
+    }
+}
+
+public extension AppStore {
+    /// A finished command from the queue: tagged with who started it, then kept.
+    internal func historyRecorded(_ e: HistoryEntry) {
+        var e = e
+        if autoUpdate.isRunning { e.origin = .autoUpdate }
+        history.record(e)
+    }
+
+    /// Runs a failed entry's brew arguments again through the queue (a
+    /// fresh environment, as any action), then re-reads status.
+    func retry(_ e: HistoryEntry) {
+        guard e.canRetry else { return }
+        let args = e.arguments
+        Task {
+            guard let r = await runQuick(args) else { return }
+            await refresh(manual: false)
+            if r.failed {
+                error = Self.quickError(verb: "Retry", name: BrewCommands.display(args), args: args, result: r)
+            }
+        }
+    }
+
+    func openHistory() { toolSheet = .history }
+}

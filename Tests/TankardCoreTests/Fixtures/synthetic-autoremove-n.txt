@@ -1,0 +1,4 @@
+==> Would autoremove 3 unneeded formulae:
+icu4c@78
+libyaml
+homebrew/core/m4

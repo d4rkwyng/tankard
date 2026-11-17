@@ -59,6 +59,8 @@ struct LaunchOptions {
     /// 0.5, demo only: TANKARD_DEMO_AUTOUPDATE=1 turns auto-update on with
     /// sample runs in its log; =run also runs it once through the fake brew.
     var demoAutoUpdate: String?
+    /// 0.6, demo only: TANKARD_DEMO_SHEET=health|history|autoremove opens that sheet.
+    var demoSheet: ToolSheet?
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -82,6 +84,7 @@ struct LaunchOptions {
             o.demoNotes = env["TANKARD_DEMO_NOTES"] == "1"
             o.demoVulnNotice = env["TANKARD_DEMO_VULN_NOTICE"] == "1"
             o.demoSelfUpdating = env["TANKARD_SELF_UPDATING"] == "1"
+            o.demoSheet = env["TANKARD_DEMO_SHEET"].flatMap { ToolSheet(rawValue: $0.lowercased()) }
             o.demoAutoUpdate = env["TANKARD_DEMO_AUTOUPDATE"].flatMap { $0.isEmpty || $0 == "0" ? nil : $0.lowercased() }
         }
         switch env["TANKARD_FILTER"]?.lowercased() {
@@ -91,6 +94,7 @@ struct LaunchOptions {
         case "bottle", "bottleavailable": o.filter = .bottleAvailable
         case "vulnerable": o.filter = .vulnerable
         case "notes", "hasnotes": o.filter = .hasNotes
+        case "deprecated": o.filter = .deprecated
         default: break
         }
         o.discoverAll = env["TANKARD_DISCOVER_ALL"] == "1"
@@ -201,6 +205,7 @@ struct TankardApp: App {
             }
             CommandMenu("Homebrew") {
                 HomebrewCommands(store: store)
+                HealthCommands(store: store)
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
