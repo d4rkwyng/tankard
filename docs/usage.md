@@ -334,6 +334,12 @@ A mug in the menu bar with the number of upgrades ready. Click it for:
 - the scan's progress, a new-vulnerabilities notice, the last automatic update, and
   **Snooze**, when they apply.
 
+Click an upgrade to open Tankard on it: the Installed tab, with the search and any More
+filter cleared, and the package selected, so its details show **Upgrade** and any compile
+warning. Click "N upgrades ready" for the Upgrades list, or the finished scan's line
+("Scanned 11 · found 2") for the Vulnerable list. **Upgrade All** is the only thing the menu
+runs itself.
+
 With the icon on, closing the window keeps Tankard running. With **Hide Dock icon when the
 window is closed** on (the default), Tankard then also leaves the Dock and ⌘-Tab. Click
 **Open Tankard** to bring the window back.

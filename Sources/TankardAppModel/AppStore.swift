@@ -229,6 +229,9 @@ public final class AppStore {
     public var filter: PackageFilter = .all
     public var search = ""
     public var selection: Package.ID?
+    /// 0.8.3: bumped when something asks the Installed table to scroll its
+    /// selection into view (a menu-bar package row; see MenuBarNavigation).
+    public internal(set) var revealRequest = 0
 
     @ObservationIgnored public let deps: Dependencies
     @ObservationIgnored public let queue: CommandQueue

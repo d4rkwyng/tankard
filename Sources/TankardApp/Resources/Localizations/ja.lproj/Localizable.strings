@@ -778,6 +778,7 @@
 "Services" = "サービス";
 "Several casks install an app with this name. Pick the one you have." = "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。";
 "Show" = "表示";
+"Show %@ in Tankard" = "%@をTankardで表示";
 "Show Auto-update Log…" = "自動アップデートのログを表示…";
 "Show Dependencies" = "依存関係を表示";
 "Show Dependencies (%lld)" = "依存関係を表示 (%lld)";
@@ -791,6 +792,7 @@
 "Show in Installed" = "インストール済みで表示";
 "Show new vulnerabilities in the menu bar" = "新しい脆弱性をメニューバーに表示";
 "Show the Auto-update log" = "自動アップデートのログを表示";
+"Show vulnerable packages in Tankard" = "脆弱性のあるパッケージをTankardで表示";
 "Showing the last data Tankard read." = "Tankardが最後に読み込んだデータを表示しています。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。";
 "Shows the brew commands first" = "先にbrewコマンドを表示します";
