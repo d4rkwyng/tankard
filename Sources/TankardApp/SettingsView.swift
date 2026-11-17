@@ -66,9 +66,7 @@ struct GeneralSettings: View {
     var body: some View {
         Form {
             Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
-            Text("A mug with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                .help("A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
 
             Divider().padding(.vertical, 4)
 
@@ -86,14 +84,12 @@ struct GeneralSettings: View {
                         settings.notifyNewUpgrades = false
                     }
                 }))
+                .help("Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
             Picker("Check every", selection: $settings.checkIntervalHours) {
                 ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text("\(h) hour\(h == 1 ? "" : "s")").tag(h) }
             }
             .disabled(!settings.notifyNewUpgrades)
             .fixedSize()
-            Text("Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
             if let note = notificationNote.wrappedValue {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
             }

@@ -73,29 +73,20 @@ struct AutoUpdateSettingsSection: View {
                         }
                     }
                 }))
+                .help("Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.")
             AutoUpdateScheduleRow(settings: settings)
                 .disabled(!settings.enabled)
             Text(statusLine(settings))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
-            Text("Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
             if appSettings?.showMenuBarIcon == false {
                 Text("The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.")
                     .font(.system(size: 11)).foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Safe mode (always on):").font(.system(size: 11, weight: .semibold))
-                ForEach(AutoUpdateSafeMode.rules, id: \.self) { rule in
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
-                        Text("•")
-                        Text(rule).fixedSize(horizontal: false, vertical: true)
-                    }
-                    .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-            }
-            .padding(.top, 2)
+            // One short line; the full safe-mode rules are in the tooltip.
+            Text("Safe mode: bottles only; skips pinned packages and running apps.")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .help("Safe mode (always on):\n" + AutoUpdateSafeMode.rules.map { "• " + $0 }.joined(separator: "\n"))
             if let note = notificationNote.wrappedValue {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)

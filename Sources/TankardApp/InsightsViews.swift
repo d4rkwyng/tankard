@@ -382,16 +382,12 @@ struct UpgradeSettings: View {
                 Divider().padding(.vertical, 4)
             }
             Toggle("Include self-updating apps", isOn: $settings.includeSelfUpdatingApps)
-            Text("Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                .help("Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
 
             Divider().padding(.vertical, 4)
 
             Toggle("Don't quit running apps during upgrades", isOn: $settings.dontQuitAppsDuringUpgrade)
-            Text("By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                .help("By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
 
             Divider().padding(.vertical, 4)
 
@@ -399,9 +395,7 @@ struct UpgradeSettings: View {
             Text(InsightSettings.scanPrivacyNote)
                 .font(.system(size: 11)).foregroundStyle(.secondary)
             Toggle("Show new vulnerabilities in the menu bar", isOn: $settings.notifyNewVulnerabilities)
-            Text("Off by default; Scan for Vulnerabilities Now, in the filter menu next to the segments, runs one scan whenever you ask. brew vulns checks installed formulae against OSV.dev: brew sends each formula's source repository and version to api.osv.dev. Casks aren't checked. A scan that runs longer than a minute is stopped. The menu-bar notice (off by default) appears when a scan finds something new.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                .help("Off by default. Scan for Vulnerabilities Now, in the filter menu next to the segments, runs one scan whenever you ask. brew vulns checks installed formulae against OSV.dev: brew sends each formula's source repository and version to api.osv.dev. Casks aren't checked. A scan that runs longer than a minute is stopped.")
         }
         .padding(20)
         .sheet(isPresented: showLog.projectedValue) {
