@@ -305,6 +305,9 @@
 "Critical" = "Crítica";
 "Dark" = "Escuro";
 "Deep purple and amber, like the icon. Dark underneath." = "Roxo profundo e âmbar, como o ícone. Escuro por baixo.";
+"Default (Homebrew updates it)" = "Padrão (Homebrew)";
+"Default (app updates itself)" = "Padrão (o app)";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "“Padrão” segue Ajustes ▸ Atualizações ▸ Incluir apps que se atualizam sozinhos.";
 "Demo mode: Terminal not opened." = "Modo demo: Terminal não aberto.";
 "Demo mode: no log file written" = "Modo demo: nenhum arquivo de registro gravado";
 "Demo · %@ casks" = "Demo · %@ casks";
@@ -365,7 +368,6 @@
 "Fixed in %@" = "Corrigido em %@";
 "Fixed upstream in commit %@" = "Corrigido no upstream no commit %@";
 "Fixed upstream in commit %@ (+%lld more)" = "Corrigido no upstream no commit %@ (+%lld mais)";
-"Follow the setting" = "Seguir o ajuste";
 "Follows macOS." = "Segue o macOS.";
 "For 1 Day" = "Por 1 Dia";
 "For 1 Week" = "Por 1 Semana";
@@ -924,7 +926,6 @@
 "Upgrade vulnerable packages. " = "Atualize os pacotes vulneráveis. ";
 "Upgraded (%lld)" = "Atualizados (%lld)";
 "Upgrades" = "Atualizações";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "As atualizações aparecem quando o brew as lista, e cada versão nova quando \"Incluir apps que se atualizam sozinhos\" está ativado (Ajustes ▸ Atualizações).";
 "Upgrading" = "Atualizando";
 "Used by" = "Usado por";
 "User" = "Usuário";

@@ -305,6 +305,9 @@
 "Critical" = "严重";
 "Dark" = "深色";
 "Deep purple and amber, like the icon. Dark underneath." = "深紫与琥珀色，如同图标。底层为深色。";
+"Default (Homebrew updates it)" = "默认（由 Homebrew 更新）";
+"Default (app updates itself)" = "默认（App 自行更新）";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "“默认”遵循 设置 ▸ 升级 ▸ 包含自行更新的 App。";
 "Demo mode: Terminal not opened." = "演示模式：未打开“终端”。";
 "Demo mode: no log file written" = "演示模式：未写入日志文件";
 "Demo · %@ casks" = "演示 · %@ 个 cask";
@@ -365,7 +368,6 @@
 "Fixed in %@" = "已在 %@ 中修复";
 "Fixed upstream in commit %@" = "已在上游提交 %@ 中修复";
 "Fixed upstream in commit %@ (+%lld more)" = "已在上游提交 %@ 中修复（另有 +%lld 个）";
-"Follow the setting" = "跟随设置";
 "Follows macOS." = "跟随 macOS。";
 "For 1 Day" = "1 天";
 "For 1 Week" = "1 周";
@@ -924,7 +926,6 @@
 "Upgrade vulnerable packages. " = "升级存在漏洞的软件包。 ";
 "Upgraded (%lld)" = "已升级 (%lld)";
 "Upgrades" = "升级";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "brew 列出升级时即会显示；开启“包含自行更新的 App”后会显示每个新版本（设置 ▸ 升级）。";
 "Upgrading" = "正在升级";
 "Used by" = "被以下项使用";
 "User" = "用户";

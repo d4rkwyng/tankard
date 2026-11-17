@@ -305,6 +305,9 @@
 "Critical" = "重大";
 "Dark" = "ダーク";
 "Deep purple and amber, like the icon. Dark underneath." = "アイコンと同じ、深い紫とアンバー。下地はダーク。";
+"Default (Homebrew updates it)" = "デフォルト（Homebrew が更新）";
+"Default (app updates itself)" = "デフォルト（アプリが更新）";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "「デフォルト」は 設定 ▸ アップグレード ▸ 自己更新するアプリを含める に従います。";
 "Demo mode: Terminal not opened." = "デモモード: ターミナルは開きませんでした。";
 "Demo mode: no log file written" = "デモモード: ログファイルは書き込まれていません";
 "Demo · %@ casks" = "デモ · %@ 個の cask";
@@ -365,7 +368,6 @@
 "Fixed in %@" = "%@で修正";
 "Fixed upstream in commit %@" = "アップストリームのコミット %@ で修正";
 "Fixed upstream in commit %@ (+%lld more)" = "アップストリームのコミット %@ で修正(ほか%lld件)";
-"Follow the setting" = "設定に従う";
 "Follows macOS." = "macOSに従います。";
 "For 1 Day" = "1日間";
 "For 1 Week" = "1週間";
@@ -924,7 +926,6 @@
 "Upgrade vulnerable packages. " = "脆弱性のあるパッケージをアップグレードします。 ";
 "Upgraded (%lld)" = "アップグレード済み (%lld)";
 "Upgrades" = "アップグレード";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "アップグレードは brew が一覧に挙げたときに表示されます。「自己更新するアプリを含める」がオンなら新しいバージョンをすべて表示します（設定 ▸ アップグレード）。";
 "Upgrading" = "アップグレード中";
 "Used by" = "使用元";
 "User" = "ユーザ";

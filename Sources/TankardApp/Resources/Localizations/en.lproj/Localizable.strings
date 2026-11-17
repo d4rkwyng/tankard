@@ -305,6 +305,9 @@
 "Critical" = "Critical";
 "Dark" = "Dark";
 "Deep purple and amber, like the icon. Dark underneath." = "Deep purple and amber, like the icon. Dark underneath.";
+"Default (Homebrew updates it)" = "Default (Homebrew updates it)";
+"Default (app updates itself)" = "Default (app updates itself)";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "Default uses Settings ▸ Upgrades ▸ Include self-updating apps.";
 "Demo mode: Terminal not opened." = "Demo mode: Terminal not opened.";
 "Demo mode: no log file written" = "Demo mode: no log file written";
 "Demo · %@ casks" = "Demo · %@ casks";
@@ -365,7 +368,6 @@
 "Fixed in %@" = "Fixed in %@";
 "Fixed upstream in commit %@" = "Fixed upstream in commit %@";
 "Fixed upstream in commit %@ (+%lld more)" = "Fixed upstream in commit %@ (+%lld more)";
-"Follow the setting" = "Follow the setting";
 "Follows macOS." = "Follows macOS.";
 "For 1 Day" = "For 1 Day";
 "For 1 Week" = "For 1 Week";
@@ -924,7 +926,6 @@
 "Upgrade vulnerable packages. " = "Upgrade vulnerable packages. ";
 "Upgraded (%lld)" = "Upgraded (%lld)";
 "Upgrades" = "Upgrades";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).";
 "Upgrading" = "Upgrading";
 "Used by" = "Used by";
 "User" = "User";

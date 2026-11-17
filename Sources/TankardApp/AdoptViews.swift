@@ -25,13 +25,15 @@ struct AdoptMenuCommands: View {
 /// "Who updates it": for a cask whose app updates itself.
 struct SelfUpdatePolicyPicker: View {
     var policy: SelfUpdatePolicy
+    /// Settings ▸ Upgrades ▸ "Include self-updating apps": what Default means.
+    var includeSelfUpdating: Bool
     /// VoiceOver's name for the menu (its visible label sits beside it).
     var accessibilityName: String = String(localized: "Updates")
     var set: (SelfUpdatePolicy) -> Void
 
     var body: some View {
         Picker(selection: Binding(get: { policy }, set: { if $0 != policy { set($0) } })) {
-            ForEach(SelfUpdatePolicy.allCases) { p in Text(p.title).tag(p) }
+            ForEach(SelfUpdatePolicy.allCases) { p in Text(p.title(includeSelfUpdating: includeSelfUpdating)).tag(p) }
         } label: {
             EmptyView()
         }
@@ -165,6 +167,7 @@ struct AdoptSheet: View {
                     HStack(spacing: 6) {
                         Text("After adopting:").font(.system(size: 11)).foregroundStyle(.secondary)
                         SelfUpdatePolicyPicker(policy: adopt.policy(r),
+                                               includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps,
                                                accessibilityName: String(localized: "Who updates \(r.app.displayName)")) { adopt.setPolicy($0, for: r) }
                     }
                 }
