@@ -882,6 +882,7 @@
 "Updated %@" = "Mis à jour %@";
 "Updates" = "Mises à jour";
 "Updates itself" = "Se met à jour seul";
+"Updates itself (auto_updates).\nUpdates: %@" = "Se met à jour seul (auto_updates).\nMises à jour : %@";
 "Upgrade" = "Mettre à niveau";
 "Upgrade %@" = "Mettre à niveau %@";
 "Upgrade %@ (compiles)" = "Mettre à niveau %@ (compilation)";

@@ -471,6 +471,7 @@ struct PackageTable: View {
                                 .fixedSize()
                                 .help("Installed as a dependency")
                         }
+                        if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p))) }
                         if p.pinned { PinnedBadge() }
                         RetiredBadge(package: p)
                         VulnerabilityTag(package: p)
@@ -541,6 +542,26 @@ struct PackageTable: View {
                 ProgressView(store.refreshPhase ?? String(localized: "Loading…"))
             }
         }
+    }
+}
+
+/// 0.8.1: marks a self-updating cask (auto_updates) next to its name. It
+/// replaced the "Updates itself" line under the name (Derek: a symbol, so the
+/// row isn't messy). The tooltip says it in words and who updates the app.
+struct SelfUpdateMark: View {
+    var help: String
+    @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Image(systemName: "arrow.triangle.2.circlepath")
+            .font(.system(size: 9.5, weight: .semibold))
+            .foregroundStyle(prominence == .increased && !theme.isCustom ? AnyShapeStyle(Color.white.opacity(0.85)) : AnyShapeStyle(.secondary))
+            .fixedSize()
+            .help(help)
+            .accessibilityElement()
+            .accessibilityLabel(Text("Updates itself"))
+            .accessibilityHint(Text(help))
     }
 }
 

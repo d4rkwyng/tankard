@@ -882,6 +882,7 @@
 "Updated %@" = "Actualizado %@";
 "Updates" = "Actualizaciones";
 "Updates itself" = "Se actualiza solo";
+"Updates itself (auto_updates).\nUpdates: %@" = "Se actualiza solo (auto_updates).\nActualizaciones: %@";
 "Upgrade" = "Actualizar";
 "Upgrade %@" = "Actualizar %@";
 "Upgrade %@ (compiles)" = "Actualizar %@ (compila)";
