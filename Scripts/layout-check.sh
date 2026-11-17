@@ -10,6 +10,7 @@
 #   Scripts/layout-check.sh [APP]        demo data (default dist/Tankard.app)
 #   REAL=1 Scripts/layout-check.sh       this Mac's Homebrew, read-only
 #                                        (REAL_SELECT / REAL_RESELECT: rows)
+#   APP_LANG=de Scripts/layout-check.sh  in another language (-AppleLanguages)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 APP=${1:-dist/Tankard.app}
@@ -26,10 +27,13 @@ else
     DATA=(TANKARD_DEMO=1); SEL=python@3.15; RESEL=curl-impersonate; DELAY=6
 fi
 
+LANG_ARGS=()
+[ -n "${APP_LANG:-}" ] && LANG_ARGS=(-AppleLanguages "($APP_LANG)")
+
 run() { # name env...
     local name=$1; shift
     env "${DATA[@]}" "$@" TANKARD_SELECT="$SEL" TANKARD_SNAPSHOT="$OUT/$name.png" TANKARD_SNAPSHOT_DELAY=$DELAY \
-        TANKARD_SNAPSHOT_QUIT=1 TANKARD_SNAPSHOT_LAYOUT=1 TANKARD_LOG_FRAMES=1 "$BIN" -ApplePersistenceIgnoreState YES >/dev/null 2>"$OUT/$name.log" &
+        TANKARD_SNAPSHOT_QUIT=1 TANKARD_SNAPSHOT_LAYOUT=1 TANKARD_LOG_FRAMES=1 "$BIN" -ApplePersistenceIgnoreState YES ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} >/dev/null 2>"$OUT/$name.log" &
     local pid=$!
     for _ in $(seq 1 $((DELAY + 30))); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
     kill "$pid" 2>/dev/null || true

@@ -12,6 +12,7 @@
 #   --app PATH    the app to launch (default: dist/Tankard.app); no build
 #   --seconds N   how long it must stay up (default: 15)
 #   --runs N      launch it N times in a row (default: 3)
+#   --lang L      launch it in language L (-AppleLanguages "(L)"), e.g. de
 #
 # Read-only: it reads the real settings and the real brew state, and quits
 # the app afterwards; it never upgrades or changes anything. A normal launch
@@ -34,6 +35,7 @@ cd "$(dirname "$0")/.."
 APP=dist/Tankard.app
 SECONDS_UP=15
 RUNS=3
+LANG_ARGS=()
 BUILD=1
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -41,6 +43,7 @@ while [ $# -gt 0 ]; do
         --app) APP=${2%/}; BUILD=0; shift ;;
         --seconds) SECONDS_UP=$2; shift ;;
         --runs) RUNS=$2; shift ;;
+        --lang) LANG_ARGS=(-AppleLanguages "($2)"); shift ;;
         -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
         *.app|*.app/) APP=${1%/}; BUILD=0 ;;
         *) echo "launch-check.sh: unknown option $1" >&2; exit 2 ;;
@@ -78,7 +81,7 @@ failed=0
 for run in $(seq 1 "$RUNS"); do
     before=$(crash_reports)
     # A normal launch, window restoration included: that is what users get.
-    "${ENV_CLEAN[@]}" "$BIN_ABS" >/dev/null 2>&1 &
+    "${ENV_CLEAN[@]}" "$BIN_ABS" ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} >/dev/null 2>&1 &
     pid=$!
     alive=1
     for _ in $(seq 1 "$SECONDS_UP"); do
