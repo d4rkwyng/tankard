@@ -34,7 +34,9 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   offers **Unpin and Uninstall**. Dependencies that nothing else would need afterwards
   are listed ("No longer needed by anything") with **Also remove these** (on by
   default, as brew's own uninstall would remove them): Tankard uninstalls exactly those
-  by name, with brew's autoremove off, so packages that were already unused stay. An
+  by name, with brew's autoremove off, so packages that were already unused stay. Each
+  one is checked again (`brew info`) right before it goes, and kept if it has since been
+  installed on request, pinned, or needed by something else; the log says why. An
   upgrade that compiles is flagged here too, with the Intelbrew build time when known, and
   a source build whose version has a bottle gets the *Replace with bottle* box.
 - **Vulnerabilities (0.4):** on **Scan Now** (Settings → Upgrades) or **Homebrew ▸ Scan for
@@ -102,6 +104,10 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   which runs through the same queue and live-log sheet as upgrades. A formula that would
   compile says so, and Install becomes "Install (compiles)" and asks first (see *Discover:
   bottled first*). Where the data comes from depends on the mode; see *Network* under *How it behaves*.
+  In normal mode the detail pane also shows **Installs**: the 30, 90 and 365-day counts
+  from Homebrew's public analytics (the Installed detail pane shows them too once Discover
+  has loaded them), and search puts more-installed packages first among equally good
+  matches. Not in Intelbrew mode.
 - **Right-click menus.** Installed rows: Upgrade (or "Upgrade (compiles)", through the
   same plan sheet), Replace with Bottle when eligible, Uninstall… (disabled with "needed
   by …" when blocked), Copy Name, Copy Upgrade/Install Command, Open Homepage, Open
@@ -148,6 +154,30 @@ as the window.
 
 Settings → General → "Show Tankard in the menu bar" (on by default). With it on, closing
 the window keeps Tankard running, with the icon and background checks.
+
+## Background brew update (0.8)
+
+On by default. Settings → General → "Check for new versions in the background".
+
+- After the list is on screen (at least 3 seconds after launch), and from then on while
+  Tankard runs, Tankard runs `brew update` when one is due, then re-reads status (without
+  measuring sizes again) so the upgrade counts are current. Selection, filter and search
+  stay as they are.
+- It is due once per check interval: Settings → General → Check every (1 to 48 hours, 6 by
+  default), or `HOMEBREW_AUTO_UPDATE_SECS` when that is longer. Any `brew update` counts,
+  including one run in Terminal (Tankard reads when the brew repository last fetched, as
+  brew's own throttle does).
+- `brew update` updates Homebrew and its package lists (taps, formula and cask data). It
+  installs and upgrades none of your packages.
+- It runs through the queue, so never beside another brew command; while something else
+  uses brew it waits. An upgrade, install or uninstall started meanwhile waits for it, and
+  its sheet says "Waiting for brew update to finish…". The status bar shows "Checking for
+  updates…".
+- A failure (offline, brew's lock) is not shown: it goes to the system log and
+  `~/Library/Logs/Tankard/upgrade.log`, and the next try is at most an hour later.
+- Off when `HOMEBREW_NO_AUTO_UPDATE` is set (in the environment, a shell startup file or
+  brew.env; Settings says where, and the toggle is disabled). Never in demo or snapshot
+  runs. Notifications for new upgrades use the same update.
 
 ## Notifications for new upgrades
 
@@ -239,6 +269,54 @@ Settings → Upgrades (0.4), both off by default:
   variable for its `--no-quit` switch (`man brew`), and the command shown in the detail
   pane and the upgrade sheet, and the one Copy Upgrade Command copies, starts with it.
 
+**Per app (0.8).** The detail pane of a cask that updates itself has an **Updates**
+choice, also offered in Adopt Apps:
+
+- **Follow the setting** (the default): as above.
+- **App updates itself**: Tankard leaves its upgrades out of Upgrade all, the counts,
+  notifications and auto-update. `brew upgrade` in Terminal can still upgrade it.
+- **Homebrew updates it**: every newer version is listed and upgraded, with "Include
+  self-updating apps" on or off.
+
+The choice is kept per cask (tap included) and forgotten when the cask is uninstalled
+through Tankard.
+
+## Adopt Apps (0.8)
+
+Homebrew ▸ Adopt Apps… scans /Applications (and one folder below it) and ~/Applications
+for apps you installed by hand, and matches them to casks in Homebrew's cask list
+(formulae.brew.sh's `cask.json`, the copy Discover caches). Apple's apps, App Store apps
+and apps Homebrew already manages aren't listed. The scan changes nothing.
+
+- **Ready to adopt**: the installed version is the one the cask installs, or the app
+  updates itself (brew doesn't compare those).
+- **Needs update first**: brew adopts only the exact version the cask installs. Update the
+  app with its own updater, then Scan Again. For a sure match the `brew install --cask
+  --force` command that would replace the app is shown to copy; Tankard never runs it.
+- **Can't adopt**: the cask runs an installer package (brew ignores `--adopt` for those
+  and runs the installer again), the app is part of a suite folder, it isn't where the cask
+  installs it, the cask is disabled, the app has no version brew can compare, or it is a
+  symbolic link.
+- **No cask**.
+
+Each match says how sure it is: **Sure match** (the app's bundle id is one the cask
+names), **Likely match** (same vendor) or **Name only**. Name-only matches are never ticked
+for you; for a cask whose app updates itself, only a sure match is. When several casks
+fit one app, you pick the cask.
+
+**Adopt** shows a confirmation first: brew downloads each cask and records it as installed,
+and the app stays where it is. For apps that don't update themselves, brew checks the
+download against the installed app and stops for that app if it doesn't match; apps that
+update themselves are listed as adopted without a version check. From then on Homebrew
+owns the app: `brew upgrade` replaces it with the cask's version, and uninstalling the cask
+(in Tankard or with `brew uninstall`) deletes the app. A name-only match you ticked gets a
+warning. Then `brew install --cask --adopt <tap>/<name>` runs once per cask through the
+queue with a live log, and the self-update choices are saved for the apps whose adopt
+succeeded.
+
+Adopt Apps needs formulae.brew.sh's cask list, so it isn't available in Intelbrew mode or
+with `HOMEBREW_NO_INSTALL_FROM_API` set; the sheet says so.
+
 ## Compile warnings
 
 One classification ("bottle or compile?") is shared by the upgrade list, the upgrade
@@ -291,8 +369,9 @@ out to be no bottle. The Bottle available filter has **Replace all**.
 ## App Management
 
 macOS asks before one app updates or deletes another (System Settings → Privacy &
-Security → App Management). Only cask upgrades and cask uninstalls need it; formulae,
-installs and Replace with bottle never do.
+Security → App Management). Only upgrades and uninstalls of casks that install an app (or
+run an installer package) need it; formulae, fonts and other casks with no app, installs and
+Replace with bottle never do.
 
 - Before the first cask upgrade or uninstall, a sheet explains this, with a button that
   opens the App Management pane (falling back to Privacy & Security). "I've done this" or
@@ -402,28 +481,37 @@ Help menu has "Tankard on GitHub" and "Report an Issue…".
   once; if it is older than an hour, Tankard asks brew again in the background
   (stale-while-revalidate), and again when the window comes back to the front. If a
   refresh fails, the data on screen stays and a banner says what went wrong.
-- **Refresh runs `brew update` first**, then re-reads status. Automatic revalidation
-  never runs `brew update`.
+- **Refresh runs `brew update` first**, then re-reads status. Revalidating the cache
+  never runs `brew update`; the background update (on by default, see *Background brew
+  update*) is the one that runs on its own.
 - **Upgrades** run one `brew upgrade --formula <tap>/<name>` (or `--cask`) per package,
   fully qualified so a formula and a cask with the same name can't be confused. They run
   with `HOMEBREW_NO_AUTO_UPDATE=1`, so you get exactly the versions the list showed (the
-  refresh button is where `brew update` happens). Failures don't stop the rest. After the
+  refresh button and the background update are where `brew update` happens). Failures don't stop the rest. After the
   run, Tankard re-reads status rather than assuming what changed.
 - **sudo.** Tankard can't type a password (brew's stdin is `/dev/null`). When brew's output
   shows it needed sudo, the app says so and gives the exact command to run in Terminal.
 - **One queue.** `brew update` and every command that changes Homebrew (upgrade,
   install, uninstall, reinstall, cleanup, pin, unpin, services start/stop/restart) go through one strict FIFO queue, so two brews
   never run at once. Status reads stay off the queue.
-- **Network: two requests of its own, each only in one mode and only when needed; no
-  telemetry.** Everything else comes from brew and git on this Mac. The links out are ones
+- **Network: Tankard's own requests are below, each only in one mode and only when
+  needed; no telemetry.** `brew update` (Refresh, Check now and the background update)
+  and an adopt's cask download are brew's own requests. Everything else comes from brew
+  and git on this Mac. The links out are ones
   you click (release pages, homepages, the About panel).
   - *Normal mode:* Discover fetches `https://formulae.brew.sh/api/formula.json` and
     `cask.json` (about 32 MB and 19 MB, gzip on the wire) the first time it is opened,
     never at launch. They are kept in `~/Library/Caches/net.mindtricks.tankard/api/` with
     their ETag. Within an hour Tankard uses that copy without asking; after an hour it
     revalidates with `If-None-Match` (a 304 costs no download). If the request fails, the
-    saved copy is used and a banner says so. No other host is contacted. Search is in
-    memory.
+    saved copy is used and a banner says so. Search is in memory. Adopt Apps reads the
+    same cached `cask.json`, fetching it the same way if it isn't there yet.
+  - *Normal mode, install counts:* once the catalogue is ready, without holding up
+    Discover, Tankard fetches Homebrew's bulk analytics files,
+    `formulae.brew.sh/api/analytics/install/{30d,90d,365d}.json` and
+    `analytics/cask-install/{30d,90d,365d}.json` (about 13 MB together), into the same
+    cache with their ETag, kept for a day. They cover every package, so no request names
+    a package. No other host is contacted.
   - *Intelbrew mode:* formulae.brew.sh is never used, because it describes upstream
     Homebrew, not the fork this Mac installs from. Discover lists the local taps
     (`<repository>/Library/Taps/*/*`: file names, the `desc` line, Aliases) and asks
