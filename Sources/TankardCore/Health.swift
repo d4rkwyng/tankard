@@ -219,7 +219,7 @@ public enum DoctorWarningKind: String, Sendable, Equatable, CaseIterable {
         if h.contains("unlinked kegs") { return .unlinkedKegs }
         if h.contains("broken symlinks") { return .brokenSymlinks }
         if h.contains("unbrewed") { return .strayFiles }
-        if h.contains("command line tools") && (h.contains("outdated") || h.contains("too old")) { return .outdatedCLT }
+        if h.contains("command line tools") && (h.contains("outdated") || h.contains("too old") || h.contains("newer")) { return .outdatedCLT }
         if h.contains("xcode") && (h.contains("outdated") || h.contains("too old")) { return .outdatedXcode }
         if h.contains("you are using macos") || h.contains("unsupported") { return .unsupportedMacOS }
         if h.contains("missing dependencies") { return .missingDependencies }
