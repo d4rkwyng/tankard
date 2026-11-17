@@ -246,4 +246,45 @@ struct V08AdoptAppTests {
         row = try #require(a.scan.rows.first)
         #expect(a.confidence(row) == .low && !a.isTicked(row))
     }
+    // MARK: review: the confirmation says what brew actually checks
+
+    static func item(_ token: String, auto: Bool, _ conf: AdoptConfidence = .high) -> AdoptPlanItem {
+        AdoptPlanItem(token: token, qualifiedName: "homebrew/cask/\(token)", appPath: "/Applications/\(token.capitalized).app",
+                      appVersion: "1.0", caskVersion: "1.0", autoUpdates: auto, policy: .automatic, confidence: conf)
+    }
+
+    @Test func confirmationTextMatchesWhatBrewChecks() {
+        let checked = AdoptStore.confirmationText([Self.item("gimp", auto: false)])
+        #expect(checked.contains("checks the download against the app"))
+        #expect(checked.contains("If a download doesn't match, brew stops"))
+        #expect(!checked.contains("without a version check") && !checked.contains("Name only"))
+
+        let auto = AdoptStore.confirmationText([Self.item("obsidian", auto: true)])
+        #expect(!auto.contains("checks the download"))
+        #expect(!auto.contains("doesn't match"))
+        #expect(auto.contains("Adopted without a version check: Obsidian."))
+        #expect(auto.contains("deletes the app"))
+
+        let mixed = AdoptStore.confirmationText([Self.item("gimp", auto: false), Self.item("obsidian", auto: true)])
+        #expect(!mixed.contains("checks the download against the app that is there, and then"))
+        #expect(mixed.contains("Adopted without a version check: Obsidian."))
+        #expect(mixed.contains("The other apps are checked"))
+
+        // A name-only row the user ticked by hand: warned, first.
+        let low = AdoptStore.confirmationText([Self.item("foo", auto: true, .low), Self.item("gimp", auto: false, .medium)])
+        #expect(low.hasPrefix("Name only: Foo."))
+        #expect(!low.contains("Gimp. Nothing"))
+    }
+
+    @Test func confirmationCarriesTheRowsConfidence() throws {
+        let target = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app")]
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
+        let a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        let row = try #require(a.scan.rows.first)
+        a.setTicked(row, true)
+        a.requestAdopt()
+        let items = try #require(a.pendingConfirm)
+        #expect(items.map(\.confidence) == [.low])
+        #expect(AdoptStore.confirmationText(items).hasPrefix("Name only: Foo."))
+    }
 }

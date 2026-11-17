@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "Adotar apps lê a lista de casks do Homebrew em formulae.brew.sh, que o Tankard não usa com este Homebrew (Intelbrew ou HOMEBREW_NO_INSTALL_FROM_API).";
 "Adopt Apps…" = "Adotar apps…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Adote-o de novo em Homebrew ▸ Adotar apps…; ele pergunta antes.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "Adotados sem verificar a versão: %@. Esses apps se atualizam sozinhos, então o brew não compara o download com o app que já está lá.";
 "Adopting" = "Adotando";
 "Adopting runs through Tankard's queue and History." = "A adoção passa pela fila e pelo Histórico do Tankard.";
 "After adopting:" = "Após adotar:";
@@ -354,6 +355,7 @@
 "Follows macOS." = "Segue o macOS.";
 "For 1 Day" = "Por 1 Dia";
 "For 1 Week" = "Por 1 Semana";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "Para cada app, o brew baixa o cask e o registra como instalado. O app continua onde está.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "Para cada app, o brew baixa o cask, confere o download com o app existente e então registra o cask como instalado. O app continua onde está.";
 "Fork: behind (%@; %@ available)" = "Fork: desatualizado (%@; %@ disponível)";
 "Fork: current (%@)" = "Fork: atual (%@)";
@@ -490,6 +492,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Mais filtros: Fixados (pacotes que o brew não atualiza), Somente solicitados (o que você instalou e nada mais precisa, brew leaves -r), Vulneráveis, Com notas, Obsoletos";
 "Name" = "Nome";
 "Name only" = "Só o nome";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Só o nome: %@. Só o nome confere, então pode ser outro app; se for, o brew upgrade o substituiria e desinstalar o cask o apagaria.";
 "Needs update first" = "Atualizar antes";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Nunca encerra um app: um cask cujo app está em execução é ignorado, a menos que \"Não encerrar apps em execução\" esteja ativado (então ele atualiza e a nova versão abre na próxima vez).";
 "New vulnerabilities" = "Novas vulnerabilidades";
@@ -812,6 +815,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "O ícone da barra de menus está desativado, então o Tankard encerra ao fechar a janela e nada é executado depois.";
 "The official installer from brew.sh." = "O instalador oficial de brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "A versão antiga ainda está instalada. O brew uninstall remove a nova e depois o brew link vincula a antiga.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Os outros apps são verificados: se um download não conferir, o brew para naquele app e o deixa como estava.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "As variáveis são removidas antes, para que este brew update não restaure o fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "O desenvolvedor confere, mas o cask não indica este bundle id exato.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Os comandos e bibliotecas deles não estão no prefixo do Homebrew. Normalmente uma instalação ou atualização foi interrompida.";

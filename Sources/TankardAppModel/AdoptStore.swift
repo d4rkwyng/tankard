@@ -111,6 +111,8 @@ public struct AdoptPlanItem: Sendable, Equatable, Identifiable {
     public var autoUpdates: Bool
     /// After adopting: who updates it (only for self-updating apps).
     public var policy: SelfUpdatePolicy
+    /// How sure the match is (a name-only one the user ticked gets a warning).
+    public var confidence: AdoptConfidence = .high
     public var id: String { token }
 
     public var arguments: [String] { AdoptCommands.arguments(qualifiedName: qualifiedName) }
@@ -243,7 +245,8 @@ public final class AdoptStore {
             guard let c = cask(row) else { return nil }
             return AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
                                  appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
-                                 policy: c.autoUpdates ? policy(row) : .automatic)
+                                 policy: c.autoUpdates ? policy(row) : .automatic,
+                                 confidence: confidence(row) ?? .low)
         }
     }
 
@@ -261,14 +264,36 @@ public final class AdoptStore {
         return pendingConfirm
     }
 
-    /// The confirmation's text: what adopting does.
+    /// The confirmation's text: what adopting does. brew compares the
+    /// download with the app only for casks that don't update themselves
+    /// (moved.rb:102), so it says which apps go without that check, and
+    /// warns about name-only matches the user ticked.
     public nonisolated static func confirmationText(_ items: [AdoptPlanItem]) -> String {
-        var lines = [String(localized: "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.")]
+        func names(_ xs: [AdoptPlanItem]) -> String {
+            xs.map { (($0.appPath as NSString).lastPathComponent as NSString).deletingPathExtension }.formatted(.list(type: .and))
+        }
+        let unchecked = items.filter(\.autoUpdates)
+        let checked = items.filter { !$0.autoUpdates }
+        var lines: [String] = []
+        let nameOnly = items.filter { $0.confidence == .low }
+        if !nameOnly.isEmpty {
+            lines.append(String(localized: "Name only: \(names(nameOnly)). Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it."))
+        }
+        if unchecked.isEmpty {
+            lines.append(String(localized: "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is."))
+        } else {
+            lines.append(String(localized: "For each app, brew downloads the cask and records it as installed. The app itself stays where it is."))
+            lines.append(String(localized: "Adopted without a version check: \(names(unchecked)). These apps update themselves, so brew doesn't compare the download with the app that is there."))
+        }
         lines.append(String(localized: "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app."))
-        if items.contains(where: \.autoUpdates) {
+        if !unchecked.isEmpty {
             lines.append(String(localized: "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption."))
         }
-        lines.append(String(localized: "If a download doesn't match, brew stops for that app and leaves it as it was."))
+        if unchecked.isEmpty {
+            lines.append(String(localized: "If a download doesn't match, brew stops for that app and leaves it as it was."))
+        } else if !checked.isEmpty {
+            lines.append(String(localized: "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was."))
+        }
         return lines.joined(separator: "\n\n")
     }
 

@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "Adopter des apps lit la liste des casks Homebrew sur formulae.brew.sh, que Tankard n'utilise pas avec ce Homebrew (Intelbrew, ou HOMEBREW_NO_INSTALL_FROM_API).";
 "Adopt Apps…" = "Adopter des apps…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Adoptez-la à nouveau via Homebrew ▸ Adopter des apps… ; une confirmation est demandée.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "Adoptées sans vérification de version : %@. Ces apps se mettent à jour elles-mêmes, donc brew ne compare pas le téléchargement avec l'app présente.";
 "Adopting" = "Adoption";
 "Adopting runs through Tankard's queue and History." = "L'adoption passe par la file d'attente et l'Historique de Tankard.";
 "After adopting:" = "Après l'adoption :";
@@ -354,6 +355,7 @@
 "Follows macOS." = "Suit macOS.";
 "For 1 Day" = "Pour 1 jour";
 "For 1 Week" = "Pour 1 semaine";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "Pour chaque app, brew télécharge le cask et l'enregistre comme installé. L'app elle-même reste où elle est.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "Pour chaque app, brew télécharge le cask, vérifie le téléchargement par rapport à l'app présente, puis enregistre le cask comme installé. L'app reste où elle est.";
 "Fork: behind (%@; %@ available)" = "Fork : en retard (%@ ; %@ disponible)";
 "Fork: current (%@)" = "Fork : à jour (%@)";
@@ -490,6 +492,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Plus de filtres : Épinglés (paquets que brew ne met pas à niveau), Demandés uniquement (ce que vous avez installé vous-même et dont rien d’autre n’a besoin, brew leaves -r), Vulnérables, Avec notes, Obsolètes";
 "Name" = "Nom";
 "Name only" = "Nom seul";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Nom seulement : %@. Seul le nom correspond, il peut donc s'agir d'une autre app ; si c'est le cas, brew upgrade la remplacerait et désinstaller le cask la supprimerait.";
 "Needs update first" = "À mettre à jour";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Ne quitte jamais une app : un cask dont l’app est ouverte est ignoré, sauf si « Ne pas quitter les apps en cours » est activé (il est alors mis à niveau et la nouvelle version s’ouvre la prochaine fois).";
 "New vulnerabilities" = "Nouvelles vulnérabilités";
@@ -812,6 +815,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "L’icône de la barre des menus est désactivée : Tankard quitte donc à la fermeture de sa fenêtre, et plus rien ne s’exécute.";
 "The official installer from brew.sh." = "Le programme d’installation officiel de brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "L’ancienne version est toujours installée. brew uninstall supprime la nouvelle, puis brew link lie l’ancienne.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Les autres apps sont vérifiées : si un téléchargement ne correspond pas, brew s'arrête pour cette app et la laisse telle quelle.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Les variables sont d’abord supprimées, afin que ce brew update ne remette pas le fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "L'éditeur correspond, mais le cask ne nomme pas cet identifiant de bundle exact.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Leurs commandes et bibliothèques ne se trouvent pas dans le préfixe de Homebrew. Généralement, une installation ou une mise à niveau a été interrompue.";

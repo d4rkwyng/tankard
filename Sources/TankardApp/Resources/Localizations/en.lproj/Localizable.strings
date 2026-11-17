@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API).";
 "Adopt Apps…" = "Adopt Apps…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there.";
 "Adopting" = "Adopting";
 "Adopting runs through Tankard's queue and History." = "Adopting runs through Tankard's queue and History.";
 "After adopting:" = "After adopting:";
@@ -354,6 +355,7 @@
 "Follows macOS." = "Follows macOS.";
 "For 1 Day" = "For 1 Day";
 "For 1 Week" = "For 1 Week";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "For each app, brew downloads the cask and records it as installed. The app itself stays where it is.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.";
 "Fork: behind (%@; %@ available)" = "Fork: behind (%@; %@ available)";
 "Fork: current (%@)" = "Fork: current (%@)";
@@ -490,6 +492,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated";
 "Name" = "Name";
 "Name only" = "Name only";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it.";
 "Needs update first" = "Needs update first";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).";
 "New vulnerabilities" = "New vulnerabilities";
@@ -812,6 +815,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.";
 "The official installer from brew.sh." = "The official installer from brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "The old version is still installed. brew uninstall removes the new one, then brew link links the old one.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "The variables are unset first, so this brew update doesn't put the fork back.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "The vendor matches, but the cask doesn't name this exact bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.";

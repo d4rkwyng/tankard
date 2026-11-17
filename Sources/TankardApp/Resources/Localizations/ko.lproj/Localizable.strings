@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "앱 가져오기는 formulae.brew.sh에서 Homebrew의 cask 목록을 읽는데, 이 Homebrew(Intelbrew 또는 HOMEBREW_NO_INSTALL_FROM_API)에서는 Tankard가 이를 사용하지 않습니다.";
 "Adopt Apps…" = "앱 가져오기…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Homebrew ▸ 앱 가져오기…에서 다시 가져올 수 있습니다. 먼저 확인을 묻습니다.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "버전 확인 없이 가져옴: %@. 이 앱들은 스스로 업데이트하므로 brew는 다운로드를 기존 앱과 비교하지 않습니다.";
 "Adopting" = "가져오는 중";
 "Adopting runs through Tankard's queue and History." = "가져오기는 Tankard의 대기열과 기록을 통해 실행됩니다.";
 "After adopting:" = "가져온 후:";
@@ -354,6 +355,7 @@
 "Follows macOS." = "macOS를 따릅니다.";
 "For 1 Day" = "1일 동안";
 "For 1 Week" = "1주 동안";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "각 앱에 대해 brew는 Cask를 다운로드하고 설치된 것으로 기록합니다. 앱 자체는 그 자리에 그대로 있습니다.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "brew는 앱마다 cask를 다운로드하고, 다운로드를 기존 앱과 대조한 뒤 cask를 설치됨으로 기록합니다. 앱 자체는 그대로 있습니다.";
 "Fork: behind (%@; %@ available)" = "포크: 뒤처짐(%@; %@ 사용 가능)";
 "Fork: current (%@)" = "포크: 최신(%@)";
@@ -490,6 +492,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "필터 더 보기: 고정됨(brew가 업그레이드하지 않는 패키지), 요청한 것만(직접 설치했고 다른 항목이 필요로 하지 않는 것, brew leaves -r), 취약, 노트 있음, 지원 중단됨";
 "Name" = "이름";
 "Name only" = "이름만 일치";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "앱을 종료하지 않습니다: 앱이 실행 중인 cask는 \"실행 중인 앱 종료 안 함\"이 켜져 있지 않으면 건너뜁니다(켜져 있으면 업그레이드되고 새 버전은 다음에 열립니다).";
 "New vulnerabilities" = "새 취약점";
@@ -812,6 +815,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "이들의 명령과 라이브러리가 Homebrew 접두사에 없습니다. 보통 설치나 업그레이드가 중단되었기 때문입니다.";

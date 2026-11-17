@@ -9049,6 +9049,58 @@
         }
       }
     },
+    "Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Versionsprüfung übernommen: %@. Diese Apps aktualisieren sich selbst; brew vergleicht den Download nicht mit der App."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptées sans vérification de version : %@. Ces apps se mettent à jour elles-mêmes, donc brew ne compare pas le téléchargement avec l'app présente."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptadas sin comprobar la versión: %@. Estas apps se actualizan solas, así que brew no compara la descarga con la app que ya está."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バージョン確認なしで引き継ぎ: %@。これらのアプリは自動アップデートするため、brew はダウンロードを既存のアプリと比較しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未检查版本即接管：%@。这些 App 会自行更新，因此 brew 不会将下载内容与现有 App 进行比较。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adotados sem verificar a versão: %@. Esses apps se atualizam sozinhos, então o brew não compara o download com o app que já está lá."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adottate senza controllo della versione: %@. Queste app si aggiornano da sole, quindi brew non confronta il download con l'app presente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "버전 확인 없이 가져옴: %@. 이 앱들은 스스로 업데이트하므로 brew는 다운로드를 기존 앱과 비교하지 않습니다."
+          }
+        }
+      }
+    },
     "Adopting": {
       "localizations": {
         "de": {
@@ -18461,6 +18513,58 @@
         }
       }
     },
+    "For each app, brew downloads the cask and records it as installed. The app itself stays where it is.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew lädt je App den Cask und trägt ihn als installiert ein. Die App bleibt, wo sie ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour chaque app, brew télécharge le cask et l'enregistre comme installé. L'app elle-même reste où elle est."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para cada app, brew descarga el cask y lo registra como instalado. La app se queda donde está."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各アプリについて、brew は Cask をダウンロードしてインストール済みとして記録します。アプリ自体はそのままの場所に残ります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对于每个 App，brew 会下载 Cask 并将其记录为已安装。App 本身保持原位。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para cada app, o brew baixa o cask e o registra como instalado. O app continua onde está."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per ogni app, brew scarica il cask e lo registra come installato. L'app resta dov'è."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "각 앱에 대해 brew는 Cask를 다운로드하고 설치된 것으로 기록합니다. 앱 자체는 그 자리에 그대로 있습니다."
+          }
+        }
+      }
+    },
     "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.": {
       "localizations": {
         "de": {
@@ -25529,6 +25633,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이름만 일치"
+          }
+        }
+      }
+    },
+    "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Name: %@. Nur der Name passt, es kann eine andere App sein; dann ersetzt brew upgrade sie und Deinstallieren löscht sie."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom seulement : %@. Seul le nom correspond, il peut donc s'agir d'une autre app ; si c'est le cas, brew upgrade la remplacerait et désinstaller le cask la supprimerait."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo el nombre: %@. Solo coincide el nombre, así que puede ser otra app; si lo es, brew upgrade la reemplazaría y desinstalar el cask la eliminaría."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前のみ: %@。一致しているのは名前だけなので、別のアプリかもしれません。その場合、brew upgrade はそれを置き換え、Cask をアンインストールすると削除されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅名称匹配：%@。只有名称一致，可能是另一个 App；若是如此，brew upgrade 会替换它，卸载该 Cask 会删除它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só o nome: %@. Só o nome confere, então pode ser outro app; se for, o brew upgrade o substituiria e desinstalar o cask o apagaria."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo nome: %@. Corrisponde solo il nome, quindi potrebbe essere un'altra app; in tal caso brew upgrade la sostituirebbe e disinstallare il cask la eliminerebbe."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다."
           }
         }
       }
@@ -42273,6 +42429,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다."
+          }
+        }
+      }
+    },
+    "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die übrigen Apps werden geprüft: Passt ein Download nicht, bricht brew für die App ab und lässt sie unverändert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les autres apps sont vérifiées : si un téléchargement ne correspond pas, brew s'arrête pour cette app et la laisse telle quelle."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las demás apps se comprueban: si una descarga no coincide, brew se detiene para esa app y la deja como estaba."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その他のアプリは確認されます。ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os outros apps são verificados: se um download não conferir, o brew para naquele app e o deixa como estava."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le altre app vengono controllate: se un download non corrisponde, brew si ferma per quell'app e la lascia com'era."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다."
           }
         }
       }

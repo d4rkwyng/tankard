@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "Adotta app legge l'elenco dei cask di Homebrew da formulae.brew.sh, che Tankard non usa con questo Homebrew (Intelbrew, o HOMEBREW_NO_INSTALL_FROM_API).";
 "Adopt Apps…" = "Adotta app…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Adottala di nuovo da Homebrew ▸ Adotta app…; chiede prima conferma.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "Adottate senza controllo della versione: %@. Queste app si aggiornano da sole, quindi brew non confronta il download con l'app presente.";
 "Adopting" = "Adozione";
 "Adopting runs through Tankard's queue and History." = "L'adozione passa per la coda e la Cronologia di Tankard.";
 "After adopting:" = "Dopo l'adozione:";
@@ -354,6 +355,7 @@
 "Follows macOS." = "Segue macOS.";
 "For 1 Day" = "Per 1 giorno";
 "For 1 Week" = "Per 1 settimana";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "Per ogni app, brew scarica il cask e lo registra come installato. L'app resta dov'è.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "Per ogni app, brew scarica il cask, confronta il download con l'app presente e poi registra il cask come installato. L'app resta dov'è.";
 "Fork: behind (%@; %@ available)" = "Fork: indietro (%@; %@ disponibile)";
 "Fork: current (%@)" = "Fork: aggiornato (%@)";
@@ -490,6 +492,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Altri filtri: Bloccati (pacchetti che brew non aggiorna), Solo richiesti (ciò che hai installato tu e di cui nient'altro ha bisogno, brew leaves -r), Vulnerabili, Con note, Obsoleti";
 "Name" = "Nome";
 "Name only" = "Solo nome";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Solo nome: %@. Corrisponde solo il nome, quindi potrebbe essere un'altra app; in tal caso brew upgrade la sostituirebbe e disinstallare il cask la eliminerebbe.";
 "Needs update first" = "Da aggiornare";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Non chiude mai un'app: un cask la cui app è in esecuzione viene saltato, a meno che \"Non chiudere le app in esecuzione\" sia attivo (allora si aggiorna e la nuova versione si apre la volta successiva).";
 "New vulnerabilities" = "Nuove vulnerabilità";
@@ -812,6 +815,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "L'icona nella barra dei menu è disattivata, quindi Tankard si chiude quando chiudi la sua finestra, e nulla viene eseguito.";
 "The official installer from brew.sh." = "Il programma di installazione ufficiale da brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "La vecchia versione è ancora installata. brew uninstall rimuove la nuova, poi brew link collega la vecchia.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Le altre app vengono controllate: se un download non corrisponde, brew si ferma per quell'app e la lascia com'era.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Le variabili vengono prima rimosse, così questo brew update non rimette il fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "Lo sviluppatore corrisponde, ma il cask non indica questo esatto bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "I loro comandi e le loro librerie non sono nel prefisso di Homebrew. Di solito un'installazione o un aggiornamento è stato interrotto.";
