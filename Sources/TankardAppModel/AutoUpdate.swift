@@ -586,7 +586,7 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
         if !skipped.isEmpty { lines.append(String(localized: "\(skipped.count) skipped (see the Auto-update log)")) }
         if let note, n == 0, failed.isEmpty { lines.append(note) }
         return UpgradeNotificationDiff.Message(title: title, body: lines.joined(separator: "\n"),
-                                               newKeys: ["auto-update@\(id.uuidString)"])
+                                               newKeys: ["auto-update@\(id.uuidString)"], kind: .autoUpdate)
     }
 }
 

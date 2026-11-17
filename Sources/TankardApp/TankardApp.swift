@@ -199,6 +199,7 @@ struct TankardApp: App {
         loginItem = LoginItem()
         checker = BackgroundChecker(store: store, settings: settings, notifier: notifier)
         store.notifier = notifier
+        NotificationActions.store = store
         SystemNotifier.install()
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings

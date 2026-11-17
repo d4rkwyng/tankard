@@ -602,6 +602,7 @@
 "Nothing to retry" = "다시 시도할 항목 없음";
 "Nothing to upgrade" = "업그레이드할 항목 없음";
 "Nothing upgraded" = "업그레이드된 항목 없음";
+"Nothing will compile from source." = "소스에서 컴파일할 항목이 없습니다.";
 "Nothing yet" = "아직 없음";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Tankard의 알림이 꺼져 있어, 실행 내역은 자동 업데이트 로그에만 남습니다. ";
 "Notify me about new upgrades" = "새 업그레이드 알림 받기";
@@ -947,6 +948,7 @@
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
+"Upgrade All…" = "모두 업그레이드…";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";

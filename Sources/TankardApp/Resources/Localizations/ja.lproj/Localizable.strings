@@ -602,6 +602,7 @@
 "Nothing to retry" = "再試行するものはありません";
 "Nothing to upgrade" = "アップグレードするものはありません";
 "Nothing upgraded" = "アップグレードされたものはありません";
+"Nothing will compile from source." = "ソースからコンパイルするものはありません。";
 "Nothing yet" = "まだありません";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Tankardの通知がオフのため、実行内容は自動アップデートのログにのみ記録されます。 ";
 "Notify me about new upgrades" = "新しいアップグレードを通知";
@@ -947,6 +948,7 @@
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
 "Upgrade All" = "すべてアップグレード";
+"Upgrade All…" = "すべてアップグレード…";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
 "Upgrade available: %@" = "アップグレードあり: %@";

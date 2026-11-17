@@ -69,6 +69,7 @@ struct ContentView: View {
             AppResources.updateDockIcon(intelbrew: intelbrew)
         }
         .themed(theme)
+        .modifier(NotificationWindowOpener())
         .background(SnapshotHook(request: options.snapshot, makeView: { name in
             switch name {
             case "menubar":

@@ -179,7 +179,7 @@ public final class AppStore {
     /// Discover's store, made when Discover is first opened.
     public private(set) var discover: DiscoverStore?
     /// 0.3: the upgrade sheet's first page when something would compile.
-    public private(set) var upgradePlan: UpgradePlan?
+    public internal(set) var upgradePlan: UpgradePlan?
     /// 0.3: the App Management sheet (shown in the activity sheet).
     public private(set) var appManagementPrompt: AppManagementPrompt?
     /// 0.8.1: the "Run again" offer after a relaunch (waits for a click).

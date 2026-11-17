@@ -354,6 +354,10 @@ default. macOS asks for permission the first time.
   "Turn on notifications in Settings ▸ General".
 - If notifications for Tankard are off in **System Settings ▸ Notifications**, the toggle
   stays off, or shows a warning, with an **Open Notification Settings** button.
+- **Click a notification** to open Tankard on **Installed ▸ Upgrades**. Its **Upgrade All…**
+  action opens a sheet listing what would be upgraded; nothing runs until you click
+  **Upgrade N** there. **Later** just dismisses it. Clicking an automatic-update
+  notification opens the Auto-update log.
 
 **Show new vulnerabilities in the menu bar** (Settings ▸ Upgrades) is not a notification.
 It adds a ⚠ next to the menu-bar icon and a line in its menu. A scan never posts a
