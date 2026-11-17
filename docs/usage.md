@@ -318,7 +318,9 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
 
 - **Homebrew ▸ Health…** runs `brew doctor`, `brew config` and `brew missing`. Known
   warnings are explained in plain English, with the command that fixes them. Tankard shows
-  the command; it never runs it.
+  the command; it never runs it. **Environment** lists your `HOMEBREW_*` settings: where
+  each comes from, whether Tankard's brew gets it, and why not when it doesn't. See
+  [Your HOMEBREW_* settings](#my-homebrew_-settings-from-zshrc).
 - **Homebrew ▸ History…** lists every brew command Tankard ran (the last 500), with its
   result. Failed ones have **Retry**.
 - **Homebrew ▸ Clean Up…** shows what `brew cleanup` would remove and how much space it
@@ -464,6 +466,12 @@ brew's own requests:
 - `brew vulns` sends each formula's source repository and version to OSV.dev. It runs only
   when you scan, or on every refresh if you turn that on.
 - Installing, upgrading and adopting download from where brew always does.
+- **Analytics:** set `HOMEBREW_NO_ANALYTICS=1` in your shell profile or brew.env and the
+  brew Tankard runs sends no Homebrew analytics, the same as in Terminal.
+- **Mirrors:** `HOMEBREW_API_DOMAIN`, `HOMEBREW_BOTTLE_DOMAIN` and `HOMEBREW_ARTIFACT_DOMAIN`
+  set in a shell profile are not applied by Tankard yet, and Discover still reads
+  formulae.brew.sh. Set them in a brew.env file and brew uses them; Tankard's own catalog
+  downloads don't.
 
 Links (homepages, release pages) open only when you click them.
 
@@ -552,11 +560,34 @@ list it read.
 Tankard looks for brew at `/usr/local/bin/brew` and `/opt/homebrew/bin/brew`. Install
 Homebrew from the welcome screen, then click **Check Again**.
 
-### My `HOMEBREW_*` settings from `~/.zshrc` are ignored
+### My `HOMEBREW_*` settings from `~/.zshrc`
 
-Apps started from the Dock don't read your shell profile. Put brew settings in a
-`brew.env` file, such as `~/.homebrew/brew.env`. brew reads it however it is started.
-Details are in [architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
+Apps started from the Dock don't run your shell profile, so Tankard reads it (single
+`export HOMEBREW_X=value` lines; values that need shell expansion are skipped) and passes
+privacy and behaviour settings on to brew: `HOMEBREW_NO_ANALYTICS`,
+`HOMEBREW_NO_INSECURE_REDIRECT`, `HOMEBREW_CURL_RETRIES`, `HOMEBREW_FORCE_BREWED_CURL`,
+`HOMEBREW_TEMP`, the `HOMEBREW_FORBIDDEN_*` lists, cleanup and download settings and a few
+more. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=…` pass: `--appdir`
+and the other `--*dir` options would move where apps go, which Adopt Apps and the App
+Management check rely on, and options like `--force` would act on apps without asking. **Homebrew ▸ Health… ▸ Environment** shows
+each one and what happened to it.
+
+Not passed from a shell profile:
+
+- anything that changes where brew lives or what it trusts: `HOMEBREW_PREFIX`, the
+  `*_GIT_REMOTE`s, `HOMEBREW_DEVELOPER`,
+  `HOMEBREW_NO_INSTALL_FROM_API`, `HOMEBREW_NO_VERIFY_ATTESTATIONS` and the like (Intelbrew
+  mode sets its own remotes);
+- `HOMEBREW_CACHE` and `HOMEBREW_LOGS` (download progress and Clean Up assume the default
+  folders);
+- mirrors (`*_DOMAIN`), tokens, proxies, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
+- settings Tankard controls: colour, verbose and debug output, and the greedy-upgrade
+  switches (Tankard's self-updating apps setting decides those);
+- any `HOMEBREW_*` name not on Tankard's list.
+
+To use one of those anyway, put it in a `brew.env` file, such as `~/.homebrew/brew.env`.
+brew reads that itself however it is started. Details are in
+[architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
 
 ### "Check for new versions in the background" is grayed out
 

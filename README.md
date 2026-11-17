@@ -118,7 +118,8 @@ packages you look at), a file-size check while a cask downloads, Intelbrew's bui
 in Intelbrew mode, and a GitHub release check only when you choose **Check for Tankard
 Updates…**. brew's own `brew update` and, only if you scan, `brew vulns` (which sends
 formula names and versions to OSV.dev) contact the network as they do in Terminal.
-Details: [Privacy and network](docs/usage.md#privacy-and-network).
+Your `HOMEBREW_NO_ANALYTICS` opt-out in a shell profile now applies to the brew Tankard runs
+too (before 0.8.3 only brew.env did). Details: [Privacy and network](docs/usage.md#privacy-and-network).
 
 ## Build from source
 

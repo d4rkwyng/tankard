@@ -197,13 +197,50 @@ directly to `posix_spawn` with no shell in between:
 | `HOMEBREW_NO_INSTALL_FROM_API=1`, `HOMEBREW_CORE_GIT_REMOTE`, `HOMEBREW_BREW_GIT_REMOTE` | Intelbrew mode only (the fork URLs, or your own spelling of them, such as an ssh URL) |
 | `HOMEBREW_NO_AUTO_UPDATE=1` | read-only queries (all of step 1) |
 | `HOMEBREW_NO_ENV_HINTS=1`, `HOMEBREW_NO_COLOR=1` | always |
+| `HOMEBREW_COLOR`, `HOMEBREW_VERBOSE`, `HOMEBREW_VERBOSE_USING_DOTS`, `HOMEBREW_DEBUG` | never (Tankard reads brew's output) |
+| `HOMEBREW_UPGRADE_GREEDY`, `HOMEBREW_UPGRADE_GREEDY_CASKS`, `HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS` | never (the self-updating apps setting decides) |
+| the user's allowed `HOMEBREW_*` settings (0.8.3) | from this process's environment, else the last shell startup file that sets them |
 
-Any other Homebrew setting you want Tankard's brew to use goes in a **brew.env** file.
-`bin/brew` reads these itself, so they apply no matter who starts brew:
-`/etc/homebrew/brew.env`, `<prefix>/etc/homebrew/brew.env`, then
-`~/.homebrew/brew.env` (or `$XDG_CONFIG_HOME/homebrew/brew.env`). `HOMEBREW_*` exports in
-your shell profile do **not** reach brew when Tankard runs it, apart from the three
-Intelbrew variables above.
+**The user's settings (0.8.3, `EnvironmentPolicy` in TankardCore).** Before 0.8.3 no
+`HOMEBREW_*` export from a shell profile reached brew apart from the Intelbrew three, so
+`HOMEBREW_NO_ANALYTICS` in `~/.zshrc` was dropped. Now an explicit allow list passes
+(`EnvironmentPolicy.allowed`): privacy and network safety (`NO_ANALYTICS`,
+`NO_INSECURE_REDIRECT`, `NO_GITHUB_API`, `CURL_RETRIES`, `FORCE_BREWED_CURL`,
+`VERIFY_ATTESTATIONS`), the user's own restrictions (`FORBIDDEN_*`,
+`FORBID_PACKAGES_FROM_PATHS`) and behaviour preferences (`TEMP`, `CASK_OPTS` filtered,
+`DISPLAY_INSTALL_TIMES`, `NO_EMOJI`, `INSTALL_BADGE`, the cleanup settings,
+`NO_AUTOREMOVE`, `NO_INSTALL_UPGRADE`, `NO_UPGRADE_QUIT_CASKS`, `NO_UPDATE_REPORT_NEW`, the
+auto-update settings, `DOWNLOAD_CONCURRENCY`, `MAKE_JOBS`, `FAIL_LOG_LINES`). Tankard's
+own values (the table above, and what the callers add per command) override them. Denied,
+with the reason shown in Health ▸ Environment: where brew lives (`PREFIX`, `CELLAR`,
+`REPOSITORY`, `LIBRARY`...), `CACHE` and `LOGS` (download progress and Clean Up assume the
+default folders), where it gets code or what it trusts
+(every `*_GIT_REMOTE`, `NO_INSTALL_FROM_API`, `DEVELOPER`, `NO_VERIFY_ATTESTATIONS`,
+`*TRUST*`, tool paths...), mirrors (`*_DOMAIN`), credentials (`*TOKEN*` and the like) and
+`NO_INSTALLED_DEPENDENTS_CHECK` (auto-update's safe mode relies on it). Any other name is
+ignored. Intelbrew mode's remotes win, unchanged.
+
+`HOMEBREW_CASK_OPTS` is filtered (`CaskOptions`). brew 7 shell-splits it and reads only
+`--flag=value` options, `--require-sha` and `--[no-]binaries`. Tankard keeps
+`--require-sha` and `--language=codes`, and drops every `--*dir=` (it would move where apps
+go, which Adopt's location verdicts and the App Management probe rely on), `--[no-]binaries`,
+and `--force`/`--adopt`/`--no-quarantine` (no effect there in brew 7, named so the user sees
+it). If nothing is left, the variable isn't set. Health shows it as partly applied, with
+each dropped option and why.
+
+Proxy variables (`http_proxy` and the rest) in shell profiles aren't read yet; bin/brew
+honours them from brew.env.
+
+**brew.env files** are read by `bin/brew` itself and exported over the top of the
+environment Tankard passes, so anything there applies no matter who starts brew (and can
+override Tankard's own values): `/etc/homebrew/brew.env`, `<prefix>/etc/homebrew/brew.env`,
+then `~/.homebrew/brew.env` (or `$XDG_CONFIG_HOME/homebrew/brew.env`). Tankard doesn't copy
+them in, it only lists them in Health ▸ Environment.
+
+**Mirrors and Tankard's own requests.** Discover and the tap index still fetch
+formulae.brew.sh and ghcr.io directly, even with `HOMEBREW_API_DOMAIN` set; following it is
+left for later (brew falls back to the default domain when a mirror file is missing, and
+Tankard would need the same fallback).
 
 **Finding brew:** `--brew PATH`, then `$TANKARD_BREW`, then `/usr/local/bin/brew`, then
 `/opt/homebrew/bin/brew`. The prefix is two directories above the brew path. The

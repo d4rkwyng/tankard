@@ -353,6 +353,7 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "Chaque fichier est d’abord sauvegardé à côté de lui-même (….%@). Ces lignes sont supprimées :";
 "Each runs as its own brew upgrade, one at a time." = "Chacun s’exécute comme son propre brew upgrade, un à la fois.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Des modifications dans le dépôt de Homebrew peuvent bloquer brew update. Le réinitialiser les supprime.";
+"Environment" = "Environnement";
 "Error" = "Erreur";
 "Error (exit %lld)" = "Erreur (code %lld)";
 "Error log" = "Journal d’erreurs";
@@ -393,6 +394,7 @@
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "Formules avec une bottle pour ce Mac (d’Intelbrew ou de Homebrew). Les autres sont compilées depuis les sources à l’installation.";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "Formules avec une bottle pour ce Mac. Les autres sont compilées depuis les sources à l’installation.";
 "From brew vulns (OSV.dev)." = "Depuis brew vulns (OSV.dev).";
+"From brew.env: brew reads it itself." = "Depuis brew.env : brew le lit lui-même.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "Depuis formulae.brew.sh, mis en cache une heure dans ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "D’après son reçu : tout ce qui est installé y était lié (brew deps --installed peut en lister moins)";
 "From source" = "Depuis les sources";
@@ -450,6 +452,8 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "Fréquence d’exécution de brew update en arrière-plan, quand « Rechercher les nouvelles versions en arrière-plan » ou « Me notifier des nouvelles mises à niveau » est activé.";
 "I've done this" = "C’est fait";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "Si un téléchargement ne correspond pas, brew s'arrête pour cette app et la laisse telle quelle.";
+"Ignored: %@ (%@)" = "Ignoré : %@ (%@)";
+"Ignored: not on Tankard's list of settings it passes to brew." = "Ignoré : absent de la liste des réglages que Tankard transmet à brew.";
 "Include self-updating apps" = "Inclure les apps à mise à jour automatique";
 "Install" = "Installer";
 "Install %@" = "Installer %@";
@@ -577,6 +581,8 @@
 "None of your zsh or bash startup files sets them, so nothing is edited." = "Aucun de vos fichiers de démarrage zsh ou bash ne les définit, donc rien n’est modifié.";
 "Not affiliated with or endorsed by the Homebrew project." = "Non affilié au projet Homebrew et non approuvé par celui-ci.";
 "Not allowed yet" = "Pas encore autorisé";
+"Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Non appliqué par Tankard (défini dans le shell) : les miroirs ne sont pas encore pris en charge.";
+"Not applied: none of these cask options are safe to pass." = "Non appliqué : aucune de ces options de cask n'est sûre à transmettre.";
 "Not checked by brew vulns." = "Non vérifié par brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "Non vérifié par brew vulns : aucun dépôt source associable.";
 "Not checked by brew vulns: untrusted tap." = "Non vérifié par brew vulns : tap non approuvé.";
@@ -587,6 +593,13 @@
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Non lié : ses commandes ne sont pas dans le bin de Homebrew. `brew link %@` le lie.";
 "Not listed: %@." = "Non listées : %@.";
 "Not now" = "Pas maintenant";
+"Not passed: Tankard reads brew's output." = "Non transmis : Tankard lit la sortie de brew.";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "Non transmis : la progression des téléchargements et le Nettoyage de Tankard supposent les dossiers par défaut.";
+"Not passed: Tankard's self-updating apps setting decides this." = "Non transmis : le réglage des apps à mise à jour automatique de Tankard en décide.";
+"Not passed: a credential." = "Non transmis : un identifiant secret.";
+"Not passed: auto-update relies on brew's dependents check." = "Non transmis : la mise à jour automatique dépend de la vérification des dépendants de brew.";
+"Not passed: changes where brew gets code from, or what it trusts." = "Non transmis : change la source du code de brew ou ce en quoi il a confiance.";
+"Not passed: changes where brew lives or keeps its files." = "Non transmis : change l'emplacement de brew ou de ses fichiers.";
 "Not running" = "Hors service";
 "Not scanned yet" = "Pas encore analysé";
 "Not stated" = "Non indiqué";
@@ -649,6 +662,8 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "Les paquets que vous avez installés vous-même, pas ceux ajoutés comme dépendances";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Fait partie du dossier %@, que le cask installe en entier ; brew comparerait chaque fichier et refuserait à la moindre différence.";
 "Partial scan" = "Analyse partielle";
+"Partly applied: %@" = "Appliqué en partie : %@";
+"Passed to brew." = "Transmis à brew.";
 "Patch only" = "Correctifs uniquement";
 "Pause automatic updates. Manual upgrades still work." = "Suspendre les mises à jour automatiques. Les mises à niveau manuelles fonctionnent toujours.";
 "Pin" = "Épingler";
@@ -782,6 +797,9 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Envoie les noms et versions de vos formulae installées à OSV.dev (via brew vulns).";
 "Service" = "Service";
 "Services" = "Services";
+"Set by Intelbrew mode." = "Défini par le mode Intelbrew.";
+"Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Défini par Tankard pour les vérifications et mises à jour : Tankard décide quand brew update s'exécute.";
+"Set by Tankard: it reads brew's output." = "Défini par Tankard : il lit la sortie de brew.";
 "Several casks install an app with this name. Pick the one you have." = "Plusieurs casks installent une app portant ce nom. Choisissez celui que vous avez.";
 "Show" = "Afficher";
 "Show %@ in Tankard" = "Afficher %@ dans Tankard";
@@ -1003,6 +1021,7 @@
 "Xcode is out of date" = "Xcode est obsolète";
 "Yes" = "Oui";
 "You have Tankard %@." = "Vous avez Tankard %@.";
+"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "Vos réglages HOMEBREW_* et ce que Tankard en fait quand il lance brew.";
 "Your PATH finds other tools before Homebrew's" = "Votre PATH trouve d’autres outils avant ceux de Homebrew";
 "a symlink to %@: that file is backed up and edited" = "un lien symbolique vers %@ : ce fichier est sauvegardé et modifié";
 "adopted" = "adoptée(s)";
@@ -1042,6 +1061,7 @@
 "brew not found (looked in %@). Set TANKARD_BREW or pass --brew." = "brew introuvable (recherché dans %@). Définissez TANKARD_BREW ou passez --brew.";
 "brew printed %lld warnings (%@)" = "brew a affiché %lld avertissements (%@)";
 "brew printed 1 warning (%@)" = "brew a affiché 1 avertissement (%@)";
+"brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew lit lui-même les fichiers brew.env : un réglage qui s'y trouve s'applique quelle que soit cette liste.";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew refuse de désinstaller une formula dont d’autres paquets installés ont besoin, et Homebrew ne prend pas en charge le mélange de versions sous eux.";
 "brew reinstall --force-bottle --formula each one, through the queue" = "brew reinstall --force-bottle --formula pour chacun, via la file d’attente";
 "brew says the scan is incomplete: %@." = "brew indique que l’analyse est incomplète : %@.";
@@ -1065,6 +1085,7 @@
 "brew's output" = "sortie de brew";
 "cancelled" = "annulé";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "change l'emplacement des apps, dont dépendent l'adoption et la gestion des apps";
 "couldn't start %@: %@" = "impossible de démarrer %@ : %@";
 "couldn't tell whether its app is running" = "impossible de savoir si son app est en cours d’exécution";
 "dep" = "dép.";
@@ -1119,6 +1140,7 @@
 "none for this Mac" = "aucun pour ce Mac";
 "not installed" = "non installé";
 "not loaded" = "non chargé";
+"not on Tankard's list of cask options" = "absente de la liste des options de cask de Tankard";
 "pin changed" = "épingle modifiée";
 "pinned" = "épinglé";
 "reinstalled" = "réinstallé";
@@ -1139,6 +1161,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "la mise à niveau de %@ nécessiterait de recompiler %@ depuis les sources ; mettez à niveau à la main";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "a été compilé à partir d’un fichier source dont la somme de contrôle a changé en amont";
+"would overwrite or take over apps without confirmation" = "écraserait ou reprendrait des apps sans confirmation";
 "yesterday %@" = "hier %@";
 "you chose to skip %@" = "vous avez choisi d’ignorer %@";
 "~%@ h" = "~%@ h";

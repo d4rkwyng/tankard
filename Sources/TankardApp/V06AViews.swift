@@ -185,6 +185,14 @@ struct HealthSheet: View {
             Label("brew missing: no missing dependencies", systemImage: "checkmark.circle")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
         }
+        if !health.environment.isEmpty {
+            DisclosureGroup {
+                EnvironmentList(entries: health.environment)
+            } label: {
+                Text("Environment")
+            }
+            .font(.system(size: 12))
+        }
         DisclosureGroup {
             Text(health.config).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -197,6 +205,81 @@ struct HealthSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .font(.system(size: 12))
+    }
+}
+
+/// 0.8.3: Health ▸ Environment. Each HOMEBREW_* setting, where it came
+/// from, and whether Tankard's brew gets it (EnvironmentPolicy).
+struct EnvironmentList: View {
+    var entries: [EnvironmentPolicy.Entry]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Your HOMEBREW_* settings and what Tankard does with each when it runs brew.")
+                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            ForEach(entries) { e in
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(verbatim: line(e)).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
+                    Text(Self.explanation(e)).font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Text("brew reads brew.env files itself, so a setting there reaches brew whatever this list says.")
+                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 4)
+    }
+
+    private func line(_ e: EnvironmentPolicy.Entry) -> String {
+        var s = e.key + "=" + (e.value ?? e.tankardValue ?? "")
+        if let src = e.source { s += "  (\(src))" }
+        if let t = e.tankardValue, e.value != nil, t != e.value, e.status != .brewEnv { s += "  → \(t)" }
+        return s
+    }
+
+    static func explanation(_ e: EnvironmentPolicy.Entry) -> String {
+        switch e.status {
+        case .passed: return String(localized: "Passed to brew.")
+        case .partial: return caskOptions(e.caskOptions)
+        case .brewEnv: return String(localized: "From brew.env: brew reads it itself.")
+        case .ignored: return String(localized: "Ignored: not on Tankard's list of settings it passes to brew.")
+        case .tankard(let why):
+            switch why {
+            case .output: return e.tankardValue == nil
+                ? String(localized: "Not passed: Tankard reads brew's output.")
+                : String(localized: "Set by Tankard: it reads brew's output.")
+            case .autoUpdate: return String(localized: "Set by Tankard for checks and upgrades: Tankard decides when brew update runs.")
+            case .greedy: return String(localized: "Not passed: Tankard's self-updating apps setting decides this.")
+            case .intelbrew: return String(localized: "Set by Intelbrew mode.")
+            }
+        case .denied(let d):
+            switch d {
+            case .location: return String(localized: "Not passed: changes where brew lives or keeps its files.")
+            case .trust: return String(localized: "Not passed: changes where brew gets code from, or what it trusts.")
+            case .mirror: return String(localized: "Not applied by Tankard (set in shell): download mirrors aren't supported yet.")
+            case .credential: return String(localized: "Not passed: a credential.")
+            case .dependentsCheck: return String(localized: "Not passed: auto-update relies on brew's dependents check.")
+            case .defaultFolders: return String(localized: "Not passed: Tankard's download progress and Clean Up assume the default folders.")
+            }
+        }
+    }
+
+    /// HOMEBREW_CASK_OPTS: "Partly applied: --require-sha" and a line per dropped option.
+    static func caskOptions(_ c: CaskOptions?) -> String {
+        guard let c else { return "" }
+        var lines = [c.kept.isEmpty ? String(localized: "Not applied: none of these cask options are safe to pass.")
+                                    : String(localized: "Partly applied: \(c.kept.joined(separator: " "))")]
+        for (option, reason) in c.dropped {
+            let why: String
+            switch reason {
+            case .location: why = String(localized: "changes where apps go, which Adopt and App Management rely on")
+            case .confirmation: why = String(localized: "would overwrite or take over apps without confirmation")
+            case .other: why = String(localized: "not on Tankard's list of cask options")
+            }
+            lines.append(String(localized: "Ignored: \(option) (\(why))"))
+        }
+        return lines.joined(separator: "\n")
     }
 }
 

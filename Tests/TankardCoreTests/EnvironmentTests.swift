@@ -138,6 +138,8 @@ struct BrewEnvironmentTests {
             "HOMEBREW_CORE_GIT_REMOTE": Intelbrew.coreRemote,
             "HOMEBREW_BREW_GIT_REMOTE": Intelbrew.brewRemote,
             "HOMEBREW_NO_ENV_HINTS": "1", "HOMEBREW_NO_COLOR": "1", "HOMEBREW_NO_AUTO_UPDATE": "1",
+            // 0.8.3: the profile's analytics opt-out reaches brew; the token doesn't.
+            "HOMEBREW_NO_ANALYTICS": "1",
         ])
     }
 

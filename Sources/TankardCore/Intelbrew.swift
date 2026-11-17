@@ -248,19 +248,25 @@ public enum IntelbrewDetector {
 
 /// Builds brew's environment from scratch (like `/usr/bin/env -i`): a GUI
 /// app inherits almost nothing useful from launchd, and a terminal's
-/// environment varies, so neither is passed through.
+/// environment varies, so neither is passed through wholesale; only the
+/// HOMEBREW_* settings EnvironmentPolicy allows.
 public enum BrewEnvironment {
     /// - HOME, USER, LOGNAME, TMPDIR from this process (or the passwd
     ///   entry / Foundation defaults), LANG=en_US.UTF-8.
     /// - PATH=<brew's bin dir>:<prefix>/sbin:/usr/bin:/bin.
-    /// - In Intelbrew mode, the three Intelbrew variables.
-    /// - HOMEBREW_NO_ENV_HINTS=1, HOMEBREW_NO_COLOR=1, and for read-only
-    ///   queries HOMEBREW_NO_AUTO_UPDATE=1 so a status query never runs
+    /// - 0.8.3: the user's own HOMEBREW_* settings from the app's
+    ///   environment and shell profiles that EnvironmentPolicy allows
+    ///   (HOMEBREW_NO_ANALYTICS, HOMEBREW_CASK_OPTS, ...). Before 0.8.3
+    ///   none were passed.
+    /// - In Intelbrew mode, the three Intelbrew variables (they win).
+    /// - Tankard's own (EnvironmentPolicy.tankardControlled, they win):
+    ///   HOMEBREW_NO_ENV_HINTS=1, HOMEBREW_NO_COLOR=1, no HOMEBREW_COLOR,
+    ///   VERBOSE, DEBUG or GREEDY, and for read-only queries
+    ///   HOMEBREW_NO_AUTO_UPDATE=1 so a status query never runs
     ///   `brew update` behind the user's back.
-    /// Every other HOMEBREW_* setting is honoured through brew.env files,
-    /// which bin/brew reads itself (/etc/homebrew/brew.env,
-    /// <prefix>/etc/homebrew/brew.env, ~/.homebrew/brew.env). HOMEBREW_*
-    /// exports in shell profiles are NOT applied, except the Intelbrew three.
+    /// brew.env files (/etc/homebrew/brew.env, <prefix>/etc/homebrew/brew.env,
+    /// ~/.homebrew/brew.env) are read by bin/brew itself, over the top of
+    /// this environment.
     public static func build(installation: BrewInstallation, sources: EnvironmentSources,
                              intelbrew: IntelbrewDetection, readOnly: Bool) -> [String: String] {
         let p = sources.process
@@ -273,14 +279,11 @@ public enum BrewEnvironment {
         env["LANG"] = "en_US.UTF-8"
         let binDir = (installation.brewPath as NSString).deletingLastPathComponent
         env["PATH"] = "\(binDir):\(installation.prefix)/sbin:/usr/bin:/bin"
+        env.merge(EnvironmentPolicy.passThrough(sources)) { $1 }
         for (k, v) in intelbrew.env {
             env[k] = v
         }
-        env["HOMEBREW_NO_ENV_HINTS"] = "1"
-        env["HOMEBREW_NO_COLOR"] = "1"
-        if readOnly {
-            env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
-        }
+        EnvironmentPolicy.applyControlled(&env, readOnly: readOnly)
         return env
     }
 }

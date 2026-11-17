@@ -40,6 +40,10 @@ public final class HealthStore {
     public private(set) var missing: [Missing] = []
     public private(set) var missingRaw = ""
 
+    /// 0.8.3: Health ▸ Environment, the user's HOMEBREW_* settings and
+    /// what Tankard does with each (EnvironmentPolicy). Read-only.
+    public let environment: [EnvironmentPolicy.Entry]
+
     @ObservationIgnored let client: BrewClient
     @ObservationIgnored let env: [String: String]
 
@@ -47,9 +51,10 @@ public final class HealthStore {
     public static let configArguments = ["config"]
     public static let missingArguments = ["missing"]
 
-    public init(client: BrewClient, env: [String: String]) {
+    public init(client: BrewClient, env: [String: String], environment: [EnvironmentPolicy.Entry] = []) {
         self.client = client
         self.env = env
+        self.environment = environment
     }
 
     public func load() async {
@@ -211,7 +216,8 @@ public extension AppStore {
     /// Homebrew ▸ Health…: doctor, config and missing, read-only.
     func openHealth() {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        let h = HealthStore(client: client, env: client.environment(for: detection))
+        let h = HealthStore(client: client, env: client.environment(for: detection),
+                            environment: EnvironmentPolicy.entries(sources: client.sources, intelbrew: detection, readOnly: true))
         health = h
         toolSheet = .health
         Task { await h.load() }
