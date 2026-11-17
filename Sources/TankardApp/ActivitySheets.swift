@@ -72,9 +72,9 @@ struct UpgradePlanView: View {
                 Button {
                     store.confirmUpgradePlan()
                 } label: {
-                    Text(plan.startTitle).fontWeight(.semibold).modifier(OnAccentLabel(theme: theme))
+                    Text(plan.startTitle)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
                 .disabled(plan.toRun.isEmpty)
             }
@@ -268,9 +268,9 @@ struct CleanupSheet: View {
                 Button {
                     store.startCleanup()
                 } label: {
-                    Text("Clean up").fontWeight(.semibold).modifier(OnAccentLabel(theme: theme))
+                    Text("Clean up")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
                 .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
             }
@@ -386,6 +386,7 @@ struct CompileInstallConfirm: View {
                     discover.confirmInstall = nil
                     store.startInstall(entry)
                 }
+                .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
                 .disabled(store.isUpgrading)
             }

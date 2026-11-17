@@ -211,10 +211,12 @@ struct ReplaceWithBottleBox: View {
                 .font(.system(size: 11.5))
                 .fixedSize(horizontal: false, vertical: true)
             CommandBox(command: command)
-            Button("Replace with bottle", action: action)
-                .controlSize(.small)
-                .disabled(!enabled)
-                .help(command)
+            Button(action: action) {
+                Label("Replace with bottle", systemImage: "shippingbox")
+            }
+            .buttonStyle(.primaryAction)
+            .disabled(!enabled)
+            .help(command)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
