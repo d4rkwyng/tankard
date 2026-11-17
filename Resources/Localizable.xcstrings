@@ -57697,6 +57697,110 @@
           }
         }
       }
+    },
+    "Hide Dock icon when the window is closed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock-Symbol ohne Fenster ausblenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer l’icône du Dock quand la fenêtre est fermée"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar el icono del Dock al cerrar la ventana"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウインドウを閉じたらDockアイコンを隠す"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭窗口时隐藏程序坞图标"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar o ícone do Dock ao fechar a janela"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nascondi l’icona nel Dock quando la finestra è chiusa"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "윈도우를 닫으면 Dock 아이콘 가리기"
+          }
+        }
+      }
+    },
+    "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sind alle Tankard-Fenster geschlossen, verschwinden Dock-Symbol und App-Menü, Tankard bleibt in der Menüleiste; ein Fenster öffnen holt beide zurück. Erfordert „Tankard in der Menüleiste anzeigen“. Standardmäßig an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand toutes les fenêtres de Tankard sont fermées, l’icône du Dock et le menu de l’app disparaissent et Tankard reste dans la barre des menus ; ouvrir une fenêtre les fait revenir. Nécessite « Afficher Tankard dans la barre des menus ». Activé par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con todas las ventanas de Tankard cerradas, el icono del Dock y el menú de la app desaparecen y Tankard sigue en la barra de menús; al abrir una ventana vuelven. Requiere «Mostrar Tankard en la barra de menús». Activado por omisión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardのウインドウをすべて閉じると、Dockアイコンとアプリメニューが消え、Tankardはメニューバーに残ります。ウインドウを開くと元に戻ります。「メニューバーにTankardを表示」が必要です。デフォルトでオン。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭所有 Tankard 窗口后，程序坞图标和应用菜单会消失，Tankard 保留在菜单栏中；打开窗口即可恢复。需要开启“在菜单栏中显示 Tankard”。默认开启。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com todas as janelas do Tankard fechadas, o ícone do Dock e o menu do app somem e o Tankard fica na barra de menus; abrir uma janela os traz de volta. Requer “Mostrar o Tankard na barra de menus”. Ativado por padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con tutte le finestre di Tankard chiuse, l’icona nel Dock e il menu dell’app spariscono e Tankard resta nella barra dei menu; aprire una finestra li riporta. Richiede «Mostra Tankard nella barra dei menu». Attivo per impostazione predefinita."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

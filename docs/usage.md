@@ -159,6 +159,11 @@ as the window.
 Settings → General → "Show Tankard in the menu bar" (on by default). With it on, closing
 the window keeps Tankard running, with the icon and background checks.
 
+"Hide Dock icon when the window is closed" (0.8.1, on by default, only with the menu-bar
+icon on): with every Tankard window closed, the Dock icon and the app menu go away and
+Tankard leaves ⌘-Tab; Open Tankard in the menu-bar panel (or opening Tankard from Finder)
+brings them back with the window. Turning the menu-bar icon off brings the Dock icon back.
+
 ## Background brew update (0.8)
 
 On by default. Settings → General → "Check for new versions in the background".

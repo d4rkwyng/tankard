@@ -8,6 +8,8 @@ import TankardCore
 public enum SettingsHelp {
     // General
     public static let showMenuBarIcon = String(localized: "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
+    /// 0.8.1: Hide Dock icon when the window is closed.
+    public static let hideDockIcon = String(localized: "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.")
     public static let notifyNewUpgrades = String(localized: "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
     public static let checkInterval = String(localized: "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.")
     /// 0.8: the background `brew update`.
@@ -29,7 +31,7 @@ public enum SettingsHelp {
 
     /// Every explanation (tests: none is empty).
     public static var all: [String] {
-        [showMenuBarIcon, backgroundUpdate, notifyNewUpgrades, checkInterval, openAtLogin,
+        [showMenuBarIcon, hideDockIcon, backgroundUpdate, notifyNewUpgrades, checkInterval, openAtLogin,
          includeSelfUpdatingApps, dontQuitApps, keepPreviousVersion, scanOnRefresh, notifyNewVulnerabilities,
          autoUpgrade, safeMode, bumpRule]
     }

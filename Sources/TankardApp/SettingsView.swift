@@ -80,6 +80,11 @@ struct GeneralSettings: View {
             ExplainedRow(help: SettingsHelp.showMenuBarIcon) {
                 Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
             }
+            // 0.8.1: only with the menu-bar icon (else Tankard would be unreachable).
+            ExplainedRow(help: SettingsHelp.hideDockIcon) {
+                Toggle("Hide Dock icon when the window is closed", isOn: $settings.hideDockIconWhenClosed)
+                    .disabled(!DockIconPolicy.optionAvailable(showMenuBarIcon: settings.showMenuBarIcon))
+            }
 
             Divider().padding(.vertical, 4)
 
