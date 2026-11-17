@@ -45,7 +45,8 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   checked by brew vulns". Casks aren't scanned. Findings only apply while the installed
   version is the one brew checked; after an upgrade the next scan decides.
   - The filter menu next to the segments (⚠ and the count when anything is vulnerable)
-    has **Vulnerable**, **Has notes** and **Scan for Vulnerabilities Now**. In Vulnerable,
+    has **Pinned**, **Requested only**, **Vulnerable**, **Has notes** and **Scan for
+    Vulnerabilities Now**. In Vulnerable,
     the green **Upgrade N** runs the normal upgrade (plan sheet, queue) for the vulnerable
     packages that have an upgrade; pinned ones are left out. Its tooltip names the ones
     with no upgrade yet.
@@ -168,12 +169,13 @@ Settings → Upgrades (0.4), both off by default:
   on, each status read also runs `brew outdated --greedy --cask --json=v2` and lists those
   casks as upgrades too (their row still says "Updates itself"). They upgrade with the
   same `brew upgrade --cask <tap>/<token>`: brew upgrades a named cask as if `--greedy`
-  was given. Turning it off takes them out at once.
+  was given. Turning it off takes them out at once. They count like any other upgrade
+  (Upgrade all, the menu-bar number, notifications for new upgrades), except a pinned one.
 - **Don't quit running apps during upgrades.** By default brew 7 quits a running app
   before upgrading its cask (when the cask lists it to quit) and opens it again
   afterwards. With this on, cask upgrades get `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, brew's
   variable for its `--no-quit` switch (`man brew`), and the command shown in the detail
-  pane and the upgrade sheet starts with it.
+  pane and the upgrade sheet, and the one Copy Upgrade Command copies, starts with it.
 
 ## Compile warnings
 
@@ -247,9 +249,9 @@ installs and Replace with bottle never do.
 - A pinned package has a blue "pinned" tag in the table and a box in the detail pane. Its
   own Upgrade button is disabled ("Pinned: unpin it first") and the right-click menu shows
   "Upgrade x (pinned)", greyed out: `brew upgrade` won't upgrade a pinned package.
-- **Upgrade all** (the status bar, the menu bar, notifications) leaves pinned packages
-  out, as `brew upgrade` does. The Upgrades filter still lists them, and the status bar says
-  "N pinned upgrades not included (…)".
+- **Upgrade all** (the status bar, the menu bar, notifications) and **Upgrade vulnerable
+  packages** leave pinned packages out, as `brew upgrade` does. The Upgrades filter still
+  lists them, and the status bar says "N pinned upgrades not included (…)".
 - The **Pinned** filter is in the menu next to the segmented filter.
 
 ## Requested only, Depends on, Used by and the tree (0.4)

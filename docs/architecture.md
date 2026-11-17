@@ -363,10 +363,12 @@ ships. `release.sh` runs it on the signed app before notarizing. 0.3.0 crashed a
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule
 that came out of it: **App.body is pure**. It reads no @Observable state that changes and
-writes none; menu items that follow the store are views (`ViewCommands`), bindings
+writes none; menu items that follow the store are views (`ViewCommands`, and 0.4's
+`HomebrewCommands` for the Homebrew menu), bindings
 handed to scenes (`MenuBarExtra(isInserted:)`) ignore unchanged writes, and settings
-(`AppSettings.showMenuBarIcon`, `AppearanceSettings.theme`) don't notify on an
-unchanged value, whatever the compiler's @Observable does.
+(`AppSettings.showMenuBarIcon`, `AppearanceSettings.theme`, and every 0.4
+`InsightSettings` option) don't notify on an unchanged value, whatever the compiler's
+@Observable does.
 
 ## Tests and fixtures
 
