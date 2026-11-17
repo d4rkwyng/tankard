@@ -364,7 +364,7 @@ struct AutoremoveSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             SheetHeader(icon: "shippingbox.and.arrow.backward.fill", title: String(localized: "Remove Unused Dependencies"),
-                        subtitle: String(localized: "Formulae installed only as dependencies that nothing installed needs any more."))
+                        subtitle: String(localized: "Formulae installed only as dependencies that nothing installed needs anymore."))
             switch autoremove.phase {
             case .idle, .running:
                 HStack(spacing: 8) {

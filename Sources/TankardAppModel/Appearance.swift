@@ -23,7 +23,7 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
         case .light: return String(localized: "Always light.")
         case .system: return String(localized: "Follows macOS.")
         case .tankard: return String(localized: "Deep purple and amber, like the icon. Dark underneath.")
-        case .dracula: return String(localized: "Dracula colours (draculatheme.com, MIT)")
+        case .dracula: return String(localized: "Dracula colors (draculatheme.com, MIT)")
         }
     }
 

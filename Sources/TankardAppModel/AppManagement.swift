@@ -287,7 +287,7 @@ public enum AboutInfo {
     public static let help = URL(string: "https://github.com/d4rkwyng/tankard/blob/main/docs/usage.md")!
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
     public static let author = String(localized: "Made by d4rkwyng")
-    public static let licence = String(localized: "BSD-2-Clause licence")
+    public static let licence = String(localized: "BSD-2-Clause license")
     public static let homebrew = URL(string: "https://brew.sh")!
     /// About Homebrew, kept short enough for the About panel's width
     /// (~280 pt): "brew.sh" is the link.

@@ -24,7 +24,7 @@ struct SkipVersionRow: View {
             } else {
                 Button("Skip This Version") { toggle(true) }
                     .controlSize(.small)
-                    .help("Leave \(version) out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this.")
+                    .help("Leave \(version) out of Upgrade All, the counts and auto-update. Upgrade still works by hand; a newer version clears this.")
             }
         }
     }

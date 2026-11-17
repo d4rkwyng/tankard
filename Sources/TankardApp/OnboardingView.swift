@@ -54,7 +54,7 @@ struct OnboardingSheet: View {
                 }
             }
 
-            Text("Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off.")
+            Text("Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off.")
                 .font(.system(size: 11)).foregroundStyle(.tertiary)
                 .fixedSize(horizontal: false, vertical: true)
 

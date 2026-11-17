@@ -31,7 +31,7 @@ struct V06ARetiredTests {
         var p = Package.command("x")
         p.kegOnly = true
         p.kegOnlyReason = "macOS provides BSD libedit"
-        #expect(p.linkNotes == ["Keg-only: macOS provides BSD libedit. Not linked into the prefix on purpose."])
+        #expect(p.linkNotes == ["Keg-only: macOS provides BSD libedit. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default."])
         p.kegOnly = false
         p.linked = false
         #expect(p.linkNotes.first?.hasPrefix("Not linked") == true)

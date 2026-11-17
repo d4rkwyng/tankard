@@ -89,8 +89,8 @@ struct DiscoverStrip: View {
 
     private var headline: String {
         switch discover.phase {
-        case .idle, .loading: return discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading Homebrew's catalogue…")
-        case .failed: return String(localized: "Couldn't load the catalogue")
+        case .idle, .loading: return discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading Homebrew's catalog…")
+        case .failed: return String(localized: "Couldn't load the catalog")
         case .ready:
             if discover.resultsQuery.isEmpty { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
             let n = discover.results.count
@@ -191,7 +191,7 @@ struct DiscoverTable: View {
             ProgressView(discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading formulae.brew.sh…"))
         case .failed(let message):
             ContentUnavailableView {
-                Label("Couldn't load the catalogue", systemImage: "wifi.exclamationmark")
+                Label("Couldn't load the catalog", systemImage: "wifi.exclamationmark")
             } description: {
                 Text(message)
             } actions: {
@@ -286,7 +286,7 @@ struct DiscoverDetail: View {
                 row(String(localized: "Version"), e.version ?? (e.detailsLoaded ? "–" : "…"))
                 row(String(localized: "Kind"), e.kind == .cask ? String(localized: "Cask") : String(localized: "Formula"))
                 if let tap = e.tap { row(String(localized: "Tap"), tap, mono: true) }
-                if e.kind == .formula { row(String(localized: "Licence"), e.license ?? (e.detailsLoaded ? String(localized: "Not stated") : "…")) }
+                if e.kind == .formula { row(String(localized: "License"), e.license ?? (e.detailsLoaded ? String(localized: "Not stated") : "…")) }
                 if let tag = e.bottleTag { row(String(localized: "Bottle tag"), tag, mono: true) }
                 if !e.otherNames.isEmpty {
                     row(e.kind == .cask ? String(localized: "Name") : String(localized: "Also"), e.otherNames.prefix(4).joined(separator: ", "))
@@ -337,7 +337,7 @@ struct DiscoverDetail: View {
                 Label("Disabled in its tap: brew won't install it.", systemImage: "nosign")
                     .font(.system(size: 12)).foregroundStyle(.orange)
             } else if e.deprecated {
-                Label("Deprecated: it still installs, but won't be updated for long.", systemImage: "exclamationmark.triangle")
+                Label("Deprecated: it still installs, but Homebrew plans to disable it.", systemImage: "exclamationmark.triangle")
                     .font(.system(size: 12)).foregroundStyle(.orange)
             }
             let _ = store.buildTimesRevision

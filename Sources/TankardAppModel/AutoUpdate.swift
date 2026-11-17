@@ -836,7 +836,7 @@ public final class AutoUpdater {
             return (code, lines)
         } catch {
             logFile?.append(["tankard: could not run brew: \(error)"])
-            return (-1, ["Could not run brew: \(error)"])
+            return (-1, ["Couldn't run brew: \(error)"])
         }
     }
 }

@@ -138,7 +138,7 @@ public extension AppStore {
             let code = try await queue.run(cmd) { collector.add($0) }
             return QuickResult(exitCode: code, lines: collector.lines())
         } catch {
-            return QuickResult(exitCode: -1, lines: [String(localized: "Could not run brew: \(String(describing: error))")])
+            return QuickResult(exitCode: -1, lines: [String(localized: "Couldn't run brew: \(String(describing: error))")])
         }
     }
 

@@ -172,9 +172,9 @@ public extension Package {
         var out: [String] = []
         if kegOnly == true {
             if let kegOnlyReason {
-                out.append(String(localized: "Keg-only: \(kegOnlyReason). Not linked into the prefix on purpose."))
+                out.append(String(localized: "Keg-only: \(kegOnlyReason). Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default."))
             } else {
-                out.append(String(localized: "Keg-only. Not linked into the prefix on purpose."))
+                out.append(String(localized: "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default."))
             }
         } else if linked == false {
             out.append(String(localized: "Not linked: its commands aren't in Homebrew's bin. `brew link \(name)` links it."))

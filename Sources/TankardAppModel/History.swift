@@ -286,7 +286,7 @@ public final class HistoryRecorder: @unchecked Sendable {
                 return (r, .cancelled, nil)
             case .failed(let message):
                 var r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
-                r.output.append(Data(String(localized: "Could not run brew: \(message)\n").utf8))
+                r.output.append(Data(String(localized: "Couldn't run brew: \(message)\n").utf8))
                 return (r, .notStarted, nil)
             }
         }

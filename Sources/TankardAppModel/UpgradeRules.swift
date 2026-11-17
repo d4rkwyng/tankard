@@ -142,9 +142,9 @@ public enum SelfUpdatePolicy: String, CaseIterable, Identifiable, Sendable, Coda
         case .automatic:
             return String(localized: "Default uses Settings ▸ Upgrades ▸ Include self-updating apps.")
         case .app:
-            return String(localized: "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.")
+            return String(localized: "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.")
         case .homebrew:
-            return String(localized: "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does.")
+            return String(localized: "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does.")
         }
     }
 }

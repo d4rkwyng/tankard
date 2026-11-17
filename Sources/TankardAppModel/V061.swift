@@ -7,7 +7,7 @@ import TankardCore
 /// The explanations behind each setting's ⓘ button (and its tooltip).
 public enum SettingsHelp {
     // General
-    public static let showMenuBarIcon = String(localized: "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
+    public static let showMenuBarIcon = String(localized: "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.")
     /// 0.8.1: Hide Dock icon when the window is closed.
     public static let hideDockIcon = String(localized: "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.")
     public static let notifyNewUpgrades = String(localized: "Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default.")

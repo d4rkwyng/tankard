@@ -491,7 +491,7 @@ public final class AppStore {
             }
             return StoreError(title: String(localized: "brew update failed (exit \(code))"), detail: tail, terminalCommand: cmd.display)
         } catch {
-            return StoreError(title: String(localized: "brew update did not run"), detail: String(describing: error))
+            return StoreError(title: String(localized: "brew update didn't run"), detail: String(describing: error))
         }
     }
 

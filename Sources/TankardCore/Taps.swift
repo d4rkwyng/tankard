@@ -190,8 +190,8 @@ public enum TapRemoval: Equatable, Sendable {
         case .inUse(let names):
             let list = names.prefix(5).joined(separator: ", ") + (names.count > 5 ? " +\(names.count - 5)" : "")
             return names.count == 1
-                ? String(localized: "1 installed package comes from this tap (\(list)). Uninstall it first; brew refuses to untap while they're installed.")
-                : String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first; brew refuses to untap while they're installed.")
+                ? String(localized: "1 installed package comes from this tap (\(list)). Uninstall it first: brew won't remove a tap while packages from it are installed.")
+                : String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first: brew won't remove a tap while packages from it are installed.")
         }
     }
 }

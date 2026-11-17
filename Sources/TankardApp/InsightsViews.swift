@@ -378,7 +378,7 @@ struct CaveatsSection: View {
                     Button {
                         copyToPasteboard(text)
                     } label: {
-                        Label("Copy notes", systemImage: "doc.on.doc")
+                        Label("Copy Notes", systemImage: "doc.on.doc")
                     }
                     .controlSize(.small)
                 }
@@ -433,7 +433,7 @@ struct PostInstallNotesSheet: View {
             }
             .frame(maxHeight: 360)
             HStack {
-                Button("Copy all") {
+                Button("Copy All") {
                     copyToPasteboard(notes.notes.map { "\($0.name) \($0.version)\n\($0.text)" }.joined(separator: "\n\n"))
                 }
                 Spacer()
