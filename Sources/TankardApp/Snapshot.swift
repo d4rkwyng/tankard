@@ -244,7 +244,9 @@ enum Snapshot {
 /// TANKARD_MENU_DUMP=/path/out.txt: write the main menu as an outline (one
 /// item per line, its shortcut, "(disabled)", "---" for a separator) a few
 /// seconds after launch, for reviewing the menus without a screenshot
-/// (menus can't be captured by the snapshot hook). With
+/// (menus can't be captured by the snapshot hook). 0.8.2: then each pop-up
+/// button in the open windows (the More filter picker), its items the
+/// same way, the selected one marked "✓". With
 /// TANKARD_SNAPSHOT_QUIT=1 the app quits afterwards. Reads nothing else
 /// and changes nothing.
 @MainActor
@@ -255,7 +257,7 @@ enum MenuDump {
         let quit = env["TANKARD_SNAPSHOT_QUIT"] == "1"
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             MainActor.assumeIsolated {
-                let text = NSApp.mainMenu.map(outline) ?? "(no main menu)\n"
+                let text = (NSApp.mainMenu.map(outline) ?? "(no main menu)\n") + popUps()
                 try? text.write(toFile: path, atomically: true, encoding: .utf8)
                 if quit { NSApp.terminate(nil) }
             }
@@ -269,6 +271,29 @@ enum MenuDump {
             if let sub = top.submenu { out += lines(sub, depth: 1) }
             out += "\n"
         }
+        return out
+    }
+
+    /// The windows' pop-up buttons, as "Pop-up: <title>" and their items.
+    static func popUps() -> String {
+        var out = ""
+        func walk(_ v: NSView) {
+            if let b = v as? NSPopUpButton, let menu = b.menu {
+                // Enabled state is validated when the menu opens.
+                menu.delegate?.menuNeedsUpdate?(menu)
+                menu.update()
+                out += "Pop-up: " + (b.titleOfSelectedItem ?? "") + "\n"
+                for item in menu.items where !item.isHidden {
+                    if item.isSeparatorItem { out += "  ---\n"; continue }
+                    var line = "  " + (item.state == .on ? "✓ " : "") + item.title
+                    if !item.isEnabled { line += "  (disabled)" }
+                    out += line + "\n"
+                }
+                out += "\n"
+            }
+            v.subviews.forEach(walk)
+        }
+        for w in NSApp.windows where w.isVisible { w.contentView.map(walk) }
         return out
     }
 

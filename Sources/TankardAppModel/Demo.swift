@@ -60,9 +60,10 @@ public enum Demo {
         /// 0.7: taps added, removed, trusted (Demo+Taps.swift).
         let taps = TapsDemoState()
 
-        init(failAppManagement: Bool = false, pinned: Set<String> = []) {
+        init(failAppManagement: Bool = false, pinned: Set<String> = [], replaced: Set<String> = []) {
             self.failAppManagement = failAppManagement
             self.v04a = V04AState(pinned: pinned)
+            self.replaced.withLock { $0 = replaced }
         }
 
         func info(_ variant: Variant, base: Data) -> Data {
@@ -106,8 +107,9 @@ public enum Demo {
     }
 
     public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
-                                    failAppManagement: Bool = false, pinned: Set<String> = []) -> AppStore.Dependencies {
-        let state = State(failAppManagement: failAppManagement, pinned: pinned)
+                                    failAppManagement: Bool = false, pinned: Set<String> = [],
+                                    replaced: Set<String> = []) -> AppStore.Dependencies {
+        let state = State(failAppManagement: failAppManagement, pinned: pinned, replaced: replaced)
         let installation: BrewInstallation
         let platform: BottlePlatform
         switch variant {

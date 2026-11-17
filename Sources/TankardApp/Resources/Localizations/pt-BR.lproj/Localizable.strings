@@ -465,6 +465,7 @@
 "Installed %@; the cask installs %@." = "Instalado: %1$@; o cask instala %2$@.";
 "Installed as" = "Instalado como";
 "Installed as a dependency" = "Instalado como dependência";
+"Installed by you" = "Instalados por você";
 "Installed on" = "Instalado em";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "Pacotes instalados, ou pesquise tudo o que o Homebrew tem (⌘1, ⌘2)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "A versão instalada é mais recente que a %@ do tap. O brew não faz downgrade.";
@@ -525,7 +526,7 @@
 "Missing dependencies" = "Dependências ausentes";
 "More" = "Mais";
 "More filters" = "Mais filtros";
-"More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Mais filtros: Fixados (pacotes que o brew não atualiza), Somente solicitados (o que você instalou e nada mais precisa, brew leaves -r), Vulneráveis, Com notas, Obsoletos";
+"More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "Mais filtros: Vulneráveis, Fixados (pacotes que o brew não atualiza), Instalados por você (pacotes que você instalou, não os que vieram como dependências), Com notas, Obsoletos";
 "Name" = "Nome";
 "Name only" = "Só o nome";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Só o nome: %@. Só o nome confere, então pode ser outro app; se for, o brew upgrade o substituiria e desinstalar o cask o apagaria.";
@@ -640,6 +641,8 @@
 "Other packages need it" = "Outros pacotes precisam dele";
 "PID" = "PID";
 "Package" = "Pacote";
+"Packages brew won't upgrade (brew pin)" = "Pacotes que o brew não atualiza (brew pin)";
+"Packages you installed yourself, not ones pulled in as dependencies" = "Pacotes que você instalou, não os que vieram como dependências";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Faz parte da pasta %@, que o cask instala inteira; o brew compararia cada arquivo e recusaria se algo for diferente.";
 "Partial scan" = "Verificação parcial";
 "Patch only" = "Somente patch";
@@ -704,7 +707,6 @@
 "Replacement: " = "Substituição: ";
 "Report an Issue…" = "Relatar um Problema…";
 "Requested" = "Solicitado";
-"Requested only" = "Somente solicitados";
 "Restart" = "Reiniciar";
 "Restore" = "Restaurar";
 "Restore Plan…" = "Plano de Restauração…";

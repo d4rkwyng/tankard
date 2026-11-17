@@ -8,8 +8,10 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     case bottleAvailable
     /// 0.4: pinned with `brew pin`.
     case pinned
-    /// 0.4: installed on request and needed by nothing installed
-    /// (`brew leaves --installed-on-request`, plus casks).
+    /// 0.4: "Installed by you" (0.4–0.8.1: "Requested only"): packages
+    /// brew marks installed-on-request, not ones pulled in as dependencies.
+    /// Every cask counts. 0.8.2: no longer also "needed by nothing" (`brew
+    /// leaves -r`), which hid things you installed that something else uses.
     case leaves
     /// 0.4: open vulnerabilities from `brew vulns`; caveats from `brew info`.
     case vulnerable, hasNotes
@@ -18,18 +20,42 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
 
     public var id: String { rawValue }
 
-    /// The segmented control's filters; the others are in its "More" menu.
-    public static let segmented: [PackageFilter] = [.all, .upgrades, .source, .newer, .bottleAvailable]
-    /// 0.4: the "More" menu next to the segmented control.
-    public static let more: [PackageFilter] = [.pinned, .leaves, .vulnerable, .hasNotes, .deprecated]
+    /// The segmented control's filters, in order; the others are in its
+    /// "More" menu. 0.8.2: Bottle available moved up next to Upgrades (it
+    /// is the other "something to do" filter). Which of them show:
+    /// `visibleSegmented`.
+    public static let segmented: [PackageFilter] = [.all, .upgrades, .bottleAvailable, .source, .newer]
+    /// 0.4: the "More" menu next to the segmented control. 0.8.2:
+    /// Vulnerable first.
+    public static let more: [PackageFilter] = [.vulnerable, .pinned, .leaves, .hasNotes, .deprecated]
+    /// 0.8.2: the segments shown even when nothing matches.
+    public static let alwaysShown: Set<PackageFilter> = [.all, .upgrades]
 
-    /// Whether `includes` needs the other packages (leaves do).
-    public var needsGraph: Bool { self == .leaves }
+    /// 0.8.2: the segments to show: All and Upgrades always, the others
+    /// only when something matches, so the bar isn't full of zeros
+    /// ("Bottle available 0"). The selected filter stays while it is
+    /// selected, even at 0 (an upgrade or a refresh can empty it), so the
+    /// bar doesn't jump under the mouse; it goes once the user picks
+    /// another filter.
+    public static func visibleSegmented(selected: PackageFilter, count: (PackageFilter) -> Int) -> [PackageFilter] {
+        segmented.filter { alwaysShown.contains($0) || $0 == selected || count($0) > 0 }
+    }
 
-    /// `includes`, with the installed set for filters that depend on it.
-    public func includes(_ p: Package, graph: DependencyGraph?) -> Bool {
-        if self == .leaves, let graph { return graph.isRequestedLeaf(p) }
-        return includes(p)
+    /// 0.8.2: one item of the More menu: its count, and whether it can be
+    /// chosen (greyed at 0, except the selected filter).
+    public struct MenuItem: Equatable, Sendable, Identifiable {
+        public var filter: PackageFilter
+        public var count: Int
+        public var isEnabled: Bool
+        public var id: PackageFilter { filter }
+    }
+
+    /// 0.8.2: the More menu's items, in `more` order.
+    public static func moreItems(selected: PackageFilter, count: (PackageFilter) -> Int) -> [MenuItem] {
+        more.map { f in
+            let n = count(f)
+            return MenuItem(filter: f, count: n, isEnabled: n > 0 || f == selected)
+        }
     }
 
     public var title: String {
@@ -40,10 +66,19 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .newer: return String(localized: "Newer")
         case .bottleAvailable: return String(localized: "Bottle available")
         case .pinned: return String(localized: "Pinned")
-        case .leaves: return String(localized: "Requested only")
+        case .leaves: return String(localized: "Installed by you")
         case .vulnerable: return String(localized: "Vulnerable")
         case .hasNotes: return String(localized: "Has notes")
         case .deprecated: return String(localized: "Deprecated")
+        }
+    }
+
+    /// 0.8.2: what a filter means, for tooltips (nil: the title says it).
+    public var help: String? {
+        switch self {
+        case .leaves: return String(localized: "Packages you installed yourself, not ones pulled in as dependencies")
+        case .pinned: return String(localized: "Packages brew won't upgrade (brew pin)")
+        default: return nil
         }
     }
 
@@ -55,8 +90,6 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .newer: return p.status == .newer
         case .bottleAvailable: return BottleReplacement.isEligible(p)
         case .pinned: return p.pinned
-        // Without the other packages only half the rule can be checked;
-        // AppStore always passes the graph.
         case .leaves: return p.requested
         case .vulnerable: return p.isVulnerable
         case .hasNotes: return p.hasCaveats

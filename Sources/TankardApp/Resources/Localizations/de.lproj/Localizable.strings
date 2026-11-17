@@ -465,6 +465,7 @@
 "Installed %@; the cask installs %@." = "Installiert: %1$@; das Cask installiert %2$@.";
 "Installed as" = "Installiert als";
 "Installed as a dependency" = "Als Abhängigkeit installiert";
+"Installed by you" = "Selbst installiert";
 "Installed on" = "Installiert am";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "Installierte Pakete oder alles durchsuchen, was Homebrew hat (⌘1, ⌘2)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "Die installierte Version ist neuer als %@ im Tap. brew führt kein Downgrade durch.";
@@ -525,7 +526,7 @@
 "Missing dependencies" = "Fehlende Abhängigkeiten";
 "More" = "Mehr";
 "More filters" = "Weitere Filter";
-"More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Weitere Filter: Angeheftet (Pakete, die brew nicht aktualisiert), Nur angefordert (was du selbst installiert hast und nichts anderes braucht, brew leaves -r), Schwachstellen, Hat Hinweise, Veraltet";
+"More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "Weitere Filter: Verwundbar, Fixiert (Pakete, die brew nicht aktualisiert), Selbst installiert (Pakete, die du selbst installiert hast, keine Abhängigkeiten), Hat Hinweise, Veraltet";
 "Name" = "Name";
 "Name only" = "Nur Name";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Nur Name: %@. Nur der Name passt, es kann eine andere App sein; dann ersetzt brew upgrade sie und Deinstallieren löscht sie.";
@@ -640,6 +641,8 @@
 "Other packages need it" = "Andere Pakete benötigen es";
 "PID" = "PID";
 "Package" = "Paket";
+"Packages brew won't upgrade (brew pin)" = "Pakete, die brew nicht aktualisiert (brew pin)";
+"Packages you installed yourself, not ones pulled in as dependencies" = "Pakete, die du selbst installiert hast, keine als Abhängigkeit mitinstallierten";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Teil des Ordners %@, den das Cask als Ganzes installiert; brew würde jede Datei vergleichen und bei Abweichungen ablehnen.";
 "Partial scan" = "Teilweiser Scan";
 "Patch only" = "Nur Patches";
@@ -704,7 +707,6 @@
 "Replacement: " = "Ersatz: ";
 "Report an Issue…" = "Problem melden…";
 "Requested" = "Angefordert";
-"Requested only" = "Nur angeforderte";
 "Restart" = "Neu starten";
 "Restore" = "Wiederherstellen";
 "Restore Plan…" = "Wiederherstellungsplan…";

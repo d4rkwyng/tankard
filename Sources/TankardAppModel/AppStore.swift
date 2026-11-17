@@ -282,21 +282,29 @@ public final class AppStore {
     }
 
     public func count(_ f: PackageFilter) -> Int {
-        let graph = f.needsGraph ? DependencyGraph(packages) : nil
-        return packages.filter { f.includes($0, graph: graph) }.count
+        packages.filter { f.includes($0) }.count
+    }
+
+    /// 0.8.2: the filter bar's segments (PackageFilter.visibleSegmented).
+    public var visibleSegmentedFilters: [PackageFilter] {
+        PackageFilter.visibleSegmented(selected: filter, count: count)
+    }
+
+    /// 0.8.2: the More menu's items with their counts.
+    public var moreFilterItems: [PackageFilter.MenuItem] {
+        PackageFilter.moreItems(selected: filter, count: count)
     }
 
     /// The rows for the table: filter, then search (name, full name, description).
     /// "deps:<name>" / "uses:<name>" (the context menu's Show Dependencies /
     /// Show What Uses It) list those packages instead.
     public var visiblePackages: [Package] {
-        let graph = filter.needsGraph ? DependencyGraph(packages) : nil
         if let related = RelatedSearch(search), let rows = related.rows(in: packages, selected: selectedPackage) {
-            return rows.filter { filter.includes($0, graph: graph) }
+            return rows.filter { filter.includes($0) }
         }
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
         return packages.filter { p in
-            filter.includes(p, graph: graph) && (q.isEmpty
+            filter.includes(p) && (q.isEmpty
                 || p.name.lowercased().contains(q)
                 || p.fullName.lowercased().contains(q)
                 || (p.desc?.lowercased().contains(q) ?? false))

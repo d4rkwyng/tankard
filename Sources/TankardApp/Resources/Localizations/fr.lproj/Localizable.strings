@@ -465,6 +465,7 @@
 "Installed %@; the cask installs %@." = "Installée : %1$@ ; le cask installe %2$@.";
 "Installed as" = "Installé comme";
 "Installed as a dependency" = "Installé comme dépendance";
+"Installed by you" = "Installés par vous";
 "Installed on" = "Installé le";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "Paquets installés, ou recherche dans tout Homebrew (⌘1, ⌘2)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "La version installée est plus récente que celle du tap (%@). brew ne la rétrogradera pas.";
@@ -525,7 +526,7 @@
 "Missing dependencies" = "Dépendances manquantes";
 "More" = "Plus";
 "More filters" = "Plus de filtres";
-"More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "Plus de filtres : Épinglés (paquets que brew ne met pas à niveau), Demandés uniquement (ce que vous avez installé vous-même et dont rien d’autre n’a besoin, brew leaves -r), Vulnérables, Avec notes, Obsolètes";
+"More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "Plus de filtres : Vulnérables, Épinglés (paquets que brew ne met pas à niveau), Installés par vous (paquets installés vous-même, pas ceux ajoutés comme dépendances), Avec notes, Obsolètes";
 "Name" = "Nom";
 "Name only" = "Nom seul";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Nom seulement : %@. Seul le nom correspond, il peut donc s'agir d'une autre app ; si c'est le cas, brew upgrade la remplacerait et désinstaller le cask la supprimerait.";
@@ -640,6 +641,8 @@
 "Other packages need it" = "D’autres paquets en dépendent";
 "PID" = "PID";
 "Package" = "Paquet";
+"Packages brew won't upgrade (brew pin)" = "Paquets que brew ne met pas à niveau (brew pin)";
+"Packages you installed yourself, not ones pulled in as dependencies" = "Les paquets que vous avez installés vous-même, pas ceux ajoutés comme dépendances";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Fait partie du dossier %@, que le cask installe en entier ; brew comparerait chaque fichier et refuserait à la moindre différence.";
 "Partial scan" = "Analyse partielle";
 "Patch only" = "Correctifs uniquement";
@@ -704,7 +707,6 @@
 "Replacement: " = "Remplacement : ";
 "Report an Issue…" = "Signaler un problème…";
 "Requested" = "Demandé";
-"Requested only" = "Demandés uniquement";
 "Restart" = "Redémarrer";
 "Restore" = "Restaurer";
 "Restore Plan…" = "Plan de restauration…";

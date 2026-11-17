@@ -68,19 +68,22 @@ struct SizeCell: View {
     }
 }
 
-/// The filters that don't fit the segmented control (Pinned, Requested
-/// only, Vulnerable, Has notes, Deprecated), as a standard menu picker next
+/// The filters that don't fit the segmented control (Vulnerable, Pinned,
+/// Installed by you, Has notes, Deprecated), as a standard menu picker next
 /// to it. 0.6.1: a native pop-up (Picker, .menu) instead of the custom
 /// styled Menu, after which the window could no longer be dragged by its
 /// toolbar until the Installed tab was rebuilt. The scan moved to Settings,
-/// the Homebrew menu and the status bar's progress line.
+/// the Homebrew menu and the status bar's progress line. 0.8.2: each item
+/// shows its count, and items with nothing to show are greyed (except the
+/// selected one).
 struct MoreFiltersPicker: View {
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
 
     var body: some View {
         let active = store.moreFilterSelection != nil
-        let vulnerable = store.count(.vulnerable)
+        let items = store.moreFilterItems
+        let vulnerable = items.first { $0.filter == .vulnerable }?.count ?? 0
         Picker("More filters", selection: Binding(get: { store.moreFilterSelection },
                                                  set: { store.moreFilterSelection = $0 })) {
             if !active {
@@ -91,20 +94,33 @@ struct MoreFiltersPicker: View {
                 }
                 Divider()
             }
-            ForEach(PackageFilter.more) { f in
-                Text(verbatim: "\(f.title)  \(store.count(f))").tag(PackageFilter?.some(f))
+            ForEach(items) { item in
+                Text(verbatim: "\(item.filter.title)  \(item.count)")
+                    .tag(PackageFilter?.some(item.filter))
+                    // .disabled does nothing to a pop-up's items; this greys them.
+                    .selectionDisabled(!item.isEnabled)
             }
         }
         .pickerStyle(.menu)
         .labelsHidden()
-        // A pop-up sizes itself to its widest item ("Requested only 123");
+        // A pop-up sizes itself to its widest item ("Installed by you 123");
         // keep it compact so the summary beside it isn't cut off.
         .frame(width: 128)
         // The active look: the theme's accent ring. Colour only; the frame
         // is the same in every theme and state.
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(active ? theme.accent : Color.clear, lineWidth: 1.5)
             .allowsHitTesting(false))
-        .help(vulnerable > 0 ? (vulnerable == 1 ? String(localized: "1 vulnerable package; more filters") : String(localized: "\(vulnerable) vulnerable packages; more filters")) : String(localized: "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated"))
+        .help(Self.help(vulnerable: vulnerable, selected: store.moreFilterSelection))
+    }
+
+    /// The pop-up's tooltip: the selected filter's meaning, else what's
+    /// in the menu.
+    static func help(vulnerable: Int, selected: PackageFilter?) -> String {
+        if let selected, let h = selected.help { return h }
+        if vulnerable > 0 {
+            return vulnerable == 1 ? String(localized: "1 vulnerable package; more filters") : String(localized: "\(vulnerable) vulnerable packages; more filters")
+        }
+        return String(localized: "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated")
     }
 }
 
