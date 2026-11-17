@@ -91,7 +91,7 @@ struct ContentView: View {
             default:
                 return nil
             }
-        }))
+        }, intelbrew: { store.intelbrewMode }))
     }
 
     @ViewBuilder

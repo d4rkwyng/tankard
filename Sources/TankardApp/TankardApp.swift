@@ -140,7 +140,7 @@ struct TankardApp: App {
         .windowToolbarStyle(.unified(showsTitle: true))
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("About Tankard") { AboutPanel.show() }
+                Button("About Tankard") { AboutPanel.show(intelbrew: store.intelbrewMode) }
             }
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .toolbar) {

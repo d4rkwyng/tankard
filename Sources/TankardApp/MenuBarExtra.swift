@@ -202,19 +202,19 @@ final class LoginItem: LoginItemControlling {
 
 @MainActor
 enum AboutPanel {
-    static func show() {
+    static func show(intelbrew: Bool = false) {
         let versions = AboutInfo.panelVersions(bundle: Bundle.main.infoDictionary)
         NSApp.activate(ignoringOtherApps: true)
         NSApp.orderFrontStandardAboutPanel(options: [
             .applicationName: "Tankard",
             .applicationVersion: versions.application,
             .version: versions.build,
-            .credits: credits(),
+            .credits: credits(intelbrew: intelbrew),
             NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): AboutInfo.copyright,
         ])
     }
 
-    static func credits() -> NSAttributedString {
+    static func credits(intelbrew: Bool) -> NSAttributedString {
         let para = NSMutableParagraphStyle()
         para.alignment = .center
         para.paragraphSpacing = 3
@@ -231,10 +231,19 @@ enum AboutPanel {
             s.append(NSAttributedString(string: "\n", attributes: base))
         }
         link("github.com/d4rkwyng/tankard", AboutInfo.repository)
-        link("Intelbrew: github.com/d4rkwyng/intelbrew", AboutInfo.intelbrew)
+        link(intelbrew ? AboutInfo.intelbrewBottlesLine : "Intelbrew: d4rkwyng/intelbrew", AboutInfo.intelbrew)
         var dim = base
         dim[.foregroundColor] = NSColor.secondaryLabelColor
-        s.append(NSAttributedString(string: AboutInfo.licence, attributes: dim))
+        s.append(NSAttributedString(string: AboutInfo.licence + "\n", attributes: dim))
+        // Homebrew: three short lines (the panel is narrow), "brew.sh" linked.
+        var small = dim
+        small[.font] = NSFont.systemFont(ofSize: 10)
+        let line = NSMutableAttributedString(string: AboutInfo.homebrewLine + "\n", attributes: small)
+        if let r = AboutInfo.homebrewLine.range(of: "brew.sh") {
+            line.addAttribute(.link, value: AboutInfo.homebrew, range: NSRange(r, in: AboutInfo.homebrewLine))
+        }
+        s.append(line)
+        s.append(NSAttributedString(string: AboutInfo.homebrewCopyright + "\n" + AboutInfo.notAffiliated, attributes: small))
         return s
     }
 }

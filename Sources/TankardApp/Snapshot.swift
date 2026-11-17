@@ -41,6 +41,8 @@ struct SnapshotHook: NSViewRepresentable {
     var request: SnapshotRequest?
     /// Builds the view named by `request.view` ("menubar", "settings"), if any.
     var makeView: (String) -> AnyView? = { _ in nil }
+    /// Intelbrew mode (the About panel's Intelbrew line).
+    var intelbrew: () -> Bool = { false }
 
     func makeNSView(context: Context) -> NSView {
         let v = NSView()
@@ -51,7 +53,8 @@ struct SnapshotHook: NSViewRepresentable {
                 v?.window?.setContentSize(NSSize(width: request.width, height: request.height))
             }
             if request.view == "about" {
-                DispatchQueue.main.asyncAfter(deadline: .now() + max(0.5, request.delay - 1)) { AboutPanel.show() }
+                let intelbrew = self.intelbrew
+                DispatchQueue.main.asyncAfter(deadline: .now() + max(0.5, request.delay - 1)) { AboutPanel.show(intelbrew: intelbrew()) }
             }
             let makeView = self.makeView
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in

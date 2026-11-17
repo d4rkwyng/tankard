@@ -597,6 +597,12 @@ struct AboutTests {
         #expect(AboutInfo.author == "Made by d4rkwyng")
         #expect(AboutInfo.copyright == "© 2026 Tankard contributors")
         #expect(AboutInfo.newIssue.absoluteString == "https://github.com/d4rkwyng/tankard/issues/new")
+        #expect(AboutInfo.homebrewLine.contains("brew.sh"))
+        #expect(AboutInfo.notAffiliated == "Not affiliated with or endorsed by the Homebrew project.")
+        // Short enough for the About panel without wrapping.
+        for line in [AboutInfo.homebrewLine, AboutInfo.homebrewCopyright, AboutInfo.notAffiliated, AboutInfo.intelbrewBottlesLine] {
+            #expect(line.count <= 56)
+        }
     }
 }
 

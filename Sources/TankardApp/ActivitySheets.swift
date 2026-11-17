@@ -342,6 +342,19 @@ struct CleanupSheet: View {
 
 /// "Install node-red from source?" before an install with no bottle here.
 struct CompileInstallConfirm: View {
+    /// Built in steps: one long concatenation is too much for Swift 6.0's type checker.
+    static func message(_ e: CatalogEntry, intelbrew: Bool, deps: [CatalogEntry], estimate: String?) -> String {
+        var m = "\(e.name) has no \(intelbrew ? "Intelbrew " : "")bottle for this Mac, so brew compiles it"
+        if !deps.isEmpty {
+            let names = deps.prefix(4).map(\.name).joined(separator: ", ")
+            let noun = deps.count == 1 ? "dependency" : "dependencies"
+            m += ", and \(deps.count) \(noun) (\(names))"
+        }
+        m += ". That can take a long time on older Macs."
+        if let estimate { m += " It took \(estimate)." }
+        return m
+    }
+
     @Bindable var store: AppStore
     @Bindable var discover: DiscoverStore
     var entry: CatalogEntry
@@ -356,10 +369,7 @@ struct CompileInstallConfirm: View {
                 Image(systemName: "hammer.circle.fill").font(.system(size: 34)).foregroundStyle(theme.badge(.source).dot)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Install \(entry.name) from source?").font(.system(size: 14, weight: .bold))
-                    Text("\(entry.name) has no \(discover.isLocalTaps ? "Intelbrew " : "")bottle for this Mac, so brew compiles it"
-                         + (deps.isEmpty ? "" : ", and \(deps.count) dependenc\(deps.count == 1 ? "y" : "ies") (\(deps.prefix(4).map(\.name).joined(separator: ", ")))")
-                         + ". That can take a long time on older Macs."
-                         + (estimate.map { " It took \($0)." } ?? ""))
+                    Text(Self.message(entry, intelbrew: discover.isLocalTaps, deps: deps, estimate: estimate))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }

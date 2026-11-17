@@ -81,6 +81,14 @@ public enum AboutInfo {
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
     public static let author = "Made by d4rkwyng"
     public static let licence = "BSD-2-Clause licence"
+    public static let homebrew = URL(string: "https://brew.sh")!
+    /// About Homebrew, kept short enough for the About panel's width
+    /// (~280 pt): "brew.sh" is the link.
+    public static let homebrewLine = "An independent app for Homebrew (brew.sh)."
+    public static let homebrewCopyright = "Homebrew © Homebrew contributors, BSD-2-Clause."
+    public static let notAffiliated = "Not affiliated with or endorsed by the Homebrew project."
+    /// Intelbrew mode: replaces the plain Intelbrew link line.
+    public static let intelbrewBottlesLine = "Intelbrew bottles from d4rkwyng/intelbrew"
     /// Matches LICENSE ("Copyright (c) 2026-present, Tankard contributors").
     public static let copyright = "© 2026 Tankard contributors"
 
