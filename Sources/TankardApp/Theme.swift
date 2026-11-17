@@ -171,19 +171,21 @@ extension EnvironmentValues {
 struct Themed: ViewModifier {
     var theme: Theme
 
+    // One modifier chain for every theme, only the values differ. An
+    // if/else here gave each theme a different view identity, so a theme
+    // switch rebuilt the whole window: a new NSTableView (scroll position,
+    // column widths and the selected row's place lost), visibly jumping.
     func body(content: Content) -> some View {
-        if let p = theme.palette {
-            content
-                .environment(\.theme, theme)
-                .tint(theme.accent)
-                .foregroundStyle(Color(hex: p.foam), Color(hex: p.lavender), Color(hex: p.muted))
-                .background(theme.window ?? .clear)
-                .toolbarBackground(theme.window ?? .clear, for: .windowToolbar)
-                .toolbarBackground(.visible, for: .windowToolbar)
-        } else {
-            content
-                .environment(\.theme, theme)
-        }
+        let p = theme.palette
+        content
+            .environment(\.theme, theme)
+            .tint(p == nil ? nil : theme.accent)
+            .foregroundStyle(p.map { AnyShapeStyle(Color(hex: $0.foam)) } ?? AnyShapeStyle(HierarchicalShapeStyle.primary),
+                             p.map { AnyShapeStyle(Color(hex: $0.lavender)) } ?? AnyShapeStyle(HierarchicalShapeStyle.secondary),
+                             p.map { AnyShapeStyle(Color(hex: $0.muted)) } ?? AnyShapeStyle(HierarchicalShapeStyle.tertiary))
+            .background(theme.window ?? .clear)
+            .toolbarBackground(theme.window ?? .clear, for: .windowToolbar)
+            .toolbarBackground(p == nil ? .automatic : .visible, for: .windowToolbar)
     }
 }
 

@@ -7,6 +7,8 @@ import SwiftUI
 ///   TANKARD_SNAPSHOT_DELAY=4         seconds after launch (default 4)
 ///   TANKARD_SNAPSHOT_QUIT=1          quit after writing
 ///   TANKARD_SNAPSHOT_SIZE=1040x620   content size to set first
+///   TANKARD_SNAPSHOT_ORIGIN=20,300   window origin (screen points) to set first
+///   TANKARD_LOG_FRAMES=1             print every window move/resize to stderr
 ///   TANKARD_SNAPSHOT_LAYOUT=1        also print the layout (window, table,
 ///                                    rows, cells) to stderr, for comparing themes
 ///
@@ -20,6 +22,7 @@ struct SnapshotRequest {
     var quit: Bool
     var width: CGFloat = 1040
     var height: CGFloat = 620
+    var origin: NSPoint?
 
     init?(environment env: [String: String]) {
         guard let p = env["TANKARD_SNAPSHOT"], !p.isEmpty else { return nil }
@@ -30,6 +33,10 @@ struct SnapshotRequest {
            let w = Double(s[0]), let h = Double(s[1]) {
             width = w
             height = h
+        }
+        if let o = env["TANKARD_SNAPSHOT_ORIGIN"]?.split(separator: ","), o.count == 2,
+           let x = Double(o[0]), let y = Double(o[1]) {
+            origin = NSPoint(x: x, y: y)
         }
     }
 }
@@ -43,7 +50,10 @@ struct SnapshotHook: NSViewRepresentable {
             // A fixed size, so shots are comparable whatever frame the
             // window restored.
             DispatchQueue.main.async { [weak v] in
-                v?.window?.setContentSize(NSSize(width: request.width, height: request.height))
+                guard let w = v?.window else { return }
+                w.setContentSize(NSSize(width: request.width, height: request.height))
+                if let o = request.origin { w.setFrameOrigin(o) }
+                if ProcessInfo.processInfo.environment["TANKARD_LOG_FRAMES"] == "1" { Snapshot.logFrames(of: w) }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in
                 guard let window = v?.window else { return }
@@ -63,6 +73,34 @@ struct SnapshotHook: NSViewRepresentable {
 
 @MainActor
 enum Snapshot {
+    /// Prints the window's frame now and on every move or resize.
+    static func logFrames(of window: NSWindow) {
+        @Sendable func log(_ why: String, _ f: NSRect) {
+            FileHandle.standardError.write(Data(String(format: "frame: %@ %.1f,%.1f %.1fx%.1f t=%.2f\n", why, f.minX, f.minY, f.width, f.height,
+                                                       ProcessInfo.processInfo.systemUptime).utf8))
+        }
+        log("start", window.frame)
+        // Once a second: the table's identity, scroll offset and column
+        // widths, to see whether a theme switch rebuilds or scrolls it.
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak window] _ in
+            MainActor.assumeIsolated {
+                guard let content = window?.contentView else { return }
+                func tables(_ v: NSView) -> [NSTableView] { (v as? NSTableView).map { [$0] } ?? v.subviews.flatMap(tables) }
+                for t in tables(content) {
+                    let clip = t.enclosingScrollView?.contentView.bounds.origin ?? .zero
+                    let widths = t.tableColumns.map { String(format: "%.0f", $0.width) }.joined(separator: "/")
+                    FileHandle.standardError.write(Data(String(format: "table: %@ scroll=%.0f,%.0f cols=%@ t=%.2f\n",
+                        "\(ObjectIdentifier(t).hashValue)", clip.x, clip.y, widths, ProcessInfo.processInfo.systemUptime).utf8))
+                }
+            }
+        }
+        for (name, why) in [(NSWindow.didMoveNotification, "move"), (NSWindow.didResizeNotification, "resize")] {
+            NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) { [weak window] _ in
+                MainActor.assumeIsolated { if let f = window?.frame { log(why, f) } }
+            }
+        }
+    }
+
     /// The geometry that must not depend on the theme: the window, the
     /// content view, and for each table its scroll view's insets, spacing,
     /// and the first rows' and cells' frames in window coordinates.
@@ -77,7 +115,10 @@ enum Snapshot {
         for t in tables(content) {
             let sv = t.enclosingScrollView
             out.append("layout: table \(r(t.convert(t.bounds, to: nil))) style=\(t.style.rawValue) spacing=\(t.intercellSpacing) "
-                       + "insets=\(sv.map { "\($0.contentInsets)" } ?? "-") scroll=\(sv.map { r($0.convert($0.bounds, to: nil)) } ?? "-")")
+                       + "insets=\(sv.map { "\($0.contentInsets)" } ?? "-") scroll=\(sv.map { r($0.convert($0.bounds, to: nil)) } ?? "-")"
+                       + " clip=\(sv.map { r($0.contentView.frame) } ?? "-")"
+                       + " scroller=\(sv.map { "\($0.scrollerStyle.rawValue)/\($0.verticalScroller.map { r($0.frame) + ($0.isHidden ? " hidden" : "") } ?? "-")" } ?? "-")")
+            out.append("layout:  heights " + (0..<t.numberOfRows).map { String(format: "%.0f", t.rect(ofRow: $0).height) }.joined(separator: ","))
             for i in 0..<min(t.numberOfRows, 4) {
                 guard let row = t.rowView(atRow: i, makeIfNecessary: false) else { continue }
                 var line = "layout:  row \(i) \(r(row.convert(row.bounds, to: nil)))"
