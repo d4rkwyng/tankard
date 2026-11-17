@@ -351,6 +351,7 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "每个文件都会先在其旁边备份（….%@）。将移除以下行：";
 "Each runs as its own brew upgrade, one at a time." = "每个都作为独立的 brew upgrade 依次运行。";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Homebrew 检出目录中的改动可能导致 brew update 停止。重置会丢弃这些改动。";
+"Environment" = "环境";
 "Error" = "错误";
 "Error (exit %lld)" = "错误（退出码 %lld）";
 "Error log" = "错误日志";
@@ -391,6 +392,7 @@
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "有适用于这台 Mac 的 bottle 的 formula（Intelbrew 或 Homebrew 的）。其余的在安装时从源码编译。";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "有适用于这台 Mac 的 bottle 的 formula。其余的在安装时从源码编译。";
 "From brew vulns (OSV.dev)." = "来自 brew vulns（OSV.dev）。";
+"From brew.env: brew reads it itself." = "来自 brew.env：brew 会自行读取。";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "来自 formulae.brew.sh，缓存一小时，位于 ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "来自其收据：所有已安装且链接到它的内容（brew deps --installed 列出的可能更少）";
 "From source" = "从源码";
@@ -448,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "后台 brew update 的运行频率，在“在后台检查新版本”或“有新升级时通知我”开启时生效。";
 "I've done this" = "我已完成";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
+"Ignored: not on Tankard's list of settings it passes to brew." = "已忽略：不在 Tankard 传给 brew 的设置列表中。";
 "Include self-updating apps" = "包含自行更新的 App";
 "Install" = "安装";
 "Install %@" = "安装 %@";
@@ -574,6 +577,7 @@
 "None of your zsh or bash startup files sets them, so nothing is edited." = "你的 zsh 或 bash 启动文件都没有设置它们，因此不会编辑任何内容。";
 "Not affiliated with or endorsed by the Homebrew project." = "与 Homebrew 项目无关联，也未获其认可。";
 "Not allowed yet" = "尚未允许";
+"Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Tankard 不应用（在 shell 中设置）：暂不支持镜像。";
 "Not checked by brew vulns." = "brew vulns 未检查。";
 "Not checked by brew vulns: no source repository it can match." = "brew vulns 未检查：没有可匹配的源码仓库。";
 "Not checked by brew vulns: untrusted tap." = "brew vulns 未检查：不受信任的 tap。";
@@ -583,6 +587,12 @@
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "未链接：它的命令不在 Homebrew 的 bin 中。`brew link %@` 可链接它。";
 "Not listed: %@." = "未列出：%@。";
 "Not now" = "暂不";
+"Not passed: Tankard reads brew's output." = "不传递：Tankard 需要读取 brew 的输出。";
+"Not passed: Tankard's self-updating apps setting decides this." = "不传递：由 Tankard 的自动更新 App 设置决定。";
+"Not passed: a credential." = "不传递：这是凭据。";
+"Not passed: auto-update relies on brew's dependents check." = "不传递：自动更新依赖 brew 的依赖项检查。";
+"Not passed: changes where brew gets code from, or what it trusts." = "不传递：会改变 brew 获取代码的来源或信任对象。";
+"Not passed: changes where brew lives or keeps its files." = "不传递：会改变 brew 的位置或文件存放位置。";
 "Not running" = "未运行";
 "Not scanned yet" = "尚未扫描";
 "Not stated" = "未说明";
@@ -644,6 +654,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "你自己安装的软件包，而不是作为依赖项装入的";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "属于 %@ 文件夹，cask 会整体安装该文件夹；brew 会比较每个文件，有任何不同就会拒绝。";
 "Partial scan" = "部分扫描";
+"Passed to brew." = "已传给 brew。";
 "Patch only" = "仅补丁";
 "Pause automatic updates. Manual upgrades still work." = "暂停自动更新。手动升级仍然可用。";
 "Pin" = "固定";
@@ -776,6 +787,9 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";
 "Services" = "服务";
+"Set by Intelbrew mode." = "由 Intelbrew 模式设置。";
+"Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "由 Tankard 为检查和升级设置：何时运行 brew update 由 Tankard 决定。";
+"Set by Tankard: it reads brew's output." = "由 Tankard 设置：它需要读取 brew 的输出。";
 "Several casks install an app with this name. Pick the one you have." = "有多个 cask 会安装同名 App。请选择你所用的那个。";
 "Show" = "显示";
 "Show Auto-update Log…" = "显示自动更新日志…";
@@ -994,6 +1008,7 @@
 "Xcode is out of date" = "Xcode 已过期";
 "Yes" = "是";
 "You have Tankard %@." = "你当前使用 Tankard %@。";
+"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "你的 HOMEBREW_* 设置，以及 Tankard 运行 brew 时如何处理每一项。";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
 "adopted" = "已接管";
@@ -1033,6 +1048,7 @@
 "brew not found (looked in %@). Set TANKARD_BREW or pass --brew." = "未找到 brew（已在 %@ 中查找）。请设置 TANKARD_BREW 或传入 --brew。";
 "brew printed %lld warnings (%@)" = "brew 输出了 %lld 条警告 (%@)";
 "brew printed 1 warning (%@)" = "brew 输出了 1 条警告 (%@)";
+"brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew 会自行读取 brew.env 文件，因此其中的设置无论此列表如何都会生效。";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew 拒绝卸载其他已安装软件包所需的 formula，且 Homebrew 不支持在其下混用不同版本。";
 "brew reinstall --force-bottle --formula each one, through the queue" = "通过队列对每个 formula 执行 brew reinstall --force-bottle --formula";
 "brew says the scan is incomplete: %@." = "brew 表示扫描不完整：%@。";

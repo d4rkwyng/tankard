@@ -351,6 +351,7 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "Cada archivo se respalda antes, junto a sí mismo (….%@). Se quitan estas líneas:";
 "Each runs as its own brew upgrade, one at a time." = "Cada uno se ejecuta como su propio brew upgrade, uno a la vez.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Las ediciones en el checkout de Homebrew pueden detener brew update. Restablecerlo las descarta.";
+"Environment" = "Entorno";
 "Error" = "Error";
 "Error (exit %lld)" = "Error (código %lld)";
 "Error log" = "Registro de errores";
@@ -391,6 +392,7 @@
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "Formulae con bottle para este Mac (de Intelbrew o de Homebrew). El resto se compila desde el código fuente al instalarse.";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "Formulae con bottle para este Mac. El resto se compila desde el código fuente al instalarse.";
 "From brew vulns (OSV.dev)." = "De brew vulns (OSV.dev).";
+"From brew.env: brew reads it itself." = "De brew.env: brew lo lee por sí mismo.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "De formulae.brew.sh, en caché durante una hora en ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "Según su recibo: todo lo instalado con lo que se enlazó (brew deps --installed puede listar menos)";
 "From source" = "Desde el código fuente";
@@ -448,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "Con qué frecuencia se ejecuta brew update en segundo plano, mientras \"Buscar versiones nuevas en segundo plano\" o \"Avisarme de nuevas actualizaciones\" esté activado.";
 "I've done this" = "Ya lo hice";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "Si una descarga no coincide, brew se detiene para esa app y la deja como estaba.";
+"Ignored: not on Tankard's list of settings it passes to brew." = "Ignorada: no está en la lista de ajustes que Tankard pasa a brew.";
 "Include self-updating apps" = "Incluir apps que se actualizan solas";
 "Install" = "Instalar";
 "Install %@" = "Instalar %@";
@@ -574,6 +577,7 @@
 "None of your zsh or bash startup files sets them, so nothing is edited." = "Ninguno de tus archivos de inicio de zsh o bash los define, así que no se edita nada.";
 "Not affiliated with or endorsed by the Homebrew project." = "No está afiliado ni respaldado por el proyecto Homebrew.";
 "Not allowed yet" = "Aún no permitido";
+"Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "No aplicada por Tankard (definida en la shell): los espejos aún no son compatibles.";
 "Not checked by brew vulns." = "No comprobado por brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "No comprobado por brew vulns: no tiene repositorio de código fuente con el que asociarlo.";
 "Not checked by brew vulns: untrusted tap." = "No comprobado por brew vulns: tap no confiable.";
@@ -583,6 +587,12 @@
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Sin enlazar: sus comandos no están en el bin de Homebrew. `brew link %@` lo enlaza.";
 "Not listed: %@." = "No listadas: %@.";
 "Not now" = "Ahora no";
+"Not passed: Tankard reads brew's output." = "No se pasa: Tankard lee la salida de brew.";
+"Not passed: Tankard's self-updating apps setting decides this." = "No se pasa: lo decide el ajuste de apps que se actualizan solas de Tankard.";
+"Not passed: a credential." = "No se pasa: es una credencial.";
+"Not passed: auto-update relies on brew's dependents check." = "No se pasa: la actualización automática depende de la comprobación de dependientes de brew.";
+"Not passed: changes where brew gets code from, or what it trusts." = "No se pasa: cambia de dónde obtiene brew el código o en qué confía.";
+"Not passed: changes where brew lives or keeps its files." = "No se pasa: cambia dónde está brew o dónde guarda sus archivos.";
 "Not running" = "No en ejecución";
 "Not scanned yet" = "Aún no analizado";
 "Not stated" = "No indicado";
@@ -644,6 +654,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "Paquetes que instalaste tú, no los que llegaron como dependencias";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Forma parte de la carpeta %@, que el cask instala completa; brew compararía cada archivo y se negaría si algo difiere.";
 "Partial scan" = "Análisis parcial";
+"Passed to brew." = "Se pasa a brew.";
 "Patch only" = "Solo parches";
 "Pause automatic updates. Manual upgrades still work." = "Pausa las actualizaciones automáticas. Las actualizaciones manuales siguen funcionando.";
 "Pin" = "Fijar";
@@ -776,6 +787,9 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Envía los nombres y versiones de tus formulae instaladas a OSV.dev (mediante brew vulns).";
 "Service" = "Servicio";
 "Services" = "Servicios";
+"Set by Intelbrew mode." = "Definida por el modo Intelbrew.";
+"Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Definida por Tankard para comprobaciones y actualizaciones: Tankard decide cuándo se ejecuta brew update.";
+"Set by Tankard: it reads brew's output." = "Definida por Tankard: lee la salida de brew.";
 "Several casks install an app with this name. Pick the one you have." = "Varios casks instalan una app con este nombre. Elige la que tienes.";
 "Show" = "Mostrar";
 "Show Auto-update Log…" = "Mostrar registro de actualización automática…";
@@ -994,6 +1008,7 @@
 "Xcode is out of date" = "Xcode está desactualizado";
 "Yes" = "Sí";
 "You have Tankard %@." = "Tienes Tankard %@.";
+"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "Tus ajustes HOMEBREW_* y lo que Tankard hace con cada uno al ejecutar brew.";
 "Your PATH finds other tools before Homebrew's" = "Tu PATH encuentra otras herramientas antes que las de Homebrew";
 "a symlink to %@: that file is backed up and edited" = "un enlace simbólico a %@: se hace copia de seguridad de ese archivo y se edita";
 "adopted" = "adoptadas";
@@ -1033,6 +1048,7 @@
 "brew not found (looked in %@). Set TANKARD_BREW or pass --brew." = "brew no encontrado (se buscó en %@). Define TANKARD_BREW o pasa --brew.";
 "brew printed %lld warnings (%@)" = "brew imprimió %lld advertencias (%@)";
 "brew printed 1 warning (%@)" = "brew imprimió 1 advertencia (%@)";
+"brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew lee los archivos brew.env por sí mismo, así que un ajuste ahí llega a brew diga lo que diga esta lista.";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew se niega a desinstalar una formula que otros paquetes instalados necesitan, y Homebrew no admite mezclar versiones debajo de ellos.";
 "brew reinstall --force-bottle --formula each one, through the queue" = "brew reinstall --force-bottle --formula una a una, mediante la cola";
 "brew says the scan is incomplete: %@." = "brew indica que el análisis está incompleto: %@.";

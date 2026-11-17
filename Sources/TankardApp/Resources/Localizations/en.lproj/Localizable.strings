@@ -351,6 +351,7 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "Each file is backed up first, next to itself (….%@). These lines are removed:";
 "Each runs as its own brew upgrade, one at a time." = "Each runs as its own brew upgrade, one at a time.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Edits in Homebrew's checkout can stop brew update. Resetting it discards them.";
+"Environment" = "Environment";
 "Error" = "Error";
 "Error (exit %lld)" = "Error (exit %lld)";
 "Error log" = "Error log";
@@ -391,6 +392,7 @@
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed.";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "Formulae with a bottle for this Mac. The rest compile from source when installed.";
 "From brew vulns (OSV.dev)." = "From brew vulns (OSV.dev).";
+"From brew.env: brew reads it itself." = "From brew.env: brew reads it itself.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)";
 "From source" = "From source";
@@ -448,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.";
 "I've done this" = "I've done this";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "If a download doesn't match, brew stops for that app and leaves it as it was.";
+"Ignored: not on Tankard's list of settings it passes to brew." = "Ignored: not on Tankard's list of settings it passes to brew.";
 "Include self-updating apps" = "Include self-updating apps";
 "Install" = "Install";
 "Install %@" = "Install %@";
@@ -574,6 +577,7 @@
 "None of your zsh or bash startup files sets them, so nothing is edited." = "None of your zsh or bash startup files sets them, so nothing is edited.";
 "Not affiliated with or endorsed by the Homebrew project." = "Not affiliated with or endorsed by the Homebrew project.";
 "Not allowed yet" = "Not allowed yet";
+"Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Not applied by Tankard (set in shell): download mirrors aren't supported yet.";
 "Not checked by brew vulns." = "Not checked by brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "Not checked by brew vulns: no source repository it can match.";
 "Not checked by brew vulns: untrusted tap." = "Not checked by brew vulns: untrusted tap.";
@@ -583,6 +587,12 @@
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it.";
 "Not listed: %@." = "Not listed: %@.";
 "Not now" = "Not now";
+"Not passed: Tankard reads brew's output." = "Not passed: Tankard reads brew's output.";
+"Not passed: Tankard's self-updating apps setting decides this." = "Not passed: Tankard's self-updating apps setting decides this.";
+"Not passed: a credential." = "Not passed: a credential.";
+"Not passed: auto-update relies on brew's dependents check." = "Not passed: auto-update relies on brew's dependents check.";
+"Not passed: changes where brew gets code from, or what it trusts." = "Not passed: changes where brew gets code from, or what it trusts.";
+"Not passed: changes where brew lives or keeps its files." = "Not passed: changes where brew lives or keeps its files.";
 "Not running" = "Not running";
 "Not scanned yet" = "Not scanned yet";
 "Not stated" = "Not stated";
@@ -644,6 +654,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "Packages you installed yourself, not ones pulled in as dependencies";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs.";
 "Partial scan" = "Partial scan";
+"Passed to brew." = "Passed to brew.";
 "Patch only" = "Patch only";
 "Pause automatic updates. Manual upgrades still work." = "Pause automatic updates. Manual upgrades still work.";
 "Pin" = "Pin";
@@ -776,6 +787,9 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sends your installed formula names and versions to OSV.dev (via brew vulns).";
 "Service" = "Service";
 "Services" = "Services";
+"Set by Intelbrew mode." = "Set by Intelbrew mode.";
+"Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Set by Tankard for checks and upgrades: Tankard decides when brew update runs.";
+"Set by Tankard: it reads brew's output." = "Set by Tankard: it reads brew's output.";
 "Several casks install an app with this name. Pick the one you have." = "Several casks install an app with this name. Pick the one you have.";
 "Show" = "Show";
 "Show Auto-update Log…" = "Show Auto-update Log…";
@@ -994,6 +1008,7 @@
 "Xcode is out of date" = "Xcode is out of date";
 "Yes" = "Yes";
 "You have Tankard %@." = "You have Tankard %@.";
+"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "Your HOMEBREW_* settings and what Tankard does with each when it runs brew.";
 "Your PATH finds other tools before Homebrew's" = "Your PATH finds other tools before Homebrew's";
 "a symlink to %@: that file is backed up and edited" = "a symlink to %@: that file is backed up and edited";
 "adopted" = "adopted";
@@ -1033,6 +1048,7 @@
 "brew not found (looked in %@). Set TANKARD_BREW or pass --brew." = "brew not found (looked in %@). Set TANKARD_BREW or pass --brew.";
 "brew printed %lld warnings (%@)" = "brew printed %lld warnings (%@)";
 "brew printed 1 warning (%@)" = "brew printed 1 warning (%@)";
+"brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew reads brew.env files itself, so a setting there reaches brew whatever this list says.";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them.";
 "brew reinstall --force-bottle --formula each one, through the queue" = "brew reinstall --force-bottle --formula each one, through the queue";
 "brew says the scan is incomplete: %@." = "brew says the scan is incomplete: %@.";

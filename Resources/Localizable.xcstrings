@@ -18593,6 +18593,58 @@
         }
       }
     },
+    "Environment": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umgebung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Environnement"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entorno"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "環境"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "环境"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ambiente"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ambiente"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "환경"
+          }
+        }
+      }
+    },
     "Error": {
       "localizations": {
         "de": {
@@ -20669,6 +20721,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew vulns(OSV.dev) 기준."
+          }
+        }
+      }
+    },
+    "From brew.env: brew reads it itself.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus brew.env: brew liest sie selbst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depuis brew.env : brew le lit lui-même."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De brew.env: brew lo lee por sí mismo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env から：brew が自分で読み込みます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来自 brew.env：brew 会自行读取。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do brew.env: o brew o lê sozinho."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da brew.env: brew lo legge da solo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에서: brew가 직접 읽습니다."
           }
         }
       }
@@ -23633,6 +23737,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다."
+          }
+        }
+      }
+    },
+    "Ignored: not on Tankard's list of settings it passes to brew.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignoriert: nicht auf Tankards Liste der weitergegebenen Einstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignoré : absent de la liste des réglages que Tankard transmet à brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorada: no está en la lista de ajustes que Tankard pasa a brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無視：Tankard が brew に渡す設定の一覧にありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略：不在 Tankard 传给 brew 的设置列表中。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorada: não está na lista de ajustes que o Tankard passa ao brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorata: non è nell'elenco delle impostazioni che Tankard passa a brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무시됨: Tankard가 brew에 전달하는 설정 목록에 없습니다."
           }
         }
       }
@@ -30189,6 +30345,58 @@
         }
       }
     },
+    "Not applied by Tankard (set in shell): download mirrors aren't supported yet.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von Tankard nicht übernommen (in der Shell gesetzt): Spiegelserver werden noch nicht unterstützt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non appliqué par Tankard (défini dans le shell) : les miroirs ne sont pas encore pris en charge."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No aplicada por Tankard (definida en la shell): los espejos aún no son compatibles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard では適用されません（シェルで設定）：ミラーはまだサポートされていません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 不应用（在 shell 中设置）：暂不支持镜像。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não aplicada pelo Tankard (definida no shell): espelhos ainda não são suportados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non applicata da Tankard (impostata nella shell): i mirror non sono ancora supportati."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 적용하지 않음(셸에서 설정): 미러는 아직 지원되지 않습니다."
+          }
+        }
+      }
+    },
     "Not checked by brew vulns.": {
       "localizations": {
         "de": {
@@ -30653,6 +30861,318 @@
           "stringUnit": {
             "state": "translated",
             "value": "나중에"
+          }
+        }
+      }
+    },
+    "Not passed: Tankard reads brew's output.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: Tankard liest die Ausgabe von brew."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : Tankard lit la sortie de brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: Tankard lee la salida de brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：Tankard は brew の出力を読み取ります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：Tankard 需要读取 brew 的输出。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: o Tankard lê a saída do brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: Tankard legge l'output di brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: Tankard가 brew 출력을 읽습니다."
+          }
+        }
+      }
+    },
+    "Not passed: Tankard's self-updating apps setting decides this.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: Tankards Einstellung für selbstaktualisierende Apps entscheidet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : le réglage des apps à mise à jour automatique de Tankard en décide."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: lo decide el ajuste de apps que se actualizan solas de Tankard."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：Tankard の自動アップデートアプリ設定で決まります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：由 Tankard 的自动更新 App 设置决定。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: o ajuste de apps que se atualizam sozinhos do Tankard decide isso."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: decide l'impostazione di Tankard per le app che si aggiornano da sole."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: Tankard의 자체 업데이트 앱 설정이 결정합니다."
+          }
+        }
+      }
+    },
+    "Not passed: a credential.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: Zugangsdaten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : un identifiant secret."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: es una credencial."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：認証情報です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：这是凭据。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: é uma credencial."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: è una credenziale."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: 자격 증명입니다."
+          }
+        }
+      }
+    },
+    "Not passed: auto-update relies on brew's dependents check.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: Auto-Update braucht brews Prüfung der Abhängigen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : la mise à jour automatique dépend de la vérification des dépendants de brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: la actualización automática depende de la comprobación de dependientes de brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：自動アップデートは brew の依存元チェックを必要とします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：自动更新依赖 brew 的依赖项检查。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: a atualização automática depende da verificação de dependentes do brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: l'aggiornamento automatico si basa sul controllo dei dipendenti di brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: 자동 업데이트는 brew의 종속 항목 검사에 의존합니다."
+          }
+        }
+      }
+    },
+    "Not passed: changes where brew gets code from, or what it trusts.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: ändert, woher brew Code bezieht oder wem es vertraut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : change la source du code de brew ou ce en quoi il a confiance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: cambia de dónde obtiene brew el código o en qué confía."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：brew のコードの取得元や信頼対象が変わります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：会改变 brew 获取代码的来源或信任对象。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: muda de onde o brew obtém código ou em que ele confia."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: cambia da dove brew prende il codice o di cosa si fida."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: brew가 코드를 가져오는 곳이나 신뢰하는 대상을 바꿉니다."
+          }
+        }
+      }
+    },
+    "Not passed: changes where brew lives or keeps its files.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: ändert, wo brew liegt oder Dateien ablegt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : change l'emplacement de brew ou de ses fichiers."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: cambia dónde está brew o dónde guarda sus archivos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：brew の場所やファイルの保存先が変わります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：会改变 brew 的位置或文件存放位置。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: muda onde o brew fica ou guarda seus arquivos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: cambia dove si trova brew o dove tiene i suoi file."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: brew의 위치나 파일 보관 위치를 바꿉니다."
           }
         }
       }
@@ -33825,6 +34345,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "일부만 검사됨"
+          }
+        }
+      }
+    },
+    "Passed to brew.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An brew weitergegeben."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transmis à brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se pasa a brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew に渡します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已传给 brew。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passada ao brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passata a brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew에 전달됩니다."
           }
         }
       }
@@ -40742,6 +41314,162 @@
           "stringUnit": {
             "state": "translated",
             "value": "서비스"
+          }
+        }
+      }
+    },
+    "Set by Intelbrew mode.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vom Intelbrew-Modus gesetzt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini par le mode Intelbrew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida por el modo Intelbrew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intelbrew モードで設定。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由 Intelbrew 模式设置。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida pelo modo Intelbrew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostata dalla modalità Intelbrew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intelbrew 모드가 설정함."
+          }
+        }
+      }
+    },
+    "Set by Tankard for checks and upgrades: Tankard decides when brew update runs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von Tankard für Prüfungen und Upgrades gesetzt: Tankard entscheidet, wann brew update läuft."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini par Tankard pour les vérifications et mises à jour : Tankard décide quand brew update s'exécute."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida por Tankard para comprobaciones y actualizaciones: Tankard decide cuándo se ejecuta brew update."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "チェックとアップグレード用に Tankard が設定：brew update の実行時期は Tankard が決めます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由 Tankard 为检查和升级设置：何时运行 brew update 由 Tankard 决定。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida pelo Tankard para verificações e atualizações: o Tankard decide quando o brew update roda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostata da Tankard per controlli e aggiornamenti: Tankard decide quando eseguire brew update."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인과 업그레이드를 위해 Tankard가 설정: brew update 실행 시점은 Tankard가 정합니다."
+          }
+        }
+      }
+    },
+    "Set by Tankard: it reads brew's output.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von Tankard gesetzt: es liest die Ausgabe von brew."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini par Tankard : il lit la sortie de brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida por Tankard: lee la salida de brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard が設定：brew の出力を読み取るためです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由 Tankard 设置：它需要读取 brew 的输出。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida pelo Tankard: ele lê a saída do brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostata da Tankard: legge l'output di brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 설정: brew 출력을 읽기 때문입니다."
           }
         }
       }
@@ -52082,6 +52810,58 @@
         }
       }
     },
+    "Your HOMEBREW_* settings and what Tankard does with each when it runs brew.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine HOMEBREW_*-Einstellungen und was Tankard beim Ausführen von brew damit macht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos réglages HOMEBREW_* et ce que Tankard en fait quand il lance brew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus ajustes HOMEBREW_* y lo que Tankard hace con cada uno al ejecutar brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOMEBREW_* 設定と、Tankard が brew を実行するときの各設定の扱い。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 HOMEBREW_* 设置，以及 Tankard 运行 brew 时如何处理每一项。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seus ajustes HOMEBREW_* e o que o Tankard faz com cada um ao executar o brew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le tue impostazioni HOMEBREW_* e cosa ne fa Tankard quando esegue brew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOMEBREW_* 설정과 Tankard가 brew를 실행할 때 각 설정을 처리하는 방식."
+          }
+        }
+      }
+    },
     "Your PATH finds other tools before Homebrew's": {
       "localizations": {
         "de": {
@@ -54106,6 +54886,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 경고 1개를 출력함 (%@)"
+          }
+        }
+      }
+    },
+    "brew reads brew.env files itself, so a setting there reaches brew whatever this list says.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew liest brew.env-Dateien selbst; Einstellungen dort gelten unabhängig von dieser Liste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew lit lui-même les fichiers brew.env : un réglage qui s'y trouve s'applique quelle que soit cette liste."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew lee los archivos brew.env por sí mismo, así que un ajuste ahí llega a brew diga lo que diga esta lista."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew は brew.env ファイルを自分で読み込むため、そこにある設定はこの一覧に関係なく brew に適用されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 会自行读取 brew.env 文件，因此其中的设置无论此列表如何都会生效。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew lê os arquivos brew.env sozinho, então um ajuste neles chega ao brew independentemente desta lista."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew legge da solo i file brew.env, quindi un'impostazione lì arriva a brew qualunque cosa dica questo elenco."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew는 brew.env 파일을 직접 읽으므로, 거기 있는 설정은 이 목록과 관계없이 brew에 적용됩니다."
           }
         }
       }
