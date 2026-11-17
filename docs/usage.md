@@ -58,9 +58,13 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
     "Scanned N · found M" (or "partial scan", "Scan stopped", "Scan timed out").
   - The More pop-up next to the segments (⚠ and the count when anything is vulnerable)
     has **Pinned**, **Requested only**, **Vulnerable**, **Has notes** and **Deprecated**. In Vulnerable,
-    the green **Upgrade N** runs the normal upgrade (plan sheet, queue) for the vulnerable
+    the green **Upgrade N** (in the filter's header) runs the normal upgrade (plan sheet, queue) for the vulnerable
     packages that have an upgrade; pinned ones are left out. Its tooltip names the ones
-    with no upgrade yet.
+    with no upgrade yet. A header above the list shows the last scan ("Scanned 42 · found 2
+    · 5 min ago", or "Not scanned yet") with **Scan Now**, or, while a scan runs, its
+    progress and **Stop**. When the list is empty it says why ("No scan yet", "No known
+    vulnerabilities", "Scan failed") and offers Scan Now there too. It is the same scan as
+    Homebrew ▸ Scan for Vulnerabilities, and greys out when that does.
   - The scan is cached for an hour (`insights.json` next to `status.json`) and, with the
     setting on, runs again after a manual refresh and after every install, upgrade or
     uninstall. A scan still running after 60 seconds is stopped (brew's whole process

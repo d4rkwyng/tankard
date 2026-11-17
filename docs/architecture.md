@@ -363,6 +363,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_PINNED=a,b` | Demo only: these start pinned. |
 | `TANKARD_DEMO_MANAGE=revert\|uninstall` | Demo only: open that Homebrew menu sheet; `TANKARD_DEMO_TYPED=<word>` pre-types the confirmation. |
 | `TANKARD_FILTER=vulnerable\|notes` | 0.4: the Vulnerable or Has notes filter on launch. |
+| `TANKARD_DEMO_SCAN=1\|slow\|off` | Demo only: scan for vulnerabilities at launch (`slow`: the scan takes 30 s, to show its progress); `off`: no scan at all, not even on refresh (the Vulnerable filter's "No scan yet"). |
 | `TANKARD_DEMO_NOTES=1` | 0.4, demo only: upgrade everything, close the finished sheet; the post-install notes follow. |
 | `TANKARD_DEMO_VULN_NOTICE=1` | 0.4, demo only: the menu-bar vulnerability notice on, with nothing seen yet. |
 | `TANKARD_SELF_UPDATING=1` | 0.4, demo only: "Include self-updating apps" on. |

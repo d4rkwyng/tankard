@@ -108,6 +108,10 @@ struct ContentView: View {
             if store.tab == .installed {
                 SummaryStrip(store: store)
                 Divider()
+                if store.filter == .vulnerable {
+                    VulnerableScanBar(store: store)
+                    Divider()
+                }
                 if let error = store.error {
                     ErrorBanner(error: error) { store.dismissError() }
                     Divider()
@@ -421,7 +425,8 @@ struct FilterActions: View {
                 .help("brew reinstall --force-bottle --formula each one, through the queue")
             }
         case .vulnerable:
-            VulnerableFilterActions(store: store)
+            // In the filter's own header (VulnerableScanBar).
+            EmptyView()
         default:
             EmptyView()
         }
@@ -526,7 +531,9 @@ struct PackageTable: View {
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay {
-            if store.report != nil && rows.isEmpty {
+            if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
+                VulnerableEmptyState(store: store)
+            } else if store.report != nil && rows.isEmpty {
                 ContentUnavailableView(store.search.isEmpty ? String(localized: "Nothing here") : String(localized: "No matches"),
                                        systemImage: store.search.isEmpty ? "tray" : "magnifyingglass",
                                        description: Text(store.search.isEmpty ? String(localized: "No packages in this group.") : String(localized: "No package matches “\(store.search)”.")))

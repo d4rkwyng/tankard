@@ -523,6 +523,7 @@
 "No dependencies" = "Sin dependencias";
 "No fix listed" = "No hay corrección indicada";
 "No installs recorded" = "Sin instalaciones registradas";
+"No known vulnerabilities" = "Sin vulnerabilidades conocidas";
 "No known vulnerabilities (brew vulns)." = "Sin vulnerabilidades conocidas (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Ya no está en el Cellar: %@. brew cleanup la eliminó después de crear esta lista, así que no se puede revertir y se quitó de la restauración. Todavía no se ha ejecutado nada. Revisa los comandos y vuelve a hacer clic en Restaurar.";
 "No longer needed by anything: %@" = "Ya no las necesita nada: %@";
@@ -530,6 +531,7 @@
 "No package matches “%@”." = "Ningún paquete coincide con “%@”.";
 "No packages in this group." = "No hay paquetes en este grupo.";
 "No restore points yet. One is saved before the next upgrade." = "Aún no hay puntos de restauración. Se guarda uno antes de la próxima actualización.";
+"No scan yet" = "Sin análisis aún";
 "No service matches “%@”." = "Ningún servicio coincide con “%@”.";
 "No services" = "Sin servicios";
 "No vulnerable package has an upgrade yet." = "Ningún paquete vulnerable tiene aún una actualización.";
@@ -694,6 +696,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "Ejecuta brew update y busca actualizaciones en segundo plano. Solo aparece una notificación cuando surgen nuevas actualizaciones. Desactivado por defecto.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "Ejecuta primero brew update y luego actualiza un paquete a la vez mediante la cola de Tankard.";
 "Runs brew vulns after each refresh. " = "Ejecuta brew vulns tras cada actualización. ";
+"Runs brew vulns once now." = "Ejecuta brew vulns una vez ahora.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Se ejecuta solo mientras Tankard está abierto, con la corriente conectada, tras %lld minutos sin actividad de teclado ni ratón. Una ejecución perdida (el Mac estaba en reposo o Tankard no estaba abierto) se hace una vez, en la siguiente oportunidad. Desactivado por defecto.";
 "Safe mode (always on):" = "Modo seguro (siempre activo):";
 "Safe mode: bottles only; skips pinned packages and running apps." = "Modo seguro: solo bottles; omite paquetes fijados y apps en ejecución.";
@@ -703,6 +706,7 @@
 "Saves what is installed now as a restore point" = "Guarda lo que hay instalado ahora como punto de restauración";
 "Scan Again" = "Volver a analizar";
 "Scan Now" = "Analizar ahora";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "«Analizar ahora» ejecuta brew vulns para encontrar fórmulas instaladas con vulnerabilidades conocidas.";
 "Scan failed" = "Falló el análisis";
 "Scan for Vulnerabilities" = "Buscar vulnerabilidades";
 "Scan for vulnerabilities when refreshing" = "Buscar vulnerabilidades al actualizar";
@@ -819,6 +823,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "El instalador pide tu contraseña y se ejecuta en Terminal. Cuando termine, vuelve y haz clic en Comprobar de nuevo.";
 "The last %lld are kept in Application Support." = "Se conservan los últimos %lld en Application Support.";
 "The last %lld automatic runs. brew's full output is in %@." = "Las últimas %lld ejecuciones automáticas. La salida completa de brew está en %@.";
+"The last scan (%@) found none." = "El último análisis (%@) no encontró ninguna.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "El icono de la barra de menús está desactivado, así que Tankard se cierra al cerrar su ventana y entonces no se ejecuta nada.";
 "The official installer from brew.sh." = "El instalador oficial de brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "La versión anterior sigue instalada. brew uninstall quita la nueva y luego brew link enlaza la anterior.";

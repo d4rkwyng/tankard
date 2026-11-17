@@ -27537,6 +27537,58 @@
         }
       }
     },
+    "No known vulnerabilities": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine bekannten Schwachstellen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune vulnérabilité connue"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin vulnerabilidades conocidas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "既知の脆弱性はありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有已知漏洞"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma vulnerabilidade conhecida"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna vulnerabilità nota"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알려진 취약점 없음"
+          }
+        }
+      }
+    },
     "No known vulnerabilities (brew vulns).": {
       "localizations": {
         "de": {
@@ -27897,6 +27949,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "아직 복원 지점이 없습니다. 다음 업그레이드 전에 하나가 저장됩니다."
+          }
+        }
+      }
+    },
+    "No scan yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Scan"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune analyse"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin análisis aún"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだスキャンしていません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未扫描"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma verificação ainda"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna scansione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 검사 안 함"
           }
         }
       }
@@ -36429,6 +36533,58 @@
         }
       }
     },
+    "Runs brew vulns once now.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Führt brew vulns jetzt einmal aus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lance brew vulns une fois maintenant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecuta brew vulns una vez ahora."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew vulns を今すぐ1回実行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即运行一次 brew vulns。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executa brew vulns uma vez agora."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegue brew vulns una volta ora."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 brew vulns를 한 번 실행합니다."
+          }
+        }
+      }
+    },
     "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.": {
       "localizations": {
         "de": {
@@ -36893,6 +37049,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "지금 검사"
+          }
+        }
+      }
+    },
+    "Scan Now runs brew vulns to find installed formulae with known vulnerabilities.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Jetzt scannen“ führt brew vulns aus und findet installierte Formeln mit bekannten Schwachstellen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Analyser maintenant » lance brew vulns pour trouver les formules installées ayant des vulnérabilités connues."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Analizar ahora» ejecuta brew vulns para encontrar fórmulas instaladas con vulnerabilidades conocidas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「今すぐスキャン」は brew vulns を実行し、既知の脆弱性があるインストール済みフォーミュラを探します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“立即扫描”会运行 brew vulns，查找存在已知漏洞的已安装 formula。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Verificar Agora” executa brew vulns para encontrar fórmulas instaladas com vulnerabilidades conhecidas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Scansiona ora» esegue brew vulns per trovare le formule installate con vulnerabilità note."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "'지금 검사'는 brew vulns를 실행해 알려진 취약점이 있는 설치된 포뮬러를 찾습니다."
           }
         }
       }
@@ -42925,6 +43133,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "최근 자동 실행 %lld건. brew의 전체 출력은 %@에 있습니다."
+          }
+        }
+      }
+    },
+    "The last scan (%@) found none.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der letzte Scan (%@) hat keine gefunden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La dernière analyse (%@) n’en a trouvé aucune."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El último análisis (%@) no encontró ninguna."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前回のスキャン（%@）では見つかりませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次扫描（%@）未发现任何漏洞。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A última verificação (%@) não encontrou nenhuma."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’ultima scansione (%@) non ne ha trovate."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마지막 검사(%@)에서 발견되지 않았습니다."
           }
         }
       }

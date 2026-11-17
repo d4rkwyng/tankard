@@ -523,6 +523,7 @@
 "No dependencies" = "Nessuna dipendenza";
 "No fix listed" = "Nessuna correzione indicata";
 "No installs recorded" = "Nessuna installazione registrata";
+"No known vulnerabilities" = "Nessuna vulnerabilità nota";
 "No known vulnerabilities (brew vulns)." = "Nessuna vulnerabilità nota (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Non più nel Cellar: %@. brew cleanup l’ha rimossa dopo la creazione di questo elenco, quindi non può essere ripristinata ed è stata tolta dal ripristino. Non è stato ancora eseguito nulla. Controlla i comandi e fai di nuovo clic su Ripristina.";
 "No longer needed by anything: %@" = "Non più necessarie a nulla: %@";
@@ -530,6 +531,7 @@
 "No package matches “%@”." = "Nessun pacchetto corrisponde a “%@”.";
 "No packages in this group." = "Nessun pacchetto in questo gruppo.";
 "No restore points yet. One is saved before the next upgrade." = "Ancora nessun punto di ripristino. Ne viene salvato uno prima del prossimo aggiornamento.";
+"No scan yet" = "Nessuna scansione";
 "No service matches “%@”." = "Nessun servizio corrisponde a “%@”.";
 "No services" = "Nessun servizio";
 "No vulnerable package has an upgrade yet." = "Nessun pacchetto vulnerabile ha ancora un aggiornamento.";
@@ -694,6 +696,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "Esegue brew update e cerca aggiornamenti in background. Una notifica compare solo quando ci sono nuovi aggiornamenti. Disattivato per impostazione predefinita.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "Esegue prima brew update, poi aggiorna un pacchetto alla volta tramite la coda di Tankard.";
 "Runs brew vulns after each refresh. " = "Esegue brew vulns dopo ogni aggiornamento. ";
+"Runs brew vulns once now." = "Esegue brew vulns una volta ora.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Viene eseguito solo mentre Tankard è in esecuzione, con alimentazione di rete, dopo %lld minuti senza input da tastiera o mouse. Un'esecuzione saltata (il Mac era in stop o Tankard non era aperto) avviene una sola volta, alla prima occasione utile. Disattivato per impostazione predefinita.";
 "Safe mode (always on):" = "Modalità sicura (sempre attiva):";
 "Safe mode: bottles only; skips pinned packages and running apps." = "Modalità sicura: solo bottle; salta i pacchetti bloccati e le app in esecuzione.";
@@ -703,6 +706,7 @@
 "Saves what is installed now as a restore point" = "Salva ciò che è installato ora come punto di ripristino";
 "Scan Again" = "Ripeti scansione";
 "Scan Now" = "Scansiona ora";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "«Scansiona ora» esegue brew vulns per trovare le formule installate con vulnerabilità note.";
 "Scan failed" = "Scansione non riuscita";
 "Scan for Vulnerabilities" = "Cerca vulnerabilità";
 "Scan for vulnerabilities when refreshing" = "Cerca vulnerabilità all'aggiornamento";
@@ -819,6 +823,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "Il programma di installazione chiede la tua password e viene eseguito nel Terminale. Al termine, torna qui e clicca su Controlla di nuovo.";
 "The last %lld are kept in Application Support." = "Gli ultimi %lld sono conservati in Application Support.";
 "The last %lld automatic runs. brew's full output is in %@." = "Le ultime %lld esecuzioni automatiche. L'output completo di brew è in %@.";
+"The last scan (%@) found none." = "L’ultima scansione (%@) non ne ha trovate.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "L'icona nella barra dei menu è disattivata, quindi Tankard si chiude quando chiudi la sua finestra, e nulla viene eseguito.";
 "The official installer from brew.sh." = "Il programma di installazione ufficiale da brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "La vecchia versione è ancora installata. brew uninstall rimuove la nuova, poi brew link collega la vecchia.";

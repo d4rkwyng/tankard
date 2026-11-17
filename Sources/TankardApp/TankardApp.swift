@@ -175,7 +175,10 @@ struct TankardApp: App {
         if !options.isDemo && options.snapshot == nil && options.script == nil { store.autoUpdate.conditions = SystemConditions() }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.
-        if options.demo != nil { store.insights.settings.scanVulnerabilitiesOnRefresh = true }
+        // TANKARD_DEMO_SCAN=off: no scan at all, to show "not scanned yet".
+        if options.demo != nil && ProcessInfo.processInfo.environment["TANKARD_DEMO_SCAN"] != "off" {
+            store.insights.settings.scanVulnerabilitiesOnRefresh = true
+        }
         appearance = AppearanceSettings(defaults: options.script.map { $0.defaults } ?? .standard, override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
