@@ -448,22 +448,22 @@ struct PackageTable: View {
                 }
                 .padding(.vertical, 3)
             }
-            .width(min: 150, ideal: 220)
+            .width(min: 150, ideal: 200)
 
             TableColumn("Installed", value: \Package.installedVersion, comparator: .localizedStandard) { p in
                 VersionText(text: p.installedVersion)
             }
-            .width(min: 70, ideal: 110)
+            .width(min: 80, ideal: 130)
 
             TableColumn("Available") { (p: Package) in
                 AvailableCell(package: p)
             }
-            .width(min: 70, ideal: 110)
+            .width(min: 80, ideal: 130)
 
             TableColumn("Source", value: \Package.statusLabel) { p in
                 SourceBadge(kind: p.badgeKind, label: p.badgeLabel(intelbrewMode: intelbrew))
             }
-            .width(min: 120, ideal: 170)
+            .width(min: 120, ideal: 130)
 
             TableColumn("Size", value: \Package.sizeSortKey) { p in
                 SizeCell(package: p)
@@ -503,10 +503,11 @@ struct AvailableCell: View {
             HStack(spacing: 3) {
                 Image(systemName: "arrow.up").font(.system(size: 10, weight: .bold))
                 Text(v).fontWeight(.semibold).monospacedDigit()
+                    .lineLimit(1).truncationMode(.middle)
             }
             .foregroundStyle(prominence == .increased && !theme.isCustom ? Color.white : theme.upgrade)
             .lineLimit(1)
-            .help("Upgrade available")
+            .help("Upgrade available: \(v)")
         } else {
             VersionText(text: v, same: true)
         }

@@ -110,9 +110,14 @@ struct PinBox: View {
                 .controlSize(.small)
                 .disabled(busy)
                 .help("\(command): brew upgrade and Upgrade all will skip it")
+                // Wraps rather than truncating: a long version (or the
+                // narrow detail pane at 1040x620) cut the sentence off.
                 Text("Keeps \(p.installedVersion); upgrades skip it")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .help("Keeps \(p.installedVersion); upgrades skip it")
                 if let running, running.hasPrefix("brew pin") {
                     ProgressView().controlSize(.small)
                 }

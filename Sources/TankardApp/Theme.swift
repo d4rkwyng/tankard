@@ -441,6 +441,7 @@ struct VersionText: View {
             .monospacedDigit()
             .lineLimit(1)
             .truncationMode(.middle)
+            .help(text)
     }
 }
 
