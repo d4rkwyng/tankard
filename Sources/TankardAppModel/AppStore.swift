@@ -799,6 +799,7 @@ public final class AppStore {
             requestUpgrade(r.packages)
         case .uninstall:
             showUpgradeSheet = false
+            // Single root: the uninstall sheet takes one package today; a future multi-select uninstall would need a loop here.
             guard let p = r.packages.first else { return }
             Task { @MainActor in
                 // The activity sheet closes first; the confirmation follows.
