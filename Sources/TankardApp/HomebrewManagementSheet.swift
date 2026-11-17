@@ -105,6 +105,11 @@ struct HomebrewManagementSheet: View {
                         Text(l).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
                             .lineLimit(1).truncationMode(.middle).textSelection(.enabled)
                     }
+                    if !e.isAutomatic {
+                        Text("Not edited: removing line \(e.emptiedBlockLines.map(String.init).joined(separator: ", ")) would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert.")
+                            .font(.system(size: 11)).foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 .padding(8)
                 .frame(maxWidth: .infinity, alignment: .leading)

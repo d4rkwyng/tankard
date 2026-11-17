@@ -117,6 +117,14 @@ public struct RevertPlan: Equatable, Sendable {
         /// "~/dotfiles/zshenv"
         public var targetLabel: String
         public var isSymlink: Bool { target != path }
+        /// 1-based numbers of removed lines that are the only command in an
+        /// if / while / until / for / select / `{ }` body of a bash startup
+        /// file: deleting them would leave an empty block, which bash
+        /// rejects (zsh accepts one). Such a file is not edited; the sheet
+        /// says to remove the lines by hand.
+        public var emptiedBlockLines: [Int] = []
+        /// The script backs up and edits this file.
+        public var isAutomatic: Bool { emptiedBlockLines.isEmpty }
         /// The lines that will be removed, exactly as they are in the file.
         public var lines: [String]
         public var id: String { path }
@@ -170,13 +178,92 @@ public struct RevertPlan: Equatable, Sendable {
             // Two profiles linked to one file: edit it once.
             let target = resolve(path)
             guard seenTargets.insert(target).inserted else { return nil }
-            return ProfileEdit(path: path, label: tilde(path), target: target, targetLabel: tilde(target), lines: lines)
+            let all = text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init)
+            let emptied = isZshFile(path) ? [] : emptiedBlocks(all)
+            return ProfileEdit(path: path, label: tilde(path), target: target, targetLabel: tilde(target),
+                               emptiedBlockLines: emptied, lines: lines)
         }
         let notes = brewEnvFiles.flatMap { (label, vars) in
             keys.filter { vars[$0] != nil }.map { "\(label): \($0)" }
         }
         return RevertPlan(edits: edits, brewEnvNotes: notes, repository: repository, brewPath: brewPath,
                           backupSuffix: HomebrewManagement.backupSuffix(date))
+    }
+
+    /// zsh's startup files (zsh runs an empty block; bash doesn't).
+    static func isZshFile(_ path: String) -> Bool {
+        [".zshenv", ".zprofile", ".zshrc", ".zlogin"].contains((path as NSString).lastPathComponent)
+    }
+
+    /// Line numbers (1-based) of lines `matches` would remove that are the
+    /// only command in a compound command's body (`then`, `else`, `do`,
+    /// `{`), so removing them leaves `then fi` or `{ }`: a bash syntax error.
+    /// A line-based reading of the shell, enough for startup files: keywords
+    /// count in command position, `#` starts a comment, quotes and here
+    /// documents aren't parsed. `case` bodies may be empty and aren't checked.
+    public static func emptiedBlocks(_ lines: [String]) -> [Int] {
+        struct Segment { var body: Bool; var content = false; var removed: [Int] = [] }
+        var stack: [Segment] = []   // the current segment of each open block
+        var found: [Int] = []
+        func finish() {
+            guard let seg = stack.last, seg.body, !seg.content, !seg.removed.isEmpty else { return }
+            found += seg.removed
+        }
+        func next(body: Bool) {
+            guard !stack.isEmpty else { return }
+            finish()
+            stack[stack.count - 1] = Segment(body: body)
+        }
+        func close() {
+            guard !stack.isEmpty else { return }
+            finish()
+            stack.removeLast()
+        }
+        for (i, line) in lines.enumerated() {
+            if matches(line) {
+                if !stack.isEmpty { stack[stack.count - 1].removed.append(i + 1) }
+                continue
+            }
+            // Tokens: words, with ; & | ( ) as their own tokens.
+            var tokens: [String] = []
+            var word = ""
+            for ch in line {
+                if ch == " " || ch == "\t" {
+                    if !word.isEmpty { tokens.append(word); word = "" }
+                } else if ";&|()".contains(ch) {
+                    if !word.isEmpty { tokens.append(word); word = "" }
+                    tokens.append(String(ch))
+                } else {
+                    word.append(ch)
+                }
+            }
+            if !word.isEmpty { tokens.append(word) }
+            var commandPosition = true
+            for t in tokens {
+                if t.hasPrefix("#") { break }
+                if ";&|()".contains(t) { commandPosition = true; continue }
+                guard commandPosition else {
+                    if !stack.isEmpty { stack[stack.count - 1].content = true }
+                    if t == "{" { stack.append(Segment(body: true)) }   // function f {
+                    continue
+                }
+                switch t {
+                case "if", "while", "until": stack.append(Segment(body: false))
+                case "for", "select", "case": stack.append(Segment(body: false)); commandPosition = false; continue
+                case "then", "do", "else": next(body: true)
+                case "elif": next(body: false)
+                case "{": stack.append(Segment(body: true))
+                case "fi", "done", "esac", "}": close()
+                case "!": break
+                default:
+                    if !stack.isEmpty { stack[stack.count - 1].content = true }
+                    commandPosition = false
+                    continue
+                }
+                commandPosition = true
+            }
+        }
+        return found
     }
 
     /// When `path` itself is a symlink, the file it finally points to
@@ -193,7 +280,7 @@ public struct RevertPlan: Equatable, Sendable {
     public var commands: [String] {
         let q = BrewCommands.shellQuoted
         var out: [String] = []
-        for e in edits {
+        for e in edits where e.isAutomatic {
             out.append("cp -p \(q(e.target)) \(q(e.target + "." + backupSuffix))")
             out.append("/usr/bin/sed -i '' -E \(q("/" + Self.sedPattern + "/d")) \(q(e.target))")
         }
@@ -216,6 +303,10 @@ public struct RevertPlan: Equatable, Sendable {
 
         """
         for c in commands { s += "echo \(BrewCommands.shellQuoted("  " + c))\n" }
+        for e in edits where !e.isAutomatic {
+            let where_ = "line" + (e.emptiedBlockLines.count == 1 ? " " : "s ") + e.emptiedBlockLines.map(String.init).joined(separator: ", ")
+            s += "echo \(BrewCommands.shellQuoted("  Not edited: \(e.label) (\(where_) would leave an empty block). Remove its Intelbrew lines by hand."))\n"
+        }
         s += """
         echo
         read -r -p "Press Return to continue, or close this window to cancel. "

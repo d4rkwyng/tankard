@@ -413,6 +413,61 @@ struct HomebrewManagementTests {
         #expect(try String(contentsOfFile: linked.target + "." + p.backupSuffix, encoding: .utf8) == bashrcText)
     }
 
+    /// Removing the only line in an if/fi (or loop, or { }) body would leave
+    /// broken bash. Such a file is left for the user, with a warning; a
+    /// block that keeps another command, a one-liner and zsh files are fine.
+    @Test func emptiedBlocksAreDetected() throws {
+        let x = "export HOMEBREW_NO_INSTALL_FROM_API=1"
+        #expect(RevertPlan.emptiedBlocks(["if [ -x /usr/local/bin/brew ]; then", "  \(x)", "fi"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["if [ -x /usr/local/bin/brew ]", "then", "  \(x)", "  export HOMEBREW_CORE_GIT_REMOTE=y", "fi"]) == [3, 4])
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  \(x)", "  export PATH=/x:$PATH", "fi"]).isEmpty)
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  echo a", "else", "  \(x)  # intelbrew", "fi"]) == [4])
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  \(x)", "elif false; then", "  echo b", "fi"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["brewenv() {", "  \(x)", "}"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["function brewenv {", "  \(x)", "}"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["for f in a b; do", "  \(x)", "done"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["while read -r l; do", "  # just a comment", "  \(x)", "done < f"]) == [3])
+        #expect(RevertPlan.emptiedBlocks(["case $TERM in", "  xterm) \(x) ;;", "esac"]).isEmpty)   // not a removable line
+        #expect(RevertPlan.emptiedBlocks(["case $TERM in", "  xterm)", "    \(x)", "    ;;", "esac"]).isEmpty) // empty case arm is fine
+        #expect(RevertPlan.emptiedBlocks(["if true; then echo done; fi", x, "echo if then fi"]).isEmpty)
+        #expect(RevertPlan.emptiedBlocks([x, "export PATH=x"]).isEmpty)
+        // Nested: the inner body empties, the outer keeps the inner if.
+        #expect(RevertPlan.emptiedBlocks(["if a; then", "  if b; then", "    \(x)", "  fi", "fi"]) == [3])
+
+        // Every case above that is flagged really is a bash syntax error
+        // after sed, and every unflagged one isn't.
+        let cases: [[String]] = [
+            ["if [ -x /usr/local/bin/brew ]; then", "  \(x)", "fi"],
+            ["brewenv() {", "  \(x)", "}"],
+            ["for f in a b; do", "  \(x)", "done"],
+            ["if true; then", "  \(x)", "  export PATH=/x:$PATH", "fi"],
+            ["case $TERM in", "  xterm)", "    \(x)", "    ;;", "esac"],
+        ]
+        for c in cases {
+            let kept = c.filter { !RevertPlan.matches($0) }.joined(separator: "\n") + "\n"
+            let proc = Process()
+            proc.executableURL = URL(fileURLWithPath: "/bin/bash")
+            proc.arguments = ["-n", "-c", kept]
+            proc.standardError = FileHandle.nullDevice
+            try proc.run()
+            proc.waitUntilExit()
+            #expect((proc.terminationStatus != 0) == !RevertPlan.emptiedBlocks(c).isEmpty, "\(c)")
+        }
+
+        // In a plan: the bash file is reported, not edited; the zsh file
+        // (zsh runs an empty block) and a plain file are edited.
+        let block = "if [ -d /usr/local ]; then\n  \(x)\nfi\n"
+        let p = plan(["\(home)/.bashrc": block, "\(home)/.zshrc": block, "\(home)/.bash_profile": x + "\n"])
+        let bashrc = try #require(p.edits.first { $0.label == "~/.bashrc" })
+        #expect(!bashrc.isAutomatic && bashrc.emptiedBlockLines == [2])
+        #expect(p.edits.first { $0.label == "~/.zshrc" }?.isAutomatic == true)
+        #expect(p.edits.first { $0.label == "~/.bash_profile" }?.isAutomatic == true)
+        #expect(!p.commands.contains { $0.contains("/.bashrc") })
+        #expect(p.commands.contains { $0.hasSuffix("/Users/test/.zshrc") })
+        #expect(p.commands.contains { $0.hasSuffix("/Users/test/.bash_profile") })
+        #expect(p.script.contains("Not edited: ~/.bashrc (line 2 would leave an empty block)"))
+    }
+
     @Test func linkedProfilesAreEditedOnce() {
         // .bash_profile and .bashrc both link to one file: one backup, one edit.
         let p = RevertPlan.make(home: home, zdotdir: nil, repository: "/r", brewPath: "/b", brewEnvFiles: [],
