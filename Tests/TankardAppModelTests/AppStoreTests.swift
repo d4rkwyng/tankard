@@ -201,8 +201,9 @@ struct AppStoreTests {
 
     @Test func stopAfterCurrentSkipsTheRest() async throws {
         let gate = Latch()
-        let r = try rig { _, output in
-            await gate.wait()
+        // 0.8.3: the prefetch (`brew fetch`) runs through; the first upgrade waits.
+        let r = try rig { args, output in
+            if args.first == "upgrade" { await gate.wait() }
             return 0
         }
         defer { try? FileManager.default.removeItem(at: r.dir) }
@@ -219,7 +220,8 @@ struct AppStoreTests {
     }
 
     @Test func stopNowCancelsTheRunningCommand() async throws {
-        let r = try rig { _, _ in
+        let r = try rig { args, _ in
+            if args.first == "fetch" { return 0 }
             try await sleepUntilCancelled()
             return 0
         }

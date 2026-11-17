@@ -904,6 +904,11 @@ public final class AppStore {
             chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
             skipCheck: skipCheck,
             downloads: deps.downloadMonitor?(client, env),
+            // 0.8.3: several packages: one `brew fetch` downloads them all first, in parallel.
+            prefetch: Prefetch.steps(action, targets) { [concurrency = Prefetch.environment(brewSources)] args in
+                QueuedCommand(executable: brew, arguments: args, environment: env.merging(concurrency) { $1 },
+                              display: BrewCommands.display(args, environment: concurrency))
+            },
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })

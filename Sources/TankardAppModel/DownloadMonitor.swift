@@ -11,6 +11,9 @@ public struct DownloadMonitor: Sendable {
     /// URLs a package's command may download (a cask's `url`), for the HEAD
     /// request that gives the total. Asked once per command, after it starts.
     public var urls: @Sendable (Package) async -> [String]
+    /// 0.8.3: the same for a `brew fetch` of several packages (one `brew
+    /// info` for all the casks). nil: `urls` for each, one after another.
+    public var batchURLs: (@Sendable ([Package]) async -> [String])?
     public var reader: DownloadFolderReading
     public var lengths: ContentLengthFetching?
     public var interval: Duration
@@ -18,16 +21,26 @@ public struct DownloadMonitor: Sendable {
 
     public init(directory: @escaping @Sendable () async -> String?,
                 urls: @escaping @Sendable (Package) async -> [String] = { _ in [] },
+                batchURLs: (@Sendable ([Package]) async -> [String])? = nil,
                 reader: DownloadFolderReading = LiveDownloadFolder(),
                 lengths: ContentLengthFetching? = nil,
                 interval: Duration = .milliseconds(250),
                 now: @escaping @Sendable () -> Date = { Date() }) {
         self.directory = directory
         self.urls = urls
+        self.batchURLs = batchURLs
         self.reader = reader
         self.lengths = lengths
         self.interval = interval
         self.now = now
+    }
+
+    /// The URLs any of `packages` may download.
+    public func urlsFor(_ packages: [Package]) async -> [String] {
+        if packages.count > 1, let batchURLs { return await batchURLs(packages) }
+        var out: [String] = []
+        for p in packages { out += await urls(p) }
+        return out
     }
 
     /// The sheet runs that download something.
@@ -64,6 +77,14 @@ public struct DownloadMonitor: Sendable {
                 case .formula:
                     return p.bottleURL.map { [$0] } ?? []
                 }
+            },
+            batchURLs: { packages in
+                let casks = packages.filter { $0.kind == .cask }.map(\.fullName)
+                var out = packages.filter { $0.kind == .formula }.compactMap(\.bottleURL)
+                if !casks.isEmpty, let info = try? await client.info(casks, kind: .cask, env: env) {
+                    out += info.casks.compactMap(\.url)
+                }
+                return out
             },
             lengths: HTTPContentLength())
     }

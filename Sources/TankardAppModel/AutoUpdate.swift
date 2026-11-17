@@ -763,6 +763,8 @@ public final class AutoUpdater {
         for s in plan.skipped { logFile?.append(["tankard: skipped \(s.package.name): \(s.reason.text)"]) }
         // 0.7: a restore point before the run upgrades anything.
         if !plan.run.isEmpty { store.saveRestorePoint(.autoUpdate, upgrading: plan.run) }
+        // 0.8.3: the downloads first, in parallel (quietly: the log only).
+        await prefetch(plan.run, store: store, logFile: logFile)
         for p in plan.run {
             guard settings.enabled else {
                 record.note = String(localized: "Stopped: auto-update was turned off during the run")
@@ -809,6 +811,34 @@ public final class AutoUpdater {
     }
 
     static func versions(_ p: Package) -> String { "\(p.installedVersion) → \(p.currentVersion ?? "?")" }
+
+    /// 0.8.3: one `brew fetch` per kind with two or more packages (Prefetch.swift),
+    /// through the queue, with safe mode's environment. A failure is only
+    /// logged: each upgrade downloads what's missing itself.
+    private func prefetch(_ run: [Package], store: AppStore, logFile: LogFile?) async {
+        guard let client = try? store.resolvedClient(), let detection = store.report?.intelbrew else { return }
+        let concurrency = Prefetch.environment(store.brewSources)
+        let env = client.environment(for: detection, readOnly: false)
+            .merging(["HOMEBREW_NO_AUTO_UPDATE": "1", "HOMEBREW_NO_ASK": "1"]) { $1 }
+            .merging(concurrency) { $1 }
+        let steps = Prefetch.steps(.upgrade, run) { args in
+            QueuedCommand(executable: client.installation.brewPath, arguments: args, environment: env,
+                          display: BrewCommands.display(args, environment: concurrency))
+        }
+        for step in steps {
+            guard settings.enabled else { return }
+            activity = String(localized: "Auto-update: downloading \(step.targets.count) packages")
+            logFile?.append(["$ \(step.command.display)"])
+            let collector = OutputCollector()
+            do {
+                let code = try await store.queue.run(step.command) { collector.add($0) }
+                logFile?.append(collector.lines())
+                if code != 0 { logFile?.append(["tankard: brew fetch exited with status \(code); each upgrade downloads what's missing itself"]) }
+            } catch {
+                logFile?.append(collector.lines() + ["tankard: could not run brew fetch: \(error)"])
+            }
+        }
+    }
 
     /// `brew upgrade` for one package through the queue (the same strict
     /// FIFO as every other brew command), with safe mode's environment.

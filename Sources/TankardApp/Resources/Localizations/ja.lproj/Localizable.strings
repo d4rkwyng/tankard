@@ -213,6 +213,7 @@
 "Auto-update failed" = "自動アップデートに失敗しました";
 "Auto-update log" = "自動アップデートのログ";
 "Auto-update: brew update" = "自動アップデート: brew update";
+"Auto-update: downloading %lld packages" = "自動アップデート: %lld 個のパッケージをダウンロード中";
 "Auto-update: upgrading %@" = "自動アップデート: %@ をアップグレード中";
 "Automatic updates" = "自動アップデート";
 "Automatically upgrade:" = "自動的にアップグレード:";
@@ -338,6 +339,7 @@
 "Download" = "ダウンロード";
 "Download cache" = "ダウンロードキャッシュ";
 "Downloading %@…" = "%@をダウンロード中…";
+"Downloading %lld of %lld" = "ダウンロード中 %lld / %lld";
 "Downloads" = "ダウンロード";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Draculaカラー(draculatheme.com、MIT)";
