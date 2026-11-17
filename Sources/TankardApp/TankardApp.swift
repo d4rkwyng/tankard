@@ -267,6 +267,9 @@ struct HomebrewCommands: View {
         }
         Button(HomebrewManagement.Kind.uninstall.title) { store.requestManagement(.uninstall) }
             .disabled(store.isBusy || store.report == nil)
+        // 0.6: Export Brewfile…, Check a Brewfile…
+        Divider()
+        BrewfileMenuItems(store: store)
     }
 }
 

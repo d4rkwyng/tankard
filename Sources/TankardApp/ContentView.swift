@@ -137,6 +137,9 @@ struct ContentView: View {
         .sheet(item: $store.managementSheet) { kind in
             HomebrewManagementSheet(store: store, kind: kind, isDemo: options.isDemo).themed(theme)
         }
+        .sheet(isPresented: BrewfileSheet.binding(store.brewfile)) {
+            BrewfileSheet(store: store, brewfile: store.brewfile).themed(theme)
+        }
         .sheet(isPresented: $store.showAutoUpdateLog) {
             AutoUpdateLogView(log: store.autoUpdate.log) { store.showAutoUpdateLog = false }.themed(theme)
         }
@@ -177,6 +180,7 @@ struct ContentView: View {
     private func applyLaunchOptions() async {
         if let f = options.filter { store.filter = f }
         await applyV04ALaunchOptions(store: store, options: options)
+        await applyBrewfileLaunchOption(store: store, options: options)
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
