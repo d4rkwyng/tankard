@@ -41,8 +41,25 @@ struct V07TapsCoreTests {
         for bad in ["steipete", "a/b/c", "-x/tap", "user/-repo", "user /repo", "user/re po", "user/..", "../etc", "user/repo;rm"] {
             #expect(TapInput.problem(name: bad) == .badName, "\(bad)")
         }
-        for bad in ["github.com/me/tools", "https://x y", "--force", "ftp//x", "javascript:alert(1)"] {
+        for bad in ["github.com/me/tools", "https://x y", "--force", "ftp//x", "javascript:alert(1)",
+                    // Nothing that starts with '-' reaches brew's argv as a URL.
+                    "-f@x:y", "--force@x:y", "-@x:y", ".@x:y", "-oProxyCommand@x:y", "git@-oProxyCommand:x",
+                    "git@.host:x", "-https://x", " -f@x:y"] {
             #expect(TapInput.problem(name: "me/tools", url: bad) == .badURL, "\(bad)")
+        }
+        #expect(ok("me/tools", "_svc@git.example.com:me/tools.git"))
+        #expect(ok("me/tools", "git@10.0.0.2:me/tools.git"))
+        // Names: neither part can start with '-' (or '.', or '_').
+        for bad in ["--force/tap", "-/tap", "user/--force", ".x/tap", "user/_repo", "_x/tap"] {
+            #expect(TapInput.problem(name: bad) == .badName, "\(bad)")
+        }
+        // Whatever passes never starts with '-' in either argv element.
+        for (n, u) in [("a/b", "x@y:z"), ("a1/b-c", "https://e.com/a"), ("a/b", "file:///tmp/t")] {
+            if case .success(let v) = TapInput.validate(name: n, url: u) {
+                #expect(!v.name.hasPrefix("-") && !(v.url ?? "").hasPrefix("-"))
+            } else {
+                Issue.record("expected \(n) \(u) to pass")
+            }
         }
         if case .success(let v) = TapInput.validate(name: " a/b ", url: " https://e.com/a/b ") {
             #expect(v.name == "a/b" && v.url == "https://e.com/a/b")

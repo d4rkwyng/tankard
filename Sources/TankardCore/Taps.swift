@@ -134,8 +134,12 @@ public enum TapInput {
     /// `user/repo`; neither part may start with '-', so it can never read
     /// as a flag.
     static let nameRegex = #"^[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*$"#
-    /// A git URL brew's two-argument form accepts.
-    static let urlRegex = #"^((https?|ssh|git|file)://[^\s]+|[A-Za-z0-9_.-]+@[A-Za-z0-9.-]+:[^\s]+)$"#
+    /// A git URL brew's two-argument form accepts. It becomes an argv
+    /// element of `brew tap` (and git's), so it can never start with '-':
+    /// the scheme form starts with a letter, and in user@host:path both
+    /// the user and the host start with a letter, digit or '_' (an ssh host
+    /// starting with '-' would read as an ssh option).
+    static let urlRegex = #"^((https?|ssh|git|file)://[^\s]+|[A-Za-z0-9_][A-Za-z0-9_.-]*@[A-Za-z0-9_][A-Za-z0-9.-]*:[^\s]+)$"#
 
     /// The cleaned name and URL, or what's wrong. The URL is optional.
     public static func validate(name: String, url: String = "") -> Result<(name: String, url: String?), Problem> {
