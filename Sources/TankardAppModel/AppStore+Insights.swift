@@ -31,9 +31,13 @@ extension AppStore {
 
     /// Starts the background reads for this brew (sizes; the vulnerability
     /// scan when that setting is on).
-    func startInsights(force: Bool) {
+    ///
+    /// `measureSizes` false: the caller already started `brew info --sizes`
+    /// (0.8: beside the status read) or nothing changed on disk.
+    func startInsights(force: Bool, measureSizes: Bool = true) {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        insights.refresh(client: client, env: client.environment(for: detection), force: force, formulae: formulaCount)
+        insights.refresh(client: client, env: client.environment(for: detection), force: force, formulae: formulaCount,
+                         measureSizes: measureSizes)
     }
 
     /// "Scan now": `brew vulns --json`, whatever the setting.
@@ -43,16 +47,24 @@ extension AppStore {
         insights.scanVulnerabilities(client: client, env: client.environment(for: detection), formulae: formulaCount)
     }
 
-    /// With "Include self-updating apps" on: the casks `brew outdated
-    /// --greedy` adds. A failure keeps brew's normal list and says so.
-    func withSelfUpdatingCasks(_ report: StatusReport, client: BrewClient) async -> StatusReport {
-        guard insights.settings.includeSelfUpdatingApps, report.packages.contains(where: { $0.kind == .cask }) else {
-            return report
-        }
+    /// With "Include self-updating apps" on: `brew outdated --greedy`, run
+    /// beside the status read (0.8; it was run after it).
+    nonisolated static func readGreedy(_ client: BrewClient, env: [String: String]) async -> Result<BrewOutdatedJSON, Error> {
         do {
-            let greedy = try await client.greedyOutdatedCasks(env: client.environment(for: report.intelbrew))
-            return SelfUpdatingCasks.mark(report, greedy: greedy)
+            return .success(try await client.greedyOutdatedCasks(env: env))
         } catch {
+            return .failure(error)
+        }
+    }
+
+    /// The casks `brew outdated --greedy` adds (nil: the setting is off).
+    /// A failure keeps brew's normal list and says so.
+    nonisolated static func markSelfUpdating(_ report: StatusReport, greedy: Result<BrewOutdatedJSON, Error>?) -> StatusReport {
+        guard let greedy, report.packages.contains(where: { $0.kind == .cask }) else { return report }
+        switch greedy {
+        case .success(let g):
+            return SelfUpdatingCasks.mark(report, greedy: g)
+        case .failure(let error):
             var r = report
             r.warnings.append(String(localized: "Self-updating apps not checked: \(String(describing: error))"))
             return r

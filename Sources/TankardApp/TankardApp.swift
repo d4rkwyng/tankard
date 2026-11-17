@@ -142,7 +142,7 @@ struct TankardApp: App {
     init() {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
-        let deps: AppStore.Dependencies
+        var deps: AppStore.Dependencies
         if let hw = options.noBrew {
             deps = Demo.noBrewDependencies(hardware: hw)
         } else {
@@ -152,6 +152,9 @@ struct TankardApp: App {
             } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
+        // 0.8: no background brew update in a snapshot run (a shot of real
+        // data must not change under it). Demo dependencies never have it.
+        if options.snapshot != nil { deps.backgroundUpdates = false }
         // Demo runs never touch the real settings.
         let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral() : AppSettings()
         if let v = ProcessInfo.processInfo.environment["TANKARD_MENUBAR"] { settings.showMenuBarIcon = v != "0" }

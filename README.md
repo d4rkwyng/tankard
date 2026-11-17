@@ -98,16 +98,20 @@ brew only changes things when you ask:
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
 | Start / Stop / Restart (Services) | `brew services start\|stop\|restart -- <name>` |
 
-Reads that change nothing also run after each status read (in the background, cached for
-an hour like status): `brew info --sizes`, `brew vulns --json` (only once you turn on
+Reads that change nothing also run with each status read (side by side with `brew info`;
+the list appears first and sizes fill in; cached for an hour like status): `brew info --sizes`, `brew vulns --json` (only once you turn on
 "Scan for vulnerabilities when refreshing" in Settings → Upgrades, off by default; "Scan
 for Vulnerabilities Now" is always there; a scan is stopped after a minute), and, with
 "Include self-updating apps" on, `brew outdated --greedy --cask --json=v2`. With "Don't
 quit running apps during upgrades" on, cask upgrades run with
 `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, and the command shown says so.
 
-With notifications turned on, Tankard also runs `brew update` in the background every few
-hours (6 by default). Commands run one at a time, never with a shell, and never with
+Tankard also runs `brew update` in the background, after the list is on screen, at most
+once per check interval (Settings → General → Check every, 6 hours by default; longer if
+`HOMEBREW_AUTO_UPDATE_SECS` says so; any `brew update`, Terminal's too, counts), then
+re-reads the upgrade counts. Turn off "Check for new versions in the background" to stop
+it; it is off when `HOMEBREW_NO_AUTO_UPDATE` is set. It waits while another brew command
+runs, and a failure (offline) is only logged. Notifications use the same update. Commands run one at a time, never with a shell, and never with
 sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
 Upgrading or removing an app (a cask) needs macOS's App Management permission; Tankard
 explains how to allow it the first time. The Homebrew menu's Revert and Uninstall never run

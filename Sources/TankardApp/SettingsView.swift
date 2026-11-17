@@ -35,7 +35,8 @@ struct SettingsView: View {
 
     var body: some View {
         TabView(selection: tab.projectedValue) {
-            GeneralSettings(settings: settings, notifier: notifier, loginItem: loginItem)
+            GeneralSettings(settings: settings, notifier: notifier, loginItem: loginItem,
+                            backgroundUpdateOptOut: store?.backgroundUpdateOptOut)
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag("general")
             if let insightSettings {
@@ -68,6 +69,8 @@ struct GeneralSettings: View {
     @Bindable var settings: AppSettings
     var notifier: SystemNotifier
     var loginItem: LoginItem
+    /// 0.8: where HOMEBREW_NO_AUTO_UPDATE is set, when it is.
+    var backgroundUpdateOptOut: String?
     private let notificationNote = State<String?>(initialValue: nil)
     private let loginOn = State<Bool?>(initialValue: nil)
     private let loginNote = State<String?>(initialValue: nil)
@@ -80,6 +83,13 @@ struct GeneralSettings: View {
 
             Divider().padding(.vertical, 4)
 
+            ExplainedRow(help: SettingsHelp.backgroundUpdate) {
+                Toggle("Check for new versions in the background", isOn: $settings.backgroundUpdate)
+                    .disabled(backgroundUpdateOptOut != nil)
+            }
+            if let source = backgroundUpdateOptOut {
+                Text("Off: HOMEBREW_NO_AUTO_UPDATE is set (\(source)).").font(.system(size: 11)).foregroundStyle(.secondary)
+            }
             ExplainedRow(help: SettingsHelp.notifyNewUpgrades) {
                 Toggle("Notify me about new upgrades", isOn: Binding(
                     get: { settings.notifyNewUpgrades },
@@ -100,7 +110,7 @@ struct GeneralSettings: View {
                 Picker("Check every", selection: $settings.checkIntervalHours) {
                     ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(h == 1 ? String(localized: "1 hour") : String(localized: "\(h) hours")).tag(h) }
                 }
-                .disabled(!settings.notifyNewUpgrades)
+                .disabled(!settings.notifyNewUpgrades && !settings.backgroundUpdate)
                 .fixedSize()
                 .help(SettingsHelp.checkInterval)
                 InfoButton(text: SettingsHelp.checkInterval)

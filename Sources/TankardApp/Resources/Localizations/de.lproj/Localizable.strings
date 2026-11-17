@@ -152,6 +152,7 @@
 "Added (%lld)" = "Hinzugefügt (%lld)";
 "Adding tap" = "Tap wird hinzugefügt";
 "Admin password" = "Administratorpasswort";
+"After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "Führt nach dem Anzeigen der Liste höchstens einmal pro Prüfintervall brew update im Hintergrund aus und aktualisiert dann die Upgrade-Zahlen. Wartet, solange brew beschäftigt ist; ein Fehler (offline) wird nur protokolliert. Aus, wenn HOMEBREW_NO_AUTO_UPDATE gesetzt ist. Standardmäßig an.";
 "All" = "Alle";
 "All versions" = "Alle Versionen";
 "Allow Tankard to update apps" = "Tankard erlauben, Apps zu aktualisieren";
@@ -215,9 +216,11 @@
 "Check a Brewfile…" = "Brewfile prüfen…";
 "Check again" = "Erneut prüfen";
 "Check every" = "Prüfen alle";
+"Check for new versions in the background" = "Im Hintergrund nach Updates suchen";
 "Check now" = "Jetzt prüfen";
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
+"Checking for updates…" = "Suche Updates…";
 "Checking…" = "Wird geprüft…";
 "Clean Up…" = "Aufräumen…";
 "Clean up" = "Aufräumen";
@@ -369,7 +372,7 @@
 "Homebrew's official uninstaller" = "Offizielles Deinstallationsprogramm von Homebrew";
 "Homebrew's own files have local changes" = "Dateien von Homebrew haben lokale Änderungen";
 "Homebrew's sbin folder isn't in your PATH" = "Der sbin-Ordner von Homebrew ist nicht in deinem PATH";
-"How often the background check runs, while \"Notify me about new upgrades\" is on." = "Wie oft die Hintergrundprüfung läuft, solange „Über neue Upgrades benachrichtigen“ aktiv ist.";
+"How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "Wie oft brew update im Hintergrund läuft, solange „Im Hintergrund nach Updates suchen“ oder „Über neue Upgrades benachrichtigen“ aktiv ist.";
 "I've done this" = "Erledigt";
 "Include self-updating apps" = "Selbstaktualisierende Apps einbeziehen";
 "Install" = "Installieren";
@@ -506,6 +509,7 @@
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "Standardmäßig aus. Zeigt im Menü der Menüleiste einen Hinweis, wenn ein Scan Schwachstellen findet, die vorher nicht da waren. „Jetzt scannen“ (hier) oder Homebrew ▸ Nach Schwachstellen suchen startet auf Wunsch einen Scan.";
 "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Standardmäßig aus. Upgrades, Installationen und Neuinstallationen von Tankard (manuell und per automatischer Aktualisierung) laufen dann mit HOMEBREW_NO_INSTALL_CLEANUP=1 (im Befehl zu sehen), sodass brew die alte Version auf dem Datenträger behält und Wiederherstellungspunkte sie zurücksetzen können. Jede behaltene Version belegt Speicherplatz, bis „Bereinigen“ sie entfernt. Auch die periodische Bereinigung von brew, die außerhalb von Tankard läuft, kann sie entfernen. Casks ersetzen die alte Version immer.";
 "Off for Tankard in System Settings → Notifications" = "Für Tankard in Systemeinstellungen → Mitteilungen deaktiviert";
+"Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "Aus: HOMEBREW_NO_AUTO_UPDATE ist gesetzt (%@).";
 "Official" = "Offiziell";
 "Old version was cleaned up" = "Alte Version wurde bereinigt";
 "Old versions" = "Alte Versionen";

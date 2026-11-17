@@ -152,6 +152,7 @@
 "Added (%lld)" = "추가됨(%lld)";
 "Adding tap" = "tap 추가 중";
 "Admin password" = "관리자 암호";
+"After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "목록을 표시한 뒤 확인 주기마다 최대 한 번 백그라운드에서 brew update를 실행하고 업그레이드 수를 새로 고칩니다. brew가 사용 중이면 기다리며, 실패(오프라인)는 로그에만 기록합니다. HOMEBREW_NO_AUTO_UPDATE가 설정되어 있으면 꺼집니다. 기본값은 켬.";
 "All" = "전체";
 "All versions" = "모든 버전";
 "Allow Tankard to update apps" = "Tankard가 앱을 업데이트하도록 허용";
@@ -215,9 +216,11 @@
 "Check a Brewfile…" = "Brewfile 확인…";
 "Check again" = "다시 확인";
 "Check every" = "확인 주기";
+"Check for new versions in the background" = "백그라운드에서 새 버전 확인";
 "Check now" = "지금 확인";
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
+"Checking for updates…" = "업데이트 확인 중…";
 "Checking…" = "확인 중…";
 "Clean Up…" = "정리…";
 "Clean up" = "정리";
@@ -369,7 +372,7 @@
 "Homebrew's official uninstaller" = "Homebrew 공식 제거 프로그램";
 "Homebrew's own files have local changes" = "Homebrew 자체 파일에 로컬 변경 사항이 있음";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew의 sbin 폴더가 PATH에 없음";
-"How often the background check runs, while \"Notify me about new upgrades\" is on." = "\"새 업그레이드 알림\"이 켜져 있을 때 백그라운드 확인을 실행하는 빈도.";
+"How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "\"백그라운드에서 새 버전 확인\" 또는 \"새 업그레이드 알림\"이 켜져 있을 때 백그라운드에서 brew update를 실행하는 빈도.";
 "I've done this" = "완료했음";
 "Include self-updating apps" = "자체 업데이트 앱 포함";
 "Install" = "설치";
@@ -506,6 +509,7 @@
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "기본값은 꺼짐입니다. 검사에서 이전에 없던 취약점이 발견되면 메뉴 막대 메뉴에 알림을 표시합니다. 지금 검사(여기) 또는 Homebrew ▸ 취약점 검사를 누르면 언제든 한 번 검사합니다.";
 "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "기본값은 꺼짐입니다. 켜면 Tankard의 업그레이드, 설치, 재설치(수동 및 자동 업데이트)가 HOMEBREW_NO_INSTALL_CLEANUP=1(명령에 표시됨)로 실행되어, brew가 이전 버전을 디스크에 남기고 복원 지점으로 되돌릴 수 있습니다. 남겨 둔 각 버전은 정리로 제거할 때까지 디스크 공간을 차지합니다. Tankard 밖에서 brew가 자체적으로 수행하는 주기적 정리도 이를 제거할 수 있습니다. cask는 항상 이전 버전을 교체합니다.";
 "Off for Tankard in System Settings → Notifications" = "시스템 설정 → 알림에서 Tankard가 꺼져 있음";
+"Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "꺼짐: HOMEBREW_NO_AUTO_UPDATE가 설정됨(%@).";
 "Official" = "공식";
 "Old version was cleaned up" = "이전 버전이 정리되었습니다";
 "Old versions" = "이전 버전";

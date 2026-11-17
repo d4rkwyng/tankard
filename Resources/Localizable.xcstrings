@@ -7957,6 +7957,58 @@
         }
       }
     },
+    "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Führt nach dem Anzeigen der Liste höchstens einmal pro Prüfintervall brew update im Hintergrund aus und aktualisiert dann die Upgrade-Zahlen. Wartet, solange brew beschäftigt ist; ein Fehler (offline) wird nur protokolliert. Aus, wenn HOMEBREW_NO_AUTO_UPDATE gesetzt ist. Standardmäßig an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une fois la liste affichée, exécute brew update en arrière-plan au plus une fois par intervalle de vérification, puis met à jour le nombre de mises à niveau. Attend tant que brew est occupé ; un échec (hors ligne) est seulement journalisé. Désactivé si HOMEBREW_NO_AUTO_UPDATE est défini. Activé par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tras mostrar la lista, ejecuta brew update en segundo plano como mucho una vez por intervalo de comprobación y luego actualiza el número de actualizaciones. Espera mientras brew está ocupado; un fallo (sin conexión) solo se registra. Desactivado si HOMEBREW_NO_AUTO_UPDATE está definido. Activado por defecto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リストの表示後、確認間隔ごとに最大1回、バックグラウンドで brew update を実行し、アップグレード数を更新します。brew の使用中は待機し、失敗（オフライン）はログに記録するだけです。HOMEBREW_NO_AUTO_UPDATE が設定されているとオフ。デフォルトはオン。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "列表显示后，在后台运行 brew update，每个检查间隔最多一次，然后刷新升级数量。brew 忙碌时会等待，失败（离线）只记入日志。设置了 HOMEBREW_NO_AUTO_UPDATE 时关闭。默认开启。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depois de mostrar a lista, executa brew update em segundo plano no máximo uma vez por intervalo de verificação e atualiza a contagem de atualizações. Espera enquanto o brew está ocupado; uma falha (offline) é apenas registrada. Desativado se HOMEBREW_NO_AUTO_UPDATE estiver definido. Ativado por padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo aver mostrato l'elenco, esegue brew update in background al massimo una volta per intervallo di controllo, poi aggiorna il numero di aggiornamenti. Attende mentre brew è occupato; un errore (offline) viene solo registrato. Disattivato se HOMEBREW_NO_AUTO_UPDATE è impostato. Attivo per impostazione predefinita."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "목록을 표시한 뒤 확인 주기마다 최대 한 번 백그라운드에서 brew update를 실행하고 업그레이드 수를 새로 고칩니다. brew가 사용 중이면 기다리며, 실패(오프라인)는 로그에만 기록합니다. HOMEBREW_NO_AUTO_UPDATE가 설정되어 있으면 꺼집니다. 기본값은 켬."
+          }
+        }
+      }
+    },
     "All": {
       "localizations": {
         "de": {
@@ -11233,6 +11285,58 @@
         }
       }
     },
+    "Check for new versions in the background": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Hintergrund nach Updates suchen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher les nouvelles versions en arrière-plan"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar versiones nuevas en segundo plano"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バックグラウンドで新しいバージョンを確認"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在后台检查新版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar novas versões em segundo plano"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca nuove versioni in background"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "백그라운드에서 새 버전 확인"
+          }
+        }
+      }
+    },
     "Check now": {
       "localizations": {
         "de": {
@@ -11385,6 +11489,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Brewfile 확인 중…"
+          }
+        }
+      }
+    },
+    "Checking for updates…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche Updates…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche de mises à jour…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando actualizaciones…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップデートを確認中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在检查更新…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurando atualizações…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca aggiornamenti…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업데이트 확인 중…"
           }
         }
       }
@@ -19241,54 +19397,54 @@
         }
       }
     },
-    "How often the background check runs, while \"Notify me about new upgrades\" is on.": {
+    "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wie oft die Hintergrundprüfung läuft, solange „Über neue Upgrades benachrichtigen“ aktiv ist."
+            "value": "Wie oft brew update im Hintergrund läuft, solange „Im Hintergrund nach Updates suchen“ oder „Über neue Upgrades benachrichtigen“ aktiv ist."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fréquence d’exécution de la vérification en arrière-plan, quand « Me notifier des nouvelles mises à niveau » est activé."
+            "value": "Fréquence d’exécution de brew update en arrière-plan, quand « Rechercher les nouvelles versions en arrière-plan » ou « Me notifier des nouvelles mises à niveau » est activé."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Con qué frecuencia se ejecuta la comprobación en segundo plano, mientras \"Avisarme de nuevas actualizaciones\" esté activado."
+            "value": "Con qué frecuencia se ejecuta brew update en segundo plano, mientras \"Buscar versiones nuevas en segundo plano\" o \"Avisarme de nuevas actualizaciones\" esté activado."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「新しいアップグレードを通知」がオンのとき、バックグラウンド確認を実行する間隔。"
+            "value": "「バックグラウンドで新しいバージョンを確認」または「新しいアップグレードを通知」がオンのとき、バックグラウンドで brew update を実行する間隔。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "后台检查的运行频率，在“有新升级时通知我”开启时生效。"
+            "value": "后台 brew update 的运行频率，在“在后台检查新版本”或“有新升级时通知我”开启时生效。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Com que frequência a verificação em segundo plano é executada, enquanto \"Notificar sobre novas atualizações\" estiver ativado."
+            "value": "Com que frequência o brew update é executado em segundo plano, enquanto \"Procurar novas versões em segundo plano\" ou \"Notificar sobre novas atualizações\" estiver ativado."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ogni quanto viene eseguito il controllo in background, mentre \"Avvisami dei nuovi aggiornamenti\" è attivo."
+            "value": "Ogni quanto viene eseguito brew update in background, mentre \"Cerca nuove versioni in background\" o \"Avvisami dei nuovi aggiornamenti\" è attivo."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"새 업그레이드 알림\"이 켜져 있을 때 백그라운드 확인을 실행하는 빈도."
+            "value": "\"백그라운드에서 새 버전 확인\" 또는 \"새 업그레이드 알림\"이 켜져 있을 때 백그라운드에서 brew update를 실행하는 빈도."
           }
         }
       }
@@ -26361,6 +26517,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "시스템 설정 → 알림에서 Tankard가 꺼져 있음"
+          }
+        }
+      }
+    },
+    "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus: HOMEBREW_NO_AUTO_UPDATE ist gesetzt (%@)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé : HOMEBREW_NO_AUTO_UPDATE est défini (%@)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado: HOMEBREW_NO_AUTO_UPDATE está definido (%@)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ：HOMEBREW_NO_AUTO_UPDATE が設定されています（%@）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已关闭：已设置 HOMEBREW_NO_AUTO_UPDATE（%@）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desativado: HOMEBREW_NO_AUTO_UPDATE está definido (%@)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disattivato: HOMEBREW_NO_AUTO_UPDATE è impostato (%@)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "꺼짐: HOMEBREW_NO_AUTO_UPDATE가 설정됨(%@)."
           }
         }
       }

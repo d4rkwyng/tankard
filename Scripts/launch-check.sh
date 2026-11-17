@@ -14,10 +14,12 @@
 #   --runs N      launch it N times in a row (default: 3)
 #   --lang L      launch it in language L (-AppleLanguages "(L)"), e.g. de
 #
-# Read-only: it reads the real settings and the real brew state, and quits
-# the app afterwards; it never upgrades or changes anything. A normal launch
-# reads Homebrew's status, as every launch does (no brew update: the
-# background check waits two minutes, and the app is quit long before).
+# It reads the real settings and the real brew state, and quits the app
+# afterwards; it never installs, upgrades or removes anything. A normal
+# launch reads Homebrew's status, as every launch does, and (0.8) may run
+# the background `brew update` a few seconds in, when the last one is older
+# than the check interval and "Check for new versions in the background" is
+# on: a fetch of Homebrew's metadata, as `brew update` in Terminal.
 #
 # Why it exists: 0.3.0 shipped a launch crash (App.body re-evaluated in a
 # loop until the stack overflowed) that every demo and snapshot run hid.
