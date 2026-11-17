@@ -46,7 +46,7 @@ Applications. Tankard needs macOS 14 Sonoma or later, on Intel or Apple silicon.
 - **No Homebrew yet?** The window shows how to install it, with the exact command. On an
   Intel Mac it offers Intelbrew first (Homebrew with prebuilt Intel bottles), then standard
   Homebrew. On Apple silicon it offers standard Homebrew. Click **Open in Terminal**, enter
-  your password when the installer asks, then come back and click **Check again**.
+  your password when the installer asks, then come back and click **Check Again**.
 - **Homebrew already installed?** A welcome sheet appears once, over the list:
   - **Allow App Management.** macOS asks before Tankard can install, update or remove
     apps. Click **Open System Settings**, turn on Tankard under Privacy & Security ▸ App
@@ -63,14 +63,14 @@ installs or upgrades anything on its own unless you turn on
 
 ## The Installed list at a glance
 
-- **Toolbar:** Installed and Discover (⌘1, ⌘2), Refresh (⌘R) and search. Search matches
+- **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search. Search matches
   the name and description.
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
   until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
   **Installed by you** (packages you installed yourself, not ones pulled in as
   dependencies), **Has notes** and **Deprecated**, each with its count; empty ones are
-  greyed out. It shows "N vulnerable" when a scan found something.
+  grayed out. It shows "N vulnerable" when a scan found something.
 - **Table:** the package, the installed version, the available version (an ↑ when an
   upgrade is ready), the source badge and the size on disk. Click a column header to sort.
 - **Detail pane:** everything about the selected package: versions, where it came from,
@@ -83,9 +83,9 @@ installs or upgrades anything on its own unless you turn on
 | badge | meaning |
 |---|---|
 | Bottle (green) | Installed from a prebuilt bottle. In Intelbrew mode it says whose: **Intelbrew bottle** or **Homebrew bottle**. |
-| Source (orange) | Built from source on this Mac. |
-| Newer (blue) | Newer than the version the tap has now. brew never downgrades it. |
-| No bottle (grey) | There is no bottle for this Mac, so a reinstall or upgrade compiles. |
+| Built from source (orange) | Built from source on this Mac. |
+| Newer than tap (blue) | Newer than the version the tap has now (**Newer than Intelbrew** in Intelbrew mode). brew never downgrades it. |
+| No bottle yet (gray) | There is no bottle for this Mac, so a reinstall or upgrade compiles. |
 | Cask (purple) | An app or other cask. |
 
 Other marks: `dep` means it was installed as a dependency. A blue "pinned" tag means
@@ -97,8 +97,8 @@ updates itself.
 **Upgrade everything:** click the green **Upgrade N** in the status bar, or **Upgrade All**
 in the menu-bar icon.
 
-**Upgrade one package:** select it and click **Upgrade** in the detail pane, or right-click
-it and choose **Upgrade**.
+**Upgrade one package:** select it and click **Upgrade <name>** in the detail pane, or
+right-click it and choose **Upgrade <name>**.
 
 The upgrade sheet shows each package, the exact command and brew's live output. Packages
 upgrade one at a time; a failure doesn't stop the rest.
@@ -119,7 +119,8 @@ compile** button. In Intelbrew mode the warning also says how long the build too
 Intelbrew builder; expect longer on an older Mac.
 
 **Replace a source build with a bottle.** A package you built from source whose version
-now has a bottle gets a **Bottle available** badge and a **Replace with bottle** button.
+now has a bottle says **Bottle available** under its name and gets a **Replace with Bottle**
+button.
 The Bottle available filter has **Replace all**.
 
 Pinned packages and skipped versions are left out of Upgrade N. See
@@ -154,9 +155,9 @@ default.
 ## Install from Discover
 
 1. Click **Discover** (⌘2) and search. Formulae with a bottle for your Mac come first.
-2. Select a package. The detail pane shows its homepage, licence, dependencies, install
+2. Select a package. The detail pane shows its homepage, license, dependencies, install
    counts for the last 30, 90 and 365 days, and the exact command.
-3. Click **Install**.
+3. Click **Install <name>**.
 
 The sheet shows brew's output and the download's progress, such as "Downloading
 font-inter… 25.4 of 33.7 MB (75%)".
@@ -294,7 +295,7 @@ packages you installed from each.
 - **Add Tap…** takes `user/repo`, and optionally a git URL. Third-party taps run their
   authors' code; Tankard warns you first.
 - **Remove…** runs `brew untap`. It is blocked while anything installed comes from the tap.
-- **Trust…** and **Untrust…** set Homebrew 7's trust for a third-party tap.
+- **Trust…** and **Stop Trusting…** set Homebrew 7's trust for a third-party tap.
 
 ## Services
 
@@ -313,7 +314,7 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
 - **Homebrew ▸ History…** lists every brew command Tankard ran (the last 500), with its
   result. Failed ones have **Retry**.
 - **Homebrew ▸ Clean Up…** shows what `brew cleanup` would remove and how much space it
-  frees, then runs it when you click **Clean up**.
+  frees, then runs it when you click **Clean Up**.
 - **Homebrew ▸ Remove Unused Dependencies…** shows what `brew autoremove` would remove
   before it runs.
 - **File ▸ Export Brewfile…** saves a Brewfile of your taps, formulae and casks.
@@ -368,7 +369,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 |---|---|---|
 | Show Tankard in the menu bar | on | The mug icon. With it on, closing the window keeps Tankard running. |
 | Hide Dock icon when the window is closed | on | Only with the menu-bar icon on. |
-| Check for new versions in the background | on | Runs `brew update` at most once per check interval. Greyed out when `HOMEBREW_NO_AUTO_UPDATE` is set; Settings says where. |
+| Check for new versions in the background | on | Runs `brew update` at most once per check interval. Grayed out when `HOMEBREW_NO_AUTO_UPDATE` is set; Settings says where. |
 | Notify me about new upgrades | off | A notification when new upgrades appear. See [Notifications](#notifications). |
 | Check every | 6 hours | 1, 3, 6, 12, 24 or 48 hours. Used by the two settings above. |
 | Open Tankard at login | off | Adds Tankard to Login Items. |
@@ -390,7 +391,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 
 ## Menu reference
 
-- **Tankard:** About Tankard, **Check for Tankard Updates…**, Settings… (⌘,), Quit (⌘Q).
+- **Tankard:** About Tankard, **Check for Tankard Updates…**, Settings… (⌘,), Quit Tankard (⌘Q).
 - **File:** **Check Brewfile…**, **Export Brewfile…**, Close (⌘W), Close All.
 - **View:** **Installed** (⌘1), **Discover** (⌘2), **Services** (⌘3).
 - **Homebrew:**
@@ -401,7 +402,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
   - **Revert to Standard Homebrew…** (Intelbrew mode only), **Uninstall Homebrew…**
 - **Help:** **Tankard Help** (this page), **Tankard on GitHub**, **Report an Issue…**
 
-Items that run brew grey out while brew is busy.
+Items that run brew gray out while brew is busy.
 
 **Tankard ▸ Check for Tankard Updates…** asks GitHub for the latest release, only when you
 choose it. If Homebrew installed Tankard, **Upgrade with Homebrew** upgrades it and offers
@@ -427,11 +428,11 @@ Open Release Page and Show in Finder.
 
 Tankard has no telemetry and no account. Its own network requests:
 
-- **Discover** (normal mode) downloads Homebrew's catalogue from formulae.brew.sh the first
+- **Discover** (normal mode) downloads Homebrew's catalog from formulae.brew.sh the first
   time you open it, and keeps it for an hour. It also downloads Homebrew's public install
   counts (about 13 MB, for every package), and keeps them for a day. Because these are the
   files for every package, the site never learns which packages you look at. Adopt Apps uses
-  the same catalogue.
+  the same catalog.
 - **Download progress for a cask:** one request to the cask's own download server for the
   file size.
 - **Check for Tankard Updates…:** one request to GitHub, only when you choose it.
@@ -460,7 +461,7 @@ or when automatic updates is on. Commands run one at a time, never with sudo.
 | Install | `brew install --formula\|--cask <tap>/<name>` |
 | Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then each dependency you chose to remove |
 | Adopt | `brew install --cask --adopt <tap>/<name>`, one per app |
-| Replace with bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
+| Replace with Bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
 | Clean up | `brew cleanup` |
 | Remove Unused Dependencies | `brew autoremove` |
@@ -481,7 +482,7 @@ macOS asks before one app installs, updates or deletes another. Tankard needs th
 permission (**System Settings ▸ Privacy & Security ▸ App Management**) for anything that
 changes an app: installing, upgrading, adopting or uninstalling a cask that has an app, a
 restore point's cask reinstall, and automatic updates. Formulae, fonts and Replace with
-bottle don't need it.
+Bottle don't need it.
 
 **Allow it:**
 
@@ -531,7 +532,7 @@ list it read.
 ### "Homebrew not found"
 
 Tankard looks for brew at `/usr/local/bin/brew` and `/opt/homebrew/bin/brew`. Install
-Homebrew from the welcome screen, then click **Check again**.
+Homebrew from the welcome screen, then click **Check Again**.
 
 ### My `HOMEBREW_*` settings from `~/.zshrc` are ignored
 
@@ -539,7 +540,7 @@ Apps started from the Dock don't read your shell profile. Put brew settings in a
 `brew.env` file, such as `~/.homebrew/brew.env`. brew reads it however it is started.
 Details are in [architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
 
-### "Check for new versions in the background" is greyed out
+### "Check for new versions in the background" is grayed out
 
 `HOMEBREW_NO_AUTO_UPDATE` is set. Settings says where.
 
