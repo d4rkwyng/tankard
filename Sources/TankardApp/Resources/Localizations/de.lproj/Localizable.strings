@@ -248,6 +248,7 @@
 "Check a Brewfile" = "Brewfile prüfen";
 "Check again" = "Erneut prüfen";
 "Check every" = "Prüfen alle";
+"Check for Tankard Updates…" = "Nach Tankard-Updates suchen…";
 "Check for new versions in the background" = "Im Hintergrund nach Updates suchen";
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
@@ -281,9 +282,11 @@
 "Core: not the Intelbrew fork" = "Core: nicht der Intelbrew-Fork";
 "Could not run brew: %@" = "brew konnte nicht ausgeführt werden: %@";
 "Could not run brew: %@\n" = "brew konnte nicht ausgeführt werden: %@\n";
+"Couldn't check for updates" = "Suche nach Updates fehlgeschlagen";
 "Couldn't load the catalogue" = "Katalog konnte nicht geladen werden";
 "Couldn't open Terminal. Copy the command instead." = "Terminal konnte nicht geöffnet werden. Kopiere stattdessen den Befehl.";
 "Couldn't open Terminal. Copy the commands instead." = "Terminal konnte nicht geöffnet werden. Kopiere stattdessen die Befehle.";
+"Couldn't reach GitHub. Check the connection and try again." = "GitHub nicht erreichbar. Prüfe die Verbindung und versuche es erneut.";
 "Couldn't read Homebrew's cask list: %@" = "Cask-Liste von Homebrew nicht lesbar: %@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Die Details der Casks konnten nicht gelesen werden, daher sind Administratorpasswörter nicht markiert.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Die Details der Formulae konnten nicht gelesen werden, daher sind Kompilierungen nicht markiert.";
@@ -316,6 +319,7 @@
 "Don't Skip %@" = "%@ nicht überspringen";
 "Don't quit running apps during upgrades" = "Laufende Apps bei Upgrades nicht beenden";
 "Done" = "Fertig";
+"Download" = "Laden";
 "Download cache" = "Download-Cache";
 "Downloads" = "Downloads";
 "Dracula" = "Dracula";
@@ -379,6 +383,9 @@
 "Full log saved to %@" = "Vollständiges Protokoll gespeichert unter %@";
 "Full scan" = "Vollständiger Scan";
 "General" = "Allgemein";
+"GitHub answered HTTP %lld." = "GitHub antwortete mit HTTP %lld.";
+"GitHub lists no release of Tankard." = "GitHub führt kein Release von Tankard.";
+"GitHub's answer couldn't be read." = "Die Antwort von GitHub war nicht lesbar.";
 "HEAD build" = "HEAD-Build";
 "HEAD builds have no fixed version to go back to." = "HEAD-Builds haben keine feste Version, auf die man zurückgehen kann.";
 "Has Intel bottle" = "Hat Intel-Bottle";
@@ -395,9 +402,11 @@
 "Homebrew bottle" = "Homebrew-Bottle";
 "Homebrew couldn't reach the network" = "Homebrew konnte das Netzwerk nicht erreichen";
 "Homebrew couldn't write to its folders" = "Homebrew konnte nicht in seine Ordner schreiben";
+"Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew führt Tankard %@ noch nicht: Der Tap braucht nach einem Release etwas Zeit. Versuche es später erneut oder lade es herunter.";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew deinstalliert keine fixierten Pakete. Löse %@ zuerst oder behalte es.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew hat ein Cask für diese Apps und die installierte Version passt (oder die App aktualisiert sich selbst, dann vergleicht brew nicht).";
 "Homebrew has disabled this cask." = "Homebrew hat dieses Cask deaktiviert.";
+"Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew ist der Paketmanager für macOS: Er installiert Befehlszeilenprogramme und Apps und hält sie aktuell. Tankard ist ein Fenster dazu, daher braucht es zuerst Homebrew.";
 "Homebrew isn't installed" = "Homebrew ist nicht installiert";
 "Homebrew isn't ready yet." = "Homebrew ist noch nicht bereit.";
@@ -432,6 +441,7 @@
 "Install command" = "Installationsbefehl";
 "Install counts unavailable" = "Installationszahlen nicht verfügbar";
 "Install standard Homebrew" = "Standard-Homebrew installieren";
+"Install with Homebrew to get updates automatically:" = "Mit Homebrew installieren, um Updates automatisch zu erhalten:";
 "Install with Tankard" = "Mit Tankard installieren";
 "Installed" = "Installiert";
 "Installed %@; the cask installs %@." = "Installiert: %1$@; das Cask installiert %2$@.";
@@ -468,6 +478,7 @@
 "Label" = "Label";
 "Last auto-update: %@ · %@" = "Letztes Auto-Update: %@ · %@";
 "Last refresh failed" = "Letzte Aktualisierung fehlgeschlagen";
+"Later" = "Später";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@ bei „Alle aktualisieren“, den Zählern und Auto-Update auslassen. Upgrade funktioniert weiterhin manuell; eine neuere Version hebt das auf.";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "Der App überlassen: %@ ist nicht in „Alle upgraden“ oder Auto-Update.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Übrig gebliebene Links zeigen auf nicht mehr vorhandene Dateien. Meist harmlos; brew cleanup entfernt die meisten.";
@@ -640,6 +651,9 @@
 "Reinstalling %@ from a bottle" = "%@ wird aus einer Bottle neu installiert";
 "Reinstalling %lld packages from bottles" = "%lld Pakete werden aus Bottles neu installiert";
 "Reinstalling usually fixes this:" = "Eine Neuinstallation behebt das meist:";
+"Relaunch" = "Neu starten";
+"Relaunch Tankard to use the new version." = "Starte Tankard neu, um die neue Version zu verwenden.";
+"Release notes" = "Versionshinweise";
 "Reload" = "Neu laden";
 "Remove" = "Entfernen";
 "Remove %@?" = "%@ entfernen?";
@@ -789,8 +803,11 @@
 "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are." = "Nimmt diesen Mac von Intelbrew: brew nutzt wieder das eigene Repository und die API von Homebrew. Deine installierten Pakete bleiben unverändert.";
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ verfügbar";
+"Tankard %@ is available." = "Tankard %@ ist verfügbar.";
+"Tankard %@ is the latest version." = "Tankard %@ ist die neueste Version.";
 "Tankard (demo)" = "Tankard (Demo)";
 "Tankard Help" = "Tankard-Hilfe";
+"Tankard Updates" = "Tankard-Updates";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hat das Homebrew-Präfix dieses Macs noch nicht gelesen. Aktualisiere zuerst.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard selbst wird nie automatisch aktualisiert: nutze brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard lässt Upgrades dieser App aus „Alle upgraden“, den Zählern und Auto-Update heraus. Ihr eigener Updater hält sie aktuell. brew upgrade im Terminal kann sie weiterhin upgraden.";
@@ -803,6 +820,7 @@
 "Tankard updates itself through brew" = "Tankard aktualisiert sich selbst über brew";
 "Tankard upgraded %lld package" = "Tankard hat %lld Paket aktualisiert";
 "Tankard upgraded %lld packages" = "Tankard hat %lld Pakete aktualisiert";
+"Tankard was upgraded" = "Tankard wurde aktualisiert";
 "Tankard: upgrades ready" = "Tankard: Upgrades bereit";
 "Tap" = "Tap";
 "Tap has %@" = "Tap enthält %@";
@@ -900,6 +918,7 @@
 "Upgrade packages automatically" = "Pakete automatisch upgraden";
 "Upgrade ready: " = "Upgrade bereit: ";
 "Upgrade vulnerable packages. " = "Verwundbare Pakete upgraden. ";
+"Upgrade with Homebrew" = "Mit Homebrew upgraden";
 "Upgraded (%lld)" = "Aktualisiert (%lld)";
 "Upgrades" = "Upgrades";
 "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "Upgrades erscheinen, wenn brew sie auflistet, und jede neuere Version, wenn „Selbstaktualisierende Apps einbeziehen“ an ist (Einstellungen ▸ Upgrades).";
@@ -933,6 +952,7 @@
 "Writing Brewfile…" = "Brewfile wird geschrieben…";
 "Xcode is out of date" = "Xcode ist veraltet";
 "Yes" = "Ja";
+"You have Tankard %@." = "Du hast Tankard %@.";
 "Your PATH finds other tools before Homebrew's" = "Dein PATH findet andere Tools vor denen von Homebrew";
 "a symlink to %@: that file is backed up and edited" = "ein Symlink auf %@: diese Datei wird gesichert und bearbeitet";
 "adopted" = "übernommen";

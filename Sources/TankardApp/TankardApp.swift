@@ -159,6 +159,13 @@ struct TankardApp: App {
         // 0.8: no background brew update in a snapshot run (a shot of real
         // data must not change under it). Demo dependencies never have it.
         if options.snapshot != nil { deps.backgroundUpdates = false }
+        // Check for Tankard Updates…: a file instead of GitHub (e2e, shots);
+        // demo mode has no feed otherwise, so the item is disabled there.
+        let env = ProcessInfo.processInfo.environment
+        if let feed = env["TANKARD_UPDATE_FEED"], !feed.isEmpty { deps.updateFeed = .file(feed) }
+        if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
+            deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
+        }
         // Demo runs never touch the real settings.
         // A script run keeps its own settings suite (ScriptLaunch.swift).
         let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral()
@@ -210,6 +217,7 @@ struct TankardApp: App {
         .commands {
             CommandGroup(replacing: .appInfo) {
                 Button("About Tankard") { AboutPanel.show(intelbrew: store.intelbrewMode) }
+                CheckForUpdatesMenuItem(store: store)
             }
             // File: Tankard's files are Brewfiles (export one, check one).
             // No New Window: Tankard has one main window.

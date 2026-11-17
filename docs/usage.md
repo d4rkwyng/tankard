@@ -484,6 +484,16 @@ for Return; nothing runs inside the app. Demo mode opens nothing.
 
 ## About and Help
 
+**Tankard ▸ Check for Tankard Updates…** (only when you choose it; never in the background,
+and not in demo mode) asks GitHub's API once for the latest release and compares versions.
+It says "Tankard x.y.z is the latest version", or shows the newer version with the start of
+its release notes. If the d4rkwyng/tap cask installed this copy, **Upgrade with Homebrew**
+runs `brew update`, then `brew upgrade --cask d4rkwyng/tap/tankard` through the queue (with
+`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, so brew doesn't quit the app running it), then offers to
+relaunch. Otherwise **Download** opens the release page, with the `brew install --cask
+d4rkwyng/tap/tankard` command for automatic updates. Offline or on an error it says so, with
+Retry.
+
 Tankard → About Tankard shows "Version <x.y.z>" (e.g. "Version 0.6.1"; no build number), "Made by d4rkwyng", links
 to the project and to Intelbrew (in Intelbrew mode, "Intelbrew bottles from
 d4rkwyng/intelbrew"), the licence, and that Tankard is an independent app for

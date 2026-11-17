@@ -9,6 +9,8 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Added
 - **The Vulnerable filter offers the scan where the list is.** A header above the list shows the last scan ("Scanned 42 · found 2 · 5 min ago", or "Not scanned yet") with **Scan Now**; while a scan runs, its progress and **Stop**. An empty list says why ("No scan yet", "No known vulnerabilities", "Scan failed") with Scan Now. Before, the only ways to scan were the Homebrew menu and Settings. **Upgrade N** moved into that header too, so the summary strip keeps its text in narrow windows.
 
+- **Tankard ▸ Check for Tankard Updates…**: asks GitHub once for the latest release, only when you choose it. A newer version shows its release notes and **Upgrade with Homebrew** (when the d4rkwyng/tap cask installed this copy; Tankard keeps running while brew replaces it, then offers to relaunch) or **Download**.
+
 ### Changed
 - **Menus reorganized** along Apple's menu bar guidelines. The View menu now holds only the tabs (Installed ⌘1, Discover ⌘2, Services ⌘3). **Refresh** (⌘R, unchanged) and **Clean Up…** moved from View to the **Homebrew** menu, which is grouped from the most used to the least: Refresh and Scan for Vulnerabilities; Health… and History…; Clean Up… and Remove Unused Dependencies…; Taps…, Adopt Apps… and Restore Points…; then Revert to Standard Homebrew… and Uninstall Homebrew… last (they were first).
 - **Check Brewfile…** (was "Check a Brewfile…") and **Export Brewfile…** moved from the Homebrew menu to the **File** menu. With them the File menu is back, and with it **Close** (⌘W) and **Close All**; in 0.8.0 there was no File menu at all.

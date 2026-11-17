@@ -248,6 +248,7 @@
 "Check a Brewfile" = "检查 Brewfile";
 "Check again" = "再次检查";
 "Check every" = "检查间隔";
+"Check for Tankard Updates…" = "检查 Tankard 更新…";
 "Check for new versions in the background" = "在后台检查新版本";
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
@@ -281,9 +282,11 @@
 "Core: not the Intelbrew fork" = "Core：非 Intelbrew 分支";
 "Could not run brew: %@" = "无法运行 brew：%@";
 "Could not run brew: %@\n" = "无法运行 brew：%@\n";
+"Couldn't check for updates" = "无法检查更新";
 "Couldn't load the catalogue" = "无法载入目录";
 "Couldn't open Terminal. Copy the command instead." = "无法打开“终端”。请改为拷贝该命令。";
 "Couldn't open Terminal. Copy the commands instead." = "无法打开“终端”。请改为拷贝这些命令。";
+"Couldn't reach GitHub. Check the connection and try again." = "无法连接 GitHub。请检查网络连接后重试。";
 "Couldn't read Homebrew's cask list: %@" = "无法读取 Homebrew 的 cask 列表：%@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "无法读取 cask 的详细信息，因此不会标记管理员密码。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "无法读取 formula 的详细信息，因此不会标记编译。";
@@ -316,6 +319,7 @@
 "Don't Skip %@" = "不再跳过 %@";
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
 "Done" = "完成";
+"Download" = "下载";
 "Download cache" = "下载缓存";
 "Downloads" = "下载";
 "Dracula" = "Dracula";
@@ -379,6 +383,9 @@
 "Full log saved to %@" = "完整日志已存储到 %@";
 "Full scan" = "完整扫描";
 "General" = "通用";
+"GitHub answered HTTP %lld." = "GitHub 返回 HTTP %lld。";
+"GitHub lists no release of Tankard." = "GitHub 上没有 Tankard 的发行版本。";
+"GitHub's answer couldn't be read." = "无法读取 GitHub 的响应。";
 "HEAD build" = "HEAD 构建";
 "HEAD builds have no fixed version to go back to." = "HEAD 构建没有可回退的固定版本。";
 "Has Intel bottle" = "有 Intel bottle";
@@ -395,9 +402,11 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
+"Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew 不会卸载已固定的软件包。请先取消固定 %@，或保留它。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。";
 "Homebrew has disabled this cask." = "Homebrew 已停用此 cask。";
+"Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew 是 macOS 的软件包管理器：它安装命令行工具和 App，并使其保持最新。Tankard 是它的图形窗口，因此需要先安装 Homebrew。";
 "Homebrew isn't installed" = "未安装 Homebrew";
 "Homebrew isn't ready yet." = "Homebrew 尚未就绪。";
@@ -432,6 +441,7 @@
 "Install command" = "安装命令";
 "Install counts unavailable" = "无法获取安装次数";
 "Install standard Homebrew" = "安装标准 Homebrew";
+"Install with Homebrew to get updates automatically:" = "使用 Homebrew 安装即可自动获取更新：";
 "Install with Tankard" = "使用 Tankard 安装";
 "Installed" = "已安装";
 "Installed %@; the cask installs %@." = "已安装 %1$@；cask 安装的是 %2$@。";
@@ -468,6 +478,7 @@
 "Label" = "标签";
 "Last auto-update: %@ · %@" = "上次自动更新：%@ · %@";
 "Last refresh failed" = "上次刷新失败";
+"Later" = "稍后";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "将 %@ 排除在“全部升级”、计数和自动更新之外。仍可手动升级；出现更新的版本后会自动解除。";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "交由 App：%@ 不在“全部升级”或自动更新中。";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "残留的链接指向已不存在的文件。通常无害；brew cleanup 会移除其中大部分。";
@@ -640,6 +651,9 @@
 "Reinstalling %@ from a bottle" = "正在从 bottle 重新安装 %@";
 "Reinstalling %lld packages from bottles" = "正在从 bottle 重新安装 %lld 个软件包";
 "Reinstalling usually fixes this:" = "通常重新安装即可解决：";
+"Relaunch" = "重新启动";
+"Relaunch Tankard to use the new version." = "重新启动 Tankard 以使用新版本。";
+"Release notes" = "发行说明";
 "Reload" = "重新载入";
 "Remove" = "移除";
 "Remove %@?" = "移除 %@？";
@@ -789,8 +803,11 @@
 "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are." = "让这台 Mac 脱离 Intelbrew：brew 将回到 Homebrew 自己的仓库和 API。你已安装的软件包保持不变。";
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ 可用";
+"Tankard %@ is available." = "Tankard %@ 已推出。";
+"Tankard %@ is the latest version." = "Tankard %@ 是最新版本。";
 "Tankard (demo)" = "Tankard（演示）";
 "Tankard Help" = "Tankard 帮助";
+"Tankard Updates" = "Tankard 更新";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
@@ -803,6 +820,7 @@
 "Tankard updates itself through brew" = "Tankard 通过 brew 自行更新";
 "Tankard upgraded %lld package" = "Tankard 已升级 %lld 个软件包";
 "Tankard upgraded %lld packages" = "Tankard 已升级 %lld 个软件包";
+"Tankard was upgraded" = "Tankard 已升级";
 "Tankard: upgrades ready" = "Tankard：升级已就绪";
 "Tap" = "Tap";
 "Tap has %@" = "Tap 含有 %@";
@@ -900,6 +918,7 @@
 "Upgrade packages automatically" = "自动升级软件包";
 "Upgrade ready: " = "升级已就绪： ";
 "Upgrade vulnerable packages. " = "升级存在漏洞的软件包。 ";
+"Upgrade with Homebrew" = "使用 Homebrew 升级";
 "Upgraded (%lld)" = "已升级 (%lld)";
 "Upgrades" = "升级";
 "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "brew 列出升级时即会显示；开启“包含自行更新的 App”后会显示每个新版本（设置 ▸ 升级）。";
@@ -933,6 +952,7 @@
 "Writing Brewfile…" = "正在写入 Brewfile…";
 "Xcode is out of date" = "Xcode 已过期";
 "Yes" = "是";
+"You have Tankard %@." = "你当前使用 Tankard %@。";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
 "adopted" = "已接管";
