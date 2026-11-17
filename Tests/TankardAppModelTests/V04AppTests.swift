@@ -381,10 +381,13 @@ struct InsightColorTests {
     @Test func demoInsightFixturesMatchTheCaptures() throws {
         for (name, ext) in [("sonoma-intelbrew-vulns", "json"), ("arm64-vulns", "json"), ("arm64-outdated-greedy", "json"),
                             ("sonoma-intelbrew-outdated-greedy", "json")] {
-            #expect(Demo.fixtureData(name) == (try fixtureData(name, ext)), "\(name) differs")
+            // `try` outside #expect: Swift 6.0 (the Intel VM's CLT) rejects it inside.
+            let captured = try fixtureData(name, ext)
+            #expect(Demo.fixtureData(name) == captured, "\(name) differs")
         }
         for name in ["sonoma-intelbrew-sizes", "arm64-sizes", "arm64-vulns-stderr"] {
-            #expect(Data(Demo.fixtureText(name).utf8) == (try fixtureData(name, "txt")), "\(name) differs")
+            let captured = try fixtureData(name, "txt")
+            #expect(Data(Demo.fixtureText(name).utf8) == captured, "\(name) differs")
         }
     }
 }
