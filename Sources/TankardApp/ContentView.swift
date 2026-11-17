@@ -175,8 +175,8 @@ struct SummaryStrip: View {
                         .truncationMode(.tail)
                     HStack(spacing: 6) {
                         if let (ready, detail) = SummaryText.upgrades(report.summary) {
-                            Circle().fill(theme.accent).frame(width: 7, height: 7)
-                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.accent)
+                            Circle().fill(theme.upgrade).frame(width: 7, height: 7)
+                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
                             Text(detail).foregroundStyle(.secondary)
                         } else {
                             Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
@@ -294,10 +294,10 @@ struct PackageTable: View {
             }
             .width(min: 120, ideal: 170)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
-        .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
+        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
+        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
         .background(theme.table ?? .clear)
-        .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {
                 ContentUnavailableView(store.search.isEmpty ? "Nothing here" : "No matches",
@@ -322,7 +322,7 @@ struct AvailableCell: View {
                 Image(systemName: "arrow.up").font(.system(size: 10, weight: .bold))
                 Text(v).fontWeight(.semibold).monospacedDigit()
             }
-            .foregroundStyle(prominence == .increased && !theme.isTankard ? Color.white : theme.accent)
+            .foregroundStyle(prominence == .increased && !theme.isCustom ? Color.white : theme.upgrade)
             .lineLimit(1)
             .help("Upgrade available")
         } else {

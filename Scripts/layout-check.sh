@@ -1,7 +1,7 @@
 #!/bin/bash
 # Checks that the main window's layout doesn't depend on the theme: the
 # table's position, insets and spacing, and every visible cell's origin
-# must match between Dark, Tankard, and a live switch either way (with a
+# must match between Dark, Tankard, Dracula, and live switches (with a
 # row selected before the switch and another after). Uses the snapshot
 # hook's layout dump (TANKARD_SNAPSHOT_LAYOUT), so it works with the screen
 # locked. Needs a window server; not part of `swift test`.
@@ -47,9 +47,11 @@ run dark TANKARD_APPEARANCE=dark
 run tankard TANKARD_APPEARANCE=tankard
 run dark-to-tankard TANKARD_APPEARANCE=dark TANKARD_SWITCH_APPEARANCE=tankard@$half TANKARD_RESELECT=$RESEL@$((half + 2))
 run tankard-to-dark TANKARD_APPEARANCE=tankard TANKARD_SWITCH_APPEARANCE=dark@$half TANKARD_RESELECT=$RESEL@$((half + 2))
+run dracula TANKARD_APPEARANCE=dracula
+run dark-to-dracula TANKARD_APPEARANCE=dark TANKARD_SWITCH_APPEARANCE=dracula@$half TANKARD_RESELECT=$RESEL@$((half + 2))
 
 status=0
-for n in tankard dark-to-tankard tankard-to-dark; do
+for n in tankard dark-to-tankard tankard-to-dark dracula dark-to-dracula; do
     if diff -u "$OUT/dark.txt" "$OUT/$n.txt" >"$OUT/$n.diff"; then
         echo "ok: $n matches dark ($(wc -l <"$OUT/dark.txt" | tr -d ' ') layout lines)"
     else

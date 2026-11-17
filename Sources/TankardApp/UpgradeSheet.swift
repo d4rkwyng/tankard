@@ -121,7 +121,7 @@ struct Chip: View {
     private var foreground: Color {
         switch item.state {
         case .done: return theme.badge(.bottle).foreground
-        case .running: return theme.accent
+        case .running: return theme.upgrade
         case .failed: return .red
         default: return .secondary
         }
@@ -130,7 +130,7 @@ struct Chip: View {
     private var background: Color {
         switch item.state {
         case .done: return theme.badge(.bottle).background
-        case .running: return theme.accent.opacity(0.14)
+        case .running: return theme.upgrade.opacity(0.14)
         case .failed: return Color.red.opacity(0.12)
         default: return theme.chip
         }

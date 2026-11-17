@@ -62,7 +62,7 @@ struct StatusBar: View {
                         Text("\(n)")
                             .font(.system(size: 11, weight: .semibold))
                             .padding(.horizontal, 6)
-                            .background(Capsule().fill((theme.isTankard ? theme.onAccent : Color.white).opacity(0.22)))
+                            .modifier(CountPill(theme: theme))
                     }
                 }
                 .fontWeight(.semibold)
@@ -93,11 +93,27 @@ struct StatusBar: View {
     }
 }
 
-/// Tankard's prominent buttons are amber, so their labels are dark; other
-/// themes keep the system's label colour.
+/// The palette themes' prominent buttons are accent-filled (amber, purple)
+/// with dark labels; other themes keep the system's label colour.
 struct OnAccentLabel: ViewModifier {
     var theme: Theme
     func body(content: Content) -> some View {
-        if theme.isTankard { content.foregroundStyle(theme.onAccent) } else { content }
+        if theme.isCustom { content.foregroundStyle(theme.onAccent) } else { content }
+    }
+}
+
+/// The count on the Upgrade button: the palette's pill colours (Dracula:
+/// its background with light text, not a clashing tint), else white at 22%
+/// with the button's own label colour.
+struct CountPill: ViewModifier {
+    var theme: Theme
+    func body(content: Content) -> some View {
+        if let p = theme.palette {
+            content
+                .foregroundStyle(Color(hex: p.pillForeground))
+                .background(Capsule().fill(Color(hex: p.pill)))
+        } else {
+            content.background(Capsule().fill(Color.white.opacity(0.22)))
+        }
     }
 }

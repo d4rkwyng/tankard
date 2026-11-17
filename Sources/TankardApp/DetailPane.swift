@@ -53,16 +53,16 @@ struct PackageDetail: View {
 
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {
-                        Image(systemName: "arrow.up.circle").foregroundStyle(theme.accent)
+                        Image(systemName: "arrow.up.circle").foregroundStyle(theme.upgrade)
                         (Text("Upgrade ready: ") + Text("\(p.installedVersion) → \(p.currentVersion ?? "?")")
-                            .foregroundColor(theme.accent).fontWeight(.semibold))
+                            .foregroundColor(theme.upgrade).fontWeight(.semibold))
                             .font(.system(size: 12))
                             .lineLimit(2)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(theme.accent.opacity(0.12)))
+                    .background(RoundedRectangle(cornerRadius: 8).fill(theme.upgrade.opacity(0.12)))
                 }
 
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {

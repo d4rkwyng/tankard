@@ -454,6 +454,9 @@ struct AppearanceTests {
     @Test func appearanceMapping() {
         #expect(AppTheme.dark.forcesDark == true)
         #expect(AppTheme.tankard.forcesDark == true)
+        #expect(AppTheme.dracula.forcesDark == true)
+        #expect(AppTheme(name: "Dracula") == .dracula)
+        #expect(AppTheme.allCases.map(\.title) == ["Dark", "Light", "System", "Tankard", "Dracula"])
         #expect(AppTheme.light.forcesDark == false)
         #expect(AppTheme.system.forcesDark == nil)
         #expect(AppTheme(name: "TANKARD") == .tankard)
@@ -467,15 +470,25 @@ struct AppearanceTests {
         }
         #expect(abs(TankardPalette.contrast(0xffffff, 0x000000) - 21) < 0.01)
         #expect(TankardPalette.blend(0xffffff, alpha: 0.5, over: 0x000000) == 0x808080)
+        // Fills (the accent as button, picker and progress) against their
+        // backgrounds: WCAG 1.4.11's 3:1 for non-text contrast.
+        for (name, fg, bg) in TankardPalette.fillPairs {
+            let ratio = TankardPalette.contrast(fg, bg)
+            #expect(ratio >= 3, "\(name): \(ratio)")
+        }
+        #expect(TankardPalette.all.map(\.name).contains("dracula"))
+        #expect(TankardPalette.palette(for: .dracula)?.name == "dracula")
+        #expect(TankardPalette.palette(for: .tankard)?.name == TankardPalette.active.name)
+        #expect(TankardPalette.palette(for: .dark) == nil)
     }
 
     /// The Installed/Available version columns: installed >= 7:1 and an
     /// unchanged Available >= 5.5:1 on rows and stripes, in Tankard (the
-    /// active palette and the deep and L1 ones) and the Dark and Light
+    /// active palette and the deep and L1 ones), Dracula, and the Dark and Light
     /// themes. L2 is held to AA (4.5:1) by the test above only.
     @Test func versionColumnsContrast() {
         var pairs = StandardVersionText.pairs
-        for p in [TankardPalette.active, TankardPalette.deep, TankardPalette.lighter] {
+        for p in [TankardPalette.active, TankardPalette.deep, TankardPalette.lighter, TankardPalette.dracula] {
             pairs += TankardPalette.versionColumnPairs(p)
         }
         for (name, fg, bg, target) in pairs {

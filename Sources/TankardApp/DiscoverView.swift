@@ -141,10 +141,10 @@ struct DiscoverTable: View {
             }
             .width(min: 120, ideal: 160)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
-        .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
+        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
+        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
         .background(theme.table ?? .clear)
-        .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay { overlay }
     }
 
@@ -185,7 +185,7 @@ struct InstalledMark: View {
     @Environment(\.theme) private var theme
 
     var body: some View {
-        let selected = prominence == .increased && !theme.isTankard
+        let selected = prominence == .increased && !theme.isCustom
         HStack(spacing: 2) {
             Image(systemName: "checkmark").font(.system(size: 8, weight: .bold))
             Text("installed").font(.system(size: 9.5, weight: .medium))
@@ -224,8 +224,7 @@ struct DiscoverDetail: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
                 RoundedRectangle(cornerRadius: 9)
-                    .fill(LinearGradient(colors: theme.isTankard ? [Color(hex: TankardPalette.plate), Color(hex: TankardPalette.window)]
-                                                                  : [Color(hex: 0x3a3a3c), Color(hex: 0x1c1c1e)],
+                    .fill(LinearGradient(colors: theme.palette.map { [Color(hex: $0.plate), Color(hex: $0.window)] } ?? [Color(hex: 0x3a3a3c), Color(hex: 0x1c1c1e)],
                                          startPoint: .top, endPoint: .bottom))
                     .frame(width: 40, height: 40)
                     .overlay(Image(systemName: e.kind == .cask ? "macwindow" : "shippingbox.fill")

@@ -6,12 +6,13 @@ import TankardAppModel
 /// with the system accent and ignores `.tint`, and its header and row
 /// stripes in system greys, so under Tankard this finds the table's
 /// NSTableView, turns its own highlight off, paints every other row with
-/// `TankardPalette.rowAlternate` and the selected rows with
-/// `TankardPalette.selection` (an amber blend the rows' text and badges
+/// the palette's `rowAlternate` and the selected rows with its
+/// `selection` (a blend the rows' text and badges
 /// stay WCAG AA on), and tints the column header. Other themes leave the
 /// table alone (system highlight and header restored).
 struct TableSelectionStyler: NSViewRepresentable {
-    var tankard: Bool
+    /// The theme's palette (Tankard, Dracula); nil = system styling.
+    var palette: TankardColors?
     /// Changes whenever the selection or the rows do, so SwiftUI calls
     /// `updateNSView` and the selected row is repainted (programmatic
     /// selection posts no selectionDidChange).
@@ -27,7 +28,7 @@ struct TableSelectionStyler: NSViewRepresentable {
 
     func updateNSView(_ view: NSView, context: Context) {
         let c = context.coordinator
-        c.tankard = tankard
+        c.palette = palette
         DispatchQueue.main.async { [weak view] in
             guard let view else { return }
             if c.table == nil { c.attach(Self.findTable(near: view)) }
@@ -58,7 +59,8 @@ struct TableSelectionStyler: NSViewRepresentable {
     @MainActor
     final class Coordinator: NSObject {
         weak var table: NSTableView?
-        var tankard = false
+        var palette: TankardColors?
+        var tankard: Bool { palette != nil }
         /// Block observers; removed in deinit (nonisolated(unsafe): only
         /// touched on the main thread, and deinit runs once nothing else can).
         nonisolated(unsafe) private var observers: [NSObjectProtocol] = []
@@ -84,10 +86,12 @@ struct TableSelectionStyler: NSViewRepresentable {
             t.selectionHighlightStyle = tankard ? .none : .regular
             styleHeader(t)
             let key = t.window?.isKeyWindow ?? false
-            let color = NSColor(hex: key ? TankardPalette.selection : TankardPalette.selectionInactive)
+            let p = palette ?? TankardPalette.active
+            let color = NSColor(hex: key ? p.selection : p.selectionInactive)
+            let edge = p.selectionEdge.map { NSColor(hex: $0) }
             t.enumerateAvailableRowViews { row, index in
-                Self.paint(row, color: tankard && t.isRowSelected(index) ? color : nil)
-                Self.stripe(row, on: tankard && index % 2 == 1)
+                Self.paint(row, color: tankard && t.isRowSelected(index) ? color : nil, edge: edge)
+                Self.stripe(row, color: tankard && index % 2 == 1 ? NSColor(hex: p.rowAlternate) : nil)
             }
             // Rows SwiftUI adds later get painted on the next pass.
             if tankard {
@@ -98,22 +102,23 @@ struct TableSelectionStyler: NSViewRepresentable {
         }
 
         private func paintOnly() {
-            guard let t = table, tankard else { return }
+            guard let t = table, let p = palette else { return }
             let key = t.window?.isKeyWindow ?? false
-            let color = NSColor(hex: key ? TankardPalette.selection : TankardPalette.selectionInactive)
+            let color = NSColor(hex: key ? p.selection : p.selectionInactive)
+            let edge = p.selectionEdge.map { NSColor(hex: $0) }
             t.enumerateAvailableRowViews { row, index in
-                Self.paint(row, color: t.isRowSelected(index) ? color : nil)
-                Self.stripe(row, on: index % 2 == 1)
+                Self.paint(row, color: t.isRowSelected(index) ? color : nil, edge: edge)
+                Self.stripe(row, color: index % 2 == 1 ? NSColor(hex: p.rowAlternate) : nil)
             }
         }
 
         /// Tints the column header and the corner above the scroller. Both
         /// sit on a banner view whose NSVisualEffectView draws the system
         /// grey material; under Tankard that is hidden and the banner filled
-        /// with `TankardPalette.header` instead.
+        /// with the palette's `header` instead.
         private func styleHeader(_ t: NSTableView) {
             guard let scroll = t.enclosingScrollView else { return }
-            let color = tankard ? NSColor(hex: TankardPalette.header).cgColor : nil
+            let color = palette.map { NSColor(hex: $0.header).cgColor }
             func walk(_ v: NSView, depth: Int) {
                 if let effect = v as? NSVisualEffectView, let banner = effect.superview,
                    String(describing: type(of: banner)).contains("Banner") {
@@ -127,10 +132,10 @@ struct TableSelectionStyler: NSViewRepresentable {
         }
 
         /// The row stripe: a rounded layer like the selection's, under it.
-        static func stripe(_ row: NSTableRowView, on: Bool) {
+        static func stripe(_ row: NSTableRowView, color: NSColor?) {
             let name = "tankard.stripe"
             let existing = row.layer?.sublayers?.first { $0.name == name }
-            guard on else {
+            guard let color else {
                 existing?.removeFromSuperlayer()
                 return
             }
@@ -145,14 +150,16 @@ struct TableSelectionStyler: NSViewRepresentable {
             }()
             CATransaction.begin()
             CATransaction.setDisableActions(true)
-            layer.backgroundColor = NSColor(hex: TankardPalette.rowAlternate).cgColor
+            layer.backgroundColor = color.cgColor
             layer.frame = row.bounds.insetBy(dx: 10, dy: 0)
             CATransaction.commit()
         }
 
         /// A rounded layer under the row's content, inset like the system's
         /// inset-style selection; nil removes it.
-        static func paint(_ row: NSTableRowView, color: NSColor?) {
+        /// `edge`: a 3-point bar down the left side (Dracula), clipped to
+        /// the rounded corners.
+        static func paint(_ row: NSTableRowView, color: NSColor?, edge: NSColor? = nil) {
             let name = "tankard.selection"
             let existing = row.layer?.sublayers?.first { $0.name == name }
             guard let color else {
@@ -175,6 +182,20 @@ struct TableSelectionStyler: NSViewRepresentable {
             CATransaction.setDisableActions(true)
             layer.backgroundColor = color.cgColor
             layer.frame = row.bounds.insetBy(dx: 10, dy: 0)
+            layer.masksToBounds = true
+            let bar = layer.sublayers?.first { $0.name == "tankard.edge" }
+            if let edge {
+                let b = bar ?? {
+                    let l = CALayer()
+                    l.name = "tankard.edge"
+                    layer.addSublayer(l)
+                    return l
+                }()
+                b.backgroundColor = edge.cgColor
+                b.frame = CGRect(x: 0, y: 0, width: 3, height: layer.bounds.height)
+            } else {
+                bar?.removeFromSuperlayer()
+            }
             CATransaction.commit()
         }
 
