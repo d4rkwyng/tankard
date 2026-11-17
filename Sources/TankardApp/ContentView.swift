@@ -203,6 +203,7 @@ struct ContentView: View {
     @MainActor
     private func applyLaunchOptions() async {
         if let f = options.filter { store.filter = f }
+        if let q = options.search { store.search = q }
         await applyV04ALaunchOptions(store: store, options: options)
         await applyBrewfileLaunchOption(store: store, options: options)
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
@@ -555,6 +556,8 @@ struct PackageTable: View {
         .overlay {
             if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
                 VulnerableEmptyState(store: store)
+            } else if store.report != nil && rows.isEmpty && store.searchFindsNothingInstalled {
+                NotInstalledEmptyState(store: store)
             } else if store.report != nil && rows.isEmpty {
                 ContentUnavailableView(store.search.isEmpty ? String(localized: "Nothing here") : String(localized: "No matches"),
                                        systemImage: store.search.isEmpty ? "tray" : "magnifyingglass",
@@ -562,6 +565,32 @@ struct PackageTable: View {
             } else if store.report == nil && store.isRefreshing {
                 ProgressView(store.refreshPhase ?? String(localized: "Loading…"))
             }
+        }
+    }
+}
+
+/// 0.8.3: the Installed search found nothing installed: offer the same
+/// search in Discover (a new user often types "wget" or pastes
+/// "brew install wget" into the field they see, which is Installed's).
+struct NotInstalledEmptyState: View {
+    var store: AppStore
+
+    var body: some View {
+        let term = store.searchTerm
+        ContentUnavailableView {
+            Label(String(localized: "Not installed"), systemImage: "magnifyingglass")
+        } description: {
+            Text("No installed package matches “\(term)”.")
+        } actions: {
+            Button("Search Discover for “\(term)”") {
+                guard let d = store.searchDiscover(for: term) else { return }
+                Task {
+                    await d.activate()
+                    await d.searchNow()
+                }
+            }
+            .buttonStyle(.primaryAction)
+            .disabled(!store.hasBrew)
         }
     }
 }

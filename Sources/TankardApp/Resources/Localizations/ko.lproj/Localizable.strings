@@ -556,6 +556,7 @@
 "No data yet" = "아직 데이터 없음";
 "No dependencies" = "종속 항목 없음";
 "No fix listed" = "나열된 수정 없음";
+"No installed package matches “%@”." = "“%@”와(과) 일치하는 설치된 패키지가 없습니다.";
 "No installs recorded" = "설치 기록 없음";
 "No known vulnerabilities" = "알려진 취약점 없음";
 "No known vulnerabilities (brew vulns)." = "알려진 취약점 없음(brew vulns).";
@@ -580,6 +581,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "편집되지 않음: %@번째 줄을 제거하면 빈 if, 반복문 또는 { } 블록이 남아 bash가 거부합니다. 되돌린 후 줄을 직접 제거하세요(또는 블록에 :를 넣으세요).";
 "Not in Intelbrew mode: nothing to revert." = "Intelbrew 모드가 아님: 되돌릴 것이 없습니다.";
 "Not included: %@ (can't roll back automatically)" = "포함되지 않음: %@(자동으로 되돌릴 수 없음)";
+"Not installed" = "설치되지 않음";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "링크되지 않음: 명령이 Homebrew의 bin에 없습니다. `brew link %@`로 링크하세요.";
 "Not listed: %@." = "목록에 없음: %@.";
 "Not now" = "나중에";
@@ -765,6 +767,7 @@
 "Scanning…" = "검사 중…";
 "Scheduled" = "예약됨";
 "Search %@ packages" = "%@ 패키지 검색";
+"Search Discover for “%@”" = "둘러보기에서 “%@” 검색";
 "Search Homebrew" = "Homebrew 검색";
 "Search installed" = "설치됨 검색";
 "Search services" = "서비스 검색";

@@ -556,6 +556,7 @@
 "No data yet" = "データはまだありません";
 "No dependencies" = "依存関係なし";
 "No fix listed" = "修正は記載されていません";
+"No installed package matches “%@”." = "「%@」に一致するインストール済みパッケージはありません。";
 "No installs recorded" = "インストールの記録なし";
 "No known vulnerabilities" = "既知の脆弱性はありません";
 "No known vulnerabilities (brew vulns)." = "既知の脆弱性はありません(brew vulns)。";
@@ -580,6 +581,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "編集しませんでした: %@行目を削除すると、bashが拒否する空のif、ループ、{ } ブロックが残ります。元に戻した後で、手動で行を削除してください(またはブロックに : を入れてください)。";
 "Not in Intelbrew mode: nothing to revert." = "Intelbrewモードではありません: 元に戻すものはありません。";
 "Not included: %@ (can't roll back automatically)" = "含まれません: %@(自動でロールバックできません)";
+"Not installed" = "未インストール";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "リンクされていません: コマンドがHomebrewのbinにありません。`brew link %@` でリンクします。";
 "Not listed: %@." = "一覧にないもの: %@。";
 "Not now" = "今はしない";
@@ -765,6 +767,7 @@
 "Scanning…" = "スキャン中…";
 "Scheduled" = "スケジュール済み";
 "Search %@ packages" = "%@個のパッケージを検索";
+"Search Discover for “%@”" = "「%@」を「見つける」で検索";
 "Search Homebrew" = "Homebrewを検索";
 "Search installed" = "インストール済みを検索";
 "Search services" = "サービスを検索";

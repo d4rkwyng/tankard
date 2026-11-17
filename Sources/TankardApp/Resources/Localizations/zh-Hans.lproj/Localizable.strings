@@ -556,6 +556,7 @@
 "No data yet" = "暂无数据";
 "No dependencies" = "无依赖项";
 "No fix listed" = "未列出修复";
+"No installed package matches “%@”." = "没有与“%@”匹配的已安装软件包。";
 "No installs recorded" = "没有安装记录";
 "No known vulnerabilities" = "没有已知漏洞";
 "No known vulnerabilities (brew vulns)." = "没有已知漏洞（brew vulns）。";
@@ -580,6 +581,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "未编辑：移除第 %@ 行会留下空的 if、循环或 { } 块，bash 会拒绝它。请在还原后手动移除这些行（或在块中放入 :）。";
 "Not in Intelbrew mode: nothing to revert." = "不在 Intelbrew 模式：无需还原。";
 "Not included: %@ (can't roll back automatically)" = "未包含：%@（无法自动回滚）";
+"Not installed" = "未安装";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "未链接：它的命令不在 Homebrew 的 bin 中。`brew link %@` 可链接它。";
 "Not listed: %@." = "未列出：%@。";
 "Not now" = "暂不";
@@ -765,6 +767,7 @@
 "Scanning…" = "正在扫描…";
 "Scheduled" = "已计划";
 "Search %@ packages" = "搜索 %@ 个软件包";
+"Search Discover for “%@”" = "在“探索”中搜索“%@”";
 "Search Homebrew" = "搜索 Homebrew";
 "Search installed" = "搜索已安装项";
 "Search services" = "搜索服务";

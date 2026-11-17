@@ -302,13 +302,37 @@ public final class AppStore {
         if let related = RelatedSearch(search), let rows = related.rows(in: packages, selected: selectedPackage) {
             return rows.filter { filter.includes($0) }
         }
-        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
-        return packages.filter { p in
-            filter.includes(p) && (q.isEmpty
-                || p.name.lowercased().contains(q)
-                || p.fullName.lowercased().contains(q)
-                || (p.desc?.lowercased().contains(q) ?? false))
-        }
+        let q = searchTerm.lowercased()
+        return packages.filter { p in filter.includes(p) && Self.matches(p, q) }
+    }
+
+    static func matches(_ p: Package, _ q: String) -> Bool {
+        q.isEmpty
+            || p.name.lowercased().contains(q)
+            || p.fullName.lowercased().contains(q)
+            || (p.desc?.lowercased().contains(q) ?? false)
+    }
+
+    /// 0.8.3: the Installed search finds nothing in any filter (not a
+    /// "deps:"/"uses:" list): the empty list offers Discover instead.
+    public var searchFindsNothingInstalled: Bool {
+        let q = searchTerm.lowercased()
+        guard !q.isEmpty, RelatedSearch(search) == nil else { return false }
+        return !packages.contains { Self.matches($0, q) }
+    }
+
+    /// 0.8.3: what the Installed search looks for: the field's text, or
+    /// the package part of a pasted "brew install x" (PastedCommand).
+    public var searchTerm: String { PastedCommand.searchTerm(search) }
+
+    /// 0.8.3: the Installed list's "Search Discover for 'x'": Discover with
+    /// the same term. The caller loads the catalog (DiscoverStore.activate).
+    @discardableResult
+    public func searchDiscover(for term: String) -> DiscoverStore? {
+        guard let d = openDiscover() else { return nil }
+        d.query = term
+        tab = .discover
+        return d
     }
 
     public var selectedPackage: Package? {

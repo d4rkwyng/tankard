@@ -16,6 +16,9 @@ struct LaunchOptions {
     var tab: MainTab = .installed
     /// TANKARD_DISCOVER=<query>: search Discover on launch.
     var discoverQuery: String?
+    /// 0.8.3: TANKARD_SEARCH: the Installed search field's text at launch
+    /// (shots of the "Search Discover for" empty state).
+    var search: String?
     /// TANKARD_DISCOVER_SELECT=<name>: select a Discover row.
     var discoverSelect: String?
     /// Demo only: TANKARD_DEMO_INSTALL=1 installs the Discover selection.
@@ -109,6 +112,7 @@ struct LaunchOptions {
         o.appearance = AppTheme(name: env["TANKARD_APPEARANCE"])
         o.tab = env["TANKARD_TAB"]?.lowercased() == "discover" ? .discover : .installed
         o.discoverQuery = env["TANKARD_DISCOVER"].flatMap { $0.isEmpty ? nil : $0 }
+        o.search = env["TANKARD_SEARCH"].flatMap { $0.isEmpty ? nil : $0 }
         if o.discoverQuery != nil { o.tab = .discover }
         o.discoverSelect = env["TANKARD_DISCOVER_SELECT"]
         o.snapshot = SnapshotRequest(environment: env)

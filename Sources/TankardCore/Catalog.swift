@@ -241,7 +241,8 @@ public enum CatalogSearch {
     public static func search(_ query: String, in entries: [CatalogEntry], kind: CatalogKindFilter = .all,
                               limit: Int = 200, preferBottled: Bool = false, bottledOnly: Bool = false,
                               popularity: [String: Int] = [:]) -> [CatalogEntry] {
-        let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        // 0.8.3: a pasted "brew install x" searches for x.
+        let q = PastedCommand.searchTerm(query).lowercased()
         guard !q.isEmpty else { return [] }
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
         var hits: [(Int, CatalogEntry)] = []

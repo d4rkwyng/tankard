@@ -556,6 +556,7 @@
 "No data yet" = "Aún no hay datos";
 "No dependencies" = "Sin dependencias";
 "No fix listed" = "No hay corrección indicada";
+"No installed package matches “%@”." = "Ningún paquete instalado coincide con “%@”.";
 "No installs recorded" = "Sin instalaciones registradas";
 "No known vulnerabilities" = "Sin vulnerabilidades conocidas";
 "No known vulnerabilities (brew vulns)." = "Sin vulnerabilidades conocidas (brew vulns).";
@@ -580,6 +581,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "No editado: quitar la línea %@ dejaría un bloque if, bucle o { } vacío, que bash rechaza. Quita las líneas manualmente (o pon : en el bloque) tras la reversión.";
 "Not in Intelbrew mode: nothing to revert." = "No está en modo Intelbrew: nada que revertir.";
 "Not included: %@ (can't roll back automatically)" = "No incluido: %@ (no se puede revertir automáticamente)";
+"Not installed" = "No instalado";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Sin enlazar: sus comandos no están en el bin de Homebrew. `brew link %@` lo enlaza.";
 "Not listed: %@." = "No listadas: %@.";
 "Not now" = "Ahora no";
@@ -765,6 +767,7 @@
 "Scanning…" = "Analizando…";
 "Scheduled" = "Programado";
 "Search %@ packages" = "Buscar en %@ paquetes";
+"Search Discover for “%@”" = "Buscar “%@” en Descubrir";
 "Search Homebrew" = "Buscar en Homebrew";
 "Search installed" = "Buscar en instalados";
 "Search services" = "Buscar servicios";

@@ -64,7 +64,10 @@ installs or upgrades anything on its own unless you turn on
 ## The Installed list at a glance
 
 - **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search. Search matches
-  the name and description.
+  the name and description. You can paste a whole command such as `brew install wget` or
+  `brew install --cask firefox` into either search field: Tankard searches for the package
+  name. When nothing installed matches, the list offers **Search Discover for "wget"**,
+  which opens Discover with the same search.
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
   until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
