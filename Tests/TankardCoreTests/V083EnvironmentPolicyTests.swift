@@ -202,6 +202,18 @@ struct CaskOptionsTests {
         #expect(row?.status == .partial)
         #expect(row?.caskOptions?.kept == ["--require-sha"])
         #expect(row?.caskOptions?.dropped.map(\.option) == ["--appdir=/a"])
+        // brew.env: brew reads it over Tankard's environment, so the unsafe
+        // options apply; the row carries them for Health's warning.
+        let file = EnvironmentSources(process: [:], shellProfiles: [("~/.zshenv", ["HOMEBREW_CASK_OPTS": "--require-sha"])],
+                                      brewEnvFiles: [("~/.homebrew/brew.env", ["HOMEBREW_CASK_OPTS": "--appdir=/x --force"])])
+        let fileRow = EnvironmentPolicy.entries(sources: file, intelbrew: none).first { $0.key == "HOMEBREW_CASK_OPTS" }
+        #expect(fileRow?.status == .brewEnv)
+        #expect(fileRow?.source == "~/.homebrew/brew.env")
+        #expect(fileRow?.caskOptions?.dropped.map(\.option) == ["--appdir=/x", "--force"])
+        let safeFile = EnvironmentSources(process: [:], brewEnvFiles: [("/etc/homebrew/brew.env", ["HOMEBREW_CASK_OPTS": "--language=de"])])
+        let safeRow = EnvironmentPolicy.entries(sources: safeFile, intelbrew: none).first { $0.key == "HOMEBREW_CASK_OPTS" }
+        #expect(safeRow?.status == .brewEnv)
+        #expect(safeRow?.caskOptions == nil)
         // All safe: plain "passed".
         let ok = EnvironmentSources(process: [:], shellProfiles: [("~/.zshenv", ["HOMEBREW_CASK_OPTS": "--require-sha"])])
         #expect(EnvironmentPolicy.entries(sources: ok, intelbrew: none).first { $0.key == "HOMEBREW_CASK_OPTS" }?.status == .passed)

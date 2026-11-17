@@ -568,7 +568,10 @@ Not passed from a shell profile:
 - any `HOMEBREW_*` name not on Tankard's list.
 
 To use one of those anyway, put it in a `brew.env` file, such as `~/.homebrew/brew.env`.
-brew reads that itself however it is started. Details are in
+brew reads that itself however it is started, and a brew.env value wins over anything
+Tankard passes. So a `HOMEBREW_CASK_OPTS` with `--appdir` there applies to Tankard's
+installs too; Health ▸ Environment warns about it, because Adopt Apps' location checks
+assume `/Applications`. Details are in
 [architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
 
 ### "Check for new versions in the background" is grayed out

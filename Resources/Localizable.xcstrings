@@ -41682,6 +41682,58 @@
         }
       }
     },
+    "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt, gilt also auch für Installationen aus Tankard; die Ortsprüfung von „Apps übernehmen“ setzt /Applications voraus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env, donc appliqué aussi aux installations de Tankard ; les vérifications d'emplacement d'Adopter des apps supposent /Applications."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida en brew.env, así que también se aplica a las instalaciones de Tankard; las comprobaciones de ubicación de Adoptar apps suponen /Applications."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定されているため、Tankard からのインストールにも適用されます。「アプリを引き継ぐ」の場所チェックは /Applications を前提としています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置，因此也会作用于 Tankard 的安装；接管 App 的位置检查假定为 /Applications。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definida no brew.env, então também vale para as instalações do Tankard; as verificações de local de Adotar apps assumem /Applications."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostata in brew.env, quindi vale anche per le installazioni da Tankard; i controlli di posizione di Adotta app presuppongono /Applications."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정되어 있어 Tankard의 설치에도 적용됩니다. 앱 가져오기의 위치 확인은 /Applications를 전제로 합니다."
+          }
+        }
+      }
+    },
     "Several casks install an app with this name. Pick the one you have.": {
       "localizations": {
         "de": {
@@ -56369,7 +56421,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アプリの保存先が変わります（取り込みと App 管理はこれに依存）"
+            "value": "アプリの保存先が変わります（引き継ぎと App 管理はこれに依存）"
           }
         },
         "zh-Hans": {
@@ -60321,7 +60373,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "確認なしでアプリを上書きまたは取り込みます"
+            "value": "確認なしでアプリを上書きまたは引き継ぎます"
           }
         },
         "zh-Hans": {

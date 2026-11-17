@@ -794,6 +794,7 @@
 "Set by Intelbrew mode." = "Intelbrew モードで設定。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "チェックとアップグレード用に Tankard が設定：brew update の実行時期は Tankard が決めます。";
 "Set by Tankard: it reads brew's output." = "Tankard が設定：brew の出力を読み取るためです。";
+"Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "brew.env で設定されているため、Tankard からのインストールにも適用されます。「アプリを引き継ぐ」の場所チェックは /Applications を前提としています。";
 "Several casks install an app with this name. Pick the one you have." = "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。";
 "Show" = "表示";
 "Show Auto-update Log…" = "自動アップデートのログを表示…";
@@ -1076,7 +1077,7 @@
 "brew's output" = "brewの出力";
 "cancelled" = "キャンセル済み";
 "cask" = "cask";
-"changes where apps go, which Adopt and App Management rely on" = "アプリの保存先が変わります（取り込みと App 管理はこれに依存）";
+"changes where apps go, which Adopt and App Management rely on" = "アプリの保存先が変わります（引き継ぎと App 管理はこれに依存）";
 "couldn't start %@: %@" = "%@を開始できませんでした: %@";
 "couldn't tell whether its app is running" = "アプリが実行中かどうか確認できませんでした";
 "dep" = "dep";
@@ -1152,7 +1153,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@のアップグレードには%@をソースから再ビルドする必要があります。手動でアップグレードしてください";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "上流でソースファイルのチェックサムが変更されたソースからビルドされました";
-"would overwrite or take over apps without confirmation" = "確認なしでアプリを上書きまたは取り込みます";
+"would overwrite or take over apps without confirmation" = "確認なしでアプリを上書きまたは引き継ぎます";
 "yesterday %@" = "昨日 %@";
 "you chose to skip %@" = "%@のスキップを選択しました";
 "~%@ h" = "約%@時間";

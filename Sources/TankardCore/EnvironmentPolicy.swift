@@ -210,6 +210,8 @@ public enum EnvironmentPolicy {
         /// What brew gets from Tankard, when Tankard sets it ("1"), else nil.
         public var tankardValue: String?
         /// HOMEBREW_CASK_OPTS from the shell: what passed and what didn't.
+        /// From a brew.env file: set only when it has options Tankard would
+        /// drop, which then apply anyway (see `entries`).
         public var caskOptions: CaskOptions?
         public var id: String { key }
     }
@@ -252,6 +254,18 @@ public enum EnvironmentPolicy {
                     entry.status = .partial
                     entry.caskOptions = c
                 }
+            }
+            // brew.env wins over the environment Tankard passes: bin/brew
+            // `export`s each line unconditionally (system, prefix, then user
+            // file; HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY re-reads the system one
+            // last). Checked on brew 7.0.14: HOMEBREW_CASK_OPTS=--require-sha
+            // in the environment, --appdir=/x --force in ~/.homebrew/brew.env
+            // -> brew config shows ["--appdir=/x", "--force"] and
+            // Cask::Config appdir is /x; an empty value in the environment
+            // doesn't help either. Tankard can't filter it, so Health warns.
+            if key == CaskOptions.key, status == .brewEnv, let v = brewEnv?.value {
+                let c = CaskOptions.filter(v)
+                if !c.dropped.isEmpty { entry.caskOptions = c }
             }
             return entry
         }

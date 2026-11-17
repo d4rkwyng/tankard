@@ -794,6 +794,7 @@
 "Set by Intelbrew mode." = "Set by Intelbrew mode.";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Set by Tankard for checks and upgrades: Tankard decides when brew update runs.";
 "Set by Tankard: it reads brew's output." = "Set by Tankard: it reads brew's output.";
+"Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.";
 "Several casks install an app with this name. Pick the one you have." = "Several casks install an app with this name. Pick the one you have.";
 "Show" = "Show";
 "Show Auto-update Log…" = "Show Auto-update Log…";
