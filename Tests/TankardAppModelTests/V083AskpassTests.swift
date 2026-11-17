@@ -94,9 +94,10 @@ private func builtHelper() -> String? {
 }
 
 struct AskpassHelperProcessTests {
-    /// Runs the real helper binary in its describe mode with a fake
-    /// context: no window, nothing on stdout (the password channel), exit 1.
-    @Test(.enabled(if: builtHelper() != nil)) func describeModeNeverWritesStdout() async throws {
+    /// The real helper binary, run by this test process (not sudo, no
+    /// Tankard above it): refused before anything is drawn, even with the
+    /// describe hook, and nothing on stdout (the password channel).
+    @Test(.enabled(if: builtHelper() != nil)) func refusesWhenNotRunBySudoForTankard() async throws {
         let helper = try #require(builtHelper())
         let r = try await ProcessRunner().run(helper, ["Password:"], environment: [
             Askpass.describeKey: "1",
@@ -104,8 +105,74 @@ struct AskpassHelperProcessTests {
         ])
         #expect(r.exitCode == 1)
         #expect(r.stdout.isEmpty)
-        #expect(r.stderrString.contains("To run the installer for windows-app: brew upgrade --cask windows-app"))
-        #expect(r.stderrString.contains("[secure text field]"))
+        #expect(r.stderrString.contains("refused: parent is not /usr/bin/sudo"))
+        #expect(!r.stderrString.contains("windows-app"))
+    }
+}
+
+struct AskpassGateTests {
+    static let helper = "/Applications/Tankard.app/Contents/MacOS/tankard-askpass"
+    static let tankard = "/Applications/Tankard.app/Contents/MacOS/Tankard"
+    static let ruby = "/opt/homebrew/Library/Homebrew/vendor/portable-ruby/current/bin/ruby"
+
+    @Test func realSudoWithTankardAboveIsAllowed() {
+        #expect(AskpassGate.expectedTankard(helperPath: Self.helper) == Self.tankard)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.ruby, Self.tankard],
+                                   helperPath: Self.helper) == .allow)
+        // brew's bash in between, or ruby straight under Tankard.
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.ruby, "/bin/bash", Self.tankard, "/sbin/launchd"],
+                                   helperPath: Self.helper) == .allow)
+    }
+
+    @Test func aParentThatIsNotTheRealSudoIsDenied() {
+        for parent in ["/bin/zsh", "/usr/bin/cat", "/tmp/sudo", "/usr/local/bin/sudo", nil] {
+            #expect(AskpassGate.decide(parentPath: parent, ancestorPaths: [Self.tankard], helperPath: Self.helper) != .allow,
+                    "\(parent ?? "nil")")
+        }
+    }
+
+    @Test func sudoWithoutTankardAboveIsDenied() {
+        // Terminal: zsh, login, Terminal.app.
+        let terminal = ["/bin/zsh", "/usr/bin/login", "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal", "/sbin/launchd"]
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: terminal, helperPath: Self.helper) != .allow)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [], helperPath: Self.helper) != .allow)
+        // Another copy of Tankard is not this helper's Tankard.
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/Users/me/Downloads/Tankard.app/Contents/MacOS/Tankard"],
+                                   helperPath: Self.helper) != .allow)
+    }
+
+    @Test func aCopiedOrSymlinkedHelperIsDenied() {
+        // Copied out of the bundle: no bundle, no Tankard of its own.
+        #expect(AskpassGate.expectedTankard(helperPath: "/tmp/tankard-askpass") == nil)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.tankard],
+                                   helperPath: "/tmp/tankard-askpass") != .allow)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.tankard],
+                                   helperPath: "/tmp/x/Contents/MacOS/tankard-askpass") != .allow)
+        // Copied into a home-made bundle: its "Tankard" is that bundle's, not
+        // the real one above sudo.
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.tankard],
+                                   helperPath: "/tmp/Evil.app/Contents/MacOS/tankard-askpass") != .allow)
+        // ...and with a program called Tankard in it running above sudo: a
+        // signed release requires the same team (nil: unsigned or invalid).
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/tmp/Evil.app/Contents/MacOS/Tankard"],
+                                   helperPath: "/tmp/Evil.app/Contents/MacOS/tankard-askpass",
+                                   helperTeam: "ABCDE12345", tankardTeam: nil) != .allow)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/tmp/Evil.app/Contents/MacOS/Tankard"],
+                                   helperPath: "/tmp/Evil.app/Contents/MacOS/tankard-askpass",
+                                   helperTeam: "ABCDE12345", tankardTeam: "ZZZZZ99999") != .allow)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.ruby, Self.tankard], helperPath: Self.helper,
+                                   helperTeam: "ABCDE12345", tankardTeam: "ABCDE12345") == .allow)
+        // A symlink to the helper: the kernel reports the target's path, so
+        // the symlink's own location never counts.
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [Self.tankard],
+                                   helperPath: "/tmp/link/tankard-askpass") != .allow)
+    }
+
+    @Test func theWalkIsCapped() {
+        let deep = Array(repeating: "/bin/bash", count: AskpassGate.maxAncestors) + [Self.tankard]
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: deep, helperPath: Self.helper) != .allow)
+        let justInside = Array(repeating: "/bin/bash", count: AskpassGate.maxAncestors - 1) + [Self.tankard]
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: justInside, helperPath: Self.helper) == .allow)
     }
 }
 

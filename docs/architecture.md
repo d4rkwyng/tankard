@@ -480,6 +480,20 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
   ignores SIGTERM while it waits for a password, the helper doesn't). It
   refuses to run with stdout on a terminal, writes nothing to disk, logs or defaults, and
   never executes anything from its environment.
+- *Gate (security review).* Before drawing or reading anything, debug hooks included, the
+  helper checks `AskpassGate.decide` (pure, tested) over kernel facts: the parent's
+  `proc_pidpath` must be exactly `/usr/bin/sudo` (SIP-protected; never p_comm), and within
+  10 processes above sudo (brew's ruby, bash, …) there must be this bundle's own
+  `Contents/MacOS/Tankard`, derived from the helper's own `proc_pidpath` (so a symlink
+  resolves to the real helper, and a copy outside a `.app/Contents/MacOS/` has no Tankard).
+  When the helper carries a Team ID (Developer ID release), that Tankard process must pass
+  `SecCodeCheckValidity` and have the same Team ID, which stops a copied helper in a
+  home-made bundle next to a program named Tankard. Anything else: exit 1, one
+  "refused: …" line on stderr, no window; sudo then fails as on Cancel. Residual risk,
+  inherent to Homebrew: brew's prefix is user-writable, so a process that already runs as
+  the user can replace `brew` itself, and the real Tankard would then run that brew, which
+  could ask through the dialog for a command of its choosing. The same is true of
+  `brew` in Terminal.
 - *Context.* `HOMEBREW_TANKARD_ASKPASS_CONTEXT`, set per command by Tankard (already
   localized), cleaned to one line of at most 400 characters with no control characters.
   A `HOMEBREW_` name because `bin/brew` drops other unknown variables; verified to reach the
@@ -510,9 +524,11 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
 - *Signing.* `bundle-app.sh` builds and copies the helper (lipo for universal);
   `release.sh` signs it first with the hardened runtime, a secure timestamp and identifier
   `net.mindtricks.tankard.askpass`, then seals the app; notarization covers both.
-- *Debug hooks* (never set by Tankard): `TANKARD_ASKPASS_DESCRIBE=1` prints the dialog's
-  text to stderr and exits 1; `TANKARD_ASKPASS_SNAPSHOT=<png>` draws the empty dialog to a
-  PNG and exits 1; `TANKARD_ASKPASS_RETRY=1` shows the retry wording. None reads a password.
+- *Debug hooks* (never set by Tankard, and only after the gate allows the request):
+  `TANKARD_ASKPASS_DESCRIBE=1` prints the dialog's text to stderr and exits 1;
+  `TANKARD_ASKPASS_SNAPSHOT=<png>` draws the empty dialog to a PNG and exits 1;
+  `TANKARD_ASKPASS_RETRY=1` shows the retry wording. None reads a password. bin/brew drops
+  these names, so in practice they work only in a test harness that is itself under Tankard.
 
 **Download progress (0.8.1).** brew prints no progress when it isn't in a terminal, so
 Tankard watches brew's downloads folder. A bottle's size comes from the manifest brew

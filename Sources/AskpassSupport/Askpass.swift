@@ -136,3 +136,68 @@ public enum AskpassText {
          "[\(ok)] [\(cancel)]"].joined(separator: "\n") + "\n"
     }
 }
+
+/// 0.8.3 (security review): the helper answers only Tankard's own brew run.
+/// Without this, any process could run
+/// `SUDO_ASKPASS=…/tankard-askpass sudo -A <anything>` with friendly
+/// context text and get a signed, Tankard-branded password dialog, or run
+/// the helper with its stdout on a pipe and read the password.
+///
+/// The helper allows a request only when
+/// 1. its parent is the real sudo: the kernel's path of the parent process
+///    (proc_pidpath, symlinks resolved) is `/usr/bin/sudo`, which SIP
+///    protects. A process name (p_comm) is not enough: anyone can name a
+///    program "sudo". Any other parent (a shell, `| cat`, a file) is refused.
+/// 2. walking up from sudo's parent (brew's Ruby, bash, …), at most
+///    `maxAncestors` steps, it finds the Tankard executable of the helper's
+///    own bundle: `<bundle>/Contents/MacOS/Tankard`, from the helper's own
+///    kernel path (so a symlink to the helper resolves to the real one),
+///    and the helper must itself sit at `<bundle>.app/Contents/MacOS/tankard-askpass`.
+///    A helper copied elsewhere has no Tankard of its own above it.
+/// 3. when the helper is signed with a Team ID (a Developer ID release),
+///    that Tankard process is validly signed by the same team. This stops a
+///    copy of the helper placed in a home-made bundle next to a program
+///    called "Tankard". Ad-hoc builds have no Team ID; there only 1 and 2 apply.
+///
+/// The decision is this pure function; `tankard-askpass/main.swift` gathers
+/// its inputs from the kernel and Security.framework.
+public enum AskpassGate {
+    public static let sudoPath = "/usr/bin/sudo"
+    public static let maxAncestors = 10
+    static let helperSuffix = ".app/Contents/MacOS/" + Askpass.helperName
+
+    public enum Decision: Equatable, Sendable {
+        case allow
+        case deny(String)
+    }
+
+    /// The Tankard executable that must be above sudo, from the helper's
+    /// own resolved path; nil when the helper isn't inside an app bundle.
+    public static func expectedTankard(helperPath: String) -> String? {
+        guard helperPath.hasPrefix("/"), helperPath.hasSuffix(helperSuffix) else { return nil }
+        return String(helperPath.dropLast(Askpass.helperName.count)) + "Tankard"
+    }
+
+    /// - parentPath: the parent process's resolved executable path (nil: unknown).
+    /// - ancestorPaths: resolved paths of sudo's parent, its parent, … in
+    ///   order, as far as they could be read (nil entries: unreadable).
+    /// - helperPath: the helper's own resolved path.
+    /// - helperTeam / tankardTeam: Team IDs (nil: none, or the Tankard
+    ///   process's signature didn't check out).
+    public static func decide(parentPath: String?, ancestorPaths: [String?], helperPath: String,
+                              helperTeam: String? = nil, tankardTeam: String? = nil) -> Decision {
+        guard parentPath == sudoPath else {
+            return .deny("parent is not \(sudoPath) (\(parentPath ?? "unknown"))")
+        }
+        guard let expected = expectedTankard(helperPath: helperPath) else {
+            return .deny("helper is not inside an app bundle (\(helperPath))")
+        }
+        guard ancestorPaths.prefix(maxAncestors).contains(where: { $0 == expected }) else {
+            return .deny("no \(expected) above sudo within \(maxAncestors) processes")
+        }
+        if let helperTeam, helperTeam != tankardTeam {
+            return .deny("Tankard process is not signed by team \(helperTeam)")
+        }
+        return .allow
+    }
+}

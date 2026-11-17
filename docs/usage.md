@@ -140,6 +140,9 @@ click **OK**:
   first sudo, and later sudo steps of the same command don't ask again. Upgrading two such
   casks asks twice.
 - The dialog closes by itself after 5 minutes, or when you click **Stop Now**.
+- The dialog only ever answers Tankard's own brew commands. Run any other way (another
+  program's sudo, Terminal), it refuses before showing anything, so it can't be used to
+  ask you for your password on someone else's behalf.
 
 Other cask installs, upgrades and uninstalls can ask too, when brew needs sudo to replace
 or remove files it doesn't own; formulae never do.
@@ -477,9 +480,9 @@ Links (homepages, release pages) open only when you click them.
 ## What Tankard runs
 
 Reading your packages never changes anything. Your packages change only when you click,
-or when automatic updates is on. Commands run one at a time. Tankard never runs `sudo`
-itself; brew does, for some cask steps, and then asks through Tankard's password dialog
-(below).
+or when automatic updates is on. Commands run one at a time. Tankard never runs sudo
+itself; when a cask's installer needs your administrator password, a Tankard dialog passes
+it straight to sudo (or you can run the command in Terminal). See below.
 
 | you click | Tankard runs |
 |---|---|

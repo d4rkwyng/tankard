@@ -15,22 +15,71 @@
 import AppKit
 import AskpassSupport
 import Darwin
+import Security
 
-/// How long the calling sudo has been running, from the kernel; nil when
-/// the parent isn't sudo (a shell, the snapshot hook), so the retry
-/// wording only ever follows a real sudo retry.
-func parentAge(_ pid: pid_t) -> TimeInterval? {
+/// The kernel's view of a process: its parent and start time.
+func procInfo(_ pid: pid_t) -> kinfo_proc? {
     var info = kinfo_proc()
     var size = MemoryLayout<kinfo_proc>.stride
     var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
-    guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0 else { return nil }
-    let name = withUnsafeBytes(of: info.kp_proc.p_comm) { raw in
-        String(decoding: raw.prefix(while: { $0 != 0 }), as: UTF8.self)
-    }
-    guard name == "sudo" else { return nil }
+    guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0, info.kp_proc.p_pid == pid else { return nil }
+    return info
+}
+
+/// The executable a process runs, as the kernel resolved it (symlinks
+/// followed): what `exec` actually loaded, not argv[0] or p_comm.
+func executablePath(_ pid: pid_t) -> String? {
+    var buf = [CChar](repeating: 0, count: 4 * Int(MAXPATHLEN))
+    let n = proc_pidpath(pid, &buf, UInt32(buf.count))
+    guard n > 0 else { return nil }
+    return String(cString: buf)
+}
+
+/// How long the calling sudo has been running (the retry wording).
+func parentAge(_ pid: pid_t) -> TimeInterval? {
+    guard let info = procInfo(pid) else { return nil }
     let start = info.kp_proc.p_un.__p_starttime
     let started = TimeInterval(start.tv_sec) + TimeInterval(start.tv_usec) / 1_000_000
     return Date().timeIntervalSince1970 - started
+}
+
+/// sudo's parent, its parent, …: (pid, resolved path), at most `limit`.
+func ancestors(above pid: pid_t, limit: Int) -> [(pid: pid_t, path: String?)] {
+    var out: [(pid_t, String?)] = []
+    var current = procInfo(pid)?.kp_eproc.e_ppid ?? 0
+    while current > 1 && out.count < limit {
+        out.append((current, executablePath(current)))
+        current = procInfo(current)?.kp_eproc.e_ppid ?? 0
+    }
+    return out
+}
+
+/// The Team ID a code object is signed with; nil when there is none or
+/// the signature doesn't check out.
+func teamID(_ code: SecStaticCode) -> String? {
+    var info: CFDictionary?
+    guard SecCodeCopySigningInformation(code, SecCSFlags(rawValue: kSecCSSigningInformation), &info) == errSecSuccess,
+          let dict = info as? [String: Any] else { return nil }
+    return dict[kSecCodeInfoTeamIdentifier as String] as? String
+}
+
+func ownTeamID() -> String? {
+    var code: SecCode?
+    var staticCode: SecStaticCode?
+    guard SecCodeCopySelf([], &code) == errSecSuccess, let code,
+          SecCodeCopyStaticCode(code, [], &staticCode) == errSecSuccess, let staticCode else { return nil }
+    return teamID(staticCode)
+}
+
+/// A running process's Team ID, only after its dynamic signature is valid.
+func runningTeamID(_ pid: pid_t) -> String? {
+    var code: SecCode?
+    let attributes = [kSecGuestAttributePid: NSNumber(value: pid)] as CFDictionary
+    guard SecCodeCopyGuestWithAttributes(nil, attributes, [], &code) == errSecSuccess, let code,
+          SecCodeCheckValidity(code, [], nil) == errSecSuccess else { return nil }
+    var staticCode: SecStaticCode?
+    guard SecCodeCopyStaticCode(code, [], &staticCode) == errSecSuccess, let staticCode else { return nil }
+    return teamID(staticCode)
 }
 
 func fail(_ message: String) -> Never {
@@ -55,6 +104,24 @@ func sendPassword(_ password: String) -> Bool {
 
 let env = ProcessInfo.processInfo.environment
 let ppid = getppid()
+
+// The gate (AskpassGate): before anything is drawn or read, including the
+// debug hooks. Refused: exit 1, one line on stderr, no window.
+let helperPath = executablePath(getpid()) ?? ""
+let parentPath = executablePath(ppid)
+let above = ancestors(above: ppid, limit: AskpassGate.maxAncestors)
+let helperTeam = ownTeamID()
+let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard(helperPath: helperPath)
+    .flatMap { expected in above.first { $0.path == expected } }
+    .flatMap { runningTeamID($0.pid) }
+let decision = AskpassGate.decide(parentPath: parentPath, ancestorPaths: above.map(\.path), helperPath: helperPath,
+                                  helperTeam: helperTeam, tankardTeam: tankardTeam)
+// The parent must still be the one checked (not exited and replaced).
+guard decision == .allow, getppid() == ppid else {
+    if case .deny(let why) = decision { fail("refused: \(why). Only Tankard's own brew commands can use this dialog.") }
+    fail("refused: the calling sudo went away.")
+}
+
 let request = Askpass.request(arguments: CommandLine.arguments, environment: env, parentAge: parentAge(ppid))
 
 if env[Askpass.describeKey] == "1" {
