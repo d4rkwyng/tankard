@@ -20,13 +20,28 @@ struct UpgradeSheet: View {
 
             HStack {
                 Text(session.statusLine(behindBrewUpdate: store.sessionWaitsForBrewUpdate))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .truncationMode(.middle)
                 Spacer()
                 Text(session.countLine).foregroundStyle(.secondary).monospacedDigit()
             }
             .font(.system(size: 12))
             .padding(.bottom, 6)
-            ProgressView(value: session.fraction)
-                .progressViewStyle(.linear)
+            // 0.8: while brew downloads, the bar is the download's (no total:
+            // an indeterminate bar); the count stays on the right.
+            Group {
+                if let d = session.download {
+                    if let f = d.fraction {
+                        ProgressView(value: f)
+                    } else {
+                        ProgressView()
+                    }
+                } else {
+                    ProgressView(value: session.fraction)
+                }
+            }
+            .progressViewStyle(.linear)
 
             FlowLayout(spacing: 6) {
                 ForEach(session.items) { item in

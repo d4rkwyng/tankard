@@ -17,6 +17,7 @@
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ 실패(종료 코드 %d)";
 "%@ %@ needs administrator rights" = "%@ %@에는 관리자 권한이 필요합니다";
+"%@ %@ so far" = "%@ %@ 받음";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ 패키지 %lld개";
@@ -38,6 +39,7 @@
 "%@ is pinned" = "%@이(가) 고정됨";
 "%@ is running" = "%@ 실행 중";
 "%@ is there but doesn't run. It said:" = "%@이(가) 있지만 실행되지 않습니다. 출력:";
+"%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
 "%@ printed JSON Tankard could not read: %@" = "%@이(가) Tankard에서 읽을 수 없는 JSON을 출력했습니다: %@";
 "%@ runs as %@: %@ needs sudo" = "%@은(는) %@ 권한으로 실행됩니다: %@에는 sudo가 필요합니다";
@@ -318,6 +320,7 @@
 "Don't quit running apps during upgrades" = "업그레이드 중 실행 중인 앱을 종료하지 않음";
 "Done" = "완료";
 "Download cache" = "다운로드 캐시";
+"Downloading %@…" = "%@ 다운로드 중…";
 "Downloads" = "다운로드";
 "Dracula" = "Dracula";
 "Dracula colours (draculatheme.com, MIT)" = "Dracula 색상(draculatheme.com, MIT)";
@@ -379,6 +382,7 @@
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "이후 이 앱들은 Homebrew가 관리합니다. brew upgrade는 앱을 cask 버전으로 교체하며, cask를 제거하면(Tankard에서든 brew uninstall로든) 앱이 삭제됩니다.";
 "Full log saved to %@" = "전체 로그가 %@에 저장됨";
 "Full scan" = "전체 검사";
+"GB" = "GB";
 "General" = "일반";
 "HEAD build" = "HEAD 빌드";
 "HEAD builds have no fixed version to go back to." = "HEAD 빌드에는 되돌아갈 고정된 버전이 없습니다.";
@@ -458,6 +462,7 @@
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "%@의 Homebrew 파일과 설치된 모든 formula와 cask를 삭제하며, /Applications에 cask로 설치된 앱도 포함됩니다. 이 Mac의 다른 prefix에 있는 Homebrew는 건드리지 않습니다. 암호를 요청할 수 있습니다.";
 "It took %@; expect longer on an older Mac." = "%@ 걸렸습니다. 오래된 Mac에서는 더 오래 걸립니다.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
+"KB" = "KB";
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
 "Keg-only" = "Keg-only";
@@ -487,6 +492,7 @@
 "Log" = "로그";
 "Logs and other" = "로그 및 기타";
 "Low" = "낮음";
+"MB" = "MB";
 "Made by d4rkwyng" = "d4rkwyng 제작";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "cask의 pkg 아티팩트로 표시됩니다. 다른 cask도 암호를 요청할 수 있습니다.";
 "Medium" = "보통";

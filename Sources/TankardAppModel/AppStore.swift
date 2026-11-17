@@ -82,6 +82,10 @@ public final class AppStore {
         /// 0.8, e2e only: the background update's interval in seconds instead
         /// of Settings' hours (Scripts/e2e.sh's background scenario).
         public var backgroundUpdateInterval: TimeInterval?
+        /// 0.8: download progress in the sheet: builds the watcher for a
+        /// session's brew (nil: none, as in demo mode). `live()` sets
+        /// `DownloadMonitor.live`.
+        public var downloadMonitor: (@Sendable (BrewClient, [String: String]) -> DownloadMonitor?)?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -126,6 +130,7 @@ public final class AppStore {
             d.historyURL = HistoryLog.defaultURL
             d.restorePointsURL = RestorePointStore.defaultDirectory
             d.backgroundUpdates = true
+            d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -732,6 +737,7 @@ public final class AppStore {
             // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.
             chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
             skipCheck: skipCheck,
+            downloads: deps.downloadMonitor?(client, env),
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -756,8 +762,16 @@ public final class AppStore {
         upgrade = UpgradeSession(packages: rows, intelbrewMode: intelbrewMode, action: action, queue: queue,
                                  makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
                                  precondition: precondition,
+                                 downloads: downloadMonitorForCustomSession(),
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
         showUpgradeSheet = true
+    }
+
+    /// A restore's reinstalls download too.
+    private func downloadMonitorForCustomSession() -> DownloadMonitor? {
+        guard let make = deps.downloadMonitor, let client = try? resolvedClient(),
+              let detection = report?.intelbrew else { return nil }
+        return make(client, client.environment(for: detection, readOnly: false))
     }
 
     private func sessionFinished(_ session: UpgradeSession) {

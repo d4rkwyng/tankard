@@ -17,6 +17,7 @@
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ failed (exit %d)";
 "%@ %@ needs administrator rights" = "%@ %@ needs administrator rights";
+"%@ %@ so far" = "%@ %@ so far";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld package";
@@ -38,6 +39,7 @@
 "%@ is pinned" = "%@ is pinned";
 "%@ is running" = "%@ is running";
 "%@ is there but doesn't run. It said:" = "%@ is there but doesn't run. It said:";
+"%@ of %@ %@ (%lld%%)" = "%@ of %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@ of %@ bottled";
 "%@ printed JSON Tankard could not read: %@" = "%@ printed JSON Tankard could not read: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ runs as %@: %@ needs sudo";
@@ -318,6 +320,7 @@
 "Don't quit running apps during upgrades" = "Don't quit running apps during upgrades";
 "Done" = "Done";
 "Download cache" = "Download cache";
+"Downloading %@…" = "Downloading %@…";
 "Downloads" = "Downloads";
 "Dracula" = "Dracula";
 "Dracula colours (draculatheme.com, MIT)" = "Dracula colours (draculatheme.com, MIT)";
@@ -379,6 +382,7 @@
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app.";
 "Full log saved to %@" = "Full log saved to %@";
 "Full scan" = "Full scan";
+"GB" = "GB";
 "General" = "General";
 "HEAD build" = "HEAD build";
 "HEAD builds have no fixed version to go back to." = "HEAD builds have no fixed version to go back to.";
@@ -458,6 +462,7 @@
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password.";
 "It took %@; expect longer on an older Mac." = "It took %@; expect longer on an older Mac.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
+"KB" = "KB";
 "Keep the previous version after upgrades" = "Keep the previous version after upgrades";
 "Keeps %@; upgrades skip it" = "Keeps %@; upgrades skip it";
 "Keg-only" = "Keg-only";
@@ -487,6 +492,7 @@
 "Log" = "Log";
 "Logs and other" = "Logs and other";
 "Low" = "Low";
+"MB" = "MB";
 "Made by d4rkwyng" = "Made by d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Marked from the cask's pkg artifact. Other casks may still ask for a password.";
 "Medium" = "Medium";

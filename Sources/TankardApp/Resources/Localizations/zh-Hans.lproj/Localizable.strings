@@ -17,6 +17,7 @@
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ 失败（退出码 %d）";
 "%@ %@ needs administrator rights" = "%@ %@ 需要管理员权限";
+"%@ %@ so far" = "已下载 %@ %@";
 "%@ %@: %@" = "%@ %@：%@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld 个软件包";
@@ -38,6 +39,7 @@
 "%@ is pinned" = "%@ 已固定";
 "%@ is running" = "%@ 正在运行";
 "%@ is there but doesn't run. It said:" = "%@ 存在但无法运行。它的输出：";
+"%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
 "%@ printed JSON Tankard could not read: %@" = "%@ 输出了 Tankard 无法读取的 JSON：%@";
 "%@ runs as %@: %@ needs sudo" = "%@ 以 %@ 身份运行：%@ 需要 sudo";
@@ -318,6 +320,7 @@
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
 "Done" = "完成";
 "Download cache" = "下载缓存";
+"Downloading %@…" = "正在下载 %@…";
 "Downloads" = "下载";
 "Dracula" = "Dracula";
 "Dracula colours (draculatheme.com, MIT)" = "Dracula 配色（draculatheme.com，MIT）";
@@ -379,6 +382,7 @@
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "此后这些 App 归 Homebrew 管理：brew upgrade 会将其替换为 cask 的版本，卸载 cask（在 Tankard 中或使用 brew uninstall）会删除该 App。";
 "Full log saved to %@" = "完整日志已存储到 %@";
 "Full scan" = "完整扫描";
+"GB" = "GB";
 "General" = "通用";
 "HEAD build" = "HEAD 构建";
 "HEAD builds have no fixed version to go back to." = "HEAD 构建没有可回退的固定版本。";
@@ -458,6 +462,7 @@
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "它会删除 %@ 的 Homebrew 文件以及所有已安装的 formula 和 cask，包括作为 cask 安装在 /Applications 中的 App。这台 Mac 上的其他 Homebrew（位于不同前缀）不受影响。它可能会要求输入密码。";
 "It took %@; expect longer on an older Mac." = "耗时 %@；在较旧的 Mac 上会更久。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
+"KB" = "KB";
 "Keep the previous version after upgrades" = "升级后保留上一个版本";
 "Keeps %@; upgrades skip it" = "保留 %@；升级会跳过它";
 "Keg-only" = "Keg-only";
@@ -487,6 +492,7 @@
 "Log" = "日志";
 "Logs and other" = "日志和其他";
 "Low" = "低";
+"MB" = "MB";
 "Made by d4rkwyng" = "由 d4rkwyng 制作";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "根据 cask 的 pkg 项标记。其他 cask 仍可能要求输入密码。";
 "Medium" = "中";

@@ -273,7 +273,11 @@ public final class ScriptContext {
             try await waitUntil("\(what) to start after Not now", timeout: 15) { store.upgrade != nil && store.upgrade?.id != before }
         }
         guard let session = store.upgrade else { throw ScriptFailure("\(what) did not start") }
-        try await waitUntil("\(what) to finish", timeout: timeout) { session.isFinished }
+        if runner.watchDownloads, DownloadMonitor.watches(session.action) {
+            try await waitWatchingDownloads(session, what: what, timeout: timeout)
+        } else {
+            try await waitUntil("\(what) to finish", timeout: timeout) { session.isFinished }
+        }
         try await settle()
         await snapshot("sheet")
         let failed = session.failedItems.map { "\($0.package.name): \($0.state)" }
@@ -308,6 +312,8 @@ public final class ScriptRunner {
     private var stepVerb = ""
     private var stepSnapshots: [String] = []
     private var watched: [String] = []
+    /// 0.8: `watch-downloads`: session steps check and capture download progress.
+    var watchDownloads = false
 
     public init(store: AppStore, steps: [ScriptStep], outputDirectory: URL, scriptName: String = "script",
                 snapshot: @escaping @MainActor (String) async -> Bool) {
@@ -433,7 +439,7 @@ public final class ScriptRunner {
     // MARK: the verbs
 
     /// Every step table. Add a feature's table here (see the header).
-    static let stepTables: [[String: ScriptStepDef]] = [coreSteps, adoptSteps, backgroundUpdateSteps]
+    static let stepTables: [[String: ScriptStepDef]] = [coreSteps, adoptSteps, backgroundUpdateSteps, downloadSteps]
 
     public static let steps: [String: ScriptStepDef] = stepTables.reduce(into: [:]) { all, t in
         all.merge(t) { a, _ in a }
