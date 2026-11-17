@@ -456,10 +456,12 @@ public final class AppStore {
         uninstallCandidate = p
     }
 
-    /// Runs `brew uninstall` for a package nothing depends on.
+    /// Runs `brew uninstall` for a package nothing depends on. 0.8: not
+    /// for a pinned one either (brew refuses it, and still exits 0); the
+    /// sheet offers Unpin and Uninstall instead.
     public func startUninstall(_ p: Package) {
         uninstallCandidate = nil
-        guard dependents(of: p).isEmpty else { return }
+        guard dependents(of: p).isEmpty, !p.pinned else { return }
         startSession(.uninstall, packages: [p])
     }
 

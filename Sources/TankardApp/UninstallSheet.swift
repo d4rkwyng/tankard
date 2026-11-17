@@ -3,7 +3,9 @@ import TankardAppModel
 import TankardCore
 
 /// "Uninstall xz?" with the exact command. When installed packages still
-/// need it, the sheet lists them and offers no Uninstall button.
+/// need it, the sheet lists them and offers no Uninstall button. 0.8: a
+/// pinned package (brew refuses it and still exits 0) offers Unpin and
+/// Uninstall instead.
 struct UninstallSheet: View {
     @Bindable var store: AppStore
     var package: Package
@@ -11,18 +13,22 @@ struct UninstallSheet: View {
 
     var body: some View {
         let dependents = store.dependents(of: package)
+        let pinned = dependents.isEmpty && package.pinned
         let command = BrewCommands.display(BrewCommands.uninstallArguments(for: package),
                                            environment: AppStore.uninstallEnvironment(.uninstall))
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
-                Image(systemName: dependents.isEmpty ? "trash" : "lock.fill")
+                Image(systemName: pinned ? "pin.fill" : dependents.isEmpty ? "trash" : "lock.fill")
                     .font(.system(size: 26))
-                    .foregroundStyle(dependents.isEmpty ? Color.red : Color.orange)
+                    .foregroundStyle(dependents.isEmpty && !pinned ? Color.red : Color.orange)
                     .frame(width: 40)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(dependents.isEmpty ? String(localized: "Uninstall \(package.name)?") : String(localized: "\(package.name) can't be uninstalled"))
+                    Text(pinned ? String(localized: "\(package.name) is pinned")
+                         : dependents.isEmpty ? String(localized: "Uninstall \(package.name)?") : String(localized: "\(package.name) can't be uninstalled"))
                         .font(.system(size: 14, weight: .bold))
-                    Text(dependents.isEmpty
+                    Text(pinned
+                         ? String(localized: "Homebrew doesn't uninstall pinned packages. Unpin \(package.name) first, or keep it.")
+                         : dependents.isEmpty
                          ? String(localized: "Removes \(package.name) \(package.installedVersion). Its dependencies stay installed.")
                          : String(localized: "These installed packages need it. Uninstall them first, or keep \(package.name)."))
                         .font(.system(size: 12))
@@ -33,6 +39,7 @@ struct UninstallSheet: View {
             if dependents.isEmpty {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
+                    if pinned { CommandBox(command: PinCommands.display(pin: false, for: package)) }
                     CommandBox(command: command)
                 }
             } else {
@@ -56,8 +63,13 @@ struct UninstallSheet: View {
                 if dependents.isEmpty {
                     Button("Cancel") { store.uninstallCandidate = nil }
                         .keyboardShortcut(.cancelAction)
-                    Button("Uninstall", role: .destructive) { store.startUninstall(package) }
-                        .disabled(store.isUpgrading)
+                    if pinned {
+                        Button("Unpin and Uninstall", role: .destructive) { store.unpinAndUninstall(package) }
+                            .disabled(store.isBusy)
+                    } else {
+                        Button("Uninstall", role: .destructive) { store.startUninstall(package) }
+                            .disabled(store.isUpgrading)
+                    }
                 } else {
                     Button("OK") { store.uninstallCandidate = nil }
                         .keyboardShortcut(.defaultAction)

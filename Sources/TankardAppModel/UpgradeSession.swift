@@ -295,7 +295,12 @@ public final class UpgradeSession: Identifiable {
             logFile?.append(lines)
         case .finished(let code):
             flush()
-            items[i].state = code == 0 ? .done : .failed(code)
+            // 0.8: brew refuses a pinned package with exit 0; nothing changed.
+            let refused = code == 0 && BrewRefusal.pinned(commandLines)
+            items[i].state = code == 0 && !refused ? .done : .failed(code)
+            if refused {
+                note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
+            }
             if code != 0 {
                 if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
                 if AppManagement.modifiesApps(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {

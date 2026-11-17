@@ -259,11 +259,11 @@ public final class ScriptContext {
     /// "Not now" (first use still runs), the finished sheet is captured,
     /// then Done. Throws when an item failed.
     @discardableResult
-    public func runSession(_ what: String, timeout: Double = 900, start: () -> Void) async throws -> UpgradeSession {
+    public func runSession(_ what: String, timeout: Double = 900, startTimeout: Double = 15, start: () -> Void) async throws -> UpgradeSession {
         let before = store.upgrade?.id
         start()
         // Tap add/remove start their session after the tool sheet closes.
-        try await waitUntil("\(what) to start", timeout: 15) {
+        try await waitUntil("\(what) to start", timeout: startTimeout) {
             store.appManagementPrompt != nil || (store.upgrade != nil && store.upgrade?.id != before)
         }
         if let prompt = store.appManagementPrompt, prompt.reason == .firstUse {

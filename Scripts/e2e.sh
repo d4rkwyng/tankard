@@ -14,6 +14,8 @@
 #              settings and no cache reads brew live, Refresh (runs brew
 #              update), Discover search
 #   formula    install `hello` from Discover, pin, unpin, uninstall
+#   pinned     install `hello`, pin it; Uninstall is blocked (brew would
+#              refuse a pinned formula and still exit 0); Unpin and Uninstall
 #   cask       install the font cask `font-press-start-2p` from Discover
 #              (no app in /Applications), uninstall (App Management explainer)
 #   security   Scan for Vulnerabilities (real brew vulns), then no leftover
@@ -57,7 +59,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula cask security settings restore adopt)
+ALL=(welcome formula pinned cask security settings restore adopt)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -65,7 +67,7 @@ while [ $# -gt 0 ]; do
         --out) OUT=$2; shift ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,45p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,52p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -193,6 +195,29 @@ always uninstall formula hello
 expect not-installed hello
 STEPS
     qbrew list --formula hello >/dev/null 2>&1 && { echo "    cleanup: hello still installed, removing" >&2; qbrew uninstall --formula hello; }
+}
+
+scenario_pinned() {
+    need_absent formula hello || { record "pinned: SKIP (hello already installed)"; return; }
+    autoremove_clean || { record "pinned: SKIP (autoremove would remove something)"; return; }
+    fresh_state pinned
+    run_phase pinned 1-hello <<'STEPS'
+expect-ready
+set keepPreviousVersion on
+install formula hello
+pin hello
+expect pinned hello
+uninstall-blocked formula hello pinned
+expect installed hello
+expect pinned hello
+unpin-uninstall formula hello
+expect not-installed hello
+always expect no-error
+STEPS
+    if qbrew list --formula hello >/dev/null 2>&1; then
+        echo "    cleanup: hello still installed, unpinning and removing" >&2
+        qbrew unpin hello >/dev/null 2>&1; qbrew uninstall --formula hello
+    fi
 }
 
 scenario_cask() {

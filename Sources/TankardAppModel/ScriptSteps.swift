@@ -111,8 +111,43 @@ extension ScriptRunner {
             await c.snapshot("confirm")
             let needs = c.store.dependents(of: p).map(\.name)
             guard needs.isEmpty else { throw ScriptFailure("uninstall is blocked: \(needs.joined(separator: ", ")) need \(name)") }
+            guard !p.pinned else { throw ScriptFailure("uninstall is blocked: \(name) is pinned (the sheet offers Unpin and Uninstall)") }
             try await c.runSession("uninstall \(name)") { c.store.startUninstall(p) }
             c.check("\(name) gone", c.package(name, kind: kind) == nil)
+        },
+        "uninstall-blocked": ScriptStepDef("uninstall-blocked formula|cask <name> pinned  (Uninstall…: the sheet blocks it; its Uninstall would run nothing)") { c in
+            let kind = try c.kind(0)
+            let name = try c.arg(1, "name")
+            let why = try c.arg(2, "pinned")
+            guard why == "pinned" else { throw ScriptFailure("uninstall-blocked: only 'pinned' is checked, not \(why)") }
+            let p = try c.requirePackage(name, kind: kind)
+            c.store.tab = .installed
+            c.store.reveal(p.id)
+            c.store.requestUninstall(p)
+            c.check("the uninstall sheet is up", c.store.uninstallCandidate?.id == p.id)
+            c.check("\(name) is pinned", p.pinned)
+            c.check("nothing else blocks it", c.store.dependents(of: p).isEmpty)
+            await c.snapshot("sheet")
+            // What a stray Uninstall would do now: nothing starts.
+            let before = c.store.upgrade?.id
+            c.store.startUninstall(p)
+            try await Task.sleep(for: .milliseconds(500))
+            c.check("no uninstall session started", c.store.upgrade?.id == before && !c.store.isUpgrading)
+            c.check("\(name) still installed", c.package(name, kind: kind) != nil)
+        },
+        "unpin-uninstall": ScriptStepDef("unpin-uninstall formula|cask <name>  (Uninstall… on a pinned package, then Unpin and Uninstall)") { c in
+            let kind = try c.kind(0)
+            let name = try c.arg(1, "name")
+            let p = try c.requirePackage(name, kind: kind)
+            c.check("\(name) is pinned before", p.pinned)
+            c.store.tab = .installed
+            c.store.reveal(p.id)
+            c.store.requestUninstall(p)
+            await c.snapshot("confirm")
+            // brew unpin and the re-read run first, then the uninstall session.
+            try await c.runSession("unpin and uninstall \(name)", startTimeout: 180) { c.store.unpinAndUninstall(p) }
+            c.check("\(name) gone", c.package(name, kind: kind) == nil)
+            c.check("no error", c.store.error == nil, c.store.error?.detail)
         },
         "upgrade": ScriptStepDef("upgrade <name>  (the detail pane's Upgrade; a compile plan is confirmed)") { c in
             let p = try c.requirePackage(try c.arg(0, "name"))

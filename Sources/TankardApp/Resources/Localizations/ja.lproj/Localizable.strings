@@ -39,6 +39,7 @@
 "%@ installs in the last 90 days" = "過去90日間に%@回インストール";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ は利用可能ですが、brewはピン留めされたパッケージをアップグレードしません。「すべてアップグレード」からも除外されます。アップグレードするにはピン留めを解除してください。";
 "%@ is installed" = "%@ はインストール済みです";
+"%@ is pinned" = "%@ はピン留めされています";
 "%@ is running" = "%@ は実行中です";
 "%@ is there but doesn't run. It said:" = "%@ はありますが、実行できません。出力:";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
@@ -388,6 +389,7 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrewがネットワークに接続できませんでした";
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
+"Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew はピン留めされたパッケージをアンインストールしません。先に %@ のピン留めを解除するか、そのままにしてください。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "これらのアプリには Homebrew の cask があり、インストール済みのバージョンが一致しています（またはアプリが自己更新するため brew は比較しません）。";
 "Homebrew has disabled this cask." = "Homebrew はこの cask を無効にしています。";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "HomebrewはmacOS用のパッケージマネージャです。コマンドラインツールやアプリをインストールし、最新に保ちます。Tankardはそのウインドウなので、先にHomebrewが必要です。";
@@ -849,6 +851,7 @@
 "Unknown" = "不明";
 "Unknown severity" = "重大度不明";
 "Unpin" = "ピン留めを解除";
+"Unpin and Uninstall" = "ピン留めを解除してアンインストール";
 "Until Turned Back On" = "再びオンにするまで";
 "Untrust" = "信頼を解除";
 "Untrust…" = "信頼を解除…";

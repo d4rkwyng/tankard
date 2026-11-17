@@ -282,11 +282,13 @@ public final class HistoryRecorder: @unchecked Sendable {
                 return (r, .notStarted, nil)
             }
         }
-        guard let (r, outcome, code) = finished else { return }
+        guard let (r, reported, code) = finished else { return }
         var assembler = LineAssembler()
         assembler.feed(r.output)
         assembler.finish()
         let lines = assembler.lines
+        // 0.8: brew's "is pinned. You must unpin it to …" exits 0 but did nothing.
+        let outcome: HistoryEntry.Outcome = reported == .succeeded && BrewRefusal.pinned(lines) ? .failed : reported
         let failed = outcome == .failed || outcome == .notStarted
         let entry = HistoryEntry(id: id, startedAt: r.started, duration: now.timeIntervalSince(r.started),
                                  command: r.command.display, arguments: r.command.arguments, outcome: outcome,

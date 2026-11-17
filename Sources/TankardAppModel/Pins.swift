@@ -86,6 +86,26 @@ public extension AppStore {
         }
     }
 
+    /// 0.8: the uninstall sheet's "Unpin and Uninstall" for a pinned
+    /// package: `brew unpin` through the queue, the re-read, then the
+    /// normal uninstall of the now-unpinned package. Stops (with brew's
+    /// error) if the unpin fails or brew still lists it as pinned.
+    func unpinAndUninstall(_ p: Package) {
+        uninstallCandidate = nil
+        guard p.pinned, dependents(of: p).isEmpty else { return }
+        let args = PinCommands.arguments(pin: false, for: p)
+        Task {
+            guard let r = await runQuick(args) else { return }
+            await refresh(manual: false)
+            if r.failed {
+                error = Self.quickError(verb: String(localized: "Unpin"), name: p.name, args: args, result: r)
+                return
+            }
+            guard let now = packages.first(where: { $0.id == p.id }), !now.pinned else { return }
+            startUninstall(now)
+        }
+    }
+
     /// Selects a package from a dependency link, clearing a filter or
     /// search that would hide it.
     func reveal(_ id: Package.ID) {

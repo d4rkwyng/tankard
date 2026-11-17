@@ -2081,6 +2081,58 @@
         }
       }
     },
+    "%@ is pinned": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ist fixiert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ est épinglé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está fijado"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ はピン留めされています"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已固定"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está fixado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ è bloccato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@이(가) 고정됨"
+          }
+        }
+      }
+    },
     "%@ is running": {
       "localizations": {
         "de": {
@@ -20225,6 +20277,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew가 폴더에 쓸 수 없음"
+          }
+        }
+      }
+    },
+    "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew deinstalliert keine fixierten Pakete. Löse %@ zuerst oder behalte es."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne désinstalle pas les paquets épinglés. Désépinglez %@ d'abord, ou gardez-le."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew no desinstala paquetes fijados. Desfija %@ primero o consérvalo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はピン留めされたパッケージをアンインストールしません。先に %@ のピン留めを解除するか、そのままにしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 不会卸载已固定的软件包。请先取消固定 %@，或保留它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não desinstala pacotes fixados. Desafixe %@ primeiro ou mantenha-o."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non disinstalla i pacchetti bloccati. Sblocca prima %@ o tienilo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew는 고정된 패키지를 제거하지 않습니다. 먼저 %@의 고정을 해제하거나 그대로 두십시오."
           }
         }
       }
@@ -44197,6 +44301,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "고정 해제"
+          }
+        }
+      }
+    },
+    "Unpin and Uninstall": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lösen und deinstallieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désépingler et désinstaller"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desfijar y desinstalar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ピン留めを解除してアンインストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消固定并卸载"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desafixar e desinstalar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sblocca e disinstalla"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "고정 해제 후 제거"
           }
         }
       }

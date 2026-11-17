@@ -39,6 +39,7 @@
 "%@ installs in the last 90 days" = "过去 90 天安装 %@ 次";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ 有可用更新，但 brew 不会升级已固定的软件包。“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
+"%@ is pinned" = "%@ 已固定";
 "%@ is running" = "%@ 正在运行";
 "%@ is there but doesn't run. It said:" = "%@ 存在但无法运行。它的输出：";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
@@ -388,6 +389,7 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
+"Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew 不会卸载已固定的软件包。请先取消固定 %@，或保留它。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。";
 "Homebrew has disabled this cask." = "Homebrew 已停用此 cask。";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew 是 macOS 的软件包管理器：它安装命令行工具和 App，并使其保持最新。Tankard 是它的图形窗口，因此需要先安装 Homebrew。";
@@ -849,6 +851,7 @@
 "Unknown" = "未知";
 "Unknown severity" = "严重程度未知";
 "Unpin" = "取消固定";
+"Unpin and Uninstall" = "取消固定并卸载";
 "Until Turned Back On" = "直到重新开启";
 "Untrust" = "取消信任";
 "Untrust…" = "取消信任…";

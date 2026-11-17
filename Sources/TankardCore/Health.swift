@@ -163,6 +163,17 @@ public enum BrewFailure {
     }
 }
 
+/// 0.8: brew commands that refuse and still exit 0. brew 7.0.14's
+/// uninstall.rb and cask/uninstall.rb (and reinstall) print
+/// "Error: <name> is pinned. You must unpin it to uninstall." with `onoe`,
+/// which doesn't set a failing exit status, so the queue would see success
+/// while nothing changed.
+public enum BrewRefusal {
+    public static func pinned<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
+        lines.contains { $0.contains(" is pinned. You must unpin it to ") }
+    }
+}
+
 // MARK: - brew doctor
 
 /// One `Warning:` block of `brew doctor`.

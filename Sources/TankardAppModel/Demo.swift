@@ -508,6 +508,11 @@ public enum Demo {
             if arguments.first == "uninstall", let qualified = arguments.last {
                 let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
                 let entry = Demo.entry(named: name, in: state.info(variant, base: info))
+                if state.v04a.pinned.withLock({ $0.contains(name) }) {
+                    // As brew 7.0.14's uninstall.rb: onoe, and still exit 0.
+                    try await say("Error: \(name) is pinned. You must unpin it to uninstall.\n", 200)
+                    return 0
+                }
                 if entry.cask {
                     try await say("==> Uninstalling Cask \(name)\n", 500)
                     try await say("==> Removing App '/Applications/\(name).app'\n", 600)

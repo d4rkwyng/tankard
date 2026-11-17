@@ -39,6 +39,7 @@
 "%@ installs in the last 90 days" = "%@ installs in the last 90 days";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.";
 "%@ is installed" = "%@ is installed";
+"%@ is pinned" = "%@ is pinned";
 "%@ is running" = "%@ is running";
 "%@ is there but doesn't run. It said:" = "%@ is there but doesn't run. It said:";
 "%@ of %@ bottled" = "%@ of %@ bottled";
@@ -388,6 +389,7 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew couldn't reach the network";
 "Homebrew couldn't write to its folders" = "Homebrew couldn't write to its folders";
+"Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).";
 "Homebrew has disabled this cask." = "Homebrew has disabled this cask.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first.";
@@ -849,6 +851,7 @@
 "Unknown" = "Unknown";
 "Unknown severity" = "Unknown severity";
 "Unpin" = "Unpin";
+"Unpin and Uninstall" = "Unpin and Uninstall";
 "Until Turned Back On" = "Until Turned Back On";
 "Untrust" = "Untrust";
 "Untrust…" = "Untrust…";
