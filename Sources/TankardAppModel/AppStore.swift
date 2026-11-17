@@ -144,6 +144,11 @@ public final class AppStore {
     /// 0.4a: a pin, unpin or service command running through the queue
     /// (its display form). See Pins.swift and ServicesStore.swift.
     public internal(set) var quickAction: String?
+    /// 0.4: why a click on Pin, Unpin, Start, Stop or Restart did nothing
+    /// (brew was busy, or not ready). Shown in the status bar for a few
+    /// seconds. See `runQuick`.
+    public internal(set) var busyNotice: String?
+    @ObservationIgnored var busyNoticeToken = 0
     /// 0.4a: the Services tab's state, made when it is first opened.
     public internal(set) var services: ServicesStore?
     /// 0.4a: the Homebrew menu's sheet (revert to standard Homebrew, uninstall).

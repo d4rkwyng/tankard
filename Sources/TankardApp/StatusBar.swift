@@ -35,6 +35,11 @@ struct StatusBar: View {
                 ProgressView().controlSize(.mini)
                 Text(phase)
             }
+            if let notice = store.busyNotice {
+                separator
+                Image(systemName: "hourglass").foregroundStyle(.orange)
+                Text(notice).lineLimit(1).truncationMode(.middle).help(notice)
+            }
             Spacer()
             if let session = store.upgrade, !store.showUpgradeSheet {
                 Button {

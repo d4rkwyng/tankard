@@ -67,6 +67,26 @@ struct PinTests {
         #expect(log.count("unpin") == 0)
     }
 
+    /// A click while brew is busy used to do nothing at all; now the status
+    /// bar says why, and the notice clears itself.
+    @Test func busyPinClickSaysSo() async throws {
+        let (store, log) = rig()
+        await store.start()
+        let xz = try #require(store.packages.first { $0.name == "xz" })
+        #expect(store.busyNotice == nil)
+        store.quickAction = "brew services stop -- php"   // something else holds the queue
+        store.setPinned(xz, true)
+        #expect(await waitUntil { store.busyNotice != nil })
+        #expect(store.busyNotice == "brew pin --formula homebrew/core/xz didn't start: brew services stop -- php is still running. Try again when it finishes.")
+        #expect(log.count("pin") == 0)
+        store.quickAction = nil
+        store.showBusyNotice("x", seconds: 0.05)
+        #expect(await waitUntil { store.busyNotice == nil })
+        #expect(AppStore.notStartedNotice("brew pin x", running: nil, upgrading: true)
+                == "brew pin x didn't start: an upgrade is still running. Try again when it finishes.")
+        #expect(AppStore.notStartedNotice("brew pin x", running: nil, upgrading: false).contains("isn't ready"))
+    }
+
     @Test func failedPinShowsBrewsError() async throws {
         let (store, log) = rig { args, output in
             output(Data("Error: No such keg: /usr/local/Cellar/xz\n".utf8))
@@ -233,6 +253,17 @@ struct ServicesStoreTests {
         #expect(log.calls.filter { $0 == ["services", "list", "--json"] }.count == 2)
         #expect(services.actionError == nil)
         #expect(store.quickAction == nil)
+    }
+
+    @Test func busyServiceClickSaysSo() async throws {
+        let (store, services, log) = try await rig()
+        await services.load()
+        let php = try #require(services.services.first { $0.name == "php" })
+        store.quickAction = "brew pin --formula homebrew/core/xz"
+        await services.perform(.start, on: php, store: store)
+        #expect(!log.calls.contains(["services", "start", "--", "php"]))
+        #expect(store.busyNotice?.hasPrefix("brew services start -- php didn't start: brew pin --formula homebrew/core/xz is still running") == true)
+        store.quickAction = nil
     }
 
     @Test func rootServiceNeverReachesBrew() async throws {
