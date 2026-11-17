@@ -67,6 +67,26 @@ struct PinTests {
         #expect(log.count("unpin") == 0)
     }
 
+    /// A click while brew is busy used to do nothing at all; now the status
+    /// bar says why, and the notice clears itself.
+    @Test func busyPinClickSaysSo() async throws {
+        let (store, log) = rig()
+        await store.start()
+        let xz = try #require(store.packages.first { $0.name == "xz" })
+        #expect(store.busyNotice == nil)
+        store.quickAction = "brew services stop -- php"   // something else holds the queue
+        store.setPinned(xz, true)
+        #expect(await waitUntil { store.busyNotice != nil })
+        #expect(store.busyNotice == "brew pin --formula homebrew/core/xz didn't start: brew services stop -- php is still running. Try again when it finishes.")
+        #expect(log.count("pin") == 0)
+        store.quickAction = nil
+        store.showBusyNotice("x", seconds: 0.05)
+        #expect(await waitUntil { store.busyNotice == nil })
+        #expect(AppStore.notStartedNotice("brew pin x", running: nil, upgrading: true)
+                == "brew pin x didn't start: an upgrade is still running. Try again when it finishes.")
+        #expect(AppStore.notStartedNotice("brew pin x", running: nil, upgrading: false).contains("isn't ready"))
+    }
+
     @Test func failedPinShowsBrewsError() async throws {
         let (store, log) = rig { args, output in
             output(Data("Error: No such keg: /usr/local/Cellar/xz\n".utf8))
@@ -227,12 +247,23 @@ struct ServicesStoreTests {
         let (store, services, log) = try await rig()
         await services.load()
         let php = try #require(services.services.first { $0.name == "php" })
-        #expect(services.command(.start, php) == "brew services start php")
+        #expect(services.command(.start, php) == "brew services start -- php")
         await services.perform(.start, on: php, store: store)
-        #expect(log.calls.contains(["services", "start", "php"]))
+        #expect(log.calls.contains(["services", "start", "--", "php"]))
         #expect(log.calls.filter { $0 == ["services", "list", "--json"] }.count == 2)
         #expect(services.actionError == nil)
         #expect(store.quickAction == nil)
+    }
+
+    @Test func busyServiceClickSaysSo() async throws {
+        let (store, services, log) = try await rig()
+        await services.load()
+        let php = try #require(services.services.first { $0.name == "php" })
+        store.quickAction = "brew pin --formula homebrew/core/xz"
+        await services.perform(.start, on: php, store: store)
+        #expect(!log.calls.contains(["services", "start", "--", "php"]))
+        #expect(store.busyNotice?.hasPrefix("brew services start -- php didn't start: brew pin --formula homebrew/core/xz is still running") == true)
+        store.quickAction = nil
     }
 
     @Test func rootServiceNeverReachesBrew() async throws {
@@ -241,8 +272,8 @@ struct ServicesStoreTests {
         let unbound = try #require(services.services.first { $0.name == "unbound" })
         #expect(services.needsSudo(unbound))
         await services.perform(.stop, on: unbound, store: store)
-        #expect(!log.calls.contains(["services", "stop", "unbound"]))
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop unbound")
+        #expect(!log.calls.contains(["services", "stop", "--", "unbound"]))
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- unbound")
     }
 
     @Test func brewsSudoMessageBecomesTerminalGuidance() async throws {
@@ -255,7 +286,7 @@ struct ServicesStoreTests {
         let pg = try #require(services.services.first { $0.name == "postgresql@18" })
         #expect(!services.needsSudo(pg)) // the list said "test", brew disagreed
         await services.perform(.stop, on: pg, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop postgresql@18")
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- postgresql@18")
         #expect(services.actionError?.title.contains("needs sudo") == true)
     }
 
@@ -269,7 +300,7 @@ struct ServicesStoreTests {
         await services.perform(.start, on: php, store: store)
         #expect(services.actionError?.title == "Start php failed (exit 1)")
         #expect(services.actionError?.detail.contains("locatable service file") == true)
-        #expect(services.actionError?.terminalCommand == "brew services start php")
+        #expect(services.actionError?.terminalCommand == "brew services start -- php")
     }
 
     @Test func sudoMarkers() {
@@ -295,7 +326,7 @@ struct ServicesStoreTests {
         #expect(services.services.first { $0.name == "redis" }?.status == .started)
         let unbound = try #require(services.services.first { $0.name == "unbound" })
         await services.perform(.restart, on: unbound, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services restart unbound")
+        #expect(services.actionError?.terminalCommand == "sudo brew services restart -- unbound")
     }
 }
 
@@ -371,11 +402,28 @@ struct HomebrewManagementTests {
 
         """
         try original.write(to: zshenv, atomically: true, encoding: .utf8)
+        // ~/.bashrc is a symlink into a dotfiles repo: BSD sed -i refuses
+        // symlinks, so the real file is backed up and edited, and the link stays.
+        let dotfiles = dir.appendingPathComponent("dotfiles")
+        try FileManager.default.createDirectory(at: dotfiles, withIntermediateDirectories: true)
+        let realBashrc = dotfiles.appendingPathComponent("bashrc")
+        let bashrcText = "alias ll='ls -l'\nexport HOMEBREW_CORE_GIT_REMOTE=https://github.com/d4rkwyng/intelbrew-core\n"
+        try bashrcText.write(to: realBashrc, atomically: true, encoding: .utf8)
+        let bashrc = dir.appendingPathComponent(".bashrc")
+        try FileManager.default.createSymbolicLink(atPath: bashrc.path, withDestinationPath: "dotfiles/bashrc")
         let p = RevertPlan.make(home: dir.path, zdotdir: nil, repository: "/nonexistent", brewPath: "/nonexistent/brew",
                                 brewEnvFiles: [], date: Date(timeIntervalSince1970: 1_800_000_000))
-        #expect(p.edits.count == 1)
+        #expect(p.edits.count == 2)
         #expect(p.edits[0].lines.count == 3)
-        let fileCommands = p.commands.prefix(2).joined(separator: "\n")
+        #expect(!p.edits[0].isSymlink)
+        let linked = try #require(p.edits.first { $0.label == "~/.bashrc" })
+        #expect(linked.isSymlink)
+        #expect(try FileManager.default.attributesOfItem(atPath: linked.target)[.type] as? FileAttributeType == .typeRegular)
+        #expect(RevertPlan.realPath(realBashrc.path) == realBashrc.path)  // not a link: unchanged
+        #expect(linked.target.hasSuffix("/dotfiles/bashrc"))
+        #expect(p.commands.contains { $0.hasPrefix("/usr/bin/sed ") && $0.hasSuffix(linked.target) })
+        #expect(!p.commands.contains { $0.hasSuffix(" " + bashrc.path) })
+        let fileCommands = p.commands.prefix(4).joined(separator: "\n")
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/bin/bash")
         proc.arguments = ["-c", "set -e\n" + fileCommands]
@@ -389,17 +437,88 @@ struct HomebrewManagementTests {
         let backup = dir.appendingPathComponent(".zshenv.\(p.backupSuffix)")
         let backedUp = try String(contentsOf: backup, encoding: .utf8)
         #expect(backedUp == original)
+        // The symlink is still a symlink, its target lost only the Intelbrew
+        // line, and the backup sits next to the target.
+        #expect((try? FileManager.default.destinationOfSymbolicLink(atPath: bashrc.path)) == "dotfiles/bashrc")
+        #expect(try String(contentsOf: realBashrc, encoding: .utf8) == "alias ll='ls -l'\n")
+        #expect(try String(contentsOfFile: linked.target + "." + p.backupSuffix, encoding: .utf8) == bashrcText)
+    }
+
+    /// Removing the only line in an if/fi (or loop, or { }) body would leave
+    /// broken bash. Such a file is left for the user, with a warning; a
+    /// block that keeps another command, a one-liner and zsh files are fine.
+    @Test func emptiedBlocksAreDetected() throws {
+        let x = "export HOMEBREW_NO_INSTALL_FROM_API=1"
+        #expect(RevertPlan.emptiedBlocks(["if [ -x /usr/local/bin/brew ]; then", "  \(x)", "fi"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["if [ -x /usr/local/bin/brew ]", "then", "  \(x)", "  export HOMEBREW_CORE_GIT_REMOTE=y", "fi"]) == [3, 4])
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  \(x)", "  export PATH=/x:$PATH", "fi"]).isEmpty)
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  echo a", "else", "  \(x)  # intelbrew", "fi"]) == [4])
+        #expect(RevertPlan.emptiedBlocks(["if true; then", "  \(x)", "elif false; then", "  echo b", "fi"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["brewenv() {", "  \(x)", "}"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["function brewenv {", "  \(x)", "}"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["for f in a b; do", "  \(x)", "done"]) == [2])
+        #expect(RevertPlan.emptiedBlocks(["while read -r l; do", "  # just a comment", "  \(x)", "done < f"]) == [3])
+        #expect(RevertPlan.emptiedBlocks(["case $TERM in", "  xterm) \(x) ;;", "esac"]).isEmpty)   // not a removable line
+        #expect(RevertPlan.emptiedBlocks(["case $TERM in", "  xterm)", "    \(x)", "    ;;", "esac"]).isEmpty) // empty case arm is fine
+        #expect(RevertPlan.emptiedBlocks(["if true; then echo done; fi", x, "echo if then fi"]).isEmpty)
+        #expect(RevertPlan.emptiedBlocks([x, "export PATH=x"]).isEmpty)
+        // Nested: the inner body empties, the outer keeps the inner if.
+        #expect(RevertPlan.emptiedBlocks(["if a; then", "  if b; then", "    \(x)", "  fi", "fi"]) == [3])
+
+        // Every case above that is flagged really is a bash syntax error
+        // after sed, and every unflagged one isn't.
+        let cases: [[String]] = [
+            ["if [ -x /usr/local/bin/brew ]; then", "  \(x)", "fi"],
+            ["brewenv() {", "  \(x)", "}"],
+            ["for f in a b; do", "  \(x)", "done"],
+            ["if true; then", "  \(x)", "  export PATH=/x:$PATH", "fi"],
+            ["case $TERM in", "  xterm)", "    \(x)", "    ;;", "esac"],
+        ]
+        for c in cases {
+            let kept = c.filter { !RevertPlan.matches($0) }.joined(separator: "\n") + "\n"
+            let proc = Process()
+            proc.executableURL = URL(fileURLWithPath: "/bin/bash")
+            proc.arguments = ["-n", "-c", kept]
+            proc.standardError = FileHandle.nullDevice
+            try proc.run()
+            proc.waitUntilExit()
+            #expect((proc.terminationStatus != 0) == !RevertPlan.emptiedBlocks(c).isEmpty, "\(c)")
+        }
+
+        // In a plan: the bash file is reported, not edited; the zsh file
+        // (zsh runs an empty block) and a plain file are edited.
+        let block = "if [ -d /usr/local ]; then\n  \(x)\nfi\n"
+        let p = plan(["\(home)/.bashrc": block, "\(home)/.zshrc": block, "\(home)/.bash_profile": x + "\n"])
+        let bashrc = try #require(p.edits.first { $0.label == "~/.bashrc" })
+        #expect(!bashrc.isAutomatic && bashrc.emptiedBlockLines == [2])
+        #expect(p.edits.first { $0.label == "~/.zshrc" }?.isAutomatic == true)
+        #expect(p.edits.first { $0.label == "~/.bash_profile" }?.isAutomatic == true)
+        #expect(!p.commands.contains { $0.contains("/.bashrc") })
+        #expect(p.commands.contains { $0.hasSuffix("/Users/test/.zshrc") })
+        #expect(p.commands.contains { $0.hasSuffix("/Users/test/.bash_profile") })
+        #expect(p.script.contains("Not edited: ~/.bashrc (line 2 would leave an empty block)"))
+    }
+
+    @Test func linkedProfilesAreEditedOnce() {
+        // .bash_profile and .bashrc both link to one file: one backup, one edit.
+        let p = RevertPlan.make(home: home, zdotdir: nil, repository: "/r", brewPath: "/b", brewEnvFiles: [],
+                                date: Date(timeIntervalSince1970: 1_800_000_000),
+                                read: { $0.hasSuffix("bash_profile") || $0.hasSuffix("bashrc") ? "export HOMEBREW_BREW_GIT_REMOTE=x\n" : nil },
+                                resolve: { $0.hasPrefix(home + "/.bash") ? home + "/dotfiles/bash" : $0 })
+        #expect(p.edits.map(\.label) == ["~/.bash_profile"])
+        #expect(p.edits[0].targetLabel == "~/dotfiles/bash")
+        #expect(p.commands[0] == "cp -p /Users/test/dotfiles/bash /Users/test/dotfiles/bash.\(p.backupSuffix)")
     }
 
     @Test func scriptsShowWaitAndUseTheOfficialCommand() {
         #expect(HomebrewManagement.officialUninstallCommand
                 == #"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#)
-        let u = HomebrewManagement.uninstallScript()
+        let u = HomebrewManagement.uninstallScript(prefix: "/usr/local")
         #expect(u.hasPrefix("#!/bin/bash\n"))
         #expect(u.contains("read -r -p"))
         let lines = u.split(separator: "\n").map(String.init)
         let readAt = lines.firstIndex { $0.hasPrefix("read ") }!
-        let runAt = lines.firstIndex { $0 == HomebrewManagement.officialUninstallCommand }!
+        let runAt = lines.firstIndex { $0 == HomebrewManagement.uninstallCommand(prefix: "/usr/local") }!
         #expect(readAt < runAt)
 
         let p = plan(["\(home)/.zshenv": "export HOMEBREW_NO_INSTALL_FROM_API=1\n"])
@@ -416,9 +535,41 @@ struct HomebrewManagementTests {
         #expect(!s.contains("\nbrew untap"))  // mentioned, never run
     }
 
+    /// The uninstaller gets the prefix Tankard detected via uninstall.sh's
+    /// --path, so a Mac with both /usr/local and /opt/homebrew loses only
+    /// the one the sheet named. The quoting survives spaces and quotes.
+    @Test func uninstallPinsTheDetectedPrefix() throws {
+        #expect(HomebrewManagement.uninstallCommand(prefix: "/usr/local")
+                == HomebrewManagement.officialUninstallCommand + " uninstall.sh --path='/usr/local'")
+        #expect(HomebrewManagement.uninstallScript(prefix: "/usr/local").contains(" uninstall.sh --path='/usr/local'\n"))
+        #expect(HomebrewManagement.uninstallScript(prefix: "/opt/homebrew").contains("--path='/opt/homebrew'"))
+        #expect(!HomebrewManagement.uninstallScript(prefix: "/opt/homebrew").contains("--path='/usr/local'"))
+        #expect(HomebrewManagement.uninstallCommand(prefix: "/Volumes/My Disk/brew").hasSuffix(" --path='/Volumes/My Disk/brew'"))
+        // Run the generated line with the curl'd uninstall.sh swapped for a
+        // stub that prints its argv: bash must hand uninstall.sh exactly one
+        // --path=<prefix> argument, whatever the prefix contains.
+        for prefix in ["/usr/local", "/Volumes/My Disk/brew", "/Users/o'brien/$HOME `x` \"q\""] {
+            let line = HomebrewManagement.uninstallCommand(prefix: prefix)
+                .replacingOccurrences(of: #""$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#,
+                                      with: #"'printf "%s\n" "$0" "$@"'"#)
+            #expect(!line.contains("curl"))
+            let proc = Process()
+            let out = Pipe()
+            proc.executableURL = URL(fileURLWithPath: "/bin/bash")
+            proc.arguments = ["-c", line]
+            proc.standardOutput = out
+            try proc.run()
+            let data = out.fileHandleForReading.readDataToEndOfFile()
+            proc.waitUntilExit()
+            #expect(proc.terminationStatus == 0)
+            #expect(String(decoding: data, as: UTF8.self) == "uninstall.sh\n--path=\(prefix)\n")
+        }
+    }
+
     @Test func scriptsParseAsBash() throws {
         let p = plan(["\(home)/.zshenv": "export HOMEBREW_NO_INSTALL_FROM_API=1\n", "\(home)/.bash_profile": "export HOMEBREW_BREW_GIT_REMOTE=x\n"])
-        for script in [p.script, HomebrewManagement.uninstallScript()] {
+        for script in [p.script, HomebrewManagement.uninstallScript(prefix: "/usr/local"),
+                       HomebrewManagement.uninstallScript(prefix: "/Users/o'brien/my brew")] {
             let proc = Process()
             proc.executableURL = URL(fileURLWithPath: "/bin/bash")
             proc.arguments = ["-n", "-c", script]   // syntax check only

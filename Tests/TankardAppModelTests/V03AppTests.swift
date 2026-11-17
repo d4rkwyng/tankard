@@ -48,6 +48,14 @@ final class Flag: @unchecked Sendable {
     AppSettings.ephemeral(name)
 }
 
+/// Test settings with "Scan for vulnerabilities when refreshing" on (0.4:
+/// off by default), for tests about what a scan finds.
+@MainActor func scanningSettings() -> AppSettings {
+    let s = testSettings()
+    InsightSettings(defaults: s.defaults).scanVulnerabilitiesOnRefresh = true
+    return s
+}
+
 // MARK: menu bar
 
 @MainActor
@@ -653,7 +661,7 @@ struct AboutTests {
         #expect(v.build == "")
         #expect(TankardVersion.string == "0.5.0")
         #expect(AboutInfo.author == "Made by d4rkwyng")
-        #expect(AboutInfo.copyright == "© 2026 Tankard contributors")
+        #expect(AboutInfo.copyright == "© 2026 d4rkwyng")
         #expect(AboutInfo.newIssue.absoluteString == "https://github.com/d4rkwyng/tankard/issues/new")
         #expect(AboutInfo.homebrewLine.contains("brew.sh"))
         #expect(AboutInfo.notAffiliated == "Not affiliated with or endorsed by the Homebrew project.")

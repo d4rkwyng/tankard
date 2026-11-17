@@ -28,8 +28,27 @@ public enum HomebrewManagement {
 
     /// Homebrew's official uninstaller, verbatim from the Homebrew/install
     /// README ("Uninstall Homebrew"). It asks again before removing anything.
+    /// On its own it picks the prefix itself (/opt/homebrew first on Apple
+    /// silicon), so Tankard always runs `uninstallCommand(prefix:)` instead.
     public static let officialUninstallCommand =
         #"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#
+
+    /// The official uninstaller pinned to the prefix Tankard detected, with
+    /// uninstall.sh's own `--path=PATH` option ("Sets Homebrew prefix"; the
+    /// README's "uninstall Homebrew from a specific prefix"). Under `bash -c`
+    /// the first argument after the script is `$0`, so "uninstall.sh" fills
+    /// it and `--path` arrives as `$1`. Without it, a Mac with both
+    /// /usr/local and /opt/homebrew would lose /opt/homebrew even though the
+    /// sheet named /usr/local.
+    public static func uninstallCommand(prefix: String) -> String {
+        officialUninstallCommand + " uninstall.sh --path=" + singleQuoted(prefix)
+    }
+
+    /// Always single-quoted (unlike `BrewCommands.shellQuoted`), embedded
+    /// single quotes as '\''.
+    public static func singleQuoted(_ s: String) -> String {
+        "'" + s.replacingOccurrences(of: "'", with: #"'\''"#) + "'"
+    }
 
     /// Upstream Homebrew/brew, as in d4rkwyng/intelbrew's README ("How do I
     /// go back to upstream Homebrew?").
@@ -45,18 +64,20 @@ public enum HomebrewManagement {
     }
 
     /// The uninstall `.command` script: says what it runs, waits for
-    /// Return, then runs the official uninstaller (which asks again).
-    public static func uninstallScript() -> String {
-        """
+    /// Return, then runs the official uninstaller (which asks again) on
+    /// `prefix` only.
+    public static func uninstallScript(prefix: String) -> String {
+        let command = uninstallCommand(prefix: prefix)
+        return """
         #!/bin/bash
         # Written by Tankard. Runs Homebrew's official uninstaller in Terminal.
-        echo "Tankard: this runs Homebrew's official uninstaller:"
+        echo \(BrewCommands.shellQuoted("Tankard: this runs Homebrew's official uninstaller on " + prefix + ":"))
         echo
-        echo \(BrewCommands.shellQuoted("  " + officialUninstallCommand))
+        echo \(BrewCommands.shellQuoted("  " + command))
         echo
-        echo "It removes Homebrew and every package installed with it."
+        echo "It removes that Homebrew and every package installed with it."
         read -r -p "Press Return to continue, or close this window to cancel. "
-        \(officialUninstallCommand)
+        \(command)
         echo
         echo "When it finishes, quit Tankard."
 
@@ -72,7 +93,9 @@ public enum HomebrewManagement {
 ///    `~/.bash_profile` (or `.bash_login` / `.profile`) and `~/.bashrc`, and
 ///    rewrites existing assignments in any zsh or bash startup file
 ///    (docs/installer.md, "Shell profile"). Each file that has one is backed
-///    up first, next to itself.
+///    up first, next to itself. A profile that is a symlink (a dotfiles
+///    repo) is edited and backed up at its real path: BSD `sed -i` refuses
+///    symlinks ("in-place editing only works for regular files").
 /// 2. Point Homebrew/brew's origin back at upstream:
 ///    `git -C "$(brew --repository)" remote set-url origin https://github.com/Homebrew/brew`.
 /// 3. `brew update`.
@@ -84,10 +107,24 @@ public enum HomebrewManagement {
 /// `brew untap homebrew/core` is mentioned, not run.
 public struct RevertPlan: Equatable, Sendable {
     public struct ProfileEdit: Equatable, Sendable, Identifiable {
-        /// Absolute path.
+        /// Absolute path of the startup file the shell reads.
         public var path: String
         /// "~/.zshenv"
         public var label: String
+        /// `path` with symlinks resolved: the regular file that is backed
+        /// up and edited. Equal to `path` unless the profile is a symlink.
+        public var target: String
+        /// "~/dotfiles/zshenv"
+        public var targetLabel: String
+        public var isSymlink: Bool { target != path }
+        /// 1-based numbers of removed lines that are the only command in an
+        /// if / while / until / for / select / `{ }` body of a bash startup
+        /// file: deleting them would leave an empty block, which bash
+        /// rejects (zsh accepts one). Such a file is not edited; the sheet
+        /// says to remove the lines by hand.
+        public var emptiedBlockLines: [Int] = []
+        /// The script backs up and edits this file.
+        public var isAutomatic: Bool { emptiedBlockLines.isEmpty }
         /// The lines that will be removed, exactly as they are in the file.
         public var lines: [String]
         public var id: String { path }
@@ -130,12 +167,21 @@ public struct RevertPlan: Equatable, Sendable {
 
     public static func make(home: String, zdotdir: String?, repository: String, brewPath: String,
                             brewEnvFiles: [(String, [String: String])], date: Date = Date(),
-                            read: (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }) -> RevertPlan {
+                            read: (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) },
+                            resolve: (String) -> String = RevertPlan.realPath) -> RevertPlan {
         let tilde = { (p: String) -> String in p.hasPrefix(home + "/") ? "~" + p.dropFirst(home.count) : p }
-        let edits: [ProfileEdit] = candidatePaths(home: home, zdotdir: zdotdir).compactMap { path in
+        var seenTargets = Set<String>()
+        let edits: [ProfileEdit] = candidatePaths(home: home, zdotdir: zdotdir).compactMap { path -> ProfileEdit? in
             guard let text = read(path) else { return nil }
             let lines = text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init).filter(matches)
-            return lines.isEmpty ? nil : ProfileEdit(path: path, label: tilde(path), lines: lines)
+            guard !lines.isEmpty else { return nil }
+            // Two profiles linked to one file: edit it once.
+            let target = resolve(path)
+            guard seenTargets.insert(target).inserted else { return nil }
+            let all = text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init)
+            let emptied = isZshFile(path) ? [] : emptiedBlocks(all)
+            return ProfileEdit(path: path, label: tilde(path), target: target, targetLabel: tilde(target),
+                               emptiedBlockLines: emptied, lines: lines)
         }
         let notes = brewEnvFiles.flatMap { (label, vars) in
             keys.filter { vars[$0] != nil }.map { "\(label): \($0)" }
@@ -144,13 +190,99 @@ public struct RevertPlan: Equatable, Sendable {
                           backupSuffix: HomebrewManagement.backupSuffix(date))
     }
 
+    /// zsh's startup files (zsh runs an empty block; bash doesn't).
+    static func isZshFile(_ path: String) -> Bool {
+        [".zshenv", ".zprofile", ".zshrc", ".zlogin"].contains((path as NSString).lastPathComponent)
+    }
+
+    /// Line numbers (1-based) of lines `matches` would remove that are the
+    /// only command in a compound command's body (`then`, `else`, `do`,
+    /// `{`), so removing them leaves `then fi` or `{ }`: a bash syntax error.
+    /// A line-based reading of the shell, enough for startup files: keywords
+    /// count in command position, `#` starts a comment, quotes and here
+    /// documents aren't parsed. `case` bodies may be empty and aren't checked.
+    public static func emptiedBlocks(_ lines: [String]) -> [Int] {
+        struct Segment { var body: Bool; var content = false; var removed: [Int] = [] }
+        var stack: [Segment] = []   // the current segment of each open block
+        var found: [Int] = []
+        func finish() {
+            guard let seg = stack.last, seg.body, !seg.content, !seg.removed.isEmpty else { return }
+            found += seg.removed
+        }
+        func next(body: Bool) {
+            guard !stack.isEmpty else { return }
+            finish()
+            stack[stack.count - 1] = Segment(body: body)
+        }
+        func close() {
+            guard !stack.isEmpty else { return }
+            finish()
+            stack.removeLast()
+        }
+        for (i, line) in lines.enumerated() {
+            if matches(line) {
+                if !stack.isEmpty { stack[stack.count - 1].removed.append(i + 1) }
+                continue
+            }
+            // Tokens: words, with ; & | ( ) as their own tokens.
+            var tokens: [String] = []
+            var word = ""
+            for ch in line {
+                if ch == " " || ch == "\t" {
+                    if !word.isEmpty { tokens.append(word); word = "" }
+                } else if ";&|()".contains(ch) {
+                    if !word.isEmpty { tokens.append(word); word = "" }
+                    tokens.append(String(ch))
+                } else {
+                    word.append(ch)
+                }
+            }
+            if !word.isEmpty { tokens.append(word) }
+            var commandPosition = true
+            for t in tokens {
+                if t.hasPrefix("#") { break }
+                if ";&|()".contains(t) { commandPosition = true; continue }
+                guard commandPosition else {
+                    if !stack.isEmpty { stack[stack.count - 1].content = true }
+                    if t == "{" { stack.append(Segment(body: true)) }   // function f {
+                    continue
+                }
+                switch t {
+                case "if", "while", "until": stack.append(Segment(body: false))
+                case "for", "select", "case": stack.append(Segment(body: false)); commandPosition = false; continue
+                case "then", "do", "else": next(body: true)
+                case "elif": next(body: false)
+                case "{": stack.append(Segment(body: true))
+                case "fi", "done", "esac", "}": close()
+                case "!": break
+                default:
+                    if !stack.isEmpty { stack[stack.count - 1].content = true }
+                    commandPosition = false
+                    continue
+                }
+                commandPosition = true
+            }
+        }
+        return found
+    }
+
+    /// When `path` itself is a symlink, the file it finally points to
+    /// (realpath(3)); otherwise `path` unchanged (a symlinked parent such as
+    /// /var doesn't matter to sed, and a missing file stays as it is).
+    public static func realPath(_ path: String) -> String {
+        var st = stat()
+        guard lstat(path, &st) == 0, (st.st_mode & S_IFMT) == S_IFLNK, let r = realpath(path, nil) else { return path }
+        defer { free(r) }
+        return String(cString: r)
+    }
+
     /// Every command the script runs, in order, as shown in the sheet.
     public var commands: [String] {
         let q = BrewCommands.shellQuoted
         var out: [String] = []
-        for e in edits {
-            out.append("cp -p \(q(e.path)) \(q(e.path + "." + backupSuffix))")
-            out.append("/usr/bin/sed -i '' -E \(q("/" + Self.sedPattern + "/d")) \(q(e.path))")
+        for e in edits where e.isAutomatic {
+            out.append("cp -p \(q(e.target)) \(q(e.target + "." + backupSuffix))")
+            out.append("/usr/bin/sed -i '' -E \(q("/" + Self.sedPattern + "/d")) \(q(e.target))")
         }
         out.append("unset " + Self.keys.joined(separator: " "))
         out.append("git -C \(q(repository)) remote set-url origin \(HomebrewManagement.upstreamBrewRemote)")
@@ -171,6 +303,10 @@ public struct RevertPlan: Equatable, Sendable {
 
         """
         for c in commands { s += "echo \(BrewCommands.shellQuoted("  " + c))\n" }
+        for e in edits where !e.isAutomatic {
+            let where_ = "line" + (e.emptiedBlockLines.count == 1 ? " " : "s ") + e.emptiedBlockLines.map(String.init).joined(separator: ", ")
+            s += "echo \(BrewCommands.shellQuoted("  Not edited: \(e.label) (\(where_) would leave an empty block). Remove its Intelbrew lines by hand."))\n"
+        }
         s += """
         echo
         read -r -p "Press Return to continue, or close this window to cancel. "

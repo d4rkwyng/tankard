@@ -93,9 +93,13 @@ public extension AppStore {
 
     /// Runs one mutating brew command through the queue (the same queue as
     /// upgrades, so it waits its turn). nil when it couldn't start: brew
-    /// not found, no status yet, or something else is already running.
+    /// not found, no status yet, or something else is already running;
+    /// then `busyNotice` says so, so the click isn't silently lost.
     func runQuick(_ args: [String]) async -> QuickResult? {
-        guard !isBusy, let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
+        guard !isBusy, let client = try? resolvedClient(), let detection = report?.intelbrew else {
+            showBusyNotice(Self.notStartedNotice(BrewCommands.display(args), running: quickAction, upgrading: isUpgrading))
+            return nil
+        }
         var env = client.environment(for: detection, readOnly: false)
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
         let cmd = QueuedCommand(executable: client.installation.brewPath, arguments: args,
@@ -108,6 +112,27 @@ public extension AppStore {
             return QuickResult(exitCode: code, lines: collector.lines())
         } catch {
             return QuickResult(exitCode: -1, lines: ["Could not run brew: \(error)"])
+        }
+    }
+
+    /// "brew pin --formula homebrew/core/xz didn't start: brew services stop
+    /// -- php is still running. Try again when it finishes."
+    nonisolated static func notStartedNotice(_ command: String, running: String?, upgrading: Bool) -> String {
+        if let running { return "\(command) didn't start: \(running) is still running. Try again when it finishes." }
+        if upgrading { return "\(command) didn't start: an upgrade is still running. Try again when it finishes." }
+        return "\(command) didn't start: Homebrew isn't ready yet. Refresh, then try again."
+    }
+
+    /// Shows `text` in the status bar, then clears it after `seconds`
+    /// unless a newer notice replaced it.
+    func showBusyNotice(_ text: String, seconds: Double = 6) {
+        busyNotice = text
+        busyNoticeToken += 1
+        let token = busyNoticeToken
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, self.busyNoticeToken == token else { return }
+            self.busyNotice = nil
         }
     }
 

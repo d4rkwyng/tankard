@@ -29,7 +29,7 @@ fi
 run() { # name env...
     local name=$1; shift
     env "${DATA[@]}" "$@" TANKARD_SELECT="$SEL" TANKARD_SNAPSHOT="$OUT/$name.png" TANKARD_SNAPSHOT_DELAY=$DELAY \
-        TANKARD_SNAPSHOT_QUIT=1 TANKARD_SNAPSHOT_LAYOUT=1 TANKARD_LOG_FRAMES=1 "$BIN" >/dev/null 2>"$OUT/$name.log" &
+        TANKARD_SNAPSHOT_QUIT=1 TANKARD_SNAPSHOT_LAYOUT=1 TANKARD_LOG_FRAMES=1 "$BIN" -ApplePersistenceIgnoreState YES >/dev/null 2>"$OUT/$name.log" &
     local pid=$!
     for _ in $(seq 1 $((DELAY + 30))); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
     kill "$pid" 2>/dev/null || true

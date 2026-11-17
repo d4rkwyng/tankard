@@ -77,6 +77,7 @@ fi
 failed=0
 for run in $(seq 1 "$RUNS"); do
     before=$(crash_reports)
+    # A normal launch, window restoration included: that is what users get.
     "${ENV_CLEAN[@]}" "$BIN_ABS" >/dev/null 2>&1 &
     pid=$!
     alive=1
@@ -86,6 +87,10 @@ for run in $(seq 1 "$RUNS"); do
     done
     status=running
     if [ $alive = 1 ]; then
+        # Quit it the way a user does (a Quit Apple event to this pid only), so
+        # macOS doesn't offer to "reopen windows" next time; kill as a fallback.
+        osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($pid); if (a) a.terminate; ''" >/dev/null 2>&1 || true
+        for _ in 1 2 3 4 5; do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
         kill "$pid" 2>/dev/null || true
         for _ in 1 2 3 4 5; do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
         kill -9 "$pid" 2>/dev/null || true

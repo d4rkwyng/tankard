@@ -35,7 +35,7 @@ struct InsightsStoreTests {
                                          cache: StatusCache(url: dir.appendingPathComponent("status.json")),
                                          logURL: nil, ttl: 3600, now: { now })
         if cache { deps.insightsCache = InsightsCache(url: dir.appendingPathComponent("insights.json")) }
-        return Rig(store: AppStore(deps: deps, settings: settings ?? testSettings()), info: runner, log: log, dir: dir)
+        return Rig(store: AppStore(deps: deps, settings: settings ?? scanningSettings()), info: runner, log: log, dir: dir)
     }
 
     @Test func scanAndSizesAreLaidOverTheReport() async throws {
@@ -120,6 +120,51 @@ struct InsightsStoreTests {
         #expect(r.store.count(.vulnerable) == 2)
     }
 
+    /// 0.4 review: off by default. A refresh sends nothing to OSV.dev
+    /// until the user opts in; Scan now still runs one scan on request.
+    @Test func scanOnRefreshIsOffByDefault() async throws {
+        let r = try rig(settings: testSettings())
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        #expect(!r.store.insights.settings.scanVulnerabilitiesOnRefresh)
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        await r.store.refresh(manual: true)
+        await r.store.insights.waitForIdle()
+        #expect(!r.info.insightLog.calls.contains(BrewClient.vulnsArguments))
+        #expect(r.store.insights.vulnerabilityScan == nil)
+        r.store.scanVulnerabilitiesNow()
+        await r.store.insights.waitForIdle()
+        #expect(r.info.insightLog.calls.filter { $0 == BrewClient.vulnsArguments }.count == 1)
+        #expect(r.store.count(.vulnerable) == 2)
+        #expect(InsightSettings.scanPrivacyNote == "Sends your installed formula names and versions to OSV.dev (via brew vulns).")
+    }
+
+    /// A brew vulns that hangs is stopped after `scanTimeout` (a real child
+    /// process here, killed through ProcessRunner's cancellation), and the
+    /// strip says the scan timed out; the last result stays.
+    @Test func hungScanTimesOut() async throws {
+        let r = try rig()
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        #expect(r.store.count(.vulnerable) == 2)
+        let hanging = HangingVulnsRunner(fallback: r.info)
+        let client = makeClient(hanging)
+        r.store.insights.scanTimeout = .milliseconds(300)
+        let started = Date()
+        r.store.insights.scanVulnerabilities(client: client, env: [:])
+        #expect(r.store.insights.scanState == .running)
+        await r.store.insights.waitForIdle()
+        let elapsed = Date().timeIntervalSince(started)
+        #expect(r.store.insights.scanState == .failed(InsightsStore.scanTimedOutMessage))
+        #expect(elapsed < 10, "the hung child was not stopped (\(elapsed) s)")
+        #expect(hanging.ran.value)
+        #expect(r.store.count(.vulnerable) == 2)
+        #expect(InsightsStore.scanTimedOutMessage.hasPrefix("Scan timed out"))
+        #expect(InsightsStore(settings: InsightSettings(defaults: testSettings().defaults), cache: nil, ttl: 1, now: { Date() })
+                    .scanTimeout == .seconds(60))
+    }
+
     /// Cached like status: fresh results are used without asking brew; a
     /// manual refresh asks again.
     @Test func cachedInsightsAreReusedUntilStale() async throws {
@@ -138,7 +183,7 @@ struct InsightsStoreTests {
                                          cache: StatusCache(url: r.dir.appendingPathComponent("status.json")),
                                          logURL: nil, ttl: 3600, now: { now.addingTimeInterval(60) })
         deps.insightsCache = InsightsCache(url: r.dir.appendingPathComponent("insights.json"))
-        let store2 = AppStore(deps: deps, settings: testSettings())
+        let store2 = AppStore(deps: deps, settings: scanningSettings())
         await store2.start()
         await store2.insights.waitForIdle()
         #expect(log2.count("info") == 0)
@@ -170,7 +215,7 @@ struct VulnerableUpgradeTests {
     /// The Intel demo: its older openssl@4 is vulnerable and has an
     /// upgrade; expat is vulnerable with no upgrade yet.
     func demoStore() async -> AppStore {
-        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: scanningSettings())
         await store.start()
         await store.insights.waitForIdle()
         return store
@@ -312,7 +357,7 @@ struct SelfUpdatingAndNoQuitTests {
     @Test func settingsPersist() {
         let d = testSettings().defaults
         let a = InsightSettings(defaults: d)
-        #expect(a.scanVulnerabilitiesOnRefresh) // on by default
+        #expect(!a.scanVulnerabilitiesOnRefresh) // off by default: it sends data to OSV.dev
         a.includeSelfUpdatingApps = true
         a.dontQuitAppsDuringUpgrade = true
         a.notifyNewVulnerabilities = true
@@ -342,7 +387,7 @@ struct VulnerabilityNoticeTests {
     }
 
     @Test func noticeInTheStore() async {
-        let settings = testSettings()
+        let settings = scanningSettings()
         let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: settings)
         await store.start()
         await store.insights.waitForIdle()
@@ -389,5 +434,20 @@ struct InsightColorTests {
             let captured = try fixtureData(name, "txt")
             #expect(Data(Demo.fixtureText(name).utf8) == captured, "\(name) differs")
         }
+    }
+}
+
+/// `brew vulns` that never finishes: runs a real `/bin/sleep 600` through
+/// ProcessRunner, so only cancellation (SIGTERM to its group) ends it.
+final class HangingVulnsRunner: CommandRunning, @unchecked Sendable {
+    let fallback: FakeInfoRunner
+    let ran = Flag()
+    init(fallback: FakeInfoRunner) { self.fallback = fallback }
+    func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
+        guard arguments == BrewClient.vulnsArguments else {
+            return try await fallback.run(executable, arguments, environment: environment)
+        }
+        ran.set()
+        return try await ProcessRunner().run("/bin/sleep", ["600"], environment: [:])
     }
 }

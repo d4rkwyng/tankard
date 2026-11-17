@@ -208,7 +208,9 @@ struct ServicesDecodeTests {
 
     @Test func arguments() {
         #expect(BrewServices.listArguments == ["services", "list", "--json"])
-        #expect(BrewServices.infoArguments("php") == ["services", "info", "--json", "php"])
-        #expect(BrewServices.arguments(.restart, "php") == ["services", "restart", "php"])
+        #expect(BrewServices.infoArguments("php") == ["services", "info", "--json", "--", "php"])
+        #expect(BrewServices.arguments(.restart, "php") == ["services", "restart", "--", "php"])
+        // A name that looks like an option stays a name.
+        #expect(BrewServices.arguments(.stop, "--all") == ["services", "stop", "--", "--all"])
     }
 }

@@ -189,7 +189,7 @@ struct ScanStateLabel: View {
                 Text("Scanning…")
             case .failed(let s):
                 Image(systemName: "exclamationmark.circle").foregroundStyle(.orange)
-                Text("Scan failed").help(s)
+                Text(s == InsightsStore.scanTimedOutMessage ? "Scan timed out" : "Scan failed").help(s)
             case .unsupported(let s):
                 Text("No brew vulns").help(s)
             case .idle:
@@ -198,6 +198,7 @@ struct ScanStateLabel: View {
                         .help(scan.partialReason.map { "brew says the scan is incomplete: \($0)." } ?? "brew checked every installed formula.")
                 } else {
                     Text("Not scanned yet")
+                        .help("Scan for Vulnerabilities Now is in the filter menu. " + InsightSettings.scanPrivacyNote)
                 }
             }
         }
@@ -395,8 +396,10 @@ struct UpgradeSettings: View {
             Divider().padding(.vertical, 4)
 
             Toggle("Scan for vulnerabilities when refreshing", isOn: $settings.scanVulnerabilitiesOnRefresh)
+            Text(InsightSettings.scanPrivacyNote)
+                .font(.system(size: 11)).foregroundStyle(.secondary)
             Toggle("Show new vulnerabilities in the menu bar", isOn: $settings.notifyNewVulnerabilities)
-            Text("brew vulns checks installed formulae against OSV.dev: brew sends each formula's source repository and version to api.osv.dev. Casks aren't checked. The menu-bar notice (off by default) appears when a scan finds something new.")
+            Text("Off by default; Scan for Vulnerabilities Now, in the filter menu next to the segments, runs one scan whenever you ask. brew vulns checks installed formulae against OSV.dev: brew sends each formula's source repository and version to api.osv.dev. Casks aren't checked. A scan that runs longer than a minute is stopped. The menu-bar notice (off by default) appears when a scan finds something new.")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }

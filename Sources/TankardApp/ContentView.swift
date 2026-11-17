@@ -31,15 +31,6 @@ struct ContentView: View {
                         .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        store.openCleanup()
-                    } label: {
-                        Label("Clean Up", systemImage: "trash")
-                    }
-                    .help("See what brew cleanup would remove, then clean up")
-                    .disabled(store.isUpgrading || store.report == nil)
-                }
-                ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
                         ProgressView().controlSize(.small).frame(width: 28)
                             .help(store.refreshPhase ?? "Refreshing")
@@ -275,7 +266,7 @@ struct SummaryStrip: View {
                         .minimumScaleFactor(0.8)
                         .truncationMode(.tail)
                         // One height however far it scales: a narrower strip
-                        // (Dark's wider native picker) shrank the line and so
+                        // (once Dark's wider native picker) shrank the line and so
                         // the strip, moving the table 2 points between themes.
                         .frame(height: Self.summaryLineHeight)
                     HStack(spacing: 6) {
@@ -470,9 +461,12 @@ struct PackageTable: View {
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
-        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
-        .background(theme.table ?? .clear)
+        // One configuration in every theme: changing it makes AppKit drop
+        // the visible rows (see TableSelectionStyler). The stripes are
+        // painted by the styler, the background is this view's.
+        .tableStyle(.inset(alternatesRowBackgrounds: false))
+        .scrollContentBackground(.hidden)
+        .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {

@@ -26,7 +26,7 @@ shot() { # name delay env...
     local name=$1 delay=$2
     shift 2
     env "$@" TANKARD_SNAPSHOT="$OUT/$name.png" TANKARD_SNAPSHOT_DELAY="$delay" TANKARD_SNAPSHOT_QUIT=1 \
-        "$BIN" >/dev/null 2>"$OUT/.$name.log" &
+        "$BIN" -ApplePersistenceIgnoreState YES >/dev/null 2>"$OUT/.$name.log" &
     local pid=$!
     for _ in $(seq 1 $((${delay%.*} + 30))); do
         kill -0 "$pid" 2>/dev/null || break

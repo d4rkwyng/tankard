@@ -89,8 +89,10 @@ public enum AboutInfo {
     public static let notAffiliated = "Not affiliated with or endorsed by the Homebrew project."
     /// Intelbrew mode: replaces the plain Intelbrew link line.
     public static let intelbrewBottlesLine = "Intelbrew bottles from d4rkwyng/intelbrew"
-    /// Matches LICENSE ("Copyright (c) 2026-present, Tankard contributors").
-    public static let copyright = "© 2026 Tankard contributors"
+    /// The About panel's copyright line, in the owner's name as First
+    /// Light's LICENSE ("Copyright (c) 2026 d4rkwyng") and both apps'
+    /// "Made by d4rkwyng" credit. LICENSE keeps "Tankard contributors".
+    public static let copyright = "© 2026 d4rkwyng"
 
     /// The About panel's version line: "Version 0.3.0". The build number is
     /// never shown (the bundle sets CFBundleVersion to the same string, and

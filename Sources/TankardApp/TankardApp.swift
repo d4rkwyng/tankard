@@ -160,6 +160,9 @@ struct TankardApp: App {
         // 0.5: the real power, idle and running-app checks. Demo runs keep
         // the default (never on AC), so nothing runs unless asked for.
         if !options.isDemo && options.snapshot == nil { store.autoUpdate.conditions = SystemConditions() }
+        // The demo's scan is a fixture (no network), so it shows what a scan
+        // finds; a real session scans on refresh only once the user opts in.
+        if options.demo != nil { store.insights.settings.scanVulnerabilitiesOnRefresh = true }
         appearance = AppearanceSettings(override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
