@@ -2,7 +2,6 @@
 "\n\nTankard runs: " = "\n\nTankard 실행: ";
 " (default)" = " (기본값)";
 " (from cache)" = " (캐시에서)";
-" (one per app)" = " (앱당 하나)";
 " Asking VS Code for its extensions can hang brew bundle dump." = " VS Code에 확장 프로그램을 요청하면 brew bundle dump가 멈출 수 있습니다.";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " cask는 검사하지 않습니다. 1분을 넘기는 검사는 중단됩니다. 지금 검사는 요청할 때마다 한 번 검사합니다. 기본적으로 꺼져 있습니다.";
 " It took %@." = " %@ 걸렸습니다.";
@@ -826,6 +825,7 @@
 "Third-party" = "서드파티";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다.";
+"This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다.";
 "This macOS version isn't supported by Homebrew" = "이 macOS 버전은 Homebrew에서 지원하지 않습니다";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";

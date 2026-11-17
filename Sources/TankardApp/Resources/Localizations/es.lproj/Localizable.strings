@@ -2,7 +2,6 @@
 "\n\nTankard runs: " = "\n\nTankard ejecuta: ";
 " (default)" = " (predeterminado)";
 " (from cache)" = " (de la caché)";
-" (one per app)" = " (uno por app)";
 " Asking VS Code for its extensions can hang brew bundle dump." = " Pedir a VS Code sus extensiones puede bloquear brew bundle dump.";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " Los casks no se comprueban. Un análisis que dure más de un minuto se detiene. Analizar ahora ejecuta un análisis cuando lo pidas. Desactivado por defecto.";
 " It took %@." = " Tardó %@.";
@@ -826,6 +825,7 @@
 "Third-party" = "De terceros";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Este brew no tiene `brew vulns` (es nuevo en Homebrew 7). Ejecuta `brew update` para obtenerlo.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Este cask ejecuta un paquete de instalación, que ignora --adopt: brew volvería a ejecutar el instalador, con tu contraseña.";
+"This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Es un enlace simbólico, no la app en sí. Tankard no adopta enlaces.";
 "This macOS version isn't supported by Homebrew" = "Homebrew no admite esta versión de macOS";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Los taps, formulae y casks de este punto de restauración como Brewfile (sin versiones: los Brewfiles no las tienen)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Este paso requiere derechos de administrador, que Tankard no puede pedir. Ejecuta esto en Terminal:";

@@ -280,4 +280,42 @@ struct V08AdoptCoreTests {
         #expect(!AdoptMatcher.vendorInWeb("com.github.foo", "https://github.com/foo"))
         #expect(!AdoptMatcher.vendorInWeb("net.sourceforge.thing", "https://sourceforge.net/projects/thing"))
     }
+    // MARK: review: location and symlinks
+
+    @Test func appOutsideApplicationsNeverMatchesATargetOutsideIt() {
+        // Both outside /Applications: nil must not equal nil.
+        let home = AdoptCask(token: "homey", version: "1.0", apps: [.init(source: "Homey.app", target: "~/Applications/Homey.app")])
+        let dollar = AdoptCask(token: "dollar", version: "1.0", apps: [.init(source: "Homey.app", target: "$APPDIR/Homey.app")])
+        let a = Self.app("Homey.app", "com.homey.homey", "1.0", root: "/Users/you/Applications")
+        #expect(AdoptMatcher.verdict(app: a, cask: home, how: .name) == .blocked(.location(expected: "~/Applications/Homey.app")))
+        #expect(AdoptMatcher.verdict(app: a, cask: dollar, how: .name) == .blocked(.location(expected: "$APPDIR/Homey.app")))
+        // In /Applications against a target outside it: blocked too.
+        #expect(AdoptMatcher.verdict(app: Self.app("Homey.app", "com.homey.homey", "1.0"), cask: home, how: .name)
+                == .blocked(.location(expected: "~/Applications/Homey.app")))
+    }
+
+    @Test func symlinkedAppIsBlocked() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-adopt-link-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let real = root.appendingPathComponent("elsewhere/Foo.app/Contents")
+        try FileManager.default.createDirectory(at: real, withIntermediateDirectories: true)
+        let plist: [String: Any] = ["CFBundleIdentifier": "com.foo.foo", "CFBundleShortVersionString": "1.0", "CFBundleVersion": "1"]
+        try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: real.appendingPathComponent("Info.plist"))
+        let apps = root.appendingPathComponent("apps")
+        try FileManager.default.createDirectory(at: apps, withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: apps.appendingPathComponent("Foo.app"),
+                                                   withDestinationURL: root.appendingPathComponent("elsewhere/Foo.app"))
+        let scanned = try #require(AppScanner.scan(roots: [apps.path]).first)
+        #expect(scanned.isSymlink && scanned.bundleID == "com.foo.foo")
+        // As if it were in /Applications, at the cask's target, same version, sure match: still blocked.
+        let link = InstalledApp(path: "/Applications/Foo.app", root: "/Applications", relativePath: "Foo.app", bundleID: "com.foo.foo",
+                                shortVersion: "1.0", bundleVersion: "1", isSymlink: true)
+        let c = AdoptCask(token: "foo", version: "1.0", apps: [.init(source: "Foo.app", target: "/Applications/Foo.app")],
+                          bundleIDs: ["com.foo.foo"])
+        let row = AdoptMatcher.row(for: link, index: AdoptIndex(casks: [c]))
+        #expect(row.confidence["foo"] == .high && row.verdicts["foo"] == .blocked(.symlink))
+        var plain = link
+        plain.isSymlink = false
+        #expect(AdoptMatcher.row(for: plain, index: AdoptIndex(casks: [c])).verdicts["foo"] == .ready)
+    }
 }

@@ -262,10 +262,8 @@ struct AdoptConfirmation: ViewModifier {
     static func message(_ items: [AdoptPlanItem]) -> String {
         let list = items.prefix(8).map { "• \(($0.appPath as NSString).lastPathComponent) → \($0.token) \($0.caskVersion)" }
             + (items.count > 8 ? [String(localized: "and \(items.count - 8) more")] : [])
-        let commands = items.count == 1 ? items[0].command
-            : BrewCommands.display(AdoptCommands.arguments(qualifiedName: "<cask>")) + String(localized: " (one per app)")
         return list.joined(separator: "\n") + "\n\n" + AdoptStore.confirmationText(items)
-            + String(localized: "\n\nTankard runs: ") + commands
+            + String(localized: "\n\nTankard runs: ") + AdoptStore.commandsText(items)
     }
 }
 

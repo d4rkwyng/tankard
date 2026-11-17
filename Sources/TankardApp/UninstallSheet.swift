@@ -16,8 +16,7 @@ struct UninstallSheet: View {
         let pinned = dependents.isEmpty && package.pinned
         // 0.8: what nothing would need any more (only this package's own dependencies).
         let orphans = dependents.isEmpty ? store.uninstallOrphans(of: package) : []
-        let command = BrewCommands.display(BrewCommands.uninstallArguments(for: package),
-                                           environment: AppStore.uninstallEnvironment(.uninstall))
+        let command = AppStore.uninstallDisplay(package)
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: pinned ? "pin.fill" : dependents.isEmpty ? "trash" : "lock.fill")
@@ -47,9 +46,7 @@ struct UninstallSheet: View {
                     if pinned { CommandBox(command: PinCommands.display(pin: false, for: package)) }
                     CommandBox(command: command)
                     if store.uninstallRemovesOrphans, !orphans.isEmpty {
-                        CommandBox(command: orphans.map {
-                            BrewCommands.display(BrewCommands.uninstallArguments(for: $0), environment: AppStore.uninstallEnvironment(.uninstall))
-                        }.joined(separator: "\n"))
+                        CommandBox(command: orphans.map { AppStore.uninstallDisplay($0) }.joined(separator: "\n"))
                     }
                 }
             } else {

@@ -467,6 +467,15 @@ public final class AppStore {
         dependencyGraph.orphans(afterRemoving: [p])
     }
 
+    /// The uninstall's command as the queue runs it (HOMEBREW_NO_AUTOREMOVE=1),
+    /// then, with `orphans`, one line per no-longer-needed dependency: what
+    /// the sheet shows and the detail pane's Uninstall button tooltip.
+    public nonisolated static func uninstallDisplay(_ p: Package, orphans: [Package] = []) -> String {
+        ([p] + orphans).map {
+            BrewCommands.display(BrewCommands.uninstallArguments(for: $0), environment: uninstallEnvironment(.uninstall))
+        }.joined(separator: "\n")
+    }
+
     /// Runs `brew uninstall` for a package nothing depends on. 0.8: not
     /// for a pinned one either (brew refuses it, and still exits 0); the
     /// sheet offers Unpin and Uninstall instead. With "Also remove these"
@@ -667,6 +676,7 @@ public final class AppStore {
     }
 
     private func sessionFinished(_ session: UpgradeSession) {
+        if session.action == .adopt { adoptSessionFinished(session) }
         // Reconcile: what brew now says, not what we assume. Then (0.4)
         // the caveats of what changed, once.
         Task {

@@ -287,4 +287,38 @@ struct V08AdoptAppTests {
         #expect(items.map(\.confidence) == [.low])
         #expect(AdoptStore.confirmationText(items).hasPrefix("Name only: Foo."))
     }
+    // MARK: review: small items
+
+    @Test func confirmationListsEveryCommand() {
+        let items = [Self.item("gimp", auto: false), Self.item("obsidian", auto: true)]
+        let text = AdoptStore.commandsText(items)
+        #expect(text.contains("brew install --cask --adopt homebrew/cask/gimp\nbrew install --cask --adopt homebrew/cask/obsidian"))
+        #expect(!text.contains("<cask>") && !text.contains("one per app"))
+        #expect(AdoptStore.commandsText([items[0]]) == "brew install --cask --adopt homebrew/cask/gimp")
+        let many = (1...10).map { Self.item("c\($0)", auto: false) }
+        let t = AdoptStore.commandsText(many)
+        #expect(t.contains("homebrew/cask/c8") && !t.contains("homebrew/cask/c9") && t.contains("and 2 more"))
+    }
+
+    @Test func selfUpdateChoiceIsSavedOnlyWhenTheAdoptSucceeds() async throws {
+        let store = try await openedDemo()
+        // The demo's brew has no such cask: the adopt fails.
+        let bad = AdoptPlanItem(token: "no-such-cask", qualifiedName: "homebrew/cask/no-such-cask", appPath: "/Applications/Nope.app",
+                                appVersion: "1.0", caskVersion: "1.0", autoUpdates: true, policy: .app)
+        #expect(store.startAdopt([bad]))
+        // Not saved before the run.
+        #expect(store.upgradeRules.selfUpdatePolicy("no-such-cask") == .automatic)
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        #expect(store.upgrade?.failedItems.count == 1)
+        #expect(store.upgradeRules.selfUpdatePolicy("no-such-cask") == .automatic)
+    }
+
+    @Test func uninstallTooltipMatchesTheSheet() {
+        var p = Package.command("luarocks"); p.kind = .formula
+        var lua = Package.command("lua"); lua.kind = .formula
+        let one = AppStore.uninstallDisplay(p)
+        #expect(one.contains("HOMEBREW_NO_AUTOREMOVE=1") && one.contains("brew uninstall") && one.hasSuffix("luarocks"))
+        let lines = AppStore.uninstallDisplay(p, orphans: [lua]).split(separator: "\n")
+        #expect(lines.count == 2 && lines.allSatisfy { $0.contains("HOMEBREW_NO_AUTOREMOVE=1") } && lines[1].hasSuffix("lua"))
+    }
 }

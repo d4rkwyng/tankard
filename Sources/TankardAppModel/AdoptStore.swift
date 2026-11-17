@@ -79,6 +79,8 @@ public extension AdoptBlock {
             return String(localized: "Homebrew has disabled this cask.")
         case .noVersion:
             return String(localized: "The app has no version brew can compare.")
+        case .symlink:
+            return String(localized: "This is a symbolic link, not the app itself. Tankard doesn't adopt links.")
         }
     }
 }
@@ -160,6 +162,9 @@ public final class AdoptStore {
     /// What brew already owns (set by AppStore, from the installed casks).
     @ObservationIgnored public var managed: @MainActor (AdoptIndex) -> ManagedApps = { _ in ManagedApps() }
     @ObservationIgnored private var loadToken = 0
+    /// The running adoption's self-update choices, saved per app only once
+    /// its adopt succeeded (token → policy).
+    @ObservationIgnored var policiesToSave: [String: SelfUpdatePolicy] = [:]
 
     public init() {}
 
@@ -297,6 +302,14 @@ public final class AdoptStore {
         return lines.joined(separator: "\n\n")
     }
 
+    /// The confirmation's commands: each one, as the queue runs them (the
+    /// first 8, then "and N more").
+    public nonisolated static func commandsText(_ items: [AdoptPlanItem]) -> String {
+        let shown = items.prefix(8).map(\.command)
+        let more = items.count > 8 ? [String(localized: "and \(items.count - 8) more")] : []
+        return (items.count == 1 ? "" : "\n") + (shown + more).joined(separator: "\n")
+    }
+
     /// "4 apps, 1 already managed, 2 from the App Store, 3 Apple": the footer.
     public var skippedLine: String {
         let s = scan.skipped
@@ -344,9 +357,9 @@ public extension AppStore {
         Task { await adopt.load() }
     }
 
-    /// The confirmed adoption: saves the self-update choices, then
-    /// `brew install --cask --adopt` per app through the queue and the
-    /// live log. The sheet closes first; the activity sheet opens once it
+    /// The confirmed adoption: `brew install --cask --adopt` per app
+    /// through the queue and the live log; each self-update choice is
+    /// saved once that app's adopt has succeeded. The sheet closes first; the activity sheet opens once it
     /// has gone. A refresh follows the run (as after any session).
     func confirmAdopt() {
         guard let items = adopt.takeConfirm() else { return }
@@ -362,11 +375,21 @@ public extension AppStore {
     @discardableResult
     func startAdopt(_ items: [AdoptPlanItem]) -> Bool {
         guard !items.isEmpty, !isUpgrading, !autoUpdate.isRunning, report != nil else { return false }
-        for i in items where i.autoUpdates && i.policy != .automatic {
-            upgradeRules.setSelfUpdatePolicy(i.token, i.policy)
-        }
         startSession(.adopt, packages: items.map { $0.asPackage() })
-        return isUpgrading
+        guard isUpgrading else { return false }
+        adopt.policiesToSave = Dictionary(items.filter { $0.autoUpdates && $0.policy != .automatic }.map { ($0.token, $0.policy) },
+                                          uniquingKeysWith: { $1 })
+        return true
+    }
+
+    /// After an adopt session: the self-update choices of the apps it adopted
+    /// (a failed or skipped adopt saves nothing).
+    func adoptSessionFinished(_ session: UpgradeSession) {
+        let policies = adopt.policiesToSave
+        adopt.policiesToSave = [:]
+        for item in session.items where item.state == .done {
+            if let policy = policies[item.package.name] { upgradeRules.setSelfUpdatePolicy(item.package.name, policy) }
+        }
     }
 }
 

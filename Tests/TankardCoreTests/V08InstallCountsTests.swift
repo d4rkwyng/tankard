@@ -44,9 +44,21 @@ struct InstallAnalyticsTests {
 
     @Test func badShapeThrows() {
         #expect(throws: (any Error).self) { try InstallAnalytics.decode([(.formula, .days30, Data("[]".utf8))]) }
-        #expect(throws: (any Error).self) {
-            try InstallAnalytics.decode([(.formula, .days30, doc("formula", [("xz", #""lots""#)]))])
+    }
+
+    /// Review: one unreadable count used to throw the whole file (and every
+    /// count) away; now only that entry is skipped.
+    @Test func badCountSkipsOnlyThatEntry() throws {
+        let a = try InstallAnalytics.decode([
+            (.formula, .days30, doc("formula", [("xz", #""lots""#), ("hello", #""1,234""#), ("sl", "null"),
+                                                ("jq", #""-3""#), ("wget", #""""#), ("git", "42"), ("lua", #"{"n":1}"#)])),
+        ])
+        #expect(a[InstallAnalytics.id(kind: .formula, name: "hello")]?.days30 == 1234)
+        #expect(a[InstallAnalytics.id(kind: .formula, name: "git")]?.days30 == 42)
+        for bad in ["xz", "sl", "jq", "wget", "lua"] {
+            #expect(a[InstallAnalytics.id(kind: .formula, name: bad)] == nil, "\(bad)")
         }
+        #expect(a.endDate == "2026-11-17")
     }
 
     @Test func numbersFollowTheLocale() {

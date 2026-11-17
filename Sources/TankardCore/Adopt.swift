@@ -278,6 +278,10 @@ public enum AdoptBlock: Sendable, Equatable, Codable {
     case disabled
     /// The app has no version brew can compare.
     case noVersion
+    /// The app is a symbolic link: Tankard doesn't hand links to brew
+    /// (what a later upgrade or uninstall does to the link's target is
+    /// not something it has checked).
+    case symlink
 }
 
 /// What adopting would do.
@@ -488,13 +492,16 @@ public enum AdoptMatcher {
 
     public static func verdict(app a: InstalledApp, cask c: AdoptCask, how: AdoptMatchKind) -> AdoptVerdict {
         if c.disabled { return .blocked(.disabled) }
+        if a.isSymlink { return .blocked(.symlink) }
         if c.pkg && c.apps.isEmpty && c.suites.isEmpty { return .blocked(.pkg) }
         if how == .suite {
             return .blocked(.suite(String(a.relativePath.split(separator: "/")[0])))
         }
         // --adopt looks only at the cask's target path.
+        // An app outside /Applications never matches (a nil `here` must not
+        // equal a cask target that is outside it too: "~/..." or "$APPDIR/...").
         let here = a.isInApplications ? a.relativePath.lowercased() : nil
-        let target = c.apps.first { AdoptIndex.relativeToApplications($0.target)?.lowercased() == here }
+        let target = here.flatMap { h in c.apps.first { AdoptIndex.relativeToApplications($0.target)?.lowercased() == h } }
         if target == nil {
             let expected = c.apps.first?.target ?? c.suites.first ?? AppScanner.systemApplications
             return .blocked(.location(expected: expected))

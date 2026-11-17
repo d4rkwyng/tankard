@@ -157,58 +157,6 @@
         }
       }
     },
-    " (one per app)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (eine pro App)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (un par app)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (uno por app)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "（アプリごとに1つ）"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "（每个 App 一个）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (um por app)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (uno per app)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (앱당 하나)"
-          }
-        }
-      }
-    },
     " Asking VS Code for its extensions can hang brew bundle dump.": {
       "localizations": {
         "de": {
@@ -43001,6 +42949,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다."
+          }
+        }
+      }
+    },
+    "This is a symbolic link, not the app itself. Tankard doesn't adopt links.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein symbolischer Link, nicht die App selbst. Tankard übernimmt keine Links."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C'est un lien symbolique, pas l'app elle-même. Tankard n'adopte pas les liens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es un enlace simbólico, no la app en sí. Tankard no adopta enlaces."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これはアプリ本体ではなくシンボリックリンクです。Tankard はリンクを引き継ぎません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto é um link simbólico, não o app em si. O Tankard não adota links."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È un link simbolico, non l'app stessa. Tankard non adotta i link."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다."
           }
         }
       }

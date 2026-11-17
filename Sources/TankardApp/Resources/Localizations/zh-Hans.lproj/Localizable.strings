@@ -2,7 +2,6 @@
 "\n\nTankard runs: " = "\n\nTankard 运行： ";
 " (default)" = " （默认）";
 " (from cache)" = " （来自缓存）";
-" (one per app)" = "（每个 App 一个）";
 " Asking VS Code for its extensions can hang brew bundle dump." = " 向 VS Code 查询其扩展可能会让 brew bundle dump 卡住。";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " 不检查 cask。运行超过一分钟的扫描会被停止。“立即扫描”会在你需要时运行一次扫描。默认关闭。";
 " It took %@." = " 耗时 %@。";
@@ -826,6 +825,7 @@
 "Third-party" = "第三方";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
+"This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。";
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";

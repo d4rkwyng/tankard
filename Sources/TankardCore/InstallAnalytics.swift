@@ -99,24 +99,27 @@ public struct InstallAnalytics: Sendable {
         struct Item: Decodable {
             var formula: String?
             var cask: String?
-            var count: Int
+            /// nil when the entry's count can't be read: that entry is
+            /// skipped, the rest of the file still counts.
+            var count: Int?
 
             enum CodingKeys: String, CodingKey { case formula, cask, count }
 
             init(from decoder: Decoder) throws {
                 let c = try decoder.container(keyedBy: CodingKeys.self)
-                formula = try c.decodeIfPresent(String.self, forKey: .formula)
-                cask = try c.decodeIfPresent(String.self, forKey: .cask)
+                formula = try? c.decodeIfPresent(String.self, forKey: .formula)
+                cask = try? c.decodeIfPresent(String.self, forKey: .cask)
                 // "551,467" (always a string with grouping, so far); an
                 // integer is accepted too.
                 if let n = try? c.decode(Int.self, forKey: .count) {
                     count = n
+                } else if let s = try? c.decode(String.self, forKey: .count) {
+                    let digits = s.filter { $0.isASCII && $0.isNumber }
+                    // Only digits and grouping: "1,234" or "1 234", not "n/a" or "-3".
+                    let rest = s.filter { !($0.isASCII && $0.isNumber) && $0 != "," && !$0.isWhitespace }
+                    count = rest.isEmpty && !digits.isEmpty ? Int(digits) : nil
                 } else {
-                    let s = try c.decode(String.self, forKey: .count)
-                    guard let n = Int(s.filter(\.isNumber)) else {
-                        throw DecodingError.dataCorruptedError(forKey: .count, in: c, debugDescription: "count \(s)")
-                    }
-                    count = n
+                    count = nil
                 }
             }
         }
@@ -144,10 +147,10 @@ public struct InstallAnalytics: Sendable {
             let doc = try decoder.decode(Document.self, from: data)
             if period == .days30, out.endDate == nil { out.endDate = doc.endDate }
             for item in doc.items {
-                guard let name = kind == .cask ? item.cask : item.formula, !name.isEmpty else { continue }
+                guard let name = kind == .cask ? item.cask : item.formula, !name.isEmpty, let count = item.count else { continue }
                 // Option variants ("hello --HEAD") count toward the package.
                 let base = name.split(separator: " ", maxSplits: 1).first.map(String.init) ?? name
-                out.counts[id(kind: kind, name: base), default: InstallCounts()][period] += item.count
+                out.counts[id(kind: kind, name: base), default: InstallCounts()][period] += count
             }
         }
         return out
