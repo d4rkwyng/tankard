@@ -125,9 +125,13 @@ public enum SelfUpdatePolicy: String, CaseIterable, Identifiable, Sendable, Coda
 
     public var id: String { rawValue }
 
-    public var title: String {
+    /// The label says what happens: `.automatic` names the outcome of
+    /// Settings ▸ Upgrades ▸ "Include self-updating apps" (`includeSelfUpdating`).
+    public func title(includeSelfUpdating: Bool) -> String {
         switch self {
-        case .automatic: return String(localized: "Follow the setting")
+        case .automatic:
+            return includeSelfUpdating ? String(localized: "Default (Homebrew updates it)")
+                                       : String(localized: "Default (app updates itself)")
         case .app: return String(localized: "App updates itself")
         case .homebrew: return String(localized: "Homebrew updates it")
         }
@@ -136,7 +140,7 @@ public enum SelfUpdatePolicy: String, CaseIterable, Identifiable, Sendable, Coda
     public var help: String {
         switch self {
         case .automatic:
-            return String(localized: "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).")
+            return String(localized: "Default uses Settings ▸ Upgrades ▸ Include self-updating apps.")
         case .app:
             return String(localized: "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.")
         case .homebrew:

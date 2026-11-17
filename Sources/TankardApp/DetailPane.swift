@@ -145,11 +145,11 @@ struct PackageDetail: View {
                             HStack(spacing: 6) {
                                 updatesLabel
                                 Spacer(minLength: 4)
-                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, includeSelfUpdating: insights?.settings.includeSelfUpdatingApps ?? false, set: selfUpdate.set)
                             }
                             VStack(alignment: .leading, spacing: 3) {
                                 updatesLabel
-                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, includeSelfUpdating: insights?.settings.includeSelfUpdatingApps ?? false, set: selfUpdate.set)
                             }
                         }
                         if p.selfUpdateHeld == true, let v = p.currentVersion {

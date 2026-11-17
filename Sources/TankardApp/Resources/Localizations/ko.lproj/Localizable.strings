@@ -308,6 +308,9 @@
 "Critical" = "심각";
 "Dark" = "다크";
 "Deep purple and amber, like the icon. Dark underneath." = "아이콘처럼 짙은 보라색과 호박색. 바탕은 다크.";
+"Default (Homebrew updates it)" = "기본값 (Homebrew가 업데이트)";
+"Default (app updates itself)" = "기본값 (앱이 업데이트)";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "‘기본값’은 설정 ▸ 업그레이드 ▸ 자체 업데이트 앱 포함을 따릅니다.";
 "Demo mode: Terminal not opened." = "데모 모드: 터미널을 열지 않았습니다.";
 "Demo mode: no log file written" = "데모 모드: 로그 파일을 쓰지 않았습니다";
 "Demo · %@ casks" = "데모 · cask %@개";
@@ -369,7 +372,6 @@
 "Fixed in %@" = "%@에서 수정됨";
 "Fixed upstream in commit %@" = "upstream 커밋 %@에서 수정됨";
 "Fixed upstream in commit %@ (+%lld more)" = "upstream 커밋 %@에서 수정됨(+%lld개 더)";
-"Follow the setting" = "설정 따르기";
 "Follows macOS." = "macOS를 따릅니다.";
 "For 1 Day" = "1일 동안";
 "For 1 Week" = "1주 동안";
@@ -944,7 +946,6 @@
 "Upgrade with Homebrew" = "Homebrew로 업그레이드";
 "Upgraded (%lld)" = "업그레이드됨 (%lld)";
 "Upgrades" = "업그레이드";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "업그레이드는 brew가 목록에 표시할 때 나타나며, \"자체 업데이트 앱 포함\"이 켜져 있으면 모든 새 버전이 나타납니다(설정 ▸ 업그레이드).";
 "Upgrading" = "업그레이드 중";
 "Used by" = "사용처";
 "User" = "사용자";

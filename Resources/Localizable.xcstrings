@@ -16357,6 +16357,162 @@
         }
       }
     },
+    "Default (Homebrew updates it)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard (Homebrew)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par défaut (Homebrew)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Predeterminado (Homebrew)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デフォルト（Homebrew が更新）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认（由 Homebrew 更新）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Padrão (Homebrew)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Predefinito (Homebrew)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본값 (Homebrew가 업데이트)"
+          }
+        }
+      }
+    },
+    "Default (app updates itself)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard (App)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par défaut (l'app)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Predeterminado (la app)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デフォルト（アプリが更新）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认（App 自行更新）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Padrão (o app)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Predefinito (l'app)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본값 (앱이 업데이트)"
+          }
+        }
+      }
+    },
+    "Default uses Settings ▸ Upgrades ▸ Include self-updating apps.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Standard“ folgt Einstellungen ▸ Upgrades ▸ Selbstaktualisierende Apps einbeziehen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Par défaut » suit Réglages ▸ Mises à niveau ▸ Inclure les apps à mise à jour automatique."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Predeterminado» sigue Ajustes ▸ Actualizaciones ▸ Incluir apps que se actualizan solas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「デフォルト」は 設定 ▸ アップグレード ▸ 自己更新するアプリを含める に従います。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“默认”遵循 设置 ▸ 升级 ▸ 包含自行更新的 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Padrão” segue Ajustes ▸ Atualizações ▸ Incluir apps que se atualizam sozinhos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Predefinito” segue Impostazioni ▸ Aggiornamenti ▸ Includi app che si aggiornano da sole."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘기본값’은 설정 ▸ 업그레이드 ▸ 자체 업데이트 앱 포함을 따릅니다."
+          }
+        }
+      }
+    },
     "Demo mode: Terminal not opened.": {
       "localizations": {
         "de": {
@@ -19525,58 +19681,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "upstream 커밋 %@에서 수정됨(+%lld개 더)"
-          }
-        }
-      }
-    },
-    "Follow the setting": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wie eingestellt"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suivre le réglage"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Según el ajuste"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "設定に従う"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跟随设置"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seguir o ajuste"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Segui l'impostazione"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "설정 따르기"
           }
         }
       }
@@ -49478,58 +49582,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드"
-          }
-        }
-      }
-    },
-    "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upgrades erscheinen, wenn brew sie auflistet, und jede neuere Version, wenn „Selbstaktualisierende Apps einbeziehen“ an ist (Einstellungen ▸ Upgrades)."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les mises à niveau apparaissent quand brew les liste, et chaque nouvelle version quand « Inclure les apps à mise à jour automatique » est activé (Réglages ▸ Mises à niveau)."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las actualizaciones aparecen cuando brew las lista, y cada versión nueva cuando «Incluir apps que se actualizan solas» está activado (Ajustes ▸ Actualizaciones)."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アップグレードは brew が一覧に挙げたときに表示されます。「自己更新するアプリを含める」がオンなら新しいバージョンをすべて表示します（設定 ▸ アップグレード）。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew 列出升级时即会显示；开启“包含自行更新的 App”后会显示每个新版本（设置 ▸ 升级）。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As atualizações aparecem quando o brew as lista, e cada versão nova quando \"Incluir apps que se atualizam sozinhos\" está ativado (Ajustes ▸ Atualizações)."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gli aggiornamenti compaiono quando brew li elenca, e ogni nuova versione quando \"Includi app che si aggiornano da sole\" è attivo (Impostazioni ▸ Aggiornamenti)."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "업그레이드는 brew가 목록에 표시할 때 나타나며, \"자체 업데이트 앱 포함\"이 켜져 있으면 모든 새 버전이 나타납니다(설정 ▸ 업그레이드)."
           }
         }
       }

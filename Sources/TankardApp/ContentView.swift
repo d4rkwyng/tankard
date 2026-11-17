@@ -484,7 +484,7 @@ struct PackageTable: View {
                                 .fixedSize()
                                 .help("Installed as a dependency")
                         }
-                        if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p))) }
+                        if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p), includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps)) }
                         if p.pinned { PinnedBadge() }
                         RetiredBadge(package: p)
                         VulnerabilityTag(package: p)

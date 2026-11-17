@@ -137,8 +137,8 @@ public extension Package {
 
     /// The tooltip for that symbol: what it means and who updates the app
     /// (the per-app choice in the detail pane).
-    func selfUpdateHelp(policy: SelfUpdatePolicy) -> String {
-        String(localized: "Updates itself (auto_updates).\nUpdates: \(policy.title)")
+    func selfUpdateHelp(policy: SelfUpdatePolicy, includeSelfUpdating: Bool) -> String {
+        String(localized: "Updates itself (auto_updates).\nUpdates: \(policy.title(includeSelfUpdating: includeSelfUpdating))")
     }
 
     private func bottleOrigin(of url: String?) -> BottleOrigin? {

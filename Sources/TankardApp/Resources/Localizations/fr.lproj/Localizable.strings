@@ -308,6 +308,9 @@
 "Critical" = "Critique";
 "Dark" = "Sombre";
 "Deep purple and amber, like the icon. Dark underneath." = "Violet profond et ambre, comme l’icône. Sombre en dessous.";
+"Default (Homebrew updates it)" = "Par défaut (Homebrew)";
+"Default (app updates itself)" = "Par défaut (l'app)";
+"Default uses Settings ▸ Upgrades ▸ Include self-updating apps." = "« Par défaut » suit Réglages ▸ Mises à niveau ▸ Inclure les apps à mise à jour automatique.";
 "Demo mode: Terminal not opened." = "Mode démo : Terminal non ouvert.";
 "Demo mode: no log file written" = "Mode démo : aucun fichier journal écrit";
 "Demo · %@ casks" = "Démo · %@ casks";
@@ -369,7 +372,6 @@
 "Fixed in %@" = "Corrigé dans %@";
 "Fixed upstream in commit %@" = "Corrigé en amont dans le commit %@";
 "Fixed upstream in commit %@ (+%lld more)" = "Corrigé en amont dans le commit %@ (+%lld de plus)";
-"Follow the setting" = "Suivre le réglage";
 "Follows macOS." = "Suit macOS.";
 "For 1 Day" = "Pour 1 jour";
 "For 1 Week" = "Pour 1 semaine";
@@ -944,7 +946,6 @@
 "Upgrade with Homebrew" = "Mettre à jour avec Homebrew";
 "Upgraded (%lld)" = "Mis à niveau (%lld)";
 "Upgrades" = "Mises à niveau";
-"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "Les mises à niveau apparaissent quand brew les liste, et chaque nouvelle version quand « Inclure les apps à mise à jour automatique » est activé (Réglages ▸ Mises à niveau).";
 "Upgrading" = "Mise à niveau";
 "Used by" = "Utilisé par";
 "User" = "Utilisateur";

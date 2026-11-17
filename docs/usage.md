@@ -281,7 +281,9 @@ Settings → Upgrades (0.4), both off by default:
 **Per app (0.8).** The detail pane of a cask that updates itself has an **Updates**
 choice, also offered in Adopt Apps:
 
-- **Follow the setting** (the default): as above.
+- **Default** (the default): follows Settings ▸ Upgrades ▸ Include self-updating apps, as
+  above. The menu says what that means now: **Default (app updates itself)** with the
+  setting off, **Default (Homebrew updates it)** with it on.
 - **App updates itself**: Tankard leaves its upgrades out of Upgrade all, the counts,
   notifications and auto-update. `brew upgrade` in Terminal can still upgrade it.
 - **Homebrew updates it**: every newer version is listed and upgraded, with "Include

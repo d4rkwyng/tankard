@@ -60,9 +60,12 @@ struct DisplayAndDemoTests {
         #expect(chrome.selfUpdates)
         #expect(chrome.subtitle == nil)
         #expect(r.packages.allSatisfy { !($0.subtitle ?? "").contains("Updates itself") })
-        #expect(chrome.selfUpdateHelp(policy: .automatic) == "Updates itself (auto_updates).\nUpdates: Follow the setting")
-        #expect(chrome.selfUpdateHelp(policy: .app).hasSuffix("Updates: App updates itself"))
-        #expect(chrome.selfUpdateHelp(policy: .homebrew).hasSuffix("Updates: Homebrew updates it"))
+        #expect(chrome.selfUpdateHelp(policy: .automatic, includeSelfUpdating: false) == "Updates itself (auto_updates).\nUpdates: Default (app updates itself)")
+        #expect(chrome.selfUpdateHelp(policy: .automatic, includeSelfUpdating: true) == "Updates itself (auto_updates).\nUpdates: Default (Homebrew updates it)")
+        for on in [false, true] {
+            #expect(chrome.selfUpdateHelp(policy: .app, includeSelfUpdating: on).hasSuffix("Updates: App updates itself"))
+            #expect(chrome.selfUpdateHelp(policy: .homebrew, includeSelfUpdating: on).hasSuffix("Updates: Homebrew updates it"))
+        }
         let cmake = try #require(r.packages.first { $0.name == "cmake" })
         #expect(!cmake.selfUpdates)
     }
