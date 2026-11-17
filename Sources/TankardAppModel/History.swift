@@ -276,6 +276,14 @@ public final class HistoryRecorder: @unchecked Sendable {
             case .finished(let code):
                 let r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
                 return (r, code == 0 ? .succeeded : .failed, code)
+            case .lockWait(let holder):
+                // 0.8.3: running again once brew's lock is free: the entry
+                // is about that run (its output, its result).
+                if holder == nil, var r = map[id] {
+                    r.output = Data()
+                    map[id] = r
+                }
+                return nil
             case .skipped:
                 // Never ran: not history (the session's log says why).
                 map.removeValue(forKey: id)

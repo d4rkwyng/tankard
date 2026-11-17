@@ -19,7 +19,7 @@ extension UpgradeSession {
     /// interrupts deferred), nor clean up or taps.
     public var stopNowNeedsConfirmation: Bool {
         Self.stopNeedsConfirmation(action: action, running: current != nil && !isFinished,
-                                   downloading: download != nil, waitingForLock: false)
+                                   downloading: download != nil, waitingForLock: lockWait != nil)
     }
 
     nonisolated static func stopNeedsConfirmation(action: SessionAction, running: Bool, downloading: Bool,

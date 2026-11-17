@@ -97,6 +97,9 @@ public final class AppStore {
         /// Check for Tankard Updates…: GitHub's latest release, fetched only
         /// when asked. nil: the item is disabled (demo mode, tests).
         public var updateFeed: UpdateFeed?
+        /// 0.8.3: a sheet step that fails on brew's lock waits for it and
+        /// runs again (nil: it fails, as before; `live()` sets `.live`).
+        public var lockWait: BrewLockWait?
         /// The running app, to tell a cask install from a zip download.
         public var bundlePath: String = Bundle.main.bundlePath
         /// Screenshots only: act as if this cask installed the running app.
@@ -147,6 +150,7 @@ public final class AppStore {
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             d.updateFeed = .live()
+            d.lockWait = .live
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -904,6 +908,7 @@ public final class AppStore {
             chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
             skipCheck: skipCheck,
             downloads: deps.downloadMonitor?(client, env),
+            lockWait: deps.lockWait,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -929,6 +934,7 @@ public final class AppStore {
                                  makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
                                  precondition: precondition,
                                  downloads: downloadMonitorForCustomSession(),
+                                 lockWait: deps.lockWait,
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
         showUpgradeSheet = true
     }
