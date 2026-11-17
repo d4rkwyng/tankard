@@ -78,8 +78,10 @@ Or download `Tankard.zip` from [Releases](https://github.com/d4rkwyng/tankard/re
 unzip it and move Tankard.app to Applications. Releases are signed with a Developer ID and
 notarized.
 
-A build you made yourself, or an ad-hoc signed one, is blocked by Gatekeeper the first
-time. Right-click → Open once, or:
+An ad-hoc signed build that was downloaded (a zip someone else built, or a CI artifact) is
+blocked by Gatekeeper the first time. On macOS 14, right-click → Open once; on macOS 15 and
+later, try to open it, then click **Open Anyway** in System Settings ▸ Privacy & Security.
+Or clear the quarantine flag:
 
 ```sh
 xattr -dr com.apple.quarantine Tankard.app

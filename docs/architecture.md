@@ -49,7 +49,9 @@ tested: the first on macOS 27 (Swift 6.4), the second on the Intel macOS 14 VM (
 
 **Downloaded builds are quarantined.** An ad-hoc signed app from a zip or a browser
 download is blocked by Gatekeeper ("can't be opened because Apple cannot check it…").
-Either right-click → Open once, or clear the flag:
+On macOS 14, right-click → Open once; on macOS 15 and later (where right-click → Open no
+longer bypasses Gatekeeper), try to open it, then click **Open Anyway** in System Settings ▸
+Privacy & Security. Or clear the flag:
 
 ```sh
 xattr -dr com.apple.quarantine Tankard.app
