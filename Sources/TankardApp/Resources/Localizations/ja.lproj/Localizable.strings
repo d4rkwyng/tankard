@@ -198,6 +198,7 @@
 "Always dark." = "常にダーク。";
 "Always light." = "常にライト。";
 "An independent app for Homebrew (brew.sh)." = "Homebrew(brew.sh)の独立したアプリ。";
+"An older copy of Tankard is still running. Quit it to finish updating." = "古いTankardがまだ実行中です。アップデートを完了するには終了してください。";
 "Another Homebrew command is running" = "別のHomebrewコマンドが実行中です";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "別のインストーラがHomebrewのプレフィックスにファイルを置きました。ソースからのビルドに支障が出ることがあります。";
 "Another old version is installed" = "別の古いバージョンがインストールされています";
@@ -683,6 +684,7 @@
 "Preview from %@ (changes nothing)." = "%@からのプレビュー（何も変更されません）。";
 "Private" = "非公開";
 "Quit Tankard" = "Tankardを終了";
+"Quit Tankard and open it again to use the new version." = "新しいバージョンを使うには、Tankardを終了してもう一度開いてください。";
 "Quit Tankard and open it again, then run it again." = "Tankardを終了してもう一度開き、もう一度実行してください。";
 "Read from Homebrew's API; not tapped locally." = "HomebrewのAPIから読み込み。ローカルではタップされていません。";
 "Reading installed packages…" = "インストール済みパッケージを読み込み中…";
@@ -807,6 +809,7 @@
 "Show Dependencies" = "依存関係を表示";
 "Show Dependencies (%lld)" = "依存関係を表示 (%lld)";
 "Show Installed" = "インストール済みを表示";
+"Show Older Copy" = "古いTankardを表示";
 "Show Tankard in the menu bar" = "メニューバーにTankardを表示";
 "Show Terminal Command" = "ターミナルコマンドを表示";
 "Show What Uses It" = "使用しているものを表示";

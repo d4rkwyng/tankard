@@ -198,6 +198,7 @@
 "Always dark." = "始终为深色。";
 "Always light." = "始终为浅色。";
 "An independent app for Homebrew (brew.sh)." = "一款独立的 Homebrew App（brew.sh）。";
+"An older copy of Tankard is still running. Quit it to finish updating." = "旧版 Tankard 仍在运行。请退出它以完成更新。";
 "Another Homebrew command is running" = "另一个 Homebrew 命令正在运行";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "另一个安装程序在 Homebrew 的前缀中放入了文件。它们可能干扰从源码构建。";
 "Another old version is installed" = "已安装另一个旧版本";
@@ -683,6 +684,7 @@
 "Preview from %@ (changes nothing)." = "来自 %@ 的预览（不会更改任何内容）。";
 "Private" = "私有";
 "Quit Tankard" = "退出 Tankard";
+"Quit Tankard and open it again to use the new version." = "退出 Tankard 并重新打开，以使用新版本。";
 "Quit Tankard and open it again, then run it again." = "请退出 Tankard 并重新打开，然后再次运行。";
 "Read from Homebrew's API; not tapped locally." = "读取自 Homebrew 的 API；未在本地添加 tap。";
 "Reading installed packages…" = "正在读取已安装的软件包…";
@@ -807,6 +809,7 @@
 "Show Dependencies" = "显示依赖项";
 "Show Dependencies (%lld)" = "显示依赖项 (%lld)";
 "Show Installed" = "显示已安装项";
+"Show Older Copy" = "显示旧版";
 "Show Tankard in the menu bar" = "在菜单栏中显示 Tankard";
 "Show Terminal Command" = "显示终端命令";
 "Show What Uses It" = "显示使用它的项目";

@@ -101,6 +101,8 @@ public final class AppStore {
         public var bundlePath: String = Bundle.main.bundlePath
         /// Screenshots only: act as if this cask installed the running app.
         public var selfCaskOverride: Package?
+        /// 0.8.3: whether brew's Caskroom has a tankard cask (path given).
+        public var selfCaskroomExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -170,6 +172,12 @@ public final class AppStore {
     public var showSelfUpdate = false
     /// The running Tankard was just upgraded through brew: offer to relaunch.
     public var offerRelaunch = false
+    /// 0.8.3: brew replaced this app's own bundle (the tankard cask
+    /// upgraded). This process is the old build running from files that are
+    /// gone, so from here on it does as little as possible: the relaunch
+    /// offer and nothing else (no re-read, no background `brew update`, no
+    /// new brew commands, no post-install notes).
+    public internal(set) var selfReplaced = false
     /// Whether brew was found and runs (the welcome screen otherwise).
     public private(set) var homebrewState: HomebrewState = .checking
     /// The package the uninstall confirmation is open for.
@@ -379,7 +387,7 @@ public final class AppStore {
             Task { await checkAgain() }
             return
         }
-        guard isStale, !isRefreshing, !isUpgrading else { return }
+        guard isStale, !isRefreshing, !isUpgrading, !selfReplaced else { return }
         Task { await refresh(manual: false) }
     }
 
@@ -407,6 +415,8 @@ public final class AppStore {
     }
 
     func refresh(_ kind: RefreshKind) async {
+        // 0.8.3: the bundle was replaced: the new instance reads status.
+        if selfReplaced { return }
         if let running = refreshTask {
             await running.value
             if kind == .automatic { return }
@@ -897,7 +907,7 @@ public final class AppStore {
     func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false,
                       skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil) {
         // 0.5: an automatic run has the queue; its commands go first.
-        guard !isUpgrading, !autoUpdate.isRunning, let client = try? resolvedClient() else { return }
+        guard !isUpgrading, !autoUpdate.isRunning, !selfReplaced, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
         if deps.appManagementGate, !skipGate, !isRetry, !settings.appManagementExplained,
            targets.contains(where: { AppManagement.modifiesApps(action, $0) }) {
@@ -975,6 +985,9 @@ public final class AppStore {
     private func sessionFinished(_ session: UpgradeSession) {
         if session.action == .adopt { adoptSessionFinished(session) }
         selfUpgradeFinished(session)
+        // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
+        // offer. The new instance reads status, shows notes and prompts.
+        if selfReplaced { return }
         // 0.8: an uninstalled cask's self-update choice goes with it.
         if session.action == .uninstall {
             for item in session.items where item.state == .done && item.package.kind == .cask {
@@ -1001,7 +1014,7 @@ public final class AppStore {
     public func closeUpgrade() {
         showUpgradeSheet = false
         if upgrade?.isFinished == true { upgrade = nil }
-        insights.presentPending()
+        if !selfReplaced { insights.presentPending() }
     }
 }
 

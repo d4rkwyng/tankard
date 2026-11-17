@@ -53,7 +53,7 @@ public extension Package {
 public extension AppStore {
     /// A brew run is going: a sheet session, a pin/service command, or
     /// (0.5) an automatic update.
-    var isBusy: Bool { isUpgrading || quickAction != nil || autoUpdate.isRunning }
+    var isBusy: Bool { isUpgrading || quickAction != nil || autoUpdate.isRunning || selfReplaced }
 
     /// Upgrades that Upgrade all leaves out because they are pinned.
     var pinnedUpgrades: [Package] { packages.filter { $0.upgradeAvailable && $0.isHeld } }

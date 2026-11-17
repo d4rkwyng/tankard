@@ -126,21 +126,6 @@ struct SelfUpdateSheet: View {
     }
 }
 
-@MainActor
-enum Relaunch {
-    /// Opens the app at the same path (now the new version) as a new
-    /// instance, then quits this one.
-    static func now() {
-        let config = NSWorkspace.OpenConfiguration()
-        config.createsNewApplicationInstance = true
-        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: config) { _, error in
-            DispatchQueue.main.async {
-                if error == nil { NSApp.terminate(nil) }
-            }
-        }
-    }
-}
-
 extension View {
     /// The update sheet, and the relaunch question once the upgrade's
     /// sheet is closed.
@@ -153,7 +138,7 @@ extension View {
             .alert(String(localized: "Tankard was upgraded"),
                    isPresented: Binding(get: { store.offerRelaunch && !store.showUpgradeSheet },
                                         set: { if !$0 && store.offerRelaunch { store.offerRelaunch = false } })) {
-                Button("Relaunch") { Relaunch.now() }
+                Button("Relaunch") { store.relaunchAfterSelfUpgrade() }
                 Button("Later", role: .cancel) { store.offerRelaunch = false }
             } message: {
                 Text("Relaunch Tankard to use the new version.")
