@@ -56,8 +56,8 @@ the Intelbrew forks.
 - **Right-click menus** on Installed, Discover and the menu-bar list.
 - **Menu-bar icon** with the number of upgrades ready, and optional **notifications**
   when new upgrades appear (off by default).
-- **Themes**: Dark, Light, System, Tankard (purple and amber) and Dracula, with green
-  primary buttons in every theme.
+- **Themes**: System (default, follows your Mac), Dark, Light, Tankard (purple and amber)
+  and Dracula.
 
 More detail, including the command-line tool `tankard status`, is in
 [docs/usage.md](docs/usage.md).

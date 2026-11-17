@@ -427,10 +427,10 @@ struct AppearanceTests {
         return d
     }
 
-    @Test func defaultIsDarkAndChoicePersists() {
+    @Test func defaultIsSystemAndChoicePersists() {
         let d = defaults()
         let s = AppearanceSettings(defaults: d)
-        #expect(s.theme == .dark)
+        #expect(s.theme == .system)
         var applied: [AppTheme] = []
         s.onChange = { applied.append($0) }
         s.theme = .tankard
@@ -448,7 +448,7 @@ struct AppearanceTests {
         #expect(s.theme == .tankard)
         #expect(d.string(forKey: AppearanceSettings.defaultsKey) == "light")
         d.set("nonsense", forKey: AppearanceSettings.defaultsKey)
-        #expect(AppearanceSettings(defaults: d).theme == .dark)
+        #expect(AppearanceSettings(defaults: d).theme == .system)
     }
 
     @Test func appearanceMapping() {
