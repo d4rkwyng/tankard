@@ -43,11 +43,17 @@ struct WelcomeView: View {
                 }
 
                 // 0.8: the next step once brew runs.
-                Label("Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.",
-                      systemImage: "square.and.arrow.down.on.square")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: 560)
+                // Centred like the rest of the screen: the icon above, not
+                // beside (a Label's wrapped second line stays left-aligned).
+                VStack(spacing: 4) {
+                    Image(systemName: "square.and.arrow.down.on.square").accessibilityHidden(true)
+                    Text("Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.")
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: 560)
 
                 VStack(spacing: 12) {
                     ForEach(Array(options.enumerated()), id: \.element) { i, installer in

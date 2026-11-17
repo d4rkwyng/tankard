@@ -135,10 +135,18 @@ struct PackageDetail: View {
 
                 if let selfUpdate {
                     VStack(alignment: .leading, spacing: 3) {
-                        HStack(spacing: 6) {
-                            Text("Updates").font(.system(size: 12)).foregroundStyle(.secondary)
-                            Spacer(minLength: 4)
-                            SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                        // The label never wraps or truncates ("Aggiornamen-ti"):
+                        // beside the picker when both fit, else above it.
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 6) {
+                                updatesLabel
+                                Spacer(minLength: 4)
+                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                            }
+                            VStack(alignment: .leading, spacing: 3) {
+                                updatesLabel
+                                SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                            }
                         }
                         if p.selfUpdateHeld == true, let v = p.currentVersion {
                             Text("Left to the app: \(v) isn't in Upgrade all or auto-update.")
@@ -191,6 +199,11 @@ struct PackageDetail: View {
     }
 
     @ViewBuilder
+    private var updatesLabel: some View {
+        Text("Updates").font(.system(size: 12)).foregroundStyle(.secondary)
+            .lineLimit(1).fixedSize().layoutPriority(1)
+    }
+
     private func row(_ k: String, _ v: String, mono: Bool = false) -> some View {
         GridRow {
             Text(k).foregroundStyle(.secondary)
