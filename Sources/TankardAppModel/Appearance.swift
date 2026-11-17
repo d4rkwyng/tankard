@@ -227,7 +227,10 @@ public enum TankardPalette {
         source: Badge(text: 0xffc46e, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17),
         newer: Badge(text: 0xb0ccff, dot: 0x6fa4ff, tint: 0x408cff, tintAlpha: 0.20),
         noBottle: Badge(text: 0xd2c8e4, dot: 0xa595c4, tint: 0xffffff, tintAlpha: 0.09),
-        cask: Badge(text: 0xf3c2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18))
+        cask: Badge(text: 0xf3c2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18),
+        // The owner wants the Tankard theme's own amber for primary actions;
+        // green is Dracula's (and the system themes').
+        action: 0xf2a93b)
 
     /// L1, moderately lighter: still a rich purple, a step or two up.
     /// Tried and not chosen; kept so the comparison can be redone.

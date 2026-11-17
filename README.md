@@ -9,6 +9,8 @@ upgrade, and runs brew for you when you click. When the Mac uses
 bottles), Tankard shows whose bottle each package came from and whether Homebrew is on
 the Intelbrew forks.
 
+<img src="docs/images/screenshot.png" alt="Tankard's Installed list: packages with bottle and source badges, five upgrades ready, and the detail pane for python@3.15" width="1040">
+
 ## What it does
 
 - **Installed**: every formula and cask with a badge for how it got there (Intelbrew or
