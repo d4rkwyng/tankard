@@ -210,6 +210,8 @@ struct SummaryStrip: View {
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
 
+    static let summaryLineHeight = NSLayoutManager().defaultLineHeight(for: .systemFont(ofSize: 13, weight: .medium))
+
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
@@ -219,6 +221,10 @@ struct SummaryStrip: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .truncationMode(.tail)
+                        // One height however far it scales: a narrower strip
+                        // (Dark's wider native picker) shrank the line and so
+                        // the strip, moving the table 2 points between themes.
+                        .frame(height: Self.summaryLineHeight)
                     HStack(spacing: 6) {
                         if let (ready, detail) = SummaryText.upgrades(report.summary) {
                             Circle().fill(theme.upgrade).frame(width: 7, height: 7)
