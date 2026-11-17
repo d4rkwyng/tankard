@@ -35,7 +35,7 @@ the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.
 the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
 else the default in `bundle-app.sh`, kept in step with `tankard --version`. `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
-"Version 0.3.0" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
+"Version 0.4.0" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
 
 **Universal builds.** `--universal` first tries one `swift build --arch x86_64 --arch
@@ -64,7 +64,8 @@ TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew 
                  index and FormulaScanner (bottle do / depends_on, no Ruby run), dependents,
                  CompileClassifier (BuildPlan: bottle or compile?, one answer for every
                  view), CleanupDryRun (parses `brew cleanup -n`), BottleReplacement,
-                 brew's environment, ProcessRunner, and StreamingProcessRunner (merged
+                 brew's environment, DependencyGraph and BrewService (0.4),
+                 ProcessRunner, and StreamingProcessRunner (merged
                  stdout/stderr in chunks, same no-shell / clean-env / process-group rules)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
@@ -90,6 +91,12 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppManagement    which steps need it, the block matcher, the settings links (0.3)
   ContextMenus     which right-click items appear, as pure functions (0.3)
   Demo             fake runners and the bundled fixture copies
+  Pins             pin/unpin commands, the one-command queue runner pin and services
+                   share, Upgrade all's pinned note, dependency links (0.4)
+  ServicesStore    the Services tab: list and info reads, actions through the queue,
+                   root services and brew's sudo advice (0.4)
+  HomebrewManagement  the Homebrew menu: typed confirmation, the revert plan (profile
+                   lines, backups, commands, script), the uninstaller script (0.4)
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
 TankardApp       the SwiftUI views (App lifecycle), the menu-bar extra, Settings, About,
@@ -295,6 +302,11 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_LOG_FRAMES=1` | Print every window move or resize, and the table's identity, scroll and column widths each second. |
 | `TANKARD_SWITCH_APPEARANCE=<theme>@<s>` | Switch theme at runtime, as Settings does (not saved). |
 | `TANKARD_RESELECT=<name>@<s>` | Select another row later, as a click would. |
+| `TANKARD_FILTER=pinned\|leaves` | 0.4: the Pinned or Requested only filter. |
+| `TANKARD_TAB=services` | 0.4: open on Services (reads only). `TANKARD_SERVICE_SELECT=<name>` selects one. |
+| `TANKARD_TREE=all` | 0.4: open every dependency-tree row. |
+| `TANKARD_DEMO_PINNED=a,b` | Demo only: these start pinned. |
+| `TANKARD_DEMO_MANAGE=revert\|uninstall` | Demo only: open that Homebrew menu sheet; `TANKARD_DEMO_TYPED=<word>` pre-types the confirmation. |
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
 
 Demo runs and snapshot runs use throwaway settings, never the real UserDefaults. Demo
@@ -307,6 +319,11 @@ sheet, the uninstall confirmation and its blocked form, the welcome screen on In
 Apple silicon, and this Mac's real data; `SKIP_REAL=1` skips the last). `SET=v0.3 Scripts/screenshots.sh OUT_DIR` takes only the 0.3 shots (menu bar,
 compile warnings, cleanup, replace with bottle, Discover's chip, App Management, Settings,
 About).
+
+`SET=v0.4a Scripts/screenshots.sh OUT_DIR` takes the 0.4 part A shots (pins, Requested only,
+the dependency tree, Services, the Homebrew menu's sheets) in Dark and Tankard. Demo
+Services are an illustrative list (one running, one failed, one not loaded, one root
+service) shaped like real output; the Intel VM has no services and the arm64 Mac one.
 
 `Scripts/layout-check.sh [APP]` checks that the main window's layout doesn't depend on
 the theme: the window frame, the table's position and insets, the visible rows and cells
@@ -356,6 +373,19 @@ bounds, caching and fallbacks (a fixture with a fake fetch), the background sche
 notification diff, App Management gating and its block matcher, the context menus' items,
 the version columns' and green buttons' contrast in every theme, and Discover's bottle chip
 and ranking. `IndexBench` (`TANKARD_BENCH_TAPS=<taps dir>`) times the tap index.
+
+v0.4 (part A) adds, against real output captured read-only on 2026-11-16 on the Intel VM
+and the arm64 Mac (`*-deps-info.json`, trimmed to the keys read; `*-deps-installed.txt`,
+`*-uses-installed.txt`, `*-leaves*.txt`, `sonoma-intelbrew-deps-tree-python.txt`,
+`*-services-*.json`): Used by equals `brew uses --installed` and the leaves equal `brew
+leaves` / `brew leaves -r` on both; Depends on contains `brew deps --installed` (equal on the
+VM, 19 supersets on the arm64 Mac); the tree equals `brew deps --tree`; services decoding
+(every status symbol, the empty outputs). With fake runners and demo mode: pin and unpin
+through the queue, failures, pinned packages left out of Upgrade all and the menu bar,
+Requested only, links, services through the queue, root services never reaching brew,
+brew's sudo message, the typed confirmations, the revert plan, and its `cp`/`sed` lines run
+for real on a temp file. The intel demo also lays the fresh receipts over its fixture, so
+its dependency views are realistic.
 
 ## Signing a release
 

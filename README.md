@@ -25,6 +25,11 @@ the Intelbrew forks.
 - **Replace with bottle**: a package you built from source whose version has a bottle
   gets swapped for the bottle in one click.
 - **Uninstall**, blocked (with the reasons listed) while other packages need it.
+- **Pin** packages so upgrades skip them, filter by **Pinned** or **Requested only**, and
+  follow **Depends on**, **Used by** and the dependency tree from package to package.
+- **Services**: see `brew services` status and start, stop or restart your own services.
+- **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall Homebrew,
+  both in Terminal after showing every command.
 - **Right-click menus** on Installed, Discover and the menu-bar list.
 - **Menu-bar icon** with the number of upgrades ready, and optional **notifications**
   when new upgrades appear (off by default).
@@ -67,12 +72,15 @@ brew only changes things when you ask:
 | Uninstall (after a confirmation) | `brew uninstall --formula\|--cask <tap>/<name>` |
 | Clean up | `brew cleanup` |
 | Replace with bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
+| Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
+| Start / Stop / Restart (Services) | `brew services start\|stop\|restart <name>` |
 
 With notifications turned on, Tankard also runs `brew update` in the background every few
 hours (6 by default). Commands run one at a time, never with a shell, and never with
-sudo: when brew needs a password, Tankard gives you the command to run in Terminal.
+sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
 Upgrading or removing an app (a cask) needs macOS's App Management permission; Tankard
-explains how to allow it the first time.
+explains how to allow it the first time. The Homebrew menu's Revert and Uninstall never run
+in the app: after you type the confirmation word, they open Terminal with the commands.
 
 ## Network and privacy
 
