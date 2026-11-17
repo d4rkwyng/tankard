@@ -249,3 +249,40 @@ struct TableSelectionStyler: NSViewRepresentable {
         }
     }
 }
+
+/// 0.8.3: scrolls the table to `row` (the selection's index in the rows
+/// the Table was given) when `request` changes (AppStore.revealRequest: a
+/// menu-bar package row). SwiftUI's Table has no scroll-to, and a
+/// programmatic selection doesn't scroll. The index comes from the rows,
+/// not the NSTableView's selectedRow, which SwiftUI sets only later. A
+/// table made after the request (the window was closed) scrolls once when
+/// it appears; the table may not have its rows yet, so it tries again
+/// briefly.
+struct TableRevealer: NSViewRepresentable {
+    var request: Int
+    var row: Int?
+
+    final class Coordinator {
+        var seen: Int?
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeNSView(context: Context) -> NSView {
+        let v = NSView()
+        v.setFrameSize(.zero)
+        return v
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        let c = context.coordinator
+        guard request > 0, c.seen != request, let row else { return }
+        c.seen = request
+        for delay in [0.0, 0.15, 0.5] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak view] in
+                guard let view, let t = TableSelectionStyler.findTable(near: view), row < t.numberOfRows else { return }
+                t.scrollRowToVisible(row)
+            }
+        }
+    }
+}

@@ -9,6 +9,9 @@ import TankardCore
 /// The menu-bar extra's panel (`.menuBarExtraStyle(.window)`): the
 /// upgrade count and list, Upgrade all, Open Tankard, Check now, Quit.
 /// Reads the same AppStore (and so the same cache) as the window.
+/// 0.8.3: the header, each package row and the scan line open the window
+/// on what they show (MenuBarDestination); Upgrade All stays the panel's
+/// only action.
 struct MenuBarContent: View {
     @Bindable var store: AppStore
     var openMain: () -> Void
@@ -19,73 +22,84 @@ struct MenuBarContent: View {
     var body: some View {
         let summary = MenuBarSummary(packages: store.report?.packages)
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 8) {
-                BrandMark(size: 28, intelbrew: store.intelbrewMode)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(summary.title).font(.system(size: 13, weight: .semibold))
-                    if let updated = store.lastUpdated {
-                        Text(store.isRefreshing ? (store.refreshPhase ?? String(localized: "Checking…")) : String(localized: "Checked \(updatedAgo(updated, now: Date()))"))
-                            .font(.system(size: 11)).foregroundStyle(.secondary)
-                    } else if store.isRefreshing {
-                        Text(store.refreshPhase ?? String(localized: "Checking…")).font(.system(size: 11)).foregroundStyle(.secondary)
+            // 0.8.3: "N upgrades ready" opens the window on the Upgrades list.
+            MenuPanelLink(enabled: summary.count > 0, accessibilityLabel: String(localized: "Show all upgrades in Tankard"),
+                          action: { show(.upgrades) }) {
+                HStack(spacing: 8) {
+                    BrandMark(size: 28, intelbrew: store.intelbrewMode)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(summary.title).font(.system(size: 13, weight: .semibold))
+                        if let updated = store.lastUpdated {
+                            Text(store.isRefreshing ? (store.refreshPhase ?? String(localized: "Checking…")) : String(localized: "Checked \(updatedAgo(updated, now: Date()))"))
+                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                        } else if store.isRefreshing {
+                            Text(store.refreshPhase ?? String(localized: "Checking…")).font(.system(size: 11)).foregroundStyle(.secondary)
+                        }
                     }
+                    Spacer()
+                    if store.isRefreshing { ProgressView().controlSize(.small) }
                 }
-                Spacer()
-                if store.isRefreshing { ProgressView().controlSize(.small) }
             }
-            .padding(.horizontal, 12)
-            .padding(.top, 10)
-            .padding(.bottom, 8)
+            .padding(.horizontal, 6)
+            .padding(.top, 6)
+            .padding(.bottom, 4)
 
             if !summary.rows.isEmpty {
                 Divider()
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 0) {
+                    // 0.8.3: a row opens the window with that package
+                    // selected (its detail: Upgrade, compile warning).
                     ForEach(summary.rows) { row in
-                        HStack(spacing: 6) {
-                            Image(systemName: row.isCask ? "macwindow" : "shippingbox")
-                                .font(.system(size: 10)).foregroundStyle(.secondary).frame(width: 14)
-                            Text(row.name).font(.system(size: 12, weight: .medium)).lineLimit(1)
-                            if row.compiles {
-                                Image(systemName: "hammer.fill").font(.system(size: 9))
-                                    .foregroundStyle(theme.badge(.source).dot)
-                                    .help(CompileWarning(context: .upgrade).label)
+                        MenuPanelLink(accessibilityLabel: String(localized: "Show \(row.name) in Tankard"),
+                                      action: { show(.package(row.id)) }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: row.isCask ? "macwindow" : "shippingbox")
+                                    .font(.system(size: 10)).foregroundStyle(.secondary).frame(width: 14)
+                                Text(row.name).font(.system(size: 12, weight: .medium)).lineLimit(1)
+                                if row.compiles {
+                                    Image(systemName: "hammer.fill").font(.system(size: 9))
+                                        .foregroundStyle(theme.badge(.source).dot)
+                                        .help(CompileWarning(context: .upgrade).label)
+                                }
+                                Spacer(minLength: 8)
+                                Text(row.versions).font(.system(size: 11)).monospacedDigit()
+                                    .foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
                             }
-                            Spacer(minLength: 8)
-                            Text(row.versions).font(.system(size: 11)).monospacedDigit()
-                                .foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
                         }
-                        .contentShape(Rectangle())
+                        .accessibilityValue(Text(row.versions))
                         .contextMenu { menuBarRowMenu(row) }
                     }
                     if let more = summary.moreText {
                         // 0.5: opens the window on the Upgrades list.
-                        Button {
-                            openMain()
-                            store.showUpgrades()
-                        } label: {
+                        MenuPanelLink(accessibilityLabel: String(localized: "Show all upgrades in Tankard"),
+                                      action: { show(.upgrades) }) {
                             Text(more).font(.system(size: 11)).foregroundStyle(Color.accentColor)
-                                .contentShape(Rectangle())
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .buttonStyle(.plain)
-                        .help("Show all upgrades in Tankard")
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 5)
             }
 
             // 0.6.1: a running scan, or how the last one ended.
             if store.insights.scanState == .running || store.insights.scanOutcome != nil {
                 Divider()
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.shield")
-                        .font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
-                        .accessibilityHidden(true)
-                    ScanProgressView(store: store)
-                    Spacer(minLength: 0)
+                // 0.8.3: once it has ended, the line opens the Vulnerable
+                // list (while it runs, it holds the Stop button).
+                MenuPanelLink(enabled: store.insights.scanState != .running,
+                              accessibilityLabel: String(localized: "Show vulnerable packages in Tankard"),
+                              action: { show(.vulnerable) }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.shield")
+                            .font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
+                            .accessibilityHidden(true)
+                        ScanProgressView(store: store)
+                        Spacer(minLength: 0)
+                    }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
             }
             VulnerabilityMenuNotice(store: store, openMain: openMain)
             AutoUpdateMenuLine(store: store, openLog: openAutoUpdateLog)
@@ -118,6 +132,13 @@ struct MenuBarContent: View {
 }
 
 extension MenuBarContent {
+    /// Opens the main window (Dock icon first, as Open Tankard does), then
+    /// shows `destination` in it.
+    func show(_ destination: MenuBarDestination) {
+        openMain()
+        store.showFromMenuBar(destination)
+    }
+
     /// Upgrade (the window's path, so a compiling upgrade shows its plan
     /// first) and Copy Name.
     @ViewBuilder
@@ -134,6 +155,39 @@ extension MenuBarContent {
                 }
             }
         }
+    }
+}
+
+/// 0.8.3: a panel line that opens something in the main window, with a
+/// menu row's hover highlight. `enabled: false` draws the same content,
+/// at the same size, as plain text.
+struct MenuPanelLink<Label: View>: View {
+    var enabled = true
+    var accessibilityLabel: String
+    var action: () -> Void
+    @ViewBuilder var label: () -> Label
+    private let hover = State(initialValue: false)
+
+    var body: some View {
+        if enabled {
+            Button(action: action) {
+                content(highlighted: hover.wrappedValue)
+            }
+            .buttonStyle(.plain)
+            .onHover { hover.wrappedValue = $0 }
+            .help(accessibilityLabel)
+            .accessibilityLabel(Text(accessibilityLabel))
+        } else {
+            content(highlighted: false)
+        }
+    }
+
+    private func content(highlighted: Bool) -> some View {
+        label()
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+            .background(RoundedRectangle(cornerRadius: 5).fill(highlighted ? Color.accentColor.opacity(0.25) : .clear))
     }
 }
 

@@ -778,6 +778,7 @@
 "Services" = "Services";
 "Several casks install an app with this name. Pick the one you have." = "Several casks install an app with this name. Pick the one you have.";
 "Show" = "Show";
+"Show %@ in Tankard" = "Show %@ in Tankard";
 "Show Auto-update Log…" = "Show Auto-update Log…";
 "Show Dependencies" = "Show Dependencies";
 "Show Dependencies (%lld)" = "Show Dependencies (%lld)";
@@ -791,6 +792,7 @@
 "Show in Installed" = "Show in Installed";
 "Show new vulnerabilities in the menu bar" = "Show new vulnerabilities in the menu bar";
 "Show the Auto-update log" = "Show the Auto-update log";
+"Show vulnerable packages in Tankard" = "Show vulnerable packages in Tankard";
 "Showing the last data Tankard read." = "Showing the last data Tankard read.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.";
 "Shows the brew commands first" = "Shows the brew commands first";

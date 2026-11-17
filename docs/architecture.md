@@ -690,6 +690,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_SCAN=1\|slow\|off` | Demo only: scan for vulnerabilities at launch (`slow`: the scan takes 30 s, to show its progress); `off`: no scan at all, not even on refresh (the Vulnerable filter's "No scan yet"). |
 | `TANKARD_DEMO_NOTES=1` | 0.4, demo only: upgrade everything, close the finished sheet; the post-install notes follow. |
 | `TANKARD_DEMO_VULN_NOTICE=1` | 0.4, demo only: the menu-bar vulnerability notice on, with nothing seen yet. |
+| `TANKARD_DEMO_MENUBAR_SHOW=<package>\|upgrades\|vulnerable` | 0.8.3, demo only: a second after launch, does what a click on that menu-bar panel line does (selects the package in Installed, or opens the Upgrades or Vulnerable list). |
 | `TANKARD_SELF_UPDATING=1` | 0.4, demo only: "Include self-updating apps" on. |
 | `TANKARD_SNAPSHOT_VIEW=settings-upgrades` | 0.4: Settings → Upgrades. |
 | `TANKARD_DEMO_SHEET=taps` | 0.7, demo only: the Taps sheet. `TANKARD_DEMO_TAP_SELECT=<tap>` selects one, `TANKARD_DEMO_TAP_ADD=<user/repo>` opens Add's confirmation, `TANKARD_DEMO_TAP_SHOW=1` clicks Show Installed, `TANKARD_DEMO_TAP_REMOVE=1` asks to remove the selection. |

@@ -61,6 +61,9 @@ struct LaunchOptions {
     var demoAutoUpdate: String?
     /// 0.6, demo only: TANKARD_DEMO_SHEET=health|history|autoremove opens that sheet.
     var demoSheet: ToolSheet?
+    /// 0.8.3, demo only: TANKARD_DEMO_MENUBAR_SHOW=<package>|upgrades|vulnerable:
+    /// after launch, what a click on that menu-bar panel line does.
+    var demoMenuBarShow: String?
     /// 0.8: TANKARD_E2E=1 + TANKARD_SCRIPT=<file>: run a scripted session
     /// (ScriptLaunch.swift, Scripts/e2e.sh).
     var script: ScriptLaunch?
@@ -88,6 +91,7 @@ struct LaunchOptions {
             o.demoVulnNotice = env["TANKARD_DEMO_VULN_NOTICE"] == "1"
             o.demoSelfUpdating = env["TANKARD_SELF_UPDATING"] == "1"
             o.demoSheet = env["TANKARD_DEMO_SHEET"].flatMap { ToolSheet(rawValue: $0.lowercased()) }
+            o.demoMenuBarShow = env["TANKARD_DEMO_MENUBAR_SHOW"].flatMap { $0.isEmpty ? nil : $0 }
             o.demoAutoUpdate = env["TANKARD_DEMO_AUTOUPDATE"].flatMap { $0.isEmpty || $0 == "0" ? nil : $0.lowercased() }
         }
         switch env["TANKARD_FILTER"]?.lowercased() {

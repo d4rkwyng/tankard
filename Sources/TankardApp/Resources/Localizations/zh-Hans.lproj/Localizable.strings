@@ -778,6 +778,7 @@
 "Services" = "服务";
 "Several casks install an app with this name. Pick the one you have." = "有多个 cask 会安装同名 App。请选择你所用的那个。";
 "Show" = "显示";
+"Show %@ in Tankard" = "在 Tankard 中显示 %@";
 "Show Auto-update Log…" = "显示自动更新日志…";
 "Show Dependencies" = "显示依赖项";
 "Show Dependencies (%lld)" = "显示依赖项 (%lld)";
@@ -791,6 +792,7 @@
 "Show in Installed" = "在“已安装”中显示";
 "Show new vulnerabilities in the menu bar" = "在菜单栏中显示新漏洞";
 "Show the Auto-update log" = "显示自动更新日志";
+"Show vulnerable packages in Tankard" = "在 Tankard 中显示有漏洞的软件包";
 "Showing the last data Tankard read." = "显示 Tankard 上次读取的数据。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
 "Shows the brew commands first" = "先显示 brew 命令";

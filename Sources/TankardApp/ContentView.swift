@@ -273,6 +273,17 @@ struct ContentView: View {
             store.selection = p.id
             store.requestUninstall(p)
         }
+        // 0.8.3: a click on a menu-bar panel line, after a moment (so a
+        // search, filter or selection set above is what it resets).
+        if options.demo != nil, let what = options.demoMenuBarShow {
+            try? await Task.sleep(for: .seconds(1))
+            switch what.lowercased() {
+            case "upgrades": store.showFromMenuBar(.upgrades)
+            case "vulnerable": store.showFromMenuBar(.vulnerable)
+            default:
+                if let p = store.packages.first(where: { $0.name == what }) { store.showFromMenuBar(.package(p.id)) }
+            }
+        }
         if options.tab == .discover {
             store.tab = .discover
             guard let d = store.openDiscover() else { return }
@@ -477,7 +488,8 @@ struct PackageTable: View {
     var body: some View {
         let intelbrew = store.intelbrewMode
         let _ = store.buildTimesRevision
-        Table(rows, selection: $store.selection, sortOrder: sortState.projectedValue) {
+        let shown = rows
+        Table(shown, selection: $store.selection, sortOrder: sortState.projectedValue) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 4) {
@@ -551,6 +563,7 @@ struct PackageTable: View {
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
+        .background(TableRevealer(request: store.revealRequest, row: shown.firstIndex { $0.id == store.selection }))
         .overlay {
             if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
                 VulnerableEmptyState(store: store)
