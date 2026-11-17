@@ -222,7 +222,7 @@ struct TankardApp: App {
 
         Settings {
             SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem,
-                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate)
+                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate, store: store)
         }
     }
 }
@@ -275,6 +275,10 @@ struct HomebrewCommands: View {
         // 0.6: Export Brewfile…, Check a Brewfile…
         Divider()
         BrewfileMenuItems(store: store)
+        // 0.6.1: the scan on demand (was in the filter menu).
+        Divider()
+        Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
+            .disabled(store.insights.scanState == .running || store.report == nil)
     }
 }
 

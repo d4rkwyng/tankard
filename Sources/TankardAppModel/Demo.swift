@@ -358,6 +358,10 @@ public enum Demo {
         }
     }
 
+    /// 0.6.1: how long the demo's `brew vulns` takes (TANKARD_DEMO_SCAN=slow
+    /// lengthens it, to show the scan's progress). Set once at launch.
+    nonisolated(unsafe) public static var scanDelay: Duration = .milliseconds(1200)
+
     /// 0.4: `brew vulns --json`, `brew info --sizes` and `brew outdated
     /// --greedy --cask --json=v2`, captured read-only (the Intel VM and the
     /// arm64 Mac). The Intel demo's older versions (`intelTweaks`) are
@@ -367,7 +371,7 @@ public enum Demo {
         let prefix = variant == .intelbrew ? "sonoma-intelbrew" : "arm64"
         switch arguments {
         case BrewClient.vulnsArguments:
-            try await Task.sleep(for: .milliseconds(1200)) // brew asks OSV.dev; never instant
+            try await Task.sleep(for: scanDelay) // brew asks OSV.dev; never instant
             var data = fixtureData("\(prefix)-vulns")
             let upgraded = state.upgraded.withLock { $0 }
             if variant == .intelbrew, var root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],

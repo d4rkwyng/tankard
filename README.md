@@ -126,7 +126,7 @@ No telemetry. Tankard makes two requests of its own, each in one mode only:
 **brew's own request: `brew vulns`.** The vulnerability scan is brew's command, not
 Tankard's code: brew sends the source repository URL and version tag of each installed
 formula to OSV.dev (`api.osv.dev/v1/querybatch`, then `api.osv.dev/v1/vulns/<id>` for
-details). Tankard runs it only when you ask: "Scan for Vulnerabilities Now", or after each
+details). Tankard runs it only when you ask: Scan Now (Settings → Upgrades) or Homebrew ▸ Scan for Vulnerabilities, or after each
 refresh once you turn that on in Settings → Upgrades (off by default). It reads only what
 brew prints. Casks aren't scanned.
 

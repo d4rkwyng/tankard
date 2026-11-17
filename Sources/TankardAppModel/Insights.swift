@@ -258,6 +258,12 @@ public final class InsightsStore {
     public private(set) var scanState: InsightState = .idle
     public private(set) var sizes: DiskSizes?
     public private(set) var sizesState: InsightState = .idle
+    /// 0.6.1: when the running scan started (nil when none runs).
+    public private(set) var scanStartedAt: Date?
+    /// 0.6.1: how many formulae the running scan checks ("Scanning N formulae…").
+    public private(set) var scanFormulaCount = 0
+    /// 0.6.1: how the last scan this session ended (nil: none yet, or it failed).
+    public private(set) var scanOutcome: ScanOutcome?
     /// The post-install notes sheet.
     public var postInstallNotes: PostInstallNotes?
     /// Notes waiting for the activity sheet to close.
@@ -324,18 +330,42 @@ public final class InsightsStore {
 
     /// After a status read. `force`: the status changed (manual refresh,
     /// reconcile after a run); otherwise only what is older than the TTL.
-    public func refresh(client: BrewClient, env: [String: String], force: Bool) {
+    public func refresh(client: BrewClient, env: [String: String], force: Bool, formulae: Int = 0) {
         if force || isStale(sizes?.measuredAt) { measureSizes(client: client, env: env) }
         if settings.scanVulnerabilitiesOnRefresh, force || isStale(vulnerabilityScan?.scannedAt) {
-            scanVulnerabilities(client: client, env: env)
+            scanVulnerabilities(client: client, env: env, formulae: formulae)
         }
+    }
+
+    /// Writes only a real change (0.6.1 state; no equal-write notifications).
+    private func assign<T: Equatable>(_ kp: ReferenceWritableKeyPath<InsightsStore, T>, _ value: T) {
+        if self[keyPath: kp] != value { self[keyPath: kp] = value }
+    }
+
+    /// The scan ended: not running any more, and how it ended.
+    private func scanEnded(_ state: InsightState, outcome: ScanOutcome?) {
+        assign(\.scanState, state)
+        assign(\.scanStartedAt, nil)
+        assign(\.scanOutcome, outcome)
+    }
+
+    /// 0.6.1: Stop. Cancels the running scan, which stops brew vulns' whole
+    /// process group (as the timeout does); the last result is kept.
+    /// Nothing runs: nothing changes.
+    public func stopScan() {
+        guard scanState == .running else { return }
+        scanTask?.cancel()
+        scanEnded(.idle, outcome: .stopped)
     }
 
     /// `brew vulns --json` in the background (a new request replaces a
     /// running one), stopped after `scanTimeout`.
-    public func scanVulnerabilities(client: BrewClient, env: [String: String]) {
+    public func scanVulnerabilities(client: BrewClient, env: [String: String], formulae: Int = 0) {
         scanTask?.cancel()
-        scanState = .running
+        assign(\.scanState, .running)
+        assign(\.scanStartedAt, now())
+        assign(\.scanFormulaCount, formulae)
+        assign(\.scanOutcome, nil)
         let now = self.now
         let timeout = scanTimeout
         scanTask = Task { [weak self] in
@@ -352,7 +382,7 @@ public final class InsightsStore {
                 }
                 guard !Task.isCancelled else { return }
                 guard let scan = result else {
-                    self?.scanState = .failed(Self.scanTimedOutMessage)
+                    self?.scanEnded(.failed(Self.scanTimedOutMessage), outcome: .timedOut)
                     return
                 }
                 self?.scanFinished(scan)
@@ -360,10 +390,10 @@ public final class InsightsStore {
             } catch {
                 guard !Task.isCancelled else { return }
                 if case InsightError.unsupported(let s) = error {
-                    self?.scanState = .unsupported(s)
+                    self?.scanEnded(.unsupported(s), outcome: nil)
                 } else {
                     // Keep the last result; say what went wrong.
-                    self?.scanState = .failed(String(describing: error))
+                    self?.scanEnded(.failed(String(describing: error)), outcome: nil)
                 }
             }
         }
@@ -395,7 +425,7 @@ public final class InsightsStore {
 
     func scanFinished(_ scan: VulnerabilityScan) {
         vulnerabilityScan = scan
-        scanState = .idle
+        scanEnded(.idle, outcome: .done(checked: scan.checked, found: scan.vulnerableCount, complete: scan.complete))
         if settings.notifyNewVulnerabilities, settings.seenVulnerabilities == nil {
             // First scan after turning the notice on: the baseline.
             settings.seenVulnerabilities = VulnerabilityNotice.keys(scan)

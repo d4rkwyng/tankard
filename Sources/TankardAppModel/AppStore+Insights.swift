@@ -33,13 +33,14 @@ extension AppStore {
     /// scan when that setting is on).
     func startInsights(force: Bool) {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        insights.refresh(client: client, env: client.environment(for: detection), force: force)
+        insights.refresh(client: client, env: client.environment(for: detection), force: force, formulae: formulaCount)
     }
 
     /// "Scan now": `brew vulns --json`, whatever the setting.
     public func scanVulnerabilitiesNow() {
+        guard insights.scanState != .running else { return }
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        insights.scanVulnerabilities(client: client, env: client.environment(for: detection))
+        insights.scanVulnerabilities(client: client, env: client.environment(for: detection), formulae: formulaCount)
     }
 
     /// With "Include self-updating apps" on: the casks `brew outdated

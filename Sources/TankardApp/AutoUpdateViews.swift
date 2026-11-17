@@ -57,23 +57,24 @@ struct AutoUpdateSettingsSection: View {
     var body: some View {
         let settings = updater.settings
         VStack(alignment: .leading, spacing: 8) {
-            Toggle("Upgrade packages automatically", isOn: Binding(
-                get: { settings.enabled },
-                set: { on in
-                    guard on != settings.enabled else { return }
-                    settings.enabled = on
-                    // The same permission flow as upgrade notifications:
-                    // macOS asks only now, when the user turns it on.
-                    if on, let notifier {
-                        Task {
-                            let ok = await notifier.requestAuthorization()
-                            let text = ok ? nil : "Notifications are off for Tankard, so runs are only in the Auto-update log. "
-                                + (await notifier.authorizationText())
-                            if notificationNote.wrappedValue != text { notificationNote.wrappedValue = text }
+            ExplainedRow(help: SettingsHelp.autoUpgrade) {
+                Toggle("Upgrade packages automatically", isOn: Binding(
+                    get: { settings.enabled },
+                    set: { on in
+                        guard on != settings.enabled else { return }
+                        settings.enabled = on
+                        // The same permission flow as upgrade notifications:
+                        // macOS asks only now, when the user turns it on.
+                        if on, let notifier {
+                            Task {
+                                let ok = await notifier.requestAuthorization()
+                                let text = ok ? nil : "Notifications are off for Tankard, so runs are only in the Auto-update log. "
+                                    + (await notifier.authorizationText())
+                                if notificationNote.wrappedValue != text { notificationNote.wrappedValue = text }
+                            }
                         }
-                    }
-                }))
-                .help("Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.")
+                    }))
+            }
             AutoUpdateScheduleRow(settings: settings)
                 .disabled(!settings.enabled)
             AutoUpdateRulesRows(rules: updater.rules)
@@ -86,9 +87,10 @@ struct AutoUpdateSettingsSection: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             // One short line; the full safe-mode rules are in the tooltip.
-            Text("Safe mode: bottles only; skips pinned packages and running apps.")
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .help("Safe mode (always on):\n" + AutoUpdateSafeMode.rules.map { "• " + $0 }.joined(separator: "\n"))
+            ExplainedRow(help: SettingsHelp.safeMode) {
+                Text("Safe mode: bottles only; skips pinned packages and running apps.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+            }
             if let note = notificationNote.wrappedValue {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)

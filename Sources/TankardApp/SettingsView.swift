@@ -11,11 +11,15 @@ struct SettingsView: View {
     var insightSettings: InsightSettings?
     /// 0.5: Settings → Upgrades → Automatic updates.
     var autoUpdater: AutoUpdater?
+    /// 0.6.1: Settings → Upgrades → Scan Now.
+    var store: AppStore?
     private let tab: State<String>
 
     /// `initialTab`: which tab shows first ("general", "appearance"; snapshots).
     init(appearance: AppearanceSettings, settings: AppSettings, notifier: SystemNotifier, loginItem: LoginItem,
-         insightSettings: InsightSettings? = nil, autoUpdater: AutoUpdater? = nil, initialTab: String = "general") {
+         insightSettings: InsightSettings? = nil, autoUpdater: AutoUpdater? = nil, store: AppStore? = nil,
+         initialTab: String = ProcessInfo.processInfo.environment["TANKARD_SETTINGS_TAB"] ?? "general") {
+        self.store = store
         self.appearance = appearance
         self.settings = settings
         self.insightSettings = insightSettings
@@ -31,7 +35,7 @@ struct SettingsView: View {
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag("general")
             if let insightSettings {
-                UpgradeSettings(settings: insightSettings, autoUpdater: autoUpdater, notifier: notifier, appSettings: settings)
+                UpgradeSettings(settings: insightSettings, autoUpdater: autoUpdater, notifier: notifier, appSettings: settings, store: store)
                     .tabItem { Label("Upgrades", systemImage: "arrow.up.circle") }
                     .tag("upgrades")
             }
@@ -65,44 +69,52 @@ struct GeneralSettings: View {
 
     var body: some View {
         Form {
-            Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
-                .help("A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
+            ExplainedRow(help: SettingsHelp.showMenuBarIcon) {
+                Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
+            }
 
             Divider().padding(.vertical, 4)
 
-            Toggle("Notify me about new upgrades", isOn: Binding(
-                get: { settings.notifyNewUpgrades },
-                set: { on in
-                    if on {
-                        // Ask macOS only now, when the user turns it on.
-                        Task {
-                            let ok = await notifier.requestAuthorization()
-                            settings.notifyNewUpgrades = ok
-                            notificationNote.wrappedValue = ok ? nil : await notifier.authorizationText()
+            ExplainedRow(help: SettingsHelp.notifyNewUpgrades) {
+                Toggle("Notify me about new upgrades", isOn: Binding(
+                    get: { settings.notifyNewUpgrades },
+                    set: { on in
+                        if on {
+                            // Ask macOS only now, when the user turns it on.
+                            Task {
+                                let ok = await notifier.requestAuthorization()
+                                settings.notifyNewUpgrades = ok
+                                notificationNote.wrappedValue = ok ? nil : await notifier.authorizationText()
+                            }
+                        } else {
+                            settings.notifyNewUpgrades = false
                         }
-                    } else {
-                        settings.notifyNewUpgrades = false
-                    }
-                }))
-                .help("Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
-            Picker("Check every", selection: $settings.checkIntervalHours) {
-                ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text("\(h) hour\(h == 1 ? "" : "s")").tag(h) }
+                    }))
             }
-            .disabled(!settings.notifyNewUpgrades)
-            .fixedSize()
+            HStack(spacing: 6) {
+                Picker("Check every", selection: $settings.checkIntervalHours) {
+                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text("\(h) hour\(h == 1 ? "" : "s")").tag(h) }
+                }
+                .disabled(!settings.notifyNewUpgrades)
+                .fixedSize()
+                .help(SettingsHelp.checkInterval)
+                InfoButton(text: SettingsHelp.checkInterval)
+            }
             if let note = notificationNote.wrappedValue {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
             }
 
             Divider().padding(.vertical, 4)
 
-            Toggle("Open Tankard at login", isOn: Binding(
-                get: { loginOn.wrappedValue ?? loginItem.isEnabled },
-                set: { on in
-                    do { try loginItem.setEnabled(on) } catch {}
-                    loginOn.wrappedValue = loginItem.isEnabled
-                    loginNote.wrappedValue = loginItem.statusNote
-                }))
+            ExplainedRow(help: SettingsHelp.openAtLogin) {
+                Toggle("Open Tankard at login", isOn: Binding(
+                    get: { loginOn.wrappedValue ?? loginItem.isEnabled },
+                    set: { on in
+                        do { try loginItem.setEnabled(on) } catch {}
+                        loginOn.wrappedValue = loginItem.isEnabled
+                        loginNote.wrappedValue = loginItem.statusNote
+                    }))
+            }
             if let note = loginNote.wrappedValue ?? loginItem.statusNote {
                 Text(note).font(.system(size: 11)).foregroundStyle(.secondary)
             }

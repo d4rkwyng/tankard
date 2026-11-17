@@ -32,7 +32,8 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   is blocked and the pane and dialog list them. brew refuses such an uninstall too. An
   upgrade that compiles is flagged here too, with the Intelbrew build time when known, and
   a source build whose version has a bottle gets the *Replace with bottle* box.
-- **Vulnerabilities (0.4):** on **Scan for Vulnerabilities Now**, or after each status
+- **Vulnerabilities (0.4):** on **Scan Now** (Settings → Upgrades) or **Homebrew ▸ Scan for
+  Vulnerabilities**, or after each status
   read once "Scan for vulnerabilities when refreshing" is on, Tankard runs `brew vulns --json`
   (Homebrew 7; reads stdout only, because brew prints its warnings on stderr). A formula
   with open advisories gets a ⚠ tag in the Package column ("High · 3"; "Vulnerable" when
@@ -42,12 +43,14 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   may not have a release with it yet) or "No fix listed". brew marks a scan incomplete
   (`"complete": false`) when it skipped any formula (no source repository it can match,
   an untrusted tap, an old keg without an SBOM): Tankard says "partial scan", with the
-  reasons, in the filter menu and the detail pane. A formula brew skipped says "Not
+  reasons, in Settings → Upgrades and the detail pane. A formula brew skipped says "Not
   checked by brew vulns". Casks aren't scanned. Findings only apply while the installed
   version is the one brew checked; after an upgrade the next scan decides.
-  - The filter menu next to the segments (⚠ and the count when anything is vulnerable)
-    has **Pinned**, **Requested only**, **Vulnerable**, **Has notes** and **Scan for
-    Vulnerabilities Now**. In Vulnerable,
+  - While a scan runs, the filter bar and the menu-bar panel show a spinner, "Scanning N
+    formulae…", the elapsed time and **Stop** (which stops brew vulns); afterwards
+    "Scanned N · found M" (or "partial scan", "Scan stopped", "Scan timed out").
+  - The More pop-up next to the segments (⚠ and the count when anything is vulnerable)
+    has **Pinned**, **Requested only**, **Vulnerable**, **Has notes** and **Deprecated**. In Vulnerable,
     the green **Upgrade N** runs the normal upgrade (plan sheet, queue) for the vulnerable
     packages that have an upgrade; pinned ones are left out. Its tooltip names the ones
     with no upgrade yet.
@@ -381,7 +384,7 @@ for Return; nothing runs inside the app. Demo mode opens nothing.
 
 ## About and Help
 
-Tankard → About Tankard shows "Version 0.5.0" (no build number), "Made by d4rkwyng", links
+Tankard → About Tankard shows "Version <x.y.z>" (e.g. "Version 0.6.1"; no build number), "Made by d4rkwyng", links
 to the project and to Intelbrew (in Intelbrew mode, "Intelbrew bottles from
 d4rkwyng/intelbrew"), the licence, and that Tankard is an independent app for
 [Homebrew](https://brew.sh), not affiliated with or endorsed by the Homebrew project. The

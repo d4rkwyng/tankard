@@ -4,6 +4,18 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.6.1]
+
+### Fixed
+- After choosing a filter from the **More** menu, the window could no longer be dragged by its toolbar (until switching to Discover and back). The More filters are now a standard pop-up menu.
+- The toolbar's logo now moves the window when dragged, like the rest of the toolbar.
+- The About examples in the docs no longer name an old version.
+
+### Changed
+- **ⓘ buttons** next to each setting in Settings (General, Upgrades, Automatic updates) show its explanation on click; the hover tooltips stay.
+- **Scan Now** beside the vulnerability scan setting (Settings → Upgrades), and **Homebrew ▸ Scan for Vulnerabilities**, replace "Scan for Vulnerabilities Now" in the More menu.
+- A running scan shows a spinner, "Scanning N formulae…", the elapsed time and **Stop** in the filter bar and the menu-bar panel; afterwards "Scanned N · found M" (or a partial, stopped or timed-out note). Stop ends brew vulns; the 60-second limit still applies.
+
 ## [0.6.0]
 
 ### Added

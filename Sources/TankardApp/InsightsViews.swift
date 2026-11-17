@@ -69,57 +69,124 @@ struct SizeCell: View {
 }
 
 /// The filters that don't fit the segmented control (Pinned, Requested
-/// only, Vulnerable, Has notes) and the vulnerability scan, as a menu next
-/// to it. When one of them is the filter, the button shows it as selected.
-struct MoreFiltersMenu: View {
+/// only, Vulnerable, Has notes, Deprecated), as a standard menu picker next
+/// to it. 0.6.1: a native pop-up (Picker, .menu) instead of the custom
+/// styled Menu, after which the window could no longer be dragged by its
+/// toolbar until the Installed tab was rebuilt. The scan moved to Settings,
+/// the Homebrew menu and the strip's progress line.
+struct MoreFiltersPicker: View {
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        let active = PackageFilter.more.contains(store.filter)
+        let active = store.moreFilterSelection != nil
         let vulnerable = store.count(.vulnerable)
-        Menu {
+        Picker("More filters", selection: Binding(get: { store.moreFilterSelection },
+                                                 set: { store.moreFilterSelection = $0 })) {
+            if !active {
+                if vulnerable > 0 {
+                    Label("\(vulnerable) vulnerable", systemImage: "exclamationmark.triangle.fill").tag(PackageFilter?.none)
+                } else {
+                    Text("More").tag(PackageFilter?.none)
+                }
+                Divider()
+            }
             ForEach(PackageFilter.more) { f in
-                Button {
-                    store.filter = f
-                } label: {
-                    if store.filter == f {
-                        Label("\(f.title)  \(store.count(f))", systemImage: "checkmark")
-                    } else {
-                        Text("\(f.title)  \(store.count(f))")
+                Text("\(f.title)  \(store.count(f))").tag(PackageFilter?.some(f))
+            }
+        }
+        .pickerStyle(.menu)
+        .labelsHidden()
+        .fixedSize()
+        // The active look: the theme's accent ring. Colour only; the frame
+        // is the same in every theme and state.
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(active ? theme.accent : Color.clear, lineWidth: 1.5)
+            .allowsHitTesting(false))
+        .help(vulnerable > 0 ? "\(vulnerable) vulnerable package\(vulnerable == 1 ? "" : "s"); more filters" : "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated")
+    }
+}
+
+/// 0.6.1: the scan's progress: spinner, "Scanning N formulae…", elapsed
+/// time and Stop; afterwards "Scanned N · found M" (or why it ended).
+struct ScanProgressView: View {
+    var store: AppStore
+    var showOutcome = true
+
+    var body: some View {
+        let insights = store.insights
+        if insights.scanState == .running {
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.mini)
+                Text(ScanProgressText.running(formulae: insights.scanFormulaCount))
+                if let start = insights.scanStartedAt {
+                    TimelineView(.periodic(from: start, by: 1)) { ctx in
+                        Text(ScanProgressText.elapsed(ctx.date.timeIntervalSince(start))).monospacedDigit()
+                            .foregroundStyle(.tertiary)
                     }
                 }
+                Button("Stop") { insights.stopScan() }
+                    .controlSize(.small)
+                    .help("Stop brew vulns. The last result, if any, is kept.")
             }
-            Divider()
-            if let scan = store.insights.vulnerabilityScan {
-                // brew reports "complete": false whenever it skipped anything.
-                Text("Vulnerabilities: " + VulnerabilityText.scanLine(scan))
-                if let reason = scan.partialReason { Text(reason) }
-            }
-            Button("Scan for Vulnerabilities Now") { store.scanVulnerabilitiesNow() }
-                .disabled(store.insights.scanState == .running || store.report == nil)
-        } label: {
-            HStack(spacing: 4) {
-                if vulnerable > 0 && !active {
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(theme.warning(scheme).text)
-                }
-                Text(active ? "\(store.filter.title)  \(store.count(store.filter))" : (vulnerable > 0 ? "\(vulnerable)" : "More"))
-                    .fontWeight(active ? .semibold : .regular)
-                Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold))
-            }
-            .font(.system(size: 12))
-            .foregroundStyle(active ? theme.onAccent : Color.primary)
-            .padding(.horizontal, 8)
-            .frame(height: 22)
-            .background(RoundedRectangle(cornerRadius: 6).fill(active ? theme.accent : Color.primary.opacity(0.07)))
-            .contentShape(Rectangle())
+            .font(.system(size: 11))
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .fixedSize()
+        } else if showOutcome, let o = insights.scanOutcome {
+            Text(ScanProgressText.outcome(o))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .fixedSize()
+                .help(insights.vulnerabilityScan?.partialReason.map { "brew says the scan is incomplete: \($0)." } ?? "From brew vulns (OSV.dev).")
         }
-        .menuStyle(.button)
-        .buttonStyle(.plain)
-        .menuIndicator(.hidden)
-        .fixedSize()
-        .help(vulnerable > 0 ? "\(vulnerable) vulnerable package\(vulnerable == 1 ? "" : "s"); more filters" : "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes")
+    }
+}
+
+/// 0.6.1: a small ⓘ that shows a setting's explanation on click (the
+/// tooltip stays for hover).
+struct InfoButton: View {
+    var text: String
+    private let shown: State<Bool>
+
+    init(text: String) {
+        self.text = text
+        // Screenshots: TANKARD_DEMO_INFO=<start of a text> opens that one.
+        shown = State(initialValue: Self.demoOpen.map { !$0.isEmpty && text.hasPrefix($0) } ?? false)
+    }
+
+    static let demoOpen = ProcessInfo.processInfo.environment["TANKARD_DEMO_INFO"]
+
+    var body: some View {
+        Button {
+            shown.wrappedValue.toggle()
+        } label: {
+            Image(systemName: "info.circle")
+        }
+        .buttonStyle(.borderless)
+        .foregroundStyle(.secondary)
+        .help(text)
+        .accessibilityLabel("Explain")
+        .popover(isPresented: shown.projectedValue, arrowEdge: .trailing) {
+            Text(text)
+                .font(.system(size: 12))
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 280, alignment: .leading)
+                .padding(12)
+        }
+    }
+}
+
+/// A settings row: the control, then its ⓘ.
+struct ExplainedRow<Content: View>: View {
+    var help: String
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        HStack(spacing: 6) {
+            content.help(help)
+            InfoButton(text: help)
+        }
     }
 }
 
@@ -198,7 +265,7 @@ struct ScanStateLabel: View {
                         .help(scan.partialReason.map { "brew says the scan is incomplete: \($0)." } ?? "brew checked every installed formula.")
                 } else {
                     Text("Not scanned yet")
-                        .help("Scan for Vulnerabilities Now is in the filter menu. " + InsightSettings.scanPrivacyNote)
+                        .help("Scan Now is in Settings → Upgrades and the Homebrew menu. " + InsightSettings.scanPrivacyNote)
                 }
             }
         }
@@ -371,6 +438,8 @@ struct UpgradeSettings: View {
     var autoUpdater: AutoUpdater? = nil
     var notifier: SystemNotifier? = nil
     var appSettings: AppSettings? = nil
+    /// 0.6.1: Scan Now and its progress (nil: not shown).
+    var store: AppStore? = nil
     private let showLog = State(initialValue: false)
 
     var body: some View {
@@ -381,21 +450,44 @@ struct UpgradeSettings: View {
                 }
                 Divider().padding(.vertical, 4)
             }
-            Toggle("Include self-updating apps", isOn: $settings.includeSelfUpdatingApps)
-                .help("Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
+            ExplainedRow(help: SettingsHelp.includeSelfUpdatingApps) {
+                Toggle("Include self-updating apps", isOn: $settings.includeSelfUpdatingApps)
+            }
 
             Divider().padding(.vertical, 4)
 
-            Toggle("Don't quit running apps during upgrades", isOn: $settings.dontQuitAppsDuringUpgrade)
-                .help("By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
+            ExplainedRow(help: SettingsHelp.dontQuitApps) {
+                Toggle("Don't quit running apps during upgrades", isOn: $settings.dontQuitAppsDuringUpgrade)
+            }
 
             Divider().padding(.vertical, 4)
 
-            Toggle("Scan for vulnerabilities when refreshing", isOn: $settings.scanVulnerabilitiesOnRefresh)
+            HStack(spacing: 6) {
+                Toggle("Scan for vulnerabilities when refreshing", isOn: $settings.scanVulnerabilitiesOnRefresh)
+                    .help(SettingsHelp.scanOnRefresh)
+                InfoButton(text: SettingsHelp.scanOnRefresh)
+                if let store {
+                    Spacer(minLength: 8)
+                    Button("Scan Now") { store.scanVulnerabilitiesNow() }
+                        .controlSize(.small)
+                        .disabled(store.insights.scanState == .running || store.report == nil)
+                        .help("Runs brew vulns once now. " + InsightSettings.scanPrivacyNote)
+                }
+            }
             Text(InsightSettings.scanPrivacyNote)
                 .font(.system(size: 11)).foregroundStyle(.secondary)
-            Toggle("Show new vulnerabilities in the menu bar", isOn: $settings.notifyNewVulnerabilities)
-                .help("Off by default. Scan for Vulnerabilities Now, in the filter menu next to the segments, runs one scan whenever you ask. brew vulns checks installed formulae against OSV.dev: brew sends each formula's source repository and version to api.osv.dev. Casks aren't checked. A scan that runs longer than a minute is stopped.")
+            if let store {
+                ScanProgressView(store: store)
+                if store.insights.scanState != .running, store.insights.scanOutcome == nil,
+                   let scan = store.insights.vulnerabilityScan {
+                    Text("Vulnerabilities: " + VulnerabilityText.scanLine(scan))
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .help(scan.partialReason ?? "")
+                }
+            }
+            ExplainedRow(help: SettingsHelp.notifyNewVulnerabilities) {
+                Toggle("Show new vulnerabilities in the menu bar", isOn: $settings.notifyNewVulnerabilities)
+            }
         }
         .padding(20)
         .sheet(isPresented: showLog.projectedValue) {

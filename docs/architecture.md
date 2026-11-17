@@ -35,7 +35,7 @@ the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.
 the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
 else the default in `bundle-app.sh`, kept in step with `tankard --version`. `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
-"Version 0.5.0" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
+"Version <x.y.z>" (e.g. "Version 0.6.1") with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
 
 **Universal builds.** `--universal` first tries one `swift build --arch x86_64 --arch

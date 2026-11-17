@@ -23,6 +23,9 @@ struct ContentView: View {
             ToolbarItem(placement: .navigation) {
                 BrandMark(size: 32, intelbrew: store.intelbrewMode)
                     .padding(.horizontal, 4)
+                    // 0.6.1: a drag on the logo moves the window, as on
+                    // the rest of the toolbar.
+                    .overlay(WindowDragArea())
             }
             if !store.homebrewState.needsWelcome {
                 ToolbarItem(placement: .principal) {
@@ -87,7 +90,7 @@ struct ContentView: View {
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "settings-upgrades":
-                return AnyView(UpgradeSettings(settings: store.insights.settings)
+                return AnyView(UpgradeSettings(settings: store.insights.settings, store: store)
                     .frame(width: 460)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
@@ -300,12 +303,14 @@ struct SummaryStrip: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            ScanProgressView(store: store)
+
             FilterActions(store: store)
 
             ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.segmented) { f in
                 "\(f.title)  \(store.count(f))"
             }
-            MoreFiltersMenu(store: store)
+            MoreFiltersPicker(store: store)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -508,4 +513,19 @@ struct AvailableCell: View {
             VersionText(text: v, same: true)
         }
     }
+}
+
+/// 0.6.1: an empty view that moves the window on a drag (the toolbar's
+/// custom items otherwise swallow the mouse-down). AppKit's own
+/// `performDrag`, so it behaves like the titlebar on every macOS version.
+struct WindowDragArea: NSViewRepresentable {
+    final class DragView: NSView {
+        override var mouseDownCanMoveWindow: Bool { true }
+        override func mouseDown(with event: NSEvent) {
+            if let window { window.performDrag(with: event) } else { super.mouseDown(with: event) }
+        }
+    }
+
+    func makeNSView(context: Context) -> NSView { DragView() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }
