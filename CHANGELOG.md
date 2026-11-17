@@ -4,6 +4,13 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.6.2]
+
+### Fixed
+- Long versions no longer lose their important part at the default window size: the Installed and Available columns are wider (the Source column gives up the room it didn't use), long versions are shortened in the middle rather than at the end, and hovering shows the full version.
+- The Pin row in the details now wraps instead of cutting off "Keeps <version>; upgrades skip it".
+- Discover descriptions wrap to two lines, with the full text on hover.
+
 ## [0.6.1]
 
 ### Fixed
