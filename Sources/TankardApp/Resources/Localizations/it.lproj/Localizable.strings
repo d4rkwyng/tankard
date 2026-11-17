@@ -795,7 +795,7 @@
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Aggiorna Tankard con brew upgrade --cask tankard (l'aggiornamento automatico lascia Tankard a brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Aggiorna di nuovo nel modo consueto: gli avvisi di compilazione, i blocchi e le versioni saltate valgono ancora";
 "Upgrade all" = "Aggiorna tutto";
-"Upgrade available" = "Aggiornamento disponibile";
+"Upgrade available: %@" = "Aggiornamento disponibile: %@";
 "Upgrade builds from source" = "Aggiorna le compilazioni da sorgente";
 "Upgrade command" = "Comando di aggiornamento";
 "Upgrade only the packages that pour a bottle; skip %@" = "Aggiorna solo i pacchetti che usano una bottle; salta %@";
@@ -856,7 +856,6 @@
 "brew doctor: %lld warning" = "brew doctor: %lld avviso";
 "brew doctor: %lld warnings" = "brew doctor: %lld avvisi";
 "brew exited %lld" = "brew è terminato con %lld";
-"brew info --sizes: kegs and Caskroom folders (apps through their links)" = "brew info --sizes: keg e cartelle Caskroom (le app tramite i loro collegamenti)";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install ottiene la versione che Homebrew ha ora, che può essere più recente di %@.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link collega sempre la versione più recente rimasta, che non è quella di questo punto di ripristino.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link richiederebbe --force per una formula keg-only, che la collega dove prima non era.";
@@ -960,5 +959,6 @@
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ su disco";
+"· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ su disco (brew info --sizes: keg e cartelle Caskroom, le app tramite i loro collegamenti)";
 "· fetched %@" = "· recuperato %@";
 "· measuring…" = "· misurazione…";

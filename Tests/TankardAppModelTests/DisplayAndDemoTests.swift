@@ -56,6 +56,25 @@ struct DisplayAndDemoTests {
         #expect(up.1 == "(4 with bottles, 1 compiles)")
     }
 
+    @Test func summaryTextShorterForms() async throws {
+        let r = try await intelReport()
+        let lines = SummaryText.lines(r.summary, intelbrewMode: true)
+        #expect(lines == [
+            "20 installed · 8 Intelbrew bottles · 9 Homebrew bottles · 1 from source · 1 newer · 1 no bottle",
+            "20 installed · 8 Intelbrew bottles · 9 Homebrew bottles · 1 from source",
+            "20 installed · 17 bottles · 1 from source",
+            "20 installed · 17 bottles",
+            "20 installed",
+        ])
+        // Each form is shorter than the one before; the first is the full line.
+        #expect(lines.first == SummaryText.line(r.summary, intelbrewMode: true))
+        #expect(zip(lines, lines.dropFirst()).allSatisfy { $0.count > $1.count })
+        // Not Intelbrew mode: the bottle split doesn't exist, so no repeat.
+        let plain = SummaryText.lines(r.summary, intelbrewMode: false)
+        #expect(Set(plain).count == plain.count)
+        #expect(plain.last == "20 installed")
+    }
+
     @Test func forkSummary() {
         var f = ForkStatus(coreTapPath: "/x", coreOrigin: Intelbrew.coreRemote, coreIsFork: true, brewRepository: "/r",
                            brewOrigin: Intelbrew.brewRemote, brewIsFork: true, brewVersion: "7.0.14", brewTag: "7.0.14",

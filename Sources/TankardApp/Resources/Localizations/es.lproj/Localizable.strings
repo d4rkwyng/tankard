@@ -795,7 +795,7 @@
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Actualiza Tankard con brew upgrade --cask tankard (la actualización automática deja Tankard a brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Actualiza de nuevo de la forma habitual: siguen aplicando las advertencias de compilación, los fijados y las versiones omitidas";
 "Upgrade all" = "Actualizar todo";
-"Upgrade available" = "Actualización disponible";
+"Upgrade available: %@" = "Actualización disponible: %@";
 "Upgrade builds from source" = "Actualizar compilaciones desde el código fuente";
 "Upgrade command" = "Comando de actualización";
 "Upgrade only the packages that pour a bottle; skip %@" = "Actualiza solo los paquetes que instalan un bottle; omite %@";
@@ -856,7 +856,6 @@
 "brew doctor: %lld warning" = "brew doctor: %lld advertencia";
 "brew doctor: %lld warnings" = "brew doctor: %lld advertencias";
 "brew exited %lld" = "brew terminó con %lld";
-"brew info --sizes: kegs and Caskroom folders (apps through their links)" = "brew info --sizes: kegs y carpetas de Caskroom (las apps mediante sus enlaces)";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install obtiene la versión que Homebrew tiene ahora, que puede ser más reciente que %@.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link siempre enlaza la versión más reciente que queda, que no es la de este punto de restauración.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link necesitaría --force para una formula keg-only, lo que la enlaza donde antes no estaba.";
@@ -960,5 +959,6 @@
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ en disco";
+"· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ en disco (brew info --sizes: kegs y carpetas de Caskroom, las apps mediante sus enlaces)";
 "· fetched %@" = "· obtenido %@";
 "· measuring…" = "· midiendo…";

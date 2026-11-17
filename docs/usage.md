@@ -46,7 +46,7 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   reasons, in Settings → Upgrades and the detail pane. A formula brew skipped says "Not
   checked by brew vulns". Casks aren't scanned. Findings only apply while the installed
   version is the one brew checked; after an upgrade the next scan decides.
-  - While a scan runs, the filter bar and the menu-bar panel show a spinner, "Scanning N
+  - While a scan runs, the status bar and the menu-bar panel show a spinner, "Scanning N
     formulae…", the elapsed time and **Stop** (which stops brew vulns); afterwards
     "Scanned N · found M" (or "partial scan", "Scan stopped", "Scan timed out").
   - The More pop-up next to the segments (⚠ and the count when anything is vulnerable)

@@ -795,7 +795,7 @@
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
 "Upgrade all" = "Upgrade all";
-"Upgrade available" = "Upgrade available";
+"Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";
 "Upgrade only the packages that pour a bottle; skip %@" = "Upgrade only the packages that pour a bottle; skip %@";
@@ -856,7 +856,6 @@
 "brew doctor: %lld warning" = "brew doctor: %lld warning";
 "brew doctor: %lld warnings" = "brew doctor: %lld warnings";
 "brew exited %lld" = "brew exited %lld";
-"brew info --sizes: kegs and Caskroom folders (apps through their links)" = "brew info --sizes: kegs and Caskroom folders (apps through their links)";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install gets the version Homebrew has now, which may be newer than %@.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link always links the newest version left, which isn't the one in this restore point.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link would need --force for a keg-only formula, which links it where it wasn't before.";
@@ -960,5 +959,6 @@
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ on disk";
+"· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)";
 "· fetched %@" = "· fetched %@";
 "· measuring…" = "· measuring…";

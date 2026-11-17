@@ -35,6 +35,12 @@ struct StatusBar: View {
                 ProgressView().controlSize(.mini)
                 Text(phase)
             }
+            // Vulnerability scan progress lives here (not in the filter row,
+            // where it squeezed the summary).
+            if store.insights.scanState == .running || store.insights.scanOutcome != nil {
+                if store.report != nil || store.refreshPhase != nil { separator }
+                ScanProgressView(store: store)
+            }
             if let notice = store.busyNotice {
                 separator
                 Image(systemName: "hourglass").foregroundStyle(.orange)

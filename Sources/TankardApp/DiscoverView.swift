@@ -139,7 +139,9 @@ struct DiscoverTable: View {
                         }
                     }
                     if let d = e.desc {
-                        Text(d).font(.system(size: 10.5)).foregroundStyle(.secondary).lineLimit(1)
+                        Text(d).font(.system(size: 10.5)).foregroundStyle(.secondary)
+                            .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                            .help(d)
                     }
                 }
                 .padding(.vertical, 3)

@@ -261,6 +261,38 @@ public enum SummaryText {
         return parts.joined(separator: " · ")
     }
 
+    /// 0.6.2: `line`, then shorter forms for a narrow strip (a wide More
+    /// picker, a scan in progress, a longer language), least important parts
+    /// dropped first: "no bottle" and "newer", then the bottle split
+    /// becomes one count, then source and casks go, leaving "20 installed".
+    /// The strip shows the first that fits; hovering shows the full line.
+    public static func lines(_ s: StatusSummary, intelbrewMode: Bool) -> [String] {
+        let installed = String(localized: "\(s.installed) installed")
+        let bottles = s.bottled == 1 ? String(localized: "\(s.bottled) bottle") : String(localized: "\(s.bottled) bottles")
+        let source = String(localized: "\(s.source) from source")
+        let casks = s.casks > 0 ? (s.casks == 1 ? String(localized: "\(s.casks) cask") : String(localized: "\(s.casks) casks")) : nil
+        var parts = [installed]
+        if intelbrewMode {
+            parts.append(s.intelbrewBottled == 1 ? String(localized: "\(s.intelbrewBottled) Intelbrew bottle") : String(localized: "\(s.intelbrewBottled) Intelbrew bottles"))
+            let others = s.bottled - s.intelbrewBottled
+            if others > 0 { parts.append(others == 1 ? String(localized: "\(others) Homebrew bottle") : String(localized: "\(others) Homebrew bottles")) }
+        } else {
+            parts.append(bottles)
+        }
+        parts.append(source)
+        if let casks { parts.append(casks) }
+        let candidates = [
+            line(s, intelbrewMode: intelbrewMode),
+            parts.joined(separator: " · "),
+            ([installed, bottles, source] + (casks.map { [$0] } ?? [])).joined(separator: " · "),
+            [installed, bottles].joined(separator: " · "),
+            installed,
+        ]
+        // Drop repeats (a summary with nothing to drop has fewer forms).
+        var seen = Set<String>()
+        return candidates.filter { seen.insert($0).inserted }
+    }
+
     /// ("5 upgrades ready", "(4 with bottles, 1 compiles)"), or nil when none.
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }

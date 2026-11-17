@@ -41393,54 +41393,54 @@
         }
       }
     },
-    "Upgrade available": {
+    "Upgrade available: %@": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upgrade verfügbar"
+            "value": "Upgrade verfügbar: %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mise à niveau disponible"
+            "value": "Mise à niveau disponible : %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualización disponible"
+            "value": "Actualización disponible: %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップグレードあり"
+            "value": "アップグレードあり: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "有可用升级"
+            "value": "有可用升级：%@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualização disponível"
+            "value": "Atualização disponível: %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiornamento disponibile"
+            "value": "Aggiornamento disponibile: %@"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "업그레이드 가능"
+            "value": "업그레이드 가능: %@"
           }
         }
       }
@@ -44561,58 +44561,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 %lld(으)로 종료됨"
-          }
-        }
-      }
-    },
-    "brew info --sizes: kegs and Caskroom folders (apps through their links)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: Kegs und Caskroom-Ordner (Apps über ihre Verknüpfungen)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes : kegs et dossiers Caskroom (apps via leurs liens)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: kegs y carpetas de Caskroom (las apps mediante sus enlaces)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: kegとCaskroomフォルダ（アプリはリンク経由）"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes：keg 和 Caskroom 文件夹（App 通过其链接计算）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: kegs e pastas do Caskroom (apps por meio dos links)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: keg e cartelle Caskroom (le app tramite i loro collegamenti)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew info --sizes: keg와 Caskroom 폴더(앱은 링크를 통해)"
           }
         }
       }
@@ -49969,6 +49917,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "· 디스크 %@"
+          }
+        }
+      }
+    },
+    "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ auf dem Datenträger (brew info --sizes: Kegs und Caskroom-Ordner, Apps über ihre Verknüpfungen)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ sur le disque (brew info --sizes : kegs et dossiers Caskroom, apps via leurs liens)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ en disco (brew info --sizes: kegs y carpetas de Caskroom, las apps mediante sus enlaces)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· ディスク上 %@（brew info --sizes: kegとCaskroomフォルダ、アプリはリンク経由）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· 磁盘上 %@（brew info --sizes：keg 和 Caskroom 文件夹，App 通过其链接计算）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ no disco (brew info --sizes: kegs e pastas do Caskroom, apps por meio dos links)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ su disco (brew info --sizes: keg e cartelle Caskroom, le app tramite i loro collegamenti)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· 디스크 %@ (brew info --sizes: keg와 Caskroom 폴더, 앱은 링크를 통해)"
           }
         }
       }

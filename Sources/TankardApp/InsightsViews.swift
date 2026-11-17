@@ -73,7 +73,7 @@ struct SizeCell: View {
 /// to it. 0.6.1: a native pop-up (Picker, .menu) instead of the custom
 /// styled Menu, after which the window could no longer be dragged by its
 /// toolbar until the Installed tab was rebuilt. The scan moved to Settings,
-/// the Homebrew menu and the strip's progress line.
+/// the Homebrew menu and the status bar's progress line.
 struct MoreFiltersPicker: View {
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
@@ -97,7 +97,9 @@ struct MoreFiltersPicker: View {
         }
         .pickerStyle(.menu)
         .labelsHidden()
-        .fixedSize()
+        // A pop-up sizes itself to its widest item ("Requested only 123");
+        // keep it compact so the summary beside it isn't cut off.
+        .frame(width: 128)
         // The active look: the theme's accent ring. Colour only; the frame
         // is the same in every theme and state.
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(active ? theme.accent : Color.clear, lineWidth: 1.5)
@@ -190,7 +192,8 @@ struct ExplainedRow<Content: View>: View {
     }
 }
 
-/// The summary strip's size total: "· 4.1 GB on disk".
+/// The summary strip's size total: "· 4.1 GB on disk". Its explanation is
+/// in the strip's tooltip, which also has the full text when the strip is short.
 struct DiskTotalText: View {
     var store: AppStore
 
@@ -199,10 +202,8 @@ struct DiskTotalText: View {
             Text("· \(DiskSizes.format(total)) on disk")
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-                .layoutPriority(-1)
-                .help("brew info --sizes: kegs and Caskroom folders (apps through their links)")
         } else if store.insights.sizesState == .running {
-            Text("· measuring…").foregroundStyle(.tertiary).lineLimit(1).layoutPriority(-1)
+            Text("· measuring…").foregroundStyle(.tertiary).lineLimit(1)
         }
     }
 }

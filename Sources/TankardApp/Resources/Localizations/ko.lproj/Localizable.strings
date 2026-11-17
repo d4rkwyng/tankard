@@ -795,7 +795,7 @@
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade all" = "모두 업그레이드";
-"Upgrade available" = "업그레이드 가능";
+"Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";
 "Upgrade only the packages that pour a bottle; skip %@" = "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기";
@@ -856,7 +856,6 @@
 "brew doctor: %lld warning" = "brew doctor: 경고 %lld개";
 "brew doctor: %lld warnings" = "brew doctor: 경고 %lld개";
 "brew exited %lld" = "brew가 %lld(으)로 종료됨";
-"brew info --sizes: kegs and Caskroom folders (apps through their links)" = "brew info --sizes: keg와 Caskroom 폴더(앱은 링크를 통해)";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install은 Homebrew에 현재 있는 버전을 받으며, %@보다 새 버전일 수 있습니다.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link는 항상 남아 있는 가장 최신 버전을 링크하며, 이는 이 복원 지점의 버전이 아닙니다.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "keg-only formula에는 brew link에 --force가 필요하며, 이전에 없던 위치에 링크하게 됩니다.";
@@ -960,5 +959,6 @@
 "~%@ h" = "~%@시간";
 "~%lld min" = "~%lld분";
 "· %@ on disk" = "· 디스크 %@";
+"· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· 디스크 %@ (brew info --sizes: keg와 Caskroom 폴더, 앱은 링크를 통해)";
 "· fetched %@" = "· %@에 가져옴";
 "· measuring…" = "· 측정 중…";

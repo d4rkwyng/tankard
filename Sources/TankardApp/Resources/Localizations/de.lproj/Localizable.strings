@@ -795,7 +795,7 @@
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankard mit brew upgrade --cask tankard upgraden (Auto-Update überlässt Tankard brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Auf dem üblichen Weg erneut upgraden: Compile-Warnungen, Fixierungen und übersprungene Versionen gelten weiterhin";
 "Upgrade all" = "Alle upgraden";
-"Upgrade available" = "Upgrade verfügbar";
+"Upgrade available: %@" = "Upgrade verfügbar: %@";
 "Upgrade builds from source" = "Upgrade baut aus dem Quellcode";
 "Upgrade command" = "Upgrade-Befehl";
 "Upgrade only the packages that pour a bottle; skip %@" = "Nur Pakete upgraden, die eine Bottle gießen; %@ überspringen";
@@ -856,7 +856,6 @@
 "brew doctor: %lld warning" = "brew doctor: %lld Warnung";
 "brew doctor: %lld warnings" = "brew doctor: %lld Warnungen";
 "brew exited %lld" = "brew beendet mit %lld";
-"brew info --sizes: kegs and Caskroom folders (apps through their links)" = "brew info --sizes: Kegs und Caskroom-Ordner (Apps über ihre Verknüpfungen)";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install holt die Version, die Homebrew jetzt hat; sie kann neuer sein als %@.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link verknüpft immer die neueste verbliebene Version, und das ist nicht die aus diesem Wiederherstellungspunkt.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link bräuchte für eine Keg-only-Formula --force und verknüpft sie dort, wo sie vorher nicht war.";
@@ -960,5 +959,6 @@
 "~%@ h" = "~%@ Std.";
 "~%lld min" = "~%lld Min.";
 "· %@ on disk" = "· %@ auf dem Datenträger";
+"· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ auf dem Datenträger (brew info --sizes: Kegs und Caskroom-Ordner, Apps über ihre Verknüpfungen)";
 "· fetched %@" = "· geladen %@";
 "· measuring…" = "· wird gemessen…";
