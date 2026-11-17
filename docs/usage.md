@@ -65,10 +65,12 @@ installs or upgrades anything on its own unless you turn on
 
 - **Toolbar:** Installed and Discover (⌘1, ⌘2), Refresh (⌘R) and search. Search matches
   the name and description.
-- **Filter bar:** the counts, and the filters **All**, **Upgrades**, **From source**,
-  **Newer** and **Bottle available**. The **More** menu next to them has **Pinned**,
-  **Requested only** (what you installed yourself that nothing else needs), **Vulnerable**,
-  **Has notes** and **Deprecated**. It shows "N vulnerable" when a scan found something.
+- **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
+  available**, **From source** and **Newer** when anything matches (the one you're on stays
+  until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
+  **Installed by you** (packages you installed yourself, not ones pulled in as
+  dependencies), **Has notes** and **Deprecated**, each with its count; empty ones are
+  greyed out. It shows "N vulnerable" when a scan found something.
 - **Table:** the package, the installed version, the available version (an ↑ when an
   upgrade is ready), the source badge and the size on disk. Click a column header to sort.
 - **Detail pane:** everything about the selected package: versions, where it came from,

@@ -508,9 +508,10 @@ result. brew sends each formula's source repository URL and version tag to
 folder followed to the app), decimal units rounded to 0.1, so a row can be off by 0.05 of
 a unit.
 
-**Requested only, Depends on, Used by.** All from the `brew info --json=v2 --installed`
-data, no extra brew calls. Requested only is `brew leaves --installed-on-request`, plus
-casks nothing depends on; checked against `brew leaves` and `brew leaves -r` on the Intel
+**Installed by you (Requested only before 0.8.2), Depends on, Used by.** All from the
+`brew info --json=v2 --installed` data, no extra brew calls. Since 0.8.2 Installed by you is
+brew's installed-on-request flag (every cask counts). Before 0.8.2 Requested only was
+`brew leaves --installed-on-request`, plus casks nothing depends on; checked against `brew leaves` and `brew leaves -r` on the Intel
 VM and the arm64 Mac. Depends on comes from the receipts (recursive, what it was linked
 against): on the Intel VM it equals `brew deps --installed` for every formula; on the arm64
 Mac for 183 of 202, and the other 19 list a few more (linkage the formula doesn't declare,

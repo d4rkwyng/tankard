@@ -43,7 +43,7 @@ the Intelbrew forks.
 - **Uninstall**, blocked (with the reasons listed) while other packages need it, or
   while it is pinned (**Unpin and Uninstall** does both). Dependencies that nothing else
   would need afterwards are listed, with **Also remove these** (on by default).
-- **Pin** packages so upgrades skip them, filter by **Pinned** or **Requested only**, and
+- **Pin** packages so upgrades skip them, filter by **Pinned** or **Installed by you**, and
   follow **Depends on**, **Used by** and the dependency tree from package to package.
 - **Services**: see `brew services` status and start, stop or restart your own services.
 - **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall the Homebrew
