@@ -36,6 +36,16 @@ public final class DiscoverStore {
     public var kind: CatalogKindFilter = .all {
         didSet { if kind != oldValue { scheduleSearch(immediately: true) } }
     }
+    /// 0.3: hide formulae known to compile ("Has Intel bottle" / "Has
+    /// bottle"). On by default in Intelbrew mode, off in normal mode.
+    public var bottledOnly: Bool {
+        didSet { if bottledOnly != oldValue { scheduleSearch(immediately: true) } }
+    }
+    /// 0.3: the entry whose "Install (compiles)" confirmation is open.
+    public var confirmInstall: CatalogEntry.ID?
+    /// 0.3: formulae with a bottle for this Mac, of all formulae.
+    public private(set) var bottledCount = 0
+    public private(set) var formulaCount = 0
     public var selection: CatalogEntry.ID? {
         didSet { if let s = selection { needDetails([s]) } }
     }
@@ -46,6 +56,9 @@ public final class DiscoverStore {
     @ObservationIgnored let now: @Sendable () -> Date
     @ObservationIgnored private var all: [CatalogEntry] = []
     @ObservationIgnored private var byID: [String: Int] = [:]
+    /// Dependency name (short or tap-qualified full name) → index.
+    @ObservationIgnored private var byName: [String: Int] = [:]
+    @ObservationIgnored public let classifier: CompileClassifier
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var loadTask: Task<Void, Never>?
     @ObservationIgnored private var pendingDetails: [String] = []
@@ -55,8 +68,11 @@ public final class DiscoverStore {
     @ObservationIgnored public var prefetch = 30
 
     public init(provider: CatalogProviding, ttl: TimeInterval = 3600, debounce: Duration = .milliseconds(250),
-                now: @escaping @Sendable () -> Date = { Date() }) {
+                now: @escaping @Sendable () -> Date = { Date() }, classifier: CompileClassifier = CompileClassifier(),
+                bottledOnly: Bool? = nil) {
         self.provider = provider
+        self.classifier = classifier
+        self.bottledOnly = bottledOnly ?? provider.isLocalTaps
         self.ttl = ttl
         self.debounce = debounce
         self.now = now
@@ -120,6 +136,16 @@ public final class DiscoverStore {
         warning = load.warning
         casksEnabled = load.casksEnabled
         totalCount = load.entries.count
+        var names: [String: Int] = [:]
+        for (i, e) in all.enumerated() where e.kind == .formula {
+            if names[e.fullName] == nil { names[e.fullName] = i }
+            if let tap = e.tap, names["\(tap)/\(e.name)"] == nil { names["\(tap)/\(e.name)"] = i }
+            if (e.tap == nil || e.tap == "homebrew/core"), names[e.name] == nil { names[e.name] = i }
+        }
+        byName = names
+        let counts = CatalogSearch.bottledCount(all)
+        bottledCount = counts.bottled
+        formulaCount = counts.formulae
         loadedAt = load.fetchedAt ?? now()
         requestedDetails = []
         revision += 1
@@ -144,15 +170,36 @@ public final class DiscoverStore {
     }
 
     private func runSearch() async {
-        let q = query, k = kind, entries = all
+        let q = query, k = kind, entries = all, only = bottledOnly
         let found = await Task.detached(priority: .userInitiated) {
-            CatalogSearch.search(q, in: entries, kind: k)
+            CatalogSearch.search(q, in: entries, kind: k, preferBottled: true, bottledOnly: only)
         }.value
-        guard q == query, k == kind else { return } // superseded
+        guard q == query, k == kind, only == bottledOnly else { return } // superseded
         results = found
         resultsQuery = q
         if let s = selection, !found.contains(where: { $0.id == s }) { selection = nil }
         needDetails(found.prefix(prefetch).map(\.id))
+    }
+
+    // MARK: compile warnings (0.3)
+
+    /// "566 of 8,732 bottled"
+    public var bottledCountText: String {
+        "\(bottledCount.formatted()) of \(formulaCount.formatted()) bottled"
+    }
+
+    /// The chip's label: "Has Intel bottle" in Intelbrew mode, "Has bottle" otherwise.
+    public var bottledChipTitle: String { isLocalTaps ? "Has Intel bottle" : "Has bottle" }
+
+    public func entry(named name: String) -> CatalogEntry? {
+        _ = revision
+        return byName[name].map { all[$0] }
+    }
+
+    /// Dependencies that installing `e` would also compile (not installed,
+    /// no bottle), and names Discover couldn't look up.
+    public func dependenciesThatCompile(_ e: CatalogEntry, installedIDs: Set<String>) -> (compiling: [CatalogEntry], unknown: [String]) {
+        classifier.dependenciesThatCompile(e, lookup: { self.entry(named: $0) }, isInstalled: { installedIDs.contains($0.id) })
     }
 
     // MARK: details (Intelbrew mode)

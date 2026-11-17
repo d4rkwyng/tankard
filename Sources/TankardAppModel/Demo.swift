@@ -47,10 +47,21 @@ public enum Demo {
         /// Installed from Discover: short name → kind and catalog JSON.
         let installed = OSAllocatedUnfairLock<[String: (PackageKind, Data)]>(initialState: [:])
         let removed = OSAllocatedUnfairLock<Set<String>>(initialState: [])
+        /// 0.3: reinstalled from a bottle (were source builds).
+        let replaced = OSAllocatedUnfairLock<Set<String>>(initialState: [])
+        /// 0.3: TANKARD_DEMO_APPMGMT=fail: cask steps fail once with the
+        /// App Management block (these already failed and will succeed).
+        let appManagementFailed = OSAllocatedUnfairLock<Set<String>>(initialState: [])
+        let failAppManagement: Bool
+
+        init(failAppManagement: Bool = false) {
+            self.failAppManagement = failAppManagement
+        }
 
         func info(_ variant: Variant, base: Data) -> Data {
             Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
-                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 })
+                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 },
+                             replaced: replaced.withLock { $0 })
         }
     }
 
@@ -61,8 +72,9 @@ public enum Demo {
                               cache: nil, logURL: nil, hardware: hardware)
     }
 
-    public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil) -> AppStore.Dependencies {
-        let state = State()
+    public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
+                                    failAppManagement: Bool = false) -> AppStore.Dependencies {
+        let state = State(failAppManagement: failAppManagement)
         let installation: BrewInstallation
         let platform: BottlePlatform
         switch variant {
@@ -77,7 +89,7 @@ public enum Demo {
         let client = BrewClient(installation: installation, platform: platform, runner: runner,
                                 sources: EnvironmentSources(process: ["HOME": NSHomeDirectory(), "USER": NSUserName()]),
                                 fileExists: { path in variant == .intelbrew && path.hasSuffix("homebrew-core/.git") })
-        return AppStore.Dependencies(
+        var deps = AppStore.Dependencies(
             makeClient: { client },
             streamRunner: ScriptRunner(variant: variant, state: state, info: fixtureInfo(variant), pace: pace),
             cache: nil,
@@ -92,6 +104,14 @@ public enum Demo {
             },
             hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
+        deps.appManagementGate = true
+        if variant == .intelbrew {
+            // Illustrative build times from a bundled file; nothing is fetched.
+            let times = BuildTimeSource(fetch: { (Demo.fixtureData("demo-build-times"), 200) }, cacheURL: nil)
+            deps.buildTimes = times
+            deps.classifier = CompileClassifier(estimator: times)
+        }
+        return deps
     }
 
     /// Intelbrew demo: the tap "listing" is the names and descriptions in
@@ -99,8 +119,12 @@ public enum Demo {
     struct FixtureTapIndexer: TapIndexing {
         func index() -> TapIndex {
             let info = (try? JSONDecoder().decode(BrewInfoJSON.self, from: Demo.fixtureData("discover-intelbrew-info")))
+            // The bottle block and depends_on as the real indexer reads them
+            // from the formula files (here: from the same brew info capture).
             let entries = (info?.formulae ?? []).map {
-                TapIndexEntry(kind: .formula, name: $0.name, tap: $0.tap ?? "homebrew/core", desc: $0.desc, otherNames: $0.aliases ?? [])
+                TapIndexEntry(kind: .formula, name: $0.name, tap: $0.tap ?? "homebrew/core", desc: $0.desc, otherNames: $0.aliases ?? [],
+                              bottle: $0.bottle["stable"] ?? BrewInfoJSON.BottleSpec(rootURL: nil, files: [:]),
+                              dependencies: $0.dependencies ?? [], buildDependencies: $0.buildDependencies ?? [])
             }
             return TapIndex(entries: entries, taps: ["homebrew/core"])
         }
@@ -160,6 +184,22 @@ public enum Demo {
         return d
     }
 
+    static func fixtureText(_ name: String) -> String {
+        guard let url = resources.url(forResource: name, withExtension: "txt", subdirectory: "Demo"),
+              let d = try? Data(contentsOf: url) else { return "" }
+        return String(decoding: d, as: UTF8.self)
+    }
+
+    /// `brew cleanup -n` as the demo prints it: Intel, illustrative; arm64,
+    /// the capture from the arm64 Mac (home directory renamed).
+    static func cleanupText(_ variant: Variant) -> String {
+        fixtureText(variant == .intelbrew ? "demo-intelbrew-cleanup-n" : "arm64-cleanup-n")
+    }
+
+    static func cachePath(_ variant: Variant) -> String {
+        variant == .intelbrew ? "/Users/demo/Library/Caches/Homebrew" : "/Users/you/Library/Caches/Homebrew"
+    }
+
     static func fixtureInfo(_ variant: Variant) -> Data {
         fixtureData(variant == .intelbrew ? "sonoma-intelbrew-info" : "arm64-api-info")
     }
@@ -168,7 +208,8 @@ public enum Demo {
     /// Intel tweaks, minus whatever was "upgraded" (back to current), plus
     /// demo installs, minus demo uninstalls.
     static func currentInfo(_ variant: Variant, base: Data, upgraded: Set<String>,
-                            installed: [String: (PackageKind, Data)] = [:], removed: Set<String> = []) -> Data {
+                            installed: [String: (PackageKind, Data)] = [:], removed: Set<String> = [],
+                            replaced: Set<String> = []) -> Data {
         guard var root = (try? JSONSerialization.jsonObject(with: base)) as? [String: Any] else { return base }
         var formulae = root["formulae"] as? [[String: Any]] ?? []
         var extraCasks: [[String: Any]] = []
@@ -198,6 +239,10 @@ public enum Demo {
             let stable = (formulae[i]["versions"] as? [String: Any])?["stable"] as? String ?? ""
             let revision = formulae[i]["revision"] as? Int ?? 0
             let current = revision > 0 ? "\(stable)_\(revision)" : stable
+            if replaced.contains(name), var kegs = formulae[i]["installed"] as? [[String: Any]], !kegs.isEmpty {
+                kegs[0]["poured_from_bottle"] = true
+                formulae[i]["installed"] = kegs
+            }
             if upgraded.contains(name) {
                 setInstalled(&formulae[i], version: current)
                 formulae[i]["outdated"] = false
@@ -237,11 +282,23 @@ public enum Demo {
                 if arguments.first == "--version" {
                     return ProcessResult(exitCode: 0, stdout: Data("Homebrew 7.0.14\n".utf8), stderr: Data())
                 }
+                if arguments == ["--cache"] {
+                    return ProcessResult(exitCode: 0, stdout: Data((Demo.cachePath(variant) + "\n").utf8), stderr: Data())
+                }
+                if arguments == ["cleanup", "-n"] {
+                    try await Task.sleep(for: .milliseconds(500))
+                    return ProcessResult(exitCode: 0, stdout: Data(Demo.cleanupText(variant).utf8), stderr: Data())
+                }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
                 if arguments.contains("--installed") {
                     return ProcessResult(exitCode: 0, stdout: state.info(variant, base: info), stderr: Data())
                 }
                 return Demo.catalogInfo(variant, arguments: arguments)
+            }
+            if executable.hasSuffix("/du"), let path = arguments.last {
+                // `du -sk`: KiB
+                let kb = variant == .intelbrew ? 412_388 : 5_196_676
+                return ProcessResult(exitCode: 0, stdout: Data("\(kb)\t\(path)\n".utf8), stderr: Data())
             }
             let isCore = arguments.count > 1 && arguments[1].hasSuffix("homebrew-core")
             let rest = Array(arguments.dropFirst(2))
@@ -299,6 +356,40 @@ public enum Demo {
                 return 0
             }
             let cellar = variant == .intelbrew ? "/usr/local/Cellar" : "/opt/homebrew/Cellar"
+            if arguments == ["cleanup"] {
+                for line in Demo.cleanupText(variant).split(separator: "\n") {
+                    let l = line.replacingOccurrences(of: "Would remove: ", with: "Removing: ")
+                        .replacingOccurrences(of: " (", with: "... (")
+                        .replacingOccurrences(of: "would free", with: "has freed")
+                    try await say(l + "\n", 180)
+                }
+                return 0
+            }
+            if arguments.first == "reinstall", let qualified = arguments.last {
+                let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
+                let entry = Demo.entry(named: name, in: state.info(variant, base: info))
+                try await say("==> Fetching downloads for: \(name)\n", 400)
+                try await say("==> Downloading \(entry.bottleURL ?? name)\n", 200)
+                try await progress(output)
+                try await say("==> Reinstalling \(name)\n", 300)
+                let tag = variant == .intelbrew ? "sonoma" : "arm64_golden_gate"
+                try await say("==> Pouring \(name)--\(entry.current).\(tag).bottle.tar.gz\n", 1000)
+                try await say("🍺  \(cellar)/\(name)/\(entry.current): 2,201 files, 39.9MB\n", 400)
+                state.replaced.withLock { _ = $0.insert(name) }
+                return 0
+            }
+            if state.failAppManagement, arguments.contains("--cask"), arguments.first == "upgrade" || arguments.first == "uninstall",
+               let qualified = arguments.last {
+                let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
+                let first = state.appManagementFailed.withLock { $0.insert(name).inserted }
+                if first {
+                    // Shaped like brew 7.0.14's cask/staged.rb message.
+                    try await say("==> Upgrading \(name)\n", 400)
+                    try await say("Error: Cannot change the ownership of '/Applications/\(name).app' because your terminal does not have App Management permissions.\n", 100)
+                    try await say("macOS prevents modifying apps without these permissions, even when using `sudo`.\n", 100)
+                    return 1
+                }
+            }
             if arguments.first == "install", let qualified = arguments.last {
                 return try await install(qualified, cask: arguments.contains("--cask"), cellar: cellar, say: say, output: output)
             }

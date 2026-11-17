@@ -37,14 +37,23 @@ struct LiveSearchCanary {
         let one = await catalog.details(Array(results.prefix(1)))
         let tOne = clock.now - t3
 
+        // The bottle the tap scan found vs what brew info says, for the same rows.
+        let scanned = Dictionary(top.map { ($0.id, $0.bottle) }, uniquingKeysWith: { a, _ in a })
+        var agree = 0
+        var disagree: [String] = []
+        for f in filled where f.kind == .formula {
+            if scanned[f.id] == f.bottle { agree += 1 } else { disagree.append("\(f.name) scan=\(scanned[f.id].map { "\($0)" } ?? "?") info=\(f.bottle)") }
+        }
         print("""
         live search: intelbrew=\(detection.detected) \(load.source)
-          index (list taps, read desc lines): \(ms(tIndex)) for \(load.entries.count) entries
+          index (list taps, read desc lines, scan bottle blocks and depends_on): \(ms(tIndex)) for \(load.entries.count) entries
           search "\(query)" in memory: \(ms(tSearch)), \(results.count) results
           brew info --json=v2, top \(top.count) in one batch: \(ms(tInfo)), \(filled.filter { $0.version != nil }.count) with versions
           brew info --json=v2, 1 name: \(ms(tOne))
           badges: \(filled.prefix(8).map { "\($0.name)=\($0.badgeLabel)" }.joined(separator: ", "))
           casks enabled: \(load.casksEnabled)
+          0.3 bottle scan: \(CatalogSearch.bottledCount(load.entries).bottled) of \(CatalogSearch.bottledCount(load.entries).formulae) formulae bottled for this Mac
+          0.3 scan vs brew info (top \(filled.count)): \(agree) agree\(disagree.isEmpty ? "" : "; differ: " + disagree.joined(separator: ", "))
         """)
         #expect(!load.entries.isEmpty)
         #expect(one.count <= 1)

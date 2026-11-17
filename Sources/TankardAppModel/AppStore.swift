@@ -50,6 +50,14 @@ public final class AppStore {
         public var makeCatalog: @Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding
         /// The Mac, for the welcome screen's install options.
         public var hardware: MacHardware
+        /// 0.3: show the App Management explainer before the first cask
+        /// upgrade or uninstall (the app and demo mode; tests opt in).
+        public var appManagementGate: Bool = false
+        /// 0.3: bottle-or-compile, shared with Discover.
+        public var classifier = CompileClassifier()
+        /// 0.3: Intelbrew's build times (Intelbrew mode only). When set,
+        /// `classifier` should use it as its estimator.
+        public var buildTimes: BuildTimeSource?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -82,12 +90,17 @@ public final class AppStore {
         /// TANKARD_BREW), posix_spawn, the user's cache and log paths.
         public static func live(environment: [String: String] = ProcessInfo.processInfo.environment) -> Dependencies {
             let override = environment["TANKARD_BREW"].flatMap { $0.isEmpty ? nil : $0 }
-            return Dependencies(
+            var d = Dependencies(
                 makeClient: { try BrewClient.locate(override: override) },
                 streamRunner: StreamingProcessRunner(),
                 cache: StatusCache(url: StatusCache.defaultURL),
                 logURL: AppPaths.upgradeLog
             )
+            d.appManagementGate = true
+            let times = BuildTimeSource.live()
+            d.buildTimes = times
+            d.classifier = CompileClassifier(estimator: times)
+            return d
         }
     }
 
@@ -108,6 +121,15 @@ public final class AppStore {
     public var uninstallCandidate: Package?
     /// Discover's store, made when Discover is first opened.
     public private(set) var discover: DiscoverStore?
+    /// 0.3: the upgrade sheet's first page when something would compile.
+    public private(set) var upgradePlan: UpgradePlan?
+    /// 0.3: the App Management sheet (shown in the activity sheet).
+    public private(set) var appManagementPrompt: AppManagementPrompt?
+    /// 0.3: the Cleanup sheet's state.
+    public private(set) var cleanup: CleanupStore?
+    public var showCleanupSheet = false
+    /// 0.3: bumped when build times arrive, so warnings re-render.
+    public private(set) var buildTimesRevision = 0
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -116,12 +138,15 @@ public final class AppStore {
 
     @ObservationIgnored public let deps: Dependencies
     @ObservationIgnored public let queue: CommandQueue
+    /// 0.3 settings (menu bar, notifications, the App Management flag).
+    @ObservationIgnored public let settings: AppSettings
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
-    public init(deps: Dependencies) {
+    public init(deps: Dependencies, settings: AppSettings? = nil) {
         self.deps = deps
         self.queue = CommandQueue(runner: deps.streamRunner)
+        self.settings = settings ?? AppSettings.ephemeral()
     }
 
     // MARK: derived
@@ -308,7 +333,7 @@ public final class AppStore {
     public func openDiscover() -> DiscoverStore? {
         if let discover { return discover }
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
-        let d = DiscoverStore(provider: deps.makeCatalog(client, detection), ttl: deps.ttl, now: deps.now)
+        let d = DiscoverStore(provider: deps.makeCatalog(client, detection), ttl: deps.ttl, now: deps.now, classifier: deps.classifier)
         discover = d
         return d
     }
@@ -343,10 +368,132 @@ public final class AppStore {
         startSession(.upgrade, packages: (packages ?? upgradable).filter(\.upgradeAvailable))
     }
 
+    /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
+    /// first shows the plan with the compile warnings and "Skip packages
+    /// that would compile"; otherwise it starts at once, as before.
+    public func requestUpgrade(_ packages: [Package]? = nil) {
+        guard !isUpgrading else { return }
+        let targets = (packages ?? upgradable).filter(\.upgradeAvailable)
+        guard !targets.isEmpty else { return }
+        let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        if plan.hasCompiling {
+            upgradePlan = plan
+            showUpgradeSheet = true
+        } else {
+            startUpgrade(targets)
+        }
+    }
+
+    public func setPlanSkipCompiling(_ skip: Bool) {
+        upgradePlan?.skipCompiling = skip
+    }
+
+    /// Start on the plan page.
+    public func confirmUpgradePlan() {
+        guard let plan = upgradePlan else { return }
+        upgradePlan = nil
+        let run = plan.toRun
+        if run.isEmpty {
+            showUpgradeSheet = false
+            return
+        }
+        startSession(.upgrade, packages: run)
+    }
+
+    public func cancelUpgradePlan() {
+        upgradePlan = nil
+        showUpgradeSheet = false
+    }
+
+    /// Upgrades with a bottle only (the Upgrades filter's "skip" button).
+    public func startUpgradeSkippingCompiles() {
+        let (bottled, _) = deps.classifier.partitionUpgrades(upgradable)
+        startUpgrade(bottled)
+    }
+
+    // MARK: replace with bottle (0.3)
+
+    /// Source builds whose installed version has a bottle here.
+    public var bottleReplaceable: [Package] { packages.filter(BottleReplacement.isEligible) }
+
+    /// `brew reinstall --force-bottle --formula <qualified>` for each
+    /// eligible package, through the queue and the sheet.
+    public func startReplaceWithBottle(_ targets: [Package]? = nil) {
+        startSession(.replaceBottle, packages: (targets ?? bottleReplaceable).filter(BottleReplacement.isEligible))
+    }
+
+    // MARK: cleanup (0.3)
+
+    /// Opens the Cleanup sheet and runs the dry run.
+    public func openCleanup() {
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
+        let c = CleanupStore(client: client, env: client.environment(for: detection))
+        cleanup = c
+        showCleanupSheet = true
+        Task { await c.load() }
+    }
+
+    /// The real `brew cleanup`, through the queue and the live log.
+    public func startCleanup() {
+        showCleanupSheet = false
+        startSession(.cleanup, packages: [Package.command("brew cleanup")])
+    }
+
+    // MARK: build times (0.3)
+
+    /// A compile warning is on screen. In Intelbrew mode only, this is when
+    /// Intelbrew's build-time JSON is fetched (once per 24 h; errors keep
+    /// the cached copy). Normal mode never fetches it.
+    public func compileWarningShown() {
+        guard intelbrewMode, let times = deps.buildTimes else { return }
+        Task {
+            await times.refreshIfNeeded()
+            buildTimesRevision += 1
+        }
+    }
+
+    // MARK: App Management (0.3)
+
+    /// "I've done this": remember the explainer was seen, then run the
+    /// pending operation (first use) or retry the blocked one once.
+    public func appManagementDone() {
+        guard let p = appManagementPrompt else { return }
+        settings.appManagementExplained = true
+        appManagementPrompt = nil
+        startSession(p.action, packages: p.packages, isRetry: p.reason == .blocked, skipGate: true)
+    }
+
+    /// "Not now": first use still runs what the user asked for (it may
+    /// already be allowed); after a block, just closes.
+    public func appManagementNotNow() {
+        guard let p = appManagementPrompt else { return }
+        settings.appManagementExplained = true
+        appManagementPrompt = nil
+        if p.reason == .firstUse {
+            startSession(p.action, packages: p.packages, skipGate: true)
+        } else if upgrade == nil {
+            showUpgradeSheet = false
+        }
+    }
+
+    /// Shows the explainer on its own (demo and screenshots).
+    public func showAppManagementExplainer(packages: [Package] = []) {
+        appManagementPrompt = AppManagementPrompt(reason: .firstUse, action: .upgrade, packages: packages)
+        showUpgradeSheet = true
+    }
+
+    // MARK: sessions
+
     /// One sheet run of `action` over `targets`, each a queued command.
-    func startSession(_ action: SessionAction, packages targets: [Package]) {
+    func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false) {
         guard !isUpgrading, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
+        if deps.appManagementGate, !skipGate, !isRetry, !settings.appManagementExplained,
+           targets.contains(where: { AppManagement.modifiesApps(action, $0) }) {
+            appManagementPrompt = AppManagementPrompt(reason: .firstUse, action: action, packages: targets)
+            showUpgradeSheet = true
+            return
+        }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
         // where `brew update` runs.
@@ -359,11 +506,21 @@ public final class AppStore {
                 return QueuedCommand(executable: brew, arguments: args, environment: env, display: BrewCommands.display(args))
             },
             logURL: deps.logURL,
-            onFinish: { [weak self] _ in
-                // Reconcile: what brew now says, not what we assume.
-                Task { await self?.refresh(manual: false) }
+            onFinish: { [weak self] session in
+                self?.sessionFinished(session)
             })
+        upgrade?.isRetry = isRetry
         showUpgradeSheet = true
+    }
+
+    private func sessionFinished(_ session: UpgradeSession) {
+        // Reconcile: what brew now says, not what we assume.
+        Task { await self.refresh(manual: false) }
+        // A cask step macOS blocked: explain, offer one retry.
+        if !session.isRetry, !session.blockedPackages.isEmpty {
+            appManagementPrompt = AppManagementPrompt(reason: .blocked, action: session.action, packages: session.blockedPackages)
+            showUpgradeSheet = true
+        }
     }
 
     /// Clears a finished session (the sheet's Done button).

@@ -5,19 +5,39 @@ import TankardCore
 /// What a sheet run does to its packages.
 public enum SessionAction: String, Sendable {
     case upgrade, install, uninstall
+    /// 0.3: `brew reinstall --force-bottle` of a source build.
+    case replaceBottle
+    /// 0.3: `brew cleanup` (one command, no packages).
+    case cleanup
 
-    /// "Upgrade", "Install", "Uninstall"
-    public var verb: String { rawValue.prefix(1).uppercased() + rawValue.dropFirst() }
-    /// "Upgrading", "Installing", "Uninstalling"
+    /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
+    public var verb: String {
+        switch self {
+        case .upgrade: return "Upgrade"
+        case .install: return "Install"
+        case .uninstall: return "Uninstall"
+        case .replaceBottle: return "Reinstall"
+        case .cleanup: return "Cleanup"
+        }
+    }
+    /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
     public var gerund: String {
         switch self {
         case .upgrade: return "Upgrading"
         case .install: return "Installing"
         case .uninstall: return "Uninstalling"
+        case .replaceBottle: return "Reinstalling"
+        case .cleanup: return "Cleaning up"
         }
     }
-    /// "upgraded", "installed", "uninstalled"
-    public var past: String { rawValue + "ed" }
+    /// "upgraded", "installed", "uninstalled", "reinstalled", "done"
+    public var past: String {
+        switch self {
+        case .replaceBottle: return "reinstalled"
+        case .cleanup: return "done"
+        default: return rawValue + "ed"
+        }
+    }
 }
 
 /// One run of the upgrade sheet: a queued `brew upgrade` per package, the
@@ -53,6 +73,10 @@ public final class UpgradeSession: Identifiable {
     /// Set when a step failed because it needed sudo: the command to run in
     /// Terminal instead.
     public private(set) var sudoCommand: String?
+    /// 0.3: cask steps macOS blocked (App Management), by item id.
+    public private(set) var appManagementBlocked: [UUID] = []
+    /// 0.3: this run is the one retry after the App Management sheet.
+    public var isRetry = false
     public private(set) var stopRequested = false
     public private(set) var isFinished = false
     public let intelbrewMode: Bool
@@ -101,6 +125,8 @@ public final class UpgradeSession: Identifiable {
     public var succeededCount: Int { items.filter { $0.state == .done }.count }
     public var failedItems: [Item] { items.filter { if case .failed = $0.state { true } else { false } } }
     public var current: Item? { items.first { $0.state == .running } }
+    /// The packages whose step macOS blocked.
+    public var blockedPackages: [Package] { items.filter { appManagementBlocked.contains($0.id) }.map(\.package) }
 
     /// 0...1, counting finished packages.
     public var fraction: Double {
@@ -114,6 +140,10 @@ public final class UpgradeSession: Identifiable {
             if stopRequested && items.contains(where: { $0.state == .cancelled }) { return "\(verb) stopped" }
             return failedItems.isEmpty ? "\(verb) complete" : "\(verb) finished with errors"
         }
+        if action == .cleanup { return "Cleaning up" }
+        if action == .replaceBottle {
+            return total == 1 ? "Reinstalling \(items[0].package.name) from a bottle" : "Reinstalling \(total) packages from bottles"
+        }
         if action != .upgrade && total == 1 { return "\(action.gerund) \(items[0].package.name)" }
         return "\(action.gerund) \(total) package\(total == 1 ? "" : "s")"
     }
@@ -122,6 +152,15 @@ public final class UpgradeSession: Identifiable {
     public var subtitle: String {
         if action == .uninstall {
             return "Its dependencies stay installed (brew autoremove removes unused ones)"
+        }
+        if action == .cleanup {
+            return "Removes old versions, stale downloads and old logs"
+        }
+        if action == .replaceBottle {
+            let ib = items.filter { BottleReplacement.origin($0.package) == .intelbrew }.count
+            let n = items.count
+            return intelbrewMode && ib == n ? "Swaps source builds for Intelbrew bottles"
+                : "Swaps source build\(n == 1 ? "" : "s") for bottle\(n == 1 ? "" : "s")"
         }
         let formulae = items.map(\.package).filter { $0.kind == .formula }
         let bottles = formulae.filter { $0.upgradeHasBottle == true }
@@ -148,6 +187,7 @@ public final class UpgradeSession: Identifiable {
 
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
     public var statusLine: String {
+        if action == .cleanup, current != nil { return "Running brew cleanup…" }
         if let c = current { return "\(action.gerund) \(c.package.name)…" }
         if isFinished {
             var parts = ["\(succeededCount) \(action.past)"]
@@ -199,6 +239,10 @@ public final class UpgradeSession: Identifiable {
             items[i].state = code == 0 ? .done : .failed(code)
             if code != 0 {
                 if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
+                if AppManagement.modifiesApps(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {
+                    appManagementBlocked.append(items[i].id)
+                    note("macOS blocked changing the app (App Management permission)")
+                }
                 note("brew exited with status \(code)")
             }
         case .cancelled:

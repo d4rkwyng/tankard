@@ -1,0 +1,11 @@
+Would remove: /usr/local/Cellar/python@3.15/3.15.0 (3,214 files, 63.8MB)
+Would remove: /usr/local/Cellar/openssl@4/4.0.3 (7,402 files, 34.1MB)
+Would remove: /usr/local/Cellar/sqlite/3.53.2 (13 files, 4.9MB)
+Would remove: /Users/demo/Library/Caches/Homebrew/downloads/6f1d0c1d9b6e2f0d6c7ad4c5e3b4f2a1b8c9d0e1f2a3b4c5d6e7f8091a2b3c4d--python@3.15--3.15.1.sonoma.bottle.tar.gz (18.2MB)
+Would remove: /Users/demo/Library/Caches/Homebrew/downloads/0a2b4c6d8e0f1a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b--openssl@4--4.0.4.sonoma.bottle.tar.gz (9.4MB)
+Would remove: /Users/demo/Library/Caches/Homebrew/downloads/9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d--ruby-4.0.8.tar.gz (23.6MB)
+Would remove: /Users/demo/Library/Caches/Homebrew/downloads/1b3d5f7a9c1e3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3a5c7e9b1d3f5a7c9e1b3d--vim--9.2.1355.tar.gz (17.1MB)
+Would remove: /Users/demo/Library/Caches/Homebrew/bootsnap/2f472defc9bf2f598caa9dba1b1bec235a5f0bf27496d8322e88c1bf70b90e25 (1,864 files, 16.5MB)
+Would remove: /Users/demo/Library/Logs/Homebrew/vim (64B)
+Would remove: /Users/demo/Library/Logs/Homebrew/ruby (64B)
+==> This operation would free approximately 187.6MB of disk space.

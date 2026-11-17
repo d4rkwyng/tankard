@@ -224,7 +224,7 @@ public final class TapCatalog: CatalogProviding {
 
     public func load() async throws -> CatalogLoad {
         let index = indexer.index()
-        let entries = index.entries.map { $0.catalogEntry() }
+        let entries = index.entries.map { $0.catalogEntry(builder: builder) }
         let formulae = index.entries.filter { $0.kind == .formula }.count
         let casks = index.entries.count - formulae
         var source = "Local taps (\(index.taps.joined(separator: ", "))) · \(formulae.formatted()) formulae"

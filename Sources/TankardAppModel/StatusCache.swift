@@ -46,8 +46,12 @@ public enum AppPaths {
 
     /// "~/Library/Logs/Tankard/upgrade.log" for display.
     public static func tilde(_ url: URL) -> String {
+        tildePath(url.path)
+    }
+
+    public static func tildePath(_ path: String) -> String {
         let home = NSHomeDirectory()
-        return url.path.hasPrefix(home + "/") ? "~" + url.path.dropFirst(home.count) : url.path
+        return path.hasPrefix(home + "/") ? "~" + path.dropFirst(home.count) : path
     }
 }
 

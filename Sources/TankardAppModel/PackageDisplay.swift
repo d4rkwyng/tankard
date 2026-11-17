@@ -4,6 +4,8 @@ import TankardCore
 /// The segmented filter above the table.
 public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     case all, upgrades, source, newer
+    /// 0.3: source builds whose version has a bottle for this Mac.
+    case bottleAvailable
 
     public var id: String { rawValue }
 
@@ -13,6 +15,7 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .upgrades: return "Upgrades"
         case .source: return "From source"
         case .newer: return "Newer"
+        case .bottleAvailable: return "Bottle available"
         }
     }
 
@@ -22,6 +25,7 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .upgrades: return p.upgradeAvailable
         case .source: return p.status == .source
         case .newer: return p.status == .newer
+        case .bottleAvailable: return BottleReplacement.isEligible(p)
         }
     }
 }
@@ -79,6 +83,8 @@ public extension Package {
         if disabled { parts.append("Disabled") } else if deprecated { parts.append("Deprecated") }
         if upgradeAvailable && kind == .formula && upgradeHasBottle != true {
             parts.append("Upgrade builds from source")
+        } else if BottleReplacement.isEligible(self) {
+            parts.append(bottleOrigin(of: bottleURL) == .intelbrew ? "Bottle available (Intelbrew)" : "Bottle available")
         } else if status == .noBottle {
             parts.append("No bottle for this Mac; reinstalling compiles")
         }
@@ -87,6 +93,10 @@ public extension Package {
         }
         if autoUpdates == true && kind == .cask { parts.append("Updates itself") }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    private func bottleOrigin(of url: String?) -> BottleOrigin? {
+        url.map { StatusClassifier.bottleOrigin(url: $0) }
     }
 
     /// The release page for a bottle hosted on GitHub releases
@@ -135,11 +145,22 @@ public enum BrewCommands {
         ["uninstall", p.kind == .cask ? "--cask" : "--formula", p.qualifiedName]
     }
 
+    /// `brew reinstall --force-bottle --formula homebrew/core/vim`.
+    public static func replaceWithBottleArguments(for p: Package) -> [String] {
+        BottleReplacement.arguments(qualifiedName: p.qualifiedName)
+    }
+
+    /// `brew cleanup` (the real run) and `brew cleanup -n` (the dry run).
+    public static let cleanupArguments = ["cleanup"]
+    public static let cleanupDryRunArguments = ["cleanup", "-n"]
+
     public static func arguments(_ action: SessionAction, for p: Package) -> [String] {
         switch action {
         case .upgrade: return upgradeArguments(for: p)
         case .install: return installArguments(kind: p.kind, qualifiedName: p.qualifiedName)
         case .uninstall: return uninstallArguments(for: p)
+        case .replaceBottle: return replaceWithBottleArguments(for: p)
+        case .cleanup: return cleanupArguments
         }
     }
 
@@ -270,7 +291,7 @@ public extension CatalogEntry {
         switch bottle {
         case .forThisMac: return "Bottle for your Mac"
         case .intelbrew: return "Intelbrew bottle ✓"
-        case .fromSource: return "Builds from source"
+        case .fromSource: return CompileWarning(context: .install).label
         case .cask: return "Cask"
         case .unknown: return detailsLoaded ? "Unknown" : "Checking…"
         }
