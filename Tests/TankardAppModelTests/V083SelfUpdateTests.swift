@@ -187,9 +187,15 @@ struct V083SelfUpdateTests {
 
     @Test func procArgsAreParsed() {
         var b: [UInt8] = [2, 0, 0, 0]
-        b += Array("/Applications/Tankard.app/Contents/MacOS/Tankard".utf8) + [0, 0, 0, 0]
-        b += Array("Tankard".utf8) + [0] + Array("-ApplePersistenceIgnoreState".utf8) + [0]
-        b += Array("TANKARD_DEMO=arm64".utf8) + [0] + Array("PATH=/usr/bin:/bin".utf8) + [0] + Array("EMPTY=".utf8) + [0, 0]
+        // One append per piece: a long `+` chain of arrays times out the
+        // type checker on CI's toolchain.
+        let pieces: [[UInt8]] = [
+            Array("/Applications/Tankard.app/Contents/MacOS/Tankard".utf8), [0, 0, 0, 0],
+            Array("Tankard".utf8), [0], Array("-ApplePersistenceIgnoreState".utf8), [0],
+            Array("TANKARD_DEMO=arm64".utf8), [0], Array("PATH=/usr/bin:/bin".utf8), [0],
+            Array("EMPTY=".utf8), [0, 0],
+        ]
+        for p in pieces { b.append(contentsOf: p) }
         #expect(SingleInstance.parseProcArgs(b) == ["TANKARD_DEMO": "arm64", "PATH": "/usr/bin:/bin", "EMPTY": ""])
         #expect(SingleInstance.parseProcArgs([1, 0]) == nil)
         // This process's own, read the way the guard reads another's.
