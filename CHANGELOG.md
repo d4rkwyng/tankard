@@ -4,6 +4,36 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.8.0]
+
+### Added
+- **Homebrew ▸ Adopt Apps…**: finds apps you installed by hand (in /Applications, one folder below it, and ~/Applications) that a Homebrew cask also installs, and hands the ones you tick to Homebrew with `brew install --cask --adopt <tap>/<name>`, through the queue with a live log, after a confirmation. brew downloads the cask and records it as installed; the app stays where it is. From then on Homebrew owns the app: `brew upgrade` replaces it with the cask's version, and uninstalling the cask, in Tankard or with `brew uninstall`, deletes the app. The confirmation says so.
+- Adopt Apps groups the apps as Ready to adopt, Needs update first (brew adopts only the exact version the cask installs; update the app with its own updater and Scan Again), Can't adopt, and No cask. App Store apps, Apple's apps and apps Homebrew already manages aren't listed. Each match says how sure it is: the app's bundle id is one the cask names (sure), the vendor matches (likely), or only the name matches. Name-only matches are never ticked for you, and ticking one by hand brings a warning first; for a cask whose app updates itself, only a sure match is ticked.
+- brew doesn't compare the download with the installed app for casks whose apps update themselves (`auto_updates`), so the confirmation lists those under "Adopted without a version check". The others are checked, and brew stops for an app whose download doesn't match.
+- Adopt Apps doesn't offer casks that run an installer package (brew ignores `--adopt` for those and runs the installer again), apps in a suite folder, apps outside the cask's install location, disabled casks, apps with no version brew can compare, or symbolic links. A cask with two apps is adopted once. For Needs update first, the `brew install --cask --force` command that replaces the app is shown to copy, only for a sure match, and Tankard never runs it.
+- **Who updates a self-updating app**, per cask: **Follow the setting** (as before), **App updates itself** (Tankard leaves its upgrades out of Upgrade all, the counts, notifications and auto-update; `brew upgrade` in Terminal can still upgrade it) or **Homebrew updates it** (every newer version is listed and upgraded, whatever "Include self-updating apps" says). In the detail pane of a cask that updates itself, and chosen at adoption (saved only for apps whose adopt succeeded). Uninstalling the cask through Tankard forgets the choice.
+- **Install counts** in Discover's details: installs in the last 30, 90 and 365 days, from Homebrew's public analytics on formulae.brew.sh. Tankard downloads the bulk files for every package (about 13 MB together) once Discover's catalogue is ready, keeps them for a day and revalidates them with their ETag, so it never asks about a single package and the site doesn't learn which packages you look at. Nothing is downloaded in Intelbrew mode (the counts describe upstream Homebrew). The Installed details show the counts once Discover has loaded them, and Discover's search puts more-installed packages first among equally good matches.
+- **Background `brew update`, on by default.** After the list is on screen, and from then on while Tankard runs, Tankard runs `brew update` at most once per check interval (Settings ▸ General ▸ Check every, 6 hours by default; any `brew update`, including one you run in Terminal, counts, and a longer `HOMEBREW_AUTO_UPDATE_SECS` wins), then re-reads the list so the upgrade counts are current. `brew update` updates Homebrew itself and its package lists (the taps and Homebrew's formula and cask data); it installs and upgrades none of your packages. It goes through the same queue as everything else, so it never runs beside another brew command, and the status bar shows "Checking for updates…" while it runs. A failure (offline) is logged to `~/Library/Logs/Tankard/upgrade.log`, not shown, and tried again at most once an hour. To turn it off, untick **Settings ▸ General ▸ Check for new versions in the background**, or set `HOMEBREW_NO_AUTO_UPDATE` (in the environment, your shell profile or brew.env): then Tankard doesn't run it, and Settings says where the variable is set.
+- An upgrade, install or uninstall started while the background update runs waits for it, and its sheet says "Waiting for brew update to finish…".
+- **Uninstall lists the dependencies nothing else would need** afterwards ("No longer needed by anything") with **Also remove these**, on by default. Only that package's own dependencies are listed (formulae installed as dependencies, not on request and not pinned); dependencies that were already unused before stay. Each listed one is checked again right before it is removed and kept if it has since been installed on request, pinned, or needed by something else; the log says why.
+- Pinned packages can't be uninstalled silently: brew refuses a pinned package but still reports success, so the uninstall sheet says it is pinned and offers **Unpin and Uninstall**. A run whose output has brew's refusal is shown as failed.
+- The Welcome screen mentions Adopt Apps.
+
+### Changed
+- **Faster loading**: the list appears as soon as `brew info` answers; sizes (and, with "Include self-updating apps" on, `brew outdated --greedy`) are read at the same time and fill in when they arrive.
+- The macOS App Management explainer appears only for casks that install an app (or run an installer package), not for fonts and other casks that put nothing in /Applications.
+- The command box in sheets wraps the whole command (up to 5 lines) instead of cutting it mid-word.
+
+### Fixed
+- Uninstalling a package no longer removes other unused dependencies across the Mac: brew 7 runs `brew autoremove` after every uninstall, although the confirmation said dependencies stay. Uninstall now runs with `HOMEBREW_NO_AUTOREMOVE=1` (shown in the command), and Homebrew ▸ Remove Unused Dependencies… is where autoremove runs.
+- Uninstalling a pinned package said "Uninstall complete" while brew had refused and nothing changed.
+- Status reads ran slower than they should: a brew or git process started while another read's output was open held that output open too, so quick reads (the git checks in every status read) waited for slow ones (about 650 ms instead of 20 ms).
+
+### For contributors
+- `Scripts/e2e.sh` runs scripted scenarios against the real app and the real brew (`TANKARD_E2E=1` with a step file in `TANKARD_SCRIPT`): welcome, formula, pinned, orphans, cask, security, settings, restore, adopt and background. Each run uses its own settings suite and state folder, and one run holds a machine-wide lock. It installs only small throwaway packages and removes them.
+- `TANKARD_LOG_TIMING=1` prints launch milestones in milliseconds since process start.
+- `Scripts/l10n.py compile` also writes `Localizable.stringsdict` for strings with plural forms, and the localization tests check it.
+
 ## [0.7.0]
 
 ### Added

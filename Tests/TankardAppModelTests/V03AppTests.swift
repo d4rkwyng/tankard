@@ -707,7 +707,7 @@ struct AboutTests {
         let v = AboutInfo.panelVersions(bundle: ["CFBundleShortVersionString": "0.3.0", "CFBundleVersion": "12"])
         #expect(v.application == "0.3.0")
         #expect(v.build == "")
-        #expect(TankardVersion.string == "0.7.0")
+        #expect(TankardVersion.string == "0.8.0")
         #expect(AboutInfo.author == "Made by d4rkwyng")
         #expect(AboutInfo.copyright == "© 2026 d4rkwyng")
         #expect(AboutInfo.newIssue.absoluteString == "https://github.com/d4rkwyng/tankard/issues/new")
