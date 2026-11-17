@@ -63,7 +63,8 @@ jobs:
           {
             echo "Tankard ${TAG}: a native Homebrew app for macOS 14 Sonoma and later (universal: Intel and Apple silicon). Signed with Developer ID and notarized."
             echo
-            Scripts/changelog-section.sh "${TAG#v}"
+            BASE="${TAG#v}"; BASE="${BASE%%-*}"   # v0.3.1-rc1 -> 0.3.1
+            Scripts/changelog-section.sh "$BASE"
             echo
             echo 'Install or upgrade: `brew install --cask d4rkwyng/tap/tankard` / `brew upgrade --cask tankard`'
           } > "$RUNNER_TEMP/release-notes.md"
@@ -84,7 +85,7 @@ jobs:
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
         run: |
-          export TANKARD_VERSION="${TAG#v}"
+          V="${TAG#v}"; export TANKARD_VERSION="${V%%-*}"
           ./Scripts/release.sh
 
       - name: Upload to the release
@@ -93,3 +94,7 @@ jobs:
           tag_name: ${{ env.TAG }}
           files: dist/Tankard.zip
           body_path: ${{ runner.temp }}/release-notes.md
+          # A tag with a suffix (v0.3.1-rc1) is a test build: a draft
+          # release, never "latest", so the cask and users don't see it.
+          draft: ${{ contains(env.TAG, '-') }}
+          prerelease: ${{ contains(env.TAG, '-') }}
