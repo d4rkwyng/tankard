@@ -6,8 +6,8 @@ import TankardCore
 //
 // Before every upgrade session and every auto-update run, Tankard saves what
 // is installed (formulae and casks with exact versions, their taps, pins).
-// The last 20 are kept in Application Support/Tankard/restore-points/, one
-// JSON file each.
+// The last 20 are kept in Application Support/net.mindtricks.tankard/
+// restore-points/ (AppPaths.bundleID), one JSON file each.
 //
 // What Restore can actually do, and why (brew 7.0.14):
 // - A package that was removed: `brew install` it again. That installs the

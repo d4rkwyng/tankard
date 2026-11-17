@@ -25,13 +25,19 @@ the Intelbrew forks.
 - **Installed**: every formula and cask with a badge for how it got there (Intelbrew or
   Homebrew bottle, built from source, newer than the tap, no bottle yet, cask), filters,
   search, and the exact brew command for each action.
-- **Upgrades** one package at a time with a live log, Stop After Current and Stop Now.
-  Upgrades with no bottle for your Mac are marked "will compile from source" before
-  anything starts, with an option to skip them; in Intelbrew mode they say how long the
-  build took on the Intelbrew builder.
+- **Upgrades** one package at a time with a live log, Stop After Current and Stop Now
+  (on every sheet; brew undoes the unfinished step). Several packages download in
+  parallel first ("Downloading 4 of 9…"). Tankard waits for a brew running elsewhere
+  instead of failing, offers Retry with a next step when one fails, asks before quitting
+  mid-run, and offers the rest of an interrupted run at the next launch. Upgrades with no
+  bottle for your Mac are marked "will compile from source" before anything starts, with
+  an option to skip them; in Intelbrew mode they say how long the build took on the
+  Intelbrew builder.
 - **Discover**: search every formula and cask and install. Formulae with a bottle for
   your Mac come first; ones that would compile say so and ask before installing. The
-  details show Homebrew's public install counts for the last 30, 90 and 365 days.
+  details show Homebrew's public install counts for the last 30, 90 and 365 days. Paste a
+  `brew install …` command into either search field; an Installed search with no match
+  offers **Search Discover**.
 - **Adopt Apps** (Homebrew menu): apps you installed by hand that a cask also installs
   can be handed to Homebrew (`brew install --cask --adopt`), so brew keeps them up to
   date. Tankard says how sure each match is, ticks only good matches, and says before
@@ -51,7 +57,10 @@ the Intelbrew forks.
 - **Restore points** before every upgrade, with rollback of formulae whose previous version
   you kept.
 - **Taps**: see, add and remove taps, and set Homebrew 7's trust for third-party ones.
-- **Health and History**: `brew doctor` warnings explained in plain English, and every
+- **Casks that need your administrator password** (`.pkg` installers) install and upgrade
+  through a Tankard password dialog; the password goes straight to sudo and is never stored.
+- **Health and History**: `brew doctor` warnings explained in plain English, the
+  `HOMEBREW_*` settings brew gets (Health ▸ Environment), and every
   brew command Tankard ran, with Retry. **Brewfiles**: export one, or check what a
   Brewfile needs that this Mac doesn't have.
 - **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall the Homebrew
@@ -68,8 +77,9 @@ the Intelbrew forks.
   themselves, as `brew outdated --greedy` does, or choose per app whether the app or
   Homebrew updates it. Another setting keeps running apps open during cask upgrades.
 - **Right-click menus** on Installed, Discover and the menu-bar list.
-- **Menu-bar icon** with the number of upgrades ready, and optional **notifications**
-  when new upgrades appear (off by default).
+- **Menu-bar icon** with the number of upgrades ready (click a package to open it in
+  Tankard), and optional **notifications** when new upgrades appear (off by default); a
+  click opens Upgrades, and **Upgrade All…** opens the plan.
 - **Themes**: System (default, follows your Mac), Dark, Light, Tankard (purple and amber)
   and Dracula.
 - **Languages**: English, German, French, Spanish, Italian, Portuguese (Brazil), Japanese,
@@ -106,12 +116,12 @@ an Intel Mac, standard Homebrew on Apple silicon.
 Reading status never changes your Homebrew. Your packages change only when you click (or
 when you turn on automatic updates, off by default), and every button shows the exact brew
 command it runs. Commands run one at a time and never through a shell. Tankard never runs
-sudo itself; when a cask's installer needs your administrator password (a `.pkg` such as
-Windows App), a Tankard dialog passes it straight to sudo, or you can run the command in
-Terminal. Tankard never stores the password, and automatic updates never ask for it; they
-skip those casks. The
-one thing Tankard runs on its own is a throttled `brew update` in the background, which
-refreshes Homebrew's package lists and upgrades nothing; Settings ▸ General turns it off.
+sudo itself; when a cask's installer needs your administrator password, a Tankard dialog
+passes it straight to sudo (or you can run the command in Terminal). That's casks with a
+`.pkg` installer, such as Windows App. Tankard never stores the password, and automatic
+updates never ask for it; they skip those casks. The one thing Tankard runs on its own is
+a throttled `brew update` in the background, which refreshes Homebrew's package lists and
+upgrades nothing; Settings ▸ General turns it off.
 The full list: [What Tankard runs](docs/usage.md#what-tankard-runs).
 
 ## Network and privacy

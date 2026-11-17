@@ -8,7 +8,7 @@ import Foundation
 /// start-up each time, and `brew ruby` is a developer command (running one
 /// switches `brew update` to the default branch), so the rules are ported.
 ///
-/// Known differences from brew are documented in README.md ("Version comparison").
+/// Known differences from brew are documented in docs/architecture.md ("Version comparison").
 public struct BrewVersion: Comparable, Sendable, CustomStringConvertible {
     public let raw: String
 

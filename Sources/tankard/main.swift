@@ -10,7 +10,7 @@ usage: tankard status [--json] [--filter upgrades|source|newer|nobottle|casks]
 
 status    Installed formulae and casks, how each was installed, and what
           an upgrade would do. Read-only: never updates or installs.
---json    Machine-readable output (schema in README.md).
+--json    Machine-readable output (schema in docs/architecture.md).
 --filter  Show only one group (the summary still counts everything).
 --remote  Ask the brew fork's remote for its newest tag (network) instead
           of using local tags.

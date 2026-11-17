@@ -4,21 +4,38 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [Unreleased]
-
-### Fixed
-- **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off. Privacy and behaviour settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=` pass: `--appdir` and the other folder options would move apps out of where Adopt Apps and the App Management check look.
-
-### Added
-- **Automatic updates pause when a brew.env file turns off brew's dependents check** (`HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`), which their safe mode relies on. The menu bar, Settings and the Auto-update log say why; manual upgrades still run.
-- **Homebrew ▸ Health ▸ Environment** lists every `HOMEBREW_*` setting, where it comes from, and whether Tankard's brew gets it, with the reason when it doesn't.
+## [0.8.3]
 
 ### Added
 - **Casks that need your administrator password install and upgrade from Tankard.** A cask whose `.pkg` installer brew runs with `sudo` (Windows App, for one) used to fail with "This step needs administrator rights, which Tankard can't ask for". Now Tankard shows a password dialog that names the cask and the command; the password goes straight to sudo and is never stored. **Cancel** (or three wrong passwords) leaves the step undone and the sheet shows the Terminal command, as before. The upgrade plan and the uninstall confirmation say "needs your administrator password" before anything starts. Tankard still never runs sudo itself: brew's sudo asks through `SUDO_ASKPASS`, set only for cask installs, upgrades, reinstalls, adopts and uninstalls.
+- **Parallel downloads.** Upgrade All, an upgrade of a selection, a Brewfile's missing packages and automatic updates download their bottles and casks first, in parallel, with one `brew fetch`, then upgrade one at a time from the cache as before. The sheet shows "Downloading 4 of 9 · 120.0 of 410.0 MB". Your `HOMEBREW_DOWNLOAD_CONCURRENCY` is respected. A failed download fails no package by itself; each step downloads what's missing.
+- **Stop Now on every running sheet**, not only multi-package runs. While brew may be changing a package it asks first; brew then undoes the unfinished step.
+- **Waiting for another brew instead of failing.** When a brew in Terminal holds Homebrew's lock, the step waits ("Waiting for another Homebrew command to finish…") and runs once the lock is free, for up to 15 minutes. Stop Now ends the wait.
+- **Quitting mid-run asks first** ("Homebrew is still upgrading xz (3 of 7). Quit anyway?") with Keep Running, Stop After Current and Quit, and Quit Now. Packages an upgrade run didn't reach because Tankard quit or crashed are offered at the next launch: **Upgrade the Remaining N Packages**, through the usual upgrade plan.
+- **Retry in the sheet**: **Retry**, **Retry Failed (N)**, or Retry on a failed package, back through the usual plan. Under the log, one plain next step for a lock, the network, a full disk, folders brew can't write, or a checksum mismatch.
+- **The menu-bar panel opens what you click**: a package row opens it in Tankard, selected and scrolled into view; "N upgrades ready" opens Upgrades, and the finished scan line opens Vulnerable.
+- **Clicking an upgrades notification opens Installed ▸ Upgrades.** Its **Upgrade All…** action opens the upgrade plan (nothing runs until you confirm), and **Later** dismisses it.
+- **Search**: a pasted brew command (`brew install foo`, also behind a `$` or a full path to brew) searches for the package. An Installed search with no match offers **Search Discover for "x"**.
+- **Homebrew ▸ Health ▸ Environment** lists every `HOMEBREW_*` setting, where it comes from, and whether Tankard's brew gets it, with the reason when it doesn't. It warns when brew.env's `HOMEBREW_CASK_OPTS` has options Tankard would drop, since brew.env wins.
+- **Automatic updates pause when a brew.env file turns off brew's dependents check** (`HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`), which their safe mode relies on. The menu bar, Settings and the Auto-update log say why; manual upgrades still run.
 
 ### Changed
 - **Automatic updates never ask for a password.** Safe mode skips casks whose installer needs it ("needs your administrator password; upgrade it by hand"), and brew is told not to run sudo at all during an automatic run (`HOMEBREW_NO_SUDO=1`). If your Mac is set up for passwordless sudo, automatic updates used to upgrade those casks; now they are skipped and listed in the Auto-update Log, and you upgrade them by hand.
-- **The password dialog answers only Tankard's own brew commands.** It checks that it was started by the real `/usr/bin/sudo` under this copy of Tankard (and, in signed releases, Tankard's signature) and refuses anything else without showing a window.
+- **The password dialog answers only Tankard's own brew run.** It checks that it was started by the real `/usr/bin/sudo` under this copy of Tankard (and, in signed releases, Tankard's signature) and refuses anything else without showing a window.
+- **`HOMEBREW_CASK_OPTS` passes only `--require-sha` and `--language=`.** `--appdir` and the other folder options would move apps out of where Adopt Apps and the App Management check look, so they are dropped; Health ▸ Environment lists each one.
+
+### Fixed
+- **Relaunch after Upgrade with Homebrew crashed the old Tankard** (EXC_BREAKPOINT): the completion handler of NSWorkspace's `openApplication` was isolated to the main actor, but LaunchServices called it on its own queue. Relaunch now closes any open sheet, quits, and then opens the new version, so two copies never run at once.
+- **Upgrading from 0.8.1 or 0.8.2 with Check for Tankard Updates**: after the new version opens, the old one may show a "quit unexpectedly" report. It's harmless, and 0.8.3 fixes it. If two Tankards stay open, quit both and open Tankard again.
+- **Only one Tankard runs.** An older copy still open after an update is asked to quit (never forced), and opening Tankard a second time brings the running one to the front.
+- **Check for Tankard Updates offered Download instead of Upgrade with Homebrew** when Tankard's cached package list was still fresh but didn't include the Tankard cask yet.
+- **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off. Privacy and behavior settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't.
+- **Stop Now gives brew time to undo the step.** Tankard interrupts brew as Ctrl-C does and waits 15 seconds before forcing it; before, brew was killed 2 seconds after being told to stop, which could cut its own rollback short.
+
+### For contributors
+- CI runs the tests (`.github/workflows/tests.yml`) on pushes to main and release branches and on pull requests that change code.
+- `Scripts/e2e.sh prefetch`: two throwaway casks upgraded through one `brew fetch`, from a throttled local server. New e2e steps for the self-update (check-updates, upgrade-self, expect-quiet, open-sheet, relaunch), and `Scripts/e2e-selfupdate.sh` covers the Relaunch with a sheet open, a double launch and a stale copy on a throwaway local tap.
+- Opt-in real-brew checks: `TANKARD_REAL_CANCEL_CASK` (Stop Now mid-download), `TANKARD_REAL_LOCK_FORMULA` (the lock wait) and `TANKARD_REAL_ENV=1` (the environment policy).
 
 ## [0.8.2]
 
@@ -255,6 +272,7 @@ First release.
 - Opens instantly from a cache; no telemetry; runs brew with a clean environment.
 - `tankard status` command-line tool (table or JSON).
 
+[0.8.3]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.3
 [0.8.2]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.2
 [0.8.1]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.1
 [0.8.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.0
