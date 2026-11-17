@@ -8,6 +8,7 @@
 #   SET=v0.4a Scripts/screenshots.sh [OUT_DIR] only the v0.4 part A shots
 #   SET=v0.4b Scripts/screenshots.sh [OUT_DIR] only the 0.4 vulnerability/notes/size shots
 #   SET=v0.4 Scripts/screenshots.sh [OUT_DIR]  both 0.4 sets
+#   SET=v0.5 Scripts/screenshots.sh [OUT_DIR]  the 0.5 auto-update shots
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -93,7 +94,19 @@ v04b() {
     done
 }
 
+v05() {
+    # v0.5: automatic updates. Settings → Upgrades, the log, the menu-bar line
+    # (a real run through the demo's fake brew; nothing is installed).
+    for t in dark tankard; do
+        shot "autoupdate-settings-$t" 3 TANKARD_DEMO=1 TANKARD_DEMO_AUTOUPDATE=1 TANKARD_SNAPSHOT_VIEW=settings-autoupdate TANKARD_APPEARANCE=$t
+        shot "autoupdate-log-intelbrew-$t" 6 TANKARD_DEMO=1 TANKARD_DEMO_AUTOUPDATE=run TANKARD_DEMO_PACE=0.02 TANKARD_SNAPSHOT_VIEW=autoupdate-log TANKARD_APPEARANCE=$t
+        shot "autoupdate-log-arm64-$t" 6 TANKARD_DEMO=arm64 TANKARD_DEMO_AUTOUPDATE=run TANKARD_DEMO_PACE=0.02 TANKARD_SNAPSHOT_VIEW=autoupdate-log TANKARD_APPEARANCE=$t
+        shot "autoupdate-menubar-$t" 6 TANKARD_DEMO=1 TANKARD_DEMO_AUTOUPDATE=run TANKARD_DEMO_PACE=0.02 TANKARD_SNAPSHOT_VIEW=menubar TANKARD_APPEARANCE=$t
+    done
+}
+
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
+if [ "${SET:-all}" = v0.5 ]; then v05; exit 0; fi
 if [ "${SET:-all}" = v0.4a ]; then v04a; exit 0; fi
 if [ "${SET:-all}" = v0.4b ]; then v04b; exit 0; fi
 if [ "${SET:-all}" = v0.4 ]; then v04a; v04b; exit 0; fi
@@ -125,6 +138,7 @@ done
 v03
 v04a
 v04b
+v05
 
 if [ "${SKIP_REAL:-0}" != 1 ]; then
     shot real-brew-light 12 TANKARD_SELECT="${REAL_SELECT:-cmake}" TANKARD_APPEARANCE=light

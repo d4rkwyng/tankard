@@ -100,12 +100,11 @@ struct AutoUpdateSettingsSection: View {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            HStack {
-                Button("Show Auto-update Log…", action: showLog)
-                if let line = AutoUpdateText.lastLine(updater.log.latest, now: Date()) {
-                    Text(line).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
-                }
+            if let line = AutoUpdateText.lastLine(updater.log.latest, now: Date()) {
+                Text(line).font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            Button("Show Auto-update Log…", action: showLog)
         }
     }
 
@@ -264,10 +263,11 @@ struct AutoUpdateMenuLine: View {
             VStack(alignment: .leading, spacing: 4) {
                 if let line {
                     Button(action: openLog) {
-                        HStack(spacing: 6) {
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
                             Image(systemName: updater.isRunning ? "arrow.triangle.2.circlepath" : "clock.arrow.circlepath")
                                 .font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
-                            Text(line).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                            Text(line).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                             Spacer(minLength: 0)
                         }
                         .contentShape(Rectangle())

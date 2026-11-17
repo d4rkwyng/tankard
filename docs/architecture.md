@@ -88,7 +88,11 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    palettes, the system themes' version and action greens, and their
                    WCAG contrast checks
   MenuBar          MenuBarSummary (the icon's count and list), BackgroundSchedule,
-                   BackgroundChecker, UpgradeNotificationDiff (0.3)
+                   BackgroundChecker (the one timer: 0.3 notifications and 0.5
+                   auto-update), UpgradeNotificationDiff (0.3)
+  AutoUpdate       0.5: AutoUpdateSchedule and AutoUpdatePolicy (pure: due, AC,
+                   idle, one run per slot), AutoUpdateSafeMode (the plan),
+                   AutoUpdateSettings, AutoUpdateLog, AutoUpdater (one run)
   BuildTimes       IntelbrewBuildTimes, BuildTimeSource (fetch, 24 h cache, bounds) (0.3)
   CleanupStore     the Cleanup sheet's dry run, cache size and run (0.3)
   AppManagement    which steps need it, the block matcher, the settings links (0.3)

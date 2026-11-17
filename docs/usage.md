@@ -139,9 +139,9 @@ the window keeps Tankard running, with the icon and background checks.
 
 ## Notifications for new upgrades
 
-Off by default. Turning on "Notify me about new upgrades" is the only time Tankard asks
-macOS for notification permission; if macOS says no, the toggle turns back off and the
-pane says where to change it.
+Off by default. Turning on "Notify me about new upgrades" (or, 0.5, automatic updates) is
+the only time Tankard asks macOS for notification permission; if macOS says no, this
+toggle turns back off and the pane says where to change it.
 
 - A check is `brew update` through the queue, then the normal status read. It is due every
   N hours (1 to 48, default 6), never sooner than 2 minutes after launch; a check missed
@@ -152,6 +152,50 @@ pane says where to change it.
   version of one already waiting); a list that only shrinks posts nothing. The baseline is
   kept in UserDefaults (`notifiedUpgrades`) and not changed by a failed check.
 - Under `swift run` (no app bundle) notifications are skipped.
+
+## Automatic updates (0.5)
+
+Settings → Upgrades → "Upgrade packages automatically". **Off by default.** It is
+separate from the notifications above (both can be on, and that one stays off by default
+too); they share one timer.
+
+- **Schedule**: every day or every week (pick the weekday), at a time (default 03:00).
+  Each scheduled time runs once. Turning it on, or changing the schedule, never runs a
+  time that has already passed today; a time missed because the Mac slept or Tankard
+  wasn't open runs once, at the next chance, until the next scheduled time replaces it.
+- **When**: only while Tankard runs (the menu-bar icon keeps it running after the window
+  closes; with the icon off, nothing runs once the window is closed). Only on AC power
+  (IOKit's power source: a battery or UPS waits), only after 10 minutes without keyboard
+  or mouse input (IOKit's `HIDIdleTime`), never in the first 5 minutes after launch, and
+  never while brew is busy. There is no helper or launch agent.
+- **Safe mode, always** (Settings lists these rules):
+  - `brew update` first, then one `brew upgrade --formula|--cask <tap>/<name>` per
+    package through the same queue as everything else (no sheet opens). Each runs with
+    `HOMEBREW_NO_AUTO_UPDATE=1` and `HOMEBREW_NO_ASK=1`.
+  - Bottles only: a formula with no bottle is skipped, and so is one whose outdated
+    dependencies (which brew would upgrade with it) have none. After an upgrade, brew
+    also upgrades outdated dependents; when one of those (or anything that chain would
+    reach) has no bottle, the upgrade runs with `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1`
+    and the log says so. That dependent keeps the older dependency until you upgrade it.
+  - Pinned packages are skipped (the 0.4 rule), and so are packages with a pinned
+    outdated dependency.
+  - Casks never quit an app: a cask whose app is running is skipped (matched by the app
+    path and the bundle ids from `brew info`'s artifacts). With "Don't quit running apps"
+    on it is upgraded instead, and every automatic cask upgrade runs with
+    `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, so an app opened mid-run isn't quit either.
+    Self-updating casks count only when "Include self-updating apps" is on.
+  - Tankard's own cask is never upgraded automatically. When brew lists an upgrade for it,
+    the menu-bar menu shows "Tankard 0.x available" (`brew upgrade --cask tankard`).
+- **Reporting**: a notification after a run that upgraded or failed something (with the
+  notification permission above; nothing when there was nothing to do), the
+  **Auto-update log** (Settings → Upgrades → Show Auto-update Log…, or click the menu-bar
+  line): the last 20 runs, each with the time, what was upgraded (old → new), what was
+  skipped and why, and failures. It is kept in
+  `~/Library/Application Support/net.mindtricks.tankard/auto-update-log.json`; brew's
+  full output goes to `~/Library/Logs/Tankard/upgrade.log` as for any upgrade. The
+  menu-bar menu shows "Last auto-update: today 03:04 · 4 upgraded".
+- Testing hook: `defaults write net.mindtricks.tankard autoUpdateDryRun -bool true` makes a
+  due run plan and log what it would do without running any brew command.
 
 ## Open at login
 
