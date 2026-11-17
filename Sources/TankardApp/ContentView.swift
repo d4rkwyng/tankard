@@ -55,6 +55,7 @@ struct ContentView: View {
         .task {
             await store.start()
             await applyLaunchOptions()
+            if let script = options.script { await script.run(store: store) }
         }
         .onChange(of: activeState) { _, state in
             if state == .key { store.revalidateIfStale() }

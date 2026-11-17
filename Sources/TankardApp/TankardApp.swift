@@ -61,6 +61,9 @@ struct LaunchOptions {
     var demoAutoUpdate: String?
     /// 0.6, demo only: TANKARD_DEMO_SHEET=health|history|autoremove opens that sheet.
     var demoSheet: ToolSheet?
+    /// 0.8: TANKARD_E2E=1 + TANKARD_SCRIPT=<file>: run a scripted session
+    /// (ScriptLaunch.swift, Scripts/e2e.sh).
+    var script: ScriptLaunch?
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -109,6 +112,7 @@ struct LaunchOptions {
         if o.discoverQuery != nil { o.tab = .discover }
         o.discoverSelect = env["TANKARD_DISCOVER_SELECT"]
         o.snapshot = SnapshotRequest(environment: env)
+        o.script = ScriptLaunch(environment: env)
         func timed(_ v: String?) -> (String, Double)? {
             guard let parts = v?.split(separator: "@"), parts.count == 2, let t = Double(parts[1]) else { return nil }
             return (String(parts[0]), t)
@@ -149,11 +153,13 @@ struct TankardApp: App {
             deps = options.demo.map {
                 Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
                                   pinned: V04ALaunch.demoPinned())
-            } ?? .live()
+            } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
         // Demo runs never touch the real settings.
-        let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral() : AppSettings()
+        // A script run keeps its own settings suite (ScriptLaunch.swift).
+        let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral()
+            : options.script.map { AppSettings(defaults: $0.defaults) } ?? AppSettings()
         if let v = ProcessInfo.processInfo.environment["TANKARD_MENUBAR"] { settings.showMenuBarIcon = v != "0" }
         // Demo of the failure path: skip the first-use explainer so the run
         // reaches the block (and the sheet that follows it).
@@ -163,18 +169,18 @@ struct TankardApp: App {
         if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
         // 0.5: the real power, idle and running-app checks. Demo runs keep
         // the default (never on AC), so nothing runs unless asked for.
-        if !options.isDemo && options.snapshot == nil { store.autoUpdate.conditions = SystemConditions() }
+        if !options.isDemo && options.snapshot == nil && options.script == nil { store.autoUpdate.conditions = SystemConditions() }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.
         if options.demo != nil { store.insights.settings.scanVulnerabilitiesOnRefresh = true }
-        appearance = AppearanceSettings(override: options.appearance)
+        appearance = AppearanceSettings(defaults: options.script.map { $0.defaults } ?? .standard, override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
         checker = BackgroundChecker(store: store, settings: settings, notifier: notifier)
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings
         let checker = self.checker
-        AppDelegate.onLaunch = { if !options.isDemo { checker.start() } }
+        AppDelegate.onLaunch = { if !options.isDemo && options.script == nil { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
         if let (theme, delay) = options.switchAppearance {
             let a = appearance
