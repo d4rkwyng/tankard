@@ -197,6 +197,8 @@ public enum BrewCommands {
         case .replaceBottle: return replaceWithBottleArguments(for: p)
         case .cleanup: return cleanupArguments
         case .autoremove: return AutoremovePlan.runArguments
+        // A restore's commands come from its plan (RestorePoints.swift).
+        case .restore: return []
         }
     }
 

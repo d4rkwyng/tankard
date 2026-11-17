@@ -11,11 +11,15 @@ struct SettingsView: View {
     var insightSettings: InsightSettings?
     /// 0.5: Settings → Upgrades → Automatic updates.
     var autoUpdater: AutoUpdater?
+    /// 0.7: Settings → Upgrades → Keep the previous version.
+    var rollbackSettings: RollbackSettings?
     private let tab: State<String>
 
     /// `initialTab`: which tab shows first ("general", "appearance"; snapshots).
     init(appearance: AppearanceSettings, settings: AppSettings, notifier: SystemNotifier, loginItem: LoginItem,
-         insightSettings: InsightSettings? = nil, autoUpdater: AutoUpdater? = nil, initialTab: String = "general") {
+         insightSettings: InsightSettings? = nil, autoUpdater: AutoUpdater? = nil,
+         rollbackSettings: RollbackSettings? = nil, initialTab: String = "general") {
+        self.rollbackSettings = rollbackSettings
         self.appearance = appearance
         self.settings = settings
         self.insightSettings = insightSettings
@@ -31,7 +35,8 @@ struct SettingsView: View {
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag("general")
             if let insightSettings {
-                UpgradeSettings(settings: insightSettings, autoUpdater: autoUpdater, notifier: notifier, appSettings: settings)
+                UpgradeSettings(settings: insightSettings, autoUpdater: autoUpdater, notifier: notifier, appSettings: settings,
+                                rollbackSettings: rollbackSettings)
                     .tabItem { Label("Upgrades", systemImage: "arrow.up.circle") }
                     .tag("upgrades")
             }

@@ -143,6 +143,9 @@ struct ContentView: View {
         .sheet(isPresented: $store.showAutoUpdateLog) {
             AutoUpdateLogView(log: store.autoUpdate.log) { store.showAutoUpdateLog = false }.themed(theme)
         }
+        .sheet(isPresented: RestorePointsSheet.binding(store.restorePoints)) {
+            RestorePointsSheet(store: store, points: store.restorePoints).themed(theme)
+        }
         .sheet(item: $store.toolSheet) { s in
             ToolSheetView(store: store, sheet: s).themed(theme)
         }
@@ -194,6 +197,12 @@ struct ContentView: View {
             }
         }
         await applyV06ALaunchOptions(store: store, options: options)
+        // 0.7 demo: TANKARD_DEMO_RESTORE=1 opens Restore Points; =confirm also opens the confirmation.
+        if options.demo != nil, let mode = ProcessInfo.processInfo.environment["TANKARD_DEMO_RESTORE"], !mode.isEmpty {
+            Demo.seedRestorePoints(store)
+            store.openRestorePoints()
+            if mode == "confirm", let p = store.restorePoints.points.first { store.requestRestore(p, pinAfter: true) }
+        }
         if options.demo != nil, let mode = options.demoAutoUpdate {
             await AutoUpdateDemo.apply(mode, store: store)
         }

@@ -371,6 +371,8 @@ struct UpgradeSettings: View {
     var autoUpdater: AutoUpdater? = nil
     var notifier: SystemNotifier? = nil
     var appSettings: AppSettings? = nil
+    /// 0.7: "Keep the previous version after upgrades" (nil: not shown).
+    var rollbackSettings: RollbackSettings? = nil
     private let showLog = State(initialValue: false)
 
     var body: some View {
@@ -388,6 +390,10 @@ struct UpgradeSettings: View {
 
             Toggle("Don't quit running apps during upgrades", isOn: $settings.dontQuitAppsDuringUpgrade)
                 .help("By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
+
+            if let rollbackSettings {
+                KeepPreviousVersionToggle(settings: rollbackSettings)
+            }
 
             Divider().padding(.vertical, 4)
 

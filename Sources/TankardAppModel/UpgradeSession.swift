@@ -11,6 +11,8 @@ public enum SessionAction: String, Sendable {
     case cleanup
     /// 0.6: `brew autoremove` (one command, no packages).
     case autoremove
+    /// 0.7: a restore point's plan (reinstall, uninstall + link, pin).
+    case restore
 
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
@@ -21,6 +23,7 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "Reinstall"
         case .cleanup: return "Cleanup"
         case .autoremove: return "Remove unused"
+        case .restore: return "Restore"
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
@@ -32,6 +35,7 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "Reinstalling"
         case .cleanup: return "Cleaning up"
         case .autoremove: return "Removing unused dependencies"
+        case .restore: return "Restoring"
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -45,6 +49,7 @@ public enum SessionAction: String, Sendable {
         case .replaceBottle: return "reinstalled"
         case .cleanup: return "done"
         case .autoremove: return "done"
+        case .restore: return "done"
         }
     }
 }
@@ -100,10 +105,16 @@ public final class UpgradeSession: Identifiable {
     /// Finished lines of the running command (for sudo detection).
     @ObservationIgnored private var commandLines: [String] = []
     @ObservationIgnored private var consumer: Task<Void, Never>?
+    /// 0.7: steps sharing a key run as a chain: when one fails, the rest of
+    /// its chain still waiting is skipped (a restore's link after a failed
+    /// uninstall).
+    @ObservationIgnored private var chainKey: ((Package) -> String?)?
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
+         chainKey: ((Package) -> String?)? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
+        self.chainKey = chainKey
         self.intelbrewMode = intelbrewMode
         self.action = action
         self.queue = queue
@@ -120,10 +131,29 @@ public final class UpgradeSession: Identifiable {
                 self?.apply(event, to: itemID)
             }
         }
+        // 0.7: for each step, the later steps of its chain. Cancelled from
+        // the queue's own thread, before the queue takes its next job, so a
+        // failed step's chain can never start.
+        var chainRest: [UUID: [UUID]] = [:]
+        if let chainKey {
+            let keys = items.map { chainKey($0.package) }
+            for (i, item) in items.enumerated() {
+                guard let k = keys[i] else { continue }
+                chainRest[item.id] = items.indices.filter { $0 > i && keys[$0] == k }.map { items[$0].id }
+            }
+        }
         // Enqueued in package order; the queue runs them strictly in order.
         for item in items {
             let itemID = item.id
-            queue.enqueue(item.command, id: itemID) { event in
+            let rest = chainRest[itemID] ?? []
+            queue.enqueue(item.command, id: itemID) { [queue] event in
+                if !rest.isEmpty {
+                    switch event {
+                    case .finished(let code) where code != 0: queue.cancel(rest)
+                    case .failed: queue.cancel(rest)
+                    default: break
+                    }
+                }
                 continuation.yield((itemID, event))
             }
         }
@@ -152,6 +182,7 @@ public final class UpgradeSession: Identifiable {
             return failedItems.isEmpty ? "\(verb) complete" : "\(verb) finished with errors"
         }
         if action == .cleanup { return "Cleaning up" }
+        if action == .restore { return "Restoring (\(total) step\(total == 1 ? "" : "s"))" }
         if action == .replaceBottle {
             return total == 1 ? "Reinstalling \(items[0].package.name) from a bottle" : "Reinstalling \(total) packages from bottles"
         }
@@ -166,6 +197,9 @@ public final class UpgradeSession: Identifiable {
         }
         if action == .cleanup {
             return "Removes old versions, stale downloads and old logs"
+        }
+        if action == .restore {
+            return "Back to a restore point, one brew command at a time"
         }
         if action == .replaceBottle {
             let ib = items.filter { BottleReplacement.origin($0.package) == .intelbrew }.count
@@ -260,6 +294,7 @@ public final class UpgradeSession: Identifiable {
                     note("\(kind.title). \(kind.explanation)")
                 }
                 note("brew exited with status \(code)")
+                noteChainSkipped(after: i)
             }
         case .cancelled:
             let wasRunning = items[i].state == .running
@@ -270,6 +305,7 @@ public final class UpgradeSession: Identifiable {
             flush()
             items[i].state = .failed(-1)
             note("Could not run brew: \(message)")
+            noteChainSkipped(after: i)
         }
         if !isFinished && items.allSatisfy({ $0.state.isTerminal }) {
             isFinished = true
@@ -278,6 +314,12 @@ public final class UpgradeSession: Identifiable {
             onFinish = nil
             done?(self)
         }
+    }
+
+    private func noteChainSkipped(after i: Int) {
+        guard let key = chainKey?(items[i].package),
+              items.dropFirst(i + 1).contains(where: { chainKey?($0.package) == key }) else { return }
+        note("Skipped the next steps for this package")
     }
 
     private func flush() {
