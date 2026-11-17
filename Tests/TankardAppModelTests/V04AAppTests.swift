@@ -394,12 +394,12 @@ struct HomebrewManagementTests {
     @Test func scriptsShowWaitAndUseTheOfficialCommand() {
         #expect(HomebrewManagement.officialUninstallCommand
                 == #"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#)
-        let u = HomebrewManagement.uninstallScript()
+        let u = HomebrewManagement.uninstallScript(prefix: "/usr/local")
         #expect(u.hasPrefix("#!/bin/bash\n"))
         #expect(u.contains("read -r -p"))
         let lines = u.split(separator: "\n").map(String.init)
         let readAt = lines.firstIndex { $0.hasPrefix("read ") }!
-        let runAt = lines.firstIndex { $0 == HomebrewManagement.officialUninstallCommand }!
+        let runAt = lines.firstIndex { $0 == HomebrewManagement.uninstallCommand(prefix: "/usr/local") }!
         #expect(readAt < runAt)
 
         let p = plan(["\(home)/.zshenv": "export HOMEBREW_NO_INSTALL_FROM_API=1\n"])
@@ -416,9 +416,41 @@ struct HomebrewManagementTests {
         #expect(!s.contains("\nbrew untap"))  // mentioned, never run
     }
 
+    /// The uninstaller gets the prefix Tankard detected via uninstall.sh's
+    /// --path, so a Mac with both /usr/local and /opt/homebrew loses only
+    /// the one the sheet named. The quoting survives spaces and quotes.
+    @Test func uninstallPinsTheDetectedPrefix() throws {
+        #expect(HomebrewManagement.uninstallCommand(prefix: "/usr/local")
+                == HomebrewManagement.officialUninstallCommand + " uninstall.sh --path='/usr/local'")
+        #expect(HomebrewManagement.uninstallScript(prefix: "/usr/local").contains(" uninstall.sh --path='/usr/local'\n"))
+        #expect(HomebrewManagement.uninstallScript(prefix: "/opt/homebrew").contains("--path='/opt/homebrew'"))
+        #expect(!HomebrewManagement.uninstallScript(prefix: "/opt/homebrew").contains("--path='/usr/local'"))
+        #expect(HomebrewManagement.uninstallCommand(prefix: "/Volumes/My Disk/brew").hasSuffix(" --path='/Volumes/My Disk/brew'"))
+        // Run the generated line with the curl'd uninstall.sh swapped for a
+        // stub that prints its argv: bash must hand uninstall.sh exactly one
+        // --path=<prefix> argument, whatever the prefix contains.
+        for prefix in ["/usr/local", "/Volumes/My Disk/brew", "/Users/o'brien/$HOME `x` \"q\""] {
+            let line = HomebrewManagement.uninstallCommand(prefix: prefix)
+                .replacingOccurrences(of: #""$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#,
+                                      with: #"'printf "%s\n" "$0" "$@"'"#)
+            #expect(!line.contains("curl"))
+            let proc = Process()
+            let out = Pipe()
+            proc.executableURL = URL(fileURLWithPath: "/bin/bash")
+            proc.arguments = ["-c", line]
+            proc.standardOutput = out
+            try proc.run()
+            let data = out.fileHandleForReading.readDataToEndOfFile()
+            proc.waitUntilExit()
+            #expect(proc.terminationStatus == 0)
+            #expect(String(decoding: data, as: UTF8.self) == "uninstall.sh\n--path=\(prefix)\n")
+        }
+    }
+
     @Test func scriptsParseAsBash() throws {
         let p = plan(["\(home)/.zshenv": "export HOMEBREW_NO_INSTALL_FROM_API=1\n", "\(home)/.bash_profile": "export HOMEBREW_BREW_GIT_REMOTE=x\n"])
-        for script in [p.script, HomebrewManagement.uninstallScript()] {
+        for script in [p.script, HomebrewManagement.uninstallScript(prefix: "/usr/local"),
+                       HomebrewManagement.uninstallScript(prefix: "/Users/o'brien/my brew")] {
             let proc = Process()
             proc.executableURL = URL(fileURLWithPath: "/bin/bash")
             proc.arguments = ["-n", "-c", script]   // syntax check only

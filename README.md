@@ -39,7 +39,8 @@ the Intelbrew forks.
 - **Pin** packages so upgrades skip them, filter by **Pinned** or **Requested only**, and
   follow **Depends on**, **Used by** and the dependency tree from package to package.
 - **Services**: see `brew services` status and start, stop or restart your own services.
-- **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall Homebrew,
+- **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall the Homebrew
+  Tankard shows (its prefix only),
   both in Terminal after showing every command.
 - **Vulnerabilities** from `brew vulns` (Homebrew 7): a ⚠ tag with severity, the advisory
   ids linked to OSV.dev, "fixed in", a Vulnerable filter and "Upgrade vulnerable

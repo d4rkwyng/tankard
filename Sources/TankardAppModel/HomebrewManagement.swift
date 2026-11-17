@@ -28,8 +28,27 @@ public enum HomebrewManagement {
 
     /// Homebrew's official uninstaller, verbatim from the Homebrew/install
     /// README ("Uninstall Homebrew"). It asks again before removing anything.
+    /// On its own it picks the prefix itself (/opt/homebrew first on Apple
+    /// silicon), so Tankard always runs `uninstallCommand(prefix:)` instead.
     public static let officialUninstallCommand =
         #"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)""#
+
+    /// The official uninstaller pinned to the prefix Tankard detected, with
+    /// uninstall.sh's own `--path=PATH` option ("Sets Homebrew prefix"; the
+    /// README's "uninstall Homebrew from a specific prefix"). Under `bash -c`
+    /// the first argument after the script is `$0`, so "uninstall.sh" fills
+    /// it and `--path` arrives as `$1`. Without it, a Mac with both
+    /// /usr/local and /opt/homebrew would lose /opt/homebrew even though the
+    /// sheet named /usr/local.
+    public static func uninstallCommand(prefix: String) -> String {
+        officialUninstallCommand + " uninstall.sh --path=" + singleQuoted(prefix)
+    }
+
+    /// Always single-quoted (unlike `BrewCommands.shellQuoted`), embedded
+    /// single quotes as '\''.
+    public static func singleQuoted(_ s: String) -> String {
+        "'" + s.replacingOccurrences(of: "'", with: #"'\''"#) + "'"
+    }
 
     /// Upstream Homebrew/brew, as in d4rkwyng/intelbrew's README ("How do I
     /// go back to upstream Homebrew?").
@@ -45,18 +64,20 @@ public enum HomebrewManagement {
     }
 
     /// The uninstall `.command` script: says what it runs, waits for
-    /// Return, then runs the official uninstaller (which asks again).
-    public static func uninstallScript() -> String {
-        """
+    /// Return, then runs the official uninstaller (which asks again) on
+    /// `prefix` only.
+    public static func uninstallScript(prefix: String) -> String {
+        let command = uninstallCommand(prefix: prefix)
+        return """
         #!/bin/bash
         # Written by Tankard. Runs Homebrew's official uninstaller in Terminal.
-        echo "Tankard: this runs Homebrew's official uninstaller:"
+        echo \(BrewCommands.shellQuoted("Tankard: this runs Homebrew's official uninstaller on " + prefix + ":"))
         echo
-        echo \(BrewCommands.shellQuoted("  " + officialUninstallCommand))
+        echo \(BrewCommands.shellQuoted("  " + command))
         echo
-        echo "It removes Homebrew and every package installed with it."
+        echo "It removes that Homebrew and every package installed with it."
         read -r -p "Press Return to continue, or close this window to cancel. "
-        \(officialUninstallCommand)
+        \(command)
         echo
         echo "When it finishes, quit Tankard."
 

@@ -119,9 +119,13 @@ struct HomebrewManagementSheet: View {
 
     @ViewBuilder
     private func uninstallBody(_ plan: RevertPlan?) -> some View {
-        step("Homebrew's official uninstaller", "From the Homebrew/install README (\"Uninstall Homebrew\"). It runs in Terminal and asks once more before removing anything.")
-        CommandBox(command: HomebrewManagement.officialUninstallCommand)
-        note("It deletes \(store.report?.host.prefix ?? "the Homebrew prefix")'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. It may ask for your password.")
+        step("Homebrew's official uninstaller", "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything.")
+        if let prefix = store.report?.host.prefix {
+            CommandBox(command: HomebrewManagement.uninstallCommand(prefix: prefix))
+            note("It deletes \(prefix)'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password.")
+        } else {
+            note("Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.")
+        }
         if let plan, !plan.edits.isEmpty {
             note("Intelbrew's lines stay in your shell profile (\(plan.edits.map(\.label).joined(separator: ", "))); remove them by hand afterwards, or use Revert to Standard Homebrew first.")
         }
@@ -155,7 +159,7 @@ struct HomebrewManagementSheet: View {
                 } label: {
                     Label("Open in Terminal", systemImage: "terminal")
                 }
-                .disabled(!confirmed || (kind == .revert && plan == nil))
+                .disabled(!confirmed || (kind == .revert && plan == nil) || (kind == .uninstall && store.report == nil))
                 .help("Writes a .command script with exactly these commands and opens it in Terminal")
             }
         }
@@ -169,7 +173,8 @@ struct HomebrewManagementSheet: View {
             guard let plan = planState.wrappedValue else { return }
             script = plan.script
         case .uninstall:
-            script = HomebrewManagement.uninstallScript()
+            guard let prefix = store.report?.host.prefix else { return }
+            script = HomebrewManagement.uninstallScript(prefix: prefix)
         }
         if isDemo {
             failureState.wrappedValue = "Demo mode: Terminal not opened."
