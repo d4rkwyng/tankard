@@ -231,9 +231,9 @@ struct VulnerableFilterActions: View {
                 .disabled(targets.isEmpty || store.isUpgrading || store.isRefreshing)
                 .help(String(localized: "Upgrade vulnerable packages. ") + upgradeHelp(targets)
                       + (scan?.partialReason.map { String(localized: " Partial scan: \($0).") } ?? ""))
-            } else {
-                ScanStateLabel(insights: store.insights)
             }
+            // Otherwise nothing: the scan's state and Scan Now are in the
+            // filter's header (VulnerableScanBar).
         }
         .fixedSize()
     }

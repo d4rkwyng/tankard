@@ -251,12 +251,12 @@
 "Changes since then" = "此后的更改";
 "Check" = "检查";
 "Check Again" = "再次检查";
+"Check Brewfile…" = "检查 Brewfile…";
+"Check Now" = "立即检查";
 "Check a Brewfile" = "检查 Brewfile";
-"Check a Brewfile…" = "检查 Brewfile…";
 "Check again" = "再次检查";
 "Check every" = "检查间隔";
 "Check for new versions in the background" = "在后台检查新版本";
-"Check now" = "立即检查";
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
 "Checking for updates…" = "正在检查更新…";
@@ -538,6 +538,7 @@
 "No dependencies" = "无依赖项";
 "No fix listed" = "未列出修复";
 "No installs recorded" = "没有安装记录";
+"No known vulnerabilities" = "没有已知漏洞";
 "No known vulnerabilities (brew vulns)." = "没有已知漏洞（brew vulns）。";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "No longer needed by anything: %@" = "已不再被任何软件包需要：%@";
@@ -545,6 +546,7 @@
 "No package matches “%@”." = "没有与“%@”匹配的软件包。";
 "No packages in this group." = "此分组中没有软件包。";
 "No restore points yet. One is saved before the next upgrade." = "暂无还原点。下次升级前会保存一个。";
+"No scan yet" = "尚未扫描";
 "No service matches “%@”." = "没有与“%@”匹配的服务。";
 "No services" = "无服务";
 "No vulnerable package has an upgrade yet." = "没有存在漏洞的软件包有可用升级。";
@@ -712,6 +714,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "在后台运行 brew update 并检查升级。仅在出现新升级时才会通知。默认关闭。";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "先运行 brew update，然后通过 Tankard 的队列逐个升级软件包。";
 "Runs brew vulns after each refresh. " = "每次刷新后运行 brew vulns。 ";
+"Runs brew vulns once now." = "立即运行一次 brew vulns。";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "仅在 Tankard 运行期间、接通电源且键盘和鼠标已闲置 %lld 分钟后运行。错过的运行（Mac 处于睡眠或 Tankard 未打开）会在下一次有机会时补运行一次。默认关闭。";
 "Safe mode (always on):" = "安全模式（始终开启）：";
 "Safe mode: bottles only; skips pinned packages and running apps." = "安全模式：仅限 bottle；跳过已固定的软件包和正在运行的 App。";
@@ -721,6 +724,7 @@
 "Saves what is installed now as a restore point" = "将当前已安装的内容存储为恢复点";
 "Scan Again" = "重新扫描";
 "Scan Now" = "立即扫描";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "“立即扫描”会运行 brew vulns，查找存在已知漏洞的已安装 formula。";
 "Scan failed" = "扫描失败";
 "Scan for Vulnerabilities" = "扫描漏洞";
 "Scan for vulnerabilities when refreshing" = "刷新时扫描漏洞";
@@ -804,6 +808,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ 可用";
 "Tankard (demo)" = "Tankard（演示）";
+"Tankard Help" = "Tankard 帮助";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
@@ -838,6 +843,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "安装程序会要求输入密码并在“终端”中运行。完成后，请回来点按“再次检查”。";
 "The last %lld are kept in Application Support." = "最近 %lld 个保存在 Application Support 中。";
 "The last %lld automatic runs. brew's full output is in %@." = "最近 %lld 次自动运行。brew 的完整输出位于 %@。";
+"The last scan (%@) found none." = "上次扫描（%@）未发现任何漏洞。";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "菜单栏图标已关闭，因此关闭窗口时 Tankard 会退出，且届时不会运行任何任务。";
 "The official installer from brew.sh." = "来自 brew.sh 的官方安装程序。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "旧版本仍已安装。brew uninstall 会移除新版本，然后 brew link 会链接旧版本。";
@@ -906,9 +912,9 @@
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
 "Upgrade 1 package?" = "升级 1 个软件包？";
+"Upgrade All" = "全部升级";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "用 brew upgrade --cask tankard 升级 Tankard（自动更新不处理 Tankard，留给 brew）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
-"Upgrade all" = "全部升级";
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";

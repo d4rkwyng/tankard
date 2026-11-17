@@ -421,18 +421,16 @@ struct AutoremoveSheet: View {
     }
 }
 
-/// Homebrew menu items for 0.6. A view, so its store reads aren't tracked
-/// by App.body.
+/// Homebrew menu items for 0.6 (Remove Unused Dependencies… sits with
+/// Clean Up… in HomebrewCommands). A view, so its store reads aren't
+/// tracked by App.body.
 struct HealthCommands: View {
     var store: AppStore
 
     var body: some View {
-        Divider()
         Button("Health…") { store.openHealth() }
             .disabled(store.report == nil)
         Button("History…") { store.openHistory() }
-        Button("Remove Unused Dependencies…") { store.openAutoremove() }
-            .disabled(store.isBusy || store.report == nil)
     }
 }
 

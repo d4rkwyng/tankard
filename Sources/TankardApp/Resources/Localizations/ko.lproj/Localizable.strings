@@ -251,12 +251,12 @@
 "Changes since then" = "그 이후 변경 사항";
 "Check" = "확인";
 "Check Again" = "다시 확인";
+"Check Brewfile…" = "Brewfile 확인…";
+"Check Now" = "지금 확인";
 "Check a Brewfile" = "Brewfile 확인";
-"Check a Brewfile…" = "Brewfile 확인…";
 "Check again" = "다시 확인";
 "Check every" = "확인 주기";
 "Check for new versions in the background" = "백그라운드에서 새 버전 확인";
-"Check now" = "지금 확인";
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
 "Checking for updates…" = "업데이트 확인 중…";
@@ -538,6 +538,7 @@
 "No dependencies" = "종속 항목 없음";
 "No fix listed" = "나열된 수정 없음";
 "No installs recorded" = "설치 기록 없음";
+"No known vulnerabilities" = "알려진 취약점 없음";
 "No known vulnerabilities (brew vulns)." = "알려진 취약점 없음(brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "더 이상 Cellar에 없음: %@. 이 목록을 만든 뒤 brew cleanup이 제거했기 때문에 되돌릴 수 없어 복원에서 제외했습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
 "No longer needed by anything: %@" = "더 이상 필요로 하는 항목 없음: %@";
@@ -545,6 +546,7 @@
 "No package matches “%@”." = "“%@”와(과) 일치하는 패키지가 없습니다.";
 "No packages in this group." = "이 그룹에 패키지가 없습니다.";
 "No restore points yet. One is saved before the next upgrade." = "아직 복원 지점이 없습니다. 다음 업그레이드 전에 하나가 저장됩니다.";
+"No scan yet" = "아직 검사 안 함";
 "No service matches “%@”." = "“%@”와(과) 일치하는 서비스가 없습니다.";
 "No services" = "서비스 없음";
 "No vulnerable package has an upgrade yet." = "업그레이드가 있는 취약한 패키지가 아직 없습니다.";
@@ -712,6 +714,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "백그라운드에서 brew update를 실행하고 업그레이드를 확인합니다. 새 업그레이드가 나타날 때만 알림이 표시됩니다. 기본값은 꺼짐입니다.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "먼저 brew update를 실행한 다음, Tankard의 대기열을 통해 패키지를 하나씩 업그레이드합니다.";
 "Runs brew vulns after each refresh. " = "새로 고칠 때마다 brew vulns를 실행합니다. ";
+"Runs brew vulns once now." = "지금 brew vulns를 한 번 실행합니다.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Tankard가 실행 중이고 AC 전원에 연결되어 있으며 키보드나 마우스 입력 없이 %lld분이 지났을 때만 실행됩니다. 놓친 실행(Mac이 잠자기 중이거나 Tankard가 열려 있지 않았음)은 다음 기회에 한 번 수행됩니다. 기본값은 꺼짐입니다.";
 "Safe mode (always on):" = "안전 모드(항상 켜짐):";
 "Safe mode: bottles only; skips pinned packages and running apps." = "안전 모드: bottle만 사용하며, 고정된 패키지와 실행 중인 앱은 건너뜁니다.";
@@ -721,6 +724,7 @@
 "Saves what is installed now as a restore point" = "현재 설치된 항목을 복원 지점으로 저장합니다";
 "Scan Again" = "다시 스캔";
 "Scan Now" = "지금 검사";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "'지금 검사'는 brew vulns를 실행해 알려진 취약점이 있는 설치된 포뮬러를 찾습니다.";
 "Scan failed" = "검사 실패";
 "Scan for Vulnerabilities" = "취약점 검사";
 "Scan for vulnerabilities when refreshing" = "새로 고칠 때 취약점 검사";
@@ -804,6 +808,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ 사용 가능";
 "Tankard (demo)" = "Tankard (데모)";
+"Tankard Help" = "Tankard 도움말";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard가 아직 이 Mac의 Homebrew 접두사를 읽지 않았습니다. 먼저 새로 고치세요.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다.";
@@ -838,6 +843,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "설치 프로그램이 암호를 요청하며 터미널에서 실행됩니다. 끝나면 돌아와서 다시 확인을 클릭하세요.";
 "The last %lld are kept in Application Support." = "최근 %lld개는 Application Support에 보관됩니다.";
 "The last %lld automatic runs. brew's full output is in %@." = "최근 자동 실행 %lld건. brew의 전체 출력은 %@에 있습니다.";
+"The last scan (%@) found none." = "마지막 검사(%@)에서 발견되지 않았습니다.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
@@ -906,9 +912,9 @@
 "Upgrade %lld (skip %lld)" = "%lld개 업그레이드 (%lld개 건너뜀)";
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
+"Upgrade All" = "모두 업그레이드";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
-"Upgrade all" = "모두 업그레이드";
 "Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";

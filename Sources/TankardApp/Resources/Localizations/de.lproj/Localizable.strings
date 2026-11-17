@@ -251,12 +251,12 @@
 "Changes since then" = "Änderungen seitdem";
 "Check" = "Prüfen";
 "Check Again" = "Erneut prüfen";
+"Check Brewfile…" = "Brewfile prüfen…";
+"Check Now" = "Jetzt prüfen";
 "Check a Brewfile" = "Brewfile prüfen";
-"Check a Brewfile…" = "Brewfile prüfen…";
 "Check again" = "Erneut prüfen";
 "Check every" = "Prüfen alle";
 "Check for new versions in the background" = "Im Hintergrund nach Updates suchen";
-"Check now" = "Jetzt prüfen";
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
 "Checking for updates…" = "Suche Updates…";
@@ -538,6 +538,7 @@
 "No dependencies" = "Keine Abhängigkeiten";
 "No fix listed" = "Kein Fix angegeben";
 "No installs recorded" = "Keine Installationen erfasst";
+"No known vulnerabilities" = "Keine bekannten Schwachstellen";
 "No known vulnerabilities (brew vulns)." = "Keine bekannten Schwachstellen (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Nicht mehr im Cellar: %@. brew cleanup hat die Version entfernt, nachdem diese Liste erstellt wurde. Sie kann daher nicht zurückgesetzt werden und wurde aus der Wiederherstellung genommen. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“.";
 "No longer needed by anything: %@" = "Nicht mehr benötigt: %@";
@@ -545,6 +546,7 @@
 "No package matches “%@”." = "Kein Paket passt zu „%@“.";
 "No packages in this group." = "Keine Pakete in dieser Gruppe.";
 "No restore points yet. One is saved before the next upgrade." = "Noch keine Wiederherstellungspunkte. Vor dem nächsten Upgrade wird einer gesichert.";
+"No scan yet" = "Noch kein Scan";
 "No service matches “%@”." = "Kein Dienst passt zu „%@“.";
 "No services" = "Keine Dienste";
 "No vulnerable package has an upgrade yet." = "Für kein Paket mit Schwachstellen gibt es schon ein Upgrade.";
@@ -712,6 +714,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "Führt brew update aus und sucht im Hintergrund nach Upgrades. Eine Benachrichtigung erscheint nur, wenn neue Upgrades auftauchen. Standardmäßig aus.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "Führt zuerst brew update aus und aktualisiert dann ein Paket nach dem anderen über die Warteschlange von Tankard.";
 "Runs brew vulns after each refresh. " = "Führt brew vulns nach jeder Aktualisierung aus. ";
+"Runs brew vulns once now." = "Führt brew vulns jetzt einmal aus.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Läuft nur, solange Tankard läuft, am Netzteil und nach %lld Minuten ohne Tastatur- oder Mauseingabe. Ein verpasster Lauf (der Mac war im Ruhezustand oder Tankard nicht geöffnet) wird einmalig bei nächster Gelegenheit nachgeholt. Standardmäßig aus.";
 "Safe mode (always on):" = "Sicherer Modus (immer an):";
 "Safe mode: bottles only; skips pinned packages and running apps." = "Sicherer Modus: nur Bottles; fixierte Pakete und laufende Apps werden übersprungen.";
@@ -721,6 +724,7 @@
 "Saves what is installed now as a restore point" = "Sichert den aktuellen Installationsstand als Wiederherstellungspunkt";
 "Scan Again" = "Neu prüfen";
 "Scan Now" = "Jetzt scannen";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "„Jetzt scannen“ führt brew vulns aus und findet installierte Formeln mit bekannten Schwachstellen.";
 "Scan failed" = "Scan fehlgeschlagen";
 "Scan for Vulnerabilities" = "Nach Schwachstellen suchen";
 "Scan for vulnerabilities when refreshing" = "Beim Aktualisieren nach Schwachstellen suchen";
@@ -804,6 +808,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ verfügbar";
 "Tankard (demo)" = "Tankard (Demo)";
+"Tankard Help" = "Tankard-Hilfe";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hat das Homebrew-Präfix dieses Macs noch nicht gelesen. Aktualisiere zuerst.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard selbst wird nie automatisch aktualisiert: nutze brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard lässt Upgrades dieser App aus „Alle upgraden“, den Zählern und Auto-Update heraus. Ihr eigener Updater hält sie aktuell. brew upgrade im Terminal kann sie weiterhin upgraden.";
@@ -838,6 +843,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "Das Installationsprogramm fragt nach deinem Passwort und läuft im Terminal. Komm danach zurück und klicke auf „Erneut prüfen“.";
 "The last %lld are kept in Application Support." = "Die letzten %lld werden in Application Support behalten.";
 "The last %lld automatic runs. brew's full output is in %@." = "Die letzten %lld automatischen Läufe. Die vollständige Ausgabe von brew liegt in %@.";
+"The last scan (%@) found none." = "Der letzte Scan (%@) hat keine gefunden.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "Das Menüleistensymbol ist aus, daher beendet sich Tankard beim Schließen des Fensters, und nichts läuft dann.";
 "The official installer from brew.sh." = "Das offizielle Installationsprogramm von brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "Die alte Version ist noch installiert. brew uninstall entfernt die neue, dann verknüpft brew link die alte.";
@@ -906,9 +912,9 @@
 "Upgrade %lld (skip %lld)" = "%lld upgraden (%lld überspringen)";
 "Upgrade %lld packages?" = "%lld Pakete upgraden?";
 "Upgrade 1 package?" = "1 Paket upgraden?";
+"Upgrade All" = "Alle upgraden";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankard mit brew upgrade --cask tankard upgraden (Auto-Update überlässt Tankard brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Auf dem üblichen Weg erneut upgraden: Compile-Warnungen, Fixierungen und übersprungene Versionen gelten weiterhin";
-"Upgrade all" = "Alle upgraden";
 "Upgrade available: %@" = "Upgrade verfügbar: %@";
 "Upgrade builds from source" = "Upgrade baut aus dem Quellcode";
 "Upgrade command" = "Upgrade-Befehl";

@@ -3,7 +3,7 @@ import SwiftUI
 import TankardAppModel
 import TankardCore
 
-// v0.6 (part B): Export Brewfile… and Check a Brewfile… (Homebrew menu),
+// v0.6 (part B): Export Brewfile… and Check Brewfile… (File menu),
 // and the sheet that shows the export summary, the check result and the
 // restore plan. Tankard never runs a shell for the user and never reads
 // or evaluates the Brewfile itself: brew bundle does.
@@ -39,18 +39,19 @@ enum BrewfilePanels {
     }
 }
 
-/// The Brewfile items of the Homebrew menu. A view, so its store reads are
+/// The Brewfile items of the File menu. A view, so its store reads are
 /// tracked here and not by App.body.
 struct BrewfileMenuItems: View {
     var store: AppStore
 
     var body: some View {
+        // Opening one before exporting, as File menus order Open and Export.
+        Button("Check Brewfile…") { BrewfilePanels.check(store: store) }
+            .disabled(!store.canUseBrewfile)
+            .help("Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)")
         Button("Export Brewfile…") { BrewfilePanels.export(store: store) }
             .disabled(!store.canUseBrewfile)
             .help(BrewfilePanels.leftOut)
-        Button("Check a Brewfile…") { BrewfilePanels.check(store: store) }
-            .disabled(!store.canUseBrewfile)
-            .help("Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)")
     }
 }
 

@@ -343,6 +343,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_UNINSTALL=<name>` | Demo only: open the uninstall confirmation for an installed package. |
 | `TANKARD_DEMO_NOBREW=intel\|arm64` | The welcome screen as on an Intel Mac or Apple silicon (nothing is opened). |
 | `TANKARD_SNAPSHOT=<file.png>` | Write a 2x PNG of the window (and an open sheet) after `TANKARD_SNAPSHOT_DELAY` seconds (default 4); `TANKARD_SNAPSHOT_QUIT=1` quits after; `TANKARD_SNAPSHOT_SIZE=1040x620` sets the content size. The window draws itself, so this works without Screen Recording permission and while the screen is locked. |
+| `TANKARD_MENU_DUMP=<file.txt>` | Write the main menu as a text outline (items, shortcuts, "(disabled)", `---` separators) after `TANKARD_SNAPSHOT_DELAY` seconds; `TANKARD_SNAPSHOT_QUIT=1` quits after. Menus can't be captured by the snapshot hook; this is how they are reviewed. |
 | `TANKARD_FILTER=upgrades\|source\|newer\|bottle` | The Installed filter on launch. |
 | `TANKARD_DEMO_CLEANUP=1` | Demo only: open Cleanup; `TANKARD_DEMO_CLEANUP_RUN=1` then clicks Clean up. |
 | `TANKARD_DEMO_REPLACE=1` | Demo only: replace the selection with a bottle. |
@@ -363,6 +364,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_PINNED=a,b` | Demo only: these start pinned. |
 | `TANKARD_DEMO_MANAGE=revert\|uninstall` | Demo only: open that Homebrew menu sheet; `TANKARD_DEMO_TYPED=<word>` pre-types the confirmation. |
 | `TANKARD_FILTER=vulnerable\|notes` | 0.4: the Vulnerable or Has notes filter on launch. |
+| `TANKARD_DEMO_SCAN=1\|slow\|off` | Demo only: scan for vulnerabilities at launch (`slow`: the scan takes 30 s, to show its progress); `off`: no scan at all, not even on refresh (the Vulnerable filter's "No scan yet"). |
 | `TANKARD_DEMO_NOTES=1` | 0.4, demo only: upgrade everything, close the finished sheet; the post-install notes follow. |
 | `TANKARD_DEMO_VULN_NOTICE=1` | 0.4, demo only: the menu-bar vulnerability notice on, with nothing seen yet. |
 | `TANKARD_SELF_UPDATING=1` | 0.4, demo only: "Include self-updating apps" on. |

@@ -13,8 +13,9 @@ import TankardCore
 //   TANKARD_DEMO_PINNED=a,b          demo only: these start pinned
 //   TANKARD_DEMO_MANAGE=revert|uninstall   demo only: open that sheet
 //   TANKARD_DEMO_TYPED=<word>        demo only: pre-type the confirmation
-//   TANKARD_DEMO_SCAN=1|slow         demo only (0.6.1): scan for vulnerabilities
-//                                    at launch; slow: the scan takes 30 s
+//   TANKARD_DEMO_SCAN=1|slow|off     demo only (0.6.1): scan for vulnerabilities
+//                                    at launch; slow: the scan takes 30 s;
+//                                    off: no scan, not even on refresh
 
 enum V04ALaunch {
     static var env: [String: String] { ProcessInfo.processInfo.environment }
@@ -39,7 +40,7 @@ func applyV04ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     if options.demo != nil, let k = env["TANKARD_DEMO_MANAGE"].flatMap(HomebrewManagement.Kind.init(rawValue:)) {
         store.requestManagement(k)
     }
-    if options.demo != nil, let scan = env["TANKARD_DEMO_SCAN"] {
+    if options.demo != nil, let scan = env["TANKARD_DEMO_SCAN"], scan != "off" {
         if scan == "slow" { Demo.scanDelay = .seconds(30) }
         store.scanVulnerabilitiesNow()
     }

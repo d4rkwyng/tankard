@@ -240,3 +240,65 @@ enum Snapshot {
         }
     }
 }
+
+/// TANKARD_MENU_DUMP=/path/out.txt: write the main menu as an outline (one
+/// item per line, its shortcut, "(disabled)", "---" for a separator) a few
+/// seconds after launch, for reviewing the menus without a screenshot
+/// (menus can't be captured by the snapshot hook). With
+/// TANKARD_SNAPSHOT_QUIT=1 the app quits afterwards. Reads nothing else
+/// and changes nothing.
+@MainActor
+enum MenuDump {
+    static func scheduleIfRequested(_ env: [String: String] = ProcessInfo.processInfo.environment) {
+        guard let path = env["TANKARD_MENU_DUMP"], !path.isEmpty else { return }
+        let delay = env["TANKARD_SNAPSHOT_DELAY"].flatMap(Double.init) ?? 4
+        let quit = env["TANKARD_SNAPSHOT_QUIT"] == "1"
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            MainActor.assumeIsolated {
+                let text = NSApp.mainMenu.map(outline) ?? "(no main menu)\n"
+                try? text.write(toFile: path, atomically: true, encoding: .utf8)
+                if quit { NSApp.terminate(nil) }
+            }
+        }
+    }
+
+    static func outline(_ menu: NSMenu) -> String {
+        var out = ""
+        for top in menu.items where !top.isHidden {
+            out += (top.submenu?.title ?? top.title) + "\n"
+            if let sub = top.submenu { out += lines(sub, depth: 1) }
+            out += "\n"
+        }
+        return out
+    }
+
+    private static func lines(_ menu: NSMenu, depth: Int) -> String {
+        // SwiftUI fills and validates command menus when they open.
+        menu.delegate?.menuNeedsUpdate?(menu)
+        menu.update()
+        var out = ""
+        let pad = String(repeating: "  ", count: depth)
+        for item in menu.items where !item.isHidden {
+            if item.isSeparatorItem { out += pad + "---\n"; continue }
+            var line = pad + item.title
+            let key = shortcut(item)
+            if !key.isEmpty { line += "  [" + key + "]" }
+            if !item.isEnabled { line += "  (disabled)" }
+            if item.submenu != nil { line += "  ▸" }
+            out += line + "\n"
+        }
+        return out
+    }
+
+    private static func shortcut(_ item: NSMenuItem) -> String {
+        guard !item.keyEquivalent.isEmpty else { return "" }
+        let m = item.keyEquivalentModifierMask
+        var s = ""
+        if m.contains(.control) { s += "⌃" }
+        if m.contains(.option) { s += "⌥" }
+        if m.contains(.shift) { s += "⇧" }
+        if m.contains(.command) { s += "⌘" }
+        let k = item.keyEquivalent
+        return s + (k == " " ? "Space" : k.uppercased())
+    }
+}

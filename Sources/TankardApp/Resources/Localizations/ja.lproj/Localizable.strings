@@ -251,12 +251,12 @@
 "Changes since then" = "それ以降の変更";
 "Check" = "確認";
 "Check Again" = "再確認";
+"Check Brewfile…" = "Brewfileを確認…";
+"Check Now" = "今すぐ確認";
 "Check a Brewfile" = "Brewfileを確認";
-"Check a Brewfile…" = "Brewfileを確認…";
 "Check again" = "再確認";
 "Check every" = "確認間隔";
 "Check for new versions in the background" = "バックグラウンドで新しいバージョンを確認";
-"Check now" = "今すぐ確認";
 "Checked %@" = "%@を確認しました";
 "Checking Brewfile…" = "Brewfileを確認中…";
 "Checking for updates…" = "アップデートを確認中…";
@@ -538,6 +538,7 @@
 "No dependencies" = "依存関係なし";
 "No fix listed" = "修正は記載されていません";
 "No installs recorded" = "インストールの記録なし";
+"No known vulnerabilities" = "既知の脆弱性はありません";
 "No known vulnerabilities (brew vulns)." = "既知の脆弱性はありません(brew vulns)。";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Cellarにもう存在しません: %@。このリストの作成後にbrew cleanupが削除したため、ロールバックできず、復元から外されました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。";
 "No longer needed by anything: %@" = "もう何にも必要とされていません: %@";
@@ -545,6 +546,7 @@
 "No package matches “%@”." = "「%@」に一致するパッケージはありません。";
 "No packages in this group." = "このグループにパッケージはありません。";
 "No restore points yet. One is saved before the next upgrade." = "復元ポイントはまだありません。次のアップグレード前に1つ保存されます。";
+"No scan yet" = "まだスキャンしていません";
 "No service matches “%@”." = "「%@」に一致するサービスはありません。";
 "No services" = "サービスなし";
 "No vulnerable package has an upgrade yet." = "アップグレードのある脆弱なパッケージはまだありません。";
@@ -712,6 +714,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "バックグラウンドでbrew updateを実行し、アップグレードを確認します。新しいアップグレードが見つかったときだけ通知されます。デフォルトではオフです。";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "最初にbrew updateを実行し、その後Tankardのキューでパッケージを1つずつアップグレードします。";
 "Runs brew vulns after each refresh. " = "更新のたびにbrew vulnsを実行します。 ";
+"Runs brew vulns once now." = "brew vulns を今すぐ1回実行します。";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Tankardの実行中、AC電源接続時で、キーボードやマウスの入力が%lld分間ない場合にのみ実行されます。実行できなかった場合（Macがスリープ中、またはTankardが開いていなかった）は、次の機会に1回だけ実行されます。デフォルトではオフです。";
 "Safe mode (always on):" = "セーフモード（常にオン）:";
 "Safe mode: bottles only; skips pinned packages and running apps." = "セーフモード: bottleのみ。ピン留めされたパッケージと実行中のアプリはスキップします。";
@@ -721,6 +724,7 @@
 "Saves what is installed now as a restore point" = "現在インストールされているものを復元ポイントとして保存します";
 "Scan Again" = "再スキャン";
 "Scan Now" = "今すぐスキャン";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "「今すぐスキャン」は brew vulns を実行し、既知の脆弱性があるインストール済みフォーミュラを探します。";
 "Scan failed" = "スキャンに失敗しました";
 "Scan for Vulnerabilities" = "脆弱性をスキャン";
 "Scan for vulnerabilities when refreshing" = "更新時に脆弱性をスキャン";
@@ -804,6 +808,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@が利用可能";
 "Tankard (demo)" = "Tankard（デモ）";
+"Tankard Help" = "Tankardヘルプ";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankardはこの MacのHomebrewのprefixをまだ読み込んでいません。先に更新してください。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
@@ -838,6 +843,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "インストーラがパスワードを求め、ターミナルで実行されます。完了したら戻って「もう一度確認」をクリックしてください。";
 "The last %lld are kept in Application Support." = "直近%lld件がApplication Supportに保持されます。";
 "The last %lld automatic runs. brew's full output is in %@." = "直近%lld回の自動実行。brewの完全な出力は%@にあります。";
+"The last scan (%@) found none." = "前回のスキャン（%@）では見つかりませんでした。";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "メニューバーアイコンがオフのため、ウインドウを閉じるとTankardは終了し、その間は何も実行されません。";
 "The official installer from brew.sh." = "brew.shの公式インストーラ。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "古いバージョンはまだインストールされています。brew uninstallで新しい方を削除し、brew linkで古い方をリンクします。";
@@ -906,9 +912,9 @@
 "Upgrade %lld (skip %lld)" = "%lld件をアップグレード（%lld件をスキップ）";
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
+"Upgrade All" = "すべてアップグレード";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
-"Upgrade all" = "すべてアップグレード";
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";

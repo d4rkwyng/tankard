@@ -251,12 +251,12 @@
 "Changes since then" = "Changes since then";
 "Check" = "Check";
 "Check Again" = "Check Again";
+"Check Brewfile…" = "Check Brewfile…";
+"Check Now" = "Check Now";
 "Check a Brewfile" = "Check a Brewfile";
-"Check a Brewfile…" = "Check a Brewfile…";
 "Check again" = "Check again";
 "Check every" = "Check every";
 "Check for new versions in the background" = "Check for new versions in the background";
-"Check now" = "Check now";
 "Checked %@" = "Checked %@";
 "Checking Brewfile…" = "Checking Brewfile…";
 "Checking for updates…" = "Checking for updates…";
@@ -538,6 +538,7 @@
 "No dependencies" = "No dependencies";
 "No fix listed" = "No fix listed";
 "No installs recorded" = "No installs recorded";
+"No known vulnerabilities" = "No known vulnerabilities";
 "No known vulnerabilities (brew vulns)." = "No known vulnerabilities (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.";
 "No longer needed by anything: %@" = "No longer needed by anything: %@";
@@ -545,6 +546,7 @@
 "No package matches “%@”." = "No package matches “%@”.";
 "No packages in this group." = "No packages in this group.";
 "No restore points yet. One is saved before the next upgrade." = "No restore points yet. One is saved before the next upgrade.";
+"No scan yet" = "No scan yet";
 "No service matches “%@”." = "No service matches “%@”.";
 "No services" = "No services";
 "No vulnerable package has an upgrade yet." = "No vulnerable package has an upgrade yet.";
@@ -712,6 +714,7 @@
 "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "Runs brew update first, then upgrades one package at a time through Tankard's queue.";
 "Runs brew vulns after each refresh. " = "Runs brew vulns after each refresh. ";
+"Runs brew vulns once now." = "Runs brew vulns once now.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.";
 "Safe mode (always on):" = "Safe mode (always on):";
 "Safe mode: bottles only; skips pinned packages and running apps." = "Safe mode: bottles only; skips pinned packages and running apps.";
@@ -721,6 +724,7 @@
 "Saves what is installed now as a restore point" = "Saves what is installed now as a restore point";
 "Scan Again" = "Scan Again";
 "Scan Now" = "Scan Now";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "Scan Now runs brew vulns to find installed formulae with known vulnerabilities.";
 "Scan failed" = "Scan failed";
 "Scan for Vulnerabilities" = "Scan for Vulnerabilities";
 "Scan for vulnerabilities when refreshing" = "Scan for vulnerabilities when refreshing";
@@ -804,6 +808,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ available";
 "Tankard (demo)" = "Tankard (demo)";
+"Tankard Help" = "Tankard Help";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.";
@@ -838,6 +843,7 @@
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again.";
 "The last %lld are kept in Application Support." = "The last %lld are kept in Application Support.";
 "The last %lld automatic runs. brew's full output is in %@." = "The last %lld automatic runs. brew's full output is in %@.";
+"The last scan (%@) found none." = "The last scan (%@) found none.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.";
 "The official installer from brew.sh." = "The official installer from brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "The old version is still installed. brew uninstall removes the new one, then brew link links the old one.";
@@ -906,9 +912,9 @@
 "Upgrade %lld (skip %lld)" = "Upgrade %lld (skip %lld)";
 "Upgrade %lld packages?" = "Upgrade %lld packages?";
 "Upgrade 1 package?" = "Upgrade 1 package?";
+"Upgrade All" = "Upgrade All";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
-"Upgrade all" = "Upgrade all";
 "Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";
