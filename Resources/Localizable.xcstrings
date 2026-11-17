@@ -9701,54 +9701,54 @@
         }
       }
     },
-    "After the relaunch, Tankard runs it again: %@ %@.": {
+    "After the relaunch, Tankard offers to run it again: %@ %@.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach dem Neustart führt Tankard es erneut aus: %1$@ %2$@."
+            "value": "Nach dem Neustart bietet Tankard an, es erneut auszuführen: %1$@ %2$@."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Après la relance, Tankard le relance : %1$@ %2$@."
+            "value": "Après la relance, Tankard propose de le relancer : %1$@ %2$@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tras reiniciar, Tankard lo ejecutará de nuevo: %1$@ %2$@."
+            "value": "Tras reiniciar, Tankard ofrecerá ejecutarlo de nuevo: %1$@ %2$@."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "再起動後、Tankardがもう一度実行します: %1$@ %2$@。"
+            "value": "再起動後、Tankardがもう一度実行するか確認します: %1$@ %2$@。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "重新启动后，Tankard 会再次运行：%1$@ %2$@。"
+            "value": "重新启动后，Tankard 会询问是否再次运行：%1$@ %2$@。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Após reabrir, o Tankard executa de novo: %1$@ %2$@."
+            "value": "Após reabrir, o Tankard oferece executar de novo: %1$@ %2$@."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dopo il riavvio, Tankard lo esegue di nuovo: %1$@ %2$@."
+            "value": "Dopo il riavvio, Tankard propone di eseguirlo di nuovo: %1$@ %2$@."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다시 시작한 후 Tankard가 다시 실행합니다: %1$@ %2$@."
+            "value": "다시 시작한 후 Tankard가 다시 실행할지 묻습니다: %1$@ %2$@."
           }
         }
       }
@@ -25405,6 +25405,58 @@
         }
       }
     },
+    "Left out, changed or done since: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgelassen, seitdem geändert oder erledigt: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laissés de côté, modifiés ou faits depuis : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitidos, cambiados o hechos desde entonces: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "除外(変更済みまたは完了済み): %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已略过（之后有变化或已完成）：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deixados de fora, alterados ou feitos desde então: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esclusi, cambiati o già fatti: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제외됨(이후 변경되었거나 완료됨): %@"
+          }
+        }
+      }
+    },
     "Left to the app: %@ isn't in Upgrade all or auto-update.": {
       "localizations": {
         "de": {
@@ -36689,6 +36741,110 @@
         }
       }
     },
+    "Run Again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut ausführen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecutar de nuevo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度実行"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再次运行"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executar de novo"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegui di nuovo"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 실행"
+          }
+        }
+      }
+    },
+    "Run again: %@ %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut ausführen: %1$@ %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancer : %1$@ %2$@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecutar de nuevo: %1$@ %2$@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度実行: %1$@ %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再次运行：%1$@ %2$@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executar de novo: %1$@ %2$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegui di nuovo: %1$@ %2$@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 실행: %1$@ %2$@"
+          }
+        }
+      }
+    },
     "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on.": {
       "localizations": {
         "de": {
@@ -42926,6 +43082,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard는 사용자 본인의 서비스만 제어하며 sudo를 실행하지 않습니다. 터미널에서 실행하세요:"
+          }
+        }
+      }
+    },
+    "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard wurde neu gestartet, damit macOS die App-Verwaltung anwendet. Nichts läuft, bevor du „Erneut ausführen“ klickst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a été relancé pour que macOS applique Gestion des apps. Rien ne s’exécute avant que vous cliquiez sur Relancer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard se reinició para que macOS aplique Gestión de apps. No se ejecuta nada hasta que hagas clic en Ejecutar de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSがApp管理を適用できるようTankardを再起動しました。「もう一度実行」をクリックするまで何も実行されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 已重新启动，以便 macOS 应用“App 管理”。在你点按“再次运行”之前不会运行任何操作。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard foi reaberto para o macOS aplicar o Gerenciamento de Apps. Nada é executado até você clicar em Executar de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard è stato riavviato perché macOS applichi Gestione app. Non parte nulla finché non fai clic su Esegui di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS가 앱 관리를 적용하도록 Tankard를 다시 시작했습니다. 다시 실행을 클릭하기 전에는 아무것도 실행되지 않습니다."
           }
         }
       }

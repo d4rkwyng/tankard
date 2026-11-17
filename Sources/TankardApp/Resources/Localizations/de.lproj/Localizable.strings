@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "Die Übernahme läuft über die Warteschlange und den Verlauf von Tankard.";
 "After adopting:" = "Nach Übernahme:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "Führt nach dem Anzeigen der Liste höchstens einmal pro Prüfintervall brew update im Hintergrund aus und aktualisiert dann die Upgrade-Zahlen. Wartet, solange brew beschäftigt ist; ein Fehler (offline) wird nur protokolliert. Aus, wenn HOMEBREW_NO_AUTO_UPDATE gesetzt ist. Standardmäßig an.";
-"After the relaunch, Tankard runs it again: %@ %@." = "Nach dem Neustart führt Tankard es erneut aus: %1$@ %2$@.";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "Nach dem Neustart bietet Tankard an, es erneut auszuführen: %1$@ %2$@.";
 "All" = "Alle";
 "All versions" = "Alle Versionen";
 "Allow App Management" = "App-Verwaltung erlauben";
@@ -482,6 +482,7 @@
 "Last auto-update: %@ · %@" = "Letztes Auto-Update: %@ · %@";
 "Last refresh failed" = "Letzte Aktualisierung fehlgeschlagen";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@ bei „Alle aktualisieren“, den Zählern und Auto-Update auslassen. Upgrade funktioniert weiterhin manuell; eine neuere Version hebt das auf.";
+"Left out, changed or done since: %@" = "Ausgelassen, seitdem geändert oder erledigt: %@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "Der App überlassen: %@ ist nicht in „Alle upgraden“ oder Auto-Update.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Übrig gebliebene Links zeigen auf nicht mehr vorhandene Dateien. Meist harmlos; brew cleanup entfernt die meisten.";
 "Let the current package finish, then skip the rest" = "Das aktuelle Paket beenden lassen, dann den Rest überspringen";
@@ -699,6 +700,8 @@
 "Run %@ again, through the queue" = "%@ erneut ausführen, über die Warteschlange";
 "Run %lld brew commands?" = "%lld brew-Befehle ausführen?";
 "Run 1 brew command?" = "1 brew-Befehl ausführen?";
+"Run Again" = "Erneut ausführen";
+"Run again: %@ %@" = "Erneut ausführen: %1$@ %2$@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "Im Terminal ausführen, wenn du diese Version brauchst. brew version-install legt sie in deinem eigenen Tap ab, und du pflegst sie danach selbst.";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Führe es erneut über Homebrew ▸ Taps… aus; es fragt vorher nach.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "Führe es erneut über das Menü aus („Bereinigen…“ oder „Nicht benötigte Abhängigkeiten entfernen…“); es zeigt vorher, was entfernt wird.";
@@ -818,6 +821,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard führt nie sudo aus. Führe dies im Terminal aus:";
 "Tankard on GitHub" = "Tankard auf GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard steuert nur deine eigenen Dienste und führt nie sudo aus. Führe dies im Terminal aus:";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard wurde neu gestartet, damit macOS die App-Verwaltung anwendet. Nichts läuft, bevor du „Erneut ausführen“ klickst.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard führt brew update im Hintergrund aus, damit die Zahlen aktuell bleiben. Abschalten unter Einstellungen → Allgemein.";
 "Tankard update available" = "Tankard-Update verfügbar";
 "Tankard updates itself through brew" = "Tankard aktualisiert sich selbst über brew";

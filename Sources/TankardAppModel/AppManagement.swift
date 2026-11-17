@@ -105,51 +105,98 @@ extension AppManagement {
     }
 }
 
-/// 0.8.1: the operation to run again once Tankard has relaunched, kept in
+/// 0.8.1: the operation to offer again once Tankard has relaunched, kept in
 /// the defaults across the relaunch. Only for a short while: an old one is
-/// dropped, never run days later.
+/// dropped, never offered days later. It is never run on its own: the
+/// relaunched app shows it ("Run again") and a click sends it through the
+/// normal request path, with every gate.
 public struct AppManagementPendingRetry: Codable, Equatable, Sendable {
     public static let maxAge: TimeInterval = 15 * 60
 
     public var action: String
+    /// Only the targets that need App Management: casks that change apps.
+    /// For an uninstall, only the package the user chose (its unused
+    /// dependencies are worked out again by the normal path).
     public var packages: [Package]
     public var savedAt: Date
+    /// Upgrade targets' ids that would compile when saved.
+    public var compiling: [String]
 
-    public init(action: SessionAction, packages: [Package], savedAt: Date) {
+    public init(action: SessionAction, packages: [Package], savedAt: Date, compiling: Set<String> = []) {
         self.action = action.rawValue
         self.packages = packages
         self.savedAt = savedAt
+        self.compiling = compiling.sorted()
+    }
+
+    /// What to save from a prompt's targets (nil: nothing needs saving).
+    /// `root`: for an uninstall, the package the user chose.
+    public static func make(action: SessionAction, targets: [Package], root: Package?, savedAt: Date,
+                            compiles: (Package) -> Bool) -> AppManagementPendingRetry? {
+        guard AppManagement.retryable(action) else { return nil }
+        var keep = targets.filter { AppManagement.modifiesApps(action, $0) }
+        if action == .uninstall {
+            let chosen = root ?? targets.first
+            keep = keep.filter { $0.id == chosen?.id }
+        }
+        guard !keep.isEmpty else { return nil }
+        return AppManagementPendingRetry(action: action, packages: keep, savedAt: savedAt,
+                                         compiling: Set(keep.filter(compiles).map(\.id)))
     }
 
     public var sessionAction: SessionAction? { SessionAction(rawValue: action) }
 
-    /// What to run now, against what brew says after the relaunch: an
-    /// upgrade only of what is still outdated, an uninstall only of what is
-    /// still installed, an install or adopt only of what still isn't. Nil:
-    /// too old, not retryable, or nothing left to do.
-    public func resolve(installed: [Package], now: Date) -> (SessionAction, [Package])? {
+    /// What to offer now, against what brew says after the relaunch, and
+    /// what was dropped (by name). An upgrade only if still outdated to the
+    /// same version, with the same bottle-or-compile answer as when the user
+    /// confirmed it; an uninstall only if still installed; an install or
+    /// adopt only if still not installed. Nil: too old, not retryable, or
+    /// nothing left.
+    public func resolve(installed: [Package], now: Date,
+                        compiles: (Package) -> Bool = { _ in false }) -> AppManagementResume? {
         guard now.timeIntervalSince(savedAt) >= 0, now.timeIntervalSince(savedAt) <= Self.maxAge,
               let a = sessionAction, AppManagement.retryable(a) else { return nil }
         let byID = Dictionary(installed.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
-        let run: [Package]
-        switch a {
-        case .upgrade: run = packages.compactMap { byID[$0.id] }.filter(\.upgradeAvailable)
-        case .uninstall: run = packages.compactMap { byID[$0.id] }
-        default: run = packages.filter { byID[$0.id] == nil }
+        var run: [Package] = []
+        var dropped: [String] = []
+        for saved in packages {
+            let live = byID[saved.id]
+            switch a {
+            case .upgrade:
+                if let live, live.upgradeAvailable, live.currentVersion == saved.currentVersion,
+                   compiles(live) == compiling.contains(saved.id) {
+                    run.append(live)
+                } else {
+                    dropped.append(saved.name)
+                }
+            case .uninstall:
+                if let live { run.append(live) } else { dropped.append(saved.name) }
+            default:
+                if live == nil { run.append(saved) } else { dropped.append(saved.name) }
+            }
         }
-        return run.isEmpty ? nil : (a, run)
+        return run.isEmpty ? nil : AppManagementResume(action: a, packages: run, dropped: dropped)
     }
 
     public func encoded() -> Data? { try? JSONEncoder().encode(self) }
     public static func decode(_ data: Data?) -> Self? { data.flatMap { try? JSONDecoder().decode(Self.self, from: $0) } }
 }
 
+/// 0.8.1: the "Run again" offer after a relaunch, waiting for a click.
+public struct AppManagementResume: Equatable, Sendable {
+    public var action: SessionAction
+    public var packages: [Package]
+    /// Saved targets that no longer apply (changed or already done).
+    public var dropped: [String]
+}
+
 // MARK: probe (0.8.1)
 
-/// Whether Tankard may change apps, found out the way brew does
-/// (cask/staged.rb writes `<app>/.homebrew-write-test` and treats EPERM as
-/// "no App Management"): create an empty dot-file at the top of a
-/// Homebrew-installed app bundle and delete it at once. Run only when the
+/// Whether Tankard may change apps, found out the way brew does (brew's
+/// cask/quarantine.rb writes its own `<app>/.homebrew-write-test` and treats
+/// EPERM as "no App Management"): Tankard creates an empty
+/// `.tankard-write-test` (`fileName`) at the top of a Homebrew-installed
+/// app bundle and deletes it at once. Run only when the
 /// user asks (Check in the welcome sheet), never at launch, and only on an
 /// app from an installed cask's own artifact list: never on an app brew
 /// doesn't manage. The attempt is also what makes macOS show its

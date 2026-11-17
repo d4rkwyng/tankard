@@ -253,6 +253,11 @@ struct ContentView: View {
         if options.demo != nil && options.demoAppManagement == "1" {
             store.showAppManagementExplainer()
         }
+        // 0.8.1: the Run again offer after a relaunch (saved, then read back).
+        if options.demo != nil && options.demoAppManagement == "resume",
+           let p = store.packages.first(where: { $0.kind == .cask && $0.upgradeAvailable }) {
+            store.demoAppManagementResume([p])
+        }
         // 0.8.1: the relaunch page, for a blocked upgrade.
         if options.demo != nil && options.demoAppManagement == "relaunch",
            let p = store.packages.first(where: { $0.kind == .cask }) {

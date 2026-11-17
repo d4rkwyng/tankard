@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "Adopting runs through Tankard's queue and History.";
 "After adopting:" = "After adopting:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.";
-"After the relaunch, Tankard runs it again: %@ %@." = "After the relaunch, Tankard runs it again: %@ %@.";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "After the relaunch, Tankard offers to run it again: %@ %@.";
 "All" = "All";
 "All versions" = "All versions";
 "Allow App Management" = "Allow App Management";
@@ -482,6 +482,7 @@
 "Last auto-update: %@ · %@" = "Last auto-update: %@ · %@";
 "Last refresh failed" = "Last refresh failed";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this.";
+"Left out, changed or done since: %@" = "Left out, changed or done since: %@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "Left to the app: %@ isn't in Upgrade all or auto-update.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them.";
 "Let the current package finish, then skip the rest" = "Let the current package finish, then skip the rest";
@@ -699,6 +700,8 @@
 "Run %@ again, through the queue" = "Run %@ again, through the queue";
 "Run %lld brew commands?" = "Run %lld brew commands?";
 "Run 1 brew command?" = "Run 1 brew command?";
+"Run Again" = "Run Again";
+"Run again: %@ %@" = "Run again: %@ %@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on.";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Run it again from Homebrew ▸ Taps…; it asks first.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first.";
@@ -818,6 +821,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard never runs sudo. Run this in Terminal:";
 "Tankard on GitHub" = "Tankard on GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard only controls your own services and never runs sudo. Run this in Terminal:";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off.";
 "Tankard update available" = "Tankard update available";
 "Tankard updates itself through brew" = "Tankard updates itself through brew";

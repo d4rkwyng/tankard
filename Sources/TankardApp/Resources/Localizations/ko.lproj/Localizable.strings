@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "가져오기는 Tankard의 대기열과 기록을 통해 실행됩니다.";
 "After adopting:" = "가져온 후:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "목록을 표시한 뒤 확인 주기마다 최대 한 번 백그라운드에서 brew update를 실행하고 업그레이드 수를 새로 고칩니다. brew가 사용 중이면 기다리며, 실패(오프라인)는 로그에만 기록합니다. HOMEBREW_NO_AUTO_UPDATE가 설정되어 있으면 꺼집니다. 기본값은 켬.";
-"After the relaunch, Tankard runs it again: %@ %@." = "다시 시작한 후 Tankard가 다시 실행합니다: %1$@ %2$@.";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "다시 시작한 후 Tankard가 다시 실행할지 묻습니다: %1$@ %2$@.";
 "All" = "전체";
 "All versions" = "모든 버전";
 "Allow App Management" = "앱 관리 허용";
@@ -482,6 +482,7 @@
 "Last auto-update: %@ · %@" = "마지막 자동 업데이트: %@ · %@";
 "Last refresh failed" = "마지막 새로 고침 실패";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@을(를) 모두 업그레이드, 개수, 자동 업데이트에서 제외합니다. 직접 업그레이드는 여전히 가능하며, 새 버전이 나오면 해제됩니다.";
+"Left out, changed or done since: %@" = "제외됨(이후 변경되었거나 완료됨): %@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "앱에 맡김: %@은(는) 모두 업그레이드 및 자동 업데이트에 포함되지 않습니다.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "남은 링크가 사라진 파일을 가리킵니다. 대개 무해하며 brew cleanup이 대부분 제거합니다.";
 "Let the current package finish, then skip the rest" = "현재 패키지를 마친 후 나머지는 건너뛰기";
@@ -699,6 +700,8 @@
 "Run %@ again, through the queue" = "대기열을 통해 %@ 다시 실행";
 "Run %lld brew commands?" = "brew 명령 %lld개를 실행할까요?";
 "Run 1 brew command?" = "brew 명령 1개를 실행할까요?";
+"Run Again" = "다시 실행";
+"Run again: %@ %@" = "다시 실행: %1$@ %2$@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "이 버전이 필요하면 터미널에서 실행하세요. brew version-install은 사용자의 tap에 넣으며, 이후 관리는 직접 해야 합니다.";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Homebrew ▸ Tap…에서 다시 실행하세요. 먼저 확인합니다.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "메뉴(정리… 또는 사용하지 않는 의존성 제거…)에서 다시 실행하세요. 제거할 항목을 먼저 보여 줍니다.";
@@ -818,6 +821,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard는 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
 "Tankard on GitHub" = "GitHub의 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard는 사용자 본인의 서비스만 제어하며 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOS가 앱 관리를 적용하도록 Tankard를 다시 시작했습니다. 다시 실행을 클릭하기 전에는 아무것도 실행되지 않습니다.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 → 일반에서 끌 수 있습니다.";
 "Tankard update available" = "Tankard 업데이트 사용 가능";
 "Tankard updates itself through brew" = "Tankard는 brew를 통해 스스로 업데이트합니다";

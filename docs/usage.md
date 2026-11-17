@@ -403,10 +403,15 @@ casks with no app, and Replace with bottle never need it.
   seen it and carries on.
 - "I've done this" turns the sheet to **Relaunch Tankard**: macOS applies the permission to
   a process started after it (its own dialog says an app "will not be able to update or
-  delete other applications until it is quit"). Relaunching quits Tankard, starts it again
-  and, once the package list has loaded, runs the operation once more if it still applies
-  (an upgrade that is still outdated, an install that still isn't installed) and is less
-  than 15 minutes old. "Continue without relaunching" runs it straight away instead.
+  delete other applications until it is quit"). Relaunching quits Tankard and starts it
+  again; once the package list has loaded, the activity sheet offers **Run again** for the
+  operation, if it is less than 15 minutes old. Nothing runs until you click it, and then it
+  goes the normal way: an upgrade through the compile plan and pins, an uninstall through its
+  confirmation (which works out the unused dependencies again and rechecks each). Only the
+  casks that change apps are kept (for an uninstall, the package you chose). An upgrade
+  whose available version or bottle-or-compile answer has changed since, or anything already
+  done, is left out, and the sheet says so. "Continue without relaunching" runs it straight
+  away instead.
   Relaunch is offered only from Tankard.app (not `swift run`) and not while brew runs.
 - When brew's output shows the block (brew's "does not have App Management permissions",
   macOS's "prevented from modifying apps", or "Operation not permitted" on an Applications
