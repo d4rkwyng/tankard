@@ -610,6 +610,7 @@ public final class AppStore {
                 // upgrade, install and reinstall (any of them can run brew's periodic cleanup).
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
                     .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
+                    .merging(Self.uninstallEnvironment(action)) { $1 }
                 return QueuedCommand(executable: brew, arguments: args, environment: env.merging(extra) { $1 },
                                      display: BrewCommands.display(args, environment: extra))
             },
@@ -619,6 +620,15 @@ public final class AppStore {
             })
         upgrade?.isRetry = isRetry
         showUpgradeSheet = true
+    }
+
+    /// 0.8: Uninstall removes only the package, as its confirmation says
+    /// ("Its dependencies stay installed"). brew 7 runs `brew autoremove`
+    /// after every uninstall unless HOMEBREW_NO_AUTOREMOVE is set
+    /// (cmd/uninstall.rb), which also removes every other unused dependency
+    /// on the Mac; Remove Unused Dependencies is the place for that.
+    public nonisolated static func uninstallEnvironment(_ action: SessionAction) -> [String: String] {
+        action == .uninstall ? [RestorePlan.noAutoremoveKey: "1"] : [:]
     }
 
     /// 0.7: a sheet run whose commands come from the caller (a restore).

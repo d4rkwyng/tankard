@@ -403,6 +403,18 @@ struct InstallUninstallTests {
         #expect(await waitUntil { session.isFinished })
         #expect(session.title == "Uninstall complete")
         #expect(log.calls.contains(["uninstall", "--formula", "homebrew/core/vim"]))
+        // 0.8: brew 7 autoremoves after an uninstall unless told not to; the
+        // sheet promises the dependencies stay, so the command says so.
+        let cmd = try #require(session.items.first?.command)
+        #expect(cmd.environment["HOMEBREW_NO_AUTOREMOVE"] == "1")
+        #expect(cmd.display == "HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula homebrew/core/vim")
+    }
+
+    @Test func onlyUninstallGetsNoAutoremove() {
+        #expect(AppStore.uninstallEnvironment(.uninstall) == ["HOMEBREW_NO_AUTOREMOVE": "1"])
+        for a in [SessionAction.install, .upgrade, .cleanup, .autoremove, .tap, .untap, .restore, .replaceBottle] {
+            #expect(AppStore.uninstallEnvironment(a).isEmpty, "\(a)")
+        }
     }
 
     @Test func discoverIsMadeOnDemandOnly() async throws {

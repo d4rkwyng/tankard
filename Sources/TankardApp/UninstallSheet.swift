@@ -11,7 +11,8 @@ struct UninstallSheet: View {
 
     var body: some View {
         let dependents = store.dependents(of: package)
-        let command = BrewCommands.display(BrewCommands.uninstallArguments(for: package))
+        let command = BrewCommands.display(BrewCommands.uninstallArguments(for: package),
+                                           environment: AppStore.uninstallEnvironment(.uninstall))
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: dependents.isEmpty ? "trash" : "lock.fill")
