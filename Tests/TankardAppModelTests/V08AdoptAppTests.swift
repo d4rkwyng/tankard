@@ -78,7 +78,7 @@ struct V08AdoptAppTests {
         #expect(session.items.map(\.command.arguments) == [["install", "--cask", "--adopt", "homebrew/cask/obsidian"]])
         #expect(await waitUntil { store.upgrade?.isFinished == true })
         #expect(session.succeededCount == 1)
-        #expect(store.upgradeRules.selfUpdatePolicy("obsidian") == .app)
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/obsidian") == .app)
         #expect(await waitUntil { store.history.entries.contains { $0.arguments.contains("--adopt") } })
         #expect(store.history.entries.first { $0.arguments.contains("--adopt") }?.category == .install)
         // The refresh after the run lists the adopted cask.
@@ -124,15 +124,15 @@ struct V08AdoptAppTests {
     }
 
     @Test func selfUpdateRuleHoldsOnlySelfUpdatingCasks() {
-        let tokens: Set<String> = ["obsidian", "plain"]
+        let tokens: Set<String> = ["homebrew/cask/obsidian", "homebrew/cask/plain"]
         #expect(SelfUpdateRule.leftToApp(cask("obsidian"), appTokens: tokens))
         #expect(!SelfUpdateRule.leftToApp(cask("plain", autoUpdates: false), appTokens: tokens))
         #expect(!SelfUpdateRule.leftToApp(cask("other"), appTokens: tokens))
-        let snap = UpgradeRuleSnapshot(appUpdates: ["obsidian"])
+        let snap = UpgradeRuleSnapshot(appUpdates: ["homebrew/cask/obsidian"])
         #expect(snap.skipReason(cask("obsidian")) == .appUpdatesItself)
         #expect(snap.skipReason(cask("firefox")) == nil)
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: []) == false)
-        #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: ["a"]))
+        #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: ["homebrew/cask/a"]))
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: true, packages: [cask("a")], homebrewTokens: []))
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: true, packages: [], homebrewTokens: []) == false)
     }
@@ -142,15 +142,15 @@ struct V08AdoptAppTests {
         let rules = UpgradeRulesSettings(defaults: defaults)
         var changes = 0
         rules.onPolicyChange = { changes += 1 }
-        rules.setSelfUpdatePolicy("obsidian", .app)
+        rules.setSelfUpdatePolicy("homebrew/cask/obsidian", .app)
         rules.setSelfUpdatePolicy("firefox", .homebrew)
         rules.setSelfUpdatePolicy("firefox", .homebrew) // unchanged: no write, no notice
         #expect(changes == 2)
         let again = UpgradeRulesSettings(defaults: defaults)
-        #expect(again.selfUpdatePolicy("obsidian") == .app)
+        #expect(again.selfUpdatePolicy("homebrew/cask/obsidian") == .app)
         #expect(again.selfUpdatePolicy("firefox") == .homebrew)
         #expect(again.selfUpdatePolicy("other") == .automatic)
-        #expect(again.homebrewUpdatedTokens == ["firefox"] && again.appUpdatedTokens == ["obsidian"])
+        #expect(again.homebrewUpdatedTokens == ["firefox"] && again.appUpdatedTokens == ["homebrew/cask/obsidian"])
         again.setSelfUpdatePolicy("firefox", .automatic)
         #expect(again.selfUpdatePolicies["firefox"] == nil)
 
@@ -166,7 +166,7 @@ struct V08AdoptAppTests {
 
     @Test func autoUpdatePlanSkipsAppUpdatedCasks() {
         let plan = AutoUpdateSafeMode.plan([cask("obsidian"), cask("firefox")], classifier: CompileClassifier(), running: [],
-                                           dontQuitApps: true, rules: UpgradeRuleSnapshot(appUpdates: ["obsidian"]))
+                                           dontQuitApps: true, rules: UpgradeRuleSnapshot(appUpdates: ["homebrew/cask/obsidian"]))
         #expect(plan.run.map(\.name) == ["firefox"])
         #expect(plan.skipped.map(\.package.name) == ["obsidian"])
         #expect(plan.skipped.first?.reason == .appUpdatesItself)
@@ -180,12 +180,12 @@ struct V08AdoptAppTests {
         #expect(store.insights.settings.includeSelfUpdatingApps == false)
         let ts = { store.packages.first { $0.name == "tailscale-app" } }
         #expect(ts()?.upgradeAvailable == false)
-        store.upgradeRules.setSelfUpdatePolicy("tailscale-app", .homebrew) // re-reads with --greedy
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew) // re-reads with --greedy
         #expect(await waitUntil { ts()?.upgradeAvailable == true })
         #expect(ts()?.selfUpdatingUpgrade == true && ts()?.isUpgradeTarget == true)
         #expect(store.upgradable.contains { $0.name == "tailscale-app" })
         // "App updates itself": still listed by brew, but not a target.
-        store.upgradeRules.setSelfUpdatePolicy("tailscale-app", .app)
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .app)
         #expect(await waitUntil { ts()?.selfUpdateHeld == true || ts()?.upgradeAvailable == false })
         #expect(!store.upgradable.contains { $0.name == "tailscale-app" })
     }
@@ -307,10 +307,10 @@ struct V08AdoptAppTests {
                                 appVersion: "1.0", caskVersion: "1.0", autoUpdates: true, policy: .app)
         #expect(store.startAdopt([bad]))
         // Not saved before the run.
-        #expect(store.upgradeRules.selfUpdatePolicy("no-such-cask") == .automatic)
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/no-such-cask") == .automatic)
         #expect(await waitUntil { store.upgrade?.isFinished == true })
         #expect(store.upgrade?.failedItems.count == 1)
-        #expect(store.upgradeRules.selfUpdatePolicy("no-such-cask") == .automatic)
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/no-such-cask") == .automatic)
     }
 
     @Test func uninstallTooltipMatchesTheSheet() {
@@ -320,5 +320,28 @@ struct V08AdoptAppTests {
         #expect(one.contains("HOMEBREW_NO_AUTOREMOVE=1") && one.contains("brew uninstall") && one.hasSuffix("luarocks"))
         let lines = AppStore.uninstallDisplay(p, orphans: [lua]).split(separator: "\n")
         #expect(lines.count == 2 && lines.allSatisfy { $0.contains("HOMEBREW_NO_AUTOREMOVE=1") } && lines[1].hasSuffix("lua"))
+    }
+    // MARK: QA: self-update choices are per qualified cask and leave with it
+
+    @Test func selfUpdateChoiceIsPerTapAndClearedOnUninstall() async throws {
+        let store = try await openedDemo()
+        let ob = try #require(store.packages.first { $0.kind == .cask && $0.autoUpdates == true })
+        var other = ob
+        other.id = "cask:someone/tap/\(ob.name)"
+        other.tap = "someone/tap"
+        other.fullName = "someone/tap/\(ob.name)"
+        store.setSelfUpdatePolicy(ob, .app)
+        #expect(store.selfUpdatePolicy(ob) == .app)
+        #expect(store.selfUpdatePolicy(other) == .automatic)
+        #expect(store.upgradeRules.selfUpdatePolicies.keys.contains(SelfUpdateRule.key(ob)))
+        #expect(!SelfUpdateRule.leftToApp(other, appTokens: store.upgradeRules.appUpdatedTokens))
+        // Uninstalling the cask removes its choice.
+        store.closeToolSheet()
+        store.settings.appManagementExplained = true // no first-use explainer in between
+        store.requestUninstall(ob)
+        store.startUninstall(ob)
+        #expect(await waitUntil(timeout: .seconds(10)) { store.upgrade?.isFinished == true })
+        #expect(store.upgrade?.succeededCount == 1)
+        #expect(store.upgradeRules.selfUpdatePolicies[SelfUpdateRule.key(ob)] == nil)
     }
 }

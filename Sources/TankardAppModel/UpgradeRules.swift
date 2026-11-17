@@ -208,8 +208,9 @@ public final class UpgradeRulesSettings {
     }
     @ObservationIgnored private var _bumpRule: BumpRule
 
-    /// 0.8: cask token → `SelfUpdatePolicy` raw value (`app` or
-    /// `homebrew`; no entry is `.automatic`).
+    /// 0.8: the cask's qualified name ("homebrew/cask/foo",
+    /// "user/tap/foo": `SelfUpdateRule.key`) → `SelfUpdatePolicy` raw
+    /// value (`app` or `homebrew`; no entry is `.automatic`).
     public var selfUpdatePolicies: [String: String] {
         get { access(keyPath: \.selfUpdatePolicies); return _selfUpdate }
         set {
@@ -372,15 +373,19 @@ public extension AutoUpdateText {
 
 /// 0.8: the per-app self-update rule, pure.
 public enum SelfUpdateRule {
+    /// The policy's key: the qualified name, so a cask from another tap
+    /// with the same token doesn't share the choice.
+    public static func key(_ p: Package) -> String { p.qualifiedName }
+
     /// A cask whose app updates itself, set to "App updates itself".
     public static func leftToApp(_ p: Package, appTokens: Set<String>) -> Bool {
-        p.kind == .cask && p.autoUpdates == true && appTokens.contains(p.name)
+        p.kind == .cask && p.autoUpdates == true && appTokens.contains(key(p))
     }
 
     /// A cask set to "Homebrew updates it": its `--greedy` upgrade stays
     /// listed even with "Include self-updating apps" off.
     public static func keptByHomebrew(_ p: Package, homebrewTokens: Set<String>) -> Bool {
-        p.kind == .cask && homebrewTokens.contains(p.name)
+        p.kind == .cask && homebrewTokens.contains(key(p))
     }
 
     /// Whether the status read needs `brew outdated --greedy`.

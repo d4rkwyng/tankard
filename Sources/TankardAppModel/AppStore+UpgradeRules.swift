@@ -35,11 +35,11 @@ extension AppStore {
     }
 
     /// 0.8: "App updates itself" / "Homebrew updates it" (detail pane, Adopt Apps).
-    public func selfUpdatePolicy(_ p: Package) -> SelfUpdatePolicy { upgradeRules.selfUpdatePolicy(p.name) }
+    public func selfUpdatePolicy(_ p: Package) -> SelfUpdatePolicy { upgradeRules.selfUpdatePolicy(SelfUpdateRule.key(p)) }
 
     public func setSelfUpdatePolicy(_ p: Package, _ policy: SelfUpdatePolicy) {
         guard p.kind == .cask else { return }
-        upgradeRules.setSelfUpdatePolicy(p.name, policy)
+        upgradeRules.setSelfUpdatePolicy(SelfUpdateRule.key(p), policy)
     }
 
     /// "Skip This Version" / "Don't Skip" (detail pane, right-click).

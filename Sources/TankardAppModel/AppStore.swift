@@ -708,6 +708,12 @@ public final class AppStore {
 
     private func sessionFinished(_ session: UpgradeSession) {
         if session.action == .adopt { adoptSessionFinished(session) }
+        // 0.8: an uninstalled cask's self-update choice goes with it.
+        if session.action == .uninstall {
+            for item in session.items where item.state == .done && item.package.kind == .cask {
+                upgradeRules.setSelfUpdatePolicy(SelfUpdateRule.key(item.package), .automatic)
+            }
+        }
         // Reconcile: what brew now says, not what we assume. Then (0.4)
         // the caveats of what changed, once.
         Task {

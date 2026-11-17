@@ -163,7 +163,7 @@ public final class AdoptStore {
     @ObservationIgnored public var managed: @MainActor (AdoptIndex) -> ManagedApps = { _ in ManagedApps() }
     @ObservationIgnored private var loadToken = 0
     /// The running adoption's self-update choices, saved per app only once
-    /// its adopt succeeded (token → policy).
+    /// its adopt succeeded (qualified name → policy).
     @ObservationIgnored var policiesToSave: [String: SelfUpdatePolicy] = [:]
 
     public init() {}
@@ -377,7 +377,7 @@ public extension AppStore {
         guard !items.isEmpty, !isUpgrading, !autoUpdate.isRunning, report != nil else { return false }
         startSession(.adopt, packages: items.map { $0.asPackage() })
         guard isUpgrading else { return false }
-        adopt.policiesToSave = Dictionary(items.filter { $0.autoUpdates && $0.policy != .automatic }.map { ($0.token, $0.policy) },
+        adopt.policiesToSave = Dictionary(items.filter { $0.autoUpdates && $0.policy != .automatic }.map { ($0.qualifiedName, $0.policy) },
                                           uniquingKeysWith: { $1 })
         return true
     }
@@ -388,7 +388,8 @@ public extension AppStore {
         let policies = adopt.policiesToSave
         adopt.policiesToSave = [:]
         for item in session.items where item.state == .done {
-            if let policy = policies[item.package.name] { upgradeRules.setSelfUpdatePolicy(item.package.name, policy) }
+            let key = SelfUpdateRule.key(item.package)
+            if let policy = policies[key] { upgradeRules.setSelfUpdatePolicy(key, policy) }
         }
     }
 }
