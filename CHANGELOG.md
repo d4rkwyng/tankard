@@ -31,7 +31,7 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Changed
 - **App Management covers every app change.** The macOS App Management explainer and the block detection now cover cask install (Discover, Brewfile, Health), adopt, reinstall, a restore's cask reinstall and auto-update, not just upgrade and uninstall. A block now reads **"macOS blocked changing an app"**, in the log and History, instead of the misleading "Homebrew couldn't write to its folders".
-- After you grant the permission, **Relaunch Tankard** (macOS may apply the grant only to a newly started app) quits and reopens Tankard, which then offers **Run again** for the blocked operation, with Cancel. It never runs by itself; Run Again goes through the usual confirmations. "Continue without relaunching" still retries in place.
+- After you grant the permission, **Relaunch Tankard** (macOS may apply the grant only to a newly started app) quits and reopens Tankard, which then offers **Run Again** for the blocked operation, with Cancel. It never runs by itself; Run Again goes through the usual confirmations. "Continue without relaunching" still retries in place.
 - Auto-update notifies when macOS blocks a cask, saying to allow Tankard and relaunch.
 - Font casks and other casks that install no app no longer get the App Management explainer when installed from Discover.
 - **Settings ▸ Upgrades** is laid out in three sections, **When upgrading**, **Automatic updates** and **Vulnerability scan**, in one aligned column with notes that wrap instead of being cut off (German labels no longer run off the edge). **Keep the previous version** has an ⓘ button. The settings themselves are unchanged.
@@ -90,7 +90,9 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Keep the previous version after upgrades** (Settings ▸ Upgrades) now covers every upgrade, install and reinstall Tankard runs, formulae and casks, by hand and by auto-update (`HOMEBREW_NO_INSTALL_CLEANUP=1`, shown in the command). Any of them can start brew's periodic cleanup, which removes the old versions of every formula, not only its own.
 - The Brewfile restore plan's missing taps get an **Add Tap…** button (same confirmation) instead of a `brew tap` command to copy.
 - **Localization**: Tankard follows the macOS language (System Settings ▸ General ▸ Language & Region, or per app) in German, French, Spanish, Japanese, Simplified Chinese, Portuguese (Brazil), Italian and Korean, besides English. The translations are machine translations and will read that way in places; corrections are welcome. Brew commands, package and tap names, and brew's own output stay as brew writes them.
-- For contributors: every user-facing string lives in `Resources/Localizable.xcstrings`. `Scripts/l10n.py extract` adds new strings from the source, `Scripts/l10n.py compile` writes the `.lproj` files the app loads (the Command Line Tools can't compile a string catalog themselves), and a test fails if any string lacks a shipped language. `APP_LANG=de Scripts/layout-check.sh` runs the layout check in another language.
+
+### For contributors
+- Every user-facing string lives in `Resources/Localizable.xcstrings`. `Scripts/l10n.py extract` adds new strings from the source, `Scripts/l10n.py compile` writes the `.lproj` files the app loads (the Command Line Tools can't compile a string catalog themselves), and a test fails if any string lacks a shipped language. `APP_LANG=de Scripts/layout-check.sh` runs the layout check in another language.
 
 ## [0.6.2]
 
@@ -102,16 +104,16 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.6.1]
 
+### Changed
+- **ⓘ buttons** next to each setting in Settings (General, Upgrades, Automatic updates) show its explanation on click; the hover tooltips stay.
+- **Scan Now** beside the vulnerability scan setting (Settings → Upgrades), and **Homebrew ▸ Scan for Vulnerabilities**, replace "Scan for Vulnerabilities Now" in the More menu.
+- A running scan shows a spinner, "Scanning N formulae…", the elapsed time and **Stop** in the status bar and the menu-bar panel; afterwards "Scanned N · found M" (or a partial, stopped or timed-out note). Stop ends brew vulns; the 60-second limit still applies.
+
 ### Fixed
 - After choosing a filter from the **More** menu (such as Has notes), the window could no longer be dragged by its toolbar until you switched to Discover and back. The More filters are now a standard pop-up menu, and dragging works.
 - The toolbar's logo now moves the window when dragged, like the rest of the toolbar.
 - Leaving the Installed tab clears a **More** filter (Has notes, Pinned…), so Installed comes back showing All.
 - The About examples in the docs no longer name an old version.
-
-### Changed
-- **ⓘ buttons** next to each setting in Settings (General, Upgrades, Automatic updates) show its explanation on click; the hover tooltips stay.
-- **Scan Now** beside the vulnerability scan setting (Settings → Upgrades), and **Homebrew ▸ Scan for Vulnerabilities**, replace "Scan for Vulnerabilities Now" in the More menu.
-- A running scan shows a spinner, "Scanning N formulae…", the elapsed time and **Stop** in the status bar and the menu-bar panel; afterwards "Scanned N · found M" (or a partial, stopped or timed-out note). Stop ends brew vulns; the 60-second limit still applies.
 
 ## [0.6.0]
 
@@ -133,13 +135,13 @@ are its section below (`Scripts/changelog-section.sh`).
 ## [0.5.0]
 
 ### Added
-- **Settings are shorter:** the long explanations under each checkbox are now tooltips; only the OSV.dev privacy note and a one-line safe-mode summary stay visible.
 - **Automatic updates** (Settings → Upgrades, off by default): upgrade packages every day or every week at a chosen time, while Tankard is running, on AC power and after 10 minutes without input. A missed time runs once at the next chance. No helper or launch agent: the menu-bar icon keeps Tankard running.
 - **Safe mode**, always on and spelled out in Settings: `brew update` first; bottles only (formulae whose upgrade or outdated dependencies would compile are skipped, and so are formulae whose upgrade would make brew upgrade or rebuild an installed dependent that has no bottle: those stay in Upgrades to do by hand, since turning brew's dependents check off could leave that dependent linked to a removed library); pinned packages skipped; casks whose app is running skipped unless "Don't quit running apps" is on, and an automatic run never quits an app; Tankard itself left to brew.
 - **Auto-update log**: the last 20 runs with what was upgraded, skipped (and why) and what failed; a notification after each run that changed something; "Last auto-update: …" in the menu-bar menu.
 - The menu-bar menu shows "Tankard 0.x available" when brew lists an upgrade for Tankard's cask.
 
 ### Changed
+- **Settings are shorter.** The long explanations under each checkbox are now tooltips; only the OSV.dev privacy note and a one-line safe-mode summary stay visible.
 - One timer runs both the update notifications (still off by default, a separate setting) and automatic updates.
 - `tankard status --json` cask entries gain `appPaths` and `quitBundleIDs` (from `brew info`'s artifacts; schema version 1, added fields).
 - The menu-bar menu lists at most 8 upgrades (was 12); "and N more…" opens Tankard on the Upgrades list. The menu-bar count shows "99+" above 99.
