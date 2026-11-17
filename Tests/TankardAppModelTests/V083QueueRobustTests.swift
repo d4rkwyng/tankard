@@ -318,3 +318,64 @@ struct V083QuitGuardTests {
         #expect(store.interruptedRun == nil)
     }
 }
+
+@MainActor
+struct V083RetryTests {
+    @Test func checksumIsRecognised() {
+        // exceptions.rb ChecksumMismatchError (brew 7.0.14).
+        #expect(BrewFailure.classify(["Error: SHA-256 mismatch", "Expected: abc", "  Actual: def",
+                                      "To retry an incomplete download, remove the file above."]) == .checksum)
+        #expect(UpgradeSession.nextStep(.checksum)?.contains("brew update") == true)
+        #expect(UpgradeSession.nextStep(.network)?.contains("connection") == true)
+        #expect(UpgradeSession.nextStep(.appManagement) == nil)
+        for k in BrewFailureKind.allCases where k != .appManagement { #expect(UpgradeSession.nextStep(k) != nil) }
+    }
+
+    @Test func retryFailedGoesThroughTheUpgradePath() async throws {
+        let calls = CallLog()
+        let failing = LockSwitch(true)
+        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let runner = FakeStreamRunner(log: calls, behaviour: { args, out in
+            guard args.first == "upgrade" else { return 0 }
+            if failing.value, calls.count("upgrade") % 2 == 1 {
+                out(Data("curl: (6) Could not resolve host: ghcr.io\n".utf8))
+                return 1
+            }
+            return 0
+        })
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil))
+        await store.start()
+        let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).filter { !store.deps.classifier.upgradeMethod($0).compiles }.prefix(2))
+        #expect(pkgs.count == 2)
+        store.startUpgrade(pkgs)
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+        #expect(s.failedItems.map(\.package.name) == [pkgs[0].name])
+        #expect(s.retryableItems.count == 1)
+        #expect(s.nextStep == "Check your internet connection, then retry.")
+        failing.value = false
+        #expect(await waitUntil { !store.isRefreshing })
+        store.retryInSheet()
+        let again = try #require(store.upgrade)
+        #expect(again !== s)
+        #expect(again.items.map(\.package.name) == [pkgs[0].name])
+        #expect(await waitUntil { again.isFinished })
+        #expect(again.failedItems.isEmpty)
+    }
+
+    @Test func noRetryForActionsThatAskFirst() async throws {
+        let calls = CallLog()
+        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let runner = FakeStreamRunner(log: calls, behaviour: { args, _ in args.first == "uninstall" ? 1 : 0 })
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil))
+        await store.start()
+        let xz = try #require(store.packages.first { $0.name == "xz" })
+        store.startSession(.uninstall, packages: [xz])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+        #expect(!s.failedItems.isEmpty)
+        #expect(s.retryableItems.isEmpty)
+        store.retryInSheet()
+        #expect(store.upgrade === s)
+    }
+}

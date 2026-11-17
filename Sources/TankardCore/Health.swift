@@ -115,6 +115,9 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
     /// 0.8.1: macOS's App Management permission stopped a change to an app
     /// in an Applications folder (Privacy & Security → App Management).
     case appManagement
+    /// 0.8.3: a download didn't match the checksum brew expected
+    /// (exceptions.rb ChecksumMismatchError: "SHA-256 mismatch").
+    case checksum
 
     public var title: String {
         switch self {
@@ -123,6 +126,7 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
         case .network: return String(localized: "Homebrew couldn't reach the network")
         case .diskFull: return String(localized: "The disk is full")
         case .permissions: return String(localized: "Homebrew couldn't write to its folders")
+        case .checksum: return String(localized: "A download didn't match its checksum")
         }
     }
 
@@ -138,6 +142,8 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
             return String(localized: "There's no space left to download or unpack. Free some space (Clean Up helps), then retry.")
         case .permissions:
             return String(localized: "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.")
+        case .checksum:
+            return String(localized: "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.")
         }
     }
 }
@@ -153,6 +159,9 @@ public enum BrewFailure {
             return .locked
         }
         if isAppManagementBlock(lines.map { $0 }) { return .appManagement }
+        if text.contains("sha-256 mismatch") || text.contains("sha256 mismatch") || text.contains("checksum mismatch") {
+            return .checksum
+        }
         if text.contains("no space left on device") || text.contains("disk full") || text.contains("enospc") {
             return .diskFull
         }

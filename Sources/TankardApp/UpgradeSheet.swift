@@ -46,6 +46,12 @@ struct UpgradeSheet: View {
             FlowLayout(spacing: 6) {
                 ForEach(session.items) { item in
                     Chip(item: item, action: session.action)
+                        .contextMenu {
+                            // 0.8.3: one failed step again.
+                            if session.retryableItems.contains(where: { $0.id == item.id }) {
+                                Button("Retry \(item.package.name)") { store.retryInSheet([item]) }
+                            }
+                        }
                 }
             }
             .padding(.top, 12)
@@ -72,6 +78,15 @@ struct UpgradeSheet: View {
             LogView(assembler: session.log)
                 .frame(height: 236)
 
+            // 0.8.3: what to do about a failure Tankard recognises.
+            if let next = session.nextStep {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Image(systemName: "arrow.uturn.forward.circle").foregroundStyle(.orange)
+                    Text(next).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 10)
+            }
+
             HStack(spacing: 8) {
                 Text(session.logURL.map { String(localized: "Full log saved to \(AppPaths.tilde($0))") } ?? String(localized: "Demo mode: no log file written"))
                     .font(.system(size: 11))
@@ -80,6 +95,13 @@ struct UpgradeSheet: View {
                     .truncationMode(.middle)
                 Spacer()
                 if session.isFinished {
+                    let retry = session.retryableItems
+                    if !retry.isEmpty {
+                        Button(session.total == 1 ? String(localized: "Retry") : String(localized: "Retry Failed (\(retry.count))")) {
+                            store.retryInSheet()
+                        }
+                        .help("Run the failed steps again (the same checks as the Upgrade and Install buttons apply)")
+                    }
                     Button("Done") { store.closeUpgrade() }
                         .buttonStyle(.primaryAction)
                         .keyboardShortcut(.defaultAction)
