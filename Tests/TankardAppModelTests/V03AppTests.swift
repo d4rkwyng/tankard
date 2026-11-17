@@ -661,7 +661,7 @@ struct AboutTests {
         #expect(v.build == "")
         #expect(TankardVersion.string == "0.4.0")
         #expect(AboutInfo.author == "Made by d4rkwyng")
-        #expect(AboutInfo.copyright == "© 2026 Tankard contributors")
+        #expect(AboutInfo.copyright == "© 2026 d4rkwyng")
         #expect(AboutInfo.newIssue.absoluteString == "https://github.com/d4rkwyng/tankard/issues/new")
         #expect(AboutInfo.homebrewLine.contains("brew.sh"))
         #expect(AboutInfo.notAffiliated == "Not affiliated with or endorsed by the Homebrew project.")

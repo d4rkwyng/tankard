@@ -24,6 +24,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - **Clean Up** is in the View menu only; the toolbar trash button is gone (it read as "delete").
 - The menu-bar mug faces left, like Tankard's logo.
+- The About panel's copyright line reads "© 2026 d4rkwyng".
 - One rule for what "upgrade everything" means: Upgrade all, the menu-bar count, upgrade notifications and Upgrade vulnerable packages all leave pinned packages out. With "Include self-updating apps" on, those casks count as upgrades everywhere too, unless pinned.
 - `tankard status --json` packages gain `directDependencies` (formulae; schema version 1, an added field).
 
