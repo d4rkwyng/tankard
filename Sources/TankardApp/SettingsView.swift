@@ -7,13 +7,16 @@ struct SettingsView: View {
     @Bindable var settings: AppSettings
     var notifier: SystemNotifier
     var loginItem: LoginItem
+    /// 0.4: Settings → Upgrades.
+    var insightSettings: InsightSettings?
     private let tab: State<String>
 
     /// `initialTab`: which tab shows first ("general", "appearance"; snapshots).
     init(appearance: AppearanceSettings, settings: AppSettings, notifier: SystemNotifier, loginItem: LoginItem,
-         initialTab: String = "general") {
+         insightSettings: InsightSettings? = nil, initialTab: String = "general") {
         self.appearance = appearance
         self.settings = settings
+        self.insightSettings = insightSettings
         self.notifier = notifier
         self.loginItem = loginItem
         tab = State(initialValue: initialTab)
@@ -24,6 +27,11 @@ struct SettingsView: View {
             GeneralSettings(settings: settings, notifier: notifier, loginItem: loginItem)
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag("general")
+            if let insightSettings {
+                UpgradeSettings(settings: insightSettings)
+                    .tabItem { Label("Upgrades", systemImage: "arrow.up.circle") }
+                    .tag("upgrades")
+            }
             Form {
                 Picker("Appearance", selection: $appearance.theme) {
                     ForEach(AppTheme.allCases) { t in

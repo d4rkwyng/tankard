@@ -105,7 +105,8 @@ public struct StatusClassifier: Sendable {
             autoUpdates: nil,
             dependencies: latest.runtimeDependencies.map { $0.map(\.fullName) } ?? f.dependencies ?? [],
             homepage: f.homepage,
-            directDependencies: Self.directDependencies(latest.runtimeDependencies, declared: f.dependencies)
+            directDependencies: Self.directDependencies(latest.runtimeDependencies, declared: f.dependencies),
+            caveats: f.caveats
         )
     }
 
@@ -145,7 +146,8 @@ public struct StatusClassifier: Sendable {
             autoUpdates: c.autoUpdates,
             dependencies: c.dependsOn?.formula ?? [],
             caskDependencies: c.dependsOn?.cask ?? [],
-            homepage: c.homepage
+            homepage: c.homepage,
+            caveats: c.caveats
         )
     }
 

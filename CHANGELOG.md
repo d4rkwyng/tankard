@@ -6,8 +6,6 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.4.0]
 
-Part A. (Vulnerabilities, caveats, sizes and the greedy toggle are part B.)
-
 ### Added
 - **Pin and Unpin** (`brew pin` / `brew unpin --formula|--cask <tap>/<name>`, through the queue) in the detail pane and the right-click menu, replacing v0.3's placeholder. Pinned packages get a "pinned" badge, a box in the detail pane with the exact command, and a **Pinned** filter. Upgrade all, the menu-bar count and upgrade notifications leave pinned packages out, and the status bar says so ("1 pinned upgrade not included (sqlite)"); a pinned package's own Upgrade button is disabled until it is unpinned.
 - **Requested only** filter: packages you installed yourself that nothing installed needs (`brew leaves --installed-on-request`, plus casks). Pinned and Requested only are in a menu next to the segmented filter.
@@ -15,9 +13,17 @@ Part A. (Vulnerabilities, caveats, sizes and the greedy toggle are part B.)
 - **Dependency tree**: an expandable `brew deps --tree` in the detail pane, from the receipts' `declared_directly` entries in brew's order.
 - **Services** tab (⌘3): `brew services list --json` with status, user, exit code and plist, and `brew services info --json` for the selected service (label, PID, logs, the command it runs). Start, Stop and Restart run through the queue with the exact command shown. Services that run as root (started with sudo) are never touched: Tankard shows the `sudo brew services …` command to run in Terminal, and turns brew's own "started as `root`" error into the same advice.
 - **Homebrew menu**: **Revert to Standard Homebrew…** (Intelbrew mode only) and **Uninstall Homebrew…**. Each opens a sheet with every command it will run, needs the word typed ("revert", "uninstall"), and then opens Terminal with a `.command` script that lists the commands again and waits for Return. Revert follows Intelbrew's README: it removes the three `HOMEBREW_*` lines from the zsh and bash startup files (each backed up first), points Homebrew/brew's origin back to upstream and runs `brew update`. Uninstall runs Homebrew's official uninstaller, which asks once more. Neither runs inside the app.
+- **Vulnerability scan** with Homebrew 7's `brew vulns`: vulnerable formulae get a ⚠ tag with the severity, the detail pane lists each advisory (linked to OSV.dev) with "fixed in", a Vulnerable filter, and "Upgrade vulnerable packages" through the normal upgrade path (pinned packages left out). Runs after each refresh (cached for an hour, can be turned off) and on demand; when brew couldn't check every formula, Tankard says "partial scan" and why. brew itself sends each formula's source repository and version to OSV.dev; casks aren't scanned.
+- Optional **menu-bar notice for new vulnerabilities** (off by default).
+- **Notes from brew** (caveats) in the detail pane, a "Has notes" filter, and a one-time "Post-install notes" sheet after an install or upgrade.
+- **Size on disk**: a sortable Size column and the total in the summary strip, from `brew info --sizes`, measured in the background.
+- **Include self-updating apps** setting (off by default): also lists casks that update themselves, as `brew outdated --greedy` does.
+- **Don't quit running apps during upgrades** setting (off by default): cask upgrades run with `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, shown in the command.
+- Settings → Upgrades for these options.
 
 ### Changed
 - `tankard status --json` packages gain `directDependencies` (formulae; schema version 1, an added field).
+
 ## [0.3.1]
 
 ### Fixed

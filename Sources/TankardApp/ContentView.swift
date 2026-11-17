@@ -85,6 +85,11 @@ struct ContentView: View {
                     .frame(width: 460)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
+            case "settings-upgrades":
+                return AnyView(UpgradeSettings(settings: store.insights.settings)
+                    .frame(width: 460)
+                    .themed(theme)
+                    .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             default:
                 return nil
             }
@@ -130,6 +135,9 @@ struct ContentView: View {
         }
         .sheet(item: $store.managementSheet) { kind in
             HomebrewManagementSheet(store: store, kind: kind, isDemo: options.isDemo).themed(theme)
+        }
+        .sheet(item: Bindable(store.insights).postInstallNotes) { n in
+            PostInstallNotesSheet(notes: n) { store.insights.postInstallNotes = nil }.themed(theme)
         }
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
@@ -179,6 +187,18 @@ struct ContentView: View {
         }
         if options.demo != nil && options.demoPlan {
             store.requestUpgrade()
+        }
+        if options.demo != nil && options.demoVulnNotice {
+            store.insights.settings.notifyNewVulnerabilities = true
+            await store.insights.waitForIdle()
+            store.insights.settings.seenVulnerabilities = []
+        }
+        if options.demo != nil && options.demoNotes {
+            // 0.4: upgrade, close the finished sheet, and the notes follow.
+            store.startUpgrade()
+            while store.upgrade?.isFinished != true || store.isRefreshing { try? await Task.sleep(for: .milliseconds(200)) }
+            try? await Task.sleep(for: .milliseconds(500))
+            store.closeUpgrade()
         }
         if options.demo != nil && options.demoCleanup {
             store.openCleanup()
@@ -251,8 +271,10 @@ struct SummaryStrip: View {
                             Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
                             Text("Everything is up to date").foregroundStyle(.secondary)
                         }
+                        DiskTotalText(store: store)
                     }
                     .font(.system(size: 12))
+                    .lineLimit(1)
                 } else if store.isRefreshing {
                     Text("Reading installed packages…").font(.system(size: 13, weight: .medium))
                     Text(store.refreshPhase ?? " ").font(.system(size: 12)).foregroundStyle(.secondary)
@@ -335,6 +357,8 @@ struct FilterActions: View {
                 .disabled(store.isUpgrading || store.isRefreshing)
                 .help("brew reinstall --force-bottle --formula each one, through the queue")
             }
+        case .vulnerable:
+            VulnerableFilterActions(store: store)
         default:
             EmptyView()
         }
@@ -378,6 +402,7 @@ struct PackageTable: View {
                                 .help("Installed as a dependency")
                         }
                         if p.pinned { PinnedBadge() }
+                        VulnerabilityTag(package: p)
                     }
                     if let w = store.deps.classifier.upgradeWarning(p) {
                         // Orange in every list, not only Upgrades: it's what the user is about to wait for.
@@ -420,6 +445,11 @@ struct PackageTable: View {
                 SourceBadge(kind: p.badgeKind, label: p.badgeLabel(intelbrewMode: intelbrew))
             }
             .width(min: 120, ideal: 170)
+
+            TableColumn("Size", value: \Package.sizeSortKey) { p in
+                SizeCell(package: p)
+            }
+            .width(min: 56, ideal: 72)
         }
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)

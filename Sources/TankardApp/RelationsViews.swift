@@ -28,45 +28,6 @@ struct PinnedBadge: View {
     }
 }
 
-/// The filters that don't fit the segmented control (Pinned, Requested
-/// only), as a menu next to it. Its label names the active one.
-struct MoreFiltersMenu: View {
-    @Bindable var store: AppStore
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        let active = PackageFilter.more.contains(store.filter)
-        Menu {
-            ForEach(PackageFilter.more) { f in
-                Button {
-                    store.filter = f
-                } label: {
-                    if store.filter == f {
-                        Label("\(f.title)  \(store.count(f))", systemImage: "checkmark")
-                    } else {
-                        Text("\(f.title)  \(store.count(f))")
-                    }
-                }
-            }
-        } label: {
-            if active {
-                Text("\(store.filter.title)  \(store.count(store.filter))")
-                    .font(.system(size: 12, weight: .semibold))
-            } else {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .accessibilityLabel("More filters")
-            }
-        }
-        .menuStyle(.borderlessButton)
-        .fixedSize()
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
-        .background(RoundedRectangle(cornerRadius: 6).fill(active ? theme.chip : .clear))
-        .overlay(RoundedRectangle(cornerRadius: 6).stroke(active ? theme.accent : .clear, lineWidth: 1))
-        .help("Pinned: packages brew won't upgrade. Requested only: what you installed yourself that nothing else needs (brew leaves -r).")
-    }
-}
-
 /// Pin box, Depends on, Used by and the dependency tree, under the
 /// detail pane's facts.
 struct PackageRelationsSection: View {

@@ -11,13 +11,15 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     /// 0.4: installed on request and needed by nothing installed
     /// (`brew leaves --installed-on-request`, plus casks).
     case leaves
+    /// 0.4: open vulnerabilities from `brew vulns`; caveats from `brew info`.
+    case vulnerable, hasNotes
 
     public var id: String { rawValue }
 
     /// The segmented control's filters; the others are in its "More" menu.
     public static let segmented: [PackageFilter] = [.all, .upgrades, .source, .newer, .bottleAvailable]
     /// 0.4: the "More" menu next to the segmented control.
-    public static let more: [PackageFilter] = [.pinned, .leaves]
+    public static let more: [PackageFilter] = [.pinned, .leaves, .vulnerable, .hasNotes]
 
     /// Whether `includes` needs the other packages (leaves do).
     public var needsGraph: Bool { self == .leaves }
@@ -37,6 +39,8 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .bottleAvailable: return "Bottle available"
         case .pinned: return "Pinned"
         case .leaves: return "Requested only"
+        case .vulnerable: return "Vulnerable"
+        case .hasNotes: return "Has notes"
         }
     }
 
@@ -51,6 +55,8 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         // Without the other packages only half the rule can be checked;
         // AppStore always passes the graph.
         case .leaves: return p.requested
+        case .vulnerable: return p.isVulnerable
+        case .hasNotes: return p.hasCaveats
         }
     }
 }

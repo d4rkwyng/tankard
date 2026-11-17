@@ -32,6 +32,42 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   is blocked and the pane and dialog list them. brew refuses such an uninstall too. An
   upgrade that compiles is flagged here too, with the Intelbrew build time when known, and
   a source build whose version has a bottle gets the *Replace with bottle* box.
+- **Vulnerabilities (0.4):** after each status read Tankard runs `brew vulns --json`
+  (Homebrew 7; reads stdout only, because brew prints its warnings on stderr). A formula
+  with open advisories gets a ⚠ tag in the Package column ("High · 3"; "Vulnerable" when
+  OSV gives no severity). The detail pane lists each advisory: its id linked to
+  `osv.dev/vulnerability/<id>`, the severity, brew's summary, and "Fixed in X" (a
+  release), "Fixed upstream in commit abc1234" (OSV only knows a commit; brew's formula
+  may not have a release with it yet) or "No fix listed". brew marks a scan incomplete
+  (`"complete": false`) when it skipped any formula (no source repository it can match,
+  an untrusted tap, an old keg without an SBOM): Tankard says "partial scan", with the
+  reasons, in the filter menu and the detail pane. A formula brew skipped says "Not
+  checked by brew vulns". Casks aren't scanned. Findings only apply while the installed
+  version is the one brew checked; after an upgrade the next scan decides.
+  - The filter menu next to the segments (⚠ and the count when anything is vulnerable)
+    has **Vulnerable**, **Has notes** and **Scan for Vulnerabilities Now**. In Vulnerable,
+    the green **Upgrade N** runs the normal upgrade (plan sheet, queue) for the vulnerable
+    packages that have an upgrade; pinned ones are left out. Its tooltip names the ones
+    with no upgrade yet.
+  - The scan is cached for an hour (`insights.json` next to `status.json`) and runs again
+    after a manual refresh and after every install, upgrade or uninstall. A failed scan
+    keeps the last result. On a brew without `vulns` the menu says so.
+  - Settings → Upgrades: "Scan for vulnerabilities when refreshing" (on) and "Show new
+    vulnerabilities in the menu bar" (off). With the notice on, the menu-bar menu shows
+    "New vulnerabilities: …" when a scan finds an advisory that wasn't there at the last
+    look (the first scan is the baseline); **Show** opens the Vulnerable list and marks
+    them seen.
+- **Notes from brew (0.4):** the caveats from `brew info --installed --json=v2`, shown in
+  the detail pane under "Notes from brew" (collapsible, copyable), with brew's
+  `$HOMEBREW_PREFIX` replaced by this Mac's prefix. The **Has notes** filter lists the
+  packages that have them. After an install or upgrade, once the status is re-read, a
+  **Post-install notes** sheet lists the notes of what just changed (after the activity
+  sheet closes); it appears once per run.
+- **Size (0.4):** the Size column (sortable) and "· N GB on disk" in the summary strip
+  come from `brew info --sizes`: brew's own measurement (kegs, and each cask's Caskroom
+  folder followed to the app), decimal units rounded to 0.1, so a row can be off by
+  0.05 of a unit. It runs in the background after a status read and is cached like the
+  scan; "On disk" is also in the detail pane.
 - **Status bar:** the fork status in Intelbrew mode (green: core and brew on the forks and
   brew on its newest tag; orange: brew on upstream or behind; red: core not on the fork),
   "Updated N min ago" (hover for the time, and whether it came from the cache), and the
@@ -122,6 +158,22 @@ Settings → General, off by default (`SMAppService.mainApp`). The toggle shows 
 state, including "Waiting for approval in System Settings → General → Login Items". The
 login item is tied to the code signature, so it is reliable with a Developer ID build; an
 ad-hoc build may be refused or forgotten. Not tested end to end.
+
+## Self-updating apps and running apps
+
+Settings → Upgrades (0.4), both off by default:
+
+- **Include self-updating apps.** brew's `outdated` flag skips casks with `auto_updates
+  true` and `version :latest`, because those apps usually update themselves. With this
+  on, each status read also runs `brew outdated --greedy --cask --json=v2` and lists those
+  casks as upgrades too (their row still says "Updates itself"). They upgrade with the
+  same `brew upgrade --cask <tap>/<token>`: brew upgrades a named cask as if `--greedy`
+  was given. Turning it off takes them out at once.
+- **Don't quit running apps during upgrades.** By default brew 7 quits a running app
+  before upgrading its cask (when the cask lists it to quit) and opens it again
+  afterwards. With this on, cask upgrades get `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, brew's
+  variable for its `--no-quit` switch (`man brew`), and the command shown in the detail
+  pane and the upgrade sheet starts with it.
 
 ## Compile warnings
 

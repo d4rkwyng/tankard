@@ -41,6 +41,15 @@ the Intelbrew forks.
 - **Services**: see `brew services` status and start, stop or restart your own services.
 - **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall Homebrew,
   both in Terminal after showing every command.
+- **Vulnerabilities** from `brew vulns` (Homebrew 7): a ⚠ tag with severity, the advisory
+  ids linked to OSV.dev, "fixed in", a Vulnerable filter and "Upgrade vulnerable
+  packages". brew reports most scans as partial, and Tankard says so.
+- **Notes from brew** (caveats) in each package's details, a "Has notes" filter, and a
+  one-time "Post-install notes" sheet after an install or upgrade.
+- **Size on disk** per package (a sortable column) and in total, from `brew info --sizes`.
+- **Self-updating apps** (optional, off by default): also list casks that update
+  themselves, as `brew outdated --greedy` does. Another setting keeps running apps open
+  during cask upgrades.
 - **Right-click menus** on Installed, Discover and the menu-bar list.
 - **Menu-bar icon** with the number of upgrades ready, and optional **notifications**
   when new upgrades appear (off by default).
@@ -86,6 +95,13 @@ brew only changes things when you ask:
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
 | Start / Stop / Restart (Services) | `brew services start\|stop\|restart <name>` |
 
+Reads that change nothing also run after each status read (in the background, cached for
+an hour like status): `brew info --sizes`, `brew vulns --json` (Settings → Upgrades can
+turn the automatic scan off; "Scan for Vulnerabilities Now" is always there), and, with
+"Include self-updating apps" on, `brew outdated --greedy --cask --json=v2`. With "Don't
+quit running apps during upgrades" on, cask upgrades run with
+`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, and the command shown says so.
+
 With notifications turned on, Tankard also runs `brew update` in the background every few
 hours (6 by default). Commands run one at a time, never with a shell, and never with
 sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
@@ -102,6 +118,12 @@ No telemetry. Tankard makes two requests of its own, each in one mode only:
 - **Intelbrew mode:** when a compile warning is shown, Tankard reads Intelbrew's build
   times (`build-times.json` from the intelbrew-core releases on GitHub) and keeps them for
   a day. Discover reads your local taps instead of formulae.brew.sh.
+
+**brew's own request: `brew vulns`.** The vulnerability scan is brew's command, not
+Tankard's code: brew sends the source repository URL and version tag of each installed
+formula to OSV.dev (`api.osv.dev/v1/querybatch`, then `api.osv.dev/v1/vulns/<id>` for
+details). Tankard runs it after each refresh unless you turn that off in Settings →
+Upgrades, and reads only what brew prints. Casks aren't scanned.
 
 Everything else comes from brew and git on your Mac. Details:
 [docs/usage.md](docs/usage.md#how-it-behaves).

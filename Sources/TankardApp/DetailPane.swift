@@ -13,7 +13,8 @@ struct DetailPane: View {
                           compileWarning: store.deps.classifier.upgradeWarning(p),
                           upgrade: { store.requestUpgrade([p]) },
                           uninstall: { store.requestUninstall(p) },
-                          replaceWithBottle: { store.startReplaceWithBottle([p]) })
+                          replaceWithBottle: { store.startReplaceWithBottle([p]) },
+                          insights: store.insights, prefix: store.report?.host.prefix)
             .id(p.id)
             .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
@@ -37,6 +38,9 @@ struct PackageDetail: View {
     var upgrade: () -> Void
     var uninstall: () -> Void
     var replaceWithBottle: () -> Void
+    /// 0.4: the scan behind the vulnerability list, and brew's prefix for caveats.
+    var insights: InsightsStore? = nil
+    var prefix: String? = nil
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -80,6 +84,8 @@ struct PackageDetail: View {
                     }
                 }
 
+                VulnerabilitySection(package: p, scan: insights?.vulnerabilityScan)
+
                 if BottleReplacement.isEligible(p) {
                     ReplaceWithBottleBox(package: p, intelbrew: intelbrew, enabled: canUpgrade, action: replaceWithBottle)
                 }
@@ -104,6 +110,7 @@ struct PackageDetail: View {
                     }
                     if let tap = p.tap { row("Tap", tap, mono: true) }
                     if p.pinned { row("Pinned", "Yes") }
+                    if let bytes = p.diskBytes { row("On disk", DiskSizes.format(bytes)) }
                 }
                 .font(.system(size: 12))
 
@@ -111,12 +118,14 @@ struct PackageDetail: View {
 
                 sourceLine(p).font(.system(size: 12))
 
+                CaveatsSection(package: p, prefix: prefix)
+
                 PackageRelationsSection(package: p)
 
                 if p.upgradeAvailable {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Upgrade command").font(.system(size: 11)).foregroundStyle(.secondary)
-                        CommandBox(command: BrewCommands.upgradeDisplay(for: p))
+                        CommandBox(command: insights?.upgradeDisplay(for: p) ?? BrewCommands.upgradeDisplay(for: p))
                         Button(action: upgrade) {
                             Label("Upgrade \(p.name)", systemImage: "arrow.up")
                         }

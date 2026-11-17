@@ -1,0 +1,3 @@
+Warning: 1 installed keg from an untrusted tap not scanned:
+  Refusing to load formula yakitrak/yakitrak/notesmd-cli from untrusted tap yakitrak/yakitrak.
+Run `brew trust` on the formula or tap to include it in future scans.

@@ -8,7 +8,9 @@ public struct QueuedCommand: Sendable, Equatable {
     public var arguments: [String]
     public var environment: [String: String]
     /// What the user sees and can copy: `brew upgrade --formula homebrew/core/xz`.
-    /// Environment and internal flags are not part of it.
+    /// The environment Tankard always sets and internal flags are not part
+    /// of it; a variable from a setting the user chose is (0.4:
+    /// `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 brew upgrade --cask …`).
     public var display: String
 
     public init(executable: String, arguments: [String], environment: [String: String], display: String) {

@@ -1,0 +1,18 @@
+==> Formulae sizes:
+python@3.14  81.3MB
+cmake        68.2MB
+openssl@3    37.3MB
+xz            2.7MB
+zstd          2.3MB
+ada-url       1.1MB
+libffi      951.8KB
+pkgconf       752KB
+blake3       94.8KB
+Total       194.7MB
+==> Casks sizes:
+lm-studio            1.2GB
+visual-studio-code     1GB
+google-chrome        773MB
+iterm2             207.4MB
+tailscale-app       22.4MB
+Total                3.2GB
