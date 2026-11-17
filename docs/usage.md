@@ -123,6 +123,27 @@ now has a bottle says **Bottle available** under its name and gets a **Replace w
 button.
 The Bottle available filter has **Replace all**.
 
+**Casks that need your password.** Some casks run a `.pkg` installer (Windows App,
+Microsoft Office, drivers), and brew runs that installer with `sudo`. Before such an
+upgrade starts, the sheet says "<name> needs your administrator password" and waits for you
+to click **Upgrade**; the uninstall confirmation says the same. When brew's sudo asks,
+Tankard shows a password dialog that names the cask and the command ("To run the installer
+for windows-app: brew upgrade --cask windows-app"). Type your Mac's login password and
+click **OK**:
+
+- The password goes from the dialog straight to sudo. Tankard doesn't keep it, log it or
+  save it anywhere.
+- **Cancel** stops that step. The sheet then shows the command to run in Terminal instead.
+- A wrong password brings the dialog back ("The password was incorrect"); after three
+  wrong tries sudo gives up and the sheet shows the Terminal command.
+- Each brew command asks at most once: brew clears sudo's remembered password before its
+  first sudo, and later sudo steps of the same command don't ask again. Upgrading two such
+  casks asks twice.
+- The dialog closes by itself after 5 minutes, or when you click **Stop Now**.
+
+Other cask installs, upgrades and uninstalls can ask too, when brew needs sudo to replace
+or remove files it doesn't own; formulae never do.
+
 Pinned packages and skipped versions are left out of Upgrade N. See
 [Pin a package or skip a version](#pin-a-package-or-skip-a-version).
 
@@ -142,6 +163,10 @@ default.
     from source, is skipped and stays in the Upgrades list for you to do by hand.
   - Pinned packages are skipped.
   - An app that is running is skipped, never quit.
+  - Never a password prompt: a cask whose installer needs your administrator password is
+    skipped ("needs your administrator password; upgrade it by hand"), and brew is told
+    not to run sudo at all (`HOMEBREW_NO_SUDO=1`), so any other step that would need it
+    fails with that reason instead of asking.
   - Tankard doesn't upgrade itself this way. The menu-bar icon says when a new Tankard is
     available.
 - **Automatically upgrade:** **All versions**, **Minor and patch only** or **Patch only**.
@@ -452,7 +477,9 @@ Links (homepages, release pages) open only when you click them.
 ## What Tankard runs
 
 Reading your packages never changes anything. Your packages change only when you click,
-or when automatic updates is on. Commands run one at a time, never with sudo.
+or when automatic updates is on. Commands run one at a time. Tankard never runs `sudo`
+itself; brew does, for some cask steps, and then asks through Tankard's password dialog
+(below).
 
 | you click | Tankard runs |
 |---|---|
@@ -475,6 +502,15 @@ With **Don't quit running apps during upgrades** on, cask upgrades start with
 `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`. With **Keep the previous version after upgrades** on,
 upgrades and installs start with `HOMEBREW_NO_INSTALL_CLEANUP=1`. The command shown in the
 app always includes these.
+
+Cask installs, upgrades, reinstalls, adopts and uninstalls (and a restore's cask steps) also
+start with `SUDO_ASKPASS` set to Tankard's password dialog,
+`Tankard.app/Contents/MacOS/tankard-askpass`, and `HOMEBREW_TANKARD_ASKPASS_CONTEXT` set to
+the sentence the dialog shows. Homebrew then runs `sudo -A`, which asks the dialog instead
+of a terminal. These two are left out of the command shown, because the copy you paste into
+Terminal should ask in Terminal; the sheet's log says when a password may be asked for.
+Formulae, `brew update`, cleanup, taps, services and every status read never get them.
+Automatic updates get `HOMEBREW_NO_SUDO=1` instead.
 
 ## App Management
 
@@ -521,8 +557,15 @@ soon as it is done.
 
 ### brew needs a password
 
-Tankard never types a password or runs sudo. When brew needs one, Tankard shows the
-command to run in Terminal.
+For a cask, Tankard shows its password dialog when brew's sudo asks (see
+[Casks that need your password](#upgrade-packages)). If you cancel it, type the wrong
+password three times, or the step isn't a cask change (a `brew update` that needs sudo,
+a service that runs as root), the sheet shows the command to run in Terminal instead.
+Automatic updates never ask; they list the cask as skipped.
+
+If the dialog doesn't appear, check the sheet's log for "sudo: a terminal is required":
+that means this copy of Tankard has no `tankard-askpass` next to it (a build run with
+`swift run`), so use the Terminal command.
 
 ### A download failed, or "Homebrew couldn't reach the network"
 
