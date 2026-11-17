@@ -69,7 +69,10 @@ public extension AppStore {
         guard canRelaunch, let relaunch = deps.relaunch else { return }
         settings.onboardingDone = true
         settings.appManagementExplained = true
-        relaunch()
+        if !relaunch() {
+            error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
+                               detail: String(localized: "Quit Tankard and open it again, then run it again."))
+        }
     }
 
     /// "Check": brew's own write test on an installed cask's app (never an

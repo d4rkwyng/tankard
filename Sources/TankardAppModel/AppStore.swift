@@ -63,7 +63,8 @@ public final class AppStore {
         public var appManagementGate: Bool = false
         /// 0.8.1: quits Tankard and starts it again (the app sets it, from
         /// a real bundle only). Nil: no "Relaunch Tankard" (tests, `swift run`).
-        public var relaunch: (@MainActor @Sendable () -> Void)?
+        /// True when the relaunch helper started (Tankard quits right after).
+        public var relaunch: (@MainActor @Sendable () -> Bool)?
         /// 0.8.1: the welcome sheet's App Management check (Onboarding.swift):
         /// the write test, and whether a candidate app exists. Demo fakes both.
         public var appManagementProbe: @Sendable (String) -> AppManagementProbe.Result = { AppManagementProbe.run(appPath: $0) }
@@ -181,6 +182,8 @@ public final class AppStore {
     public private(set) var upgradePlan: UpgradePlan?
     /// 0.3: the App Management sheet (shown in the activity sheet).
     public private(set) var appManagementPrompt: AppManagementPrompt?
+    /// 0.8.1: the "Run again" offer after a relaunch (waits for a click).
+    public internal(set) var appManagementResume: AppManagementResume?
     /// 0.3: the Cleanup sheet's state.
     public private(set) var cleanup: CleanupStore?
     public var showCleanupSheet = false
@@ -725,32 +728,105 @@ public final class AppStore {
     }
 
     /// 0.8.1: "Relaunch Tankard": keep the operation for the next launch
-    /// (run again then if it still applies, `resumeAppManagementRetry`),
-    /// then quit and start again. Not while brew is running.
+    /// (offered again then, `resumeAppManagementRetry`), then quit and start
+    /// again. Not while brew is running. Only the cask targets that change
+    /// apps are kept; for an uninstall only the package the user chose.
     public func appManagementRelaunch() {
         guard let p = appManagementPrompt, let relaunch = deps.relaunch, !isUpgrading, !autoUpdate.isRunning else { return }
         settings.appManagementExplained = true
-        settings.appManagementPendingRetry = p.canRetry
-            ? AppManagementPendingRetry(action: p.action, packages: p.packages, savedAt: deps.now()).encoded() : nil
+        let classifier = deps.classifier
+        var pending = p.canRetry
+            ? AppManagementPendingRetry.make(action: p.action, targets: p.packages, root: p.packages.first, savedAt: deps.now(),
+                                             compiles: { classifier.upgradeMethod($0).compiles })
+            : nil
+        // An adopt's per-app self-update choices go with it.
+        if p.action == .adopt, !adopt.policiesToSave.isEmpty {
+            pending?.policies = adopt.policiesToSave.mapValues(\.rawValue)
+        }
         appManagementPrompt = nil
-        relaunch()
+        // Saved only once the helper has started; a failed start leaves
+        // nothing behind to offer at the next launch.
+        settings.appManagementPendingRetry = nil
+        if relaunch() {
+            settings.appManagementPendingRetry = pending?.encoded()
+        } else {
+            error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
+                               detail: String(localized: "Quit Tankard and open it again, then run it again."))
+            if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
+        }
+    }
+
+    /// 0.8.1: Esc on the relaunch page: close, run nothing.
+    public func appManagementCancel() {
+        guard appManagementPrompt != nil else { return }
+        settings.appManagementExplained = true
+        appManagementPrompt = nil
+        if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
     }
 
     /// Whether "Relaunch Tankard" can be offered now.
     public var canRelaunch: Bool { deps.relaunch != nil && !isUpgrading && !autoUpdate.isRunning }
 
-    /// 0.8.1: after a relaunch for App Management, the operation it was for,
-    /// once (the saved one is cleared first), and only if it still applies
-    /// to what brew now says and is less than 15 minutes old. It runs
-    /// through the normal sheet, as a retry (no second explainer).
+    /// 0.8.1: after a relaunch for App Management, the operation it was for
+    /// (once: the saved one is cleared first), if it still applies to what
+    /// brew now says and is less than 15 minutes old. Never run on its own:
+    /// the activity sheet offers "Run again" and waits for a click.
     @discardableResult
     func resumeAppManagementRetry() -> Bool {
         guard let data = settings.appManagementPendingRetry else { return false }
         settings.appManagementPendingRetry = nil
-        guard let pending = AppManagementPendingRetry.decode(data),
-              let (action, run) = pending.resolve(installed: packages, now: deps.now()) else { return false }
-        startSession(action, packages: run, isRetry: true, skipGate: true)
-        return upgrade != nil
+        guard !isUpgrading, upgradePlan == nil, appManagementPrompt == nil,
+              let pending = AppManagementPendingRetry.decode(data) else { return false }
+        let classifier = deps.classifier
+        guard let offer = pending.resolve(installed: packages, now: deps.now(),
+                                          compiles: { classifier.upgradeMethod($0).compiles }) else { return false }
+        appManagementResume = offer
+        showUpgradeSheet = true
+        return true
+    }
+
+    /// "Run again": through the normal path for the action, gates on: an
+    /// upgrade through requestUpgrade (compile plan, pins, rules), an
+    /// uninstall through its confirmation (which works out the unused
+    /// dependencies again and rechecks each before it runs), an install or
+    /// adopt through startSession's own checks.
+    public func appManagementResumeConfirm() {
+        guard let r = appManagementResume else { return }
+        appManagementResume = nil
+        switch r.action {
+        case .upgrade:
+            showUpgradeSheet = false
+            requestUpgrade(r.packages)
+        case .uninstall:
+            showUpgradeSheet = false
+            guard let p = r.packages.first else { return }
+            Task { @MainActor in
+                // The activity sheet closes first; the confirmation follows.
+                try? await Task.sleep(for: .milliseconds(450))
+                self.requestUninstall(p)
+            }
+        default:
+            let run = r.packages.filter { !installedIDs.contains($0.id) }
+            guard !run.isEmpty else { showUpgradeSheet = false; return }
+            startSession(r.action, packages: run)
+            if r.action == .adopt, isUpgrading || appManagementPrompt != nil {
+                adopt.policiesToSave = r.policies.compactMapValues(SelfUpdatePolicy.init(rawValue:))
+            }
+        }
+    }
+
+    /// Demo and screenshots: the offer as a relaunch would leave it.
+    public func demoAppManagementResume(_ targets: [Package]) {
+        settings.appManagementPendingRetry = AppManagementPendingRetry.make(
+            action: .upgrade, targets: targets, root: nil, savedAt: deps.now(), compiles: { _ in false })?.encoded()
+        // (The demo's own launch never saves one: its settings are ephemeral.)
+        resumeAppManagementRetry()
+    }
+
+    /// "Cancel" on the Run again offer.
+    public func appManagementResumeCancel() {
+        appManagementResume = nil
+        if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
     }
 
     /// "Not now": first use still runs what the user asked for (it may

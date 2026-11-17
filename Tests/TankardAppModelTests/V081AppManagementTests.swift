@@ -51,7 +51,7 @@ struct V081AppManagementTests {
         #expect(!AppManagement.isCaskCommand(["link", "--formula", "xz"]))
     }
 
-    func store(fail: Bool = false, settings: AppSettings = testSettings(), relaunch: (@MainActor @Sendable () -> Void)? = nil) async -> AppStore {
+    func store(fail: Bool = false, settings: AppSettings = testSettings(), relaunch: (@MainActor @Sendable () -> Bool)? = nil) async -> AppStore {
         var deps = Demo.dependencies(.arm64, pace: 0.01, failAppManagement: fail)
         deps.relaunch = relaunch
         let store = AppStore(deps: deps, settings: settings)
@@ -110,7 +110,7 @@ struct V081AppManagementTests {
         let settings = testSettings()
         settings.appManagementExplained = true
         let relaunched = Flag()
-        let store = await store(fail: true, settings: settings, relaunch: { relaunched.set() })
+        let store = await store(fail: true, settings: settings, relaunch: { relaunched.set(); return true })
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         store.startUpgrade([chrome])
         let s = try #require(store.upgrade)
@@ -129,18 +129,78 @@ struct V081AppManagementTests {
         #expect(pending.sessionAction == .upgrade)
         #expect(pending.packages.map(\.name) == ["google-chrome"])
 
-        // The next launch (same defaults): runs it once, then forgets it.
+        // The next launch (same defaults): offered, never run without a click (1).
         let next = await self.store(settings: settings)
-        #expect(await waitUntil { next.upgrade != nil })
-        #expect(next.upgrade?.isRetry == true)
+        #expect(await waitUntil { next.appManagementResume != nil })
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(next.upgrade == nil)
+        #expect(next.showUpgradeSheet)
+        #expect(settings.appManagementPendingRetry == nil) // once
+        let offer = try #require(next.appManagementResume)
+        #expect(offer.action == .upgrade)
+        #expect(offer.packages.map(\.name) == ["google-chrome"])
+        // Run again: through requestUpgrade, a normal (not retry) session.
+        next.appManagementResumeConfirm()
+        #expect(next.appManagementResume == nil)
+        #expect(next.upgrade?.isRetry == false)
         #expect(next.upgrade?.items.map(\.command.display) == ["brew upgrade --cask homebrew/cask/google-chrome"])
-        #expect(settings.appManagementPendingRetry == nil)
+    }
+
+    @Test func cancelOnTheOfferRunsNothing() async throws {
+        let settings = testSettings()
+        settings.appManagementExplained = true
+        let store = await store(settings: settings)
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        store.demoAppManagementResume([chrome])
+        #expect(store.appManagementResume != nil)
+        store.appManagementResumeCancel()
+        #expect(store.appManagementResume == nil)
+        #expect(store.upgrade == nil)
+        #expect(!store.showUpgradeSheet)
+    }
+
+    @Test func onlyAppChangingCasksAreSavedAndAnUninstallOnlyItsRoot() async throws {
+        let t0 = Date(timeIntervalSince1970: 1_000_000)
+        func cask(_ n: String) -> Package {
+            var p = CatalogEntry(kind: .cask, name: n, fullName: n, tap: "homebrew/cask", desc: nil, bottle: .cask).asPackage()
+            p.appPaths = ["/Applications/\(n).app"]
+            p.suitePaths = []
+            p.installsPkg = false
+            return p
+        }
+        let formula = CatalogEntry(kind: .formula, name: "xz", fullName: "xz", tap: "homebrew/core", desc: nil, bottle: .intelbrew).asPackage()
+        var font = cask("font-x")
+        font.appPaths = []
+        // (4) formulae and app-less casks are not saved.
+        let up = try #require(AppManagementPendingRetry.make(action: .upgrade, targets: [formula, cask("a"), font, cask("b")],
+                                                            root: nil, savedAt: t0, compiles: { _ in false }))
+        #expect(up.packages.map(\.name) == ["a", "b"])
+        #expect(AppManagementPendingRetry.make(action: .upgrade, targets: [formula], root: nil, savedAt: t0, compiles: { _ in false }) == nil)
+        // (3) an uninstall keeps only the chosen package, not its orphans (even a cask one).
+        let un = try #require(AppManagementPendingRetry.make(action: .uninstall, targets: [cask("root"), formula, cask("orphan")],
+                                                            root: nil, savedAt: t0, compiles: { _ in false }))
+        #expect(un.packages.map(\.name) == ["root"])
+        #expect(AppManagementPendingRetry.make(action: .restore, targets: [cask("a")], root: nil, savedAt: t0, compiles: { _ in false }) == nil)
+    }
+
+    @Test func aResumedUninstallGoesThroughItsConfirmation() async throws {
+        let settings = testSettings()
+        settings.appManagementExplained = true
+        let store = await store(settings: settings)
+        let c = try #require(store.packages.first { $0.kind == .cask })
+        settings.appManagementPendingRetry = AppManagementPendingRetry(action: .uninstall, packages: [c], savedAt: Date()).encoded()
+        #expect(store.resumeAppManagementRetry())
+        store.appManagementResumeConfirm()
+        #expect(store.upgrade == nil) // nothing runs from the offer
+        #expect(await waitUntil { store.uninstallCandidate != nil })
+        #expect(store.uninstallCandidate?.id == c.id) // the normal confirmation (orphans, rechecks)
+        #expect(store.upgrade == nil)
     }
 
     @Test func continueWithoutRelaunchingRetriesNow() async throws {
         let settings = testSettings()
         settings.appManagementExplained = true
-        let store = await store(fail: true, settings: settings, relaunch: {})
+        let store = await store(fail: true, settings: settings, relaunch: { true })
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         store.startUpgrade([chrome])
         let s = try #require(store.upgrade)
@@ -161,12 +221,26 @@ struct V081AppManagementTests {
         var current = outdated
         current.upgradeAvailable = false
         let up = AppManagementPendingRetry(action: .upgrade, packages: [outdated], savedAt: t0)
-        #expect(up.resolve(installed: [outdated], now: t0 + 60)?.1.map(\.name) == ["a"])
+        #expect(up.resolve(installed: [outdated], now: t0 + 60)?.packages.map(\.name) == ["a"])
         #expect(up.resolve(installed: [current], now: t0 + 60) == nil) // already upgraded
         #expect(up.resolve(installed: [outdated], now: t0 + 16 * 60) == nil) // too old
         #expect(up.resolve(installed: [outdated], now: t0 - 60) == nil) // clock went back
+        // (2) a newer version than the one confirmed, or a changed compile answer: dropped.
+        var newer = outdated
+        newer.currentVersion = "3"
+        #expect(up.resolve(installed: [newer], now: t0 + 60) == nil)
+        #expect(up.resolve(installed: [outdated], now: t0 + 60, compiles: { _ in true }) == nil)
+        var other = outdated
+        other.id = "cask:homebrew/cask/b"
+        other.name = "b"
+        let two = AppManagementPendingRetry(action: .upgrade, packages: [outdated, other], savedAt: t0)
+        let r = try #require(two.resolve(installed: [outdated, { var o = other; o.currentVersion = "9"; return o }()], now: t0 + 60))
+        #expect(r.packages.map(\.name) == ["a"])
+        #expect(r.dropped == ["b"]) // said so in the sheet
+        let saidCompiles = AppManagementPendingRetry(action: .upgrade, packages: [outdated], savedAt: t0, compiling: [outdated.id])
+        #expect(saidCompiles.resolve(installed: [outdated], now: t0, compiles: { _ in true })?.packages.count == 1)
         let install = AppManagementPendingRetry(action: .install, packages: [outdated], savedAt: t0)
-        #expect(install.resolve(installed: [], now: t0)?.0 == .install)
+        #expect(install.resolve(installed: [], now: t0)?.action == .install)
         #expect(install.resolve(installed: [current], now: t0) == nil) // installed meanwhile
         let gone = AppManagementPendingRetry(action: .uninstall, packages: [outdated], savedAt: t0)
         #expect(gone.resolve(installed: [], now: t0) == nil)
@@ -239,5 +313,104 @@ struct V081AppManagementTests {
                              failure: BrewFailureKind.appManagement.rawValue)
         #expect(!e.canRetry)
         #expect(e.rerunHint?.contains("App Management") == true)
+    }
+
+    // QA round (0.8.1).
+
+    @Test func aFailedRelaunchSavesNothing() async throws {
+        let settings = testSettings()
+        settings.appManagementExplained = true
+        let store = await store(fail: true, settings: settings, relaunch: { false })
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        store.startUpgrade([chrome])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        store.appManagementDone()
+        store.appManagementRelaunch()
+        #expect(settings.appManagementPendingRetry == nil)
+        #expect(store.error?.title == "Couldn't relaunch Tankard")
+        #expect(store.appManagementPrompt == nil)
+    }
+
+    @Test func escOnTheRelaunchPageRunsNothing() async throws {
+        let store = await store(relaunch: { true })
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        store.startUpgrade([chrome])
+        #expect(store.appManagementPrompt?.reason == .firstUse)
+        store.appManagementDone()
+        #expect(store.appManagementPrompt?.stage == .relaunch)
+        store.appManagementCancel()
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade == nil)
+        #expect(!store.showUpgradeSheet)
+    }
+
+    @Test func anAdoptsSelfUpdateChoicesSurviveTheRelaunch() async throws {
+        let settings = testSettings()
+        let store = await store(settings: settings, relaunch: { true })
+        let item = AdoptPlanItem(token: "anybar", qualifiedName: "homebrew/cask/anybar", appPath: "/Applications/AnyBar.app",
+                                 appVersion: "1.0", caskVersion: "1.0", autoUpdates: true, policy: .app)
+        #expect(store.startAdopt([item]))
+        store.appManagementDone()
+        store.appManagementRelaunch()
+        let pending = try #require(AppManagementPendingRetry.decode(settings.appManagementPendingRetry))
+        #expect(pending.policies == ["homebrew/cask/anybar": SelfUpdatePolicy.app.rawValue])
+
+        let next = await self.store(settings: settings)
+        #expect(await waitUntil { next.appManagementResume != nil })
+        #expect(next.appManagementResume?.policies == ["homebrew/cask/anybar": "app"])
+        next.appManagementResumeConfirm()
+        #expect(next.upgrade?.action == .adopt)
+        #expect(next.adopt.policiesToSave["homebrew/cask/anybar"] == .app)
+    }
+
+    @Test func aResumedFirstUseRunIsNotARetrySoASecondBlockIsExplained() async throws {
+        let settings = testSettings()
+        settings.appManagementExplained = true
+        let store = await store(fail: true, settings: settings)
+        let e = CatalogEntry(kind: .cask, name: "anybar", fullName: "anybar", tap: "homebrew/cask", desc: nil, version: "1.0", bottle: .cask)
+        settings.appManagementPendingRetry = AppManagementPendingRetry(action: .install, packages: [e.asPackage()], savedAt: Date()).encoded()
+        #expect(store.resumeAppManagementRetry())
+        store.appManagementResumeConfirm()
+        let s = try #require(store.upgrade)
+        #expect(!s.isRetry)
+        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(store.appManagementPrompt?.reason == .blocked) // explained again, with its own relaunch offer
+    }
+
+    @Test func aStillRunningTankardIsNotOpenedTwice() throws {
+        // Our own pid never exits during the wait: the helper must not open.
+        let c = AppManagement.relaunchCommand(bundlePath: "/Applications/My Tankard.app",
+                                              pid: ProcessInfo.processInfo.processIdentifier, waitTenths: 2)
+        let script = c.arguments[1].replacingOccurrences(of: "exec /usr/bin/open -n", with: "printf %s")
+            .replacingOccurrences(of: "/usr/bin/logger -t Tankard", with: "true")
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: c.executable)
+        p.arguments = ["-c", script, c.arguments[2], c.arguments[3]]
+        let out = Pipe(), err = Pipe()
+        p.standardOutput = out
+        p.standardError = err
+        try p.run()
+        p.waitUntilExit()
+        #expect(p.terminationStatus == 1)
+        #expect(out.fileHandleForReading.readDataToEndOfFile().isEmpty)
+        #expect(String(decoding: err.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self).contains("still running"))
+        #expect(c.arguments[1].contains("/usr/bin/logger -t Tankard"))
+    }
+
+    @Test func aFontCaskFromDiscoverGetsNoExplainer() async throws {
+        let store = await store()
+        var font = CatalogEntry(kind: .cask, name: "font-fira-code", fullName: "font-fira-code", tap: "homebrew/cask", desc: nil, version: "6.2", bottle: .cask)
+        font.appPaths = []
+        font.suitePaths = []
+        font.installsPkg = false
+        #expect(!AppManagement.modifiesApps(.install, font.asPackage()))
+        store.startInstall(font)
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade != nil)
+        // An app cask's artifacts from the catalog JSON still get it.
+        var app = font
+        app.appPaths = ["/Applications/AnyBar.app"]
+        #expect(AppManagement.modifiesApps(.install, app.asPackage()))
     }
 }

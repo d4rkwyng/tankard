@@ -45,6 +45,12 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     /// False while only the name and description are known (Intelbrew mode
     /// reads the tap first and asks `brew info` for the rest lazily).
     public var detailsLoaded: Bool
+    /// 0.8.1, casks: what the cask puts in Applications, from the catalog's
+    /// own JSON (nil: brew gave no artifacts). The App Management explainer
+    /// skips a cask that installs no app (a font).
+    public var appPaths: [String]?
+    public var suitePaths: [String]?
+    public var installsPkg: Bool?
 
     // Lower-cased once, for search.
     var keyName: String
@@ -112,7 +118,7 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
                 installedAt: nil, upgradeAvailable: false,
                 upgradeHasBottle: kind == .formula ? (bottle == .forThisMac || bottle == .intelbrew) : nil,
                 autoUpdates: nil, dependencies: dependencies, caskDependencies: caskDependencies,
-                homepage: homepage)
+                homepage: homepage, appPaths: appPaths, suitePaths: suitePaths, installsPkg: installsPkg)
     }
 }
 
@@ -149,11 +155,18 @@ public struct CatalogBuilder: Sendable {
     }
 
     public func entry(_ c: BrewInfoJSON.Cask) -> CatalogEntry {
-        CatalogEntry(kind: .cask, name: c.token, fullName: c.fullToken, tap: c.tap, desc: c.desc,
+        var e = CatalogEntry(kind: .cask, name: c.token, fullName: c.fullToken, tap: c.tap, desc: c.desc,
                      version: c.version, homepage: c.homepage, license: nil,
                      dependencies: c.dependsOn?.formula ?? [], caskDependencies: c.dependsOn?.cask ?? [],
                      otherNames: c.name ?? [], deprecated: c.deprecated ?? false, disabled: c.disabled ?? false,
                      bottle: .cask)
+        // 0.8.1: the cask's artifacts (none decoded: unknown, as before).
+        if let a = c.adoptArtifacts {
+            e.appPaths = c.appPaths ?? a.apps.map(\.target)
+            e.suitePaths = a.suites
+            e.installsPkg = a.pkg
+        }
+        return e
     }
 }
 

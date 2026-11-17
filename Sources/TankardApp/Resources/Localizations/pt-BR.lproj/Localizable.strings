@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "A adoção passa pela fila e pelo Histórico do Tankard.";
 "After adopting:" = "Após adotar:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "Depois de mostrar a lista, executa brew update em segundo plano no máximo uma vez por intervalo de verificação e atualiza a contagem de atualizações. Espera enquanto o brew está ocupado; uma falha (offline) é apenas registrada. Desativado se HOMEBREW_NO_AUTO_UPDATE estiver definido. Ativado por padrão.";
-"After the relaunch, Tankard runs it again: %@ %@." = "Após reabrir, o Tankard executa de novo: %1$@ %2$@.";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "Após reabrir, o Tankard oferece executar de novo: %1$@ %2$@.";
 "All" = "Todos";
 "All versions" = "Todas as versões";
 "Allow App Management" = "Permitir Gerenciamento de Apps";
@@ -300,6 +300,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Não foi possível ler os detalhes dos casks, então as senhas de administrador não são marcadas.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Não foi possível ler os detalhes das formulae, então as compilações não são marcadas.";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "Não foi possível atualizar a partir de formulae.brew.sh (%@); mostrando a cópia salva.";
+"Couldn't relaunch Tankard" = "Não foi possível reabrir o Tankard";
 "Couldn't reload: %@" = "Não foi possível recarregar: %@";
 "Couldn't run brew tap-info: %@" = "Não foi possível executar brew tap-info: %@";
 "Couldn't tell" = "Não foi possível saber";
@@ -496,6 +497,7 @@
 "Last refresh failed" = "Última atualização falhou";
 "Later" = "Mais Tarde";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "Deixar %@ fora de Atualizar tudo, das contagens e da atualização automática. Atualizar ainda funciona manualmente; uma versão mais nova remove isto.";
+"Left out, changed or done since: %@" = "Deixados de fora, alterados ou feitos desde então: %@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "Deixado ao app: %@ não está em Atualizar tudo nem na atualização automática.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Links remanescentes apontam para arquivos que não existem mais. Geralmente inofensivo; brew cleanup remove a maioria.";
 "Let the current package finish, then skip the rest" = "Deixe o pacote atual terminar e ignore o restante";
@@ -655,6 +657,7 @@
 "Preview from %@ (changes nothing)." = "Prévia de %@ (não altera nada).";
 "Private" = "Privado";
 "Quit Tankard" = "Encerrar o Tankard";
+"Quit Tankard and open it again, then run it again." = "Encerre o Tankard, abra-o de novo e execute de novo.";
 "Read from Homebrew's API; not tapped locally." = "Lido da API do Homebrew; não está em tap local.";
 "Reading installed packages…" = "Lendo pacotes instalados…";
 "Reading package details…" = "Lendo detalhes do pacote…";
@@ -716,6 +719,8 @@
 "Run %@ again, through the queue" = "Executar %@ novamente, pela fila";
 "Run %lld brew commands?" = "Executar %lld comandos brew?";
 "Run 1 brew command?" = "Executar 1 comando brew?";
+"Run Again" = "Executar de novo";
+"Run again: %@ %@" = "Executar de novo: %1$@ %2$@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "Execute no Terminal se precisar desta versão. O brew version-install a coloca no seu próprio tap, e a manutenção passa a ser sua.";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Execute-o novamente em Homebrew ▸ Taps…; ele pergunta antes.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "Execute-o novamente pelo menu (Limpar… ou Remover Dependências Não Usadas…); ele mostra antes o que remove.";
@@ -838,6 +843,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "O Tankard nunca executa sudo. Execute isto no Terminal:";
 "Tankard on GitHub" = "Tankard no GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "O Tankard controla apenas os seus próprios serviços e nunca executa sudo. Execute isto no Terminal:";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "O Tankard foi reaberto para o macOS aplicar o Gerenciamento de Apps. Nada é executado até você clicar em Executar de novo.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "O Tankard executa brew update em segundo plano para manter os números atualizados. Desative em Ajustes → Geral.";
 "Tankard update available" = "Atualização do Tankard disponível";
 "Tankard updates itself through brew" = "O Tankard se atualiza pelo brew";

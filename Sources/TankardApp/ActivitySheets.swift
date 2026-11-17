@@ -12,6 +12,8 @@ struct ActivitySheet: View {
     var body: some View {
         if let prompt = store.appManagementPrompt {
             AppManagementSheet(store: store, prompt: prompt)
+        } else if let resume = store.appManagementResume {
+            AppManagementResumeSheet(store: store, resume: resume)
         } else if let plan = store.upgradePlan {
             UpgradePlanView(store: store, plan: plan)
         } else if let session = store.upgrade {
@@ -212,7 +214,7 @@ struct AppManagementSheet: View {
                         .fixedSize(horizontal: false, vertical: true)
                     Group {
                         if prompt.canRetry {
-                            Text("After the relaunch, Tankard runs it again: \(prompt.action.verb) \(prompt.packages.map(\.name).joined(separator: ", ")).")
+                            Text("After the relaunch, Tankard offers to run it again: \(prompt.action.verb) \(prompt.packages.map(\.name).joined(separator: ", ")).")
                         } else {
                             Text("Nothing runs on its own after the relaunch.")
                         }
@@ -223,9 +225,11 @@ struct AppManagementSheet: View {
                 }
             }
             HStack {
-                Button("Continue without relaunching") { store.appManagementContinue() }
+                // Esc closes and runs nothing; continuing is a deliberate click.
+                Button("Cancel") { store.appManagementCancel() }
                     .keyboardShortcut(.cancelAction)
                 Spacer()
+                Button("Continue without relaunching") { store.appManagementContinue() }
                 Button {
                     store.appManagementRelaunch()
                 } label: {
@@ -236,6 +240,50 @@ struct AppManagementSheet: View {
                 .disabled(!store.canRelaunch)
             }
         }
+    }
+}
+
+/// 0.8.1: after the relaunch, the operation it was for, waiting for a click.
+struct AppManagementResumeSheet: View {
+    @Bindable var store: AppStore
+    var resume: AppManagementResume
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 14) {
+                BrandMark(size: 64, intelbrew: store.intelbrewMode)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Run again: \(resume.action.verb) \(resume.packages.map(\.name).joined(separator: ", "))")
+                        .font(.system(size: 15, weight: .bold))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if !resume.dropped.isEmpty {
+                        Text("Left out, changed or done since: \(resume.dropped.joined(separator: ", "))")
+                            .font(.system(size: 12))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 4)
+                    }
+                }
+            }
+            HStack {
+                Button("Cancel") { store.appManagementResumeCancel() }
+                    .keyboardShortcut(.cancelAction)
+                Spacer()
+                Button {
+                    store.appManagementResumeConfirm()
+                } label: {
+                    Text("Run Again").fontWeight(.semibold).modifier(OnAccentLabel(theme: theme))
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 480)
+        .background(theme.window ?? .clear)
     }
 }
 

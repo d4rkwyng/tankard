@@ -76,7 +76,7 @@ struct V081OnboardingTests {
         let settings = testSettings()
         let flag = Flag()
         var deps = Demo.dependencies(.arm64, pace: 0)
-        deps.relaunch = { flag.set() }
+        deps.relaunch = { flag.set(); return true }
         let store = AppStore(deps: deps, settings: settings)
         await store.start()
         store.presentOnboarding()

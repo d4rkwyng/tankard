@@ -416,6 +416,10 @@ public extension AppStore {
             let key = SelfUpdateRule.key(item.package)
             if let policy = policies[key] { upgradeRules.setSelfUpdatePolicy(key, policy) }
         }
+        // 0.8.1: macOS blocked some (App Management): their choices stay for
+        // the retry, here or after a relaunch.
+        let blocked = Set(session.blockedPackages.map(SelfUpdateRule.key))
+        adopt.policiesToSave = policies.filter { blocked.contains($0.key) }
     }
 }
 

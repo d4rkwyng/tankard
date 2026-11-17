@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "接管通过 Tankard 的队列和历史记录进行。";
 "After adopting:" = "接管后：";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "列表显示后，在后台运行 brew update，每个检查间隔最多一次，然后刷新升级数量。brew 忙碌时会等待，失败（离线）只记入日志。设置了 HOMEBREW_NO_AUTO_UPDATE 时关闭。默认开启。";
-"After the relaunch, Tankard runs it again: %@ %@." = "重新启动后，Tankard 会再次运行：%1$@ %2$@。";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "重新启动后，Tankard 会询问是否再次运行：%1$@ %2$@。";
 "All" = "全部";
 "All versions" = "所有版本";
 "Allow App Management" = "允许“App 管理”";
@@ -300,6 +300,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "无法读取 cask 的详细信息，因此不会标记管理员密码。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "无法读取 formula 的详细信息，因此不会标记编译。";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "无法从 formulae.brew.sh 刷新（%@）；正在显示已存储的副本。";
+"Couldn't relaunch Tankard" = "无法重新启动 Tankard";
 "Couldn't reload: %@" = "无法重新载入：%@";
 "Couldn't run brew tap-info: %@" = "无法运行 brew tap-info：%@";
 "Couldn't tell" = "无法判断";
@@ -496,6 +497,7 @@
 "Last refresh failed" = "上次刷新失败";
 "Later" = "稍后";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "将 %@ 排除在“全部升级”、计数和自动更新之外。仍可手动升级；出现更新的版本后会自动解除。";
+"Left out, changed or done since: %@" = "已略过（之后有变化或已完成）：%@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "交由 App：%@ 不在“全部升级”或自动更新中。";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "残留的链接指向已不存在的文件。通常无害；brew cleanup 会移除其中大部分。";
 "Let the current package finish, then skip the rest" = "让当前软件包完成，然后跳过其余的";
@@ -655,6 +657,7 @@
 "Preview from %@ (changes nothing)." = "来自 %@ 的预览（不会更改任何内容）。";
 "Private" = "私有";
 "Quit Tankard" = "退出 Tankard";
+"Quit Tankard and open it again, then run it again." = "请退出 Tankard 并重新打开，然后再次运行。";
 "Read from Homebrew's API; not tapped locally." = "读取自 Homebrew 的 API；未在本地添加 tap。";
 "Reading installed packages…" = "正在读取已安装的软件包…";
 "Reading package details…" = "正在读取软件包详情…";
@@ -716,6 +719,8 @@
 "Run %@ again, through the queue" = "通过队列再次运行 %@";
 "Run %lld brew commands?" = "运行 %lld 条 brew 命令？";
 "Run 1 brew command?" = "运行 1 条 brew 命令？";
+"Run Again" = "再次运行";
+"Run again: %@ %@" = "再次运行：%1$@ %2$@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "如果需要此版本，请在“终端”中运行。brew version-install 会把它放入你自己的 tap，此后由你自行维护。";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "可从 Homebrew ▸ Tap… 再次运行；运行前会先询问。";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "可从菜单（“清理…”或“移除未使用的依赖项…”）再次运行；会先显示将移除的内容。";
@@ -838,6 +843,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard 从不运行 sudo。请在“终端”中运行：";
 "Tankard on GitHub" = "GitHub 上的 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard 只控制你自己的服务，从不运行 sudo。请在“终端”中运行：";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard 已重新启动，以便 macOS 应用“App 管理”。在你点按“再次运行”之前不会运行任何操作。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”→“通用”中关闭。";
 "Tankard update available" = "Tankard 有可用更新";
 "Tankard updates itself through brew" = "Tankard 通过 brew 自行更新";

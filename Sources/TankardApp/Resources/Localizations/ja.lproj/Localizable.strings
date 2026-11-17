@@ -180,7 +180,7 @@
 "Adopting runs through Tankard's queue and History." = "引き継ぎは Tankard のキューと履歴を通じて実行されます。";
 "After adopting:" = "引き継ぎ後:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "リストの表示後、確認間隔ごとに最大1回、バックグラウンドで brew update を実行し、アップグレード数を更新します。brew の使用中は待機し、失敗（オフライン）はログに記録するだけです。HOMEBREW_NO_AUTO_UPDATE が設定されているとオフ。デフォルトはオン。";
-"After the relaunch, Tankard runs it again: %@ %@." = "再起動後、Tankardがもう一度実行します: %1$@ %2$@。";
+"After the relaunch, Tankard offers to run it again: %@ %@." = "再起動後、Tankardがもう一度実行するか確認します: %1$@ %2$@。";
 "All" = "すべて";
 "All versions" = "すべてのバージョン";
 "Allow App Management" = "App管理を許可";
@@ -300,6 +300,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "caskの詳細を読み取れなかったため、管理者パスワードの表示がありません。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "formulaeの詳細を読み取れなかったため、コンパイルの表示がありません。";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "formulae.brew.sh から更新できませんでした(%@)。保存済みのコピーを表示しています。";
+"Couldn't relaunch Tankard" = "Tankardを再起動できませんでした";
 "Couldn't reload: %@" = "再読み込みできませんでした: %@";
 "Couldn't run brew tap-info: %@" = "brew tap-info を実行できませんでした: %@";
 "Couldn't tell" = "判定できません";
@@ -496,6 +497,7 @@
 "Last refresh failed" = "前回の更新に失敗しました";
 "Later" = "後で";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@を「すべてアップグレード」、カウント、自動アップデートから除外します。手動でのアップグレードは引き続き使えます。新しいバージョンが出ると解除されます。";
+"Left out, changed or done since: %@" = "除外(変更済みまたは完了済み): %@";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "アプリに任せる: %@ は「すべてアップグレード」と自動アップデートの対象外です。";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "残ったリンクは、存在しないファイルを指しています。通常は問題ありません。brew cleanup でほとんど削除されます。";
 "Let the current package finish, then skip the rest" = "現在のパッケージの完了を待ち、残りをスキップする";
@@ -655,6 +657,7 @@
 "Preview from %@ (changes nothing)." = "%@からのプレビュー（何も変更されません）。";
 "Private" = "非公開";
 "Quit Tankard" = "Tankardを終了";
+"Quit Tankard and open it again, then run it again." = "Tankardを終了してもう一度開き、もう一度実行してください。";
 "Read from Homebrew's API; not tapped locally." = "HomebrewのAPIから読み込み。ローカルではタップされていません。";
 "Reading installed packages…" = "インストール済みパッケージを読み込み中…";
 "Reading package details…" = "パッケージの詳細を読み込み中…";
@@ -716,6 +719,8 @@
 "Run %@ again, through the queue" = "%@をキュー経由でもう一度実行";
 "Run %lld brew commands?" = "brewコマンドを%lld件実行しますか？";
 "Run 1 brew command?" = "brewコマンドを1件実行しますか？";
+"Run Again" = "もう一度実行";
+"Run again: %@ %@" = "もう一度実行: %1$@ %2$@";
 "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on." = "このバージョンが必要な場合はターミナルで実行してください。brew version-installは自分のtapにインストールし、以降は自分で管理することになります。";
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Homebrew ▸ Tap… からもう一度実行してください。先に確認があります。";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "メニュー（クリーンアップ… または 未使用の依存関係を削除…）からもう一度実行してください。削除する内容が先に表示されます。";
@@ -838,6 +843,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankardはsudoを実行しません。ターミナルでこれを実行してください:";
 "Tankard on GitHub" = "GitHubのTankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankardは自分のサービスのみを制御し、sudoは実行しません。ターミナルでこれを実行してください:";
+"Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOSがApp管理を適用できるようTankardを再起動しました。「もう一度実行」をクリックするまで何も実行されません。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」→「一般」でオフにできます。";
 "Tankard update available" = "Tankardのアップデートがあります";
 "Tankard updates itself through brew" = "Tankardはbrew経由で自己アップデートします";
