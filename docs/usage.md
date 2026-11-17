@@ -210,7 +210,7 @@ sheet, the menu bar and Discover.
 
 ## Clean up
 
-The toolbar's trash button (or View → Clean Up…) opens a sheet that runs `brew cleanup -n`
+View → Clean Up… opens a sheet that runs `brew cleanup -n`
 (a dry run, read-only), `brew --cache` and `du -sk` on the cache, and shows what would be
 removed, how much space it frees and the download cache's size. **Clean up** then runs
 `brew cleanup` through the queue with the live log. When brew prints no total (it exits

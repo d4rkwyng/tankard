@@ -31,15 +31,6 @@ struct ContentView: View {
                         .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        store.openCleanup()
-                    } label: {
-                        Label("Clean Up", systemImage: "trash")
-                    }
-                    .help("See what brew cleanup would remove, then clean up")
-                    .disabled(store.isUpgrading || store.report == nil)
-                }
-                ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
                         ProgressView().controlSize(.small).frame(width: 28)
                             .help(store.refreshPhase ?? "Refreshing")
