@@ -112,8 +112,9 @@ upgrade one at a time; a failure doesn't stop the rest.
 **Skip compiling.** An upgrade with no bottle for your Mac is marked "No bottle: will
 compile from source" before anything starts. When any selected upgrade would compile, the
 sheet opens on a plan first: tick **Skip packages that would compile** to upgrade only the
-bottled ones. The Upgrades filter has the same choice as a button. In Intelbrew mode the warning also
-says how long the build took on the Intelbrew builder; expect longer on an older Mac.
+bottled ones. The Upgrades filter offers the same thing as a **Skip packages that would
+compile** button. In Intelbrew mode the warning also says how long the build took on the
+Intelbrew builder; expect longer on an older Mac.
 
 **Replace a source build with a bottle.** A package you built from source whose version
 now has a bottle gets a **Bottle available** badge and a **Replace with bottle** button.
@@ -367,7 +368,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 | Hide Dock icon when the window is closed | on | Only with the menu-bar icon on. |
 | Check for new versions in the background | on | Runs `brew update` at most once per check interval. Greyed out when `HOMEBREW_NO_AUTO_UPDATE` is set; Settings says where. |
 | Notify me about new upgrades | off | A notification when new upgrades appear. See [Notifications](#notifications). |
-| Check every | 6 hours | 1 to 48 hours. Used by the two settings above. |
+| Check every | 6 hours | 1, 3, 6, 12, 24 or 48 hours. Used by the two settings above. |
 | Open Tankard at login | off | Adds Tankard to Login Items. |
 
 **Upgrades**
@@ -552,8 +553,10 @@ icon ▸ **Open Tankard**, or untick the setting.
 
 ### "Tankard can't be opened because Apple cannot check it"
 
-Releases are signed and notarized, so this happens only with a build you made yourself.
-Right-click Tankard.app ▸ **Open** once, or run
+Releases are signed and notarized, so this happens only with an unsigned or ad-hoc signed
+build that was downloaded, such as a zip someone else built. On macOS 14, right-click
+Tankard.app ▸ **Open** once. On macOS 15 and later, try to open it, then click **Open
+Anyway** in **System Settings ▸ Privacy & Security**. Or run
 `xattr -dr com.apple.quarantine Tankard.app`.
 
 ### Open at login doesn't stick
