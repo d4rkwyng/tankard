@@ -1,0 +1,31 @@
+name: Tests
+
+# Runs the test suite on pushes to main and release branches and on pull
+# requests, so a flaky or failing test shows up before a release tag is
+# pushed (the Release workflow runs the same `swift test` again). No secrets,
+# no signing, read-only token. Docs-only changes don't trigger it.
+
+on:
+  push:
+    branches: [main, "release-*"]
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
+
+      - name: Tests
+        run: swift test
