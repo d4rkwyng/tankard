@@ -116,9 +116,13 @@ struct ServicesView: View {
             }
             .width(min: 100, ideal: 200)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
-        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
-        .background(theme.table ?? .clear)
+        // One configuration in every theme: changing it makes AppKit drop
+        // the visible rows (see TableSelectionStyler). The stripes are
+        // painted by the styler, the background is this view's.
+        .tableStyle(.inset(alternatesRowBackgrounds: false))
+        .scrollContentBackground(.hidden)
+        .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
+        .background(TableSelectionStyler(palette: theme.palette, token: 0, paintsSelection: false))
         .onChange(of: services.selection) { _, name in
             if let name { Task { await services.loadInfo(name) } }
         }
