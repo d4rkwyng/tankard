@@ -70,6 +70,10 @@ TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew 
                  0.4: BrewVulnsJSON and VulnerabilityScan (`brew vulns --json`, stdout
                  only), DiskSizes (parses `brew info --sizes`), SelfUpdatingCasks
                  (`brew outdated --greedy --cask`)
+                 0.6: PackageLifecycle (deprecation/disable dates, reasons,
+                 replacements), DoctorReport and its warning mapping,
+                 BrewFailure (brew's lock, network, disk full, permissions),
+                 AutoremovePlan (Health.swift)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
                    cache-first loading, errors that keep data, starting upgrades
@@ -116,6 +120,14 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    root services and brew's sudo advice (0.4)
   HomebrewManagement  the Homebrew menu: typed confirmation, the revert plan (profile
                    lines, backups, commands, script), the uninstaller script (0.4)
+  History          0.6: HistoryLog (Application Support history.json, last 500,
+                   the auto-update log's JSON format), HistoryRecorder (the
+                   queue's observer: every queued command, its result and
+                   duration), filters and Retry (through the queue)
+  HealthStore      0.6: the Health sheet (`brew doctor`, `config`, `missing`,
+                   read-only), the autoremove sheet (`brew autoremove
+                   --dry-run`, then `brew autoremove` through the queue), the
+                   deprecated/disabled/keg-only display and Install replacement
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
 TankardApp       the SwiftUI views (App lifecycle), the menu-bar extra, Settings, About,

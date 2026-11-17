@@ -181,6 +181,14 @@ public struct DoctorWarning: Equatable, Sendable, Identifiable {
     /// The command to fix it, shown and never run: the first indented
     /// command line in brew's block, else the kind's own.
     public var fixCommand: String? {
+        let found = firstCommand
+        // brew's fallback for broken CLT is `sudo rm -rf …`; lead with the
+        // safe step and leave the destructive one in brew's text.
+        if let found, found.contains("rm -rf"), let safe = kind?.defaultCommand { return safe }
+        return found ?? kind?.defaultCommand
+    }
+
+    private var firstCommand: String? {
         for line in raw.split(separator: "\n").dropFirst() {
             let t = line.trimmingCharacters(in: .whitespaces)
             guard line.hasPrefix("  "), !t.isEmpty else { continue }
@@ -190,7 +198,7 @@ public struct DoctorWarning: Equatable, Sendable, Identifiable {
                 return t
             }
         }
-        return kind?.defaultCommand
+        return nil
     }
 }
 

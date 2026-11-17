@@ -77,7 +77,8 @@ struct DoctorTests {
         #expect(r.warnings.map(\.kind) == [.brokenSymlinks, .unlinkedKegs, .outdatedCLT, nil])
         #expect(r.warnings[0].title == "There are broken links in Homebrew's folders")
         #expect(r.warnings[0].fixCommand == "brew cleanup") // the kind's own: brew's line is a path
-        #expect(r.warnings[2].fixCommand == "sudo rm -rf /Library/Developer/CommandLineTools")
+        // brew's first command there is `sudo rm -rf …`: the safe one leads instead.
+        #expect(r.warnings[2].fixCommand == "softwareupdate --list")
         // Unknown: brew's own headline, no explanation, raw kept.
         #expect(r.warnings[3].title == "Something brand new that Tankard has never seen.")
         #expect(r.warnings[3].explanation == nil)

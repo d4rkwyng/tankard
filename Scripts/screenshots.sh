@@ -9,6 +9,7 @@
 #   SET=v0.4b Scripts/screenshots.sh [OUT_DIR] only the 0.4 vulnerability/notes/size shots
 #   SET=v0.4 Scripts/screenshots.sh [OUT_DIR]  both 0.4 sets
 #   SET=v0.5 Scripts/screenshots.sh [OUT_DIR]  the 0.5 auto-update shots
+#   SET=v0.6a Scripts/screenshots.sh [OUT_DIR] the 0.6 part A shots (deprecated, Health, History, autoremove)
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -105,7 +106,18 @@ v05() {
     done
 }
 
+v06a() {
+    for t in dark tankard; do
+        shot deprecated-badge-$t 3 TANKARD_DEMO=1 TANKARD_SELECT=json-c TANKARD_APPEARANCE=$t
+        shot deprecated-filter-$t 3 TANKARD_DEMO=1 TANKARD_FILTER=deprecated TANKARD_SELECT=json-c TANKARD_APPEARANCE=$t
+        shot health-$t 4 TANKARD_DEMO=1 TANKARD_DEMO_SHEET=health TANKARD_APPEARANCE=$t
+        shot history-$t 3 TANKARD_DEMO=1 TANKARD_DEMO_SHEET=history TANKARD_APPEARANCE=$t
+        shot autoremove-confirm-$t 3.5 TANKARD_DEMO=1 TANKARD_DEMO_SHEET=autoremove TANKARD_APPEARANCE=$t
+    done
+}
+
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
+if [ "${SET:-all}" = v0.6a ]; then v06a; exit 0; fi
 if [ "${SET:-all}" = v0.5 ]; then v05; exit 0; fi
 if [ "${SET:-all}" = v0.4a ]; then v04a; exit 0; fi
 if [ "${SET:-all}" = v0.4b ]; then v04b; exit 0; fi
