@@ -73,7 +73,7 @@ struct SizeCell: View {
 /// to it. 0.6.1: a native pop-up (Picker, .menu) instead of the custom
 /// styled Menu, after which the window could no longer be dragged by its
 /// toolbar until the Installed tab was rebuilt. The scan moved to Settings,
-/// the Homebrew menu and the strip's progress line.
+/// the Homebrew menu and the status bar's progress line.
 struct MoreFiltersPicker: View {
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
@@ -97,7 +97,9 @@ struct MoreFiltersPicker: View {
         }
         .pickerStyle(.menu)
         .labelsHidden()
-        .fixedSize()
+        // A pop-up sizes itself to its widest item ("Requested only 123");
+        // keep it compact so the summary beside it isn't cut off.
+        .frame(width: 128)
         // The active look: the theme's accent ring. Colour only; the frame
         // is the same in every theme and state.
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(active ? theme.accent : Color.clear, lineWidth: 1.5)

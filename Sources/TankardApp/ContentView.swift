@@ -303,8 +303,6 @@ struct SummaryStrip: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            ScanProgressView(store: store)
-
             FilterActions(store: store)
 
             ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.segmented) { f in
