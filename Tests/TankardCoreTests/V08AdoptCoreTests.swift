@@ -223,4 +223,61 @@ struct V08AdoptCoreTests {
         #expect(out.packages.map(\.upgradeAvailable) == [false, true])
         #expect(SelfUpdatingCasks.unmark(r).packages.map(\.upgradeAvailable) == [false, false])
     }
+    // MARK: vendor check (review: wrong-app adoption)
+
+    /// io.github.alice.Foo must not match an unrelated GitHub-hosted cask
+    /// "foo": "github" is everyone's, the owner is bob.
+    @Test func githubLabelIsNotAVendor() throws {
+        let alice = Self.app("Foo.app", "io.github.alice.Foo", "1.0")
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true,
+                             web: "https://github.com/bob/foo https://github.com/bob/foo/releases/download/v2.0/Foo.dmg",
+                             apps: [.init(source: "Foo.app", target: "/Applications/Foo.app")])
+        #expect(!AdoptMatcher.vendorInWeb("io.github.alice.foo", bobs.web))
+        #expect(AdoptMatcher.confidence(app: alice, cask: bobs, ambiguous: false) == .low)
+        // auto_updates: brew wouldn't compare versions, so it is "ready"...
+        let row = AdoptMatcher.row(for: alice, index: AdoptIndex(casks: [bobs]))
+        #expect(row.verdicts["foo"] == .ready && row.confidence["foo"] == .low)
+        // ...but Alice's own cask is the same vendor.
+        var alices = bobs
+        alices.web = "https://github.com/alice/foo"
+        #expect(AdoptMatcher.confidence(app: alice, cask: alices, ambiguous: false) == .medium)
+        #expect(AdoptMatcher.vendorInWeb("io.github.alice.foo", "https://alice.github.io/foo/"))
+        // Bundle ids under a code host's namespace share only the host: not a vendor prefix.
+        var named = bobs
+        named.bundleIDs = ["io.github.bob.foo"]
+        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .low)
+        named.bundleIDs = ["io.github.alice.foohelper"]
+        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .medium)
+        // The plain vendor prefix still works (org.scummvm.app vs org.scummvm.scummvm).
+        let scumm = AdoptCask(token: "scummvm", version: "1", bundleIDs: ["org.scummvm.scummvm"])
+        #expect(AdoptMatcher.confidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm, ambiguous: false) == .medium)
+    }
+
+    @Test func vendorIsTheHostOrTheCodeHostOwner() {
+        func v(_ u: String) -> [String] { AdoptVendor.vendors(of: u) }
+        #expect(v("https://www.saurik.com/impactor/") == ["saurik"])
+        #expect(v("https://dl.saurik.com/x.dmg") == ["saurik"])
+        #expect(v("https://www.example.co.uk/app") == ["example"])
+        #expect(v("https://download.mozilla.org/?product=firefox") == ["mozilla"])
+        #expect(v("https://github.com/dwarvesf/hidden/") == ["dwarvesf"])
+        #expect(v("https://github.com/") == [])
+        #expect(v("https://objects.githubusercontent.com/github-production-release-asset/123") == [])
+        #expect(v("https://raw.githubusercontent.com/alice/foo/main/x") == ["alice"])
+        #expect(v("https://alice.github.io/foo") == ["alice"])
+        #expect(v("https://gitlab.com/bob/foo/-/releases") == ["bob"])
+        #expect(v("https://bitbucket.org/carol/foo") == ["carol"])
+        #expect(v("https://codeberg.org/dave/foo") == ["dave"])
+        #expect(v("https://git.sr.ht/~erin/foo") == ["erin"])
+        #expect(v("https://sourceforge.net/projects/inkscape/") == ["inkscape"])
+        #expect(v("https://downloads.sourceforge.net/project/gimp/x.dmg") == ["gimp"])
+        #expect(v("https://scummvm.sourceforge.net/") == ["scummvm"])
+        #expect(v("https://code.google.com/p/frank/") == ["frank"])
+        #expect(v("not a url") == [])
+        // Only the vendor label counts, not a label anywhere in the URL.
+        #expect(!AdoptMatcher.vendorInWeb("com.saurik.impactor", "https://example.com/mirrors/saurik/impactor.dmg"))
+        #expect(AdoptMatcher.vendorInWeb("com.saurik.impactor", "https://example.com/x https://cydia.saurik.com/x.dmg"))
+        // Code hosts are never a vendor label.
+        #expect(!AdoptMatcher.vendorInWeb("com.github.foo", "https://github.com/foo"))
+        #expect(!AdoptMatcher.vendorInWeb("net.sourceforge.thing", "https://sourceforge.net/projects/thing"))
+    }
 }

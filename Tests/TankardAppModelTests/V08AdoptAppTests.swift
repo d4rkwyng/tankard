@@ -200,4 +200,50 @@ struct V08AdoptAppTests {
         #expect(RollbackSettings.appliesTo(.adopt))
         #expect(!AppManagement.modifiesApps(.adopt, Package.command("x")))
     }
+    // MARK: review: default ticks for self-updating casks
+
+    /// A store on a hand-made index (no demo, no I/O).
+    func adoptStore(_ casks: [AdoptCask], _ apps: [InstalledApp]) -> AdoptStore {
+        let a = AdoptStore()
+        a.apply(AdoptInput(index: AdoptIndex(casks: casks), apps: apps, source: "test"))
+        return a
+    }
+
+    static func app(_ rel: String, _ bid: String, _ v: String) -> InstalledApp {
+        InstalledApp(path: "/Applications/" + rel, root: "/Applications", relativePath: rel, bundleID: bid,
+                     shortVersion: v, bundleVersion: v)
+    }
+
+    @Test func selfUpdatingCaskTicksOnlyASureMatch() throws {
+        let target = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app")]
+        // The review's case: Alice's io.github.alice.Foo vs Bob's GitHub-hosted auto_updates cask "foo".
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
+        var a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        var row = try #require(a.scan.rows.first)
+        #expect(a.group(row) == .ready && a.confidence(row) == .low)
+        #expect(!a.isTicked(row) && a.plan.isEmpty)
+        // Same vendor (owner alice) but not the exact bundle id: still not ticked for a self-updating cask.
+        var alices = bobs
+        alices.web = "https://github.com/alice/foo"
+        a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .medium && !a.isTicked(row))
+        // The user can still tick it by hand.
+        a.setTicked(row, true)
+        #expect(a.plan.map(\.token) == ["foo"])
+        // The bundle id named by the cask: ticked.
+        alices.bundleIDs = ["io.github.alice.foo"]
+        a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .high && a.isTicked(row))
+        // Not self-updating: a likely match at the same version is ticked (brew compares the download).
+        var plain = AdoptCask(token: "foo", version: "1.0", web: "https://github.com/alice/foo", apps: target)
+        a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .medium && a.isTicked(row))
+        plain.web = "https://github.com/bob/foo"
+        a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .low && !a.isTicked(row))
+    }
 }

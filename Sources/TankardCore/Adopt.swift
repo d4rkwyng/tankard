@@ -456,7 +456,11 @@ public enum AdoptMatcher {
         if !bid.isEmpty, c.bundleIDs.contains(bid) { return .high }
         var out: AdoptConfidence
         let labels = bid.split(separator: ".").map(String.init)
-        if labels.count > 2, c.bundleIDs.contains(where: { $0.split(separator: ".").prefix(2).map(String.init) == Array(labels.prefix(2)) }) {
+        // The vendor prefix: two labels (org.scummvm), or three under a
+        // code host's namespace (io.github.alice), where the first two are
+        // shared by everyone hosted there.
+        let n = AdoptVendor.isHostNamespace(labels) ? 3 : 2
+        if labels.count > n, c.bundleIDs.contains(where: { $0.split(separator: ".").prefix(n).map(String.init) == Array(labels.prefix(n)) }) {
             out = .medium
         } else if !c.bundleIDs.isEmpty {
             out = .low
@@ -468,13 +472,18 @@ public enum AdoptMatcher {
         return out
     }
 
-    /// A label of the bundle id ("saurik" in com.saurik.Impactor) in the
-    /// cask's homepage or download URL.
+    /// A label of the bundle id ("saurik" in com.saurik.Impactor) that is
+    /// the vendor of the cask's homepage or download URL: the registrable
+    /// domain's label (saurik.com), or, on a code host (github.com,
+    /// sourceforge.net, ...), the owner (github.com/saurik/...). A label
+    /// merely somewhere in the URL doesn't count: io.github.alice.Foo
+    /// against github.com/bob/foo is not the same vendor.
     static func vendorInWeb(_ bid: String, _ web: String) -> Bool {
-        let skip: Set<String> = ["com", "org", "net", "io", "app", "www"]
-        let labels = bid.split(separator: ".").dropLast().map(String.init).filter { $0.count > 3 && !skip.contains($0) }
-        let w = web.lowercased()
-        return labels.contains { w.contains($0) }
+        let labels = bid.lowercased().split(separator: ".").dropLast().map(String.init)
+            .filter { $0.count > 3 && !AdoptVendor.skip.contains($0) }
+        guard !labels.isEmpty else { return false }
+        let vendors = Set(web.split(whereSeparator: \.isWhitespace).flatMap { AdoptVendor.vendors(of: String($0)) })
+        return labels.contains { l in vendors.contains(l) || vendors.contains(l.replacingOccurrences(of: "-", with: "")) }
     }
 
     public static func verdict(app a: InstalledApp, cask c: AdoptCask, how: AdoptMatchKind) -> AdoptVerdict {
@@ -492,6 +501,94 @@ public enum AdoptMatcher {
         }
         if c.pkg { return .blocked(.pkg) }
         return AdoptVersion.verdict(app: a, caskVersion: c.version, autoUpdates: c.autoUpdates)
+    }
+}
+
+/// Who a URL belongs to, for the vendor check.
+public enum AdoptVendor {
+    /// Bundle-id labels that say nothing about the vendor: TLDs, generic
+    /// words, and code hosts (everyone hosted there shares them).
+    static let skip: Set<String> = Set(["com", "org", "net", "io", "app", "www", "apps", "mac", "macos", "osx"])
+        .union(hostLabels)
+
+    /// Code hosts' names as bundle-id labels (io.github.alice).
+    static let hostLabels: Set<String> = [
+        "github", "gitlab", "sourceforge", "bitbucket", "codeberg", "googlecode",
+        "githubusercontent", "launchpad", "sourcehut", "gitee", "framagit",
+    ]
+
+    /// Registrable domains where the first path segment (or the
+    /// subdomain, for pages hosts) is the owner, not the domain.
+    static let codeHosts: Set<String> = [
+        "github.com", "githubusercontent.com", "github.io", "gitlab.com", "gitlab.io",
+        "sourceforge.net", "sourceforge.io", "sf.net", "bitbucket.org", "bitbucket.io",
+        "codeberg.org", "codeberg.page", "googlecode.com", "code.google.com", "sr.ht",
+        "launchpad.net", "gitee.com", "framagit.org",
+    ]
+
+    /// io.github.alice, com.github.alice, net.sourceforge.foo, ...: the
+    /// first two labels name a code host, not a vendor.
+    static func isHostNamespace(_ labels: [String]) -> Bool {
+        labels.count >= 2 && hostLabels.contains(labels[1])
+    }
+
+    /// Two-letter country codes whose sites sit one level lower
+    /// (example.co.uk, example.com.au).
+    static let secondLevel: Set<String> = ["co", "com", "org", "net", "ac", "gov", "edu", "ne", "or", "go"]
+
+    /// The registrable domain of a host: "dl.saurik.com" → "saurik.com",
+    /// "www.example.co.uk" → "example.co.uk".
+    static func registrableDomain(_ host: String) -> [String] {
+        let parts = host.lowercased().split(separator: ".").map(String.init)
+        guard parts.count >= 2 else { return parts }
+        let n = parts.count >= 3 && parts.last!.count == 2 && secondLevel.contains(parts[parts.count - 2]) ? 3 : 2
+        return Array(parts.suffix(n))
+    }
+
+    /// The vendor names a URL stands for, lower-cased: the registrable
+    /// domain's label ("saurik"), or on a code host the owner ("bob" in
+    /// github.com/bob/foo, bob.github.io, sourceforge.net/projects/bob,
+    /// bob.sourceforge.net, git.sr.ht/~bob). A code host itself is never a
+    /// vendor.
+    public static func vendors(of url: String) -> [String] {
+        guard let u = URL(string: url), let host = u.host?.lowercased(), !host.isEmpty else { return [] }
+        let hostParts = host.split(separator: ".").map(String.init)
+        let reg = registrableDomain(host)
+        let regName = reg.joined(separator: ".")
+        let path = u.path.split(separator: "/").map { String($0).lowercased() }
+        func owner(_ s: String?) -> [String] {
+            guard var s, !s.isEmpty else { return [] }
+            if s.hasPrefix("~") { s.removeFirst() }
+            return s.isEmpty ? [] : [s]
+        }
+        // code.google.com/p/<project>
+        if host == "code.google.com" { return path.first == "p" ? owner(path.dropFirst().first) : [] }
+        guard codeHosts.contains(regName) else {
+            return reg.first.map { [$0] } ?? []
+        }
+        // A subdomain names the owner on pages hosts and
+        // <project>.sourceforge.net / <project>.googlecode.com.
+        let sub = hostParts.count > reg.count ? hostParts[hostParts.count - reg.count - 1] : nil
+        let generic: Set<String> = ["www", "api", "raw", "objects", "codeload", "downloads", "download", "dl", "git",
+                                    "release-assets", "github-releases", "media", "gist", "pages", "master", "svn"]
+        switch regName {
+        case "sourceforge.net", "sourceforge.io", "sf.net":
+            if let s = sub, !generic.contains(s) { return [s] }
+            // sourceforge.net/projects/<p>/..., downloads.sourceforge.net/project/<p>/...
+            if let i = path.firstIndex(where: { $0 == "projects" || $0 == "project" || $0 == "p" }) {
+                return owner(path.dropFirst(i + 1).first)
+            }
+            return []
+        case "github.io", "gitlab.io", "bitbucket.io", "codeberg.page", "googlecode.com":
+            if let s = sub, !generic.contains(s) { return [s] }
+            return []
+        case "githubusercontent.com":
+            // raw.githubusercontent.com/<owner>/...; the release-asset hosts carry no owner.
+            return sub == "raw" ? owner(path.first) : []
+        default:
+            if let s = sub, !generic.contains(s) { return [] }
+            return owner(path.first)
+        }
     }
 }
 

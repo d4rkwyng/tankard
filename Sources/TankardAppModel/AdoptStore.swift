@@ -201,10 +201,14 @@ public final class AdoptStore {
     public func group(_ row: AdoptRow) -> AdoptGroup { AdoptGroup.of(verdict(row)) }
     public func policy(_ row: AdoptRow) -> SelfUpdatePolicy { policies[row.id] ?? .automatic }
 
-    /// Ticked by default: ready, not name-only, and a version brew can
-    /// check before downloading.
+    /// Ticked by default: ready and not name-only. For a cask that updates
+    /// itself only a sure match (the bundle id): brew adopts those without
+    /// comparing versions or files (moved.rb:102), so a wrong match would
+    /// succeed, and a later upgrade or uninstall would replace or delete
+    /// someone else's app.
     public func defaultTicked(_ row: AdoptRow) -> Bool {
         guard verdict(row) == .ready, let c = confidence(row) else { return false }
+        if cask(row)?.autoUpdates == true { return c == .high }
         return c != .low
     }
 
