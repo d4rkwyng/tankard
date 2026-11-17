@@ -190,7 +190,34 @@ if let snapshotPath {
     NSApplication.shared.abortModal()
 }
 
-app.activate(ignoringOtherApps: true)
+// Come to the front. The helper is a background child of sudo (brew's
+// child, Tankard's grandchild), and macOS 14+ activation is cooperative:
+// a process can't take focus; the active app has to yield it. Tankard does
+// that (`NSApp.yieldActivation(to:)`, AskpassFocus in the app) as soon as
+// it sees this helper; here the helper asks with the cooperative
+// `NSApp.activate()`. Measured on macOS 27 without a yield: the window is
+// visible and the secure field editing, but the app is not active and the
+// window not key. Fallback when focus never comes: the modal-panel level
+// and `orderFrontRegardless()` keep the window in front of other apps'
+// normal windows, and a click on it gives it focus.
+@MainActor func bringToFront() {
+    NSApplication.shared.activate()
+    alert.window.level = .modalPanel
+    alert.window.makeKeyAndOrderFront(nil)
+    alert.window.orderFrontRegardless()
+    alert.window.makeFirstResponder(field)
+}
+// Once right after runModal shows the window, and again a little later
+// (Tankard's yield can arrive after the first request).
+for delay in [0.05, 0.6, 1.5] {
+    let front = Timer(timeInterval: delay, repeats: false) { _ in
+        MainActor.assumeIsolated { bringToFront() }
+    }
+    RunLoop.main.add(front, forMode: .modalPanel)
+}
+
+app.finishLaunching()
+app.activate()
 let response = alert.runModal()
 watchdog.invalidate()
 guard snapshotPath == nil, response == .alertFirstButtonReturn else { exit(1) }

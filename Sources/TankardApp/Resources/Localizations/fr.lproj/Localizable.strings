@@ -989,6 +989,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "En attente d’approbation dans Réglages Système → Général → Éléments de connexion.";
 "Waiting for brew update to finish…" = "En attente de la fin de brew update…";
 "Waiting for brew…" = "En attente de brew…";
+"Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "En attente de votre mot de passe dans la fenêtre de Tankard. Vous ne la voyez pas ? Annulez-la et exécutez ceci dans Terminal :";
 "Welcome to Tankard" = "Bienvenue dans Tankard";
 "What brew printed" = "Ce que brew a affiché";
 "What installing the missing items would do, before anything runs" = "Ce que ferait l’installation des éléments manquants, avant toute exécution";

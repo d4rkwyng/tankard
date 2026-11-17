@@ -156,6 +156,12 @@ struct TankardApp: App {
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
+        // 0.8.3: real brew runs only (live and scripted, never demo): find
+        // the password helper and yield focus to it, since macOS 14+
+        // activation is cooperative and a background helper can't take it.
+        if !options.isDemo, let helper = deps.askpassHelper {
+            deps.askpassFocus = AskpassFocus(find: AskpassFocus.liveFind(helper: helper), yield: AskpassYield.yield)
+        }
         // 0.8.1: Relaunch Tankard (App Management): the real app only, from
         // its bundle. The demo of the relaunch page gets a button that does nothing.
         if !options.isDemo && options.snapshot == nil && options.script == nil
@@ -497,5 +503,15 @@ enum AppResources {
         DispatchQueue.main.async {
             NSApp.applicationIconImage = intelbrew ? intelbrewDockIcon : nil
         }
+    }
+}
+
+/// 0.8.3: hands focus to the password helper. Called on the main actor
+/// (UpgradeSession's watcher); no NSWorkspace notifications or KVO, so
+/// nothing arrives on another thread.
+enum AskpassYield {
+    @MainActor static func yield(_ pid: pid_t) {
+        guard let helper = NSRunningApplication(processIdentifier: pid) else { return }
+        NSApp.yieldActivation(to: helper)
     }
 }

@@ -51822,6 +51822,58 @@
         }
       }
     },
+    "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warte auf dein Passwort im Tankard-Dialog. Nicht zu sehen? Abbrechen und dies im Terminal ausführen:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de votre mot de passe dans la fenêtre de Tankard. Vous ne la voyez pas ? Annulez-la et exécutez ceci dans Terminal :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando tu contraseña en el cuadro de Tankard. ¿No lo ves? Cancélalo y ejecuta esto en Terminal:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardのダイアログでパスワードを待っています。表示されない場合は、キャンセルしてターミナルで次を実行してください:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在 Tankard 对话框中等待你的密码。看不到它？请取消它，然后在“终端”中运行："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aguardando sua senha na caixa de diálogo do Tankard. Não a vê? Cancele-a e execute isto no Terminal:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In attesa della password nella finestra di Tankard. Non la vedi? Annullala ed esegui questo nel Terminale:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 대화상자에서 암호를 기다리는 중입니다. 보이지 않나요? 취소하고 터미널에서 다음을 실행하세요:"
+          }
+        }
+      }
+    },
     "Welcome to Tankard": {
       "localizations": {
         "de": {

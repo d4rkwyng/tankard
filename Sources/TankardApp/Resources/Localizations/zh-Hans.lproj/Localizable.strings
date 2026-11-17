@@ -989,6 +989,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "正在等待在“系统设置 → 通用 → 登录项”中批准。";
 "Waiting for brew update to finish…" = "正在等待 brew update 完成…";
 "Waiting for brew…" = "正在等待 brew…";
+"Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "正在 Tankard 对话框中等待你的密码。看不到它？请取消它，然后在“终端”中运行：";
 "Welcome to Tankard" = "欢迎使用 Tankard";
 "What brew printed" = "brew 的输出";
 "What installing the missing items would do, before anything runs" = "在运行任何内容之前，显示安装缺失项会执行的操作";

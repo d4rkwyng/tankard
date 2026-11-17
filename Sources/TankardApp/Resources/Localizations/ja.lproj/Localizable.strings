@@ -989,6 +989,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "システム設定 → 一般 → ログイン項目 での承認を待っています。";
 "Waiting for brew update to finish…" = "brew update の完了を待機中…";
 "Waiting for brew…" = "brewを待機中…";
+"Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Tankardのダイアログでパスワードを待っています。表示されない場合は、キャンセルしてターミナルで次を実行してください:";
 "Welcome to Tankard" = "Tankardへようこそ";
 "What brew printed" = "brewの出力";
 "What installing the missing items would do, before anything runs" = "不足している項目をインストールした場合の内容（何も実行される前に確認）";

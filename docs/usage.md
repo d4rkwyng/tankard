@@ -134,6 +134,9 @@ click **OK**:
 - The password goes from the dialog straight to sudo. Tankard doesn't keep it, log it or
   save it anywhere.
 - **Cancel** stops that step. The sheet then shows the command to run in Terminal instead.
+- While the dialog is up, the sheet says "Waiting for your password in the Tankard dialog"
+  and shows the Terminal command. If you don't see the dialog, cancel it (or click
+  **Stop Now**) and use Terminal.
 - A wrong password brings the dialog back ("The password was incorrect"); after three
   wrong tries sudo gives up and the sheet shows the Terminal command.
 - Each brew command asks at most once: brew clears sudo's remembered password before its

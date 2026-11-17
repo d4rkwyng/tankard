@@ -1,4 +1,5 @@
 import AskpassSupport
+import Darwin
 import Foundation
 import TankardCore
 
@@ -98,5 +99,69 @@ extension AppStore {
             r.packages[i].installsPkg = true
         }
         report = r
+    }
+}
+
+/// 0.8.3: how a session finds Tankard's password helper and gives it focus.
+/// The app sets `yield` to `NSApp.yieldActivation(to:)` (AppKit); tests
+/// inject both closures.
+public struct AskpassFocus: Sendable {
+    /// The helper's pid when it is running under this Tankard, else nil.
+    /// Called off the main actor.
+    public var find: @Sendable () -> pid_t?
+    /// Called on the main actor, once per helper process.
+    public var yield: @MainActor @Sendable (pid_t) -> Void
+    public var interval: Duration
+
+    public init(find: @escaping @Sendable () -> pid_t?, yield: @escaping @MainActor @Sendable (pid_t) -> Void,
+                interval: Duration = .milliseconds(400)) {
+        self.find = find
+        self.yield = yield
+        self.interval = interval
+    }
+
+    /// The real lookup: a process running exactly `helper` (kernel path)
+    /// whose ancestors include this Tankard process. Reads only the process
+    /// table (proc_listallpids, proc_pidpath, sysctl).
+    public static func liveFind(helper: String, tankard: pid_t = getpid()) -> @Sendable () -> pid_t? {
+        { AskpassProcess.find(helperPath: helper, below: tankard) }
+    }
+}
+
+public enum AskpassProcess {
+    public static func find(helperPath: String, below ancestor: pid_t, maxDepth: Int = 12) -> pid_t? {
+        let estimate = proc_listallpids(nil, 0)
+        guard estimate > 0 else { return nil }
+        var pids = [pid_t](repeating: 0, count: Int(estimate) + 128)
+        let count = pids.withUnsafeMutableBytes { proc_listallpids($0.baseAddress, Int32($0.count)) }
+        guard count > 0 else { return nil }
+        for pid in pids.prefix(Int(count)) where pid > 1 && path(pid) == helperPath {
+            if descends(pid, from: ancestor, maxDepth: maxDepth) { return pid }
+        }
+        return nil
+    }
+
+    static func path(_ pid: pid_t) -> String? {
+        var buf = [CChar](repeating: 0, count: 4 * Int(MAXPATHLEN))
+        guard proc_pidpath(pid, &buf, UInt32(buf.count)) > 0 else { return nil }
+        return String(cString: buf)
+    }
+
+    static func parent(_ pid: pid_t) -> pid_t? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
+        guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0, info.kp_proc.p_pid == pid else { return nil }
+        return info.kp_eproc.e_ppid
+    }
+
+    static func descends(_ pid: pid_t, from ancestor: pid_t, maxDepth: Int) -> Bool {
+        var current = pid
+        for _ in 0..<maxDepth {
+            guard let p = parent(current), p > 1 else { return false }
+            if p == ancestor { return true }
+            current = p
+        }
+        return false
     }
 }

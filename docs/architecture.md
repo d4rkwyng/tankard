@@ -494,6 +494,17 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
   the user can replace `brew` itself, and the real Tankard would then run that brew, which
   could ask through the dialog for a command of its choosing. The same is true of
   `brew` in Terminal.
+- *Focus.* macOS 14+ activation is cooperative: a background helper started by sudo can't
+  take focus. While a command with `SUDO_ASKPASS` runs, the session polls (every 0.4 s, off
+  the main actor) for a process whose `proc_pidpath` is this bundle's helper and whose
+  ancestors include this Tankard process (`AskpassProcess.find`); when one appears, Tankard
+  calls `NSApp.yieldActivation(to:)` with its `NSRunningApplication` once, on the main
+  actor (no NSWorkspace notifications or KVO), and the sheet shows "Waiting for your
+  password in the Tankard dialog…" with the Terminal command. The helper calls the
+  cooperative `NSApp.activate()` before and just after showing the alert, sets
+  `.modalPanel`, `makeKeyAndOrderFront`, `orderFrontRegardless()` (the fallback when focus
+  never comes: in front of other apps' windows, a click focuses it), and makes the secure
+  field first responder.
 - *Context.* `HOMEBREW_TANKARD_ASKPASS_CONTEXT`, set per command by Tankard (already
   localized), cleaned to one line of at most 400 characters with no control characters.
   A `HOMEBREW_` name because `bin/brew` drops other unknown variables; verified to reach the

@@ -135,6 +135,14 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var chainKey: ((Package) -> String?)?
     @ObservationIgnored private let downloads: DownloadMonitor?
     @ObservationIgnored private var downloadTask: Task<Void, Never>?
+    /// 0.8.3: brew's sudo is showing Tankard's password dialog now (the
+    /// helper process is running for this command). The sheet then keeps
+    /// the Terminal route in view.
+    public private(set) var awaitingPassword = false
+    /// 0.8.3: finds the helper and hands it focus (AskpassFocus). nil: no
+    /// watching (tests that don't ask, demo mode).
+    @ObservationIgnored public var passwordFocus: AskpassFocus?
+    @ObservationIgnored private var passwordTask: Task<Void, Never>?
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -321,12 +329,17 @@ public final class UpgradeSession: Identifiable {
         // item's cancel must not stop the running one's watcher.)
         switch event {
         case .started, .output: break
-        default: if items[i].state == .running { stopWatchingDownloads() }
+        default:
+            if items[i].state == .running {
+                stopWatchingDownloads()
+                stopWatchingPassword()
+            }
         }
         switch event {
         case .started:
             items[i].state = .running
             watchDownloads(of: items[i].package)
+            if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
             commandLines = []
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
@@ -422,6 +435,40 @@ public final class UpgradeSession: Identifiable {
     private func showDownload(_ p: DownloadProgress?) {
         if p != nil { downloadObservations += 1 }
         if download != p { download = p }
+    }
+
+    /// 0.8.3: while a command that may run sudo is running, look for the
+    /// password helper. When it appears: `awaitingPassword`, and Tankard
+    /// yields focus to it (macOS 14+ activation is cooperative, so the
+    /// helper can't take focus by itself). When it goes: not awaiting.
+    private func watchPassword() {
+        stopWatchingPassword()
+        guard let focus = passwordFocus else { return }
+        passwordTask = Task { @MainActor [weak self] in
+            var yielded: pid_t?
+            while !Task.isCancelled {
+                // The process table walk happens off the main actor.
+                let pid = await Task.detached(priority: .userInitiated) { focus.find() }.value
+                guard !Task.isCancelled, let self else { return }
+                if let pid {
+                    if yielded != pid {
+                        yielded = pid
+                        focus.yield(pid)
+                        self.note("The password dialog is open (process \(pid)); Tankard handed it the focus.")
+                    }
+                    if !self.awaitingPassword { self.awaitingPassword = true }
+                } else if self.awaitingPassword {
+                    self.awaitingPassword = false
+                }
+                try? await Task.sleep(for: focus.interval)
+            }
+        }
+    }
+
+    private func stopWatchingPassword() {
+        passwordTask?.cancel()
+        passwordTask = nil
+        if awaitingPassword { awaitingPassword = false }
     }
 
     private func stopWatchingDownloads() {

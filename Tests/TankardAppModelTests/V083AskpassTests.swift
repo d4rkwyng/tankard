@@ -369,3 +369,84 @@ struct SudoInstallerDecodingTests {
         #expect(try cask("[]").sudoInstaller == false)
     }
 }
+
+/// 0.8.3: while the helper is up, the session says so (the sheet keeps the
+/// Terminal route in view) and Tankard yields focus to it once per helper.
+@MainActor
+struct AwaitingPasswordTests {
+    final class Box: @unchecked Sendable {
+        private let lock = NSLock()
+        private var _pid: pid_t?
+        private var _finds = 0
+        var pid: pid_t? { get { lock.withLock { _pid } } set { lock.withLock { _pid = newValue } } }
+        var finds: Int { lock.withLock { _finds } }
+        func find() -> pid_t? { lock.withLock { _finds += 1; return _pid } }
+    }
+
+    func rig(_ box: Box, yields: @escaping @MainActor @Sendable (pid_t) -> Void) async -> (AppStore, Latch) {
+        let latch = Latch()
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.askpassHelper = AdminPasswordTests.helper
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, _ in
+            if args.first == "upgrade" { await latch.wait() }
+            return 0
+        }
+        deps.askpassFocus = AskpassFocus(find: { box.find() }, yield: yields, interval: .milliseconds(20))
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        return (store, latch)
+    }
+
+    @Test func helperUpMeansAwaitingAndOneYieldPerHelper() async throws {
+        let box = Box()
+        var yielded: [pid_t] = []
+        let (store, latch) = await rig(box) { yielded.append($0) }
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        store.startUpgrade([chrome])
+        let session = try #require(store.upgrade)
+        await #expect(waitUntil { session.current != nil && box.finds > 1 })
+        #expect(!session.awaitingPassword)
+        box.pid = 4242
+        await #expect(waitUntil { session.awaitingPassword })
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(yielded == [4242])          // once, not every poll
+        box.pid = nil                         // dialog answered or cancelled
+        await #expect(waitUntil { !session.awaitingPassword })
+        box.pid = 4243                        // sudo asks again (wrong password)
+        await #expect(waitUntil { session.awaitingPassword })
+        #expect(yielded == [4242, 4243])
+        latch.release()
+        await #expect(waitUntil { session.isFinished })
+        #expect(!session.awaitingPassword)
+        let after = box.finds
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(box.finds == after)           // watching stopped with the command
+    }
+
+    @Test func aFormulaUpgradeNeverWatches() async throws {
+        let box = Box()
+        box.pid = 4242
+        var yielded: [pid_t] = []
+        let (store, latch) = await rig(box) { yielded.append($0) }
+        let formula = try #require(store.packages.first { $0.kind == .formula && $0.isManualUpgradeTarget })
+        store.startUpgrade([formula])
+        let session = try #require(store.upgrade)
+        await #expect(waitUntil { session.current != nil })
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(box.finds == 0)
+        #expect(!session.awaitingPassword)
+        #expect(yielded.isEmpty)
+        latch.release()
+        await #expect(waitUntil { session.isFinished })
+    }
+
+    @Test func liveFindIgnoresProcessesNotUnderTankard() {
+        // This test process runs no helper: nothing found, and the lookup
+        // itself works on the real process table.
+        #expect(AskpassProcess.find(helperPath: AdminPasswordTests.helper, below: getpid()) == nil)
+        #expect(AskpassProcess.path(getpid()) != nil)
+        #expect(AskpassProcess.descends(getpid(), from: getppid(), maxDepth: 3))
+        #expect(!AskpassProcess.descends(getppid(), from: getpid(), maxDepth: 3))
+    }
+}

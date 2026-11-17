@@ -104,6 +104,9 @@ public final class AppStore {
         /// (tests, `swift run`, demo mode); brew's sudo then fails as before
         /// and the sheet offers the Terminal command.
         public var askpassHelper: String?
+        /// 0.8.3: finds the running helper and yields focus to it (the app
+        /// sets it with AppKit; nil: no watching).
+        public var askpassFocus: AskpassFocus?
         /// Screenshots only: act as if this cask installed the running app.
         public var selfCaskOverride: Package?
 
@@ -921,6 +924,7 @@ public final class AppStore {
                 self?.sessionFinished(session)
             })
         upgrade?.isRetry = isRetry
+        upgrade?.passwordFocus = deps.askpassFocus
         showUpgradeSheet = true
     }
 
@@ -943,6 +947,7 @@ public final class AppStore {
                                  precondition: precondition,
                                  downloads: downloadMonitorForCustomSession(),
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
+        upgrade?.passwordFocus = deps.askpassFocus
         showUpgradeSheet = true
     }
 
