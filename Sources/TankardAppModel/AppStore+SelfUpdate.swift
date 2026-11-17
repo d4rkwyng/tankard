@@ -76,9 +76,26 @@ extension AppStore {
     /// start: say to quit and reopen.
     public func relaunchAfterSelfUpgrade() {
         offerRelaunch = false
+        dismissPresentations()
         if let relaunch = deps.relaunch, relaunch() { return }
         error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
                            detail: Self.quitAndReopen)
+    }
+
+    /// Every sheet the store presents, closed in its own state, so SwiftUI
+    /// doesn't put one back after the relaunch ends it in AppKit (AppKit
+    /// refuses to terminate under a sheet; the first e2e run saw the first
+    /// terminate refused with the History sheet's state still set).
+    func dismissPresentations() {
+        if upgrade.map(\.isFinished) ?? true { showUpgradeSheet = false }
+        showSelfUpdate = false
+        uninstallCandidate = nil
+        showCleanupSheet = false
+        managementSheet = nil
+        showAutoUpdateLog = false
+        toolSheet = nil
+        restorePoints.isShowing = false
+        insights.postInstallNotes = nil
     }
 
     /// The relaunch couldn't quit this copy (or couldn't start).

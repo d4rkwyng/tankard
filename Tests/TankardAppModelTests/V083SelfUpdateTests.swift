@@ -113,6 +113,32 @@ struct V083SelfUpdateTests {
         #expect(SingleInstance.decide(others: [dev], executableWritten: written) == .proceed)
     }
 
+    @Test func aCopyInAnotherFolderNeverCounts() {
+        // A worktree's dist/ build, or launch-check.sh's real-mode run.
+        let elsewhere = SingleInstance.Other(pid: 5, launchDate: written.addingTimeInterval(60), samePath: false)
+        #expect(SingleInstance.decide(others: [elsewhere], executableWritten: written) == .proceed)
+        let stale = SingleInstance.Other(pid: 6, launchDate: written.addingTimeInterval(-60), samePath: false)
+        #expect(SingleInstance.decide(others: [stale], executableWritten: written) == .proceed)
+        let a = URL(fileURLWithPath: "/Applications/Tankard.app")
+        #expect(SingleInstance.samePath(a, URL(fileURLWithPath: "/Applications/../Applications/Tankard.app")))
+        #expect(!SingleInstance.samePath(a, URL(fileURLWithPath: "/Users/x/tankard/dist/Tankard.app")))
+        #expect(!SingleInstance.samePath(a, nil))
+    }
+
+    /// A process started without LaunchServices has no launchDate: the
+    /// kernel's start time stands in.
+    @Test func startDateFromTheKernel() throws {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/bin/sleep")
+        p.arguments = ["2"]
+        let before = Date().addingTimeInterval(-1)
+        try p.run()
+        defer { p.terminate() }
+        let d = try #require(SingleInstance.startDate(pid: p.processIdentifier))
+        #expect(d >= before && d <= Date().addingTimeInterval(1))
+        #expect(SingleInstance.startDate(pid: 999_999) == nil)
+    }
+
     @Test func aSameBuildSecondLaunchYieldsToTheRunningCopy() {
         let first = SingleInstance.Other(pid: 42, launchDate: written.addingTimeInterval(3600))
         #expect(SingleInstance.decide(others: [first], executableWritten: written) == .yield(to: 42))
@@ -227,8 +253,12 @@ struct V083SelfUpdateTests {
         let calls = CallLog()
         let store = await demoStore(relaunch: { calls.add(["relaunch"]); return true })
         store.offerRelaunch = true
+        store.toolSheet = .history
+        store.showSelfUpdate = true
         store.relaunchAfterSelfUpgrade()
         #expect(calls.count("relaunch") == 1)
+        // Sheets closed in the store's own state first (SwiftUI would put them back).
+        #expect(store.toolSheet == nil && !store.showSelfUpdate)
         #expect(!store.offerRelaunch)
         #expect(store.error == nil)
         // No helper (a build outside an app bundle) or it didn't start.

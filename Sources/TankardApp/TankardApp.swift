@@ -462,12 +462,14 @@ enum InstanceGuard {
             .filter { $0.processIdentifier != me && !$0.isTerminated }
         guard !apps.isEmpty else { return }
         let others = apps.map { a in
-            SingleInstance.Other(pid: a.processIdentifier, launchDate: a.launchDate,
-                                 isDevRun: SingleInstance.environment(pid: a.processIdentifier).map(SingleInstance.isDevRun) ?? false)
+            SingleInstance.Other(pid: a.processIdentifier,
+                                 launchDate: a.launchDate ?? SingleInstance.startDate(pid: a.processIdentifier),
+                                 isDevRun: SingleInstance.environment(pid: a.processIdentifier).map(SingleInstance.isDevRun) ?? false,
+                                 samePath: SingleInstance.samePath(a.bundleURL, Bundle.main.bundleURL))
         }
         let written = Bundle.main.executablePath.flatMap(SingleInstance.writtenDate)
         let decision = SingleInstance.decide(others: others, executableWritten: written)
-        note("pid \(me): others \(others.map { "\($0.pid)\($0.isDevRun ? "(dev)" : "") launched \($0.launchDate.map { "\($0)" } ?? "?")" }.joined(separator: ", ")); executable written \(written.map { "\($0)" } ?? "?"); \(decision)")
+        note("pid \(me): others \(others.map { "\($0.pid)\($0.isDevRun ? "(dev)" : "")\($0.samePath ? "" : "(other path)") launched \($0.launchDate.map { "\($0)" } ?? "?")" }.joined(separator: ", ")); executable written \(written.map { "\($0)" } ?? "?"); \(decision)")
         switch decision {
         case .proceed:
             return

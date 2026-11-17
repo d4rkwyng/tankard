@@ -16,11 +16,17 @@ public enum SingleInstance {
         /// A demo, snapshot or script run (read from its environment):
         /// tests run those side by side on purpose, so they never count.
         public var isDevRun: Bool
+        /// Runs from this app's own bundle path. Only those count: a build
+        /// in another folder (a worktree's dist/, launch-check.sh's real-mode
+        /// run) is a different copy, and brew replaces Tankard in place, so
+        /// a stale old copy always has our path.
+        public var samePath: Bool
 
-        public init(pid: Int32, launchDate: Date?, isDevRun: Bool = false) {
+        public init(pid: Int32, launchDate: Date?, isDevRun: Bool = false, samePath: Bool = true) {
             self.pid = pid
             self.launchDate = launchDate
             self.isDevRun = isDevRun
+            self.samePath = samePath
         }
     }
 
@@ -42,7 +48,7 @@ public enum SingleInstance {
     /// duplicate. Unknown dates count as the same build: when in doubt the
     /// copy that is already running keeps running.
     public static func decide(others: [Other], executableWritten: Date?) -> Decision {
-        let real = others.filter { !$0.isDevRun }
+        let real = others.filter { !$0.isDevRun && $0.samePath }
         guard !real.isEmpty else { return .proceed }
         var stale: [Int32] = []
         for o in real {
@@ -65,6 +71,25 @@ public enum SingleInstance {
         guard stat(path, &st) == 0 else { return nil }
         func date(_ t: timespec) -> Date { Date(timeIntervalSince1970: TimeInterval(t.tv_sec) + TimeInterval(t.tv_nsec) / 1e9) }
         return max(date(st.st_mtimespec), date(st.st_ctimespec))
+    }
+
+    /// When a process started, from the kernel (kinfo_proc). The fallback
+    /// for NSRunningApplication.launchDate, which is nil for a process that
+    /// wasn't started through LaunchServices (exec'd directly).
+    public static func startDate(pid: Int32) -> Date? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
+        guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0 else { return nil }
+        let t = info.kp_proc.p_un.__p_starttime
+        guard t.tv_sec > 0 else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(t.tv_sec) + TimeInterval(t.tv_usec) / 1e6)
+    }
+
+    /// The same bundle, symlinks and `..` resolved.
+    public static func samePath(_ a: URL?, _ b: URL?) -> Bool {
+        guard let a, let b else { return false }
+        return a.resolvingSymlinksInPath().standardizedFileURL.path == b.resolvingSymlinksInPath().standardizedFileURL.path
     }
 
     /// The variables that make a launch a dev run (LaunchOptions in
