@@ -253,6 +253,29 @@ struct BackgroundUpdateStoreTests {
         #expect(!r.store.backgroundUpdating)
     }
 
+    /// 0.6.1's drag lock came from writes the toolbar's filter picker saw.
+    /// The background update writes none of filter, tab, selection or search.
+    @Test func backgroundUpdateWritesNoFilterOrSelection() async throws {
+        let r = try await base.rig(info: Self.before, backgroundUpdates: true)
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        r.store.moreFilterSelection = .hasNotes
+        r.store.selection = r.store.packages.first?.id
+        let notified = Flag()
+        withObservationTracking {
+            _ = r.store.filter
+            _ = r.store.tab
+            _ = r.store.selection
+            _ = r.store.search
+            _ = r.store.moreFilterSelection
+        } onChange: { notified.set() }
+        r.runner.info = demoIntelInfo()
+        #expect(await r.store.runBackgroundUpdate())
+        #expect(!notified.value)
+        #expect(r.store.filter == .hasNotes)
+    }
+
     @Test func offlineFailureIsQuietAndBacksOff() async throws {
         let r = try await base.rig(backgroundUpdates: true, stream: { args, out in
             out(Data("fatal: unable to access 'https://github.com/Homebrew/brew/': Could not resolve host: github.com\n".utf8))
