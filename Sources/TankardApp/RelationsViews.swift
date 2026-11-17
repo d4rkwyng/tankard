@@ -24,7 +24,7 @@ struct PinnedBadge: View {
         .padding(.horizontal, 4).padding(.vertical, 0.5)
         .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : p.background))
         .fixedSize()
-        .help("Pinned: brew upgrade skips it, and Upgrade all leaves it out")
+        .help("Pinned: brew upgrade skips it, and Upgrade All leaves it out")
     }
 }
 
@@ -79,7 +79,7 @@ struct PinBox: View {
                 }
                 Text(p.upgradeAvailable
                      ? String(localized: "\(p.currentVersion ?? "A newer version") is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.")
-                     : String(localized: "brew won't upgrade it, and Upgrade all leaves it out."))
+                     : String(localized: "brew won't upgrade it, and Upgrade All leaves it out."))
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -109,7 +109,7 @@ struct PinBox: View {
                 }
                 .controlSize(.small)
                 .disabled(busy)
-                .help("\(command): brew upgrade and Upgrade all will skip it")
+                .help("\(command): brew upgrade and Upgrade All will skip it")
                 // Wraps rather than truncating: a long version (or the
                 // narrow detail pane at 1040x620) cut the sentence off.
                 Text("Keeps \(p.installedVersion); upgrades skip it")

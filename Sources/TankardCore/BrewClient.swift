@@ -17,7 +17,7 @@ public enum BrewClientError: Error, CustomStringConvertible {
                 ? String(localized: "\(command) exited \(exit)")
                 : String(localized: "\(command) exited \(exit):\n\(tail)")
         case .badJSON(let command, let underlying):
-            return String(localized: "\(command) printed JSON Tankard could not read: \(underlying)")
+            return String(localized: "\(command) printed JSON Tankard couldn't read: \(underlying)")
         }
     }
 }

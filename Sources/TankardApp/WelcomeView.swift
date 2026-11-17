@@ -69,7 +69,7 @@ struct WelcomeView: View {
                         if store.isRefreshing {
                             ProgressView().controlSize(.small)
                         } else {
-                            Label("Check again", systemImage: "arrow.clockwise")
+                            Label("Check Again", systemImage: "arrow.clockwise")
                         }
                     }
                     .controlSize(.large)
@@ -117,14 +117,14 @@ struct InstallerCard: View {
                 } else {
                     Button("Open in Terminal", action: open)
                 }
-                Button("Copy command") { copyToPasteboard(installer.command) }
+                Button("Copy Command") { copyToPasteboard(installer.command) }
                 Spacer()
                 if let f = failure.wrappedValue {
                     Text(f).font(.system(size: 11)).foregroundStyle(.orange).lineLimit(2)
                 }
             }
             .controlSize(.regular)
-            Text("The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again.")
+            Text("The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again.")
                 .font(.system(size: 11))
                 .foregroundStyle(.tertiary)
         }

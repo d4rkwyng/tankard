@@ -88,7 +88,7 @@ public enum HomebrewInstaller: String, Sendable, CaseIterable, Identifiable {
         # Written by Tankard. Runs the \(self == .intelbrew ? "Intelbrew" : "Homebrew") installer in Terminal.
         \(command)
         echo
-        echo "When it finishes, return to Tankard and click Check again."
+        echo "When it finishes, return to Tankard and click Check Again."
 
         """
     }

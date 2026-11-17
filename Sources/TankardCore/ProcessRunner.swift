@@ -25,7 +25,7 @@ public enum ProcessRunnerError: Error, CustomStringConvertible {
     public var description: String {
         switch self {
         case .spawnFailed(let exe, let errno): let reason = String(cString: strerror(errno))
-            return String(localized: "could not start \(exe): \(reason)")
+            return String(localized: "couldn't start \(exe): \(reason)")
         case .cancelled: return String(localized: "cancelled")
         }
     }

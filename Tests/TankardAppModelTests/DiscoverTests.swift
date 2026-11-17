@@ -574,7 +574,7 @@ struct WelcomeTests {
         let lines = ib.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         #expect(lines[0] == "#!/bin/bash")
         #expect(lines.contains(#"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/d4rkwyng/intelbrew/main/install.sh)""#))
-        #expect(lines.contains(#"echo "When it finishes, return to Tankard and click Check again.""#))
+        #expect(lines.contains(#"echo "When it finishes, return to Tankard and click Check Again.""#))
         #expect(!ib.contains("Homebrew/install"))
         let hb = HomebrewInstaller.homebrew.script
         #expect(hb.contains(#"/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)""#))

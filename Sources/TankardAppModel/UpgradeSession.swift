@@ -367,7 +367,7 @@ public final class UpgradeSession: Identifiable {
         case .failed(let message):
             flush()
             items[i].state = .failed(-1)
-            note("Could not run brew: \(message)")
+            note("Couldn't run brew: \(message)")
             noteChainSkipped(after: i)
         }
         if !isFinished && items.allSatisfy({ $0.state.isTerminal }) {

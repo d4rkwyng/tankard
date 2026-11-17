@@ -153,7 +153,7 @@ struct PackageDetail: View {
                             }
                         }
                         if p.selfUpdateHeld == true, let v = p.currentVersion {
-                            Text("Left to the app: \(v) isn't in Upgrade all or auto-update.")
+                            Text("Left to the app: \(v) isn't in Upgrade All or auto-update.")
                                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -190,7 +190,7 @@ struct PackageDetail: View {
                 if let page = p.releasePageURL {
                     Link(destination: page) {
                         HStack(spacing: 3) {
-                            Text("Open release page")
+                            Text("Open Release Page")
                             Image(systemName: "arrow.up.right").font(.system(size: 10, weight: .semibold))
                         }
                         .font(.system(size: 12, weight: .medium))
@@ -281,7 +281,7 @@ struct ReplaceWithBottleBox: View {
                 .fixedSize(horizontal: false, vertical: true)
             CommandBox(command: command)
             Button(action: action) {
-                Label("Replace with bottle", systemImage: "shippingbox")
+                Label("Replace with Bottle", systemImage: "shippingbox")
             }
             .buttonStyle(.primaryAction)
             .disabled(!enabled)

@@ -378,7 +378,7 @@ struct CleanupSheet: View {
                 Button {
                     store.startCleanup()
                 } label: {
-                    Text("Clean up")
+                    Text("Clean Up")
                 }
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)

@@ -157,7 +157,7 @@ struct TapsSheet: View {
                     .disabled(store.installedCount(from: t) == 0)
                     .help("The Installed list, filtered to this tap (tap:\(t.name))")
                 if !t.official, t.trusted != nil {
-                    Button(t.trusted == true ? String(localized: "Untrust…") : String(localized: "Trust…")) { taps.requestTrust(t) }
+                    Button(t.trusted == true ? String(localized: "Stop Trusting…") : String(localized: "Trust…")) { taps.requestTrust(t) }
                         .disabled(store.isBusy)
                 }
                 Button("Remove…") { _ = taps.requestRemove(t, packages: store.packages) }
@@ -212,7 +212,7 @@ struct TapsAlerts: ViewModifier {
                isPresented: pendingBinding({ taps.pendingTrust != nil }, { taps.cancelPending() }),
                presenting: taps.pendingTrust) { t in
             Button("Cancel", role: .cancel) { taps.cancelPending() }
-            Button(t.trusted == true ? String(localized: "Untrust") : String(localized: "Trust")) { store.confirmTrustTap() }
+            Button(t.trusted == true ? String(localized: "Stop Trusting") : String(localized: "Trust")) { store.confirmTrustTap() }
         } message: { t in
             Text((t.trusted == true
                   ? String(localized: "brew no longer counts this tap as trusted (brew untrust: \"Stop trusting non-official tap formulae, casks or commands\").")
