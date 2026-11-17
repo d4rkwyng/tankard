@@ -28,7 +28,7 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
     }
 
     /// The default for a new install.
-    public static let `default` = AppTheme.dark
+    public static let `default` = AppTheme.system
 
     /// "dark", "light", "system", "tankard", "dracula" (case-insensitive); nil otherwise.
     public init?(name: String?) {

@@ -22,6 +22,8 @@ are its section below (`Scripts/changelog-section.sh`).
 - Settings → Upgrades for these options.
 
 ### Changed
+- **System is the default theme** (it follows the Mac's light or dark setting); a theme you already chose is kept.
+- The menu-bar icon is a pixel tankard (handle on the left, like the logo), with foam only when upgrades are waiting.
 - **Clean Up** is in the View menu only; the toolbar trash button is gone (it read as "delete").
 - The menu-bar mug faces left, like Tankard's logo.
 - One rule for what "upgrade everything" means: Upgrade all, the menu-bar count, upgrade notifications and Upgrade vulnerable packages all leave pinned packages out. With "Include self-updating apps" on, those casks count as upgrades everywhere too, unless pinned.
