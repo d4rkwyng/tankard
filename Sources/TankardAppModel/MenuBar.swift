@@ -17,8 +17,10 @@ public struct MenuBarSummary: Equatable, Sendable {
         public var isCask: Bool
     }
 
-    /// How many rows the menu lists before "and N more".
-    public static let maxRows = 12
+    /// How many rows the menu lists before "and N more…" (0.5: 8, was 12).
+    public static let maxRows = 8
+    /// The largest count the badge spells out; above it, "99+".
+    public static let maxBadge = 99
 
     public var count: Int
     public var rows: [Row]
@@ -48,8 +50,15 @@ public struct MenuBarSummary: Equatable, Sendable {
         return "\(count) upgrade\(count == 1 ? "" : "s") ready"
     }
 
-    /// The number next to the mug; nil (icon only) when there are none.
-    public var badge: String? { count > 0 ? "\(count)" : nil }
+    /// The number next to the mug; nil (icon only) when there are none,
+    /// "99+" above 99 so the menu bar item stays narrow.
+    public var badge: String? {
+        guard count > 0 else { return nil }
+        return count > Self.maxBadge ? "\(Self.maxBadge)+" : "\(count)"
+    }
+
+    /// "and 3 more…" under the rows; nil when every upgrade is listed.
+    public var moreText: String? { moreCount > 0 ? "and \(moreCount) more…" : nil }
 
     /// 0.5: "Tankard 0.6.0 available" when brew lists an upgrade for
     /// Tankard's own cask (the status read already has it). Tankard never

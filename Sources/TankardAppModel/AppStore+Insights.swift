@@ -86,4 +86,13 @@ extension AppStore {
         filter = .vulnerable
         insights.markVulnerabilitiesSeen()
     }
+
+    /// 0.5: the menu-bar panel's "and N more…": the Upgrades list. Only a
+    /// real change is written, so a click on an already-shown list
+    /// invalidates nothing.
+    public func showUpgrades() {
+        if tab != .installed { tab = .installed }
+        if !search.isEmpty { search = "" }
+        if filter != .upgrades { filter = .upgrades }
+    }
 }

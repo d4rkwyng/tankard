@@ -15,6 +15,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - One timer runs both the update notifications (still off by default, a separate setting) and automatic updates.
 - `tankard status --json` cask entries gain `appPaths` and `quitBundleIDs` (from `brew info`'s artifacts; schema version 1, added fields).
+- The menu-bar menu lists at most 8 upgrades (was 12); "and N more…" opens Tankard on the Upgrades list. The menu-bar count shows "99+" above 99.
 
 ## [0.4.0]
 

@@ -93,8 +93,56 @@ struct MenuBarTests {
         let s = MenuBarSummary(packages: many)
         #expect(s.count == 15)
         #expect(s.rows.count == MenuBarSummary.maxRows)
-        #expect(s.moreCount == 3)
+        #expect(s.moreCount == 7)
+        #expect(s.moreText == "and 7 more…")
         #expect(MenuBarSummary(packages: [base]).title == "1 upgrade ready")
+    }
+
+    func upgrades(_ n: Int) async throws -> [Package] {
+        let base = try #require(try await intel().first { $0.upgradeAvailable })
+        return (0..<n).map { i -> Package in var p = base; p.id = "formula:homebrew/core/p\(i)"; p.name = "p\(i)"; return p }
+    }
+
+    /// 0.5: at most 8 rows; "and N more…" only past 8.
+    @Test func eightRowsThenMore() async throws {
+        #expect(MenuBarSummary.maxRows == 8)
+        let eight = MenuBarSummary(packages: try await upgrades(8))
+        #expect(eight.rows.count == 8)
+        #expect(eight.moreCount == 0)
+        #expect(eight.moreText == nil)
+        let nine = MenuBarSummary(packages: try await upgrades(9))
+        #expect(nine.rows.count == 8)
+        #expect(nine.moreCount == 1)
+        #expect(nine.moreText == "and 1 more…")
+        // Rows are the first 8 by name; the rest are counted, not listed.
+        #expect(nine.rows.map(\.name) == ["p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7"])
+    }
+
+    /// 0.5: the badge spells out up to 99, then "99+".
+    @Test func badgeCapsAt99Plus() async throws {
+        #expect(MenuBarSummary(packages: try await upgrades(1)).badge == "1")
+        #expect(MenuBarSummary(packages: try await upgrades(99)).badge == "99")
+        let many = MenuBarSummary(packages: try await upgrades(100))
+        #expect(many.badge == "99+")
+        #expect(many.title == "100 upgrades ready")
+        #expect(many.moreCount == 92)
+    }
+
+    /// 0.5: "and N more…" opens the Installed tab on the Upgrades filter,
+    /// clearing a search; a second click writes (and notifies) nothing.
+    @Test func moreShowsTheUpgradesList() {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        store.tab = .discover
+        store.filter = .pinned
+        store.search = "xz"
+        store.showUpgrades()
+        #expect(store.tab == .installed)
+        #expect(store.filter == .upgrades)
+        #expect(store.search.isEmpty)
+        let notified = Flag()
+        withObservationTracking { _ = (store.tab, store.filter, store.search) } onChange: { notified.set() }
+        store.showUpgrades()
+        #expect(!notified.value)
     }
 }
 

@@ -56,8 +56,17 @@ struct MenuBarContent: View {
                         .contentShape(Rectangle())
                         .contextMenu { menuBarRowMenu(row) }
                     }
-                    if summary.moreCount > 0 {
-                        Text("and \(summary.moreCount) more").font(.system(size: 11)).foregroundStyle(.secondary)
+                    if let more = summary.moreText {
+                        // 0.5: opens the window on the Upgrades list.
+                        Button {
+                            openMain()
+                            store.showUpgrades()
+                        } label: {
+                            Text(more).font(.system(size: 11)).foregroundStyle(Color.accentColor)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .help("Show all upgrades in Tankard")
                     }
                 }
                 .padding(.horizontal, 12)
