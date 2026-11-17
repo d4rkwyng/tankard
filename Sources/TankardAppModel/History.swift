@@ -73,6 +73,10 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     /// Where to run a failed entry again when Retry isn't offered.
     public var rerunHint: String? {
         guard isFailure, !canRetry else { return nil }
+        // 0.8.1: macOS blocked it: allow, relaunch, then run it again.
+        if failureKind == .appManagement {
+            return String(localized: "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again.")
+        }
         // 0.8: brew install --cask --adopt.
         if arguments.contains("--adopt") { return String(localized: "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first.") }
         switch category {

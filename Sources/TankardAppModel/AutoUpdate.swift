@@ -538,6 +538,9 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
     /// A problem with the run as a whole ("brew update failed …").
     public var note: String?
     public var dryRun: Bool
+    /// 0.8.1: casks macOS's App Management permission blocked (nil in
+    /// logs from before 0.8.1).
+    public var appManagement: [String]?
 
     public init(id: UUID = UUID(), startedAt: Date, finishedAt: Date? = nil, upgraded: [Item] = [], skipped: [Item] = [],
                 failed: [Item] = [], note: String? = nil, dryRun: Bool = false) {
@@ -577,6 +580,9 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
             lines.append(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? String(localized: " and \(names.count - 4) more") : ""))
         }
         if !failed.isEmpty { lines.append(String(localized: "Failed: ") + failed.map(\.name).prefix(3).joined(separator: ", ")) }
+        if !(appManagement ?? []).isEmpty {
+            lines.append(String(localized: "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it."))
+        }
         if !skipped.isEmpty { lines.append(String(localized: "\(skipped.count) skipped (see the Auto-update log)")) }
         if let note, n == 0, failed.isEmpty { lines.append(note) }
         return UpgradeNotificationDiff.Message(title: title, body: lines.joined(separator: "\n"),
@@ -769,7 +775,15 @@ public final class AutoUpdater {
                 record.upgraded.append(item)
             } else {
                 let tail = lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
-                let why = SudoDetector.needsSudo(lines) ? String(localized: "needs administrator rights") : String(localized: "brew exited \(Int(code))") + (tail.isEmpty ? "" : ": \(tail)")
+                var why = SudoDetector.needsSudo(lines) ? String(localized: "needs administrator rights") : String(localized: "brew exited \(Int(code))") + (tail.isEmpty ? "" : ": \(tail)")
+                // 0.8.1: no sheet here to explain it: say so in the log and
+                // the notification, and explain again before the next
+                // cask change the user makes.
+                if p.kind == .cask, AppManagement.isPermissionBlock(lines) {
+                    why = BrewFailureKind.appManagement.title
+                    record.appManagement = (record.appManagement ?? []) + [p.name]
+                    store.settings.appManagementExplained = false
+                }
                 record.failed.append(.init(name: p.name, isCask: p.kind == .cask, detail: why))
             }
         }

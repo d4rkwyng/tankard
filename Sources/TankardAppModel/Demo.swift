@@ -144,6 +144,9 @@ public enum Demo {
             hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
         deps.appManagementGate = true
+        // 0.8.1: the welcome's check never touches a real app in the demo.
+        deps.appManagementProbe = { _ in .blocked }
+        deps.appManagementProbeExists = { _ in true }
         // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
         deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {
@@ -490,7 +493,7 @@ public enum Demo {
                 state.replaced.withLock { _ = $0.insert(name) }
                 return 0
             }
-            if state.failAppManagement, arguments.contains("--cask"), arguments.first == "upgrade" || arguments.first == "uninstall",
+            if state.failAppManagement, AppManagement.isCaskCommand(arguments),
                let qualified = arguments.last {
                 let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
                 let first = state.appManagementFailed.withLock { $0.insert(name).inserted }

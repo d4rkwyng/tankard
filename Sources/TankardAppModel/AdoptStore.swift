@@ -400,7 +400,8 @@ public extension AppStore {
     func startAdopt(_ items: [AdoptPlanItem]) -> Bool {
         guard !items.isEmpty, !isUpgrading, !autoUpdate.isRunning, report != nil else { return false }
         startSession(.adopt, packages: items.map { $0.asPackage() })
-        guard isUpgrading else { return false }
+        // 0.8.1: or waiting on the App Management explainer (it runs after).
+        guard isUpgrading || appManagementPrompt?.action == .adopt else { return false }
         adopt.policiesToSave = Dictionary(items.filter { $0.autoUpdates && $0.policy != .automatic }.map { ($0.qualifiedName, $0.policy) },
                                           uniquingKeysWith: { $1 })
         return true

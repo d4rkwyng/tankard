@@ -124,8 +124,8 @@ upgrades none of your packages. Turn off Settings → General → "Check for new
 the background" to stop it; it is also off when `HOMEBREW_NO_AUTO_UPDATE` is set. It waits
 while another brew command runs, and a failure (offline) is only logged. Notifications use the same update. Commands run one at a time, never with a shell, and never with
 sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
-Upgrading or removing an app (a cask that installs one) needs macOS's App Management permission; Tankard
-explains how to allow it the first time. The Homebrew menu's Revert and Uninstall never run
+Installing, adopting, upgrading or removing an app (a cask that installs one) needs macOS's App Management permission; Tankard
+explains how to allow it the first time and offers to relaunch itself so macOS applies it. The Homebrew menu's Revert and Uninstall never run
 in the app: after you type the confirmation word, they open Terminal with the commands.
 
 ## Network and privacy

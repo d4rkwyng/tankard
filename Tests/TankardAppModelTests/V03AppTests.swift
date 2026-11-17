@@ -509,7 +509,10 @@ struct AppManagementTests {
         let formula = CatalogEntry(kind: .formula, name: "xz", fullName: "xz", tap: "homebrew/core", desc: nil, bottle: .intelbrew).asPackage()
         #expect(AppManagement.modifiesApps(.upgrade, cask))
         #expect(AppManagement.modifiesApps(.uninstall, cask))
-        #expect(!AppManagement.modifiesApps(.install, cask))
+        // 0.8.1: installs and adopts write into /Applications too.
+        #expect(AppManagement.modifiesApps(.install, cask))
+        #expect(AppManagement.modifiesApps(.adopt, cask))
+        #expect(!AppManagement.modifiesApps(.install, formula))
         #expect(!AppManagement.modifiesApps(.upgrade, formula))
         #expect(!AppManagement.modifiesApps(.uninstall, formula))
         #expect(!AppManagement.modifiesApps(.replaceBottle, formula))

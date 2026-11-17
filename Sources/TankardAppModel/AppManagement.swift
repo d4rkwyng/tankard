@@ -17,8 +17,11 @@ public enum AppManagement {
     /// Fallback: Privacy & Security itself.
     public static let privacyURL = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
 
-    /// Only cask upgrades and uninstalls replace or remove apps. Formula
-    /// operations (and Replace with bottle) never trigger the flow. 0.8:
+    /// Cask installs, adopts, upgrades and uninstalls write into
+    /// /Applications (0.8.1: install and adopt too; adopt runs
+    /// `brew install --cask --adopt`, which changes the user's existing app
+    /// in place). Formula operations (and Replace with bottle) never
+    /// trigger the flow. 0.8:
     /// nor does a cask that puts nothing in an Applications folder (a font,
     /// a CLI tool): the explainer is shown only for casks with an `app` or
     /// `suite` artifact, or a pkg installer (which can install apps).
@@ -26,10 +29,17 @@ public enum AppManagement {
         isCaskChange(action, p) && hasApps(p)
     }
 
-    /// A cask upgrade or uninstall, whatever it installs. brew's output is
-    /// still checked for the block on every one of these.
+    /// A cask install, adopt, upgrade or uninstall, whatever it installs.
+    /// brew's output is still checked for the block on every one of these.
     public static func isCaskChange(_ action: SessionAction, _ p: Package) -> Bool {
-        p.kind == .cask && (action == .upgrade || action == .uninstall)
+        p.kind == .cask && retryable(action)
+    }
+
+    /// 0.8.1: the actions Tankard can run again from a package list (after
+    /// "I've done this", or after a relaunch). A restore's commands come
+    /// from its plan, so it is run again from Restore Points instead.
+    public static func retryable(_ action: SessionAction) -> Bool {
+        [.upgrade, .install, .uninstall, .adopt].contains(action)
     }
 
     /// Whether the cask installs an app, a suite or a pkg. Unknown counts
@@ -48,13 +58,14 @@ public enum AppManagement {
     /// "Operation not permitted" on a path in an Applications folder (what
     /// rename/rm/chown print when the move is blocked).
     public static func isPermissionBlock(_ lines: some Sequence<String>) -> Bool {
-        lines.contains { line in
-            let l = line.lowercased()
-            if l.contains("app management permission") { return true }
-            if l.contains("prevented from modifying apps") { return true }
-            if l.contains("operation not permitted"), l.contains("/applications/") { return true }
-            return false
-        }
+        BrewFailure.isAppManagementBlock(Array(lines))
+    }
+
+    /// 0.8.1: a brew command that writes into an Applications folder: a
+    /// cask install (adopt too), reinstall, upgrade or uninstall. Used for
+    /// sessions whose rows are commands (a restore's reinstall).
+    public static func isCaskCommand(_ arguments: [String]) -> Bool {
+        arguments.contains("--cask") && ["install", "reinstall", "upgrade", "uninstall"].contains(arguments.first ?? "")
     }
 
     /// The sheet's steps. `anchored`: the deep link opens App Management
@@ -69,6 +80,117 @@ public enum AppManagement {
     }
 }
 
+// MARK: relaunch (0.8.1)
+
+extension AppManagement {
+    /// macOS applies an App Management grant to a process started after it:
+    /// the system's own dialog says the app "will not be able to update or
+    /// delete other applications until it is quit" (see
+    /// docs/usage.md, App Management). So after "I've done this"
+    /// Tankard offers to relaunch itself.
+    ///
+    /// The command that does it: a detached /bin/sh waits (at most ~10 s)
+    /// for this process to exit, so the new one is a fresh process for TCC,
+    /// then `open -n` starts the bundle again. Arguments are passed as
+    /// positional parameters ($0 the bundle, $1 the pid), never spliced
+    /// into the script.
+    public static func relaunchCommand(bundlePath: String, pid: Int32) -> (executable: String, arguments: [String]) {
+        let script = "i=0; while kill -0 \"$1\" 2>/dev/null && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; exec /usr/bin/open -n \"$0\""
+        return ("/bin/sh", ["-c", script, bundlePath, String(pid)])
+    }
+
+    /// Relaunch is offered only from a real app bundle (not `swift run`).
+    public static func canRelaunch(bundlePath: String) -> Bool {
+        bundlePath.hasSuffix(".app")
+    }
+}
+
+/// 0.8.1: the operation to run again once Tankard has relaunched, kept in
+/// the defaults across the relaunch. Only for a short while: an old one is
+/// dropped, never run days later.
+public struct AppManagementPendingRetry: Codable, Equatable, Sendable {
+    public static let maxAge: TimeInterval = 15 * 60
+
+    public var action: String
+    public var packages: [Package]
+    public var savedAt: Date
+
+    public init(action: SessionAction, packages: [Package], savedAt: Date) {
+        self.action = action.rawValue
+        self.packages = packages
+        self.savedAt = savedAt
+    }
+
+    public var sessionAction: SessionAction? { SessionAction(rawValue: action) }
+
+    /// What to run now, against what brew says after the relaunch: an
+    /// upgrade only of what is still outdated, an uninstall only of what is
+    /// still installed, an install or adopt only of what still isn't. Nil:
+    /// too old, not retryable, or nothing left to do.
+    public func resolve(installed: [Package], now: Date) -> (SessionAction, [Package])? {
+        guard now.timeIntervalSince(savedAt) >= 0, now.timeIntervalSince(savedAt) <= Self.maxAge,
+              let a = sessionAction, AppManagement.retryable(a) else { return nil }
+        let byID = Dictionary(installed.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let run: [Package]
+        switch a {
+        case .upgrade: run = packages.compactMap { byID[$0.id] }.filter(\.upgradeAvailable)
+        case .uninstall: run = packages.compactMap { byID[$0.id] }
+        default: run = packages.filter { byID[$0.id] == nil }
+        }
+        return run.isEmpty ? nil : (a, run)
+    }
+
+    public func encoded() -> Data? { try? JSONEncoder().encode(self) }
+    public static func decode(_ data: Data?) -> Self? { data.flatMap { try? JSONDecoder().decode(Self.self, from: $0) } }
+}
+
+// MARK: probe (0.8.1)
+
+/// Whether Tankard may change apps, found out the way brew does
+/// (cask/staged.rb writes `<app>/.homebrew-write-test` and treats EPERM as
+/// "no App Management"): create an empty dot-file at the top of a
+/// Homebrew-installed app bundle and delete it at once. Run only when the
+/// user asks (Check in the welcome sheet), never at launch, and only on an
+/// app from an installed cask's own artifact list: never on an app brew
+/// doesn't manage. The attempt is also what makes macOS show its
+/// "was prevented from modifying apps" notice and list Tankard in
+/// App Management.
+public enum AppManagementProbe {
+    public enum Result: Equatable, Sendable { case allowed, blocked, unknown }
+
+    public static let fileName = ".tankard-write-test"
+
+    /// The first existing app of an installed cask (`packages`: brew's
+    /// installed list; `appPaths` comes from the cask's own artifacts), in
+    /// an Applications folder.
+    public static func target(_ packages: [Package], exists: (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }) -> String? {
+        for p in packages where p.kind == .cask {
+            for path in p.appPaths ?? [] where path.hasSuffix(".app") && path.contains("/Applications/") && exists(path) {
+                return path
+            }
+        }
+        return nil
+    }
+
+    /// Writes and removes the test file. EPERM: blocked. Any other error
+    /// (the app is gone, a read-only volume): unknown.
+    public static func run(appPath: String) -> Result {
+        let path = (appPath as NSString).appendingPathComponent(fileName)
+        let fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0o600)
+        if fd < 0 {
+            let e = errno
+            if e == EEXIST {
+                // A leftover from an interrupted probe: ours, remove it.
+                return unlink(path) == 0 ? .allowed : (errno == EPERM ? .blocked : .unknown)
+            }
+            return e == EPERM ? .blocked : .unknown
+        }
+        close(fd)
+        unlink(path)
+        return .allowed
+    }
+}
+
 /// Why the App Management sheet is up, and what to do after it.
 public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
     public enum Reason: Equatable, Sendable {
@@ -78,8 +200,13 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
         case blocked
     }
 
+    /// 0.8.1: the sheet's page. `relaunch`: after "I've done this", the
+    /// offer to relaunch (macOS applies the grant to a new process).
+    public enum Stage: Equatable, Sendable { case explain, relaunch }
+
     public var id = UUID()
     public var reason: Reason
+    public var stage: Stage = .explain
     public var action: SessionAction
     /// The packages to run (firstUse) or retry (blocked).
     public var packages: [Package]
@@ -89,6 +216,9 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
         self.action = action
         self.packages = packages
     }
+
+    /// 0.8.1: whether Tankard can run it again itself (a restore can't).
+    public var canRetry: Bool { AppManagement.retryable(action) && !packages.isEmpty }
 }
 
 /// The About panel and Help menu.

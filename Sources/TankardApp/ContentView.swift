@@ -211,6 +211,7 @@ struct ContentView: View {
         await applyV06ALaunchOptions(store: store, options: options)
         await applyTapsLaunchOptions(store: store, options: options)
         await applyAdoptLaunchOptions(store: store, options: options)
+        await applyOnboardingLaunchOptions(store: store, options: options)
         // 0.7 demo: TANKARD_DEMO_RESTORE=1 opens Restore Points; =confirm also opens the confirmation.
         if options.demo != nil, let mode = ProcessInfo.processInfo.environment["TANKARD_DEMO_RESTORE"], !mode.isEmpty {
             Demo.seedRestorePoints(store)
@@ -247,6 +248,12 @@ struct ContentView: View {
         }
         if options.demo != nil && options.demoAppManagement == "1" {
             store.showAppManagementExplainer()
+        }
+        // 0.8.1: the relaunch page, for a blocked upgrade.
+        if options.demo != nil && options.demoAppManagement == "relaunch",
+           let p = store.packages.first(where: { $0.kind == .cask }) {
+            store.showAppManagementExplainer(packages: [p], reason: .blocked)
+            store.appManagementDone()
         }
         if options.demo != nil && options.demoReplace, let p = store.selectedPackage {
             store.startReplaceWithBottle([p])

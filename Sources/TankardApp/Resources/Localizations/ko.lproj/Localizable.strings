@@ -180,8 +180,11 @@
 "Adopting runs through Tankard's queue and History." = "가져오기는 Tankard의 대기열과 기록을 통해 실행됩니다.";
 "After adopting:" = "가져온 후:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "목록을 표시한 뒤 확인 주기마다 최대 한 번 백그라운드에서 brew update를 실행하고 업그레이드 수를 새로 고칩니다. brew가 사용 중이면 기다리며, 실패(오프라인)는 로그에만 기록합니다. HOMEBREW_NO_AUTO_UPDATE가 설정되어 있으면 꺼집니다. 기본값은 켬.";
+"After the relaunch, Tankard runs it again: %@ %@." = "다시 시작한 후 Tankard가 다시 실행합니다: %1$@ %2$@.";
 "All" = "전체";
 "All versions" = "모든 버전";
+"Allow App Management" = "앱 관리 허용";
+"Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "개인정보 보호 및 보안 → 앱 관리에서 Tankard를 허용하고 Tankard를 다시 시작한 다음 다시 실행하세요.";
 "Allow Tankard to update apps" = "Tankard가 앱을 업데이트하도록 허용";
 "Allowed" = "허용됨";
 "Already above in this branch" = "이 분기에 이미 위에 있음";
@@ -200,6 +203,7 @@
 "App updates itself" = "앱이 직접 업데이트";
 "Appearance" = "외관";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "자체 업데이트하는 앱은 계속 스스로 업데이트합니다. 각 앱을 누가 업데이트할지 선택한 내용은 가져오기와 함께 저장됩니다.";
+"Apps you installed yourself that Homebrew can manage: %lld" = "직접 설치한 앱 중 Homebrew가 관리할 수 있는 앱: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "직접 설치한 앱 중 Homebrew cask로도 설치되는 앱입니다. 가져오면 재설치 없이 brew로 업데이트할 수 있습니다.";
 "Asking brew info…" = "brew info 요청 중…";
 "Auto-update" = "자동 업데이트";
@@ -245,6 +249,7 @@
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "cask가 활성화되지 않음: `brew tap homebrew/cask` 실행(약 620 MB)";
 "Changes since then" = "그 이후 변경 사항";
+"Check" = "확인";
 "Check Again" = "다시 확인";
 "Check a Brewfile" = "Brewfile 확인";
 "Check a Brewfile…" = "Brewfile 확인…";
@@ -270,6 +275,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "셸의 명령이 Homebrew가 아닌 시스템의 사본을 실행할 수 있습니다. 셸 프로파일만 이를 바꿉니다.";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "brew와 같은 방식으로 버전을 비교합니다. 조건에 맞지 않는 패키지는 건너뛰고 기록하며, 직접 업그레이드해야 합니다. 비교할 수 없는 버전(날짜, 문자)은 모든 버전에서만 자동으로 업그레이드됩니다.";
 "Compiles" = "컴파일";
+"Continue without relaunching" = "다시 시작하지 않고 계속";
 "Copy Brewfile" = "Brewfile 복사";
 "Copy Command" = "명령어 복사";
 "Copy Install Command" = "설치 명령 복사";
@@ -293,6 +299,7 @@
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "formulae.brew.sh에서 새로 고칠 수 없어(%@) 저장된 사본을 표시합니다.";
 "Couldn't reload: %@" = "다시 불러올 수 없음: %@";
 "Couldn't run brew tap-info: %@" = "brew tap-info를 실행할 수 없음: %@";
+"Couldn't tell" = "알 수 없음";
 "Couldn't write the script: %@" = "스크립트를 쓸 수 없음: %@";
 "Count %@ as an upgrade again" = "%@을(를) 다시 업그레이드로 계산";
 "Critical" = "심각";
@@ -513,6 +520,7 @@
 "Newer than Intelbrew" = "Intelbrew보다 최신";
 "Newer than tap" = "tap보다 최신";
 "Next run: %@" = "다음 실행: %@";
+"No Homebrew app to check with yet" = "아직 확인할 Homebrew 앱이 없음";
 "No Homebrew cask installs these apps." = "이 앱들을 설치하는 Homebrew cask가 없습니다.";
 "No Homebrew status to work from" = "작업할 Homebrew 상태가 없음";
 "No Intelbrew bottle yet." = "아직 Intelbrew bottle이 없습니다.";
@@ -543,6 +551,7 @@
 "None of the installed formulae has a background service." = "설치된 formula 중 백그라운드 서비스가 있는 항목이 없습니다.";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "zsh나 bash 시작 파일 중 어느 것도 이를 설정하지 않으므로 편집되는 것이 없습니다.";
 "Not affiliated with or endorsed by the Homebrew project." = "Homebrew 프로젝트와 제휴하거나 승인받지 않았습니다.";
+"Not allowed yet" = "아직 허용되지 않음";
 "Not checked by brew vulns." = "brew vulns가 검사하지 않음.";
 "Not checked by brew vulns: no source repository it can match." = "brew vulns가 검사하지 않음: 일치시킬 소스 저장소 없음.";
 "Not checked by brew vulns: untrusted tap." = "brew vulns가 검사하지 않음: 신뢰할 수 없는 tap.";
@@ -565,6 +574,7 @@
 "Nothing here can be restored automatically" = "여기 있는 항목은 자동으로 복원할 수 없습니다";
 "Nothing matches" = "일치하는 항목 없음";
 "Nothing matches “%@”." = "“%@”와(과) 일치하는 항목이 없습니다.";
+"Nothing runs on its own after the relaunch." = "다시 시작한 후 자동으로 실행되는 것은 없습니다.";
 "Nothing to clean up" = "정리할 항목 없음";
 "Nothing to remove" = "제거할 항목 없음";
 "Nothing to retry" = "다시 시도할 항목 없음";
@@ -645,6 +655,7 @@
 "Reinstalling %@ from a bottle" = "bottle에서 %@ 재설치 중";
 "Reinstalling %lld packages from bottles" = "bottle에서 패키지 %lld개 재설치 중";
 "Reinstalling usually fixes this:" = "보통 재설치하면 해결됩니다:";
+"Relaunch Tankard" = "Tankard 다시 시작";
 "Reload" = "다시 불러오기";
 "Remove" = "제거";
 "Remove %@?" = "%@ 제거할까요?";
@@ -726,11 +737,11 @@
 "Search Homebrew" = "Homebrew 검색";
 "Search installed" = "설치됨 검색";
 "Search services" = "서비스 검색";
+"See what Homebrew installed, what's out of date, and upgrade it in one place." = "Homebrew가 설치한 항목과 오래된 항목을 보고 한곳에서 업데이트하세요.";
 "Select %@" = "%@ 선택";
 "Select a package" = "패키지 선택";
 "Select a service" = "서비스 선택";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "자체 업데이트 앱은 \"자체 업데이트 앱 포함\"이 켜져 있거나 해당 앱에 \"Homebrew가 업데이트\"를 선택한 경우에만 포함됩니다. \"앱이 직접 업데이트\"를 선택한 경우에는 포함되지 않습니다.";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "\"자체 업데이트 앱 포함\"이 켜져 있을 때만 자체 업데이트 앱이 포함됩니다.";
 "Self-updating apps not checked: %@" = "자체 업데이트 앱을 확인하지 않음: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "설치된 formula 이름과 버전을 OSV.dev로 보냅니다(brew vulns 사용).";
 "Service" = "서비스";
@@ -798,9 +809,11 @@
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard는 이 cask의 모든 새 버전을 표시하고, 모두 업그레이드와 자동 업데이트로 업그레이드하며, brew와 같은 방식으로 앱을 교체합니다.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard는 %@ 또는 TANKARD_BREW에서 brew를 찾습니다.";
+"Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard에 앱 관리 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 앱 관리에서 허용하고 Tankard를 다시 시작한 다음 다시 시도하세요.";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard는 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
 "Tankard on GitHub" = "GitHub의 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard는 사용자 본인의 서비스만 제어하며 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
+"Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 → 일반에서 끌 수 있습니다.";
 "Tankard update available" = "Tankard 업데이트 사용 가능";
 "Tankard updates itself through brew" = "Tankard는 brew를 통해 스스로 업데이트합니다";
 "Tankard upgraded %lld package" = "Tankard가 패키지 %lld개를 업그레이드함";
@@ -845,6 +858,7 @@
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "하나를 유지하려면 먼저 터미널에서 요청에 의해 설치됨으로 표시한 다음 다시 확인하세요:";
 "Top 200 results for “%@”" = "“%@” 상위 200개 결과";
+"Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Homebrew처럼 Homebrew가 설치한 앱에 무해한 쓰기를 시도하고 바로 제거합니다";
 "Trust" = "신뢰";
 "Trust %@?" = "%@ 신뢰할까요?";
 "Trust?" = "신뢰할까요?";
@@ -922,6 +936,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";
 "Waiting for brew update to finish…" = "brew update가 끝나기를 기다리는 중…";
 "Waiting for brew…" = "brew를 기다리는 중…";
+"Welcome to Tankard" = "Tankard에 오신 것을 환영합니다";
 "What brew printed" = "brew가 출력한 내용";
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "이 목록을 만든 뒤 설치된 항목이 바뀌었습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
@@ -1032,10 +1047,16 @@
 "its dependency %@ would compile from source" = "의존성 %@을(를) 소스에서 컴파일해야 함";
 "just now" = "방금";
 "macOS already provides this software" = "macOS가 이미 이 소프트웨어를 제공함";
-"macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications." = "macOS는 한 앱이 다른 앱을 업데이트하거나 제거하기 전에 확인을 요청하므로, Homebrew가 응용 프로그램의 앱을 업그레이드하거나 제거하려면 이 권한이 필요합니다.";
+"macOS applies App Management the next time Tankard starts." = "macOS는 Tankard가 다음에 시작될 때 앱 관리 권한을 적용합니다.";
+"macOS asks before Tankard can install, update or remove apps in Applications. Turn on Tankard in Privacy & Security → App Management." = "macOS는 Tankard가 응용 프로그램의 앱을 설치, 업데이트 또는 제거하기 전에 묻습니다. 개인정보 보호 및 보안 → 앱 관리에서 Tankard를 켜세요.";
+"macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOS는 한 앱이 다른 앱을 변경하기 전에 묻습니다. Homebrew가 응용 프로그램의 앱을 설치, 업데이트 또는 제거하려면 이 권한이 필요합니다.";
+"macOS blocked changing an app" = "macOS가 앱 변경을 차단함";
+"macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOS가 앱 변경을 차단했습니다: 개인정보 보호 및 보안 → 앱 관리에서 Tankard를 허용한 다음 다시 시작하세요.";
+"macOS may apply it only after Tankard relaunches." = "macOS는 Tankard를 다시 시작한 후에만 적용할 수 있습니다.";
 "macOS provides a similar version, which this would shadow" = "macOS가 비슷한 버전을 제공하며, 이 항목이 그것을 가리게 됩니다";
 "macOS refused: %@" = "macOS가 거부함: %@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS가 %@을(를) 중지했습니다. 허용하면 Tankard가 한 번 더 시도합니다.";
+"macOS stopped a step that changes an app. Allow it, then run it again." = "macOS가 앱을 변경하는 단계를 중단했습니다. 허용한 다음 다시 실행하세요.";
 "macOS will ask when you turn this on" = "이것을 켜면 macOS가 확인을 요청합니다";
 "needs administrator rights" = "관리자 권한이 필요함";
 "newer" = "더 새로움";

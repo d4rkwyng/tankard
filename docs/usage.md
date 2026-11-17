@@ -366,19 +366,52 @@ intelbrew-core) and a **Replace with bottle** button in the detail pane. It runs
 `brew reinstall --force-bottle --formula <tap>/<name>`; brew fails cleanly if there turns
 out to be no bottle. The Bottle available filter has **Replace all**.
 
+## Welcome sheet (0.8.1)
+
+The first time Tankard opens with a working Homebrew, a welcome sheet shows over the list
+(once; **Done** closes it for good). It has two cards:
+
+- **Allow App Management**: Open System Settings, **Check**, and Relaunch Tankard. Check
+  does what Homebrew itself does before changing an app (cask/quarantine.rb): it creates an
+  empty `.tankard-write-test` file at the top of an app that an installed cask put in
+  Applications, and deletes it at once. It never touches an app Homebrew doesn't manage, and
+  runs only when you click it. "Not allowed yet" means macOS refused the write; the attempt
+  is also what makes macOS list Tankard in App Management and show its notice.
+- **Adopt Apps**, once the Adopt scan (run in the background; the sheet doesn't wait)
+  finds apps you installed yourself that a cask can manage. Adopt Apps… opens that sheet.
+  The card stays hidden when the scan finds none or fails (Intelbrew mode has no scan).
+
+A line says that brew update runs in the background and that Settings → General turns it
+off. The welcome never shows in demo, script, e2e or snapshot runs
+(`TANKARD_DEMO_ONBOARDING=1|check` shows it in the demo).
+
 ## App Management
 
-macOS asks before one app updates or deletes another (System Settings → Privacy &
-Security → App Management). Only upgrades and uninstalls of casks that install an app (or
-run an installer package) need it; formulae, fonts and other casks with no app, installs and
-Replace with bottle never do.
+macOS asks before one app installs, updates or deletes another (System Settings → Privacy &
+Security → App Management). Since 0.8.1 every action that writes into an Applications
+folder counts: installing a cask (from Discover, a Brewfile, a Health replacement), Adopt
+Apps (`brew install --cask --adopt` changes the app you already have), upgrades,
+uninstalls, a restore point's cask reinstall, and auto-update. Formulae, fonts and other
+casks with no app, and Replace with bottle never need it.
 
-- Before the first cask upgrade or uninstall, a sheet explains this, with a button that
-  opens the App Management pane (falling back to Privacy & Security). "I've done this" or
-  "Not now" both remember that you've seen it and carry on.
-- When brew's output shows the block ("does not have App Management permissions",
-  "prevented from modifying apps", or "Operation not permitted" on an /Applications path),
-  the sheet comes back and offers one retry through the queue.
+- Before the first such action, a sheet explains this, with a button that opens the App
+  Management pane (falling back to Privacy & Security). "Not now" remembers that you've
+  seen it and carries on.
+- "I've done this" turns the sheet to **Relaunch Tankard**: macOS applies the permission to
+  a process started after it (its own dialog says an app "will not be able to update or
+  delete other applications until it is quit"). Relaunching quits Tankard, starts it again
+  and, once the package list has loaded, runs the operation once more if it still applies
+  (an upgrade that is still outdated, an install that still isn't installed) and is less
+  than 15 minutes old. "Continue without relaunching" runs it straight away instead.
+  Relaunch is offered only from Tankard.app (not `swift run`) and not while brew runs.
+- When brew's output shows the block (brew's "does not have App Management permissions",
+  macOS's "prevented from modifying apps", or "Operation not permitted" on an Applications
+  path), the step's failure says "macOS blocked changing an app", in the sheet and in
+  History, and the sheet comes back with the same relaunch offer. A restore's blocked step
+  is explained without a retry: run the restore again from Restore Points.
+- Auto-update has no sheet: a blocked cask counts as failed with that reason, the
+  notification says to allow Tankard and relaunch it, and the explainer shows again before
+  the next cask change you make.
 - The permission is tied to the code signature: an ad-hoc build needs it again after every
   rebuild, a Developer ID build keeps it across updates.
 
