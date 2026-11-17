@@ -171,6 +171,8 @@ struct AppStoreTests {
         #expect(upgrades.count == 5)
         #expect(session.items.allSatisfy { $0.state == .done })
         #expect(session.subtitle == "4 bottles from Intelbrew · 1 build from source (ruby)")
+        #expect(session.title == "Upgrade complete")
+        #expect(session.statusLine == "5 upgraded")
         #expect(session.items.first?.command.display == "brew upgrade --formula homebrew/core/openssl@4")
         #expect(session.items.first?.command.environment["HOMEBREW_NO_AUTO_UPDATE"] == "1")
         #expect(session.items.first?.command.environment["HOMEBREW_CORE_GIT_REMOTE"] == Intelbrew.coreRemote)
@@ -187,6 +189,14 @@ struct AppStoreTests {
         // Reconcile: status is read again after the run.
         #expect(await waitUntil { r.log.count("info") == infoCalls + 1 && !r.store.isRefreshing })
         #expect(r.log.count("update") == 0)
+    }
+
+    @Test func finishedLineWordsForEveryAction() {
+        #expect(SessionAction.upgrade.past == "upgraded")
+        #expect(SessionAction.install.past == "installed")
+        #expect(SessionAction.uninstall.past == "uninstalled")
+        #expect(SessionAction.replaceBottle.past == "reinstalled")
+        #expect(SessionAction.cleanup.past == "done")
     }
 
     @Test func stopAfterCurrentSkipsTheRest() async throws {

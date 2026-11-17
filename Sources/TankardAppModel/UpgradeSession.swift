@@ -30,12 +30,16 @@ public enum SessionAction: String, Sendable {
         case .cleanup: return "Cleaning up"
         }
     }
-    /// "upgraded", "installed", "uninstalled", "reinstalled", "done"
+    /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
+    /// finished line's word after a count ("5 upgraded", "1 upgraded"), so
+    /// the same for one or many.
     public var past: String {
         switch self {
+        case .upgrade: return "upgraded"
+        case .install: return "installed"
+        case .uninstall: return "uninstalled"
         case .replaceBottle: return "reinstalled"
         case .cleanup: return "done"
-        default: return rawValue + "ed"
         }
     }
 }
