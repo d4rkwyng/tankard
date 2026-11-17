@@ -328,10 +328,8 @@ struct DiscoverDetail: View {
                         store.startInstall(e)
                     } label: {
                         Label("Install \(e.name)", systemImage: "arrow.down.circle")
-                            .fontWeight(.semibold)
-                            .modifier(OnAccentLabel(theme: theme))
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.primaryAction)
                     .disabled(store.isUpgrading || e.disabled)
                     .help(store.isUpgrading ? "Wait for the running brew to finish" : e.installDisplay)
                 }

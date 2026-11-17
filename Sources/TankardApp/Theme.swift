@@ -88,6 +88,12 @@ struct Theme {
     var onAccent: Color
     /// "Upgrade available": arrows, versions, the upgrade-ready line.
     var upgrade: Color
+    /// The primary action (Upgrade, Install, Done): green fill, its text,
+    /// and the Upgrade count's pill (see `PrimaryActionStyle`).
+    var action: Color
+    var onAction: Color
+    var actionPill: Color
+    var actionPillText: Color
     /// The window background; nil = the system's.
     var window: Color?
     /// The table's background (its rows); nil = the system's.
@@ -118,6 +124,10 @@ struct Theme {
         accent: .accentColor,
         onAccent: .white,
         upgrade: .accentColor,
+        action: Color(light: NSColor(hex: StandardActionGreen.light), dark: NSColor(hex: StandardActionGreen.dark)),
+        onAction: Color(light: NSColor(hex: StandardActionGreen.onLight), dark: NSColor(hex: StandardActionGreen.onDark)),
+        actionPill: Color(light: NSColor(hex: StandardActionGreen.lightPill), dark: NSColor(hex: StandardActionGreen.darkPill)),
+        actionPillText: Color(light: NSColor(hex: StandardActionGreen.lightPillText), dark: NSColor(hex: StandardActionGreen.darkPillText)),
         window: nil,
         table: nil,
         versionInstalled: Color(light: NSColor(hex: StandardVersionText.lightInstalled), dark: NSColor(hex: StandardVersionText.darkInstalled)),
@@ -139,6 +149,10 @@ struct Theme {
             accent: Color(hex: p.accent),
             onAccent: Color(hex: p.onAccent),
             upgrade: Color(hex: p.upgrade),
+            action: Color(hex: p.action),
+            onAction: Color(hex: p.onAction),
+            actionPill: Color(hex: p.actionPill),
+            actionPillText: Color(hex: p.actionPillText),
             window: Color(hex: p.window),
             table: Color(hex: p.table),
             versionInstalled: Color(hex: p.versionInstalled),
@@ -403,5 +417,46 @@ struct VersionText: View {
             .monospacedDigit()
             .lineLimit(1)
             .truncationMode(.middle)
+    }
+}
+
+/// The primary action button (Upgrade, Install, the upgrade sheet's Done):
+/// filled with the theme's green whatever the system accent, focus or key
+/// window, so it looks the same live and in snapshots. Disabled, it stays
+/// green but muted.
+struct PrimaryActionStyle: ButtonStyle {
+    @Environment(\.theme) private var theme
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(theme.onAction)
+            .padding(.horizontal, 11)
+            .frame(minHeight: 24)
+            .background(RoundedRectangle(cornerRadius: 6).fill(theme.action))
+            .overlay(RoundedRectangle(cornerRadius: 6).fill(Color.black.opacity(configuration.isPressed ? 0.15 : 0)))
+            .opacity(isEnabled ? 1 : 0.45)
+            .saturation(isEnabled ? 1 : 0.6)
+            .contentShape(RoundedRectangle(cornerRadius: 6))
+    }
+}
+
+extension ButtonStyle where Self == PrimaryActionStyle {
+    static var primaryAction: PrimaryActionStyle { PrimaryActionStyle() }
+}
+
+/// The count on the Upgrade button.
+struct ActionCountPill: View {
+    var count: Int
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Text("\(count)")
+            .font(.system(size: 11, weight: .semibold))
+            .monospacedDigit()
+            .foregroundStyle(theme.actionPillText)
+            .padding(.horizontal, 6)
+            .background(Capsule().fill(theme.actionPill))
     }
 }

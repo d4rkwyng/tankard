@@ -56,19 +56,17 @@ struct StatusBar: View {
                 store.startUpgrade()
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "arrow.up")
-                    Text("Upgrade")
-                    if n > 0 {
-                        Text("\(n)")
-                            .font(.system(size: 11, weight: .semibold))
-                            .padding(.horizontal, 6)
-                            .modifier(CountPill(theme: theme))
+                    if n == 0 {
+                        Image(systemName: "checkmark")
+                        Text("Up to date")
+                    } else {
+                        Image(systemName: "arrow.up")
+                        Text("Upgrade")
+                        ActionCountPill(count: n)
                     }
                 }
-                .fontWeight(.semibold)
-                .modifier(OnAccentLabel(theme: theme))
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.primaryAction)
             .disabled(n == 0 || store.isUpgrading || store.isRefreshing)
             .help(n == 0 ? "Nothing to upgrade" : "brew upgrade the \(n) outdated package\(n == 1 ? "" : "s"), one at a time")
         }
@@ -99,21 +97,5 @@ struct OnAccentLabel: ViewModifier {
     var theme: Theme
     func body(content: Content) -> some View {
         if theme.isCustom { content.foregroundStyle(theme.onAccent) } else { content }
-    }
-}
-
-/// The count on the Upgrade button: the palette's pill colours (Dracula:
-/// its background with light text, not a clashing tint), else white at 22%
-/// with the button's own label colour.
-struct CountPill: ViewModifier {
-    var theme: Theme
-    func body(content: Content) -> some View {
-        if let p = theme.palette {
-            content
-                .foregroundStyle(Color(hex: p.pillForeground))
-                .background(Capsule().fill(Color(hex: p.pill)))
-        } else {
-            content.background(Capsule().fill(Color.white.opacity(0.22)))
-        }
     }
 }

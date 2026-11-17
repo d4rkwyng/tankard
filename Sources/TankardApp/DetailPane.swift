@@ -96,9 +96,11 @@ struct PackageDetail: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Upgrade command").font(.system(size: 11)).foregroundStyle(.secondary)
                         CommandBox(command: BrewCommands.upgradeDisplay(for: p))
-                        Button("Upgrade \(p.name)", action: upgrade)
-                            .controlSize(.small)
-                            .disabled(!canUpgrade)
+                        Button(action: upgrade) {
+                            Label("Upgrade \(p.name)", systemImage: "arrow.up")
+                        }
+                        .buttonStyle(.primaryAction)
+                        .disabled(!canUpgrade)
                     }
                 }
 

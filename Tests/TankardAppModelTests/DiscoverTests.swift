@@ -464,7 +464,7 @@ struct AppearanceTests {
     }
 
     @Test func tankardPaletteMeetsWCAGAA() {
-        for (name, fg, bg) in TankardPalette.textPairs {
+        for (name, fg, bg) in TankardPalette.textPairs + StandardActionGreen.textPairs {
             let ratio = TankardPalette.contrast(fg, bg)
             #expect(ratio >= 4.5, "\(name): \(ratio)")
         }
@@ -472,7 +472,7 @@ struct AppearanceTests {
         #expect(TankardPalette.blend(0xffffff, alpha: 0.5, over: 0x000000) == 0x808080)
         // Fills (the accent as button, picker and progress) against their
         // backgrounds: WCAG 1.4.11's 3:1 for non-text contrast.
-        for (name, fg, bg) in TankardPalette.fillPairs {
+        for (name, fg, bg) in TankardPalette.fillPairs + StandardActionGreen.fillPairs {
             let ratio = TankardPalette.contrast(fg, bg)
             #expect(ratio >= 3, "\(name): \(ratio)")
         }

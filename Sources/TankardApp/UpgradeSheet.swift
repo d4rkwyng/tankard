@@ -66,6 +66,7 @@ struct UpgradeSheet: View {
                 Spacer()
                 if session.isFinished {
                     Button("Done") { store.closeUpgrade() }
+                        .buttonStyle(.primaryAction)
                         .keyboardShortcut(.defaultAction)
                 } else {
                     if session.stopRequested {

@@ -142,14 +142,15 @@ public struct TankardColors: Sendable {
     public var upgradeColor: UInt32? = nil
     /// A bar down the selected row's left edge (Dracula); nil = none.
     public var selectionEdge: UInt32? = nil
-    /// The count pill on the accent-filled Upgrade button; nil = the
-    /// on-accent colour at 22% over the accent, with on-accent text.
-    public var pillBackground: UInt32? = nil
-    public var pillText: UInt32? = nil
+    /// The primary action (Upgrade, Install, Done): a filled green with
+    /// `onAction` text, and the Upgrade count in a pill of `actionPill`
+    /// with `actionPillText`.
+    public var action: UInt32 = 0x3fb950
+    public var onAction: UInt32 = 0x1f0d3d
+    public var actionPill: UInt32 = 0x1f0d3d
+    public var actionPillText: UInt32 = 0xfff6e6
 
     public var upgrade: UInt32 { upgradeColor ?? accent }
-    public var pill: UInt32 { pillBackground ?? TankardPalette.blend(onAccent, alpha: 0.22, over: accent) }
-    public var pillForeground: UInt32 { pillText ?? onAccent }
 
     public var badges: [TankardPalette.Badge] { [bottle, source, newer, noBottle, cask] }
 
@@ -175,7 +176,8 @@ public struct TankardColors: Sendable {
         pairs.append(("foam on header", foam, header))
         pairs.append(("lavender on header", lavender, header))
         pairs.append(("text on accent", onAccent, accent))
-        pairs.append(("count pill on the Upgrade button", pillForeground, pill))
+        pairs.append(("text on the action green", onAction, action))
+        pairs.append(("count on its pill", actionPillText, actionPill))
         pairs.append(("foam on plate", foam, plate))
         pairs.append(("foam on selection", foam, selection))
         pairs.append(("lavender on selection", lavender, selection))
@@ -199,8 +201,9 @@ public struct TankardColors: Sendable {
     /// Non-text pairs (fills next to their background), for the 3:1 check:
     /// the accent as button, picker and progress fill.
     public var fillPairs: [(String, UInt32, UInt32)] {
-        [("window", window), ("pane", pane), ("strip", strip), ("bar", bar)].map {
-            ("\(name): accent fill on \($0.0)", accent, $0.1)
+        [("window", window), ("pane", pane), ("strip", strip), ("bar", bar)].flatMap {
+            [("\(name): accent fill on \($0.0)", accent, $0.1),
+             ("\(name): action green on \($0.0)", action, $0.1)]
         }
     }
 }
@@ -255,7 +258,8 @@ public enum TankardPalette {
         source: Badge(text: 0xffe8c6, dot: 0xffb04d, tint: 0xff9f0a, tintAlpha: 0.17),
         newer: Badge(text: 0xdfeaff, dot: 0x8ab6ff, tint: 0x408cff, tintAlpha: 0.20),
         noBottle: Badge(text: 0xf5f1fb, dot: 0xc4b8de, tint: 0xffffff, tintAlpha: 0.09),
-        cask: Badge(text: 0xfde9ff, dot: 0xe4a8ff, tint: 0xd98cff, tintAlpha: 0.18))
+        cask: Badge(text: 0xfde9ff, dot: 0xe4a8ff, tint: 0xd98cff, tintAlpha: 0.18),
+        action: 0x5ee07a)
 
     /// The custom segmented picker's track: `plate` at this alpha.
     public static let segmentTrackAlpha = 0.55
@@ -288,7 +292,8 @@ public enum TankardPalette {
         newer: Badge(text: 0x8be9fd, dot: 0x8be9fd, tint: 0x8be9fd, tintAlpha: 0.12),
         noBottle: Badge(text: 0xd4d6e2, dot: 0x6272a4, tint: 0x6272a4, tintAlpha: 0.25),
         cask: Badge(text: 0xffbee4, dot: 0xff79c6, tint: 0xff79c6, tintAlpha: 0.14),
-        upgradeColor: 0xffb86c, selectionEdge: 0xbd93f9, pillBackground: 0x282a36, pillText: 0xf8f8f2)
+        upgradeColor: 0xffb86c, selectionEdge: 0xbd93f9,
+        action: 0x50fa7b, onAction: 0x282a36, actionPill: 0x282a36, actionPillText: 0xf8f8f2)
 
     /// Every defined palette (the contrast test checks each).
     public static let all = [deep, lighter, lavenderDusk, dracula]
@@ -363,5 +368,30 @@ public enum StandardVersionText {
                             ("dark: same available on \(String($0, radix: 16))", darkSame, $0, 5.5)] }
             + lightRows.flatMap { [("light: installed on \(String($0, radix: 16))", lightInstalled, $0, 7.0),
                                    ("light: same available on \(String($0, radix: 16))", lightSame, $0, 5.5)] }
+    }
+}
+
+/// The primary action green in the system themes: a bright macOS green
+/// with dark text in Dark, GitHub's darker green with white text in Light
+/// (System follows the appearance). Backgrounds are the status bar's.
+public enum StandardActionGreen {
+    public static let dark: UInt32 = 0x30d158
+    public static let onDark: UInt32 = 0x0a2410
+    public static let darkPill: UInt32 = 0x0a2410
+    public static let darkPillText: UInt32 = 0xf2fff5
+    public static let darkBar: UInt32 = 0x2c2c2c
+    public static let light: UInt32 = 0x1f883d
+    public static let onLight: UInt32 = 0xffffff
+    public static let lightPill: UInt32 = 0x0f4d22
+    public static let lightPillText: UInt32 = 0xffffff
+    public static let lightBar: UInt32 = 0xf6f6f6
+
+    /// Text pairs (4.5:1) and fill pairs (3:1), as the palettes'.
+    public static var textPairs: [(String, UInt32, UInt32)] {
+        [("dark: text on green", onDark, dark), ("dark: count on pill", darkPillText, darkPill),
+         ("light: text on green", onLight, light), ("light: count on pill", lightPillText, lightPill)]
+    }
+    public static var fillPairs: [(String, UInt32, UInt32)] {
+        [("dark: green on bar", dark, darkBar), ("light: green on bar", light, lightBar)]
     }
 }
