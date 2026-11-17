@@ -75,7 +75,14 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
         var attr: posix_spawnattr_t?
         posix_spawnattr_init(&attr)
         defer { posix_spawnattr_destroy(&attr) }
+        // 0.8: POSIX_SPAWN_CLOEXEC_DEFAULT: the child gets only the descriptors
+        // the file actions set up (stdin, stdout, stderr). Without it, a child
+        // spawned while another thread's pipes were open inherited their write
+        // ends, and that other read saw end-of-file only when this child
+        // exited: concurrent reads finished together, as slow as the slowest
+        // (`brew info` waited for `brew info --sizes`, git probes for brew).
         let flags = Int16(POSIX_SPAWN_SETSID) | Int16(POSIX_SPAWN_SETSIGMASK) | Int16(POSIX_SPAWN_SETSIGDEF)
+            | Int16(POSIX_SPAWN_CLOEXEC_DEFAULT)
         posix_spawnattr_setflags(&attr, flags)
         var noSignals = sigset_t()
         sigemptyset(&noSignals)

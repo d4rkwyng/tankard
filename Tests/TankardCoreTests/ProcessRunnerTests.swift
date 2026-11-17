@@ -118,3 +118,58 @@ struct StreamingProcessRunnerTests {
         #expect(sink.text == "ONLY=this\n")
     }
 }
+
+/// 0.8: a child must not inherit descriptors it wasn't given. Before
+/// POSIX_SPAWN_CLOEXEC_DEFAULT, a pipe another thread had open while this
+/// child was spawned stayed open in the child, so that other read saw
+/// end-of-file only when this child exited: `brew info` running beside
+/// `brew info --sizes` finished when the sizes did.
+struct SpawnDescriptorTests {
+    /// Opens a pipe as "another read in flight", spawns `start`'s child
+    /// (`sleep 3`), closes our write end and times how long the read end
+    /// takes to see end-of-file.
+    func secondsToEOF(_ start: @escaping @Sendable () async throws -> Void) async throws -> Double {
+        var fds: [Int32] = [0, 0]
+        #expect(pipe(&fds) == 0)
+        let child = Task { try await start() }
+        // Let the child be spawned while our write end is still open.
+        try await Task.sleep(for: .milliseconds(300))
+        close(fds[1])
+        let readEnd = fds[0]
+        let t0 = ContinuousClock.now
+        let eof = await withCheckedContinuation { (c: CheckedContinuation<Duration, Never>) in
+            DispatchQueue.global().async {
+                var b = [UInt8](repeating: 0, count: 64)
+                while read(readEnd, &b, b.count) > 0 {}
+                c.resume(returning: ContinuousClock.now - t0)
+            }
+        }
+        close(readEnd)
+        _ = try? await child.value
+        return Double(eof.components.seconds) + Double(eof.components.attoseconds) / 1e18
+    }
+
+    @Test func processRunnerChildInheritsNoOtherPipes() async throws {
+        let s = try await secondsToEOF { _ = try await ProcessRunner().run("/bin/sleep", ["3"], environment: [:]) }
+        #expect(s < 1.5)
+    }
+
+    @Test func streamingRunnerChildInheritsNoOtherPipes() async throws {
+        let s = try await secondsToEOF { _ = try await StreamingProcessRunner().stream("/bin/sleep", ["3"], environment: [:]) { _ in } }
+        #expect(s < 1.5)
+    }
+
+    @Test func concurrentReadsFinishIndependently() async throws {
+        // A slow and a fast command at once: the fast one returns first.
+        let runner = ProcessRunner()
+        let t0 = ContinuousClock.now
+        async let slow = runner.run("/bin/sleep", ["3"], environment: [:])
+        var fast: [Duration] = []
+        for _ in 0..<5 {
+            _ = try await runner.run("/bin/echo", ["hi"], environment: [:])
+            fast.append(ContinuousClock.now - t0)
+        }
+        _ = try await slow
+        #expect(fast.allSatisfy { $0 < .milliseconds(2500) })
+    }
+}
