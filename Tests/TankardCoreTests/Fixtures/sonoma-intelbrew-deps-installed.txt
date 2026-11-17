@@ -1,0 +1,20 @@
+ca-certificates: 
+curl-impersonate: ca-certificates
+expat: 
+gettext: json-c libunistring
+json-c: 
+libsodium: 
+libunistring: 
+libyaml: 
+lua: 
+lz4: 
+mpdecimal: 
+ncurses: 
+openssl@4: ca-certificates
+python@3.15: ca-certificates expat lz4 mpdecimal openssl@4 readline sqlite xz zstd
+readline: 
+ruby: ca-certificates libyaml openssl@4
+sqlite: readline
+vim: gettext json-c libsodium libunistring ncurses
+xz: 
+zstd: lz4 xz

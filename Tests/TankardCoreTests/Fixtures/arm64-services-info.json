@@ -1,0 +1,23 @@
+[
+  {
+    "name": "php",
+    "service_name": "sh.brew.php",
+    "running": false,
+    "loaded": false,
+    "schedulable": false,
+    "pid": null,
+    "exit_code": null,
+    "user": null,
+    "status": "none",
+    "file": "/opt/homebrew/opt/php/sh.brew.php.plist",
+    "registered": false,
+    "loaded_file": null,
+    "command": "/opt/homebrew/opt/php/sbin/php-fpm --nodaemonize",
+    "working_dir": "/opt/homebrew/var",
+    "root_dir": null,
+    "log_path": null,
+    "error_log_path": "/opt/homebrew/var/log/php-fpm.log",
+    "interval": null,
+    "cron": null
+  }
+]

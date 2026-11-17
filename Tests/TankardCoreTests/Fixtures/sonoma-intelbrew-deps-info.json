@@ -1,0 +1,555 @@
+{
+ "casks": [],
+ "formulae": [
+  {
+   "dependencies": [],
+   "full_name": "ca-certificates",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "2026-11-05"
+    }
+   ],
+   "keg_only": false,
+   "name": "ca-certificates",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "2026-11-05"
+   }
+  },
+  {
+   "dependencies": [
+    "ca-certificates"
+   ],
+   "full_name": "curl-impersonate",
+   "installed": [
+    {
+     "installed_on_request": true,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "ca-certificates"
+      }
+     ],
+     "version": "2.3.2"
+    }
+   ],
+   "keg_only": false,
+   "name": "curl-impersonate",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "2.3.2"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "expat",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "2.10.0"
+    }
+   ],
+   "keg_only": true,
+   "name": "expat",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "2.10.0"
+   }
+  },
+  {
+   "dependencies": [
+    "json-c",
+    "libunistring"
+   ],
+   "full_name": "gettext",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "json-c"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "libunistring"
+      }
+     ],
+     "version": "1.0"
+    }
+   ],
+   "keg_only": false,
+   "name": "gettext",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "1.0"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "json-c",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "0.19"
+    }
+   ],
+   "keg_only": false,
+   "name": "json-c",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "0.19"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "libsodium",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "1.0.22"
+    }
+   ],
+   "keg_only": false,
+   "name": "libsodium",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "1.0.22"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "libunistring",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "1.5"
+    }
+   ],
+   "keg_only": false,
+   "name": "libunistring",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "1.5"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "libyaml",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "0.2.5"
+    }
+   ],
+   "keg_only": false,
+   "name": "libyaml",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "0.2.5"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "lua",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "5.5.1"
+    }
+   ],
+   "keg_only": false,
+   "name": "lua",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "5.5.1"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "lz4",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "1.11.1"
+    }
+   ],
+   "keg_only": false,
+   "name": "lz4",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "1.11.1"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "mpdecimal",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "4.0.1"
+    }
+   ],
+   "keg_only": false,
+   "name": "mpdecimal",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "4.0.1"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "ncurses",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "6.6"
+    }
+   ],
+   "keg_only": true,
+   "name": "ncurses",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "6.6"
+   }
+  },
+  {
+   "dependencies": [
+    "ca-certificates"
+   ],
+   "full_name": "openssl@4",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "ca-certificates"
+      }
+     ],
+     "version": "4.1.0"
+    }
+   ],
+   "keg_only": false,
+   "name": "openssl@4",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "4.1.0"
+   }
+  },
+  {
+   "dependencies": [
+    "ca-certificates",
+    "mpdecimal",
+    "openssl@4",
+    "sqlite",
+    "xz",
+    "zstd"
+   ],
+   "full_name": "python@3.15",
+   "installed": [
+    {
+     "installed_on_request": true,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "ca-certificates"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "mpdecimal"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "openssl@4"
+      },
+      {
+       "declared_directly": false,
+       "full_name": "readline"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "sqlite"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "xz"
+      },
+      {
+       "declared_directly": false,
+       "full_name": "lz4"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "zstd"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "expat"
+      }
+     ],
+     "version": "3.15.2"
+    }
+   ],
+   "keg_only": false,
+   "name": "python@3.15",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "3.15.2"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "readline",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "8.3.6"
+    }
+   ],
+   "keg_only": true,
+   "name": "readline",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "8.3.6"
+   }
+  },
+  {
+   "dependencies": [
+    "libyaml",
+    "openssl@4"
+   ],
+   "full_name": "ruby",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "libyaml"
+      },
+      {
+       "declared_directly": false,
+       "full_name": "ca-certificates"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "openssl@4"
+      }
+     ],
+     "version": "4.0.9"
+    }
+   ],
+   "keg_only": false,
+   "name": "ruby",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "4.0.9"
+   }
+  },
+  {
+   "dependencies": [
+    "readline"
+   ],
+   "full_name": "sqlite",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "readline"
+      }
+     ],
+     "version": "3.54.1"
+    }
+   ],
+   "keg_only": true,
+   "name": "sqlite",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "3.54.1"
+   }
+  },
+  {
+   "dependencies": [
+    "libsodium",
+    "ncurses",
+    "gettext"
+   ],
+   "full_name": "vim",
+   "installed": [
+    {
+     "installed_on_request": true,
+     "poured_from_bottle": false,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "libsodium"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "ncurses"
+      },
+      {
+       "declared_directly": false,
+       "full_name": "json-c"
+      },
+      {
+       "declared_directly": false,
+       "full_name": "libunistring"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "gettext"
+      }
+     ],
+     "version": "9.2.1355"
+    }
+   ],
+   "keg_only": false,
+   "name": "vim",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "9.2.1332"
+   }
+  },
+  {
+   "dependencies": [],
+   "full_name": "xz",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [],
+     "version": "5.8.4"
+    }
+   ],
+   "keg_only": false,
+   "name": "xz",
+   "outdated": false,
+   "pinned": false,
+   "revision": 0,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "5.8.4"
+   }
+  },
+  {
+   "dependencies": [
+    "lz4",
+    "xz"
+   ],
+   "full_name": "zstd",
+   "installed": [
+    {
+     "installed_on_request": false,
+     "poured_from_bottle": true,
+     "runtime_dependencies": [
+      {
+       "declared_directly": true,
+       "full_name": "lz4"
+      },
+      {
+       "declared_directly": true,
+       "full_name": "xz"
+      }
+     ],
+     "version": "1.5.7_1"
+    }
+   ],
+   "keg_only": false,
+   "name": "zstd",
+   "outdated": false,
+   "pinned": false,
+   "revision": 1,
+   "tap": "homebrew/core",
+   "versions": {
+    "stable": "1.5.7"
+   }
+  }
+ ]
+}

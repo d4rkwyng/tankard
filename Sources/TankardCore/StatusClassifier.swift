@@ -104,7 +104,8 @@ public struct StatusClassifier: Sendable {
             upgradeHasBottle: outdated ? currentHasBottle : nil,
             autoUpdates: nil,
             dependencies: latest.runtimeDependencies.map { $0.map(\.fullName) } ?? f.dependencies ?? [],
-            homepage: f.homepage
+            homepage: f.homepage,
+            directDependencies: Self.directDependencies(latest.runtimeDependencies, declared: f.dependencies)
         )
     }
 
@@ -146,6 +147,16 @@ public struct StatusClassifier: Sendable {
             caskDependencies: c.dependsOn?.cask ?? [],
             homepage: c.homepage
         )
+    }
+
+    /// The receipt's `declared_directly` entries, in its order (what
+    /// `brew deps --tree` shows), or the formula's declared dependencies when
+    /// the receipt doesn't say.
+    static func directDependencies(_ runtime: [BrewInfoJSON.Installed.RuntimeDependency]?, declared: [String]?) -> [String]? {
+        if let runtime, runtime.contains(where: { $0.declaredDirectly != nil }) {
+            return runtime.filter { $0.declaredDirectly == true }.map(\.fullName)
+        }
+        return declared
     }
 
     func label(status: PackageStatus, origin: BottleOrigin?) -> String {

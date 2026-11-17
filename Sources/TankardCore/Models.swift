@@ -92,6 +92,11 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// The formula's or cask's homepage, from `brew info`. nil in reports
     /// written before Tankard 0.3, or when brew gives none.
     public var homepage: String? = nil
+    /// 0.4: the formulae this one declares directly (receipt entries with
+    /// `declared_directly`, in brew's order), for the dependency tree. nil
+    /// for casks (their `dependencies` are already direct) and in reports
+    /// written before Tankard 0.4.
+    public var directDependencies: [String]? = nil
 
     public var isDependency: Bool { !requested }
 
