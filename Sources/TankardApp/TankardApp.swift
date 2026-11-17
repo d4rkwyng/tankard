@@ -92,10 +92,14 @@ struct LaunchOptions {
             guard let parts = v?.split(separator: "@"), parts.count == 2, let t = Double(parts[1]) else { return nil }
             return (String(parts[0]), t)
         }
-        if let (name, t) = timed(env["TANKARD_SWITCH_APPEARANCE"]), let theme = AppTheme(name: name) {
-            o.switchAppearance = (theme, t)
+        // Test hooks for layout-check.sh: only in demo or snapshot runs, never in a
+        // real session.
+        if o.isDemo || o.snapshot != nil {
+            if let (name, t) = timed(env["TANKARD_SWITCH_APPEARANCE"]), let theme = AppTheme(name: name) {
+                o.switchAppearance = (theme, t)
+            }
+            o.reselect = timed(env["TANKARD_RESELECT"])
         }
-        o.reselect = timed(env["TANKARD_RESELECT"])
         return o
     }
 }
