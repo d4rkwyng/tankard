@@ -164,6 +164,7 @@
 "Adding tap" = "Adding tap";
 "Admin password" = "Admin password";
 "Adopt" = "Adopt";
+"Adopt %@" = "Adopt %@";
 "Adopt %@?" = "Adopt %@?";
 "Adopt %lld Apps…" = "Adopt %lld Apps…";
 "Adopt %lld apps?" = "Adopt %lld apps?";
@@ -413,6 +414,7 @@
 "Homebrew's official uninstaller" = "Homebrew's official uninstaller";
 "Homebrew's own files have local changes" = "Homebrew's own files have local changes";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew's sbin folder isn't in your PATH";
+"How adopting works" = "How adopting works";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "How often the background check runs, while \"Notify me about new upgrades\" is on.";
 "I've done this" = "I've done this";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "If a download doesn't match, brew stops for that app and leaves it as it was.";
@@ -910,6 +912,7 @@
 "What installing the missing items would do, before anything runs" = "What installing the missing items would do, before anything runs";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.";
+"Who updates %@" = "Who updates %@";
 "With the dependencies nothing else needs" = "With the dependencies nothing else needs";
 "Would free about %@" = "Would free about %@";
 "Would remove %lld formulae" = "Would remove %lld formulae";

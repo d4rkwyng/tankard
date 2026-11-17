@@ -369,4 +369,14 @@ struct V08AdoptAppTests {
         #expect(store.upgrade?.action == .upgrade)
         latch.release()
     }
+    @Test func replaceCommandOnlyForASureMatch() async throws {
+        let store = try await openedDemo()
+        let a = store.adopt
+        let im = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "Impactor" })
+        #expect(a.confidence(im) == .low && !a.offersReplace(im))
+        let gimp = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "GIMP" })
+        #expect(a.offersReplace(gimp) == (a.confidence(gimp) == .high))
+        // Never outside "Needs update first".
+        #expect(a.rows(.ready).allSatisfy { !a.offersReplace($0) })
+    }
 }

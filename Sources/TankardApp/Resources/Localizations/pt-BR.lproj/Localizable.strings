@@ -164,6 +164,7 @@
 "Adding tap" = "Adicionando tap";
 "Admin password" = "Senha de administrador";
 "Adopt" = "Adotar";
+"Adopt %@" = "Adotar %@";
 "Adopt %@?" = "Adotar %@?";
 "Adopt %lld Apps…" = "Adotar %lld apps…";
 "Adopt %lld apps?" = "Adotar %lld apps?";
@@ -413,6 +414,7 @@
 "Homebrew's official uninstaller" = "Desinstalador oficial do Homebrew";
 "Homebrew's own files have local changes" = "Os arquivos do próprio Homebrew têm alterações locais";
 "Homebrew's sbin folder isn't in your PATH" = "A pasta sbin do Homebrew não está no seu PATH";
+"How adopting works" = "Como funciona adotar";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "Com que frequência a verificação em segundo plano é executada, enquanto \"Notificar sobre novas atualizações\" estiver ativado.";
 "I've done this" = "Já fiz isso";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "Se um download não conferir, o brew para naquele app e o deixa como estava.";
@@ -910,6 +912,7 @@
 "What installing the missing items would do, before anything runs" = "O que a instalação dos itens ausentes faria, antes de executar qualquer coisa";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "O que está instalado mudou desde que esta lista foi criada. Nada foi executado ainda. Confira os comandos e clique em Restaurar novamente.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "De onde o Homebrew obtém formulae e casks. Clique em um tap para ver o que você instalou dele.";
+"Who updates %@" = "Quem atualiza %@";
 "With the dependencies nothing else needs" = "Com as dependências que nada mais usa";
 "Would free about %@" = "Liberaria cerca de %@";
 "Would remove %lld formulae" = "Removeria %lld formulae";

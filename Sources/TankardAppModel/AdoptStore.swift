@@ -219,6 +219,13 @@ public final class AdoptStore {
         return c != .low
     }
 
+    /// "Needs update first": the copyable `brew install --cask --force`,
+    /// only for a sure match (on a weaker one it could overwrite a
+    /// different app with the same name).
+    public func offersReplace(_ row: AdoptRow) -> Bool {
+        group(row) == .needsUpdate && confidence(row) == .high
+    }
+
     public func rows(_ g: AdoptGroup) -> [AdoptRow] {
         scan.rows.filter { group($0) == g }
             .sorted { $0.app.displayName.localizedStandardCompare($1.app.displayName) == .orderedAscending }

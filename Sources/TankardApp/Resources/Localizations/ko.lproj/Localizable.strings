@@ -164,6 +164,7 @@
 "Adding tap" = "tap 추가 중";
 "Admin password" = "관리자 암호";
 "Adopt" = "가져오기";
+"Adopt %@" = "%@ 가져오기";
 "Adopt %@?" = "%@ 앱을 가져오겠습니까?";
 "Adopt %lld Apps…" = "앱 %lld개 가져오기…";
 "Adopt %lld apps?" = "앱 %lld개를 가져오겠습니까?";
@@ -413,6 +414,7 @@
 "Homebrew's official uninstaller" = "Homebrew 공식 제거 프로그램";
 "Homebrew's own files have local changes" = "Homebrew 자체 파일에 로컬 변경 사항이 있음";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew의 sbin 폴더가 PATH에 없음";
+"How adopting works" = "가져오기 작동 방식";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "\"새 업그레이드 알림\"이 켜져 있을 때 백그라운드 확인을 실행하는 빈도.";
 "I've done this" = "완료했음";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
@@ -910,6 +912,7 @@
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "이 목록을 만든 뒤 설치된 항목이 바뀌었습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew가 formulae와 cask를 가져오는 곳입니다. tap을 클릭하면 그곳에서 설치한 항목을 볼 수 있습니다.";
+"Who updates %@" = "%@ 업데이트 주체";
 "With the dependencies nothing else needs" = "더 이상 필요 없는 의존성도 함께";
 "Would free about %@" = "약 %@ 확보 가능";
 "Would remove %lld formulae" = "formulae %lld개를 제거합니다";
