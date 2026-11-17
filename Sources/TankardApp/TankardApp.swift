@@ -198,6 +198,8 @@ struct TankardApp: App {
         notifier = SystemNotifier()
         loginItem = LoginItem()
         checker = BackgroundChecker(store: store, settings: settings, notifier: notifier)
+        store.notifier = notifier
+        SystemNotifier.install()
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings
         AppDelegate.dock = DockIconController(settings: settings)
@@ -298,7 +300,7 @@ struct HomebrewCommands: View {
 
     var body: some View {
         // Check: the toolbar's Refresh, and the scan on demand (0.6.1).
-        Button("Refresh") { Task { await store.refresh(manual: true) } }
+        Button("Refresh") { Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) } }
             .keyboardShortcut("r", modifiers: .command)
             .disabled(store.isRefreshing || store.isUpgrading)
         Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }

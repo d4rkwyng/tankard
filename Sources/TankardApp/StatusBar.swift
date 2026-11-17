@@ -32,6 +32,10 @@ struct StatusBar: View {
                     ProgressView().controlSize(.mini)
                     Text("Checking for updates…").foregroundStyle(.tertiary)
                         .help(SettingsHelp.backgroundUpdate)
+                } else if let note = store.checkNote {
+                    // 0.8.2: what the Refresh just found (UserCheckFeedback).
+                    separator
+                    Text(note).lineLimit(1).truncationMode(.tail).help(note)
                 } else if store.error != nil {
                     separator
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)

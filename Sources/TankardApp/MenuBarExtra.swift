@@ -1,4 +1,5 @@
 import AppKit
+import os
 import ServiceManagement
 import SwiftUI
 import TankardAppModel
@@ -100,7 +101,7 @@ struct MenuBarContent: View {
                 MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
                 MenuRow(title: String(localized: "Check Now"), systemImage: "arrow.clockwise", shortcut: nil,
                         enabled: !store.isRefreshing && !store.isUpgrading) {
-                    Task { await store.refresh(manual: true) }
+                    Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) }
                 }
                 Divider().padding(.vertical, 3)
                 MenuRow(title: String(localized: "Quit Tankard"), systemImage: "power", shortcut: "Q", enabled: true) {
@@ -191,13 +192,38 @@ struct MenuBarLabel: View {
 /// bundle; under `swift run` this does nothing.
 @MainActor
 final class SystemNotifier: UpgradeNotifying {
+    private static let log = Logger(subsystem: AppPaths.bundleID, category: "notifications")
+
     private var center: UNUserNotificationCenter? {
         Bundle.main.bundleURL.pathExtension == "app" ? UNUserNotificationCenter.current() : nil
     }
 
+    /// 0.8.2: makes macOS show Tankard's notifications as banners while
+    /// Tankard is the active app too (without a delegate it only puts them
+    /// in Notification Centre). Tankard posts while active only for a check
+    /// the user can't see: the window closed or behind another window.
+    /// Called once at launch; logs the permission state.
+    static func install() {
+        guard Bundle.main.bundleURL.pathExtension == "app" else { return }
+        let center = UNUserNotificationCenter.current()
+        center.delegate = NotificationPresenter.shared
+        Task {
+            let status = await center.notificationSettings().authorizationStatus
+            log.notice("authorization at launch: \(Self.describe(status), privacy: .public)")
+        }
+    }
+
     func requestAuthorization() async -> Bool {
         guard let center else { return false }
-        return (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+        let ok = (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+        Self.log.notice("authorization requested: \(ok ? "granted" : "not granted", privacy: .public)")
+        return ok
+    }
+
+    /// Denied in System Settings (the toggle stays on, but nothing shows).
+    func isDenied() async -> Bool {
+        guard let center else { return false }
+        return await center.notificationSettings().authorizationStatus == .denied
     }
 
     /// "Allowed", "Denied in System Settings", "Not asked yet", or "Unavailable".
@@ -212,11 +238,63 @@ final class SystemNotifier: UpgradeNotifying {
     }
 
     func post(_ message: UpgradeNotificationDiff.Message) {
-        guard let center else { return }
+        guard let center else {
+            Self.log.notice("post skipped: not running from Tankard.app")
+            return
+        }
         let content = UNMutableNotificationContent()
         content.title = message.title
         content.body = message.body
-        center.add(UNNotificationRequest(identifier: message.identifier, content: content, trigger: nil))
+        let id = message.identifier
+        Task {
+            let status = await center.notificationSettings().authorizationStatus
+            do {
+                try await center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
+                Self.log.notice("posted \(id.prefix(20), privacy: .public) (authorization: \(Self.describe(status), privacy: .public))")
+            } catch {
+                Self.log.error("post failed (authorization: \(Self.describe(status), privacy: .public)): \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+
+    nonisolated static func describe(_ s: UNAuthorizationStatus) -> String {
+        switch s {
+        case .authorized: return "authorized"
+        case .provisional: return "provisional"
+        case .denied: return "denied"
+        case .notDetermined: return "notDetermined"
+        default: return "other(\(s.rawValue))"
+        }
+    }
+
+    /// System Settings ▸ Notifications, at Tankard's entry where macOS
+    /// supports it; the pane itself otherwise.
+    static func openSystemSettings() {
+        let pane = "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+        if let url = URL(string: pane + "?id=" + AppPaths.bundleID), NSWorkspace.shared.open(url) { return }
+        if let url = URL(string: pane) { NSWorkspace.shared.open(url) }
+    }
+}
+
+/// The notification centre's delegate (it holds it weakly, hence `shared`).
+final class NotificationPresenter: NSObject, UNUserNotificationCenterDelegate, Sendable {
+    static let shared = NotificationPresenter()
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .list, .sound])
+    }
+}
+
+/// 0.8.2: whether the user can see the list right now: Tankard is the
+/// active app and a main window is on screen (not minimized).
+@MainActor
+enum MainWindowState {
+    static var inFront: Bool {
+        guard NSApp.isActive else { return false }
+        // The WindowGroup's id is "main" (its windows: "main-AppWindow-1"),
+        // as ScriptLaunch and openMain look it up.
+        return NSApp.windows.contains { $0.identifier?.rawValue.hasPrefix("main") == true && $0.isVisible && !$0.isMiniaturized }
     }
 }
 

@@ -5541,6 +5541,58 @@
         }
       }
     },
+    "%lld new upgrades": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld neue Upgrades"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld nouvelles mises à niveau"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld actualizaciones nuevas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいアップグレード %lld 件"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个新升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld atualizações novas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld nuovi aggiornamenti"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 업그레이드 %lld개"
+          }
+        }
+      }
+    },
     "%lld newer": {
       "localizations": {
         "de": {
@@ -7669,6 +7721,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "알려진 취약점 1개(brew vulns): %@"
+          }
+        }
+      }
+    },
+    "1 new upgrade": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 neues Upgrade"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 nouvelle mise à niveau"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 actualización nueva"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいアップグレード 1 件"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 个新升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 atualização nova"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 nuovo aggiornamento"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 업그레이드 1개"
           }
         }
       }
@@ -29409,6 +29513,58 @@
         }
       }
     },
+    "No new upgrades": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine neuen Upgrades"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune nouvelle mise à niveau"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay actualizaciones nuevas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいアップグレードはありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有新的升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma atualização nova"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun nuovo aggiornamento"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 업그레이드 없음"
+          }
+        }
+      }
+    },
     "No package matches “%@”.": {
       "localizations": {
         "de": {
@@ -32525,6 +32681,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "홈페이지 열기"
+          }
+        }
+      }
+    },
+    "Open Notification Settings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitteilungen öffnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages des notifications"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ajustes de notificaciones"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知設定を開く"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开通知设置"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ajustes de notificações"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri impostazioni notifiche"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알림 설정 열기"
           }
         }
       }
@@ -38457,58 +38665,6 @@
         }
       }
     },
-    "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Führt brew update aus und sucht im Hintergrund nach Upgrades. Eine Benachrichtigung erscheint nur, wenn neue Upgrades auftauchen. Standardmäßig aus."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exécute brew update et recherche les mises à niveau en arrière-plan. Une notification n’apparaît que lorsque de nouvelles mises à niveau sont disponibles. Désactivé par défaut."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ejecuta brew update y busca actualizaciones en segundo plano. Solo aparece una notificación cuando surgen nuevas actualizaciones. Desactivado por defecto."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "バックグラウンドでbrew updateを実行し、アップグレードを確認します。新しいアップグレードが見つかったときだけ通知されます。デフォルトではオフです。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在后台运行 brew update 并检查升级。仅在出现新升级时才会通知。默认关闭。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Executa brew update e verifica atualizações em segundo plano. Uma notificação aparece somente quando surgem novas atualizações. Desativado por padrão."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Esegue brew update e cerca aggiornamenti in background. Una notifica compare solo quando ci sono nuovi aggiornamenti. Disattivato per impostazione predefinita."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "백그라운드에서 brew update를 실행하고 업그레이드를 확인합니다. 새 업그레이드가 나타날 때만 알림이 표시됩니다. 기본값은 꺼짐입니다."
-          }
-        }
-      }
-    },
     "Runs brew update first, then upgrades one package at a time through Tankard's queue.": {
       "localizations": {
         "de": {
@@ -38557,6 +38713,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "먼저 brew update를 실행한 다음, Tankard의 대기열을 통해 패키지를 하나씩 업그레이드합니다."
+          }
+        }
+      }
+    },
+    "Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Führt brew update im Hintergrund aus und zeigt eine Mitteilung, wenn neue Upgrades auftauchen. Aktualisieren und Jetzt prüfen zeigen nur dann eine, wenn das Tankard-Fenster nicht vorne ist; sonst zeigen Liste und Statusleiste das Neue. Standardmäßig aus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécute brew update en arrière-plan et affiche une notification quand de nouvelles mises à niveau apparaissent. Actualiser et Vérifier maintenant n’en affichent une que si la fenêtre de Tankard n’est pas au premier plan ; sinon, la liste et la barre d’état montrent les nouveautés. Désactivé par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecuta brew update en segundo plano y muestra una notificación cuando aparecen actualizaciones nuevas. Actualizar y Comprobar ahora solo muestran una si la ventana de Tankard no está en primer plano; si lo está, la lista y la barra de estado muestran lo nuevo. Desactivado por omisión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バックグラウンドで brew update を実行し、新しいアップグレードが見つかると通知します。「更新」と「今すぐ確認」は Tankard のウインドウが前面にないときだけ通知し、前面にあるときはリストとステータスバーに新しい項目を表示します。デフォルトはオフ。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在后台运行 brew update，出现新升级时发送通知。“刷新”和“立即检查”仅在 Tankard 窗口不在最前面时发送通知；否则由列表和状态栏显示新内容。默认关闭。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executa o brew update em segundo plano e mostra uma notificação quando surgem novas atualizações. Atualizar e Verificar agora só mostram uma quando a janela do Tankard não está em primeiro plano; caso contrário, a lista e a barra de status mostram as novidades. Desativado por padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegue brew update in background e mostra una notifica quando compaiono nuovi aggiornamenti. Aggiorna e Controlla ora ne mostrano una solo se la finestra di Tankard non è in primo piano; altrimenti l’elenco e la barra di stato mostrano le novità. Disattivato per impostazione predefinita."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "백그라운드에서 brew update를 실행하고 새 업그레이드가 나타나면 알림을 보냅니다. 새로 고침과 지금 확인은 Tankard 윈도우가 앞에 있지 않을 때만 알림을 보내며, 앞에 있으면 목록과 상태 막대에 새 항목이 표시됩니다. 기본값은 끔."
           }
         }
       }
@@ -47242,6 +47450,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard를 켜세요. 목록에 없으면 +를 클릭하고 응용 프로그램에서 Tankard를 선택하세요."
+          }
+        }
+      }
+    },
+    "Turn on notifications in Settings ▸ General": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitteilungen: Einstellungen ▸ Allgemein"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activez les notifications dans Réglages ▸ Général"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa las notificaciones en Ajustes ▸ General"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知は「設定」▸「一般」でオンにできます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可在“设置 ▸ 通用”中打开通知"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ative as notificações em Ajustes ▸ Geral"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiva le notifiche in Impostazioni ▸ Generali"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설정 ▸ 일반에서 알림을 켤 수 있습니다"
           }
         }
       }

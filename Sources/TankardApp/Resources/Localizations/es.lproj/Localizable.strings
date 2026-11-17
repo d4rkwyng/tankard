@@ -100,6 +100,7 @@
 "%lld min %lld s" = "%lld min %lld s";
 "%lld min ago" = "hace %lld min";
 "%lld missing from this Mac" = "%lld faltan en este Mac";
+"%lld new upgrades" = "%lld actualizaciones nuevas";
 "%lld newer" = "%lld más recientes";
 "%lld no bottle" = "%lld sin bottle";
 "%lld not checked" = "%lld sin comprobar";
@@ -141,6 +142,7 @@
 "1 item" = "1 elemento";
 "1 known vulnerability" = "1 vulnerabilidad conocida";
 "1 known vulnerability (brew vulns): %@" = "1 vulnerabilidad conocida (brew vulns): %@";
+"1 new upgrade" = "1 actualización nueva";
 "1 vulnerable package; more filters" = "1 paquete vulnerable; más filtros";
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 se compilaría desde el código fuente: sin bottle para este Mac. Puede tardar mucho.";
 "1. Remove the Intelbrew lines from your shell profile" = "1. Quita las líneas de Intelbrew de tu perfil de shell";
@@ -559,6 +561,7 @@
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Ya no está en el Cellar: %@. brew cleanup la eliminó después de crear esta lista, así que no se puede revertir y se quitó de la restauración. Todavía no se ha ejecutado nada. Revisa los comandos y vuelve a hacer clic en Restaurar.";
 "No longer needed by anything: %@" = "Ya no las necesita nada: %@";
 "No matches" = "Sin coincidencias";
+"No new upgrades" = "No hay actualizaciones nuevas";
 "No package matches “%@”." = "Ningún paquete coincide con “%@”.";
 "No packages in this group." = "No hay paquetes en este grupo.";
 "No restore points yet. One is saved before the next upgrade." = "Aún no hay puntos de restauración. Se guarda uno antes de la próxima actualización.";
@@ -619,6 +622,7 @@
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "Solo coincide el nombre de la app. Puede ser otra app con el mismo nombre: compruébalo antes de adoptar.";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "Solo lo que necesitaba %@. Las dependencias que ya no se usaban siguen instaladas.";
 "Open Homepage" = "Abrir página web";
+"Open Notification Settings" = "Abrir ajustes de notificaciones";
 "Open Release Page" = "Abrir página de la versión";
 "Open System Settings" = "Abrir Ajustes del Sistema";
 "Open Tankard" = "Abrir Tankard";
@@ -733,8 +737,8 @@
 "Running brew update…" = "Ejecutando brew update…";
 "Runs" = "Ejecuciones";
 "Runs as %@ (started with sudo). Tankard only controls your own services and never runs sudo. To change it, run this in Terminal:" = "Se ejecuta como %@ (iniciado con sudo). Tankard solo controla tus propios servicios y nunca ejecuta sudo. Para cambiarlo, ejecuta esto en Terminal:";
-"Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "Ejecuta brew update y busca actualizaciones en segundo plano. Solo aparece una notificación cuando surgen nuevas actualizaciones. Desactivado por defecto.";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "Ejecuta primero brew update y luego actualiza un paquete a la vez mediante la cola de Tankard.";
+"Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default." = "Ejecuta brew update en segundo plano y muestra una notificación cuando aparecen actualizaciones nuevas. Actualizar y Comprobar ahora solo muestran una si la ventana de Tankard no está en primer plano; si lo está, la lista y la barra de estado muestran lo nuevo. Desactivado por omisión.";
 "Runs brew vulns after each refresh. " = "Ejecuta brew vulns tras cada actualización. ";
 "Runs brew vulns once now." = "Ejecuta brew vulns una vez ahora.";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "Se ejecuta solo mientras Tankard está abierto, con la corriente conectada, tras %lld minutos sin actividad de teclado ni ratón. Una ejecución perdida (el Mac estaba en reposo o Tankard no estaba abierto) se hace una vez, en la siguiente oportunidad. Desactivado por defecto.";
@@ -901,6 +905,7 @@
 "Try another filter." = "Prueba otro filtro.";
 "Turn automatic updates back on now" = "Reactivar ahora las actualizaciones automáticas";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Activa Tankard. Si no aparece en la lista, haz clic en + y elige Tankard en Aplicaciones.";
+"Turn on notifications in Settings ▸ General" = "Activa las notificaciones en Ajustes ▸ General";
 "Type" = "Tipo";
 "Type " = "Escribe ";
 "Type a name or a word from a description." = "Escribe un nombre o una palabra de la descripción.";

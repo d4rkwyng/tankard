@@ -39,7 +39,7 @@ struct ContentView: View {
                             .help(store.refreshPhase ?? String(localized: "Refreshing"))
                     } else {
                         Button {
-                            Task { await store.refresh(manual: true) }
+                            Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) }
                         } label: {
                             Label("Refresh", systemImage: "arrow.clockwise")
                         }
