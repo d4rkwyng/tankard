@@ -96,9 +96,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
             if let e = nonEmpty(explanation) { return e }
             guard let r = nonEmpty(reason) else { return nil }
             switch r {
-            case ":provided_by_macos": return "macOS already provides this software"
-            case ":shadowed_by_macos": return "macOS provides a similar version, which this would shadow"
-            case ":versioned_formula": return "it is a versioned formula"
+            case ":provided_by_macos": return String(localized: "macOS already provides this software")
+            case ":shadowed_by_macos": return String(localized: "macOS provides a similar version, which this would shadow")
+            case ":versioned_formula": return String(localized: "it is a versioned formula")
             default: return r.hasPrefix(":") ? String(r.dropFirst()).replacingOccurrences(of: "_", with: " ") : r
             }
         }

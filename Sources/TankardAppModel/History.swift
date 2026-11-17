@@ -74,10 +74,10 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     public var rerunHint: String? {
         guard isFailure, !canRetry else { return nil }
         switch category {
-        case .uninstall: return "Uninstall again from the package's details; it asks first."
-        case .cleanup: return "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first."
-        case .install, .reinstall: return "Install again from Discover or the package's details."
-        case .taps: return "Run it again from Homebrew ▸ Taps…; it asks first."
+        case .uninstall: return String(localized: "Uninstall again from the package's details; it asks first.")
+        case .cleanup: return String(localized: "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first.")
+        case .install, .reinstall: return String(localized: "Install again from Discover or the package's details.")
+        case .taps: return String(localized: "Run it again from Homebrew ▸ Taps…; it asks first.")
         default: return nil
         }
     }
@@ -85,18 +85,18 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     /// "succeeded", "failed (exit 1)", "stopped", "didn't start".
     public var resultText: String {
         switch outcome {
-        case .succeeded: return "succeeded"
-        case .failed: return exitCode.map { "failed (exit \($0))" } ?? "failed"
-        case .cancelled: return "stopped"
-        case .notStarted: return "didn't start"
+        case .succeeded: return String(localized: "succeeded")
+        case .failed: return exitCode.map { code in String(localized: "failed (exit \(code))") } ?? String(localized: "failed")
+        case .cancelled: return String(localized: "stopped")
+        case .notStarted: return String(localized: "didn't start")
         }
     }
 
     /// "0.4 s", "12 s", "3 min 5 s".
     public var durationText: String {
-        if duration < 10 { return String(format: "%.1f s", max(0, duration)) }
+        if duration < 10 { return String(localized: "\(String(format: "%.1f", max(0, duration))) s") }
         let s = Int(duration.rounded())
-        return s < 60 ? "\(s) s" : "\(s / 60) min \(s % 60) s"
+        return s < 60 ? String(localized: "\(s) s") : String(localized: "\(s / 60) min \(s % 60) s")
     }
 }
 
@@ -125,16 +125,16 @@ public enum HistoryCategory: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .install: return "Install"
-        case .upgrade: return "Upgrade"
-        case .uninstall: return "Uninstall"
-        case .reinstall: return "Reinstall"
-        case .pin: return "Pin"
-        case .services: return "Services"
-        case .cleanup: return "Clean up"
-        case .update: return "Update"
-        case .other: return "Other"
-        case .taps: return "Taps"
+        case .install: return String(localized: "Install")
+        case .upgrade: return String(localized: "Upgrade")
+        case .uninstall: return String(localized: "Uninstall")
+        case .reinstall: return String(localized: "Reinstall")
+        case .pin: return String(localized: "Pin")
+        case .services: return String(localized: "Services")
+        case .cleanup: return String(localized: "Clean up")
+        case .update: return String(localized: "Update")
+        case .other: return String(localized: "Other")
+        case .taps: return String(localized: "Taps")
         }
     }
 }
@@ -155,9 +155,9 @@ public enum HistoryFilter: Hashable, Sendable, Identifiable {
 
     public var title: String {
         switch self {
-        case .all: return "All"
-        case .failed: return "Failed"
-        case .autoUpdate: return "Auto-update"
+        case .all: return String(localized: "All")
+        case .failed: return String(localized: "Failed")
+        case .autoUpdate: return String(localized: "Auto-update")
         case .category(let c): return c.title
         }
     }
@@ -276,7 +276,7 @@ public final class HistoryRecorder: @unchecked Sendable {
                 return (r, .cancelled, nil)
             case .failed(let message):
                 var r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
-                r.output.append(Data("Could not run brew: \(message)\n".utf8))
+                r.output.append(Data(String(localized: "Could not run brew: \(message)\n").utf8))
                 return (r, .notStarted, nil)
             }
         }
@@ -317,7 +317,7 @@ public extension AppStore {
                     || names.contains((p.tap.map { "\($0)/" } ?? "") + p.name)
             }
             if targets.isEmpty {
-                error = StoreError(title: "Nothing to retry", detail: "\(BrewCommands.display(args)) has nothing left to upgrade.")
+                error = StoreError(title: String(localized: "Nothing to retry"), detail: String(localized: "\(BrewCommands.display(args)) has nothing left to upgrade."))
                 return
             }
             requestUpgrade(targets)
@@ -327,7 +327,7 @@ public extension AppStore {
             guard let r = await runQuick(args) else { return }
             await refresh(manual: false)
             if r.failed {
-                error = Self.quickError(verb: "Retry", name: BrewCommands.display(args), args: args, result: r)
+                error = Self.quickError(verb: String(localized: "Retry"), name: BrewCommands.display(args), args: args, result: r)
             }
         }
     }

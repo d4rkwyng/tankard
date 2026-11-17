@@ -478,7 +478,7 @@ struct ActionCountPill: View {
     @Environment(\.theme) private var theme
 
     var body: some View {
-        Text("\(count)")
+        Text(verbatim: "\(count)")
             .font(.system(size: 11, weight: .semibold))
             .monospacedDigit()
             .foregroundStyle(theme.isCustom ? theme.actionPillText : Color.white)

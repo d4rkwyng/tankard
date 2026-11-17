@@ -76,8 +76,8 @@ struct WelcomeView: View {
     }
 
     private var title: String {
-        if case .broken = store.homebrewState { return "Homebrew isn't working" }
-        return "Homebrew isn't installed"
+        if case .broken = store.homebrewState { return String(localized: "Homebrew isn't working") }
+        return String(localized: "Homebrew isn't installed")
     }
 }
 
@@ -125,14 +125,14 @@ struct InstallerCard: View {
     /// starts Terminal. Demo mode never opens anything.
     private func open() {
         if isDemo {
-            failure.wrappedValue = "Demo mode: Terminal not opened."
+            failure.wrappedValue = String(localized: "Demo mode: Terminal not opened.")
             return
         }
         do {
             let url = try installer.writeScript()
-            if !NSWorkspace.shared.open(url) { failure.wrappedValue = "Couldn't open Terminal. Copy the command instead." }
+            if !NSWorkspace.shared.open(url) { failure.wrappedValue = String(localized: "Couldn't open Terminal. Copy the command instead.") }
         } catch {
-            failure.wrappedValue = "Couldn't write the script: \(error.localizedDescription)"
+            failure.wrappedValue = String(localized: "Couldn't write the script: \(error.localizedDescription)")
         }
     }
 }

@@ -51,7 +51,7 @@ enum MenuBarIcon {
             return true
         }
         img.isTemplate = true
-        img.accessibilityDescription = full ? "Tankard: upgrades ready" : "Tankard"
+        img.accessibilityDescription = full ? String(localized: "Tankard: upgrades ready") : "Tankard"
         return img
     }
 

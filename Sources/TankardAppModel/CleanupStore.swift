@@ -35,7 +35,7 @@ public final class CleanupStore {
     /// brew's problem lines, when it exited non-zero.
     public var problem: String? {
         guard let d = dryRun, exitCode != 0 || !d.errors.isEmpty else { return nil }
-        let lines = d.errors.isEmpty ? ["brew cleanup -n exited \(exitCode)."] : d.errors
+        let lines = d.errors.isEmpty ? [String(localized: "brew cleanup -n exited \(exitCode).")] : d.errors
         return lines.prefix(3).joined(separator: "\n")
     }
 
@@ -95,6 +95,6 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     public var startTitle: String {
         let n = toRun.count
         let skipped = rows.count - n
-        return skipped > 0 ? "Upgrade \(n) (skip \(skipped))" : "Upgrade \(n)"
+        return skipped > 0 ? String(localized: "Upgrade \(n) (skip \(skipped))") : String(localized: "Upgrade \(n)")
     }
 }

@@ -15,8 +15,8 @@ public enum HomebrewManagement {
 
         public var title: String {
             switch self {
-            case .revert: return "Revert to Standard Homebrew…"
-            case .uninstall: return "Uninstall Homebrew…"
+            case .revert: return String(localized: "Revert to Standard Homebrew…")
+            case .uninstall: return String(localized: "Uninstall Homebrew…")
             }
         }
     }

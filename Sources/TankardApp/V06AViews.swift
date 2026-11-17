@@ -48,7 +48,7 @@ struct RetiredDetail: View {
                     Image(systemName: p.disabled ? "nosign" : "clock.badge.exclamationmark").foregroundStyle(w.text)
                     Text(detail).font(.system(size: 12)).foregroundStyle(w.text).fixedSize(horizontal: false, vertical: true)
                 }
-                Text(p.disabled ? "Homebrew no longer installs or upgrades it." : "Homebrew still has it, but will disable it later.")
+                Text(p.disabled ? String(localized: "Homebrew no longer installs or upgrades it.") : String(localized: "Homebrew still has it, but will disable it later."))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 if let r = p.replacement {
                     let installed = store.installedReplacement(r)
@@ -126,8 +126,8 @@ struct HealthSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SheetHeader(icon: "stethoscope.circle.fill", title: "Homebrew Health",
-                        subtitle: "brew doctor, brew config and brew missing. Read-only: Tankard changes nothing here.")
+            SheetHeader(icon: "stethoscope.circle.fill", title: String(localized: "Homebrew Health"),
+                        subtitle: String(localized: "brew doctor, brew config and brew missing. Read-only: Tankard changes nothing here."))
             switch health.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
@@ -175,15 +175,17 @@ struct HealthSheet: View {
         if !health.missing.isEmpty {
             Text("Missing dependencies").font(.system(size: 12, weight: .semibold))
             ForEach(health.missing) { m in
-                Text("\(m.formula): \(m.missing.joined(separator: ", "))").font(.system(size: 11.5, design: .monospaced))
+                Text(verbatim: "\(m.formula): \(m.missing.joined(separator: ", "))").font(.system(size: 11.5, design: .monospaced))
             }
         } else {
             Label("brew missing: no missing dependencies", systemImage: "checkmark.circle")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
         }
-        DisclosureGroup("brew config") {
+        DisclosureGroup {
             Text(health.config).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+            Text(verbatim: "brew config")
         }
         .font(.system(size: 12))
         DisclosureGroup("brew doctor (raw output)") {
@@ -236,10 +238,10 @@ struct HistorySheet: View {
     var body: some View {
         let rows = history.filtered(filter.wrappedValue)
         VStack(alignment: .leading, spacing: 10) {
-            SheetHeader(icon: "clock.arrow.circlepath", title: "History",
-                        subtitle: "Every brew command Tankard ran: when, the command, the result and how long it took.")
+            SheetHeader(icon: "clock.arrow.circlepath", title: String(localized: "History"),
+                        subtitle: String(localized: "Every brew command Tankard ran: when, the command, the result and how long it took."))
             HStack(spacing: 8) {
-                ThemedSegmentedPicker(title: "Show", selection: filter.projectedValue,
+                ThemedSegmentedPicker(title: String(localized: "Show"), selection: filter.projectedValue,
                                       options: Array(HistoryFilter.menu.prefix(3)), label: \.title)
                 Menu(categoryTitle) {
                     ForEach(Array(HistoryFilter.menu.dropFirst(3))) { f in
@@ -252,9 +254,9 @@ struct HistorySheet: View {
                 Text("\(rows.count) of \(history.entries.count)").font(.system(size: 11)).foregroundStyle(.secondary)
             }
             if rows.isEmpty {
-                ContentUnavailableView(history.entries.isEmpty ? "Nothing yet" : "Nothing matches",
+                ContentUnavailableView(history.entries.isEmpty ? String(localized: "Nothing yet") : String(localized: "Nothing matches"),
                                        systemImage: "clock",
-                                       description: Text(history.entries.isEmpty ? "Installs, upgrades, pins and more appear here." : "Try another filter."))
+                                       description: Text(history.entries.isEmpty ? String(localized: "Installs, upgrades, pins and more appear here.") : String(localized: "Try another filter.")))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
@@ -279,8 +281,8 @@ struct HistorySheet: View {
     }
 
     private var categoryTitle: String {
-        if case .category(let c) = filter.wrappedValue { return "Type: \(c.title)" }
-        return "Type"
+        if case .category(let c) = filter.wrappedValue { return String(localized: "Type: \(c.title)") }
+        return String(localized: "Type")
     }
 }
 
@@ -310,8 +312,8 @@ struct HistoryRow: View {
                         .controlSize(.small)
                         .disabled(store.isBusy)
                         .help(e.category == .upgrade
-                              ? "Upgrade again the usual way: compile warnings, pins and skipped versions still apply"
-                              : "Run \(e.command) again, through the queue")
+                              ? String(localized: "Upgrade again the usual way: compile warnings, pins and skipped versions still apply")
+                              : String(localized: "Run \(e.command) again, through the queue"))
                 } else if let hint = e.rerunHint {
                     Image(systemName: "info.circle").foregroundStyle(.secondary).help(hint)
                 }
@@ -324,7 +326,7 @@ struct HistoryRow: View {
             .font(.system(size: 11)).foregroundStyle(.secondary)
             .padding(.leading, 24)
             if let k = e.failureKind {
-                Text("\(k.title). \(k.explanation)").font(.system(size: 11)).foregroundStyle(w.text)
+                Text(verbatim: "\(k.title). \(k.explanation)").font(.system(size: 11)).foregroundStyle(w.text)
                     .fixedSize(horizontal: false, vertical: true).padding(.leading, 24)
             }
             if e.isFailure && !e.outputTail.isEmpty {
@@ -357,8 +359,8 @@ struct AutoremoveSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SheetHeader(icon: "shippingbox.and.arrow.backward.fill", title: "Remove Unused Dependencies",
-                        subtitle: "Formulae installed only as dependencies that nothing installed needs any more.")
+            SheetHeader(icon: "shippingbox.and.arrow.backward.fill", title: String(localized: "Remove Unused Dependencies"),
+                        subtitle: String(localized: "Formulae installed only as dependencies that nothing installed needs any more."))
             switch autoremove.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
@@ -370,7 +372,7 @@ struct AutoremoveSheet: View {
                 Label(m, systemImage: "exclamationmark.triangle.fill").font(.system(size: 12)).foregroundStyle(.orange)
             case .ready:
                 let names = autoremove.plan?.formulae ?? []
-                Text(names.isEmpty ? "Nothing to remove" : "Would remove \(names.count) formula\(names.count == 1 ? "" : "e")")
+                Text(names.isEmpty ? String(localized: "Nothing to remove") : (names.count == 1 ? String(localized: "Would remove 1 formula") : String(localized: "Would remove \(names.count) formulae")))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(names.isEmpty ? Color.secondary : theme.accent)
                 if !names.isEmpty {

@@ -56,7 +56,7 @@ struct DiscoverStrip: View {
                     .lineLimit(1)
                 HStack(spacing: 6) {
                     Image(systemName: discover.isLocalTaps ? "internaldrive" : "globe")
-                    Text(discover.source.isEmpty ? (discover.isLocalTaps ? "Local taps" : "formulae.brew.sh") : discover.source)
+                    Text(discover.source.isEmpty ? (discover.isLocalTaps ? String(localized: "Local taps") : "formulae.brew.sh") : discover.source)
                         .lineLimit(1)
                         .truncationMode(.middle)
                     if let t = discover.loadedAt, !discover.isLocalTaps {
@@ -66,21 +66,21 @@ struct DiscoverStrip: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.secondary)
                 .help(discover.isLocalTaps
-                      ? "Intelbrew mode: names from the taps on this Mac, details from brew info. formulae.brew.sh isn't used: it describes upstream Homebrew."
-                      : "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api")
+                      ? String(localized: "Intelbrew mode: names from the taps on this Mac, details from brew info. formulae.brew.sh isn't used: it describes upstream Homebrew.")
+                      : String(localized: "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api"))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if discover.phase == .ready && discover.formulaCount > 0 {
-                ThemedSegmentedPicker(title: "Bottles", selection: bottleScope, options: BottleScope.allCases) { scope in
-                    scope == .bottled ? "\(discover.bottledChipTitle) (\(discover.bottledCountText))" : "All"
+                ThemedSegmentedPicker(title: String(localized: "Bottles"), selection: bottleScope, options: BottleScope.allCases) { scope in
+                    scope == .bottled ? "\(discover.bottledChipTitle) (\(discover.bottledCountText))" : String(localized: "All")
                 }
                 .help(discover.isLocalTaps
-                      ? "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed."
-                      : "Formulae with a bottle for this Mac. The rest compile from source when installed.")
+                      ? String(localized: "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed.")
+                      : String(localized: "Formulae with a bottle for this Mac. The rest compile from source when installed."))
             }
 
-            ThemedSegmentedPicker(title: "Kind", selection: $discover.kind, options: CatalogKindFilter.allCases, label: \.title)
+            ThemedSegmentedPicker(title: String(localized: "Kind"), selection: $discover.kind, options: CatalogKindFilter.allCases, label: \.title)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -89,12 +89,13 @@ struct DiscoverStrip: View {
 
     private var headline: String {
         switch discover.phase {
-        case .idle, .loading: return discover.isLocalTaps ? "Reading the local taps…" : "Loading Homebrew's catalogue…"
-        case .failed: return "Couldn't load the catalogue"
+        case .idle, .loading: return discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading Homebrew's catalogue…")
+        case .failed: return String(localized: "Couldn't load the catalogue")
         case .ready:
-            if discover.resultsQuery.isEmpty { return "Search \(discover.totalCount.formatted()) packages" }
+            if discover.resultsQuery.isEmpty { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
             let n = discover.results.count
-            return "\(n == 200 ? "Top 200" : "\(n)") result\(n == 1 ? "" : "s") for “\(discover.resultsQuery)”"
+            if n == 200 { return String(localized: "Top 200 results for “\(discover.resultsQuery)”") }
+        return n == 1 ? String(localized: "\(n) result for “\(discover.resultsQuery)”") : String(localized: "\(n) results for “\(discover.resultsQuery)”")
         }
     }
 }
@@ -134,7 +135,7 @@ struct DiscoverTable: View {
                             InstalledMark()
                         }
                         if e.disabled || e.deprecated {
-                            Text(e.disabled ? "disabled" : "deprecated").font(.system(size: 9.5)).foregroundStyle(.orange)
+                            Text(e.disabled ? String(localized: "disabled") : String(localized: "deprecated")).font(.system(size: 9.5)).foregroundStyle(.orange)
                         }
                     }
                     if let d = e.desc {
@@ -152,7 +153,7 @@ struct DiscoverTable: View {
             .width(min: 60, ideal: 90)
 
             TableColumn("Kind") { (e: CatalogEntry) in
-                Text(e.kind == .cask ? "Cask" : "Formula").foregroundStyle(.secondary)
+                Text(e.kind == .cask ? String(localized: "Cask") : String(localized: "Formula")).foregroundStyle(.secondary)
             }
             .width(min: 50, ideal: 64)
 
@@ -185,7 +186,7 @@ struct DiscoverTable: View {
     private var overlay: some View {
         switch discover.phase {
         case .idle, .loading:
-            ProgressView(discover.isLocalTaps ? "Reading the local taps…" : "Loading formulae.brew.sh…")
+            ProgressView(discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading formulae.brew.sh…"))
         case .failed(let message):
             ContentUnavailableView {
                 Label("Couldn't load the catalogue", systemImage: "wifi.exclamationmark")
@@ -262,7 +263,7 @@ struct DiscoverDetail: View {
                         .font(.system(size: 18)).foregroundStyle(.white))
                 VStack(alignment: .leading, spacing: 1) {
                     Text(e.name).font(.system(size: 16, weight: .bold)).lineLimit(1).truncationMode(.middle)
-                    Text(e.desc ?? (e.kind == .cask ? "Cask" : "Formula"))
+                    Text(e.desc ?? (e.kind == .cask ? String(localized: "Cask") : String(localized: "Formula")))
                         .font(.system(size: 11.5)).foregroundStyle(.secondary).lineLimit(3)
                 }
             }
@@ -280,13 +281,13 @@ struct DiscoverDetail: View {
             }
 
             Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {
-                row("Version", e.version ?? (e.detailsLoaded ? "–" : "…"))
-                row("Kind", e.kind == .cask ? "Cask" : "Formula")
-                if let tap = e.tap { row("Tap", tap, mono: true) }
-                if e.kind == .formula { row("Licence", e.license ?? (e.detailsLoaded ? "Not stated" : "…")) }
-                if let tag = e.bottleTag { row("Bottle tag", tag, mono: true) }
+                row(String(localized: "Version"), e.version ?? (e.detailsLoaded ? "–" : "…"))
+                row(String(localized: "Kind"), e.kind == .cask ? String(localized: "Cask") : String(localized: "Formula"))
+                if let tap = e.tap { row(String(localized: "Tap"), tap, mono: true) }
+                if e.kind == .formula { row(String(localized: "Licence"), e.license ?? (e.detailsLoaded ? String(localized: "Not stated") : "…")) }
+                if let tag = e.bottleTag { row(String(localized: "Bottle tag"), tag, mono: true) }
                 if !e.otherNames.isEmpty {
-                    row(e.kind == .cask ? "Name" : "Also", e.otherNames.prefix(4).joined(separator: ", "))
+                    row(e.kind == .cask ? String(localized: "Name") : String(localized: "Also"), e.otherNames.prefix(4).joined(separator: ", "))
                 }
             }
             .font(.system(size: 12))
@@ -317,7 +318,7 @@ struct DiscoverDetail: View {
                             .foregroundStyle(have ? theme.badge(.bottle).foreground : Color.secondary)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Capsule().fill(have ? theme.badge(.bottle).background : theme.chip))
-                            .help(have ? "\(d) is installed" : "\(d) would be installed too")
+                            .help(have ? String(localized: "\(d) is installed") : String(localized: "\(d) would be installed too"))
                         }
                     }
                 }
@@ -361,11 +362,11 @@ struct DiscoverDetail: View {
                     Button {
                         if compiles { discover.confirmInstall = e.id } else { store.startInstall(e) }
                     } label: {
-                        Label(compiles ? "Install (compiles)" : "Install \(e.name)", systemImage: compiles ? "hammer" : "arrow.down.circle")
+                        Label(compiles ? String(localized: "Install (compiles)") : String(localized: "Install \(e.name)"), systemImage: compiles ? "hammer" : "arrow.down.circle")
                     }
                     .buttonStyle(.primaryAction)
                     .disabled(store.isUpgrading || e.disabled)
-                    .help(store.isUpgrading ? "Wait for the running brew to finish" : e.installDisplay)
+                    .help(store.isUpgrading ? String(localized: "Wait for the running brew to finish") : e.installDisplay)
                 }
             }
         }
@@ -398,7 +399,7 @@ struct CompileWarningBox: View {
             HStack(alignment: .top, spacing: 6) {
                 Image(systemName: "hammer.fill").foregroundStyle(theme.badge(.source).dot)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(intelbrew ? "No Intelbrew bottle yet." : "No bottle for this Mac.")
+                    Text(intelbrew ? String(localized: "No Intelbrew bottle yet.") : String(localized: "No bottle for this Mac."))
                         .fontWeight(.semibold)
                     Text("Installing compiles from source, which can take a long time on older Macs.")
                         .fixedSize(horizontal: false, vertical: true)
@@ -407,7 +408,11 @@ struct CompileWarningBox: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if !deps.isEmpty {
-                        Text("+\(deps.count) dependenc\(deps.count == 1 ? "y" : "ies") also compile\(deps.count == 1 ? "s" : ""): \(deps.prefix(5).map(\.name).joined(separator: ", "))\(deps.count > 5 ? "…" : "")")
+                        Text(verbatim: { () -> String in
+                            let names = deps.prefix(5).map(\.name).joined(separator: ", ") + (deps.count > 5 ? "…" : "")
+                            return deps.count == 1 ? String(localized: "+1 dependency also compiles: \(names)")
+                                : String(localized: "+\(deps.count) dependencies also compile: \(names)")
+                        }())
                             .fontWeight(.medium)
                             .fixedSize(horizontal: false, vertical: true)
                     }

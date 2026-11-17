@@ -170,16 +170,16 @@ public struct StatusClassifier: Sendable {
     func label(status: PackageStatus, origin: BottleOrigin?) -> String {
         switch status {
         case .bottle:
-            guard intelbrewMode else { return "bottle" }
+            guard intelbrewMode else { return String(localized: "bottle") }
             switch origin {
-            case .intelbrew: return "Intelbrew bottle"
-            case .homebrew: return "Homebrew bottle"
-            default: return "bottle"
+            case .intelbrew: return String(localized: "Intelbrew bottle")
+            case .homebrew: return String(localized: "Homebrew bottle")
+            default: return String(localized: "bottle")
             }
-        case .source: return "source"
-        case .newer: return "newer"
-        case .noBottle: return "no bottle"
-        case .cask: return "cask"
+        case .source: return String(localized: "source")
+        case .newer: return String(localized: "newer")
+        case .noBottle: return String(localized: "no bottle")
+        case .cask: return String(localized: "cask")
         }
     }
 }

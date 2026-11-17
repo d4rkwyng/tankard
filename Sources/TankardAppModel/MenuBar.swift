@@ -45,9 +45,9 @@ public struct MenuBarSummary: Equatable, Sendable {
     /// "5 upgrades ready", "1 upgrade ready", "Everything is up to date",
     /// or "No data yet".
     public var title: String {
-        guard hasData else { return "No data yet" }
-        if count == 0 { return "Everything is up to date" }
-        return "\(count) upgrade\(count == 1 ? "" : "s") ready"
+        guard hasData else { return String(localized: "No data yet") }
+        if count == 0 { return String(localized: "Everything is up to date") }
+        return count == 1 ? String(localized: "\(count) upgrade ready") : String(localized: "\(count) upgrades ready")
     }
 
     /// The number next to the mug; nil (icon only) when there are none,
@@ -58,14 +58,15 @@ public struct MenuBarSummary: Equatable, Sendable {
     }
 
     /// "and 3 more…" under the rows; nil when every upgrade is listed.
-    public var moreText: String? { moreCount > 0 ? "and \(moreCount) more…" : nil }
+    public var moreText: String? { moreCount > 0 ? String(localized: "and \(moreCount) more…") : nil }
 
     /// 0.5: "Tankard 0.6.0 available" when brew lists an upgrade for
     /// Tankard's own cask (the status read already has it). Tankard never
     /// upgrades itself; that stays with brew.
     public static func selfUpdateLine(_ packages: [Package]?) -> String? {
         guard let p = packages?.first(where: { AutoUpdateSafeMode.isTankard($0) && $0.upgradeAvailable }) else { return nil }
-        return "Tankard \(p.currentVersion ?? "update") available"
+        if let v = p.currentVersion { return String(localized: "Tankard \(v) available") }
+        return String(localized: "Tankard update available")
     }
 }
 
@@ -102,10 +103,11 @@ public enum UpgradeNotificationDiff {
         guard !added.isEmpty else { return nil }
         let names = packages.filter { added.contains("\($0.id)@\($0.currentVersion ?? "")") }.map(\.name).sorted()
         let total = current.count
-        let title = "\(total) upgrade\(total == 1 ? "" : "s") ready"
+        let title = total == 1 ? String(localized: "\(total) upgrade ready") : String(localized: "\(total) upgrades ready")
         let shown = names.prefix(4).joined(separator: ", ")
-        let more = names.count > 4 ? " and \(names.count - 4) more" : ""
-        let body = "New: \(shown)\(more)"
+        let body = names.count > 4
+            ? String(localized: "New: \(shown) and \(names.count - 4) more")
+            : String(localized: "New: \(shown)")
         return Message(title: title, body: body, newKeys: added)
     }
 }

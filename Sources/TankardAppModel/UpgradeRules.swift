@@ -68,9 +68,9 @@ public enum BumpRule: String, CaseIterable, Identifiable, Sendable, Codable {
 
     public var title: String {
         switch self {
-        case .all: return "All versions"
-        case .minorAndPatch: return "Minor and patch only"
-        case .patchOnly: return "Patch only"
+        case .all: return String(localized: "All versions")
+        case .minorAndPatch: return String(localized: "Minor and patch only")
+        case .patchOnly: return String(localized: "Patch only")
         }
     }
 
@@ -95,9 +95,9 @@ public enum SnoozeLength: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
     public var title: String {
         switch self {
-        case .day: return "For 1 Day"
-        case .week: return "For 1 Week"
-        case .untilResumed: return "Until Turned Back On"
+        case .day: return String(localized: "For 1 Day")
+        case .week: return String(localized: "For 1 Week")
+        case .untilResumed: return String(localized: "Until Turned Back On")
         }
     }
 }
@@ -280,7 +280,7 @@ public extension UpgradeRulesSettings {
 public extension AutoUpdateText {
     /// "Snoozed until tomorrow 21:45", "Snoozed until turned back on".
     static func snoozed(until: Date?, now: Date, calendar: Calendar = .current) -> String {
-        guard let until else { return "Snoozed until turned back on" }
-        return "Snoozed until \(when(until, now: now, calendar: calendar))"
+        guard let until else { return String(localized: "Snoozed until turned back on") }
+        return String(localized: "Snoozed until \(when(until, now: now, calendar: calendar))")
     }
 }

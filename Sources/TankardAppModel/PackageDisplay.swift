@@ -34,16 +34,16 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .all: return "All"
-        case .upgrades: return "Upgrades"
-        case .source: return "From source"
-        case .newer: return "Newer"
-        case .bottleAvailable: return "Bottle available"
-        case .pinned: return "Pinned"
-        case .leaves: return "Requested only"
-        case .vulnerable: return "Vulnerable"
-        case .hasNotes: return "Has notes"
-        case .deprecated: return "Deprecated"
+        case .all: return String(localized: "All")
+        case .upgrades: return String(localized: "Upgrades")
+        case .source: return String(localized: "From source")
+        case .newer: return String(localized: "Newer")
+        case .bottleAvailable: return String(localized: "Bottle available")
+        case .pinned: return String(localized: "Pinned")
+        case .leaves: return String(localized: "Requested only")
+        case .vulnerable: return String(localized: "Vulnerable")
+        case .hasNotes: return String(localized: "Has notes")
+        case .deprecated: return String(localized: "Deprecated")
         }
     }
 
@@ -99,14 +99,14 @@ public extension Package {
         switch status {
         case .bottle:
             switch (intelbrewMode, bottleOrigin) {
-            case (true, .intelbrew): return "Intelbrew bottle"
-            case (true, .homebrew): return "Homebrew bottle"
-            default: return "Bottle"
+            case (true, .intelbrew): return String(localized: "Intelbrew bottle")
+            case (true, .homebrew): return String(localized: "Homebrew bottle")
+            default: return String(localized: "Bottle")
             }
-        case .source: return "Built from source"
-        case .newer: return intelbrewMode ? "Newer than Intelbrew" : "Newer than tap"
-        case .noBottle: return "No bottle yet"
-        case .cask: return "Cask"
+        case .source: return String(localized: "Built from source")
+        case .newer: return intelbrewMode ? String(localized: "Newer than Intelbrew") : String(localized: "Newer than tap")
+        case .noBottle: return String(localized: "No bottle yet")
+        case .cask: return String(localized: "Cask")
         }
     }
 
@@ -114,19 +114,19 @@ public extension Package {
     /// columns don't.
     var subtitle: String? {
         var parts: [String] = []
-        if pinned { parts.append("Pinned") }
-        if disabled { parts.append("Disabled") } else if deprecated { parts.append("Deprecated") }
+        if pinned { parts.append(String(localized: "Pinned")) }
+        if disabled { parts.append(String(localized: "Disabled")) } else if deprecated { parts.append(String(localized: "Deprecated")) }
         if upgradeAvailable && kind == .formula && upgradeHasBottle != true {
-            parts.append("Upgrade builds from source")
+            parts.append(String(localized: "Upgrade builds from source"))
         } else if BottleReplacement.isEligible(self) {
-            parts.append(bottleOrigin(of: bottleURL) == .intelbrew ? "Bottle available (Intelbrew)" : "Bottle available")
+            parts.append(bottleOrigin(of: bottleURL) == .intelbrew ? String(localized: "Bottle available (Intelbrew)") : String(localized: "Bottle available"))
         } else if status == .noBottle {
-            parts.append("No bottle for this Mac; reinstalling compiles")
+            parts.append(String(localized: "No bottle for this Mac; reinstalling compiles"))
         }
         if status == .newer, let current = currentVersion {
-            parts.append("Tap has \(current)")
+            parts.append(String(localized: "Tap has \(current)"))
         }
-        if autoUpdates == true && kind == .cask { parts.append("Updates itself") }
+        if autoUpdates == true && kind == .cask { parts.append(String(localized: "Updates itself")) }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
@@ -246,28 +246,28 @@ public enum SudoDetector {
 public enum SummaryText {
     /// "20 installed · 8 Intelbrew bottles · 9 Homebrew bottles · 1 from source · 1 newer"
     public static func line(_ s: StatusSummary, intelbrewMode: Bool) -> String {
-        var parts = ["\(s.installed) installed"]
+        var parts = [String(localized: "\(s.installed) installed")]
         if intelbrewMode {
-            parts.append("\(s.intelbrewBottled) Intelbrew bottle\(s.intelbrewBottled == 1 ? "" : "s")")
+            parts.append(s.intelbrewBottled == 1 ? String(localized: "\(s.intelbrewBottled) Intelbrew bottle") : String(localized: "\(s.intelbrewBottled) Intelbrew bottles"))
             let others = s.bottled - s.intelbrewBottled
-            if others > 0 { parts.append("\(others) Homebrew bottle\(others == 1 ? "" : "s")") }
+            if others > 0 { parts.append(others == 1 ? String(localized: "\(others) Homebrew bottle") : String(localized: "\(others) Homebrew bottles")) }
         } else {
-            parts.append("\(s.bottled) bottle\(s.bottled == 1 ? "" : "s")")
+            parts.append(s.bottled == 1 ? String(localized: "\(s.bottled) bottle") : String(localized: "\(s.bottled) bottles"))
         }
-        parts.append("\(s.source) from source")
-        if s.newer > 0 || intelbrewMode { parts.append("\(s.newer) newer") }
-        if s.noBottle > 0 { parts.append("\(s.noBottle) no bottle") }
-        if s.casks > 0 { parts.append("\(s.casks) cask\(s.casks == 1 ? "" : "s")") }
+        parts.append(String(localized: "\(s.source) from source"))
+        if s.newer > 0 || intelbrewMode { parts.append(String(localized: "\(s.newer) newer")) }
+        if s.noBottle > 0 { parts.append(String(localized: "\(s.noBottle) no bottle")) }
+        if s.casks > 0 { parts.append(s.casks == 1 ? String(localized: "\(s.casks) cask") : String(localized: "\(s.casks) casks")) }
         return parts.joined(separator: " · ")
     }
 
     /// ("5 upgrades ready", "(4 with bottles, 1 compiles)"), or nil when none.
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }
-        var detail = ["\(s.upgradesWithBottle) with bottles"]
-        if s.upgradesFromSource > 0 { detail.append("\(s.upgradesFromSource) compile\(s.upgradesFromSource == 1 ? "s" : "")") }
-        if s.caskUpgrades > 0 { detail.append("\(s.caskUpgrades) cask\(s.caskUpgrades == 1 ? "" : "s")") }
-        return ("\(s.upgrades) upgrade\(s.upgrades == 1 ? "" : "s") ready", "(\(detail.joined(separator: ", ")))")
+        var detail = [String(localized: "\(s.upgradesWithBottle) with bottles")]
+        if s.upgradesFromSource > 0 { detail.append(s.upgradesFromSource == 1 ? String(localized: "\(s.upgradesFromSource) compiles") : String(localized: "\(s.upgradesFromSource) compile")) }
+        if s.caskUpgrades > 0 { detail.append(s.caskUpgrades == 1 ? String(localized: "\(s.caskUpgrades) cask") : String(localized: "\(s.caskUpgrades) casks")) }
+        return (s.upgrades == 1 ? String(localized: "\(s.upgrades) upgrade ready") : String(localized: "\(s.upgrades) upgrades ready"), "(\(detail.joined(separator: ", ")))")
     }
 }
 
@@ -280,24 +280,24 @@ public struct ForkSummary: Equatable, Sendable {
 
     public init(_ fork: ForkStatus) {
         let version = fork.brewVersion.map { "Homebrew \($0)" } ?? "Homebrew"
-        let core = fork.coreOrigin ?? "none (API mode)"
+        let core = fork.coreOrigin ?? String(localized: "none (API mode)")
         help = "core: \(core)\(fork.coreBranch.map { " (\($0))" } ?? "")\nbrew: \(fork.brewOrigin ?? "unknown")"
             + (fork.brewNewestTag.map { "\nnewest brew tag: \($0) (\(fork.brewNewestTagSource ?? "local"))" } ?? "")
         if !fork.coreIsFork {
             level = .problem
-            text = fork.coreTapPath == nil ? "Core: API mode, not the Intelbrew fork" : "Core: not the Intelbrew fork"
+            text = fork.coreTapPath == nil ? String(localized: "Core: API mode, not the Intelbrew fork") : String(localized: "Core: not the Intelbrew fork")
         } else if !fork.brewIsFork {
             level = .warning
-            text = "Core: Intelbrew fork · brew: upstream (\(version))"
+            text = String(localized: "Core: Intelbrew fork · brew: upstream (\(version))")
         } else if fork.brewAtNewestTag == false, let newest = fork.brewNewestTag {
             level = .warning
-            text = "Fork: behind (\(version); \(newest) available)"
+            text = String(localized: "Fork: behind (\(version); \(newest) available)")
         } else if fork.brewTag == nil {
             level = .warning
-            text = "Fork: not on a release tag (\(version))"
+            text = String(localized: "Fork: not on a release tag (\(version))")
         } else {
             level = .ok
-            text = "Fork: current (\(version))"
+            text = String(localized: "Fork: current (\(version))")
         }
     }
 }
@@ -306,12 +306,12 @@ public struct ForkSummary: Equatable, Sendable {
 public func updatedAgo(_ date: Date, now: Date) -> String {
     let s = max(0, now.timeIntervalSince(date))
     switch s {
-    case ..<60: return "just now"
-    case ..<3600: return "\(Int(s / 60)) min ago"
-    case ..<86400: return "\(Int(s / 3600)) h ago"
+    case ..<60: return String(localized: "just now")
+    case ..<3600: return String(localized: "\(Int(s / 60)) min ago")
+    case ..<86400: return String(localized: "\(Int(s / 3600)) h ago")
     default:
         let d = Int(s / 86400)
-        return "\(d) day\(d == 1 ? "" : "s") ago"
+        return d == 1 ? String(localized: "\(d) day ago") : String(localized: "\(d) days ago")
     }
 }
 
@@ -329,11 +329,11 @@ public extension CatalogEntry {
     /// Discover's bottle badge text.
     var badgeLabel: String {
         switch bottle {
-        case .forThisMac: return "Bottle for your Mac"
-        case .intelbrew: return "Intelbrew bottle ✓"
+        case .forThisMac: return String(localized: "Bottle for your Mac")
+        case .intelbrew: return String(localized: "Intelbrew bottle ✓")
         case .fromSource: return CompileWarning(context: .install).label
-        case .cask: return "Cask"
-        case .unknown: return detailsLoaded ? "Unknown" : "Checking…"
+        case .cask: return String(localized: "Cask")
+        case .unknown: return detailsLoaded ? String(localized: "Unknown") : String(localized: "Checking…")
         }
     }
 

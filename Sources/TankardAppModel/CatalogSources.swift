@@ -88,7 +88,7 @@ public enum APIFetchError: Error, CustomStringConvertible {
     case http(Int, String)
     public var description: String {
         switch self {
-        case .http(let code, let name): return "formulae.brew.sh answered \(code) for \(name)"
+        case .http(let code, let name): return String(localized: "formulae.brew.sh answered \(code) for \(name)")
         }
     }
 }
@@ -176,7 +176,7 @@ public final class APICatalog: CatalogProviding {
         var load = try Self.build(formulaJSON: fData, caskJSON: cData, builder: builder)
         load.fetchedAt = min(fDate, cDate)
         for case .staleAfterError(let e) in [fOutcome, cOutcome] {
-            load.warning = "Couldn't refresh from formulae.brew.sh (\(e)); showing the saved copy."
+            load.warning = String(localized: "Couldn't refresh from formulae.brew.sh (\(e)); showing the saved copy.")
         }
         return load
     }
@@ -186,7 +186,7 @@ public final class APICatalog: CatalogProviding {
         let formulae = try JSONDecoder().decode([BrewInfoJSON.Formula].self, from: formulaJSON)
         let casks = try JSONDecoder().decode([BrewInfoJSON.Cask].self, from: caskJSON)
         return CatalogLoad(entries: formulae.map(builder.entry) + casks.map(builder.entry),
-                           source: "formulae.brew.sh · \(formulae.count.formatted()) formulae · \(casks.count.formatted()) casks",
+                           source: String(localized: "formulae.brew.sh · \(formulae.count.formatted()) formulae · \(casks.count.formatted()) casks"),
                            casksEnabled: true)
     }
 
@@ -227,8 +227,10 @@ public final class TapCatalog: CatalogProviding {
         let entries = index.entries.map { $0.catalogEntry(builder: builder) }
         let formulae = index.entries.filter { $0.kind == .formula }.count
         let casks = index.entries.count - formulae
-        var source = "Local taps (\(index.taps.joined(separator: ", "))) · \(formulae.formatted()) formulae"
-        if casks > 0 { source += " · \(casks.formatted()) casks" }
+        let tapList = index.taps.joined(separator: ", ")
+        let source = casks > 0
+            ? String(localized: "Local taps (\(tapList)) · \(formulae.formatted()) formulae · \(casks.formatted()) casks")
+            : String(localized: "Local taps (\(tapList)) · \(formulae.formatted()) formulae")
         return CatalogLoad(entries: entries, source: source, fetchedAt: Date(), casksEnabled: index.hasCaskTap)
     }
 

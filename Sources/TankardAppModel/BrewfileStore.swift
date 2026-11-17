@@ -31,8 +31,10 @@ public struct BrewfileSummary: Equatable, Sendable {
 
     /// "3 taps, 41 formulae, 12 casks"
     public var line: String {
-        func n(_ c: Int, _ one: String, _ many: String) -> String { "\(c) \(c == 1 ? one : many)" }
-        return [n(taps, "tap", "taps"), n(formulae, "formula", "formulae"), n(casks, "cask", "casks")].joined(separator: ", ")
+        let t = taps == 1 ? String(localized: "\(taps) tap") : String(localized: "\(taps) taps")
+        let f = formulae == 1 ? String(localized: "\(formulae) formula") : String(localized: "\(formulae) formulae")
+        let c = casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")
+        return [t, f, c].joined(separator: ", ")
     }
 }
 
@@ -82,7 +84,7 @@ public enum BrewfileError: Error, Equatable, CustomStringConvertible {
     public var description: String {
         switch self {
         case .timedOut(let s):
-            return "brew bundle didn't finish within \(s) seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment."
+            return String(localized: "brew bundle didn't finish within \(s) seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment.")
         case .failed(let s): return s
         }
     }
@@ -143,7 +145,7 @@ public final class BrewfileStore {
 
     private func start(_ label: String, _ body: @escaping @MainActor (@escaping @Sendable ([String]) async throws -> ProcessResult) async throws -> Page) {
         guard let run else {
-            set(.failed("Homebrew isn't ready yet."))
+            set(.failed(String(localized: "Homebrew isn't ready yet.")))
             return
         }
         task?.cancel()
@@ -163,15 +165,15 @@ public final class BrewfileStore {
 
     private static func tail(_ r: ProcessResult) -> String {
         let text = (r.stderrString + "\n" + r.stdoutString).split(whereSeparator: \.isNewline).suffix(4).joined(separator: "\n")
-        return text.isEmpty ? "exit \(r.exitCode)" : text
+        return text.isEmpty ? String(localized: "exit \(r.exitCode)") : text
     }
 
     /// Export: dump, then count the file per kind.
     public func export(to path: String, force: Bool) {
         let timeout = self.timeout
-        start("Writing Brewfile…") { run in
+        start(String(localized: "Writing Brewfile…")) { run in
             let dump = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.dump(path: path, force: force)) }
-            guard dump.exitCode == 0 else { throw BrewfileError.failed("brew bundle dump failed:\n" + Self.tail(dump)) }
+            guard dump.exitCode == 0 else { throw BrewfileError.failed(String(localized: "brew bundle dump failed:\n") + Self.tail(dump)) }
             let summary = try await withBrewfileTimeout(timeout) {
                 async let t = run(BrewfileCommands.list(path: path, kind: .tap))
                 async let f = run(BrewfileCommands.list(path: path, kind: .formula))
@@ -186,14 +188,14 @@ public final class BrewfileStore {
     /// Check: what the Brewfile at `path` needs that this Mac lacks.
     public func check(path: String) {
         let timeout = self.timeout
-        start("Checking Brewfile…") { run in
+        start(String(localized: "Checking Brewfile…")) { run in
             let r = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.check(path: path)) }
             let lines = (r.stdoutString + "\n" + r.stderrString).components(separatedBy: "\n")
             let missing = BrewfileParser.missing(lines)
             // check exits 1 when something is missing; any other failure
             // has no "needs to be" lines.
             if r.exitCode != 0 && missing.isEmpty {
-                throw BrewfileError.failed("brew bundle check failed:\n" + Self.tail(r))
+                throw BrewfileError.failed(String(localized: "brew bundle check failed:\n") + Self.tail(r))
             }
             return .checked(BrewfileCheckResult(path: path, missing: missing))
         }
@@ -204,7 +206,7 @@ public final class BrewfileStore {
     public func planRestore(_ result: BrewfileCheckResult) {
         let timeout = self.timeout
         let platform = self.platform
-        start("Reading package details…") { run in
+        start(String(localized: "Reading package details…")) { run in
             let p = try await withBrewfileTimeout(timeout) {
                 await Self.buildPlan(result, platform: platform, run: run)
             }
@@ -229,14 +231,14 @@ public final class BrewfileStore {
             if let i = await info(formulae, .formula), let platform {
                 compiles = BrewfilePlanner.compiles(i, platform: platform)
             } else {
-                notes.append("Couldn't read the formulae's details, so compiles aren't marked.")
+                notes.append(String(localized: "Couldn't read the formulae's details, so compiles aren't marked."))
             }
         }
         if !casks.isEmpty {
             if let i = await info(casks, .cask) {
                 admin = BrewfilePlanner.needsAdmin(i)
             } else {
-                notes.append("Couldn't read the casks' details, so admin passwords aren't marked.")
+                notes.append(String(localized: "Couldn't read the casks' details, so admin passwords aren't marked."))
             }
         }
         let plan = BrewfileRestorePlan(missing: result.missing, path: result.path, compiles: compiles, needsAdmin: admin)

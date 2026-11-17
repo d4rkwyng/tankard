@@ -47,12 +47,12 @@ public final class ServicesStore {
 
     /// "2 services · 1 running · 1 error"
     public var summary: String {
-        guard !services.isEmpty else { return "No services" }
-        var parts = ["\(services.count) service\(services.count == 1 ? "" : "s")"]
+        guard !services.isEmpty else { return String(localized: "No services") }
+        var parts = [services.count == 1 ? String(localized: "\(services.count) service") : String(localized: "\(services.count) services")]
         let running = services.filter { $0.status == .started }.count
-        if running > 0 { parts.append("\(running) running") }
+        if running > 0 { parts.append(String(localized: "\(running) running")) }
         let failed = services.filter { $0.status == .error }.count
-        if failed > 0 { parts.append("\(failed) error\(failed == 1 ? "" : "s")") }
+        if failed > 0 { parts.append(failed == 1 ? String(localized: "\(failed) error") : String(localized: "\(failed) errors")) }
         return parts.joined(separator: " · ")
     }
 
@@ -75,7 +75,7 @@ public final class ServicesStore {
             let r = try await client.runner.run(client.installation.brewPath, BrewServices.listArguments, environment: env)
             guard r.exitCode == 0 else {
                 let text = (r.stderrString + "\n" + r.stdoutString).trimmingCharacters(in: .whitespacesAndNewlines)
-                phase = .failed(text.isEmpty ? "brew services list exited \(r.exitCode)" : text)
+                phase = .failed(text.isEmpty ? String(localized: "brew services list exited \(r.exitCode)") : text)
                 return
             }
             services = try BrewServices.decode(r.stdout)
@@ -118,8 +118,9 @@ public final class ServicesStore {
     }
 
     static func sudoError(_ action: ServiceAction, _ s: BrewService, command: String) -> StoreError {
-        StoreError(title: "\(s.name) runs as \(s.user ?? "root"): \(action.rawValue) needs sudo",
-                   detail: "Tankard only controls your own services and never runs sudo. Run this in Terminal:",
+        let user = s.user ?? "root"
+        return StoreError(title: String(localized: "\(s.name) runs as \(user): \(action.rawValue) needs sudo"),
+                   detail: String(localized: "Tankard only controls your own services and never runs sudo. Run this in Terminal:"),
                    terminalCommand: command)
     }
 

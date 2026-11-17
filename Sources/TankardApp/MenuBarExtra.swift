@@ -23,10 +23,10 @@ struct MenuBarContent: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(summary.title).font(.system(size: 13, weight: .semibold))
                     if let updated = store.lastUpdated {
-                        Text(store.isRefreshing ? (store.refreshPhase ?? "Checking…") : "Checked \(updatedAgo(updated, now: Date()))")
+                        Text(store.isRefreshing ? (store.refreshPhase ?? String(localized: "Checking…")) : String(localized: "Checked \(updatedAgo(updated, now: Date()))"))
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                     } else if store.isRefreshing {
-                        Text(store.refreshPhase ?? "Checking…").font(.system(size: 11)).foregroundStyle(.secondary)
+                        Text(store.refreshPhase ?? String(localized: "Checking…")).font(.system(size: 11)).foregroundStyle(.secondary)
                     }
                 }
                 Spacer()
@@ -92,18 +92,18 @@ struct MenuBarContent: View {
 
             Divider()
             VStack(alignment: .leading, spacing: 1) {
-                MenuRow(title: "Upgrade all", systemImage: "arrow.up.circle", shortcut: nil,
+                MenuRow(title: String(localized: "Upgrade all"), systemImage: "arrow.up.circle", shortcut: nil,
                         enabled: summary.count > 0 && !store.isUpgrading && !store.isRefreshing) {
                     openMain()
                     store.requestUpgrade()
                 }
-                MenuRow(title: "Open Tankard", systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
-                MenuRow(title: "Check now", systemImage: "arrow.clockwise", shortcut: nil,
+                MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
+                MenuRow(title: String(localized: "Check now"), systemImage: "arrow.clockwise", shortcut: nil,
                         enabled: !store.isRefreshing && !store.isUpgrading) {
                     Task { await store.refresh(manual: true) }
                 }
                 Divider().padding(.vertical, 3)
-                MenuRow(title: "Quit Tankard", systemImage: "power", shortcut: "Q", enabled: true) {
+                MenuRow(title: String(localized: "Quit Tankard"), systemImage: "power", shortcut: "Q", enabled: true) {
                     NSApp.terminate(nil)
                 }
             }
@@ -151,7 +151,7 @@ struct MenuRow: View {
                 Image(systemName: systemImage).frame(width: 16)
                 Text(title)
                 Spacer()
-                if let shortcut { Text("⌘\(shortcut)").foregroundStyle(.secondary) }
+                if let shortcut { Text(verbatim: "⌘\(shortcut)").foregroundStyle(.secondary) }
             }
             .font(.system(size: 13))
             .padding(.horizontal, 8)
@@ -202,12 +202,12 @@ final class SystemNotifier: UpgradeNotifying {
 
     /// "Allowed", "Denied in System Settings", "Not asked yet", or "Unavailable".
     func authorizationText() async -> String {
-        guard let center else { return "Unavailable outside Tankard.app" }
+        guard let center else { return String(localized: "Unavailable outside Tankard.app") }
         switch await center.notificationSettings().authorizationStatus {
-        case .authorized, .provisional: return "Allowed"
-        case .denied: return "Off for Tankard in System Settings → Notifications"
-        case .notDetermined: return "macOS will ask when you turn this on"
-        default: return "Unknown"
+        case .authorized, .provisional: return String(localized: "Allowed")
+        case .denied: return String(localized: "Off for Tankard in System Settings → Notifications")
+        case .notDetermined: return String(localized: "macOS will ask when you turn this on")
+        default: return String(localized: "Unknown")
         }
     }
 
@@ -234,8 +234,8 @@ final class LoginItem: LoginItemControlling {
     var statusNote: String? {
         if let lastError { return lastError }
         switch SMAppService.mainApp.status {
-        case .requiresApproval: return "Waiting for approval in System Settings → General → Login Items."
-        case .notFound: return Bundle.main.bundleURL.pathExtension == "app" ? nil : "Only available in Tankard.app."
+        case .requiresApproval: return String(localized: "Waiting for approval in System Settings → General → Login Items.")
+        case .notFound: return Bundle.main.bundleURL.pathExtension == "app" ? nil : String(localized: "Only available in Tankard.app.")
         default: return nil
         }
     }
@@ -245,7 +245,7 @@ final class LoginItem: LoginItemControlling {
         do {
             if on { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
         } catch {
-            lastError = "macOS refused: \(error.localizedDescription)"
+            lastError = String(localized: "macOS refused: \(error.localizedDescription)")
             throw error
         }
     }

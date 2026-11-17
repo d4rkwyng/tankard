@@ -14,7 +14,7 @@ import TankardCore
 public enum AutoUpdateFrequency: String, CaseIterable, Identifiable, Sendable, Codable {
     case daily, weekly
     public var id: String { rawValue }
-    public var title: String { self == .daily ? "Every day" : "Every week" }
+    public var title: String { self == .daily ? String(localized: "Every day") : String(localized: "Every week") }
 }
 
 /// The user's chosen slot: a time of day, and for weekly a weekday.
@@ -62,10 +62,10 @@ public struct AutoUpdateSchedule: Equatable, Sendable {
     /// "Every day at 03:00", "Every Sunday at 03:00".
     public func text(calendar: Calendar = .current) -> String {
         let time = String(format: "%02d:%02d", hour, minute)
-        if frequency == .daily { return "Every day at \(time)" }
+        if frequency == .daily { return String(localized: "Every day at \(time)") }
         let names = calendar.weekdaySymbols
-        let name = names.indices.contains(weekday - 1) ? names[weekday - 1] : "Sunday"
-        return "Every \(name) at \(time)"
+        let name = names.indices.contains(weekday - 1) ? names[weekday - 1] : String(localized: "Sunday")
+        return String(localized: "Every \(name) at \(time)")
     }
 }
 
@@ -207,20 +207,20 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
 
     public var text: String {
         switch self {
-        case .pinned: return "pinned"
-        case .compiles: return "no bottle, would compile from source"
-        case .dependencyCompiles(let d): return "its dependency \(d) would compile from source"
-        case .dependencyPinned(let d): return "its dependency \(d) is pinned"
-        case .dependentCompiles(let p, let d): return "upgrading \(p) would need \(d) rebuilt from source; upgrade by hand"
-        case .appRunning(let a): return "\(a) is running"
-        case .appUnknown: return "couldn't tell whether its app is running"
-        case .tankardItself: return "Tankard updates itself through brew"
-        case .versionSkipped(let v): return "you chose to skip \(v)"
+        case .pinned: return String(localized: "pinned")
+        case .compiles: return String(localized: "no bottle, would compile from source")
+        case .dependencyCompiles(let d): return String(localized: "its dependency \(d) would compile from source")
+        case .dependencyPinned(let d): return String(localized: "its dependency \(d) is pinned")
+        case .dependentCompiles(let p, let d): return String(localized: "upgrading \(p) would need \(d) rebuilt from source; upgrade by hand")
+        case .appRunning(let a): return String(localized: "\(a) is running")
+        case .appUnknown: return String(localized: "couldn't tell whether its app is running")
+        case .tankardItself: return String(localized: "Tankard updates itself through brew")
+        case .versionSkipped(let v): return String(localized: "you chose to skip \(v)")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
-                return "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand"
+                return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")
             }
-            return "\(a) → \(b): \(bump) version; upgrade by hand"
+            return String(localized: "\(a) → \(b): \(bump) version; upgrade by hand")
         }
     }
 }
@@ -344,12 +344,12 @@ public enum AutoUpdateSafeMode {
 
     /// The lines Settings shows: exactly what safe mode does.
     public static let rules: [String] = [
-        "Runs brew update first, then upgrades one package at a time through Tankard's queue.",
-        "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand.",
-        "Pinned packages are skipped, and so are packages whose dependencies are pinned.",
-        "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).",
-        "Self-updating apps are included only when \"Include self-updating apps\" is on.",
-        "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.",
+        String(localized: "Runs brew update first, then upgrades one package at a time through Tankard's queue."),
+        String(localized: "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand."),
+        String(localized: "Pinned packages are skipped, and so are packages whose dependencies are pinned."),
+        String(localized: "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)."),
+        String(localized: "Self-updating apps are included only when \"Include self-updating apps\" is on."),
+        String(localized: "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard."),
     ]
 }
 
@@ -551,13 +551,13 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
     /// "3 upgraded · 1 skipped · 1 failed", "Nothing to upgrade",
     /// "Dry run: 3 would upgrade".
     public var summary: String {
-        if dryRun { return "Dry run: \(upgraded.count) would upgrade" + (skipped.isEmpty ? "" : " · \(skipped.count) skipped") }
-        if upgraded.isEmpty && skipped.isEmpty && failed.isEmpty { return note == nil ? "Nothing to upgrade" : "Didn't run" }
+        if dryRun { return String(localized: "Dry run: \(upgraded.count) would upgrade") + (skipped.isEmpty ? "" : " · " + String(localized: "\(skipped.count) skipped")) }
+        if upgraded.isEmpty && skipped.isEmpty && failed.isEmpty { return note == nil ? String(localized: "Nothing to upgrade") : String(localized: "Didn't run") }
         var parts: [String] = []
-        if !upgraded.isEmpty { parts.append("\(upgraded.count) upgraded") }
-        if !skipped.isEmpty { parts.append("\(skipped.count) skipped") }
-        if !failed.isEmpty { parts.append("\(failed.count) failed") }
-        if upgraded.isEmpty && failed.isEmpty { parts.insert("Nothing upgraded", at: 0) }
+        if !upgraded.isEmpty { parts.append(String(localized: "\(upgraded.count) upgraded")) }
+        if !skipped.isEmpty { parts.append(String(localized: "\(skipped.count) skipped")) }
+        if !failed.isEmpty { parts.append(String(localized: "\(failed.count) failed")) }
+        if upgraded.isEmpty && failed.isEmpty { parts.insert(String(localized: "Nothing upgraded"), at: 0) }
         return parts.joined(separator: " · ")
     }
 
@@ -566,15 +566,15 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
     public var notification: UpgradeNotificationDiff.Message? {
         guard !dryRun, !(upgraded.isEmpty && failed.isEmpty && note == nil) else { return nil }
         let n = upgraded.count
-        let title = n > 0 ? "Tankard upgraded \(n) package\(n == 1 ? "" : "s")"
-            : (failed.isEmpty ? "Auto-update didn't run" : "Auto-update failed")
+        let title = n > 0 ? (n == 1 ? String(localized: "Tankard upgraded \(n) package") : String(localized: "Tankard upgraded \(n) packages"))
+            : (failed.isEmpty ? String(localized: "Auto-update didn't run") : String(localized: "Auto-update failed"))
         var lines: [String] = []
         if n > 0 {
             let names = upgraded.map(\.name)
-            lines.append(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? " and \(names.count - 4) more" : ""))
+            lines.append(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? String(localized: " and \(names.count - 4) more") : ""))
         }
-        if !failed.isEmpty { lines.append("Failed: " + failed.map(\.name).prefix(3).joined(separator: ", ")) }
-        if !skipped.isEmpty { lines.append("\(skipped.count) skipped (see the Auto-update log)") }
+        if !failed.isEmpty { lines.append(String(localized: "Failed: ") + failed.map(\.name).prefix(3).joined(separator: ", ")) }
+        if !skipped.isEmpty { lines.append(String(localized: "\(skipped.count) skipped (see the Auto-update log)")) }
         if let note, n == 0, failed.isEmpty { lines.append(note) }
         return UpgradeNotificationDiff.Message(title: title, body: lines.joined(separator: "\n"),
                                                newKeys: ["auto-update@\(id.uuidString)"])
@@ -638,7 +638,7 @@ public final class AutoUpdateLog {
 public enum AutoUpdateText {
     public static func lastLine(_ run: AutoUpdateRun?, now: Date, calendar: Calendar = .current) -> String? {
         guard let run else { return nil }
-        return "Last auto-update: \(when(run.startedAt, now: now, calendar: calendar)) · \(run.summary)"
+        return String(localized: "Last auto-update: \(when(run.startedAt, now: now, calendar: calendar)) · \(run.summary)")
     }
 
     public static func when(_ date: Date, now: Date, calendar: Calendar = .current) -> String {
@@ -648,9 +648,9 @@ public enum AutoUpdateText {
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "HH:mm"
         let time = f.string(from: date)
-        if calendar.isDate(date, inSameDayAs: now) { return "today \(time)" }
-        if let t = calendar.date(byAdding: .day, value: 1, to: now), calendar.isDate(date, inSameDayAs: t) { return "tomorrow \(time)" }
-        if let y = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: y) { return "yesterday \(time)" }
+        if calendar.isDate(date, inSameDayAs: now) { return String(localized: "today \(time)") }
+        if let t = calendar.date(byAdding: .day, value: 1, to: now), calendar.isDate(date, inSameDayAs: t) { return String(localized: "tomorrow \(time)") }
+        if let y = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: y) { return String(localized: "yesterday \(time)") }
         f.dateFormat = "d MMM HH:mm"
         return f.string(from: date)
     }
@@ -658,16 +658,16 @@ public enum AutoUpdateText {
     /// The Settings line under the schedule.
     public static func status(_ d: AutoUpdateDecision, now: Date, calendar: Calendar = .current) -> String {
         switch d {
-        case .off: return "Off"
+        case .off: return String(localized: "Off")
         case .snoozed(let until): return snoozed(until: until, now: now, calendar: calendar)
-        case .notDue(let next): return "Next run: \(when(next, now: now, calendar: calendar))"
-        case .run: return "Due now"
+        case .notDue(let next): return String(localized: "Next run: \(when(next, now: now, calendar: calendar))")
+        case .run: return String(localized: "Due now")
         case .waiting(let w, _):
             switch w {
-            case .startup: return "Due: waiting a few minutes after launch"
-            case .busy: return "Due: waiting for brew to finish"
-            case .onBattery: return "Due: waiting for AC power"
-            case .notIdle: return "Due: waiting until the Mac is idle"
+            case .startup: return String(localized: "Due: waiting a few minutes after launch")
+            case .busy: return String(localized: "Due: waiting for brew to finish")
+            case .onBattery: return String(localized: "Due: waiting for AC power")
+            case .notIdle: return String(localized: "Due: waiting until the Mac is idle")
             }
         }
     }
@@ -726,7 +726,7 @@ public final class AutoUpdater {
         var record = AutoUpdateRun(startedAt: started, dryRun: settings.dryRun)
 
         if !settings.dryRun {
-            activity = "Auto-update: brew update"
+            activity = String(localized: "Auto-update: brew update")
             await store.refresh(manual: true)
             if let e = store.error {
                 record.note = "\(e.title)" + (e.detail.isEmpty ? "" : ": \(e.detail.split(separator: "\n").last ?? "")")
@@ -734,7 +734,7 @@ public final class AutoUpdater {
             }
         }
         guard store.report != nil else {
-            record.note = "No Homebrew status to work from"
+            record.note = String(localized: "No Homebrew status to work from")
             return finish(record, store: store, notifier: notifier, now: now)
         }
         let plan = AutoUpdateSafeMode.plan(store.packages, classifier: store.deps.classifier,
@@ -744,7 +744,7 @@ public final class AutoUpdater {
         record.skipped = plan.skipped.map { .init(name: $0.package.name, isCask: $0.package.kind == .cask, detail: $0.reason.text) }
         if settings.dryRun {
             record.upgraded = plan.run.map { .init(name: $0.name, isCask: $0.kind == .cask, detail: Self.versions($0)) }
-            record.note = "Dry run: no brew command ran"
+            record.note = String(localized: "Dry run: no brew command ran")
             return finish(record, store: store, notifier: notifier, now: now)
         }
 
@@ -756,17 +756,17 @@ public final class AutoUpdater {
         if !plan.run.isEmpty { store.saveRestorePoint(.autoUpdate, upgrading: plan.run) }
         for p in plan.run {
             guard settings.enabled else {
-                record.note = "Stopped: auto-update was turned off during the run"
+                record.note = String(localized: "Stopped: auto-update was turned off during the run")
                 break
             }
             let item = AutoUpdateRun.Item(name: p.name, isCask: p.kind == .cask, detail: Self.versions(p))
-            activity = "Auto-update: upgrading \(p.name)"
+            activity = String(localized: "Auto-update: upgrading \(p.name)")
             let (code, lines) = await runUpgrade(p, store: store, logFile: logFile)
             if code == 0 {
                 record.upgraded.append(item)
             } else {
                 let tail = lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
-                let why = SudoDetector.needsSudo(lines) ? "needs administrator rights" : "brew exited \(code)" + (tail.isEmpty ? "" : ": \(tail)")
+                let why = SudoDetector.needsSudo(lines) ? String(localized: "needs administrator rights") : String(localized: "brew exited \(Int(code))") + (tail.isEmpty ? "" : ": \(tail)")
                 record.failed.append(.init(name: p.name, isCask: p.kind == .cask, detail: why))
             }
         }
@@ -778,7 +778,7 @@ public final class AutoUpdater {
             let still = Set(store.packages.filter(\.upgradeAvailable).map(\.name))
             let notDone = record.upgraded.filter { still.contains($0.name) }
             record.upgraded.removeAll { still.contains($0.name) }
-            record.failed += notDone.map { .init(name: $0.name, isCask: $0.isCask, detail: "still outdated after brew upgrade") }
+            record.failed += notDone.map { .init(name: $0.name, isCask: $0.isCask, detail: String(localized: "still outdated after brew upgrade")) }
         }
         return finish(record, store: store, notifier: notifier, now: now)
     }

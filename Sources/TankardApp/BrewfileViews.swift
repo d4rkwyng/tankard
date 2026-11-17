@@ -14,14 +14,14 @@ import TankardCore
 /// The save and open panels.
 @MainActor
 enum BrewfilePanels {
-    static let leftOut = "VS Code extensions and Mac App Store apps are left out (brew bundle dump --no-vscode --no-mas)."
+    static let leftOut = String(localized: "VS Code extensions and Mac App Store apps are left out (brew bundle dump --no-vscode --no-mas).")
 
     static func export(store: AppStore) {
         let panel = NSSavePanel()
-        panel.title = "Export Brewfile"
+        panel.title = String(localized: "Export Brewfile")
         panel.nameFieldStringValue = "Brewfile"
         panel.canCreateDirectories = true
-        panel.message = "VS Code extensions and App Store apps are left out."
+        panel.message = String(localized: "VS Code extensions and App Store apps are left out.")
         guard panel.runModal() == .OK, let url = panel.url else { return }
         // The save panel has already asked "Replace?" when the file exists.
         let force = FileManager.default.fileExists(atPath: url.path)
@@ -30,7 +30,7 @@ enum BrewfilePanels {
 
     static func check(store: AppStore) {
         let panel = NSOpenPanel()
-        panel.title = "Check a Brewfile"
+        panel.title = String(localized: "Check a Brewfile")
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
@@ -73,7 +73,7 @@ struct BrewfileSheet: View {
             case .running(let label):
                 running(label)
             case .planning:
-                running("Reading package details…")
+                running(String(localized: "Reading package details…"))
             case .exported(let s):
                 exported(s)
             case .checked(let r):
@@ -119,18 +119,18 @@ struct BrewfileSheet: View {
 
     private func exported(_ s: BrewfileSummary) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            header("checkmark.circle.fill", .green, "Brewfile saved", s.path)
+            header("checkmark.circle.fill", .green, String(localized: "Brewfile saved"), s.path)
             HStack(spacing: 10) {
-                count(s.taps, "Taps")
-                count(s.formulae, "Formulae")
-                count(s.casks, "Casks")
+                count(s.taps, String(localized: "Taps"))
+                count(s.formulae, String(localized: "Formulae"))
+                count(s.casks, String(localized: "Casks"))
             }
             HStack(spacing: 6) {
                 Image(systemName: "info.circle").foregroundStyle(.secondary)
                 Text("VS Code extensions and App Store apps are left out.")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
             }
-            .help(BrewfilePanels.leftOut + " Asking VS Code for its extensions can hang brew bundle dump.")
+            .help(BrewfilePanels.leftOut + String(localized: " Asking VS Code for its extensions can hang brew bundle dump."))
             HStack {
                 Button("Show in Finder") {
                     NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: s.path)])
@@ -143,7 +143,7 @@ struct BrewfileSheet: View {
 
     private func count(_ n: Int, _ label: String) -> some View {
         VStack(spacing: 2) {
-            Text("\(n)").font(.system(size: 22, weight: .semibold)).monospacedDigit()
+            Text(verbatim: "\(n)").font(.system(size: 22, weight: .semibold)).monospacedDigit()
             Text(label).font(.system(size: 11)).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -151,22 +151,22 @@ struct BrewfileSheet: View {
         .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip))
     }
 
-    private static let groups: [(BrewfileKind?, String)] = [(.tap, "Taps"), (.formula, "Formulae"), (.cask, "Casks"),
-                                                            (.mas, "App Store apps"), (.vscode, "VS Code extensions"), (nil, "Other")]
+    private static let groups: [(BrewfileKind?, String)] = [(.tap, String(localized: "Taps")), (.formula, String(localized: "Formulae")), (.cask, String(localized: "Casks")),
+                                                            (.mas, String(localized: "App Store apps")), (.vscode, String(localized: "VS Code extensions")), (nil, String(localized: "Other"))]
 
     private func checked(_ r: BrewfileCheckResult) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             if r.isSatisfied {
-                header("checkmark.circle.fill", .green, "Everything in this Brewfile is installed", r.path)
+                header("checkmark.circle.fill", .green, String(localized: "Everything in this Brewfile is installed"), r.path)
             } else {
-                header("shippingbox", theme.accent, "\(r.missing.count) missing from this Mac", r.path)
+                header("shippingbox", theme.accent, String(localized: "\(r.missing.count) missing from this Mac"), r.path)
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(Self.groups, id: \.1) { kind, title in
                             let names = r.names(kind)
                             if !names.isEmpty {
                                 VStack(alignment: .leading, spacing: 3) {
-                                    Text("\(title) (\(names.count))").font(.system(size: 12, weight: .semibold))
+                                    Text(verbatim: "\(title) (\(names.count))").font(.system(size: 12, weight: .semibold))
                                     ForEach(names, id: \.self) { n in
                                         Text(n).font(.system(size: 11.5, design: .monospaced)).textSelection(.enabled)
                                     }
@@ -196,7 +196,7 @@ struct BrewfileSheet: View {
     private func plan(_ p: BrewfileRestorePlan, note: String?) -> some View {
         let result = BrewfileCheckResult(path: p.path, missing: p.items.map(\.entry))
         return VStack(alignment: .leading, spacing: 12) {
-            header("list.bullet.clipboard", theme.accent, "Restore plan", p.path)
+            header("list.bullet.clipboard", theme.accent, String(localized: "Restore plan"), p.path)
             ScrollView {
                 VStack(alignment: .leading, spacing: 5) {
                     ForEach(p.items) { item in planRow(item) }
@@ -210,7 +210,7 @@ struct BrewfileSheet: View {
                     .font(.system(size: 11.5)).foregroundStyle(.orange)
             }
             if !p.adminCasks.isEmpty {
-                Label("\(p.adminCasks.count) \(p.adminCasks.count == 1 ? "cask runs" : "casks run") a pkg installer: macOS asks for an administrator password.",
+                Label(p.adminCasks.count == 1 ? "\(p.adminCasks.count) cask runs a pkg installer: macOS asks for an administrator password." : "\(p.adminCasks.count) casks run a pkg installer: macOS asks for an administrator password.",
                       systemImage: "lock.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
                     .help("Marked from the cask's pkg artifact. Other casks may still ask for a password.")
@@ -227,7 +227,7 @@ struct BrewfileSheet: View {
             HStack {
                 Button("Back") { brewfile.back(to: result) }
                 Spacer()
-                Button(showTerminal ? "Hide Terminal Command" : "Show Terminal Command") { showTerminal.toggle() }
+                Button(showTerminal ? String(localized: "Hide Terminal Command") : String(localized: "Show Terminal Command")) { showTerminal.toggle() }
                     .help("brew bundle install with --no-upgrade, to copy. Tankard doesn't run it.")
                 Button("Install with Tankard") { store.installBrewfilePlan(p) }
                     .keyboardShortcut(.defaultAction)
@@ -256,7 +256,7 @@ struct BrewfileSheet: View {
                 Button("Add Tap…") { store.taps.requestAdd(name: e.name, source: .brewfile) }
                     .controlSize(.small)
                     .disabled(store.isBusy || TapInput.problem(name: e.name) != nil)
-                    .help(BrewfileCommands.tapDisplay(e.name) + ", after you confirm")
+                    .help(BrewfileCommands.tapDisplay(e.name) + String(localized: ", after you confirm"))
             } else if !item.throughQueue {
                 Text("Terminal only").font(.system(size: 10.5)).foregroundStyle(.secondary)
             }
@@ -274,7 +274,7 @@ struct BrewfileSheet: View {
 
     private func failed(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            header("exclamationmark.triangle.fill", .orange, "Brewfile", nil)
+            header("exclamationmark.triangle.fill", .orange, String(localized: "Brewfile"), nil)
             Text(message).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
             HStack {
                 Spacer()

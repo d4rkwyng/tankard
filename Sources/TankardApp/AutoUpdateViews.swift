@@ -68,7 +68,7 @@ struct AutoUpdateSettingsSection: View {
                         if on, let notifier {
                             Task {
                                 let ok = await notifier.requestAuthorization()
-                                let text = ok ? nil : "Notifications are off for Tankard, so runs are only in the Auto-update log. "
+                                let text = ok ? nil : String(localized: "Notifications are off for Tankard, so runs are only in the Auto-update log. ")
                                     + (await notifier.authorizationText())
                                 if notificationNote.wrappedValue != text { notificationNote.wrappedValue = text }
                             }
@@ -106,13 +106,13 @@ struct AutoUpdateSettingsSection: View {
     /// "Next run: tomorrow 03:00" or "Due now: …". Schedule only (no
     /// IOKit reads in a view body).
     private func statusLine(_ s: AutoUpdateSettings) -> String {
-        guard s.enabled else { return "Off" }
+        guard s.enabled else { return String(localized: "Off") }
         let now = Date()
         if updater.rules.isSnoozed(now: now) { return AutoUpdateText.snoozed(until: updater.rules.snoozeEnds, now: now) }
         let d = AutoUpdatePolicy.decide(enabled: true, schedule: s.schedule, since: s.since, lastRun: s.lastRun,
                                         launchedAt: .distantPast, now: now, onAC: true, idle: .infinity, busy: false)
-        if case .notDue(let next) = d { return "\(s.schedule.text()). Next run: \(AutoUpdateText.when(next, now: now))" }
-        return "\(s.schedule.text()). Due now: runs when the Mac is on AC power and idle"
+        if case .notDue(let next) = d { return String(localized: "\(s.schedule.text()). Next run: \(AutoUpdateText.when(next, now: now))") }
+        return String(localized: "\(s.schedule.text()). Due now: runs when the Mac is on AC power and idle")
     }
 }
 
@@ -237,7 +237,7 @@ struct AutoUpdateRunRow: View {
     }
 
     private func duration(_ s: TimeInterval) -> String {
-        s < 60 ? "\(Int(s.rounded())) s" : "\(Int((s / 60).rounded())) min"
+        s < 60 ? String(localized: "\(Int(s.rounded())) s") : String(localized: "\(Int((s / 60).rounded())) min")
     }
 }
 

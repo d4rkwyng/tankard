@@ -13,11 +13,11 @@ public enum BrewfileKind: String, CaseIterable, Sendable, Codable {
     public var listFlag: String { "--\(rawValue)" }
     public var title: String {
         switch self {
-        case .tap: return "Taps"
-        case .formula: return "Formulae"
-        case .cask: return "Casks"
-        case .mas: return "App Store apps"
-        case .vscode: return "VS Code extensions"
+        case .tap: return String(localized: "Taps")
+        case .formula: return String(localized: "Formulae")
+        case .cask: return String(localized: "Casks")
+        case .mas: return String(localized: "App Store apps")
+        case .vscode: return String(localized: "VS Code extensions")
         }
     }
 }

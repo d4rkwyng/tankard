@@ -81,62 +81,62 @@ public enum ContextMenus {
         var actions: [MenuItemModel] = []
         if p.upgradeAvailable && p.isHeld {
             // brew won't upgrade a pinned package; unpin first.
-            actions.append(MenuItemModel(id: "upgrade", title: "Upgrade \(p.name) (pinned)", systemImage: "pin",
+            actions.append(MenuItemModel(id: "upgrade", title: String(localized: "Upgrade \(p.name) (pinned)"), systemImage: "pin",
                                          action: .upgrade, isEnabled: false))
         } else if p.upgradeAvailable {
             actions.append(MenuItemModel(id: "upgrade",
-                                         title: compileWarning == nil ? "Upgrade \(p.name)" : "Upgrade \(p.name) (compiles)",
+                                         title: compileWarning == nil ? String(localized: "Upgrade \(p.name)") : String(localized: "Upgrade \(p.name) (compiles)"),
                                          systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
                                          action: .upgrade, isEnabled: !busy))
             if let v = p.currentVersion {
                 actions.append(p.versionSkipped == true
-                    ? MenuItemModel(id: "unskip-version", title: "Don't Skip \(v)", systemImage: "forward.end",
+                    ? MenuItemModel(id: "unskip-version", title: String(localized: "Don't Skip \(v)"), systemImage: "forward.end",
                                     action: .skipVersion(false))
-                    : MenuItemModel(id: "skip-version", title: "Skip Version \(v)", systemImage: "forward.end",
+                    : MenuItemModel(id: "skip-version", title: String(localized: "Skip Version \(v)"), systemImage: "forward.end",
                                     action: .skipVersion(true)))
             }
         }
         if BottleReplacement.isEligible(p) {
-            actions.append(MenuItemModel(id: "replace-bottle", title: "Replace with Bottle",
+            actions.append(MenuItemModel(id: "replace-bottle", title: String(localized: "Replace with Bottle"),
                                          systemImage: "shippingbox.and.arrow.backward",
                                          action: .replaceWithBottle, isEnabled: !busy))
         }
         actions.append(p.pinned
-            ? MenuItemModel(id: "unpin", title: "Unpin", systemImage: "pin.slash", action: .unpin, isEnabled: !busy)
-            : MenuItemModel(id: "pin", title: "Pin", systemImage: "pin", action: .pin, isEnabled: !busy))
+            ? MenuItemModel(id: "unpin", title: String(localized: "Unpin"), systemImage: "pin.slash", action: .unpin, isEnabled: !busy)
+            : MenuItemModel(id: "pin", title: String(localized: "Pin"), systemImage: "pin", action: .pin, isEnabled: !busy))
         actions.append(MenuItemModel(id: "uninstall", title: uninstallTitle(dependents: dependents),
                                      systemImage: dependents.isEmpty ? "trash" : "lock",
                                      action: .uninstall, isEnabled: !busy && dependents.isEmpty,
                                      isDestructive: true))
 
         var copy: [MenuItemModel] = [
-            MenuItemModel(id: "copy-name", title: "Copy Name", systemImage: "doc.on.doc", action: .copy(p.name)),
+            MenuItemModel(id: "copy-name", title: String(localized: "Copy Name"), systemImage: "doc.on.doc", action: .copy(p.name)),
         ]
         if p.upgradeAvailable {
-            copy.append(MenuItemModel(id: "copy-command", title: "Copy Upgrade Command", systemImage: "terminal",
+            copy.append(MenuItemModel(id: "copy-command", title: String(localized: "Copy Upgrade Command"), systemImage: "terminal",
                                       action: .copy(upgradeCommand ?? BrewCommands.upgradeDisplay(for: p))))
         } else {
-            copy.append(MenuItemModel(id: "copy-command", title: "Copy Install Command", systemImage: "terminal",
+            copy.append(MenuItemModel(id: "copy-command", title: String(localized: "Copy Install Command"), systemImage: "terminal",
                                       action: .copy(BrewCommands.display(BrewCommands.installArguments(kind: p.kind, qualifiedName: p.qualifiedName)))))
         }
 
         var open: [MenuItemModel] = []
         if let url = webURL(p.homepage) {
-            open.append(MenuItemModel(id: "homepage", title: "Open Homepage", systemImage: "safari", action: .open(url)))
+            open.append(MenuItemModel(id: "homepage", title: String(localized: "Open Homepage"), systemImage: "safari", action: .open(url)))
         }
         if let page = p.releasePageURL {
-            open.append(MenuItemModel(id: "release-page", title: "Open Release Page", systemImage: "arrow.up.right.square", action: .open(page)))
+            open.append(MenuItemModel(id: "release-page", title: String(localized: "Open Release Page"), systemImage: "arrow.up.right.square", action: .open(page)))
         }
         if let kegPath {
-            open.append(MenuItemModel(id: "finder", title: "Show in Finder", systemImage: "folder", action: .revealInFinder(kegPath)))
+            open.append(MenuItemModel(id: "finder", title: String(localized: "Show in Finder"), systemImage: "folder", action: .revealInFinder(kegPath)))
         }
 
         let related = [
             MenuItemModel(id: "show-dependencies",
-                          title: dependencies.isEmpty ? "Show Dependencies" : "Show Dependencies (\(dependencies.count))",
+                          title: dependencies.isEmpty ? String(localized: "Show Dependencies") : String(localized: "Show Dependencies (\(dependencies.count))"),
                           systemImage: "arrow.down.right.circle", action: .showDependencies, isEnabled: !dependencies.isEmpty),
             MenuItemModel(id: "show-dependents",
-                          title: dependents.isEmpty ? "Show What Uses It" : "Show What Uses It (\(dependents.count))",
+                          title: dependents.isEmpty ? String(localized: "Show What Uses It") : String(localized: "Show What Uses It (\(dependents.count))"),
                           systemImage: "arrow.up.left.circle", action: .showDependents, isEnabled: !dependents.isEmpty),
         ]
         return joined([actions, copy, open, related])
@@ -144,10 +144,10 @@ public enum ContextMenus {
 
     /// "Uninstall…", or "Uninstall… (needed by vim, git +2)" when blocked.
     static func uninstallTitle(dependents: [Package]) -> String {
-        guard !dependents.isEmpty else { return "Uninstall…" }
+        guard !dependents.isEmpty else { return String(localized: "Uninstall…") }
         let names = dependents.prefix(3).map(\.name).joined(separator: ", ")
         let more = dependents.count > 3 ? " +\(dependents.count - 3)" : ""
-        return "Uninstall… (needed by \(names)\(more))"
+        return String(localized: "Uninstall… (needed by \(names)\(more))")
     }
 
     /// Discover's row menu.
@@ -157,24 +157,24 @@ public enum ContextMenus {
     public static func discover(_ e: CatalogEntry, installed: Bool, compileWarning: CompileWarning?, busy: Bool) -> [MenuEntry] {
         let install: MenuItemModel
         if installed {
-            install = MenuItemModel(id: "show-installed", title: "Show in Installed", systemImage: "checkmark.circle",
+            install = MenuItemModel(id: "show-installed", title: String(localized: "Show in Installed"), systemImage: "checkmark.circle",
                                     action: .showInInstalled)
         } else if !e.detailsLoaded {
-            install = MenuItemModel(id: "install", title: "Install (checking…)", systemImage: "arrow.down.circle",
+            install = MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
                                     action: .install(confirmCompile: false), isEnabled: false)
         } else {
             let compiles = compileWarning != nil
-            install = MenuItemModel(id: "install", title: compiles ? "Install (compiles)" : "Install \(e.name)",
+            install = MenuItemModel(id: "install", title: compiles ? String(localized: "Install (compiles)") : String(localized: "Install \(e.name)"),
                                     systemImage: compiles ? "hammer" : "arrow.down.circle",
                                     action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
         }
         let copy = [
-            MenuItemModel(id: "copy-name", title: "Copy Name", systemImage: "doc.on.doc", action: .copy(e.name)),
-            MenuItemModel(id: "copy-command", title: "Copy Install Command", systemImage: "terminal", action: .copy(e.installDisplay)),
+            MenuItemModel(id: "copy-name", title: String(localized: "Copy Name"), systemImage: "doc.on.doc", action: .copy(e.name)),
+            MenuItemModel(id: "copy-command", title: String(localized: "Copy Install Command"), systemImage: "terminal", action: .copy(e.installDisplay)),
         ]
         var open: [MenuItemModel] = []
         if let url = webURL(e.homepage) {
-            open.append(MenuItemModel(id: "homepage", title: "Open Homepage", systemImage: "safari", action: .open(url)))
+            open.append(MenuItemModel(id: "homepage", title: String(localized: "Open Homepage"), systemImage: "safari", action: .open(url)))
         }
         return joined([[install], copy, open])
     }
@@ -184,11 +184,11 @@ public enum ContextMenus {
         var items: [MenuEntry] = []
         if p.upgradeAvailable {
             items.append(.item(MenuItemModel(id: "upgrade",
-                                             title: compileWarning == nil ? "Upgrade \(p.name)" : "Upgrade \(p.name) (compiles)",
+                                             title: compileWarning == nil ? String(localized: "Upgrade \(p.name)") : String(localized: "Upgrade \(p.name) (compiles)"),
                                              systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
                                              action: .upgrade, isEnabled: !busy)))
         }
-        items.append(.item(MenuItemModel(id: "copy-name", title: "Copy Name", systemImage: "doc.on.doc", action: .copy(p.name))))
+        items.append(.item(MenuItemModel(id: "copy-name", title: String(localized: "Copy Name"), systemImage: "doc.on.doc", action: .copy(p.name))))
         return items
     }
 

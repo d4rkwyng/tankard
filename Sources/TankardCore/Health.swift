@@ -67,21 +67,21 @@ public struct PackageLifecycle: Codable, Sendable, Equatable {
     /// brew's reason symbols in words (DeprecateDisable's two tables, brew
     /// 7.0.14). Anything else is brew's own free text and shown as is.
     public static let reasonText: [String: String] = [
-        "does_not_build": "does not build",
-        "no_license": "has no license",
-        "repo_archived": "has an archived upstream repository",
-        "repo_removed": "has a removed upstream repository",
-        "unmaintained": "is not maintained upstream",
-        "unreachable": "is no longer reliably reachable upstream",
-        "unsupported": "is not supported upstream",
-        "deprecated_upstream": "is deprecated upstream",
-        "versioned_formula": "is a versioned formula",
-        "checksum_mismatch": "was built from a source file whose checksum changed upstream",
-        "discontinued": "is discontinued upstream",
-        "moved_to_mas": "is now only on the Mac App Store",
-        "no_longer_available": "is no longer available upstream",
-        "no_longer_meets_criteria": "no longer meets the criteria for casks",
-        "fails_gatekeeper_check": "does not pass the macOS Gatekeeper check",
+        "does_not_build": String(localized: "does not build"),
+        "no_license": String(localized: "has no license"),
+        "repo_archived": String(localized: "has an archived upstream repository"),
+        "repo_removed": String(localized: "has a removed upstream repository"),
+        "unmaintained": String(localized: "is not maintained upstream"),
+        "unreachable": String(localized: "is no longer reliably reachable upstream"),
+        "unsupported": String(localized: "is not supported upstream"),
+        "deprecated_upstream": String(localized: "is deprecated upstream"),
+        "versioned_formula": String(localized: "is a versioned formula"),
+        "checksum_mismatch": String(localized: "was built from a source file whose checksum changed upstream"),
+        "discontinued": String(localized: "is discontinued upstream"),
+        "moved_to_mas": String(localized: "is now only on the Mac App Store"),
+        "no_longer_available": String(localized: "is no longer available upstream"),
+        "no_longer_meets_criteria": String(localized: "no longer meets the criteria for casks"),
+        "fails_gatekeeper_check": String(localized: "does not pass the macOS Gatekeeper check"),
     ]
 
     public static func describe(reason: String?) -> String? {
@@ -115,23 +115,23 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
 
     public var title: String {
         switch self {
-        case .locked: return "Another Homebrew command is running"
-        case .network: return "Homebrew couldn't reach the network"
-        case .diskFull: return "The disk is full"
-        case .permissions: return "Homebrew couldn't write to its folders"
+        case .locked: return String(localized: "Another Homebrew command is running")
+        case .network: return String(localized: "Homebrew couldn't reach the network")
+        case .diskFull: return String(localized: "The disk is full")
+        case .permissions: return String(localized: "Homebrew couldn't write to its folders")
         }
     }
 
     public var explanation: String {
         switch self {
         case .locked:
-            return "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry."
+            return String(localized: "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry.")
         case .network:
-            return "A download failed. Check the internet connection (or a VPN or proxy), then retry."
+            return String(localized: "A download failed. Check the internet connection (or a VPN or proxy), then retry.")
         case .diskFull:
-            return "There's no space left to download or unpack. Free some space (Clean Up helps), then retry."
+            return String(localized: "There's no space left to download or unpack. Free some space (Clean Up helps), then retry.")
         case .permissions:
-            return "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it."
+            return String(localized: "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.")
         }
     }
 }
@@ -239,50 +239,50 @@ public enum DoctorWarningKind: String, Sendable, Equatable, CaseIterable {
 
     public var title: String {
         switch self {
-        case .deprecatedDisabled: return "Some packages are deprecated or disabled"
-        case .pathOrder: return "Your PATH finds other tools before Homebrew's"
-        case .sbinNotInPath: return "Homebrew's sbin folder isn't in your PATH"
-        case .unlinkedKegs: return "Some packages are installed but not linked"
-        case .brokenSymlinks: return "There are broken links in Homebrew's folders"
-        case .strayFiles: return "Files Homebrew didn't install are in its folders"
-        case .outdatedCLT: return "The Command Line Tools are out of date"
-        case .outdatedXcode: return "Xcode is out of date"
-        case .unsupportedMacOS: return "This macOS version isn't supported by Homebrew"
-        case .missingDependencies: return "Some packages are missing dependencies"
-        case .untrustedTaps: return "Some taps aren't trusted"
-        case .gitDirty: return "Homebrew's own files have local changes"
-        case .notWritable: return "Some Homebrew folders aren't writable"
+        case .deprecatedDisabled: return String(localized: "Some packages are deprecated or disabled")
+        case .pathOrder: return String(localized: "Your PATH finds other tools before Homebrew's")
+        case .sbinNotInPath: return String(localized: "Homebrew's sbin folder isn't in your PATH")
+        case .unlinkedKegs: return String(localized: "Some packages are installed but not linked")
+        case .brokenSymlinks: return String(localized: "There are broken links in Homebrew's folders")
+        case .strayFiles: return String(localized: "Files Homebrew didn't install are in its folders")
+        case .outdatedCLT: return String(localized: "The Command Line Tools are out of date")
+        case .outdatedXcode: return String(localized: "Xcode is out of date")
+        case .unsupportedMacOS: return String(localized: "This macOS version isn't supported by Homebrew")
+        case .missingDependencies: return String(localized: "Some packages are missing dependencies")
+        case .untrustedTaps: return String(localized: "Some taps aren't trusted")
+        case .gitDirty: return String(localized: "Homebrew's own files have local changes")
+        case .notWritable: return String(localized: "Some Homebrew folders aren't writable")
         }
     }
 
     public var explanation: String {
         switch self {
         case .deprecatedDisabled:
-            return "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one."
+            return String(localized: "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one.")
         case .pathOrder:
-            return "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this."
+            return String(localized: "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this.")
         case .sbinNotInPath:
-            return "Some installed tools put commands in sbin; your shell won't find them by name until it's in PATH."
+            return String(localized: "Some installed tools put commands in sbin; your shell won't find them by name until it's in PATH.")
         case .unlinkedKegs:
-            return "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted."
+            return String(localized: "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.")
         case .brokenSymlinks:
-            return "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them."
+            return String(localized: "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them.")
         case .strayFiles:
-            return "Another installer put files in Homebrew's prefix. They can confuse builds from source."
+            return String(localized: "Another installer put files in Homebrew's prefix. They can confuse builds from source.")
         case .outdatedCLT:
-            return "Formulae that build from source may fail. Software Update installs the new version."
+            return String(localized: "Formulae that build from source may fail. Software Update installs the new version.")
         case .outdatedXcode:
-            return "Formulae that build from source may fail. The App Store updates Xcode."
+            return String(localized: "Formulae that build from source may fail. The App Store updates Xcode.")
         case .unsupportedMacOS:
-            return "Bottles may be missing and Homebrew won't help with issues. Things often still work."
+            return String(localized: "Bottles may be missing and Homebrew won't help with issues. Things often still work.")
         case .missingDependencies:
-            return "A package needs something that isn't installed. Installing the missing ones fixes it."
+            return String(localized: "A package needs something that isn't installed. Installing the missing ones fixes it.")
         case .untrustedTaps:
-            return "brew won't load formulae from third-party taps until you trust them."
+            return String(localized: "brew won't load formulae from third-party taps until you trust them.")
         case .gitDirty:
-            return "Edits in Homebrew's checkout can stop brew update. Resetting it discards them."
+            return String(localized: "Edits in Homebrew's checkout can stop brew update. Resetting it discards them.")
         case .notWritable:
-            return "brew can't update or install while it can't write there."
+            return String(localized: "brew can't update or install while it can't write there.")
         }
     }
 

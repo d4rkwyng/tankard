@@ -56,7 +56,7 @@ public struct CompileWarning: Sendable, Equatable {
     /// "No bottle: will compile from source" (upgrades) or
     /// "No bottle: compiles" (Discover rows and badges).
     public var label: String {
-        context == .upgrade ? "No bottle: will compile from source" : "No bottle: compiles"
+        context == .upgrade ? String(localized: "No bottle: will compile from source") : String(localized: "No bottle: compiles")
     }
 
     /// "at least ~25 min on the Intelbrew builder", or nil without an
@@ -66,8 +66,8 @@ public struct CompileWarning: Sendable, Equatable {
         // Finite and below ~116 days, or no estimate: Int() traps on huge values.
         guard let s = estimatedSeconds, s.isFinite, s > 0, s < 1e7 else { return nil }
         let min = Int((s / 60).rounded(.up))
-        let amount = min >= 90 ? "~\(Int((s / 3600).rounded(.up))) h" : "~\(max(1, min)) min"
-        return "at least \(amount) on the Intelbrew builder"
+        let amount = min >= 90 ? String(localized: "~\(String(Int((s / 3600).rounded(.up)))) h") : String(localized: "~\(max(1, min)) min")
+        return String(localized: "at least \(amount) on the Intelbrew builder")
     }
 
     /// The label plus the estimate when there is one.
@@ -174,7 +174,7 @@ public enum BottleReplacement {
     /// "Intelbrew bottle available" in Intelbrew mode when the bottle is on
     /// intelbrew-core, otherwise "Bottle available".
     public static func badge(_ p: Package, intelbrewMode: Bool) -> String {
-        intelbrewMode && origin(p) == .intelbrew ? "Intelbrew bottle available" : "Bottle available"
+        intelbrewMode && origin(p) == .intelbrew ? String(localized: "Intelbrew bottle available") : String(localized: "Bottle available")
     }
 
     /// `brew reinstall --force-bottle --formula homebrew/core/vim`.

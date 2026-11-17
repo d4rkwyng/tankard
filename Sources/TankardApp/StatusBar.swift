@@ -19,7 +19,7 @@ struct StatusBar: View {
                     TimelineView(.periodic(from: .now, by: 30)) { ctx in
                         Text("Updated \(updatedAgo(updated, now: ctx.date))")
                             .help(updated.formatted(date: .abbreviated, time: .standard)
-                                  + (store.reportFromCache ? " (from cache)" : ""))
+                                  + (store.reportFromCache ? String(localized: " (from cache)") : ""))
                     }
                 }
                 if let phase = store.refreshPhase {
@@ -50,7 +50,7 @@ struct StatusBar: View {
                     } else {
                         HStack(spacing: 6) {
                             ProgressView().controlSize(.mini)
-                            Text("\(session.action.gerund) \(session.countLine)")
+                            Text(verbatim: "\(session.action.gerund) \(session.countLine)")
                         }
                     }
                 }
@@ -76,7 +76,7 @@ struct StatusBar: View {
             }
             .buttonStyle(.primaryAction)
             .disabled(n == 0 || store.isUpgrading || store.isRefreshing)
-            .help(n == 0 ? "Nothing to upgrade" : "brew upgrade the \(n) outdated package\(n == 1 ? "" : "s"), one at a time")
+            .help(n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "brew upgrade the 1 outdated package, one at a time") : String(localized: "brew upgrade the \(n) outdated packages, one at a time")))
         }
         .font(.system(size: 11.5))
         .foregroundStyle(.secondary)
@@ -87,7 +87,7 @@ struct StatusBar: View {
     }
 
     private var separator: some View {
-        Text("·").foregroundStyle(.tertiary)
+        Text(verbatim: "·").foregroundStyle(.tertiary)
     }
 
     private func color(_ l: ForkSummary.Level) -> Color {

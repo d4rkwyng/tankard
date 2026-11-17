@@ -8,12 +8,16 @@ public enum BrewClientError: Error, CustomStringConvertible {
     public var description: String {
         switch self {
         case .brewNotFound(let searched):
-            return "brew not found (looked in \(searched.joined(separator: ", "))). Set TANKARD_BREW or pass --brew."
+            let list = searched.joined(separator: ", ")
+            return String(localized: "brew not found (looked in \(list)). Set TANKARD_BREW or pass --brew.")
         case .commandFailed(let command, let code, let stderr):
             let tail = stderr.split(separator: "\n").suffix(5).joined(separator: "\n")
-            return "\(command) exited \(code)\(tail.isEmpty ? "" : ":\n\(tail)")"
+            let exit = Int(code)
+            return tail.isEmpty
+                ? String(localized: "\(command) exited \(exit)")
+                : String(localized: "\(command) exited \(exit):\n\(tail)")
         case .badJSON(let command, let underlying):
-            return "\(command) printed JSON Tankard could not read: \(underlying)"
+            return String(localized: "\(command) printed JSON Tankard could not read: \(underlying)")
         }
     }
 }
@@ -204,8 +208,8 @@ public struct BrewClient: Sendable {
 
         if detection.detected && !fork.coreIsFork {
             warnings.append(fork.coreTapPath == nil
-                ? "Intelbrew settings found but there is no local homebrew/core tap (API mode): run `brew tap homebrew/core` and `brew update`."
-                : "Intelbrew settings found but homebrew/core's origin is \(fork.coreOrigin ?? "unset"): run `brew update` to switch it.")
+                ? String(localized: "Intelbrew settings found but there is no local homebrew/core tap (API mode): run `brew tap homebrew/core` and `brew update`.")
+                : String(localized: "Intelbrew settings found but homebrew/core's origin is \(fork.coreOrigin ?? "unset"): run `brew update` to switch it."))
         }
 
         let host = HostInfo(brewPath: installation.brewPath, prefix: installation.prefix,

@@ -98,46 +98,46 @@ struct RestoreDiffView: View {
     var body: some View {
         let plan = RestorePlan.make(diff, installed: store.packages, pinAfter: pinAfter)
         VStack(alignment: .leading, spacing: 8) {
-            Text(diff.isEmpty ? "Nothing changed since then" : "Changes since then")
+            Text(diff.isEmpty ? String(localized: "Nothing changed since then") : String(localized: "Changes since then"))
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(diff.isEmpty ? Color.secondary : theme.accent)
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     if !diff.upgraded.isEmpty {
-                        DiffSection(title: "Upgraded (\(diff.upgraded.count))") {
+                        DiffSection(title: String(localized: "Upgraded (\(diff.upgraded.count))")) {
                             ForEach(diff.upgraded) { c in
                                 UpgradedRow(change: c, eligibility: RollbackPolicy.eligibility(c, installed: store.packages))
                             }
                         }
                     }
                     if !diff.removed.isEmpty {
-                        DiffSection(title: "Removed (\(diff.removed.count))") {
+                        DiffSection(title: String(localized: "Removed (\(diff.removed.count))")) {
                             ForEach(diff.removed, id: \.id) { r in
-                                PlainDiffRow(name: r.name, detail: r.version, note: "Reinstall")
+                                PlainDiffRow(name: r.name, detail: r.version, note: String(localized: "Reinstall"))
                                     .help("brew install gets the version Homebrew has now, which may be newer than \(r.version).")
                             }
                         }
                     }
                     if !diff.added.isEmpty {
-                        DiffSection(title: "Added (\(diff.added.count))") {
+                        DiffSection(title: String(localized: "Added (\(diff.added.count))")) {
                             ForEach(diff.added) { p in
-                                PlainDiffRow(name: p.name, detail: p.installedVersion, note: "Kept")
+                                PlainDiffRow(name: p.name, detail: p.installedVersion, note: String(localized: "Kept"))
                                     .help("Restore never uninstalls what was added. Uninstall it from its details if you don't want it.")
                             }
                         }
                     }
                     if !diff.downgraded.isEmpty {
-                        DiffSection(title: "Older now (\(diff.downgraded.count))") {
+                        DiffSection(title: String(localized: "Older now (\(diff.downgraded.count))")) {
                             ForEach(diff.downgraded) { c in
                                 PlainDiffRow(name: c.now.name, detail: "\(c.then.version) → \(c.now.installedVersion)", note: "")
                             }
                         }
                     }
                     if !diff.tapsAdded.isEmpty || !diff.tapsRemoved.isEmpty || !diff.pinsChanged.isEmpty {
-                        DiffSection(title: "Taps and pins") {
-                            ForEach(diff.tapsAdded, id: \.self) { PlainDiffRow(name: $0, detail: "tap added", note: "") }
-                            ForEach(diff.tapsRemoved, id: \.self) { PlainDiffRow(name: $0, detail: "tap removed", note: "") }
-                            ForEach(diff.pinsChanged, id: \.self) { PlainDiffRow(name: $0, detail: "pin changed", note: "") }
+                        DiffSection(title: String(localized: "Taps and pins")) {
+                            ForEach(diff.tapsAdded, id: \.self) { PlainDiffRow(name: $0, detail: String(localized: "tap added"), note: "") }
+                            ForEach(diff.tapsRemoved, id: \.self) { PlainDiffRow(name: $0, detail: String(localized: "tap removed"), note: "") }
+                            ForEach(diff.pinsChanged, id: \.self) { PlainDiffRow(name: $0, detail: String(localized: "pin changed"), note: "") }
                         }
                     }
                 }
@@ -156,7 +156,7 @@ struct RestoreDiffView: View {
                 Button("Restore…") { store.requestRestore(point, pinAfter: pinAfter) }
                     .buttonStyle(.primaryAction)
                     .disabled(plan.steps.isEmpty || store.isBusy)
-                    .help(plan.steps.isEmpty ? "Nothing here can be restored automatically" : "Shows the brew commands first")
+                    .help(plan.steps.isEmpty ? String(localized: "Nothing here can be restored automatically") : String(localized: "Shows the brew commands first"))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -200,7 +200,7 @@ private struct UpgradedRow: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 8) {
                 Text(change.now.name).font(.system(size: 12, weight: .medium))
-                Text("\(change.then.version) → \(change.now.installedVersion)")
+                Text(verbatim: "\(change.then.version) → \(change.now.installedVersion)")
                     .font(.system(size: 11.5, design: .monospaced)).foregroundStyle(.secondary)
                 Spacer(minLength: 0)
                 switch eligibility {
@@ -219,7 +219,7 @@ private struct UpgradedRow: View {
                         ForEach(cmds, id: \.self) { CommandBox(command: $0) }
                     }
                         .help(block == .cleanedUp
-                              ? "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on."
+                              ? String(localized: "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on.")
                               : block.explanation)
                 }
             }
@@ -233,7 +233,7 @@ struct RestoreConfirmView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Run \(plan.steps.count) brew command\(plan.steps.count == 1 ? "" : "s")?")
+            Text(plan.steps.count == 1 ? String(localized: "Run 1 brew command?") : String(localized: "Run \(plan.steps.count) brew commands?"))
                 .font(.system(size: 16, weight: .bold))
             Text("One at a time through Tankard's queue. Each is recorded in History.")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)

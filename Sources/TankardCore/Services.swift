@@ -118,7 +118,13 @@ public enum ServiceStatus: Equatable, Sendable, Hashable {
 public enum ServiceAction: String, Sendable, CaseIterable, Identifiable {
     case start, stop, restart
     public var id: String { rawValue }
-    public var title: String { rawValue.capitalized }
+    public var title: String {
+        switch self {
+        case .start: return String(localized: "Start")
+        case .stop: return String(localized: "Stop")
+        case .restart: return String(localized: "Restart")
+        }
+    }
 }
 
 public enum BrewServices {

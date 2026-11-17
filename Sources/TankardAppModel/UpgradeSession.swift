@@ -19,29 +19,29 @@ public enum SessionAction: String, Sendable {
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
         switch self {
-        case .upgrade: return "Upgrade"
-        case .install: return "Install"
-        case .uninstall: return "Uninstall"
-        case .replaceBottle: return "Reinstall"
-        case .cleanup: return "Cleanup"
-        case .autoremove: return "Remove unused"
-        case .tap: return "Add tap"
-        case .untap: return "Remove tap"
-        case .restore: return "Restore"
+        case .upgrade: return String(localized: "Upgrade")
+        case .install: return String(localized: "Install")
+        case .uninstall: return String(localized: "Uninstall")
+        case .replaceBottle: return String(localized: "Reinstall")
+        case .cleanup: return String(localized: "Cleanup")
+        case .autoremove: return String(localized: "Remove unused")
+        case .tap: return String(localized: "Add tap")
+        case .untap: return String(localized: "Remove tap")
+        case .restore: return String(localized: "Restore")
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
     public var gerund: String {
         switch self {
-        case .upgrade: return "Upgrading"
-        case .install: return "Installing"
-        case .uninstall: return "Uninstalling"
-        case .replaceBottle: return "Reinstalling"
-        case .cleanup: return "Cleaning up"
-        case .autoremove: return "Removing unused dependencies"
-        case .tap: return "Adding tap"
-        case .untap: return "Removing tap"
-        case .restore: return "Restoring"
+        case .upgrade: return String(localized: "Upgrading")
+        case .install: return String(localized: "Installing")
+        case .uninstall: return String(localized: "Uninstalling")
+        case .replaceBottle: return String(localized: "Reinstalling")
+        case .cleanup: return String(localized: "Cleaning up")
+        case .autoremove: return String(localized: "Removing unused dependencies")
+        case .tap: return String(localized: "Adding tap")
+        case .untap: return String(localized: "Removing tap")
+        case .restore: return String(localized: "Restoring")
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -49,15 +49,15 @@ public enum SessionAction: String, Sendable {
     /// the same for one or many.
     public var past: String {
         switch self {
-        case .upgrade: return "upgraded"
-        case .install: return "installed"
-        case .uninstall: return "uninstalled"
-        case .replaceBottle: return "reinstalled"
-        case .cleanup: return "done"
-        case .autoremove: return "done"
-        case .tap: return "tapped"
-        case .untap: return "untapped"
-        case .restore: return "done"
+        case .upgrade: return String(localized: "upgraded")
+        case .install: return String(localized: "installed")
+        case .uninstall: return String(localized: "uninstalled")
+        case .replaceBottle: return String(localized: "reinstalled")
+        case .cleanup: return String(localized: "done")
+        case .autoremove: return String(localized: "done")
+        case .tap: return String(localized: "tapped")
+        case .untap: return String(localized: "untapped")
+        case .restore: return String(localized: "done")
         }
     }
 }
@@ -186,34 +186,34 @@ public final class UpgradeSession: Identifiable {
     public var title: String {
         let verb = action.verb
         if isFinished {
-            if stopRequested && items.contains(where: { $0.state == .cancelled }) { return "\(verb) stopped" }
-            return failedItems.isEmpty ? "\(verb) complete" : "\(verb) finished with errors"
+            if stopRequested && items.contains(where: { $0.state == .cancelled }) { return String(localized: "\(verb) stopped") }
+            return failedItems.isEmpty ? String(localized: "\(verb) complete") : String(localized: "\(verb) finished with errors")
         }
-        if action == .cleanup { return "Cleaning up" }
-        if action == .restore { return "Restoring (\(total) step\(total == 1 ? "" : "s"))" }
+        if action == .cleanup { return String(localized: "Cleaning up") }
+        if action == .restore { return total == 1 ? String(localized: "Restoring (\(total) step)") : String(localized: "Restoring (\(total) steps)") }
         if action == .replaceBottle {
-            return total == 1 ? "Reinstalling \(items[0].package.name) from a bottle" : "Reinstalling \(total) packages from bottles"
+            return total == 1 ? String(localized: "Reinstalling \(items[0].package.name) from a bottle") : String(localized: "Reinstalling \(total) packages from bottles")
         }
-        if action != .upgrade && total == 1 { return "\(action.gerund) \(items[0].package.name)" }
-        return "\(action.gerund) \(total) package\(total == 1 ? "" : "s")"
+        if action != .upgrade && total == 1 { return String(localized: "\(action.gerund) \(items[0].package.name)") }
+        return total == 1 ? String(localized: "\(action.gerund) \(total) package") : String(localized: "\(action.gerund) \(total) packages")
     }
 
     /// "4 bottles from Intelbrew · 1 build from source (rust)"
     public var subtitle: String {
         if action == .uninstall {
-            return "Its dependencies stay installed (brew autoremove removes unused ones)"
+            return String(localized: "Its dependencies stay installed (brew autoremove removes unused ones)")
         }
         if action == .cleanup {
-            return "Removes old versions, stale downloads and old logs"
+            return String(localized: "Removes old versions, stale downloads and old logs")
         }
         if action == .restore {
-            return "Back to a restore point, one brew command at a time"
+            return String(localized: "Back to a restore point, one brew command at a time")
         }
         if action == .replaceBottle {
             let ib = items.filter { BottleReplacement.origin($0.package) == .intelbrew }.count
             let n = items.count
-            return intelbrewMode && ib == n ? "Swaps source builds for Intelbrew bottles"
-                : "Swaps source build\(n == 1 ? "" : "s") for bottle\(n == 1 ? "" : "s")"
+            return intelbrewMode && ib == n ? String(localized: "Swaps source builds for Intelbrew bottles")
+                : (n == 1 ? String(localized: "Swaps source build for bottle") : String(localized: "Swaps source builds for bottles"))
         }
         let formulae = items.map(\.package).filter { $0.kind == .formula }
         let bottles = formulae.filter { $0.upgradeHasBottle == true }
@@ -223,39 +223,39 @@ public final class UpgradeSession: Identifiable {
         if !bottles.isEmpty && action == .install && intelbrewMode {
             // Installs know whose bottle it is (from the catalogue).
             let ib = bottles.filter { $0.bottleOrigin == .intelbrew }.count
-            if ib > 0 { parts.append("\(ib) bottle\(ib == 1 ? "" : "s") from Intelbrew") }
+            if ib > 0 { parts.append(ib == 1 ? String(localized: "\(ib) bottle from Intelbrew") : String(localized: "\(ib) bottles from Intelbrew")) }
             let other = bottles.count - ib
-            if other > 0 { parts.append("\(other) Homebrew bottle\(other == 1 ? "" : "s")") }
+            if other > 0 { parts.append(other == 1 ? String(localized: "\(other) Homebrew bottle") : String(localized: "\(other) Homebrew bottles")) }
         } else if !bottles.isEmpty {
-            let from = intelbrewMode ? " from Intelbrew" : ""
-            parts.append("\(bottles.count) bottle\(bottles.count == 1 ? "" : "s")\(from)")
+            let from = intelbrewMode ? String(localized: " from Intelbrew") : ""
+            parts.append((bottles.count == 1 ? String(localized: "\(bottles.count) bottle") : String(localized: "\(bottles.count) bottles")) + from)
         }
         if !compiles.isEmpty {
             let names = compiles.count <= 3 ? " (\(compiles.map(\.name).joined(separator: ", ")))" : ""
-            parts.append("\(compiles.count) build\(compiles.count == 1 ? "" : "s") from source\(names)")
+            parts.append((compiles.count == 1 ? String(localized: "\(compiles.count) build from source") : String(localized: "\(compiles.count) builds from source")) + names)
         }
-        if casks > 0 { parts.append("\(casks) cask\(casks == 1 ? "" : "s")") }
+        if casks > 0 { parts.append(casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")) }
         return parts.joined(separator: " · ")
     }
 
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
     public var statusLine: String {
-        if action == .cleanup, current != nil { return "Running brew cleanup…" }
-        if let c = current { return "\(action.gerund) \(c.package.name)…" }
+        if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
+        if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
         if isFinished {
-            var parts = ["\(succeededCount) \(action.past)"]
-            if !failedItems.isEmpty { parts.append("\(failedItems.count) failed") }
+            var parts = [String(localized: "\(succeededCount) \(action.past)")]
+            if !failedItems.isEmpty { parts.append(String(localized: "\(failedItems.count) failed")) }
             let skipped = items.filter { $0.state == .cancelled }.count
-            if skipped > 0 { parts.append("\(skipped) stopped") }
+            if skipped > 0 { parts.append(String(localized: "\(skipped) stopped")) }
             return parts.joined(separator: ", ")
         }
-        return "Waiting for brew…"
+        return String(localized: "Waiting for brew…")
     }
 
     /// "2 of 5"
     public var countLine: String {
         let n = current.map { c in (items.firstIndex { $0.id == c.id } ?? 0) + 1 } ?? completedCount
-        return "\(n) of \(total)"
+        return String(localized: "\(n) of \(total)")
     }
 
     // MARK: controls

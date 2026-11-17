@@ -46,12 +46,12 @@ enum VulnerabilityText {
     static func help(_ p: Package) -> String {
         let list = p.vulnerabilities ?? []
         let ids = list.prefix(4).map(\.id).joined(separator: ", ") + (list.count > 4 ? ", …" : "")
-        return "\(list.count) known vulnerabilit\(list.count == 1 ? "y" : "ies") (brew vulns): \(ids)"
+        return list.count == 1 ? String(localized: "1 known vulnerability (brew vulns): \(ids)") : String(localized: "\(list.count) known vulnerabilities (brew vulns): \(ids)")
     }
 
     /// "Scanned 5 min ago · partial scan".
     static func scanLine(_ scan: VulnerabilityScan) -> String {
-        "Scanned \(updatedAgo(scan.scannedAt, now: Date()))" + (scan.complete ? "" : " · partial scan")
+        String(localized: "Scanned \(updatedAgo(scan.scannedAt, now: Date()))") + (scan.complete ? "" : String(localized: " · partial scan"))
     }
 }
 
@@ -92,7 +92,7 @@ struct MoreFiltersPicker: View {
                 Divider()
             }
             ForEach(PackageFilter.more) { f in
-                Text("\(f.title)  \(store.count(f))").tag(PackageFilter?.some(f))
+                Text(verbatim: "\(f.title)  \(store.count(f))").tag(PackageFilter?.some(f))
             }
         }
         .pickerStyle(.menu)
@@ -102,7 +102,7 @@ struct MoreFiltersPicker: View {
         // is the same in every theme and state.
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(active ? theme.accent : Color.clear, lineWidth: 1.5)
             .allowsHitTesting(false))
-        .help(vulnerable > 0 ? "\(vulnerable) vulnerable package\(vulnerable == 1 ? "" : "s"); more filters" : "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated")
+        .help(vulnerable > 0 ? (vulnerable == 1 ? String(localized: "1 vulnerable package; more filters") : String(localized: "\(vulnerable) vulnerable packages; more filters")) : String(localized: "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated"))
     }
 }
 
@@ -138,7 +138,7 @@ struct ScanProgressView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .fixedSize()
-                .help(insights.vulnerabilityScan?.partialReason.map { "brew says the scan is incomplete: \($0)." } ?? "From brew vulns (OSV.dev).")
+                .help(insights.vulnerabilityScan?.partialReason.map { String(localized: "brew says the scan is incomplete: \($0).") } ?? String(localized: "From brew vulns (OSV.dev)."))
         }
     }
 }
@@ -227,8 +227,8 @@ struct VulnerableFilterActions: View {
                 }
                 .buttonStyle(.primaryAction)
                 .disabled(targets.isEmpty || store.isUpgrading || store.isRefreshing)
-                .help("Upgrade vulnerable packages. " + upgradeHelp(targets)
-                      + (scan?.partialReason.map { " Partial scan: \($0)." } ?? ""))
+                .help(String(localized: "Upgrade vulnerable packages. ") + upgradeHelp(targets)
+                      + (scan?.partialReason.map { String(localized: " Partial scan: \($0).") } ?? ""))
             } else {
                 ScanStateLabel(insights: store.insights)
             }
@@ -238,8 +238,8 @@ struct VulnerableFilterActions: View {
 
     private func upgradeHelp(_ targets: [Package]) -> String {
         let none = VulnerabilityUpgrades.withoutUpgrade(store.packages)
-        var s = targets.isEmpty ? "No vulnerable package has an upgrade yet." : "Upgrade \(targets.map(\.name).joined(separator: ", "))."
-        if !none.isEmpty { s += " No upgrade yet for \(none.map(\.name).joined(separator: ", "))." }
+        var s = targets.isEmpty ? String(localized: "No vulnerable package has an upgrade yet.") : String(localized: "Upgrade \(targets.map(\.name).joined(separator: ", ")).")
+        if !none.isEmpty { s += String(localized: " No upgrade yet for \(none.map(\.name).joined(separator: ", ")).") }
         return s
     }
 }
@@ -256,13 +256,13 @@ struct ScanStateLabel: View {
                 Text("Scanning…")
             case .failed(let s):
                 Image(systemName: "exclamationmark.circle").foregroundStyle(.orange)
-                Text(s == InsightsStore.scanTimedOutMessage ? "Scan timed out" : "Scan failed").help(s)
+                Text(s == InsightsStore.scanTimedOutMessage ? String(localized: "Scan timed out") : String(localized: "Scan failed")).help(s)
             case .unsupported(let s):
                 Text("No brew vulns").help(s)
             case .idle:
                 if let scan = insights.vulnerabilityScan {
-                    Text(scan.complete ? "Full scan" : "Partial scan")
-                        .help(scan.partialReason.map { "brew says the scan is incomplete: \($0)." } ?? "brew checked every installed formula.")
+                    Text(scan.complete ? String(localized: "Full scan") : String(localized: "Partial scan"))
+                        .help(scan.partialReason.map { String(localized: "brew says the scan is incomplete: \($0).") } ?? String(localized: "brew checked every installed formula."))
                 } else {
                     Text("Not scanned yet")
                         .help("Scan Now is in Settings → Upgrades and the Homebrew menu. " + InsightSettings.scanPrivacyNote)
@@ -291,7 +291,7 @@ struct VulnerabilitySection: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                    Text("\(list.count) known vulnerabilit\(list.count == 1 ? "y" : "ies")")
+                    Text(list.count == 1 ? String(localized: "1 known vulnerability") : String(localized: "\(list.count) known vulnerabilities"))
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundStyle(w.text)
@@ -318,7 +318,7 @@ struct VulnerabilitySection: View {
                     }
                 }
                 if let scan {
-                    Text(VulnerabilityText.scanLine(scan) + ". From brew vulns (OSV.dev).")
+                    Text(VulnerabilityText.scanLine(scan) + String(localized: ". From brew vulns (OSV.dev)."))
                         .font(.system(size: 10.5)).foregroundStyle(.secondary)
                         .help(scan.partialReason ?? "")
                 }
@@ -328,11 +328,11 @@ struct VulnerabilitySection: View {
             .background(RoundedRectangle(cornerRadius: 8).fill(w.tag))
         } else if package.kind == .formula, let scan {
             let note: String = {
-                if scan.skipped.contains(package.fullName) { return "Not checked by brew vulns: no source repository it can match." }
+                if scan.skipped.contains(package.fullName) { return String(localized: "Not checked by brew vulns: no source repository it can match.") }
                 if let reason = scan.unscanned[package.fullName] {
-                    return reason == "untrusted_tap" ? "Not checked by brew vulns: untrusted tap." : "Not checked by brew vulns."
+                    return reason == "untrusted_tap" ? String(localized: "Not checked by brew vulns: untrusted tap.") : String(localized: "Not checked by brew vulns.")
                 }
-                return "No known vulnerabilities (brew vulns)."
+                return String(localized: "No known vulnerabilities (brew vulns).")
             }()
             Label(note, systemImage: "checkmark.shield")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -387,7 +387,7 @@ struct PostInstallNotesSheet: View {
                 Image(systemName: "note.text").font(.system(size: 22)).foregroundStyle(theme.accent)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Post-install notes").font(.system(size: 15, weight: .bold))
-                    Text(notes.subtitle + ". brew printed these; they are also in each package's details.")
+                    Text(notes.subtitle + String(localized: ". brew printed these; they are also in each package's details."))
                         .font(.system(size: 11.5)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -525,7 +525,7 @@ struct VulnerabilityMenuNotice: View {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(theme.warning(scheme).text)
                     VStack(alignment: .leading, spacing: 1) {
                         Text("New vulnerabilities").font(.system(size: 12.5, weight: .semibold))
-                        Text(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? " and \(names.count - 4) more" : ""))
+                        Text(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? String(localized: " and \(names.count - 4) more") : ""))
                             .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
                     }
                     Spacer()

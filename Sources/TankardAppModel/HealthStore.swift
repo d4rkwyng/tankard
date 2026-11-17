@@ -76,8 +76,10 @@ public final class HealthStore {
     /// The summary line under the title.
     public var summary: String {
         guard let d = doctor else { return "" }
-        if d.warnings.isEmpty { return d.ready ? "brew doctor found nothing to fix." : "brew doctor printed no warnings." }
-        return "brew doctor: \(d.warnings.count) warning\(d.warnings.count == 1 ? "" : "s")"
+        if d.warnings.isEmpty { return d.ready ? String(localized: "brew doctor found nothing to fix.") : String(localized: "brew doctor printed no warnings.") }
+        return d.warnings.count == 1
+            ? String(localized: "brew doctor: \(d.warnings.count) warning")
+            : String(localized: "brew doctor: \(d.warnings.count) warnings")
     }
 }
 
@@ -112,7 +114,7 @@ public final class AutoremoveStore {
             raw = [r.stdoutString, r.stderrString].filter { !$0.isEmpty }.joined(separator: "\n")
             if r.exitCode != 0 {
                 let tail = raw.split(separator: "\n").suffix(4).joined(separator: "\n")
-                phase = .failed(tail.isEmpty ? "\(dryRunCommand) exited \(r.exitCode)" : tail)
+                phase = .failed(tail.isEmpty ? String(localized: "\(dryRunCommand) exited \(r.exitCode)") : tail)
                 return
             }
             plan = AutoremovePlan.parse(r.stdoutString)
@@ -128,19 +130,23 @@ public extension Package {
     var isRetired: Bool { deprecated || disabled }
 
     /// "disabled" / "deprecated" / nil: the list's badge.
-    var retiredLabel: String? { disabled ? "disabled" : deprecated ? "deprecated" : nil }
+    var retiredLabel: String? { disabled ? String(localized: "disabled") : deprecated ? String(localized: "deprecated") : nil }
 
     /// "Deprecated since 2026-10-30: is a versioned formula." / "Disabled
     /// …". nil when neither applies.
     var retiredDetail: String? {
         guard isRetired else { return nil }
         let l = lifecycle
-        let word = disabled ? "Disabled" : "Deprecated"
         let date = disabled ? l?.disableDate : l?.deprecationDate
         let reason = PackageLifecycle.describe(reason: disabled ? l?.disableReason : l?.deprecationReason)
-        var s = word
-        if let date { s += " since \(date)" }
-        if let reason { s += ": \(name) \(reason)" }
+        let s: String
+        switch (disabled, date) {
+        case (true, let date?): s = String(localized: "Disabled since \(date)")
+        case (true, nil): s = String(localized: "Disabled")
+        case (false, let date?): s = String(localized: "Deprecated since \(date)")
+        case (false, nil): s = String(localized: "Deprecated")
+        }
+        if let reason { return String(localized: "\(s): \(name) \(reason).") }
         return s + "."
     }
 
@@ -161,9 +167,13 @@ public extension Package {
         guard kind == .formula else { return [] }
         var out: [String] = []
         if kegOnly == true {
-            out.append("Keg-only" + (kegOnlyReason.map { ": \($0)" } ?? "") + ". Not linked into the prefix on purpose.")
+            if let kegOnlyReason {
+                out.append(String(localized: "Keg-only: \(kegOnlyReason). Not linked into the prefix on purpose."))
+            } else {
+                out.append(String(localized: "Keg-only. Not linked into the prefix on purpose."))
+            }
         } else if linked == false {
-            out.append("Not linked: its commands aren't in Homebrew's bin. `brew link \(name)` links it.")
+            out.append(String(localized: "Not linked: its commands aren't in Homebrew's bin. `brew link \(name)` links it."))
         }
         return out
     }

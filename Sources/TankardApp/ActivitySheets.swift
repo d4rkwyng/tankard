@@ -34,7 +34,7 @@ struct UpgradePlanView: View {
             HStack(spacing: 12) {
                 BrandMark(size: 64, intelbrew: store.intelbrewMode)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Upgrade \(plan.rows.count) package\(plan.rows.count == 1 ? "" : "s")?")
+                    Text(plan.rows.count == 1 ? String(localized: "Upgrade 1 package?") : String(localized: "Upgrade \(plan.rows.count) packages?"))
                         .font(.system(size: 14, weight: .bold))
                     Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
@@ -107,12 +107,12 @@ struct PlanRow: View {
             .layoutPriority(1)
             Spacer()
             if let w = row.warning {
-                CompileBadge(text: skipped ? "Skipped: would compile" : w.label)
+                CompileBadge(text: skipped ? String(localized: "Skipped: would compile") : w.label)
             } else if p.kind == .cask {
-                SourceBadge(kind: .cask, label: "Cask")
+                SourceBadge(kind: .cask, label: String(localized: "Cask"))
             } else {
                 SourceBadge(kind: .bottle, label: intelbrew && p.bottleURL.map({ StatusClassifier.bottleOrigin(url: $0) }) == .intelbrew
-                            ? "Intelbrew bottle" : "Bottle")
+                            ? String(localized: "Intelbrew bottle") : String(localized: "Bottle"))
             }
         }
         .padding(.horizontal, 10)
@@ -170,7 +170,7 @@ struct AppManagementSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(AppManagement.steps().enumerated()), id: \.offset) { i, step in
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text("\(i + 1)")
+                        Text(verbatim: "\(i + 1)")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundStyle(theme.onAccent)
                             .frame(width: 18, height: 18)
@@ -242,7 +242,7 @@ struct CleanupSheet: View {
             HStack(spacing: 6) {
                 Image(systemName: "externaldrive").foregroundStyle(.secondary)
                 Text("Download cache").foregroundStyle(.secondary)
-                Text(cleanup.cachePath.map { AppPaths.tildePath($0) } ?? "–")
+                Text(verbatim: cleanup.cachePath.map { AppPaths.tildePath($0) } ?? "–")
                     .font(.system(size: 11, design: .monospaced)).lineLimit(1).truncationMode(.middle)
                 Spacer()
                 if cleanup.measuringCache {
@@ -286,19 +286,20 @@ struct CleanupSheet: View {
     @ViewBuilder
     private func results(_ d: CleanupDryRun) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(d.items.isEmpty ? "Nothing to clean up" : "Would free about \(d.totalText)")
+            Text(d.items.isEmpty ? String(localized: "Nothing to clean up") : String(localized: "Would free about \(d.totalText)"))
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(d.items.isEmpty ? Color.secondary : theme.accent)
             if !d.items.isEmpty {
-                Text("\(d.items.count) item\(d.items.count == 1 ? "" : "s")\(d.totalIsFromBrew ? "" : " (Tankard's sum: brew printed no total)")")
+                Text(verbatim: (d.items.count == 1 ? String(localized: "1 item") : String(localized: "\(d.items.count) items"))
+                     + (d.totalIsFromBrew ? "" : " " + String(localized: "(Tankard's sum: brew printed no total)")))
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
         }
         if !d.items.isEmpty {
             HStack(spacing: 14) {
-                kindTotal("Old versions", d.bytes(of: .oldVersion))
-                kindTotal("Downloads", d.bytes(of: .download))
-                kindTotal("Logs and other", d.bytes(of: .log) + d.bytes(of: .other))
+                kindTotal(String(localized: "Old versions"), d.bytes(of: .oldVersion))
+                kindTotal(String(localized: "Downloads"), d.bytes(of: .download))
+                kindTotal(String(localized: "Logs and other"), d.bytes(of: .log) + d.bytes(of: .other))
             }
             .font(.system(size: 11.5))
             ScrollView {
@@ -325,7 +326,7 @@ struct CleanupSheet: View {
             }
         }
         if !d.warnings.isEmpty {
-            Text("brew printed \(d.warnings.count) warning\(d.warnings.count == 1 ? "" : "s") (\(d.warnings[0]))")
+            Text(d.warnings.count == 1 ? String(localized: "brew printed 1 warning (\(d.warnings[0]))") : String(localized: "brew printed \(d.warnings.count) warnings (\(d.warnings[0]))"))
                 .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.tail)
         }
     }
@@ -344,14 +345,14 @@ struct CleanupSheet: View {
 struct CompileInstallConfirm: View {
     /// Built in steps: one long concatenation is too much for Swift 6.0's type checker.
     static func message(_ e: CatalogEntry, intelbrew: Bool, deps: [CatalogEntry], estimate: String?) -> String {
-        var m = "\(e.name) has no \(intelbrew ? "Intelbrew " : "")bottle for this Mac, so brew compiles it"
+        var m = intelbrew ? String(localized: "\(e.name) has no Intelbrew bottle for this Mac, so brew compiles it") : String(localized: "\(e.name) has no bottle for this Mac, so brew compiles it")
         if !deps.isEmpty {
             let names = deps.prefix(4).map(\.name).joined(separator: ", ")
-            let noun = deps.count == 1 ? "dependency" : "dependencies"
-            m += ", and \(deps.count) \(noun) (\(names))"
+            let noun = deps.count == 1 ? String(localized: "dependency") : String(localized: "dependencies")
+            m += String(localized: ", and \(deps.count) \(noun) (\(names))")
         }
-        m += ". That can take a long time on older Macs."
-        if let estimate { m += " It took \(estimate)." }
+        m += String(localized: ". That can take a long time on older Macs.")
+        if let estimate { m += String(localized: " It took \(estimate).") }
         return m
     }
 

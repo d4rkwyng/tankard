@@ -30,10 +30,9 @@ public struct TapAddRequest: Equatable, Sendable, Identifiable {
     /// The confirmation's text. Official Homebrew taps don't need the warning.
     public var warning: String {
         let isOfficial = name.lowercased().hasPrefix("homebrew/")
-        if isOfficial { return "brew clones \(remote ?? name) and reads its formulae and casks." }
-        return "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac "
-            + "when brew loads them, and installs from it run their install steps. Add only taps you trust. "
-            + "brew clones \(remote ?? name)."
+        let source = remote ?? name
+        if isOfficial { return String(localized: "brew clones \(source) and reads its formulae and casks.") }
+        return String(localized: "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones \(source).")
     }
 }
 
@@ -43,9 +42,9 @@ public enum TapsFilter: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
     public var title: String {
         switch self {
-        case .all: return "All"
-        case .thirdParty: return "Third-party"
-        case .official: return "Official"
+        case .all: return String(localized: "All")
+        case .thirdParty: return String(localized: "Third-party")
+        case .official: return String(localized: "Official")
         }
     }
 
@@ -92,7 +91,7 @@ public final class TapsStore {
     /// Reads the list. A failure keeps the last list.
     public func load() async {
         guard let run else {
-            setPhase(.failed("Homebrew isn't ready yet."))
+            setPhase(.failed(String(localized: "Homebrew isn't ready yet.")))
             return
         }
         loadToken += 1
@@ -106,11 +105,13 @@ public final class TapsStore {
                 setPhase(.ready)
             } catch {
                 let tail = r.stderrString.split(whereSeparator: \.isNewline).suffix(3).joined(separator: "\n")
-                setPhase(.failed("brew tap-info printed something Tankard couldn't read" + (tail.isEmpty ? "." : ":\n" + tail)))
+                setPhase(.failed(tail.isEmpty
+                    ? String(localized: "brew tap-info printed something Tankard couldn't read.")
+                    : String(localized: "brew tap-info printed something Tankard couldn't read:\n\(tail)")))
             }
         } catch {
             guard token == loadToken else { return }
-            setPhase(.failed("Couldn't run brew tap-info: \(error)"))
+            setPhase(.failed(String(localized: "Couldn't run brew tap-info: \(String(describing: error))")))
         }
         if let s = selection, !taps.contains(where: { $0.id == s }) { select(nil) }
     }
@@ -222,7 +223,7 @@ public extension AppStore {
             guard let r = await runQuick(args) else { return }
             await taps.load()
             if r.failed {
-                error = Self.quickError(verb: trusted ? "Trust" : "Untrust", name: tap.name, args: args, result: r)
+                error = Self.quickError(verb: trusted ? String(localized: "Trust") : String(localized: "Untrust"), name: tap.name, args: args, result: r)
             }
         }
     }

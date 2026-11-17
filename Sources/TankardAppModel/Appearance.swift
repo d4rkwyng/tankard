@@ -9,21 +9,21 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .dark: return "Dark"
-        case .light: return "Light"
-        case .system: return "System"
-        case .tankard: return "Tankard"
-        case .dracula: return "Dracula"
+        case .dark: return String(localized: "Dark")
+        case .light: return String(localized: "Light")
+        case .system: return String(localized: "System")
+        case .tankard: return String(localized: "Tankard")
+        case .dracula: return String(localized: "Dracula")
         }
     }
 
     public var help: String {
         switch self {
-        case .dark: return "Always dark."
-        case .light: return "Always light."
-        case .system: return "Follows macOS."
-        case .tankard: return "Deep purple and amber, like the icon. Dark underneath."
-        case .dracula: return "Dracula colours (draculatheme.com, MIT)"
+        case .dark: return String(localized: "Always dark.")
+        case .light: return String(localized: "Always light.")
+        case .system: return String(localized: "Follows macOS.")
+        case .tankard: return String(localized: "Deep purple and amber, like the icon. Dark underneath.")
+        case .dracula: return String(localized: "Dracula colours (draculatheme.com, MIT)")
         }
     }
 

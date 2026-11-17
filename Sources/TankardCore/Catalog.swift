@@ -164,9 +164,9 @@ public enum CatalogKindFilter: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .all: return "All"
-        case .formulae: return "Formulae"
-        case .casks: return "Casks"
+        case .all: return String(localized: "All")
+        case .formulae: return String(localized: "Formulae")
+        case .casks: return String(localized: "Casks")
         }
     }
 

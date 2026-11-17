@@ -44,10 +44,10 @@ public enum AppManagement {
     /// itself (false: it opens Privacy & Security, so step 1 says where to go).
     public static func steps(anchored: Bool = true) -> [String] {
         [
-            anchored ? "Click Open System Settings. It opens Privacy & Security → App Management."
-                : "Click Open System Settings, then choose Privacy & Security → App Management.",
-            "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications.",
-            "Come back and click I've done this.",
+            anchored ? String(localized: "Click Open System Settings. It opens Privacy & Security → App Management.")
+                : String(localized: "Click Open System Settings, then choose Privacy & Security → App Management."),
+            String(localized: "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications."),
+            String(localized: "Come back and click I've done this."),
         ]
     }
 }
@@ -79,16 +79,16 @@ public enum AboutInfo {
     public static let repository = URL(string: "https://github.com/d4rkwyng/tankard")!
     public static let newIssue = URL(string: "https://github.com/d4rkwyng/tankard/issues/new")!
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
-    public static let author = "Made by d4rkwyng"
-    public static let licence = "BSD-2-Clause licence"
+    public static let author = String(localized: "Made by d4rkwyng")
+    public static let licence = String(localized: "BSD-2-Clause licence")
     public static let homebrew = URL(string: "https://brew.sh")!
     /// About Homebrew, kept short enough for the About panel's width
     /// (~280 pt): "brew.sh" is the link.
-    public static let homebrewLine = "An independent app for Homebrew (brew.sh)."
-    public static let homebrewCopyright = "Homebrew © Homebrew contributors, BSD-2-Clause."
-    public static let notAffiliated = "Not affiliated with or endorsed by the Homebrew project."
+    public static let homebrewLine = String(localized: "An independent app for Homebrew (brew.sh).")
+    public static let homebrewCopyright = String(localized: "Homebrew © Homebrew contributors, BSD-2-Clause.")
+    public static let notAffiliated = String(localized: "Not affiliated with or endorsed by the Homebrew project.")
     /// Intelbrew mode: replaces the plain Intelbrew link line.
-    public static let intelbrewBottlesLine = "Intelbrew bottles from d4rkwyng/intelbrew"
+    public static let intelbrewBottlesLine = String(localized: "Intelbrew bottles from d4rkwyng/intelbrew")
     /// The About panel's copyright line, in the owner's name as First
     /// Light's LICENSE ("Copyright (c) 2026 d4rkwyng") and both apps'
     /// "Made by d4rkwyng" credit. LICENSE keeps "Tankard contributors".
@@ -98,8 +98,12 @@ public enum AboutInfo {
     /// never shown (the bundle sets CFBundleVersion to the same string, and
     /// the panel is given an empty build so AppKit adds no "(N)").
     public static func versionLine(short: String?, build: String?) -> String {
-        let v = (short?.isEmpty == false ? short : nil) ?? (build?.isEmpty == false ? build : nil) ?? TankardVersion.string
-        return "Version \(v)"
+        String(localized: "Version \(versionString(short: short, build: build))")
+    }
+
+    /// The version alone ("0.3.0"): short, else build, else TankardVersion.
+    static func versionString(short: String?, build: String?) -> String {
+        (short?.isEmpty == false ? short : nil) ?? (build?.isEmpty == false ? build : nil) ?? TankardVersion.string
     }
 
     /// What goes in the panel's application-version slot ("0.3.0") and
@@ -107,6 +111,6 @@ public enum AboutInfo {
     public static func panelVersions(bundle: [String: Any]?) -> (application: String, build: String) {
         let short = bundle?["CFBundleShortVersionString"] as? String
         let build = bundle?["CFBundleVersion"] as? String
-        return (String(versionLine(short: short, build: build).dropFirst("Version ".count)), "")
+        return (versionString(short: short, build: build), "")
     }
 }

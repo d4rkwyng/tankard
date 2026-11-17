@@ -7,21 +7,21 @@ import TankardCore
 /// The explanations behind each setting's ⓘ button (and its tooltip).
 public enum SettingsHelp {
     // General
-    public static let showMenuBarIcon = "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running."
-    public static let notifyNewUpgrades = "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default."
-    public static let checkInterval = "How often the background check runs, while \"Notify me about new upgrades\" is on."
-    public static let openAtLogin = "Opens Tankard when you log in, as a macOS login item."
+    public static let showMenuBarIcon = String(localized: "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
+    public static let notifyNewUpgrades = String(localized: "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
+    public static let checkInterval = String(localized: "How often the background check runs, while \"Notify me about new upgrades\" is on.")
+    public static let openAtLogin = String(localized: "Opens Tankard when you log in, as a macOS login item.")
 
     // Upgrades
-    public static let includeSelfUpdatingApps = "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default."
-    public static let dontQuitApps = "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it."
-    public static let scanOnRefresh = "Runs brew vulns after each refresh. " + InsightSettings.scanPrivacyNote + " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default."
-    public static let notifyNewVulnerabilities = "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask."
+    public static let includeSelfUpdatingApps = String(localized: "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
+    public static let dontQuitApps = String(localized: "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
+    public static let scanOnRefresh = String(localized: "Runs brew vulns after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default.")
+    public static let notifyNewVulnerabilities = String(localized: "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.")
 
     // Upgrades → Automatic updates
-    public static let autoUpgrade = "Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default."
-    public static var safeMode: String { "Safe mode (always on):\n" + AutoUpdateSafeMode.rules.map { "• " + $0 }.joined(separator: "\n") }
-    public static let bumpRule = "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions."
+    public static let autoUpgrade = String(localized: "Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.")
+    public static var safeMode: String { String(localized: "Safe mode (always on):") + "\n" + AutoUpdateSafeMode.rules.map { "• " + $0 }.joined(separator: "\n") }
+    public static let bumpRule = String(localized: "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions.")
 
     /// Every explanation (tests: none is empty).
     public static var all: [String] {
@@ -59,7 +59,7 @@ public enum ScanOutcome: Equatable, Sendable {
 public enum ScanProgressText {
     /// "Scanning 42 formulae…"
     public static func running(formulae: Int) -> String {
-        formulae > 0 ? "Scanning \(formulae) formula\(formulae == 1 ? "" : "e")…" : "Scanning…"
+        formulae > 0 ? (formulae == 1 ? String(localized: "Scanning \(formulae) formula…") : String(localized: "Scanning \(formulae) formulae…")) : String(localized: "Scanning…")
     }
 
     /// "0:07", "1:02".
@@ -72,9 +72,9 @@ public enum ScanProgressText {
     public static func outcome(_ o: ScanOutcome) -> String {
         switch o {
         case .done(let checked, let found, let complete):
-            return "Scanned \(checked) · found \(found)" + (complete ? "" : " · partial scan")
-        case .stopped: return "Scan stopped"
-        case .timedOut: return "Scan timed out"
+            return String(localized: "Scanned \(checked) · found \(found)") + (complete ? "" : String(localized: " · partial scan"))
+        case .stopped: return String(localized: "Scan stopped")
+        case .timedOut: return String(localized: "Scan timed out")
         }
     }
 }

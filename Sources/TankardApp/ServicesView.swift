@@ -22,13 +22,13 @@ extension BrewService {
 
     var statusLabel: String {
         switch status {
-        case .started: return "Running"
-        case .scheduled: return "Scheduled"
-        case .stopped: return "Stopped"
-        case .error: return exitCode.map { "Error (exit \($0))" } ?? "Error"
-        case .none: return "Not running"
-        case .unknown: return "Unknown"
-        case .other: return "Other"
+        case .started: return String(localized: "Running")
+        case .scheduled: return String(localized: "Scheduled")
+        case .stopped: return String(localized: "Stopped")
+        case .error: return exitCode.map { String(localized: "Error (exit \($0))") } ?? String(localized: "Error")
+        case .none: return String(localized: "Not running")
+        case .unknown: return String(localized: "Unknown")
+        case .other: return String(localized: "Other")
         case .unrecognized(let s): return s
         }
     }
@@ -58,7 +58,7 @@ struct ServicesView: View {
     private var header: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(services.phase == .loading && services.services.isEmpty ? "Reading services…" : services.summary)
+                Text(services.phase == .loading && services.services.isEmpty ? String(localized: "Reading services…") : services.summary)
                     .font(.system(size: 13, weight: .medium))
                 Text("Background services from installed formulae. Tankard controls your own (~/Library/LaunchAgents), never root's.")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
@@ -128,10 +128,10 @@ struct ServicesView: View {
         }
         .overlay {
             if services.phase == .ready && rows.isEmpty {
-                ContentUnavailableView(services.services.isEmpty ? "No services" : "No matches", systemImage: "gearshape.2",
+                ContentUnavailableView(services.services.isEmpty ? String(localized: "No services") : String(localized: "No matches"), systemImage: "gearshape.2",
                                        description: Text(services.services.isEmpty
-                                                         ? "None of the installed formulae has a background service."
-                                                         : "No service matches “\(services.query)”."))
+                                                         ? String(localized: "None of the installed formulae has a background service.")
+                                                         : String(localized: "No service matches “\(services.query)”.")))
             } else if case .failed(let message) = services.phase {
                 ContentUnavailableView {
                     Label("brew services failed", systemImage: "exclamationmark.triangle")
@@ -167,13 +167,13 @@ struct ServiceDetail: View {
                         }
                     }
                     Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {
-                        row("User", s.user ?? "not loaded")
-                        if let pid = s.pid { row("PID", "\(pid)") }
-                        row("Exit code", s.exitCode.map(String.init) ?? "–")
-                        if let label = s.serviceName { row("Label", label, mono: true) }
-                        if let file = s.file { row("Plist", abbreviate(file), mono: true) }
-                        if let log = s.logPath { row("Log", abbreviate(log), mono: true) }
-                        if let log = s.errorLogPath { row("Error log", abbreviate(log), mono: true) }
+                        row(String(localized: "User"), s.user ?? String(localized: "not loaded"))
+                        if let pid = s.pid { row(String(localized: "PID"), "\(pid)") }
+                        row(String(localized: "Exit code"), s.exitCode.map(String.init) ?? "–")
+                        if let label = s.serviceName { row(String(localized: "Label"), label, mono: true) }
+                        if let file = s.file { row(String(localized: "Plist"), abbreviate(file), mono: true) }
+                        if let log = s.logPath { row(String(localized: "Log"), abbreviate(log), mono: true) }
+                        if let log = s.errorLogPath { row(String(localized: "Error log"), abbreviate(log), mono: true) }
                     }
                     .font(.system(size: 12))
                     if let cmd = s.command {
@@ -194,7 +194,7 @@ struct ServiceDetail: View {
         } else {
             VStack(spacing: 8) {
                 Image(systemName: "gearshape.2").font(.system(size: 28)).foregroundStyle(.tertiary)
-                Text(services.services.isEmpty ? "No services" : "Select a service").foregroundStyle(.secondary)
+                Text(services.services.isEmpty ? String(localized: "No services") : String(localized: "Select a service")).foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -239,8 +239,8 @@ struct ServiceDetail: View {
                     }
                 }
                 Text(s.status == .none
-                     ? "Start also registers it to launch at login."
-                     : "Stop also unregisters it from launching at login.")
+                     ? String(localized: "Start also registers it to launch at login.")
+                     : String(localized: "Stop also unregisters it from launching at login."))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
         }

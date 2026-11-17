@@ -19,11 +19,11 @@ struct UninstallSheet: View {
                     .foregroundStyle(dependents.isEmpty ? Color.red : Color.orange)
                     .frame(width: 40)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(dependents.isEmpty ? "Uninstall \(package.name)?" : "\(package.name) can't be uninstalled")
+                    Text(dependents.isEmpty ? String(localized: "Uninstall \(package.name)?") : String(localized: "\(package.name) can't be uninstalled"))
                         .font(.system(size: 14, weight: .bold))
                     Text(dependents.isEmpty
-                         ? "Removes \(package.name) \(package.installedVersion). Its dependencies stay installed."
-                         : "These installed packages need it. Uninstall them first, or keep \(package.name).")
+                         ? String(localized: "Removes \(package.name) \(package.installedVersion). Its dependencies stay installed.")
+                         : String(localized: "These installed packages need it. Uninstall them first, or keep \(package.name)."))
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)

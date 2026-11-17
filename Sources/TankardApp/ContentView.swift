@@ -18,7 +18,7 @@ struct ContentView: View {
             }
         }
         .navigationTitle(store.intelbrewMode ? "Intelbrew" : "Tankard")
-        .navigationSubtitle(store.intelbrewMode ? "Intel bottles for macOS 14+" : "Homebrew")
+        .navigationSubtitle(store.intelbrewMode ? String(localized: "Intel bottles for macOS 14+") : "Homebrew")
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 BrandMark(size: 32, intelbrew: store.intelbrewMode)
@@ -29,14 +29,14 @@ struct ContentView: View {
             }
             if !store.homebrewState.needsWelcome {
                 ToolbarItem(placement: .principal) {
-                    ThemedSegmentedPicker(title: "View", selection: $store.tab, options: MainTab.allCases, label: \.title)
+                    ThemedSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases, label: \.title)
                         .environment(\.theme, Theme.of(appearance.theme))
                         .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
                         ProgressView().controlSize(.small).frame(width: 28)
-                            .help(store.refreshPhase ?? "Refreshing")
+                            .help(store.refreshPhase ?? String(localized: "Refreshing"))
                     } else {
                         Button {
                             Task { await store.refresh(manual: true) }
@@ -157,7 +157,7 @@ struct ContentView: View {
         }
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
-                    prompt: store.tab == .installed ? "Search installed" : store.tab == .services ? "Search services" : "Search Homebrew")
+                    prompt: store.tab == .installed ? String(localized: "Search installed") : store.tab == .services ? String(localized: "Search services") : String(localized: "Search Homebrew"))
     }
 
     /// The toolbar search field searches the tab on screen.
@@ -317,7 +317,7 @@ struct SummaryStrip: View {
 
             FilterActions(store: store)
 
-            ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.segmented) { f in
+            ThemedSegmentedPicker(title: String(localized: "Filter"), selection: $store.filter, options: PackageFilter.segmented) { f in
                 "\(f.title)  \(store.count(f))"
             }
             MoreFiltersPicker(store: store)
@@ -494,11 +494,11 @@ struct PackageTable: View {
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {
-                ContentUnavailableView(store.search.isEmpty ? "Nothing here" : "No matches",
+                ContentUnavailableView(store.search.isEmpty ? String(localized: "Nothing here") : String(localized: "No matches"),
                                        systemImage: store.search.isEmpty ? "tray" : "magnifyingglass",
-                                       description: Text(store.search.isEmpty ? "No packages in this group." : "No package matches “\(store.search)”."))
+                                       description: Text(store.search.isEmpty ? String(localized: "No packages in this group.") : String(localized: "No package matches “\(store.search)”.")))
             } else if store.report == nil && store.isRefreshing {
-                ProgressView(store.refreshPhase ?? "Loading…")
+                ProgressView(store.refreshPhase ?? String(localized: "Loading…"))
             }
         }
     }

@@ -62,7 +62,9 @@ public extension AppStore {
         let p = pinnedUpgrades
         guard !p.isEmpty else { return nil }
         let names = p.prefix(3).map(\.name).joined(separator: ", ") + (p.count > 3 ? " +\(p.count - 3)" : "")
-        return "\(p.count) pinned upgrade\(p.count == 1 ? "" : "s") not included (\(names))"
+        return p.count == 1
+            ? String(localized: "\(p.count) pinned upgrade not included (\(names))")
+            : String(localized: "\(p.count) pinned upgrades not included (\(names))")
     }
 
     /// The installed packages' dependency graph (built per call; cheap).
@@ -78,7 +80,7 @@ public extension AppStore {
             // Re-read first: a successful refresh clears `error`.
             await refresh(manual: false)
             if r.failed {
-                error = Self.quickError(verb: pinned ? "Pin" : "Unpin", name: p.name, args: args, result: r)
+                error = Self.quickError(verb: pinned ? String(localized: "Pin") : String(localized: "Unpin"), name: p.name, args: args, result: r)
             }
         }
     }
@@ -115,16 +117,16 @@ public extension AppStore {
             let code = try await queue.run(cmd) { collector.add($0) }
             return QuickResult(exitCode: code, lines: collector.lines())
         } catch {
-            return QuickResult(exitCode: -1, lines: ["Could not run brew: \(error)"])
+            return QuickResult(exitCode: -1, lines: [String(localized: "Could not run brew: \(String(describing: error))")])
         }
     }
 
     /// "brew pin --formula homebrew/core/xz didn't start: brew services stop
     /// -- php is still running. Try again when it finishes."
     nonisolated static func notStartedNotice(_ command: String, running: String?, upgrading: Bool) -> String {
-        if let running { return "\(command) didn't start: \(running) is still running. Try again when it finishes." }
-        if upgrading { return "\(command) didn't start: an upgrade is still running. Try again when it finishes." }
-        return "\(command) didn't start: Homebrew isn't ready yet. Refresh, then try again."
+        if let running { return String(localized: "\(command) didn't start: \(running) is still running. Try again when it finishes.") }
+        if upgrading { return String(localized: "\(command) didn't start: an upgrade is still running. Try again when it finishes.") }
+        return String(localized: "\(command) didn't start: Homebrew isn't ready yet. Refresh, then try again.")
     }
 
     /// Shows `text` in the status bar, then clears it after `seconds`
@@ -145,16 +147,16 @@ public extension AppStore {
     static func quickError(verb: String, name: String, args: [String], result: QuickResult, sudoCommand: String? = nil) -> StoreError {
         let display = BrewCommands.display(args)
         if SudoDetector.needsSudo(result.lines) || sudoCommand != nil {
-            return StoreError(title: "\(verb) \(name) needs administrator rights",
-                              detail: "Tankard never runs sudo. Run this in Terminal:",
+            return StoreError(title: String(localized: "\(verb) \(name) needs administrator rights"),
+                              detail: String(localized: "Tankard never runs sudo. Run this in Terminal:"),
                               terminalCommand: sudoCommand ?? "sudo " + display)
         }
         let tail = result.lines.suffix(6).joined(separator: "\n")
         // 0.6: brew's lock, no network, a full disk, permissions.
         if let kind = BrewFailure.classify(result.lines) {
-            return StoreError(title: "\(verb) \(name): \(kind.title)", detail: kind.explanation + "\n\n" + tail,
+            return StoreError(title: String(localized: "\(verb) \(name): \(kind.title)"), detail: kind.explanation + "\n\n" + tail,
                               terminalCommand: display)
         }
-        return StoreError(title: "\(verb) \(name) failed (exit \(result.exitCode))", detail: tail, terminalCommand: display)
+        return StoreError(title: String(localized: "\(verb) \(name) failed (exit \(result.exitCode))"), detail: tail, terminalCommand: display)
     }
 }

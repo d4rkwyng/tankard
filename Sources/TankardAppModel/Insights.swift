@@ -111,7 +111,7 @@ public final class InsightSettings {
     public nonisolated static let noQuitKey = "HOMEBREW_NO_UPGRADE_QUIT_CASKS"
 
     /// The line beside the scan toggle.
-    public nonisolated static let scanPrivacyNote = "Sends your installed formula names and versions to OSV.dev (via brew vulns)."
+    public nonisolated static let scanPrivacyNote = String(localized: "Sends your installed formula names and versions to OSV.dev (via brew vulns).")
 }
 
 public extension BrewCommands {
@@ -202,8 +202,8 @@ public extension Package {
     /// The table's warning badge: "⚠ High · 3".
     var vulnerabilityBadge: String? {
         guard let list = vulnerabilities, !list.isEmpty, let worst = worstSeverity else { return nil }
-        let word = worst == .unknown ? "Vulnerable" : worst.label
-        return list.count > 1 ? "\(word) · \(list.count)" : word
+        let word = worst == .unknown ? String(localized: "Vulnerable") : worst.label
+        return list.count > 1 ? String(localized: "\(word) · \(list.count)") : word
     }
 }
 
@@ -247,7 +247,9 @@ public struct PostInstallNotes: Identifiable, Equatable, Sendable {
 
     /// "Notes from 2 upgraded packages".
     public var subtitle: String {
-        "Notes from \(notes.count) \(action.past) package\(notes.count == 1 ? "" : "s")"
+        notes.count == 1
+            ? String(localized: "Notes from \(notes.count) \(action.past) package")
+            : String(localized: "Notes from \(notes.count) \(action.past) packages")
     }
 }
 
@@ -284,7 +286,7 @@ public final class InsightsStore {
     /// process group, as for any cancelled brew call) and the scan reported
     /// as timed out. A setting so tests can shorten it.
     @ObservationIgnored public var scanTimeout: Duration = .seconds(60)
-    public static let scanTimedOutMessage = "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept."
+    public static let scanTimedOutMessage = String(localized: "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept.")
     @ObservationIgnored private var sizesTask: Task<Void, Never>?
 
     public init(settings: InsightSettings, cache: InsightsCache?, ttl: TimeInterval, now: @escaping @Sendable () -> Date) {

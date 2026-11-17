@@ -71,9 +71,9 @@ public struct RestorePoint: Codable, Sendable, Equatable, Identifiable {
         case upgrade, autoUpdate, manual
         public var title: String {
             switch self {
-            case .upgrade: return "Before upgrade"
-            case .autoUpdate: return "Before auto-update"
-            case .manual: return "Saved by hand"
+            case .upgrade: return String(localized: "Before upgrade")
+            case .autoUpdate: return String(localized: "Before auto-update")
+            case .manual: return String(localized: "Saved by hand")
             }
         }
     }
@@ -185,13 +185,13 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
     /// Short, for the row.
     public var title: String {
         switch self {
-        case .cask: return "Cask: no older version"
-        case .cleanedUp: return "Old version was cleaned up"
-        case .kegOnly: return "Keg-only"
-        case .pinned: return "Pinned"
-        case .hasDependents: return "Other packages need it"
-        case .otherKegWouldLink: return "Another old version is installed"
-        case .headVersion: return "HEAD build"
+        case .cask: return String(localized: "Cask: no older version")
+        case .cleanedUp: return String(localized: "Old version was cleaned up")
+        case .kegOnly: return String(localized: "Keg-only")
+        case .pinned: return String(localized: "Pinned")
+        case .hasDependents: return String(localized: "Other packages need it")
+        case .otherKegWouldLink: return String(localized: "Another old version is installed")
+        case .headVersion: return String(localized: "HEAD build")
         }
     }
 
@@ -199,19 +199,19 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
     public var explanation: String {
         switch self {
         case .cask:
-            return "Homebrew keeps only the current cask definition, so it can't install an older version of an app."
+            return String(localized: "Homebrew keeps only the current cask definition, so it can't install an older version of an app.")
         case .cleanedUp:
-            return "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time."
+            return String(localized: "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time.")
         case .kegOnly:
-            return "brew link would need --force for a keg-only formula, which links it where it wasn't before."
+            return String(localized: "brew link would need --force for a keg-only formula, which links it where it wasn't before.")
         case .pinned:
-            return "brew won't uninstall a pinned formula. Unpin it first."
+            return String(localized: "brew won't uninstall a pinned formula. Unpin it first.")
         case .hasDependents:
-            return "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them."
+            return String(localized: "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them.")
         case .otherKegWouldLink:
-            return "brew link always links the newest version left, which isn't the one in this restore point."
+            return String(localized: "brew link always links the newest version left, which isn't the one in this restore point.")
         case .headVersion:
-            return "HEAD builds have no fixed version to go back to."
+            return String(localized: "HEAD builds have no fixed version to go back to.")
         }
     }
 }

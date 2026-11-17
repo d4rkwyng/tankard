@@ -45,11 +45,11 @@ struct PackageRelationsSection: View {
                 let uses = graph.dependents(of: package)
                 let deps = graph.dependencies(of: package)
                 if !deps.isEmpty {
-                    PackageLinks(title: "Depends on", help: "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)",
+                    PackageLinks(title: String(localized: "Depends on"), help: String(localized: "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)"),
                                  packages: deps) { store.reveal($0) }
                 }
                 if !uses.isEmpty {
-                    PackageLinks(title: "Used by", help: "brew uses --installed: installed packages that need it",
+                    PackageLinks(title: String(localized: "Used by"), help: String(localized: "brew uses --installed: installed packages that need it"),
                                  packages: uses) { store.reveal($0) }
                 }
                 if !graph.directNames(of: package).isEmpty {
@@ -78,8 +78,8 @@ struct PinBox: View {
                     Text("Pinned at \(p.installedVersion)").font(.system(size: 12, weight: .medium))
                 }
                 Text(p.upgradeAvailable
-                     ? "\(p.currentVersion ?? "A newer version") is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it."
-                     : "brew won't upgrade it, and Upgrade all leaves it out.")
+                     ? String(localized: "\(p.currentVersion ?? "A newer version") is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.")
+                     : String(localized: "brew won't upgrade it, and Upgrade all leaves it out."))
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -131,7 +131,7 @@ struct PackageLinks: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text("\(title) (\(packages.count))")
+            Text(verbatim: "\(title) (\(packages.count))")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .help(help)
             FlowLayout(spacing: 5) {
@@ -216,7 +216,7 @@ struct DependencyTreeView: View {
         } label: {
             Text("Dependency tree (\(root.children.count) direct, \(Set(allNames(root)).count) in all)")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
-                .help("brew deps --tree --installed \(root.name)")
+                .help(Text(verbatim: "brew deps --tree --installed \(root.name)"))
         }
     }
 
@@ -253,7 +253,7 @@ struct TreeRow: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help(open ? "Collapse" : "Expand (\(node.descendantCount))")
+                .help(open ? String(localized: "Collapse") : String(localized: "Expand (\(node.descendantCount))"))
             }
             if let id = node.packageID {
                 LinkChip(title: node.name) { select(id) }

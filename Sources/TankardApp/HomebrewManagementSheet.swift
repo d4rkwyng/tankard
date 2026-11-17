@@ -49,8 +49,8 @@ struct HomebrewManagementSheet: View {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "terminal").foregroundStyle(.secondary)
                     Text(kind == .revert
-                         ? "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here."
-                         : "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard.")
+                         ? String(localized: "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here.")
+                         : String(localized: "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard."))
                         .font(.system(size: 12))
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -74,11 +74,11 @@ struct HomebrewManagementSheet: View {
                 .foregroundStyle(kind == .revert ? Color.orange : Color.red)
                 .frame(width: 40)
             VStack(alignment: .leading, spacing: 4) {
-                Text(kind == .revert ? "Revert to standard Homebrew?" : "Uninstall Homebrew?")
+                Text(kind == .revert ? String(localized: "Revert to standard Homebrew?") : String(localized: "Uninstall Homebrew?"))
                     .font(.system(size: 14, weight: .bold))
                 Text(kind == .revert
-                     ? "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are."
-                     : "Removes Homebrew and every package installed with it: \(store.packages.filter { $0.kind == .formula }.count) formulae and \(store.packages.filter { $0.kind == .cask }.count) casks. This can't be undone.")
+                     ? String(localized: "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are.")
+                     : String(localized: "Removes Homebrew and every package installed with it: \(store.packages.filter { $0.kind == .formula }.count) formulae and \(store.packages.filter { $0.kind == .cask }.count) casks. This can't be undone."))
                     .font(.system(size: 12))
                     .foregroundStyle(kind == .revert ? Color.secondary : Color.primary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -89,10 +89,10 @@ struct HomebrewManagementSheet: View {
     @ViewBuilder
     private func revertBody(_ plan: RevertPlan?) -> some View {
         if let plan {
-            step("1. Remove the Intelbrew lines from your shell profile",
+            step(String(localized: "1. Remove the Intelbrew lines from your shell profile"),
                  plan.edits.isEmpty
-                 ? "None of your zsh or bash startup files sets them, so nothing is edited."
-                 : "Each file is backed up first, next to itself (….\(plan.backupSuffix)). These lines are removed:")
+                 ? String(localized: "None of your zsh or bash startup files sets them, so nothing is edited.")
+                 : String(localized: "Each file is backed up first, next to itself (….\(plan.backupSuffix)). These lines are removed:"))
             ForEach(plan.edits) { e in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(e.label).font(.system(size: 11.5, weight: .semibold, design: .monospaced))
@@ -116,12 +116,12 @@ struct HomebrewManagementSheet: View {
                 .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))
             }
             if !plan.brewEnvNotes.isEmpty {
-                note("A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" + plan.brewEnvNotes.joined(separator: "\n"))
+                note(String(localized: "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n") + plan.brewEnvNotes.joined(separator: "\n"))
             }
-            step("2. Point Homebrew/brew back at upstream, then 3. brew update",
-                 "The variables are unset first, so this brew update doesn't put the fork back.")
+            step(String(localized: "2. Point Homebrew/brew back at upstream, then 3. brew update"),
+                 String(localized: "The variables are unset first, so this brew update doesn't put the fork back."))
             commandList(plan.commands)
-            note("Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\".")
+            note(String(localized: "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"."))
         } else {
             Text("Not in Intelbrew mode: nothing to revert.").font(.system(size: 12))
         }
@@ -129,15 +129,15 @@ struct HomebrewManagementSheet: View {
 
     @ViewBuilder
     private func uninstallBody(_ plan: RevertPlan?) -> some View {
-        step("Homebrew's official uninstaller", "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything.")
+        step(String(localized: "Homebrew's official uninstaller"), String(localized: "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything."))
         if let prefix = store.report?.host.prefix {
             CommandBox(command: HomebrewManagement.uninstallCommand(prefix: prefix))
-            note("It deletes \(prefix)'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password.")
+            note(String(localized: "It deletes \(prefix)'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password."))
         } else {
-            note("Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.")
+            note(String(localized: "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first."))
         }
         if let plan, !plan.edits.isEmpty {
-            note("Intelbrew's lines stay in your shell profile (\(plan.edits.map(\.label).joined(separator: ", "))); remove them by hand afterwards, or use Revert to Standard Homebrew first.")
+            note(String(localized: "Intelbrew's lines stay in your shell profile (\(plan.edits.map(\.label).joined(separator: ", "))); remove them by hand afterwards, or use Revert to Standard Homebrew first."))
         }
     }
 
@@ -187,7 +187,7 @@ struct HomebrewManagementSheet: View {
             script = HomebrewManagement.uninstallScript(prefix: prefix)
         }
         if isDemo {
-            failureState.wrappedValue = "Demo mode: Terminal not opened."
+            failureState.wrappedValue = String(localized: "Demo mode: Terminal not opened.")
             return
         }
         do {
@@ -195,10 +195,10 @@ struct HomebrewManagementSheet: View {
             if NSWorkspace.shared.open(url) {
                 openedState.wrappedValue = true
             } else {
-                failureState.wrappedValue = "Couldn't open Terminal. Copy the commands instead."
+                failureState.wrappedValue = String(localized: "Couldn't open Terminal. Copy the commands instead.")
             }
         } catch {
-            failureState.wrappedValue = "Couldn't write the script: \(error.localizedDescription)"
+            failureState.wrappedValue = String(localized: "Couldn't write the script: \(error.localizedDescription)")
         }
     }
 

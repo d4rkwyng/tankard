@@ -58,7 +58,7 @@ struct UpgradeSheet: View {
                 .frame(height: 236)
 
             HStack(spacing: 8) {
-                Text(session.logURL.map { "Full log saved to \(AppPaths.tilde($0))" } ?? "Demo mode: no log file written")
+                Text(session.logURL.map { String(localized: "Full log saved to \(AppPaths.tilde($0))") } ?? String(localized: "Demo mode: no log file written"))
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -97,7 +97,7 @@ struct Chip: View {
 
     var body: some View {
         let compiles = (action == .upgrade || action == .install) && item.package.kind == .formula && item.package.upgradeHasBottle != true
-        let name = item.package.name + (compiles ? " · source" : "")
+        let name = item.package.name + (compiles ? String(localized: " · source") : "")
         HStack(spacing: 4) {
             switch item.state {
             case .done:
@@ -204,10 +204,10 @@ struct LogLine: View {
             return Text(text).foregroundColor(theme.logText.opacity(0.62))
         }
         if text.hasPrefix("==>") {
-            return Text("==>").foregroundColor(theme.logArrow).fontWeight(.bold) + Text(text.dropFirst(3))
+            return Text(verbatim: "==>").foregroundColor(theme.logArrow).fontWeight(.bold) + Text(text.dropFirst(3))
         }
         if text.hasPrefix("🍺") {
-            return Text("🍺").foregroundColor(theme.logGood) + Text(text.dropFirst(1))
+            return Text(verbatim: "🍺").foregroundColor(theme.logGood) + Text(text.dropFirst(1))
         }
         return Text(text)
     }

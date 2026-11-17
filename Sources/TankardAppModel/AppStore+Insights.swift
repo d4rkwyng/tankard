@@ -54,7 +54,7 @@ extension AppStore {
             return SelfUpdatingCasks.mark(report, greedy: greedy)
         } catch {
             var r = report
-            r.warnings.append("Self-updating apps not checked: \(error)")
+            r.warnings.append(String(localized: "Self-updating apps not checked: \(String(describing: error))"))
             return r
         }
     }

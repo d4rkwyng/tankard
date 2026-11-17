@@ -94,7 +94,7 @@ public struct TapInfo: Equatable, Sendable, Identifiable {
     }
 
     /// "Official", "Third-party".
-    public var originLabel: String { official ? "Official" : "Third-party" }
+    public var originLabel: String { official ? String(localized: "Official") : String(localized: "Third-party") }
 }
 
 /// The argv Tankard runs (after `brew`). Never `--force`: `brew untap
@@ -124,9 +124,9 @@ public enum TapInput {
 
         public var description: String {
             switch self {
-            case .emptyName: return "Type a tap name: user/repo."
-            case .badName: return "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces."
-            case .badURL: return "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces."
+            case .emptyName: return String(localized: "Type a tap name: user/repo.")
+            case .badName: return String(localized: "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces.")
+            case .badURL: return String(localized: "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces.")
             }
         }
     }
@@ -182,11 +182,12 @@ public enum TapRemoval: Equatable, Sendable {
     public var reason: String? {
         switch self {
         case .allowed: return nil
-        case .notTapped: return "Not tapped: Homebrew reads this tap from its API, so there is nothing to remove."
+        case .notTapped: return String(localized: "Not tapped: Homebrew reads this tap from its API, so there is nothing to remove.")
         case .inUse(let names):
             let list = names.prefix(5).joined(separator: ", ") + (names.count > 5 ? " +\(names.count - 5)" : "")
-            return "\(names.count) installed package\(names.count == 1 ? " comes" : "s come") from this tap (\(list)). "
-                + "Uninstall \(names.count == 1 ? "it" : "them") first; brew refuses to untap while they're installed."
+            return names.count == 1
+                ? String(localized: "1 installed package comes from this tap (\(list)). Uninstall it first; brew refuses to untap while they're installed.")
+                : String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first; brew refuses to untap while they're installed.")
         }
     }
 }

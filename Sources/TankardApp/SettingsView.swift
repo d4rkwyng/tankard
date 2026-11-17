@@ -47,7 +47,7 @@ struct SettingsView: View {
             Form {
                 Picker("Appearance", selection: $appearance.theme) {
                     ForEach(AppTheme.allCases) { t in
-                        Text(t.title + (t == .default ? " (default)" : "")).tag(t)
+                        Text(t.title + (t == .default ? String(localized: " (default)") : "")).tag(t)
                     }
                 }
                 .pickerStyle(.radioGroup)
@@ -98,7 +98,7 @@ struct GeneralSettings: View {
             }
             HStack(spacing: 6) {
                 Picker("Check every", selection: $settings.checkIntervalHours) {
-                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text("\(h) hour\(h == 1 ? "" : "s")").tag(h) }
+                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(h == 1 ? String(localized: "1 hour") : String(localized: "\(h) hours")).tag(h) }
                 }
                 .disabled(!settings.notifyNewUpgrades)
                 .fixedSize()

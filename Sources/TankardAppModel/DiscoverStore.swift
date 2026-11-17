@@ -93,7 +93,7 @@ public final class DiscoverStore {
     /// Intelbrew mode without homebrew/cask tapped.
     public var casksNotice: String? {
         guard isLocalTaps, phase == .ready, !casksEnabled else { return nil }
-        return "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)"
+        return String(localized: "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)")
     }
 
     // MARK: loading
@@ -124,7 +124,7 @@ public final class DiscoverStore {
             if all.isEmpty {
                 phase = .failed(String(describing: error))
             } else {
-                warning = "Couldn't reload: \(error)"
+                warning = String(localized: "Couldn't reload: \(String(describing: error))")
             }
         }
     }
@@ -185,11 +185,11 @@ public final class DiscoverStore {
 
     /// "566 of 8,732 bottled"
     public var bottledCountText: String {
-        "\(bottledCount.formatted()) of \(formulaCount.formatted()) bottled"
+        String(localized: "\(bottledCount.formatted()) of \(formulaCount.formatted()) bottled")
     }
 
     /// The chip's label: "Has Intel bottle" in Intelbrew mode, "Has bottle" otherwise.
-    public var bottledChipTitle: String { isLocalTaps ? "Has Intel bottle" : "Has bottle" }
+    public var bottledChipTitle: String { isLocalTaps ? String(localized: "Has Intel bottle") : String(localized: "Has bottle") }
 
     public func entry(named name: String) -> CatalogEntry? {
         _ = revision

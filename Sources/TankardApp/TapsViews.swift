@@ -35,13 +35,13 @@ struct TapAddConfirmation: ViewModifier {
     var taps: TapsStore
 
     func body(content: Content) -> some View {
-        content.alert(taps.pendingAdd.map { "Add \($0.name)?" } ?? "Add tap?",
+        content.alert(taps.pendingAdd.map { String(localized: "Add \($0.name)?") } ?? String(localized: "Add tap?"),
                       isPresented: pendingBinding({ taps.pendingAdd != nil }, { taps.cancelPending() }),
                       presenting: taps.pendingAdd) { _ in
             Button("Cancel", role: .cancel) { taps.cancelPending() }
             Button("Add Tap") { store.confirmAddTap() }
         } message: { req in
-            Text(req.warning + "\n\nTankard runs: " + req.command)
+            Text(req.warning + String(localized: "\n\nTankard runs: ") + req.command)
         }
     }
 }
@@ -57,10 +57,10 @@ struct TapsSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            SheetHeader(icon: "point.3.connected.trianglepath.dotted", title: "Taps",
-                        subtitle: "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.")
+            SheetHeader(icon: "point.3.connected.trianglepath.dotted", title: String(localized: "Taps"),
+                        subtitle: String(localized: "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it."))
             HStack(spacing: 8) {
-                ThemedSegmentedPicker(title: "Show", selection: Binding(get: { taps.filter }, set: { taps.setFilter($0) }),
+                ThemedSegmentedPicker(title: String(localized: "Show"), selection: Binding(get: { taps.filter }, set: { taps.setFilter($0) }),
                                       options: TapsFilter.allCases, label: \.title)
                 Spacer()
                 Text("\(taps.visibleTaps.count) of \(taps.taps.count)").font(.system(size: 11)).foregroundStyle(.secondary)
@@ -118,9 +118,9 @@ struct TapsSheet: View {
     private func row(_ t: TapInfo) -> some View {
         let selected = taps.selection == t.id
         let installed = store.installedCount(from: t)
-        var facts = ["\(t.formulaCount) formula\(t.formulaCount == 1 ? "" : "e")", "\(t.caskCount) cask\(t.caskCount == 1 ? "" : "s")",
-                     "\(installed) installed from it"]
-        if let last = t.lastCommit { facts.append("updated \(last)") }
+        var facts = [t.formulaCount == 1 ? String(localized: "1 formula") : String(localized: "\(t.formulaCount) formulae"), t.caskCount == 1 ? String(localized: "1 cask") : String(localized: "\(t.caskCount) casks"),
+                     String(localized: "\(installed) installed from it")]
+        if let last = t.lastCommit { facts.append(String(localized: "updated \(last)")) }
         return Button {
             taps.select(selected ? nil : t.id)
         } label: {
@@ -129,13 +129,13 @@ struct TapsSheet: View {
                     Text(t.name).font(.system(size: 12.5, weight: .semibold, design: .monospaced))
                     chip(t.originLabel, t.official ? theme.accent : .secondary)
                     if !t.official, let trusted = t.trusted {
-                        chip(trusted ? "Trusted" : "Not trusted", trusted ? theme.accent : theme.warning(scheme).text)
+                        chip(trusted ? String(localized: "Trusted") : String(localized: "Not trusted"), trusted ? theme.accent : theme.warning(scheme).text)
                     }
-                    if !t.tapped { chip("API", .secondary).help("Read from Homebrew's API; not tapped locally.") }
-                    if t.isPrivate { chip("Private", .secondary) }
+                    if !t.tapped { chip(String(localized: "API"), .secondary).help(String(localized: "Read from Homebrew's API; not tapped locally.")) }
+                    if t.isPrivate { chip(String(localized: "Private"), .secondary) }
                     Spacer()
                 }
-                Text(t.remote ?? "Homebrew's API (formulae.brew.sh)")
+                Text(t.remote ?? String(localized: "Homebrew's API (formulae.brew.sh)"))
                     .font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
                 Text(facts.joined(separator: " · ")).font(.system(size: 11)).foregroundStyle(.secondary)
             }
@@ -157,7 +157,7 @@ struct TapsSheet: View {
                     .disabled(store.installedCount(from: t) == 0)
                     .help("The Installed list, filtered to this tap (tap:\(t.name))")
                 if !t.official, t.trusted != nil {
-                    Button(t.trusted == true ? "Untrust…" : "Trust…") { taps.requestTrust(t) }
+                    Button(t.trusted == true ? String(localized: "Untrust…") : String(localized: "Trust…")) { taps.requestTrust(t) }
                         .disabled(store.isBusy)
                 }
                 Button("Remove…") { _ = taps.requestRemove(t, packages: store.packages) }
@@ -199,7 +199,7 @@ struct TapsAlerts: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .alert(taps.pendingRemove.map { "Remove \($0.name)?" } ?? "Remove tap?",
+            .alert(taps.pendingRemove.map { String(localized: "Remove \($0.name)?") } ?? String(localized: "Remove tap?"),
                    isPresented: pendingBinding({ taps.pendingRemove != nil }, { taps.cancelPending() }),
                presenting: taps.pendingRemove) { _ in
             Button("Cancel", role: .cancel) { taps.cancelPending() }
@@ -208,16 +208,16 @@ struct TapsAlerts: ViewModifier {
             Text("Nothing installed comes from it. brew deletes its local copy; you can add it again later.\n\nTankard runs: "
                  + BrewCommands.display(TapCommands.untap(t.name)))
         }
-            .alert(taps.pendingTrust.map { ($0.trusted == true ? "Stop trusting " : "Trust ") + $0.name + "?" } ?? "Trust?",
+            .alert(taps.pendingTrust.map { $0.trusted == true ? String(localized: "Stop trusting \($0.name)?") : String(localized: "Trust \($0.name)?") } ?? String(localized: "Trust?"),
                isPresented: pendingBinding({ taps.pendingTrust != nil }, { taps.cancelPending() }),
                presenting: taps.pendingTrust) { t in
             Button("Cancel", role: .cancel) { taps.cancelPending() }
-            Button(t.trusted == true ? "Untrust" : "Trust") { store.confirmTrustTap() }
+            Button(t.trusted == true ? String(localized: "Untrust") : String(localized: "Trust")) { store.confirmTrustTap() }
         } message: { t in
             Text((t.trusted == true
-                  ? "brew no longer counts this tap as trusted (brew untrust: \"Stop trusting non-official tap formulae, casks or commands\")."
-                  : "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust.")
-                 + "\n\nTankard runs: " + BrewCommands.display(TapCommands.trust(t.name, t.trusted != true)))
+                  ? String(localized: "brew no longer counts this tap as trusted (brew untrust: \"Stop trusting non-official tap formulae, casks or commands\").")
+                  : String(localized: "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust."))
+                 + String(localized: "\n\nTankard runs: ") + BrewCommands.display(TapCommands.trust(t.name, t.trusted != true)))
         }
     }
 }

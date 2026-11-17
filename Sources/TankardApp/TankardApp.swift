@@ -189,7 +189,7 @@ struct TankardApp: App {
     // binding never writes an unchanged value (see AppSettings.showMenuBarIcon).
     // 0.3.0 broke this and crashed at launch; Scripts/launch-check.sh guards it.
     var body: some Scene {
-        WindowGroup(options.isDemo ? "Tankard (demo)" : "Tankard", id: "main") {
+        WindowGroup(options.isDemo ? String(localized: "Tankard (demo)") : "Tankard", id: "main") {
             ContentView(store: store, options: options, appearance: appearance)
                 .frame(minWidth: 820, minHeight: 480)
         }

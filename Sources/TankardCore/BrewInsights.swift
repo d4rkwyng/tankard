@@ -36,7 +36,7 @@ extension BrewClient {
         }
         let err = r.stderrString
         if err.contains("Unknown command") || err.contains("Invalid usage") && err.contains("vulns") {
-            throw InsightError.unsupported("This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it.")
+            throw InsightError.unsupported(String(localized: "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it."))
         }
         if r.exitCode != 0 {
             throw BrewClientError.commandFailed(command: command, exitCode: r.exitCode, stderr: err)

@@ -60,7 +60,7 @@ struct PackageDetail: View {
                             .font(.system(size: 18)).foregroundStyle(.white))
                     VStack(alignment: .leading, spacing: 1) {
                         Text(p.name).font(.system(size: 16, weight: .bold)).lineLimit(1).truncationMode(.middle)
-                        Text(p.desc ?? (p.kind == .cask ? "Cask" : "Formula"))
+                        Text(p.desc ?? (p.kind == .cask ? String(localized: "Cask") : String(localized: "Formula")))
                             .font(.system(size: 11.5)).foregroundStyle(.secondary).lineLimit(2)
                     }
                 }
@@ -70,7 +70,7 @@ struct PackageDetail: View {
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.up.circle").foregroundStyle(theme.upgrade)
-                        (Text("Upgrade ready: ") + Text("\(p.installedVersion) → \(p.currentVersion ?? "?")")
+                        (Text("Upgrade ready: ") + Text(verbatim: "\(p.installedVersion) → \(p.currentVersion ?? "?")")
                             .foregroundColor(theme.upgrade).fontWeight(.semibold))
                             .font(.system(size: 12))
                             .lineLimit(2)
@@ -96,26 +96,26 @@ struct PackageDetail: View {
                 }
 
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {
-                    row("Installed", p.installedVersion)
+                    row(String(localized: "Installed"), p.installedVersion)
                     if p.installedVersions.count > 1 {
-                        row("Kegs", p.installedVersions.joined(separator: ", "))
+                        row(String(localized: "Kegs"), p.installedVersions.joined(separator: ", "))
                     }
-                    row("Available", p.currentVersion ?? "–")
+                    row(String(localized: "Available"), p.currentVersion ?? "–")
                     if p.kind == .formula {
-                        row("Bottle tag", p.bottleTag ?? "none for this Mac", mono: p.bottleTag != nil)
+                        row(String(localized: "Bottle tag"), p.bottleTag ?? String(localized: "none for this Mac"), mono: p.bottleTag != nil)
                         if let origin = p.bottleOrigin {
-                            row("Bottle from", originText(origin))
+                            row(String(localized: "Bottle from"), originText(origin))
                         }
-                        row("Installed as", p.requested ? "Requested" : "Dependency")
+                        row(String(localized: "Installed as"), p.requested ? String(localized: "Requested") : String(localized: "Dependency"))
                     } else {
-                        row("Kind", p.autoUpdates == true ? "Cask, updates itself" : "Cask")
+                        row(String(localized: "Kind"), p.autoUpdates == true ? String(localized: "Cask, updates itself") : String(localized: "Cask"))
                     }
                     if let date = p.installedAt {
-                        row("Installed on", date.formatted(Self.dateFormat))
+                        row(String(localized: "Installed on"), date.formatted(Self.dateFormat))
                     }
-                    if let tap = p.tap { row("Tap", tap, mono: true) }
-                    if p.pinned { row("Pinned", "Yes") }
-                    if let bytes = p.diskBytes { row("On disk", DiskSizes.format(bytes)) }
+                    if let tap = p.tap { row(String(localized: "Tap"), tap, mono: true) }
+                    if p.pinned { row(String(localized: "Pinned"), String(localized: "Yes")) }
+                    if let bytes = p.diskBytes { row(String(localized: "On disk"), DiskSizes.format(bytes)) }
                 }
                 .font(.system(size: 12))
 
@@ -137,7 +137,7 @@ struct PackageDetail: View {
                         }
                         .buttonStyle(.primaryAction)
                         .disabled(!canUpgrade || p.isHeld)
-                        .help(p.isHeld ? "Pinned: unpin it first" : command)
+                        .help(p.isHeld ? String(localized: "Pinned: unpin it first") : command)
                         if let skipVersion, !p.isHeld, let v = p.currentVersion {
                             SkipVersionRow(skipped: p.versionSkipped == true, version: v, toggle: skipVersion)
                         }
@@ -180,7 +180,7 @@ struct PackageDetail: View {
         switch o {
         case .intelbrew: return "Intelbrew"
         case .homebrew: return "Homebrew"
-        case .other: return "Other"
+        case .other: return String(localized: "Other")
         }
     }
 
@@ -199,7 +199,7 @@ struct PackageDetail: View {
                 }
             case .source:
                 Image(systemName: "hammer").foregroundStyle(theme.badge(.source).dot)
-                Text(p.currentHasBottle == true ? "Built from source; a bottle exists for the current version" : "Built from source")
+                Text(p.currentHasBottle == true ? String(localized: "Built from source; a bottle exists for the current version") : String(localized: "Built from source"))
             case .newer:
                 Image(systemName: "arrow.up.forward.circle").foregroundStyle(theme.badge(.newer).dot)
                 Text("Installed version is newer than the tap's \(p.currentVersion ?? "?"). brew won't downgrade it.")
@@ -229,7 +229,8 @@ struct ReplaceWithBottleBox: View {
         let command = BrewCommands.display(BrewCommands.replaceWithBottleArguments(for: package))
         VStack(alignment: .leading, spacing: 7) {
             SourceBadge(kind: .bottle, label: label)
-            Text("Built from source, but \(package.installedVersion) has a bottle for this Mac\(package.bottleTag.map { " (\($0))" } ?? ""). Replacing it pours the bottle instead; the version stays the same.")
+            Text(package.bottleTag.map { String(localized: "Built from source, but \(package.installedVersion) has a bottle for this Mac (\($0)). Replacing it pours the bottle instead; the version stays the same.") }
+                 ?? String(localized: "Built from source, but \(package.installedVersion) has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same."))
                 .font(.system(size: 11.5))
                 .fixedSize(horizontal: false, vertical: true)
             CommandBox(command: command)
@@ -265,7 +266,7 @@ struct UninstallSection: View {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "lock").foregroundStyle(.secondary)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Can't uninstall: needed by \(dependents.count) installed package\(dependents.count == 1 ? "" : "s")")
+                        Text(dependents.count == 1 ? String(localized: "Can't uninstall: needed by 1 installed package") : String(localized: "Can't uninstall: needed by \(dependents.count) installed packages"))
                             .font(.system(size: 11.5, weight: .medium))
                         Text(dependents.map(\.name).joined(separator: ", "))
                             .font(.system(size: 11, design: .monospaced))

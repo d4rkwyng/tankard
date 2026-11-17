@@ -118,8 +118,11 @@ public enum VulnerabilitySeverity: String, Codable, Sendable, CaseIterable, Comp
     /// "Critical", "High", "Medium", "Low", "Unknown severity".
     public var label: String {
         switch self {
-        case .unknown: return "Unknown severity"
-        default: return rawValue.prefix(1).uppercased() + rawValue.dropFirst()
+        case .unknown: return String(localized: "Unknown severity")
+        case .low: return String(localized: "Low")
+        case .medium: return String(localized: "Medium")
+        case .high: return String(localized: "High")
+        case .critical: return String(localized: "Critical")
         }
     }
 }
@@ -168,12 +171,14 @@ public struct PackageVulnerability: Codable, Sendable, Equatable, Identifiable {
     /// A commit only says upstream has a fix; brew's formula may not
     /// have a release with it yet.
     public var fixText: String {
-        if !fixedVersions.isEmpty { return "Fixed in " + fixedVersions.joined(separator: ", ") }
+        if !fixedVersions.isEmpty { let versions = fixedVersions.joined(separator: ", "); return String(localized: "Fixed in \(versions)") }
         if let c = fixedCommits.first {
-            let more = fixedCommits.count > 1 ? " (+\(fixedCommits.count - 1) more)" : ""
-            return "Fixed upstream in commit \(c.prefix(7))\(more)"
+            let short = String(c.prefix(7))
+            return fixedCommits.count > 1
+                ? String(localized: "Fixed upstream in commit \(short) (+\(fixedCommits.count - 1) more)")
+                : String(localized: "Fixed upstream in commit \(short)")
         }
-        return "No fix listed"
+        return String(localized: "No fix listed")
     }
 }
 
@@ -242,16 +247,16 @@ public struct VulnerabilityScan: Codable, Sendable, Equatable {
     public var partialReason: String? {
         guard !complete else { return nil }
         var parts: [String] = []
-        if !skipped.isEmpty { parts.append("\(skipped.count) with no source repository brew can match") }
+        if !skipped.isEmpty { parts.append(String(localized: "\(skipped.count) with no source repository brew can match")) }
         let untrusted = unscanned.values.filter { $0 == "untrusted_tap" }.count
-        if untrusted > 0 { parts.append("\(untrusted) from an untrusted tap") }
+        if untrusted > 0 { parts.append(String(localized: "\(untrusted) from an untrusted tap")) }
         let other = unscanned.count - untrusted
-        if other > 0 { parts.append("\(other) brew couldn't load") }
+        if other > 0 { parts.append(String(localized: "\(other) brew couldn't load")) }
         if !outdatedWithoutSBOM.isEmpty {
-            parts.append("\(outdatedWithoutSBOM.count) checked against the current formula, not the installed keg")
+            parts.append(String(localized: "\(outdatedWithoutSBOM.count) checked against the current formula, not the installed keg"))
         }
         let notChecked = skipped.count + unscanned.count
-        let head = notChecked > 0 ? "\(notChecked) not checked" : "brew marks it incomplete"
+        let head = notChecked > 0 ? String(localized: "\(notChecked) not checked") : String(localized: "brew marks it incomplete")
         return parts.isEmpty ? head : "\(head): " + parts.joined(separator: ", ")
     }
 }

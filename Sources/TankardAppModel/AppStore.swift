@@ -25,9 +25,9 @@ public enum MainTab: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
     public var title: String {
         switch self {
-        case .installed: return "Installed"
-        case .discover: return "Discover"
-        case .services: return "Services"
+        case .installed: return String(localized: "Installed")
+        case .discover: return String(localized: "Discover")
+        case .services: return String(localized: "Services")
         }
     }
 }
@@ -319,7 +319,7 @@ public final class AppStore {
         do {
             client = try resolvedClient()
         } catch {
-            self.error = StoreError(title: "Homebrew not found", detail: String(describing: error))
+            self.error = StoreError(title: String(localized: "Homebrew not found"), detail: String(describing: error))
             if case BrewClientError.brewNotFound(let searched) = error {
                 homebrewState = .missing(searched: searched)
             } else {
@@ -330,11 +330,11 @@ public final class AppStore {
 
         var updateError: StoreError?
         if manual {
-            refreshPhase = "Running brew update…"
+            refreshPhase = String(localized: "Running brew update…")
             updateError = await runUpdate(client)
         }
 
-        refreshPhase = "Reading installed packages…"
+        refreshPhase = String(localized: "Reading installed packages…")
         do {
             let fresh = await withSelfUpdatingCasks(try await client.status(), client: client)
             report = insights.decorate(fresh)
@@ -345,7 +345,7 @@ public final class AppStore {
             startInsights(force: true)
         } catch {
             // Keep what's on screen; say what went wrong.
-            self.error = updateError ?? StoreError(title: "Refresh failed", detail: String(describing: error))
+            self.error = updateError ?? StoreError(title: String(localized: "Refresh failed"), detail: String(describing: error))
             if let broken = await Self.probeBroken(client) {
                 homebrewState = broken
             } else if homebrewState != .ready {
@@ -374,15 +374,15 @@ public final class AppStore {
             let lines = collector.lines()
             let tail = lines.suffix(6).joined(separator: "\n")
             if SudoDetector.needsSudo(lines) {
-                return StoreError(title: "brew update needs administrator rights",
-                                  detail: "Run this in Terminal:", terminalCommand: cmd.display)
+                return StoreError(title: String(localized: "brew update needs administrator rights"),
+                                  detail: String(localized: "Run this in Terminal:"), terminalCommand: cmd.display)
             }
             if let kind = BrewFailure.classify(lines) {
                 return StoreError(title: kind.title, detail: kind.explanation + "\n\n" + tail, terminalCommand: cmd.display)
             }
-            return StoreError(title: "brew update failed (exit \(code))", detail: tail, terminalCommand: cmd.display)
+            return StoreError(title: String(localized: "brew update failed (exit \(code))"), detail: tail, terminalCommand: cmd.display)
         } catch {
-            return StoreError(title: "brew update did not run", detail: String(describing: error))
+            return StoreError(title: String(localized: "brew update did not run"), detail: String(describing: error))
         }
     }
 
@@ -396,7 +396,7 @@ public final class AppStore {
             guard r.exitCode != 0 else { return nil }
             let text = (r.stderrString + "\n" + r.stdoutString).trimmingCharacters(in: .whitespacesAndNewlines)
             let tail = text.split(separator: "\n").suffix(8).joined(separator: "\n")
-            return .broken(path: path, detail: tail.isEmpty ? "brew --version exited \(r.exitCode)" : tail)
+            return .broken(path: path, detail: tail.isEmpty ? String(localized: "brew --version exited \(r.exitCode)") : tail)
         } catch {
             return .broken(path: path, detail: String(describing: error))
         }

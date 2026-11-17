@@ -62,17 +62,17 @@ public enum HomebrewInstaller: String, Sendable, CaseIterable, Identifiable {
 
     public var title: String {
         switch self {
-        case .intelbrew: return "Install Intelbrew (recommended for Intel Macs)"
-        case .homebrew: return "Install standard Homebrew"
+        case .intelbrew: return String(localized: "Install Intelbrew (recommended for Intel Macs)")
+        case .homebrew: return String(localized: "Install standard Homebrew")
         }
     }
 
     public var detail: String {
         switch self {
         case .intelbrew:
-            return "Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles."
+            return String(localized: "Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles.")
         case .homebrew:
-            return "The official installer from brew.sh."
+            return String(localized: "The official installer from brew.sh.")
         }
     }
 
