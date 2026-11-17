@@ -81,6 +81,18 @@ for b in tankard_TankardApp.bundle tankard_TankardAppModel.bundle; do
     fi
 done
 
+# Localizations: SwiftUI's Text("...") and String(localized:) look in
+# Bundle.main, and the app's language is picked from the main bundle's
+# .lproj folders, so the generated Localizable.strings go there too.
+LPROJ_FROM=$(find "$BIN/tankard_TankardApp.bundle" -maxdepth 3 -name 'en.lproj' -type d | head -1)
+[ -n "$LPROJ_FROM" ] || { echo "bundle-app.sh: no localizations in tankard_TankardApp.bundle (run Scripts/l10n.py compile)" >&2; exit 1; }
+LOCALIZATIONS=""
+for d in "$(dirname "$LPROJ_FROM")"/*.lproj; do
+    cp -R "$d" "$APP/Contents/Resources/"
+    LOCALIZATIONS="$LOCALIZATIONS        <string>$(basename "$d" .lproj)</string>
+"
+done
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -106,6 +118,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <string>6.0</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+$LOCALIZATIONS    </array>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>LSApplicationCategoryType</key>

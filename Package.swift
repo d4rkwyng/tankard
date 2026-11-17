@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "tankard",
+    defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "TankardCore", targets: ["TankardCore"]),
@@ -32,10 +33,16 @@ let package = Package(
         ),
 
         // The SwiftUI app. Scripts/bundle-app.sh wraps it in Tankard.app.
+        // Localizations: <lang>.lproj/Localizable.strings, generated from
+        // Resources/Localizable.xcstrings by Scripts/l10n.py compile (the
+        // CLT have no xcstringstool to compile the catalog itself).
         .executableTarget(
             name: "TankardApp",
             dependencies: ["TankardCore", "TankardAppModel"],
-            resources: [.copy("Resources/intelbrew-mug.png"), .copy("Resources/tankard-mark.png")]
+            resources: [
+                .copy("Resources/intelbrew-mug.png"), .copy("Resources/tankard-mark.png"),
+                .process("Resources/Localizations"),
+            ]
         ),
 
         .testTarget(

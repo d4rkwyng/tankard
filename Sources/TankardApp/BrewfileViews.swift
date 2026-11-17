@@ -205,7 +205,9 @@ struct BrewfileSheet: View {
             }
             .frame(height: min(CGFloat(p.items.count) * 27, 270))
             if !p.compiling.isEmpty {
-                Label("\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time.",
+                Label(p.compiling.count == 1
+                      ? String(localized: "1 would compile from source: no bottle for this Mac. That can take a long time.")
+                      : String(localized: "\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time."),
                       systemImage: "hammer.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.orange)
             }
