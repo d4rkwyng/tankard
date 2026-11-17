@@ -54,7 +54,15 @@ struct ContextMenuTests {
         p.upgradeAvailable = true
         p.currentVersion = "9.9.9"
         let m = ContextMenus.installed(p, dependents: [], dependencies: [], compileWarning: nil, busy: false, kegPath: nil)
-        #expect(ids(m).prefix(3) == ["upgrade", "pin", "uninstall"])
+        // 0.6: "Skip Version" follows Upgrade.
+        #expect(ids(m).prefix(4) == ["upgrade", "skip-version", "pin", "uninstall"])
+        #expect(item(m, "skip-version")?.title == "Skip Version 9.9.9")
+        #expect(item(m, "skip-version")?.action == .skipVersion(true))
+        var skipped = p
+        skipped.versionSkipped = true
+        let ms = ContextMenus.installed(skipped, dependents: [], dependencies: [], compileWarning: nil, busy: false, kegPath: nil)
+        #expect(item(ms, "unskip-version")?.action == .skipVersion(false))
+        #expect(item(ms, "upgrade")?.isEnabled == true)
         #expect(item(m, "upgrade")?.title == "Upgrade xz")
         #expect(item(m, "upgrade")?.action == .upgrade)
         #expect(item(m, "copy-command")?.title == "Copy Upgrade Command")

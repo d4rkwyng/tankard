@@ -81,6 +81,7 @@ enum ContextMenuActions {
         case .showDependents: store.showDependents(of: p)
         case .pin: store.setPinned(p, true)
         case .unpin: store.setPinned(p, false)
+        case .skipVersion(let on): store.setVersionSkipped(p, on)
         case .install, .showInInstalled: break // Discover only
         }
     }

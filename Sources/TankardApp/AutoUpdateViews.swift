@@ -76,6 +76,8 @@ struct AutoUpdateSettingsSection: View {
                 .help("Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default.")
             AutoUpdateScheduleRow(settings: settings)
                 .disabled(!settings.enabled)
+            AutoUpdateRulesRows(rules: updater.rules)
+                .disabled(!settings.enabled)
             Text(statusLine(settings))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
             if appSettings?.showMenuBarIcon == false {
@@ -104,6 +106,7 @@ struct AutoUpdateSettingsSection: View {
     private func statusLine(_ s: AutoUpdateSettings) -> String {
         guard s.enabled else { return "Off" }
         let now = Date()
+        if updater.rules.isSnoozed(now: now) { return AutoUpdateText.snoozed(until: updater.rules.snoozeEnds, now: now) }
         let d = AutoUpdatePolicy.decide(enabled: true, schedule: s.schedule, since: s.since, lastRun: s.lastRun,
                                         launchedAt: .distantPast, now: now, onAC: true, idle: .infinity, busy: false)
         if case .notDue(let next) = d { return "\(s.schedule.text()). Next run: \(AutoUpdateText.when(next, now: now))" }
