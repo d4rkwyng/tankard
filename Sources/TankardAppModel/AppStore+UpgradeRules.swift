@@ -18,6 +18,28 @@ extension AppStore {
             return rules.decorate(r)
         }
         rules.onSkipsChange = { [weak self] in self?.applyInsights() }
+        // 0.8: per-app self-update choices.
+        insights.keepSelfUpdating = { [weak rules] p in
+            guard let rules else { return false }
+            return SelfUpdateRule.keptByHomebrew(p, homebrewTokens: rules.homebrewUpdatedTokens)
+        }
+        rules.onPolicyChange = { [weak self] in
+            guard let self else { return }
+            self.applyInsights()
+            // A cask newly set to "Homebrew updates it" needs brew's --greedy list.
+            if !self.insights.settings.includeSelfUpdatingApps, self.report != nil,
+               self.packages.contains(where: { SelfUpdateRule.keptByHomebrew($0, homebrewTokens: rules.homebrewUpdatedTokens) && $0.selfUpdatingUpgrade == nil && !$0.upgradeAvailable }) {
+                Task { await self.refresh(manual: false) }
+            }
+        }
+    }
+
+    /// 0.8: "App updates itself" / "Homebrew updates it" (detail pane, Adopt Apps).
+    public func selfUpdatePolicy(_ p: Package) -> SelfUpdatePolicy { upgradeRules.selfUpdatePolicy(p.name) }
+
+    public func setSelfUpdatePolicy(_ p: Package, _ policy: SelfUpdatePolicy) {
+        guard p.kind == .cask else { return }
+        upgradeRules.setSelfUpdatePolicy(p.name, policy)
     }
 
     /// "Skip This Version" / "Don't Skip" (detail pane, right-click).

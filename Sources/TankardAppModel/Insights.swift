@@ -306,13 +306,17 @@ public final class InsightsStore {
     /// sizes, and self-updating casks unmarked when that setting is off.
     /// Idempotent: every field is set from scratch.
     public func decorate(_ report: StatusReport) -> StatusReport {
-        var r = settings.includeSelfUpdatingApps ? report : SelfUpdatingCasks.unmark(report)
+        var r = settings.includeSelfUpdatingApps ? report : SelfUpdatingCasks.unmark(report, keeping: keepSelfUpdating)
         for i in r.packages.indices {
             r.packages[i].vulnerabilities = vulnerabilityScan?.vulnerabilities(for: r.packages[i])
             r.packages[i].diskBytes = sizes?.bytes(for: r.packages[i])
         }
         return extraDecoration?(r) ?? r
     }
+
+    /// 0.8: casks whose `--greedy` upgrade stays listed with "Include
+    /// self-updating apps" off ("Homebrew updates it").
+    @ObservationIgnored public var keepSelfUpdating: (Package) -> Bool = { _ in false }
 
     /// 0.6: laid over after the insights (skipped versions).
     @ObservationIgnored public var extraDecoration: ((StatusReport) -> StatusReport)?

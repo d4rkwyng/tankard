@@ -112,6 +112,8 @@ struct ToolSheetView: View {
             if let a = store.autoremove { AutoremoveSheet(store: store, autoremove: a) }
         case .taps:
             TapsSheet(store: store, taps: store.taps)
+        case .adopt:
+            AdoptSheet(store: store, adopt: store.adopt)
         }
     }
 }
@@ -442,6 +444,7 @@ func applyV06ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     case .history?: store.openHistory()
     case .autoremove?: store.openAutoremove()
     case .taps?: store.openTaps()
+    case .adopt?: store.openAdopt()
     case nil: break
     }
 }

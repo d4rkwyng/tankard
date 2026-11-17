@@ -74,6 +74,8 @@ public final class AppStore {
         public var historyURL: URL?
         /// 0.7: the restore points folder (nil: memory only).
         public var restorePointsURL: URL?
+        /// 0.8: Adopt Apps' scan (nil: the real cask.json and disk).
+        public var adoptLoader: AdoptLoader?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -188,6 +190,8 @@ public final class AppStore {
     @ObservationIgnored public let brewfile = BrewfileStore()
     /// 0.7: the Taps sheet (TapsStore.swift).
     @ObservationIgnored public let taps = TapsStore()
+    /// 0.8: the Adopt Apps sheet (AdoptStore.swift).
+    @ObservationIgnored public let adopt = AdoptStore()
     /// 0.7: restore points and "Keep the previous version" (RestorePoints.swift).
     @ObservationIgnored public let restorePoints: RestorePointStore
     @ObservationIgnored private var client: BrewClient?

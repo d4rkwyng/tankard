@@ -202,6 +202,7 @@ struct ContentView: View {
         }
         await applyV06ALaunchOptions(store: store, options: options)
         await applyTapsLaunchOptions(store: store, options: options)
+        await applyAdoptLaunchOptions(store: store, options: options)
         // 0.7 demo: TANKARD_DEMO_RESTORE=1 opens Restore Points; =confirm also opens the confirmation.
         if options.demo != nil, let mode = ProcessInfo.processInfo.environment["TANKARD_DEMO_RESTORE"], !mode.isEmpty {
             Demo.seedRestorePoints(store)

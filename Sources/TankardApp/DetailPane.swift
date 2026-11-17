@@ -17,7 +17,9 @@ struct DetailPane: View {
                           insights: store.insights, prefix: store.report?.host.prefix,
                           skipVersion: { store.setVersionSkipped(p, $0) },
                           installCounts: store.discover?.installCounts(p.id),
-                          analyticsEndDate: store.discover?.analytics?.endDate)
+                          analyticsEndDate: store.discover?.analytics?.endDate,
+                          selfUpdate: p.kind == .cask && p.autoUpdates == true
+                              ? (store.selfUpdatePolicy(p), { store.setSelfUpdatePolicy(p, $0) }) : nil)
             .id(p.id)
             .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
@@ -50,6 +52,8 @@ struct PackageDetail: View {
     /// them this session (the Installed tab never fetches them itself).
     var installCounts: InstallCounts? = nil
     var analyticsEndDate: String? = nil
+    /// 0.8: a self-updating cask's "who updates it" choice.
+    var selfUpdate: (policy: SelfUpdatePolicy, set: (SelfUpdatePolicy) -> Void)? = nil
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -127,6 +131,20 @@ struct PackageDetail: View {
 
                 if let installCounts {
                     InstallCountsView(counts: installCounts, phase: .ready, endDate: analyticsEndDate)
+                }
+
+                if let selfUpdate {
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text("Updates").font(.system(size: 12)).foregroundStyle(.secondary)
+                            Spacer(minLength: 4)
+                            SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                        }
+                        if p.selfUpdateHeld == true, let v = p.currentVersion {
+                            Text("Left to the app: \(v) isn't in Upgrade all or auto-update.")
+                                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
                 }
 
                 Divider()

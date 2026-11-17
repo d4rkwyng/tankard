@@ -12,6 +12,8 @@ public enum ToolSheet: String, Identifiable, Sendable {
     case health, history, autoremove
     /// 0.7: Homebrew ▸ Taps… (TapsStore.swift).
     case taps
+    /// 0.8: Homebrew ▸ Adopt Apps… (AdoptStore.swift).
+    case adopt
     public var id: String { rawValue }
 }
 

@@ -201,6 +201,7 @@ public enum BrewCommands {
         case .untap: return TapCommands.untap(p.fullName)
         // A restore's commands come from its plan (RestorePoints.swift).
         case .restore: return []
+        case .adopt: return AdoptCommands.arguments(qualifiedName: p.qualifiedName)
         }
     }
 

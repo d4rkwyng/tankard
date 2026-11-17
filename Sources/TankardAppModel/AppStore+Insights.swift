@@ -46,7 +46,9 @@ extension AppStore {
     /// With "Include self-updating apps" on: the casks `brew outdated
     /// --greedy` adds. A failure keeps brew's normal list and says so.
     func withSelfUpdatingCasks(_ report: StatusReport, client: BrewClient) async -> StatusReport {
-        guard insights.settings.includeSelfUpdatingApps, report.packages.contains(where: { $0.kind == .cask }) else {
+        // 0.8: also when a cask is set to "Homebrew updates it".
+        guard SelfUpdateRule.needsGreedy(includeSelfUpdating: insights.settings.includeSelfUpdatingApps, packages: report.packages,
+                                         homebrewTokens: upgradeRules.homebrewUpdatedTokens) else {
             return report
         }
         do {

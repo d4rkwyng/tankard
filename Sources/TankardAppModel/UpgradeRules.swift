@@ -102,6 +102,49 @@ public enum SnoozeLength: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+// MARK: self-updating apps (0.8)
+
+/// Who updates a cask whose app updates itself (`auto_updates`).
+///
+/// brew 7 upgrades such a cask by default when the installed app's
+/// Info.plist is older than the cask (cask.rb `outdated_version`,
+/// HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS turns that off, but only for every
+/// cask at once), and `brew outdated --greedy` lists every version
+/// difference. The choice is per app and Tankard's own: it decides what
+/// Upgrade all, the counts, notifications and auto-update take. brew run
+/// from Terminal still does what brew does.
+public enum SelfUpdatePolicy: String, CaseIterable, Identifiable, Sendable, Codable {
+    /// No choice: what brew lists, plus `--greedy`'s list when "Include
+    /// self-updating apps" is on.
+    case automatic
+    /// Left to the app's own updater: Tankard never counts or auto-updates it.
+    case app
+    /// Homebrew keeps it current: counted and auto-updated whenever the
+    /// cask has a newer version (`--greedy`), whatever the global setting.
+    case homebrew
+
+    public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .automatic: return String(localized: "Follow the setting")
+        case .app: return String(localized: "App updates itself")
+        case .homebrew: return String(localized: "Homebrew updates it")
+        }
+    }
+
+    public var help: String {
+        switch self {
+        case .automatic:
+            return String(localized: "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).")
+        case .app:
+            return String(localized: "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.")
+        case .homebrew:
+            return String(localized: "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does.")
+        }
+    }
+}
+
 // MARK: settings
 
 /// v0.6 settings, in the same UserDefaults as `AppSettings`. Like every
@@ -114,6 +157,7 @@ public final class UpgradeRulesSettings {
         static let snoozeUntil = "autoUpdateSnoozeUntil"
         static let snoozeIndefinite = "autoUpdateSnoozeIndefinite"
         static let bumpRule = "autoUpdateBumpRule"
+        static let selfUpdate = "selfUpdatePolicies"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -164,12 +208,44 @@ public final class UpgradeRulesSettings {
     }
     @ObservationIgnored private var _bumpRule: BumpRule
 
+    /// 0.8: cask token → `SelfUpdatePolicy` raw value (`app` or
+    /// `homebrew`; no entry is `.automatic`).
+    public var selfUpdatePolicies: [String: String] {
+        get { access(keyPath: \.selfUpdatePolicies); return _selfUpdate }
+        set {
+            guard newValue != _selfUpdate else { return }
+            withMutation(keyPath: \.selfUpdatePolicies) { _selfUpdate = newValue }
+            defaults.set(newValue, forKey: Key.selfUpdate)
+            onPolicyChange?()
+        }
+    }
+    @ObservationIgnored private var _selfUpdate: [String: String]
+    /// Told after a self-update choice changes (the store re-decorates,
+    /// and asks brew for `--greedy` when a cask became "Homebrew updates it").
+    @ObservationIgnored public var onPolicyChange: (() -> Void)?
+
+    public func selfUpdatePolicy(_ token: String) -> SelfUpdatePolicy {
+        selfUpdatePolicies[token].flatMap(SelfUpdatePolicy.init(rawValue:)) ?? .automatic
+    }
+
+    public func setSelfUpdatePolicy(_ token: String, _ policy: SelfUpdatePolicy) {
+        var m = selfUpdatePolicies
+        m[token] = policy == .automatic ? nil : policy.rawValue
+        selfUpdatePolicies = m
+    }
+
+    /// Tokens with "Homebrew updates it".
+    public var homebrewUpdatedTokens: Set<String> { Set(_selfUpdate.filter { $0.value == SelfUpdatePolicy.homebrew.rawValue }.keys) }
+    /// Tokens with "App updates itself".
+    public var appUpdatedTokens: Set<String> { Set(_selfUpdate.filter { $0.value == SelfUpdatePolicy.app.rawValue }.keys) }
+
     public init(defaults: UserDefaults) {
         self.defaults = defaults
         _skipped = defaults.dictionary(forKey: Key.skipped) as? [String: String] ?? [:]
         _snoozeUntil = defaults.object(forKey: Key.snoozeUntil) as? Date
         _snoozeIndefinite = defaults.bool(forKey: Key.snoozeIndefinite)
         _bumpRule = BumpRule(rawValue: defaults.string(forKey: Key.bumpRule) ?? "") ?? .all
+        _selfUpdate = defaults.dictionary(forKey: Key.selfUpdate) as? [String: String] ?? [:]
     }
 
     // MARK: skip this version
@@ -211,9 +287,12 @@ public final class UpgradeRulesSettings {
     /// Marks the report's packages whose offered version is skipped.
     public func decorate(_ report: StatusReport) -> StatusReport {
         var r = report
+        let leftToApp = appUpdatedTokens
         for i in r.packages.indices {
             let skipped = isSkippedRaw(r.packages[i])
             if r.packages[i].versionSkipped != skipped { r.packages[i].versionSkipped = skipped }
+            let held: Bool? = SelfUpdateRule.leftToApp(r.packages[i], appTokens: leftToApp) ? true : nil
+            if r.packages[i].selfUpdateHeld != held { r.packages[i].selfUpdateHeld = held }
         }
         return r
     }
@@ -256,13 +335,17 @@ public final class UpgradeRulesSettings {
 public struct UpgradeRuleSnapshot: Equatable, Sendable {
     public var bumpRule: BumpRule
     public var skipped: [String: String]
-    public init(bumpRule: BumpRule = .all, skipped: [String: String] = [:]) {
+    /// 0.8: casks set to "App updates itself".
+    public var appUpdates: Set<String>
+    public init(bumpRule: BumpRule = .all, skipped: [String: String] = [:], appUpdates: Set<String> = []) {
         self.bumpRule = bumpRule
         self.skipped = skipped
+        self.appUpdates = appUpdates
     }
 
     /// Why the rules keep `p` out of an automatic run, or nil.
     public func skipReason(_ p: Package) -> AutoUpdateSkip? {
+        if SelfUpdateRule.leftToApp(p, appTokens: appUpdates) { return .appUpdatesItself }
         guard let current = p.currentVersion else { return nil }
         if skipped[p.id] == current { return .versionSkipped(current) }
         let bump = VersionBump.classify(from: p.installedVersion, to: current)
@@ -274,7 +357,9 @@ public struct UpgradeRuleSnapshot: Equatable, Sendable {
 }
 
 public extension UpgradeRulesSettings {
-    var snapshot: UpgradeRuleSnapshot { UpgradeRuleSnapshot(bumpRule: bumpRule, skipped: skippedVersions) }
+    var snapshot: UpgradeRuleSnapshot {
+        UpgradeRuleSnapshot(bumpRule: bumpRule, skipped: skippedVersions, appUpdates: appUpdatedTokens)
+    }
 }
 
 public extension AutoUpdateText {
@@ -282,5 +367,25 @@ public extension AutoUpdateText {
     static func snoozed(until: Date?, now: Date, calendar: Calendar = .current) -> String {
         guard let until else { return String(localized: "Snoozed until turned back on") }
         return String(localized: "Snoozed until \(when(until, now: now, calendar: calendar))")
+    }
+}
+
+/// 0.8: the per-app self-update rule, pure.
+public enum SelfUpdateRule {
+    /// A cask whose app updates itself, set to "App updates itself".
+    public static func leftToApp(_ p: Package, appTokens: Set<String>) -> Bool {
+        p.kind == .cask && p.autoUpdates == true && appTokens.contains(p.name)
+    }
+
+    /// A cask set to "Homebrew updates it": its `--greedy` upgrade stays
+    /// listed even with "Include self-updating apps" off.
+    public static func keptByHomebrew(_ p: Package, homebrewTokens: Set<String>) -> Bool {
+        p.kind == .cask && homebrewTokens.contains(p.name)
+    }
+
+    /// Whether the status read needs `brew outdated --greedy`.
+    public static func needsGreedy(includeSelfUpdating: Bool, packages: [Package], homebrewTokens: Set<String>) -> Bool {
+        guard packages.contains(where: { $0.kind == .cask }) else { return false }
+        return includeSelfUpdating || packages.contains { keptByHomebrew($0, homebrewTokens: homebrewTokens) }
     }
 }
