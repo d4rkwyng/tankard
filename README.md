@@ -2,6 +2,15 @@
 
 # Tankard
 
+<p>
+<a href="https://github.com/d4rkwyng/tankard/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/d4rkwyng/tankard?label=release"></a>
+<a href="https://github.com/d4rkwyng/homebrew-tap/blob/main/Casks/tankard.rb"><img alt="Homebrew cask: d4rkwyng/tap/tankard" src="https://img.shields.io/badge/brew-d4rkwyng%2Ftap%2Ftankard-orange"></a>
+<img alt="macOS 14+" src="https://img.shields.io/badge/macOS-14%2B-blue">
+<img alt="Universal: Intel and Apple silicon" src="https://img.shields.io/badge/universal-Intel%20%2B%20Apple%20silicon-lightgrey">
+<img alt="Signed and notarized" src="https://img.shields.io/badge/signed-notarized-brightgreen">
+<a href="LICENSE"><img alt="License: BSD-2-Clause" src="https://img.shields.io/github/license/d4rkwyng/tankard"></a>
+</p>
+
 A native macOS app for Homebrew, for macOS 14 Sonoma and later, Intel and Apple silicon.
 It shows what you have installed, how each package got there, and what's ready to
 upgrade, and runs brew for you when you click. When the Mac uses
