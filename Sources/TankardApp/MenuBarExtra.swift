@@ -147,9 +147,9 @@ struct MenuBarLabel: View {
     var body: some View {
         let summary = MenuBarSummary(packages: store.report?.packages)
         HStack(spacing: 2) {
-            // Mirrored so the handle is on the left, like Tankard's own mug.
-            Image(systemName: summary.count > 0 ? "mug.fill" : "mug")
-                .scaleEffect(x: -1, y: 1)
+            // A pixel tankard (handle on the left, like the logo); foam only
+            // when upgrades are waiting.
+            Image(nsImage: summary.count > 0 ? MenuBarIcon.full : MenuBarIcon.empty)
             if let badge = summary.badge { Text(badge) }
             // 0.4: the optional notice for new vulnerabilities.
             if !store.insights.newVulnerableFormulae.isEmpty { Image(systemName: "exclamationmark.triangle") }
