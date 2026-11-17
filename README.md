@@ -18,7 +18,7 @@ upgrade, and runs brew for you when you click. When the Mac uses
 bottles), Tankard shows whose bottle each package came from and whether Homebrew is on
 the Intelbrew forks.
 
-<img src="docs/images/screenshot.png" alt="Tankard's Installed list: packages with bottle and source badges, five upgrades ready, and the detail pane for python@3.15" width="1040">
+<img src="docs/images/screenshot.png" alt="Tankard 0.8.2 in its Tankard theme: the Installed list with bottle, built-from-source and cask badges, five upgrades ready, a vulnerable openssl@3, self-updating apps marked with a circular arrow, the filter bar (All, Upgrades, Bottle available, From source) and the detail pane for google-chrome with its Updates choice" width="1040">
 
 ## What it does
 
