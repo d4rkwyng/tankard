@@ -118,7 +118,10 @@ in the app: after you type the confirmation word, they open Terminal with the co
 No telemetry. Tankard makes two requests of its own, each in one mode only:
 
 - **Normal mode:** Discover downloads Homebrew's catalogue from formulae.brew.sh the first
-  time you open it, and keeps it for an hour.
+  time you open it, and keeps it for an hour. Right after, without holding up the search, it
+  downloads Homebrew's public install counts (the 30, 90 and 365-day files under
+  `formulae.brew.sh/api/analytics/`, about 13 MB together) and keeps them for a day. These are
+  the bulk files for every package, so the site never learns which packages you look at.
 - **Intelbrew mode:** when a compile warning is shown, Tankard reads Intelbrew's build
   times (`build-times.json` from the intelbrew-core releases on GitHub) and keeps them for
   a day. Discover reads your local taps instead of formulae.brew.sh.

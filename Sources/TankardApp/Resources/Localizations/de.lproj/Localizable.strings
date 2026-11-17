@@ -32,6 +32,9 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es";
 "%@ has no bottle for this Mac, so brew compiles it" = "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es";
 "%@ has nothing left to upgrade." = "%@ hat keine ausstehenden Upgrades mehr.";
+"%@ installs in the last 30 days" = "%@ Installationen in 30 Tagen";
+"%@ installs in the last 365 days" = "%@ Installationen in 365 Tagen";
+"%@ installs in the last 90 days" = "%@ Installationen in 90 Tagen";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ ist verfügbar, aber brew führt für ein angeheftetes Paket kein Upgrade aus. „Alle aktualisieren“ lässt es aus. Löse die Anheftung, um es zu aktualisieren.";
 "%@ is installed" = "%@ ist installiert";
 "%@ is running" = "%@ läuft";
@@ -135,6 +138,9 @@
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 Paket würde aus Quellcode kompiliert: keine Bottle für diesen Mac. Das kann lange dauern.";
 "1. Remove the Intelbrew lines from your shell profile" = "1. Entferne die Intelbrew-Zeilen aus deinem Shell-Profil";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. Richte Homebrew/brew wieder auf Upstream aus, dann 3. brew update";
+"30 days" = "30 Tage";
+"365 days" = "365 Tage";
+"90 days" = "90 Tage";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "Eine brew.env-Datei setzt ebenfalls eine Intelbrew-Variable. Tankard bearbeitet brew.env nicht; entferne sie von Hand, sonst nutzt brew weiter den Fork:\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "Ein Download ist fehlgeschlagen. Prüfe die Internetverbindung (oder VPN bzw. Proxy) und versuche es erneut.";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "Ein Paket braucht etwas, das nicht installiert ist. Das Installieren der fehlenden Pakete behebt das.";
@@ -366,6 +372,8 @@
 "Homebrew still has it, but will disable it later." = "Homebrew hat es noch, wird es aber später deaktivieren.";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew-Mitwirkende, BSD-2-Clause.";
 "Homebrew's API (formulae.brew.sh)" = "API von Homebrew (formulae.brew.sh)";
+"Homebrew's anonymous install analytics (formulae.brew.sh)" = "Homebrews anonyme Installationsstatistik (formulae.brew.sh)";
+"Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrews anonyme Installationsstatistik (formulae.brew.sh), bis %@";
 "Homebrew's official uninstaller" = "Offizielles Deinstallationsprogramm von Homebrew";
 "Homebrew's own files have local changes" = "Dateien von Homebrew haben lokale Änderungen";
 "Homebrew's sbin folder isn't in your PATH" = "Der sbin-Ordner von Homebrew ist nicht in deinem PATH";
@@ -380,6 +388,7 @@
 "Install Intelbrew (recommended for Intel Macs)" = "Intelbrew installieren (empfohlen für Intel-Macs)";
 "Install again from Discover or the package's details." = "Erneut über „Entdecken“ oder die Details des Pakets installieren.";
 "Install command" = "Installationsbefehl";
+"Install counts unavailable" = "Installationszahlen nicht verfügbar";
 "Install standard Homebrew" = "Standard-Homebrew installieren";
 "Install with Tankard" = "Mit Tankard installieren";
 "Installed" = "Installiert";
@@ -390,6 +399,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "Die installierte Version ist neuer als %@ im Tap. brew führt kein Downgrade durch.";
 "Installing" = "Wird installiert";
 "Installing compiles from source, which can take a long time on older Macs." = "Die Installation kompiliert aus Quellcode, was auf älteren Macs lange dauern kann.";
+"Installs" = "Installationen";
 "Installs, upgrades, pins and more appear here." = "Installationen, Upgrades, Anheftungen und mehr erscheinen hier.";
 "Intel bottles for macOS 14+" = "Intel-Bottles für macOS 14+";
 "Intelbrew" = "Intelbrew";
@@ -423,6 +433,7 @@
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "Listet auf, was ein Brewfile braucht und dieser Mac nicht hat (brew bundle check)";
 "Loading Homebrew's catalogue…" = "Katalog von Homebrew wird geladen…";
 "Loading formulae.brew.sh…" = "formulae.brew.sh wird geladen…";
+"Loading install counts…" = "Lade Installationszahlen…";
 "Loading…" = "Wird geladen…";
 "Local taps" = "Lokale Taps";
 "Local taps (%@) · %@ formulae" = "Lokale Taps (%@) · %@ Formulae";
@@ -460,6 +471,7 @@
 "No data yet" = "Noch keine Daten";
 "No dependencies" = "Keine Abhängigkeiten";
 "No fix listed" = "Kein Fix angegeben";
+"No installs recorded" = "Keine Installationen erfasst";
 "No known vulnerabilities (brew vulns)." = "Keine bekannten Schwachstellen (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Nicht mehr im Cellar: %@. brew cleanup hat die Version entfernt, nachdem diese Liste erstellt wurde. Sie kann daher nicht zurückgesetzt werden und wurde aus der Wiederherstellung genommen. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“.";
 "No matches" = "Keine Treffer";

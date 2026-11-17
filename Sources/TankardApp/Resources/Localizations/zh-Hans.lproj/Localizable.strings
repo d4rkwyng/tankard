@@ -32,6 +32,9 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译";
 "%@ has nothing left to upgrade." = "%@ 已无可升级内容。";
+"%@ installs in the last 30 days" = "过去 30 天安装 %@ 次";
+"%@ installs in the last 365 days" = "过去 365 天安装 %@ 次";
+"%@ installs in the last 90 days" = "过去 90 天安装 %@ 次";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ 有可用更新，但 brew 不会升级已固定的软件包。“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
 "%@ is running" = "%@ 正在运行";
@@ -135,6 +138,9 @@
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 个将从源码编译：没有适用于这台 Mac 的 bottle。这可能需要很长时间。";
 "1. Remove the Intelbrew lines from your shell profile" = "1. 从你的 shell 配置文件中移除 Intelbrew 相关行";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. 将 Homebrew/brew 指回上游，然后 3. brew update";
+"30 days" = "30 天";
+"365 days" = "365 天";
+"90 days" = "90 天";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 文件也设置了一个 Intelbrew 变量。Tankard 不会编辑 brew.env；请手动移除，否则 brew 会继续使用该分支：\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "下载失败。请检查网络连接（或 VPN、代理），然后重试。";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "某个软件包需要尚未安装的内容。安装缺失的软件包即可解决。";
@@ -366,6 +372,8 @@
 "Homebrew still has it, but will disable it later." = "Homebrew 仍保留它，但之后会将其停用。";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew 贡献者，BSD-2-Clause。";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew 的 API（formulae.brew.sh）";
+"Homebrew's anonymous install analytics (formulae.brew.sh)" = "Homebrew 匿名安装统计（formulae.brew.sh）";
+"Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew 匿名安装统计（formulae.brew.sh），截至 %@";
 "Homebrew's official uninstaller" = "Homebrew 官方卸载程序";
 "Homebrew's own files have local changes" = "Homebrew 自身文件有本地改动";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew 的 sbin 文件夹不在你的 PATH 中";
@@ -380,6 +388,7 @@
 "Install Intelbrew (recommended for Intel Macs)" = "安装 Intelbrew（推荐用于 Intel Mac）";
 "Install again from Discover or the package's details." = "请从“探索”或软件包详细信息中重新安装。";
 "Install command" = "安装命令";
+"Install counts unavailable" = "无法获取安装次数";
 "Install standard Homebrew" = "安装标准 Homebrew";
 "Install with Tankard" = "使用 Tankard 安装";
 "Installed" = "已安装";
@@ -390,6 +399,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "已安装的版本比 tap 的 %@ 更新。brew 不会降级它。";
 "Installing" = "正在安装";
 "Installing compiles from source, which can take a long time on older Macs." = "安装时会从源码编译，这在较旧的 Mac 上可能需要很长时间。";
+"Installs" = "安装次数";
 "Installs, upgrades, pins and more appear here." = "安装、升级、固定等操作会显示在这里。";
 "Intel bottles for macOS 14+" = "适用于 macOS 14+ 的 Intel bottle";
 "Intelbrew" = "Intelbrew";
@@ -423,6 +433,7 @@
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "列出 Brewfile 需要而这台 Mac 缺少的内容（brew bundle check）";
 "Loading Homebrew's catalogue…" = "正在载入 Homebrew 目录…";
 "Loading formulae.brew.sh…" = "正在载入 formulae.brew.sh…";
+"Loading install counts…" = "正在加载安装次数…";
 "Loading…" = "正在载入…";
 "Local taps" = "本地 tap";
 "Local taps (%@) · %@ formulae" = "本地 tap（%@）· %@ 个 formula";
@@ -460,6 +471,7 @@
 "No data yet" = "暂无数据";
 "No dependencies" = "无依赖项";
 "No fix listed" = "未列出修复";
+"No installs recorded" = "没有安装记录";
 "No known vulnerabilities (brew vulns)." = "没有已知漏洞（brew vulns）。";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "No matches" = "无匹配项";

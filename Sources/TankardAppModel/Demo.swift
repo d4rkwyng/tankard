@@ -186,6 +186,26 @@ public enum Demo {
         }
 
         func details(_ entries: [CatalogEntry]) async -> [CatalogEntry] { entries }
+
+        /// 0.8: the six bulk analytics files cut down to the slice's
+        /// packages (real counts, captured 2026-11-17; firefox@cn has none).
+        func analytics() async throws -> InstallAnalytics? {
+            try await Task.sleep(for: .milliseconds(200))
+            return try Demo.fixtureAnalytics()
+        }
+    }
+
+    /// `discover-api-analytics.json`: {"formula"|"cask": {"30d"|"90d"|"365d": <bulk file>}}.
+    static func fixtureAnalytics() throws -> InstallAnalytics {
+        let all = try JSONSerialization.jsonObject(with: Demo.fixtureData("discover-api-analytics")) as? [String: [String: Any]] ?? [:]
+        var files: [(PackageKind, AnalyticsPeriod, Data)] = []
+        for kind in [PackageKind.formula, .cask] {
+            for period in AnalyticsPeriod.allCases {
+                guard let doc = all[kind.rawValue]?[period.rawValue] else { continue }
+                files.append((kind, period, try JSONSerialization.data(withJSONObject: doc)))
+            }
+        }
+        return try InstallAnalytics.decode(files)
     }
 
     /// The catalog JSON of one package from the Discover fixtures (for a

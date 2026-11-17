@@ -15,7 +15,9 @@ struct DetailPane: View {
                           uninstall: { store.requestUninstall(p) },
                           replaceWithBottle: { store.startReplaceWithBottle([p]) },
                           insights: store.insights, prefix: store.report?.host.prefix,
-                          skipVersion: { store.setVersionSkipped(p, $0) })
+                          skipVersion: { store.setVersionSkipped(p, $0) },
+                          installCounts: store.discover?.installCounts(p.id),
+                          analyticsEndDate: store.discover?.analytics?.endDate)
             .id(p.id)
             .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
@@ -44,6 +46,10 @@ struct PackageDetail: View {
     var prefix: String? = nil
     /// 0.6: "Skip This Version" (true) or "Don't Skip" (false).
     var skipVersion: ((Bool) -> Void)? = nil
+    /// 0.8: formulae.brew.sh's install counts, when Discover has loaded
+    /// them this session (the Installed tab never fetches them itself).
+    var installCounts: InstallCounts? = nil
+    var analyticsEndDate: String? = nil
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -118,6 +124,10 @@ struct PackageDetail: View {
                     if let bytes = p.diskBytes { row(String(localized: "On disk"), DiskSizes.format(bytes)) }
                 }
                 .font(.system(size: 12))
+
+                if let installCounts {
+                    InstallCountsView(counts: installCounts, phase: .ready, endDate: analyticsEndDate)
+                }
 
                 Divider()
 

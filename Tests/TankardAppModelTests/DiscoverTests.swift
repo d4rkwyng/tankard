@@ -63,6 +63,37 @@ let formulaJSON = Data(#"""
 """#.utf8)
 let caskJSON = Data(#"[{"token":"firefox","full_token":"firefox","tap":"homebrew/cask","name":["Mozilla Firefox"],"desc":"Web browser","version":"160.0"}]"#.utf8)
 
+/// formulae.brew.sh's bulk analytics files, in their real shape (counts
+/// are strings with grouping; other taps are tap-qualified).
+func analyticsJSON(_ path: String) -> Data? {
+    let cask = path.contains("/cask-install/")
+    let key = cask ? "cask" : "formula"
+    let rows: [(String, Int)]
+    switch (cask, (path as NSString).lastPathComponent) {
+    case (false, "30d.json"): rows = [("xz", 327_759), ("zstd", 330_001), ("user/tap/xz", 5)]
+    case (false, "90d.json"): rows = [("xz", 1_001_234), ("zstd", 990_000)]
+    case (false, "365d.json"): rows = [("xz", 4_100_000), ("zstd", 3_900_000)]
+    case (true, "30d.json"): rows = [("firefox", 13_167)]
+    case (true, "90d.json"): rows = [("firefox", 33_293)]
+    case (true, "365d.json"): rows = [("firefox", 182_009)]
+    default: return nil
+    }
+    let items = rows.enumerated().map { i, r in
+        #"{"number":\#(i + 1),"\#(key)":"\#(r.0)","count":"\#(r.1.formatted(.number.locale(Locale(identifier: "en_US"))))","percent":"1.00"}"#
+    }
+    return Data(#"{"category":"\#(key)_install","total_items":\#(rows.count),"start_date":"2026-10-18","end_date":"2026-11-17","total_count":1,"items":[\#(items.joined(separator: ","))]}"#.utf8)
+}
+
+/// formula.json, cask.json and the six analytics files.
+let apiHandler: FakeURLProtocol.Handler = { req in
+    let path = req.url!.path
+    if path.hasPrefix("/api/analytics/") {
+        guard let d = analyticsJSON(path) else { return (404, [:], Data()) }
+        return (200, ["ETag": "\"a\""], d)
+    }
+    return (200, ["ETag": "\"e\""], req.url!.lastPathComponent == "cask.json" ? caskJSON : formulaJSON)
+}
+
 @Suite(.serialized)
 struct APICacheTests {
     func fetcher(_ dir: URL, _ clock: Clock) -> APIFetcher {
@@ -146,12 +177,11 @@ struct APICacheTests {
         let dir = try tempDir()
         defer { try? FileManager.default.removeItem(at: dir) }
         let clock = Clock()
-        FakeURLProtocol.reset { req in
-            (200, ["ETag": "\"e\""], req.url!.lastPathComponent == "cask.json" ? caskJSON : formulaJSON)
-        }
+        FakeURLProtocol.reset(apiHandler)
         let catalog = APICatalog(fetcher: fetcher(dir, clock), platform: BottlePlatform(arch: .arm64, macOSVersion: "27", cellar: "/opt/homebrew/Cellar"))
         let store = await DiscoverStore(provider: catalog, debounce: .zero)
         await store.activate()
+        await store.waitForAnalytics()
         await MainActor.run {
             #expect(store.phase == .ready)
             #expect(store.totalCount == 3)
@@ -171,7 +201,7 @@ struct APICacheTests {
         let before = FakeURLProtocol.seen.count
         await store.activate()
         #expect(FakeURLProtocol.seen.count == before)
-        #expect(Set(FakeURLProtocol.seen.map(\.path)) == ["/api/formula.json", "/api/cask.json"])
+        #expect(Set(FakeURLProtocol.seen.map(\.path).filter { !$0.hasPrefix("/api/analytics/") }) == ["/api/formula.json", "/api/cask.json"])
     }
 }
 

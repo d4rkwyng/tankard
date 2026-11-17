@@ -32,6 +32,9 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ has no Intelbrew bottle for this Mac, so brew compiles it";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ has no bottle for this Mac, so brew compiles it";
 "%@ has nothing left to upgrade." = "%@ has nothing left to upgrade.";
+"%@ installs in the last 30 days" = "%@ installs in the last 30 days";
+"%@ installs in the last 365 days" = "%@ installs in the last 365 days";
+"%@ installs in the last 90 days" = "%@ installs in the last 90 days";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.";
 "%@ is installed" = "%@ is installed";
 "%@ is running" = "%@ is running";
@@ -135,6 +138,9 @@
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 would compile from source: no bottle for this Mac. That can take a long time.";
 "1. Remove the Intelbrew lines from your shell profile" = "1. Remove the Intelbrew lines from your shell profile";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. Point Homebrew/brew back at upstream, then 3. brew update";
+"30 days" = "30 days";
+"365 days" = "365 days";
+"90 days" = "90 days";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "A download failed. Check the internet connection (or a VPN or proxy), then retry.";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "A package needs something that isn't installed. Installing the missing ones fixes it.";
@@ -366,6 +372,8 @@
 "Homebrew still has it, but will disable it later." = "Homebrew still has it, but will disable it later.";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew contributors, BSD-2-Clause.";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew's API (formulae.brew.sh)";
+"Homebrew's anonymous install analytics (formulae.brew.sh)" = "Homebrew's anonymous install analytics (formulae.brew.sh)";
+"Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew's anonymous install analytics (formulae.brew.sh), to %@";
 "Homebrew's official uninstaller" = "Homebrew's official uninstaller";
 "Homebrew's own files have local changes" = "Homebrew's own files have local changes";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew's sbin folder isn't in your PATH";
@@ -380,6 +388,7 @@
 "Install Intelbrew (recommended for Intel Macs)" = "Install Intelbrew (recommended for Intel Macs)";
 "Install again from Discover or the package's details." = "Install again from Discover or the package's details.";
 "Install command" = "Install command";
+"Install counts unavailable" = "Install counts unavailable";
 "Install standard Homebrew" = "Install standard Homebrew";
 "Install with Tankard" = "Install with Tankard";
 "Installed" = "Installed";
@@ -390,6 +399,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "Installed version is newer than the tap's %@. brew won't downgrade it.";
 "Installing" = "Installing";
 "Installing compiles from source, which can take a long time on older Macs." = "Installing compiles from source, which can take a long time on older Macs.";
+"Installs" = "Installs";
 "Installs, upgrades, pins and more appear here." = "Installs, upgrades, pins and more appear here.";
 "Intel bottles for macOS 14+" = "Intel bottles for macOS 14+";
 "Intelbrew" = "Intelbrew";
@@ -423,6 +433,7 @@
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)";
 "Loading Homebrew's catalogue…" = "Loading Homebrew's catalogue…";
 "Loading formulae.brew.sh…" = "Loading formulae.brew.sh…";
+"Loading install counts…" = "Loading install counts…";
 "Loading…" = "Loading…";
 "Local taps" = "Local taps";
 "Local taps (%@) · %@ formulae" = "Local taps (%@) · %@ formulae";
@@ -460,6 +471,7 @@
 "No data yet" = "No data yet";
 "No dependencies" = "No dependencies";
 "No fix listed" = "No fix listed";
+"No installs recorded" = "No installs recorded";
 "No known vulnerabilities (brew vulns)." = "No known vulnerabilities (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.";
 "No matches" = "No matches";
