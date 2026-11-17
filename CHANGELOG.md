@@ -16,9 +16,18 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Replace with bottle**: a package built from source whose version has a bottle for your Mac gets a "Bottle available" badge (or "Intelbrew bottle available") and a button that runs `brew reinstall --force-bottle`. A "Bottle available" filter has Replace all.
 - **App Management help**: before Tankard first upgrades or removes an app, and whenever macOS blocks it, a short guide explains how to allow Tankard under Privacy & Security → App Management, with a button that opens the right page. After you allow it, Tankard retries once.
 - **About Tankard** shows the version, links to the project and to Intelbrew, and the licence. Help menu: "Tankard on GitHub" and "Report an Issue…".
+- **Right-click menus** on Installed rows (Upgrade, Replace with Bottle, Uninstall…, copy the name or command, open the homepage or release page, Show in Finder, show dependencies or what uses it), Discover rows (Install, copy, open the homepage) and the menu-bar list (Upgrade, Copy Name).
+- **Dracula theme**, a fifth option in Settings → Appearance.
 
 ### Changed
+- Brighter version columns in every theme, so installed and available versions are easier to read.
+- Primary buttons (Upgrade, Install, Replace with bottle, Clean up, Done) are green in every theme. With nothing to upgrade, the Upgrade button reads "Up to date".
+- Tankard theme: amber segmented pickers, striped rows and a purple column header.
 - About shows "Version 0.3.0" without a build number.
+
+### Fixed
+- Switching theme no longer rebuilds the window: the list keeps its scroll position, column widths and selection.
+- The finished upgrade sheet said "5 upgradeed"; it now says "5 upgraded".
 
 ## [0.2.0]
 
