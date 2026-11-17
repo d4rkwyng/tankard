@@ -34,7 +34,7 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のbottleがないため、brewがコンパイルします";
 "%@ has nothing left to upgrade." = "%@ にはアップグレードするものがありません。";
-"%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ は利用可能ですが、brewはピン留めされたパッケージをアップグレードしません。「すべてアップグレード」からも除外されます。アップグレードするにはピン留めを解除してください。";
+"%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ は利用可能ですが、このパッケージはピン留めされているため、brew upgradeと「すべてアップグレード」ではスキップされます。アップグレードするにはピン留めを解除してください。";
 "%@ is installed" = "%@ はインストール済みです";
 "%@ is pinned" = "%@ はピン留めされています";
 "%@ is running" = "%@ は実行中です";
@@ -89,7 +89,7 @@
 "%lld hours" = "%lld時間";
 "%lld installed" = "%lld個がインストール済み";
 "%lld installed from it" = "%lld個がここからインストール済み";
-"%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。インストール済みの間は、brewはuntapを拒否します。";
+"%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。";
 "%lld installs in the last 30 days" = "過去30日間に%lld回インストール";
 "%lld installs in the last 365 days" = "過去365日間に%lld回インストール";
 "%lld installs in the last 90 days" = "過去90日間に%lld回インストール";
@@ -138,7 +138,7 @@
 "1 cask" = "1個のcask";
 "1 formula" = "1個のformula";
 "1 hour" = "1時間";
-"1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed." = "このtap(%@)から1個のインストール済みパッケージが来ています。先にアンインストールしてください。インストール済みの間は、brewはuntapを拒否します。";
+"1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "このtap(%@)から1個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。";
 "1 item" = "1項目";
 "1 known vulnerability" = "1件の既知の脆弱性";
 "1 known vulnerability (brew vulns): %@" = "1件の既知の脆弱性(brew vulns): %@";
@@ -152,8 +152,8 @@
 "90 days" = "90日";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env ファイルにもIntelbrewの変数が設定されています。Tankardは brew.env を編集しません。手動で削除しないと、brewはフォークを使い続けます:\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "ダウンロードに失敗しました。インターネット接続(またはVPN、プロキシ)を確認して、再試行してください。";
+"A newer version" = "新しいバージョン";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "パッケージが、インストールされていないものを必要としています。不足分をインストールすると解決します。";
-"A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running." = "アップグレード可能な数を表示するTankardアイコン。オンにすると、ウインドウを閉じてもTankardは実行され続けます。";
 "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces." = "tap名は ユーザ/リポジトリ の形式です: 英数字、「.」「_」「-」、スラッシュ1つ、スペースなし。";
 "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@." = "サードパーティのtapは、Homebrewではなく作者が提供するコードです。brewが読み込むとき、そのformulaeとcaskはこのMac上でRubyを実行し、そこからのインストールはインストール手順を実行します。信頼できるtapだけを追加してください。brewは %@ をクローンします。";
 "API" = "API";
@@ -323,7 +323,7 @@
 "Depends on" = "依存先";
 "Deprecated" = "非推奨";
 "Deprecated since %@" = "%@から非推奨";
-"Deprecated: it still installs, but won't be updated for long." = "非推奨: インストールはできますが、まもなく更新されなくなります。";
+"Deprecated: it still installs, but Homebrew plans to disable it." = "非推奨: インストールはできますが、Homebrewは今後無効化する予定です。";
 "Didn't run" = "実行されませんでした";
 "Disabled" = "無効";
 "Disabled in its tap: brew won't install it." = "tapで無効化されています: brewはインストールしません。";
@@ -430,9 +430,9 @@
 "Homebrew isn't ready yet." = "Homebrewの準備ができていません。";
 "Homebrew isn't working" = "Homebrewが動作していません";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrewは現在のcask定義だけを保持するため、アプリの古いバージョンはインストールできません。";
-"Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles." = "HomebrewはIntel Mac用のbottleをもうビルドしないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされます。IntelbrewはIntel用のビルド済みbottleを備えたHomebrewです。";
 "Homebrew no longer installs or upgrades it." = "Homebrewはもうインストールもアップグレードもしません。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrewはもうメンテナンスしていないか、まもなく終了します。「非推奨」フィルタで一覧でき、brewが代替を示す場合はそれも表示されます。";
+"Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "HomebrewはIntel Mac用のbottle(ビルド済みパッケージ)をもう提供していないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされ、時間がかかります。IntelbrewはIntel用bottleを備えたHomebrewです。";
 "Homebrew not found" = "Homebrewが見つかりません";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew は %@ として記録します。自己更新するアプリについて brew はバージョンを比較しません。";
 "Homebrew still has it, but will disable it later." = "Homebrewにはまだありますが、後で無効化されます。";
@@ -489,8 +489,8 @@
 "Keep the previous version after upgrades" = "アップグレード後も以前のバージョンを残す";
 "Keeps %@; upgrades skip it" = "%@を維持します。アップグレードではスキップされます";
 "Keg-only" = "Keg-only";
-"Keg-only. Not linked into the prefix on purpose." = "Keg-only。意図的にプレフィックスへリンクされていません。";
-"Keg-only: %@. Not linked into the prefix on purpose." = "Keg-only: %@。意図的にプレフィックスへリンクされていません。";
+"Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@。意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。";
+"Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: 意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。";
 "Kegs" = "Keg";
 "Kept" = "維持";
 "Kind" = "種類";
@@ -790,6 +790,7 @@
 "Show new vulnerabilities in the menu bar" = "新しい脆弱性をメニューバーに表示";
 "Show the Auto-update log" = "自動アップデートのログを表示";
 "Showing the last data Tankard read." = "Tankardが最後に読み込んだデータを表示しています。";
+"Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。";
 "Shows the brew commands first" = "先にbrewコマンドを表示します";
 "Size" = "サイズ";
 "Skip This Version" = "このバージョンをスキップ";

@@ -34,7 +34,7 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다";
 "%@ has nothing left to upgrade." = "%@에는 더 업그레이드할 항목이 없습니다.";
-"%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ 업그레이드가 가능하지만 brew는 고정된 패키지를 업그레이드하지 않습니다. 모두 업그레이드에서도 제외됩니다. 업그레이드하려면 고정을 해제하세요.";
+"%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ 업그레이드가 가능하지만 이 패키지는 고정되어 있어 brew upgrade와 모두 업그레이드에서 건너뜁니다. 업그레이드하려면 고정을 해제하세요.";
 "%@ is installed" = "%@ 설치됨";
 "%@ is pinned" = "%@이(가) 고정됨";
 "%@ is running" = "%@ 실행 중";
@@ -89,7 +89,7 @@
 "%lld hours" = "%lld시간";
 "%lld installed" = "설치됨 %lld개";
 "%lld installed from it" = "여기서 설치된 항목 %lld개";
-"%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 설치되어 있는 동안에는 brew가 untap을 거부합니다.";
+"%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다.";
 "%lld installs in the last 30 days" = "최근 30일간 %lld회 설치";
 "%lld installs in the last 365 days" = "최근 365일간 %lld회 설치";
 "%lld installs in the last 90 days" = "최근 90일간 %lld회 설치";
@@ -138,7 +138,7 @@
 "1 cask" = "cask 1개";
 "1 formula" = "formula 1개";
 "1 hour" = "1시간";
-"1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed." = "설치된 패키지 1개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 설치되어 있는 동안에는 brew가 untap을 거부합니다.";
+"1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "설치된 패키지 1개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다.";
 "1 item" = "항목 1개";
 "1 known vulnerability" = "알려진 취약점 1개";
 "1 known vulnerability (brew vulns): %@" = "알려진 취약점 1개(brew vulns): %@";
@@ -152,8 +152,8 @@
 "90 days" = "90일";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 파일에도 Intelbrew 변수가 설정되어 있습니다. Tankard는 brew.env를 편집하지 않습니다. 직접 제거하지 않으면 brew가 계속 포크를 사용합니다.\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "다운로드에 실패했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 후 다시 시도하세요.";
+"A newer version" = "새 버전";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "패키지에 설치되지 않은 항목이 필요합니다. 누락된 항목을 설치하면 해결됩니다.";
-"A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running." = "업그레이드 준비된 개수가 표시되는 tankard. 켜면 윈도우를 닫아도 Tankard가 계속 실행됩니다.";
 "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces." = "tap 이름은 user/repo 형식입니다: 영문자, 숫자, '.', '_', '-', 슬래시 하나, 공백 없음.";
 "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@." = "서드파티 tap은 Homebrew가 아닌 작성자의 코드입니다: brew가 불러올 때 formula와 cask가 이 Mac에서 Ruby를 실행하며, 여기서 설치하면 설치 단계가 실행됩니다. 신뢰하는 tap만 추가하세요. brew가 %@을(를) 클론합니다.";
 "API" = "API";
@@ -323,7 +323,7 @@
 "Depends on" = "의존 대상";
 "Deprecated" = "지원 중단됨";
 "Deprecated since %@" = "%@부터 지원 중단됨";
-"Deprecated: it still installs, but won't be updated for long." = "지원 중단: 아직 설치되지만 오래 업데이트되지 않습니다.";
+"Deprecated: it still installs, but Homebrew plans to disable it." = "지원 중단: 아직 설치되지만 Homebrew가 나중에 비활성화할 예정입니다.";
 "Didn't run" = "실행되지 않음";
 "Disabled" = "비활성화됨";
 "Disabled in its tap: brew won't install it." = "tap에서 비활성화됨: brew가 설치하지 않습니다.";
@@ -430,9 +430,9 @@
 "Homebrew isn't ready yet." = "Homebrew가 아직 준비되지 않았습니다.";
 "Homebrew isn't working" = "Homebrew가 작동하지 않음";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew는 현재 cask 정의만 유지하므로 앱의 이전 버전을 설치할 수 없습니다.";
-"Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles." = "Homebrew는 더 이상 Intel Mac용 bottle을 빌드하지 않으므로, 표준 Homebrew는 여기서 대부분의 패키지를 소스에서 컴파일합니다. Intelbrew는 미리 빌드된 Intel bottle을 제공하는 Homebrew입니다.";
 "Homebrew no longer installs or upgrades it." = "Homebrew가 더 이상 설치하거나 업그레이드하지 않습니다.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew가 더 이상 유지 관리하지 않거나 곧 중단합니다. 지원 중단됨 필터에 나열되며, brew가 대체 항목을 알려주면 함께 표시됩니다.";
+"Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew는 더 이상 Intel Mac용 bottle(미리 빌드된 패키지)을 제공하지 않으므로, 표준 Homebrew는 여기서 대부분의 패키지를 소스에서 컴파일하며 오래 걸립니다. Intelbrew는 Intel bottle을 제공하는 Homebrew입니다.";
 "Homebrew not found" = "Homebrew를 찾을 수 없음";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew에는 %@(으)로 기록됩니다. 자체 업데이트하는 앱은 brew가 버전을 비교하지 않습니다.";
 "Homebrew still has it, but will disable it later." = "Homebrew에는 아직 있지만 나중에 비활성화할 예정입니다.";
@@ -489,8 +489,8 @@
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
 "Keg-only" = "Keg-only";
-"Keg-only. Not linked into the prefix on purpose." = "Keg-only. 의도적으로 prefix에 링크되지 않습니다.";
-"Keg-only: %@. Not linked into the prefix on purpose." = "Keg-only: %@. 의도적으로 prefix에 링크되지 않습니다.";
+"Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다.";
+"Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다.";
 "Kegs" = "Keg";
 "Kept" = "유지됨";
 "Kind" = "종류";
@@ -790,6 +790,7 @@
 "Show new vulnerabilities in the menu bar" = "메뉴 막대에 새 취약점 표시";
 "Show the Auto-update log" = "자동 업데이트 로그 보기";
 "Showing the last data Tankard read." = "Tankard가 마지막으로 읽은 데이터를 표시하고 있습니다.";
+"Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "업그레이드 준비된 개수를 tankard 아이콘으로 보여줍니다. 켜져 있는 동안에는 윈도우를 닫아도 Tankard가 계속 실행됩니다.";
 "Shows the brew commands first" = "brew 명령을 먼저 보여 줍니다";
 "Size" = "크기";
 "Skip This Version" = "이 버전 건너뛰기";

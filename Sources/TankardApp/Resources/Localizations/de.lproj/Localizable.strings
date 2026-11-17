@@ -34,7 +34,7 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es";
 "%@ has no bottle for this Mac, so brew compiles it" = "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es";
 "%@ has nothing left to upgrade." = "%@ hat keine ausstehenden Upgrades mehr.";
-"%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ ist verfügbar, aber brew führt für ein angeheftetes Paket kein Upgrade aus. „Alle aktualisieren“ lässt es aus. Löse die Anheftung, um es zu aktualisieren.";
+"%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ ist verfügbar, aber dieses Paket ist fixiert: brew upgrade und „Alle upgraden“ überspringen es. Löse die Fixierung, um es zu upgraden.";
 "%@ is installed" = "%@ ist installiert";
 "%@ is pinned" = "%@ ist fixiert";
 "%@ is running" = "%@ läuft";
@@ -89,7 +89,7 @@
 "%lld hours" = "%lld Stunden";
 "%lld installed" = "%lld installiert";
 "%lld installed from it" = "%lld davon installiert";
-"%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "%lld installierte Pakete stammen aus diesem Tap (%@). Deinstalliere sie zuerst; brew verweigert untap, solange sie installiert sind.";
+"%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "%lld installierte Pakete stammen aus diesem Tap (%@). Deinstalliere sie zuerst: brew entfernt keinen Tap, solange Pakete daraus installiert sind.";
 "%lld installs in the last 30 days" = "%lld Installationen in 30 Tagen";
 "%lld installs in the last 365 days" = "%lld Installationen in 365 Tagen";
 "%lld installs in the last 90 days" = "%lld Installationen in 90 Tagen";
@@ -105,8 +105,8 @@
 "%lld no bottle" = "%lld ohne Bottle";
 "%lld not checked" = "%lld nicht geprüft";
 "%lld of %lld" = "%lld von %lld";
-"%lld pinned upgrade not included (%@)" = "%lld angeheftetes Upgrade nicht enthalten (%@)";
-"%lld pinned upgrades not included (%@)" = "%lld angeheftete Upgrades nicht enthalten (%@)";
+"%lld pinned upgrade not included (%@)" = "%lld fixiertes Upgrade nicht enthalten (%@)";
+"%lld pinned upgrades not included (%@)" = "%lld fixierte Upgrades nicht enthalten (%@)";
 "%lld result for “%@”" = "%lld Ergebnis für „%@“";
 "%lld results for “%@”" = "%lld Ergebnisse für „%@“";
 "%lld running" = "%lld laufen";
@@ -138,7 +138,7 @@
 "1 cask" = "1 Cask";
 "1 formula" = "1 Formula";
 "1 hour" = "1 Stunde";
-"1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed." = "1 installiertes Paket stammt aus diesem Tap (%@). Deinstalliere es zuerst; brew verweigert untap, solange es installiert ist.";
+"1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "1 installiertes Paket stammt aus diesem Tap (%@). Deinstalliere es zuerst: brew entfernt keinen Tap, solange Pakete daraus installiert sind.";
 "1 item" = "1 Objekt";
 "1 known vulnerability" = "1 bekannte Schwachstelle";
 "1 known vulnerability (brew vulns): %@" = "1 bekannte Schwachstelle (brew vulns): %@";
@@ -152,8 +152,8 @@
 "90 days" = "90 Tage";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "Eine brew.env-Datei setzt ebenfalls eine Intelbrew-Variable. Tankard bearbeitet brew.env nicht; entferne sie von Hand, sonst nutzt brew weiter den Fork:\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "Ein Download ist fehlgeschlagen. Prüfe die Internetverbindung (oder VPN bzw. Proxy) und versuche es erneut.";
+"A newer version" = "Eine neuere Version";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "Ein Paket braucht etwas, das nicht installiert ist. Das Installieren der fehlenden Pakete behebt das.";
-"A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running." = "Ein Humpen mit der Anzahl bereiter Upgrades. Wenn aktiviert, bleibt Tankard beim Schließen des Fensters aktiv.";
 "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces." = "Ein Tap-Name hat die Form user/repo: Buchstaben, Ziffern, '.', '_' oder '-', ein Schrägstrich, keine Leerzeichen.";
 "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@." = "Ein Drittanbieter-Tap ist Code von seinem Autor, nicht von Homebrew: Seine Formulae und Casks führen Ruby auf diesem Mac aus, wenn brew sie lädt, und Installationen daraus führen ihre Installationsschritte aus. Füge nur Taps hinzu, denen du vertraust. brew klont %@.";
 "API" = "API";
@@ -323,7 +323,7 @@
 "Depends on" = "Hängt ab von";
 "Deprecated" = "Veraltet";
 "Deprecated since %@" = "Veraltet seit %@";
-"Deprecated: it still installs, but won't be updated for long." = "Veraltet: wird noch installiert, aber nicht mehr lange aktualisiert.";
+"Deprecated: it still installs, but Homebrew plans to disable it." = "Veraltet: wird noch installiert, aber Homebrew wird es deaktivieren.";
 "Didn't run" = "Nicht ausgeführt";
 "Disabled" = "Deaktiviert";
 "Disabled in its tap: brew won't install it." = "In seinem Tap deaktiviert: brew installiert es nicht.";
@@ -430,9 +430,9 @@
 "Homebrew isn't ready yet." = "Homebrew ist noch nicht bereit.";
 "Homebrew isn't working" = "Homebrew funktioniert nicht";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew behält nur die aktuelle Cask-Definition, kann also keine ältere Version einer App installieren.";
-"Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles." = "Homebrew baut keine Bottles mehr für Intel-Macs, daher kompiliert Standard-Homebrew hier die meisten Pakete aus Quellcode. Intelbrew ist Homebrew mit vorgebauten Intel-Bottles.";
 "Homebrew no longer installs or upgrades it." = "Homebrew installiert oder aktualisiert es nicht mehr.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew pflegt sie nicht mehr oder bald nicht mehr. Der Filter „Veraltet“ listet sie auf, mit dem Ersatz, wenn brew einen nennt.";
+"Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew baut keine Bottles (fertige Pakete) mehr für Intel-Macs, daher kompiliert Standard-Homebrew hier die meisten Pakete langsam aus Quellcode. Intelbrew ist Homebrew mit Intel-Bottles.";
 "Homebrew not found" = "Homebrew nicht gefunden";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew führt sie als %@; bei selbstaktualisierenden Apps vergleicht brew keine Versionen.";
 "Homebrew still has it, but will disable it later." = "Homebrew hat es noch, wird es aber später deaktivieren.";
@@ -471,7 +471,7 @@
 "Installing" = "Wird installiert";
 "Installing compiles from source, which can take a long time on older Macs." = "Die Installation kompiliert aus Quellcode, was auf älteren Macs lange dauern kann.";
 "Installs" = "Installationen";
-"Installs, upgrades, pins and more appear here." = "Installationen, Upgrades, Anheftungen und mehr erscheinen hier.";
+"Installs, upgrades, pins and more appear here." = "Installationen, Upgrades, Fixierungen und mehr erscheinen hier.";
 "Intel bottles for macOS 14+" = "Intel-Bottles für macOS 14+";
 "Intelbrew" = "Intelbrew";
 "Intelbrew bottle" = "Intelbrew-Bottle";
@@ -489,8 +489,8 @@
 "Keep the previous version after upgrades" = "Vorherige Version nach Upgrades behalten";
 "Keeps %@; upgrades skip it" = "Behält %@; Upgrades überspringen es";
 "Keg-only" = "Keg-only";
-"Keg-only. Not linked into the prefix on purpose." = "Keg-only. Absichtlich nicht ins Präfix gelinkt.";
-"Keg-only: %@. Not linked into the prefix on purpose." = "Keg-only: %@. Absichtlich nicht ins Präfix gelinkt.";
+"Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. Absichtlich nicht in Homebrews Ordner gelinkt, daher findet die Shell seine Befehle nicht von selbst.";
+"Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: absichtlich nicht in Homebrews Ordner gelinkt, daher findet die Shell seine Befehle nicht von selbst.";
 "Kegs" = "Kegs";
 "Kept" = "Behalten";
 "Kind" = "Art";
@@ -790,6 +790,7 @@
 "Show new vulnerabilities in the menu bar" = "Neue Schwachstellen in der Menüleiste anzeigen";
 "Show the Auto-update log" = "Auto-Update-Protokoll anzeigen";
 "Showing the last data Tankard read." = "Zeigt die zuletzt von Tankard gelesenen Daten.";
+"Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Zeigt einen Humpen mit der Anzahl bereiter Upgrades. Solange aktiv, läuft Tankard nach dem Schließen des Fensters weiter.";
 "Shows the brew commands first" = "Zeigt zuerst die brew-Befehle";
 "Size" = "Größe";
 "Skip This Version" = "Diese Version überspringen";

@@ -34,7 +34,7 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译";
 "%@ has nothing left to upgrade." = "%@ 已无可升级内容。";
-"%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ 有可用更新，但 brew 不会升级已固定的软件包。“全部升级”会跳过它。取消固定后即可升级。";
+"%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ 已可用，但此软件包已固定：brew upgrade 和“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
 "%@ is pinned" = "%@ 已固定";
 "%@ is running" = "%@ 正在运行";
@@ -89,7 +89,7 @@
 "%lld hours" = "%lld 小时";
 "%lld installed" = "%lld 个已安装";
 "%lld installed from it" = "%lld 个由其安装";
-"%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们；只要它们仍已安装，brew 就拒绝 untap。";
+"%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们：只要还装有来自该 tap 的软件包，brew 就不会移除它。";
 "%lld installs in the last 30 days" = "过去 30 天安装 %lld 次";
 "%lld installs in the last 365 days" = "过去 365 天安装 %lld 次";
 "%lld installs in the last 90 days" = "过去 90 天安装 %lld 次";
@@ -138,7 +138,7 @@
 "1 cask" = "1 个 cask";
 "1 formula" = "1 个 formula";
 "1 hour" = "1 小时";
-"1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed." = "这个 tap（%@）提供了 1 个已安装的软件包。请先卸载它；只要它仍已安装，brew 就拒绝 untap。";
+"1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "这个 tap（%@）提供了 1 个已安装的软件包。请先卸载它：只要还装有来自该 tap 的软件包，brew 就不会移除它。";
 "1 item" = "1 项";
 "1 known vulnerability" = "1 个已知漏洞";
 "1 known vulnerability (brew vulns): %@" = "1 个已知漏洞（brew vulns）：%@";
@@ -152,8 +152,8 @@
 "90 days" = "90 天";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 文件也设置了一个 Intelbrew 变量。Tankard 不会编辑 brew.env；请手动移除，否则 brew 会继续使用该分支：\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "下载失败。请检查网络连接（或 VPN、代理），然后重试。";
+"A newer version" = "新版本";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "某个软件包需要尚未安装的内容。安装缺失的软件包即可解决。";
-"A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running." = "带有待升级数量的 tankard 图标。开启后，关闭窗口时 Tankard 会继续运行。";
 "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces." = "tap 名称格式为 user/repo：字母、数字、“.”、“_”或“-”，一个斜杠，无空格。";
 "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@." = "第三方 tap 是作者提供的代码，而非 Homebrew 提供：brew 加载时，其中的 formula 和 cask 会在这台 Mac 上运行 Ruby，从中安装也会运行其安装步骤。只添加你信任的 tap。brew 会克隆 %@。";
 "API" = "API";
@@ -323,7 +323,7 @@
 "Depends on" = "依赖于";
 "Deprecated" = "已弃用";
 "Deprecated since %@" = "自 %@ 起弃用";
-"Deprecated: it still installs, but won't be updated for long." = "已弃用：仍可安装，但长期不会再更新。";
+"Deprecated: it still installs, but Homebrew plans to disable it." = "已弃用：仍可安装，但 Homebrew 计划将其停用。";
 "Didn't run" = "未运行";
 "Disabled" = "已停用";
 "Disabled in its tap: brew won't install it." = "在其 tap 中已停用：brew 不会安装它。";
@@ -430,9 +430,9 @@
 "Homebrew isn't ready yet." = "Homebrew 尚未就绪。";
 "Homebrew isn't working" = "Homebrew 无法正常工作";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew 只保留当前的 cask 定义，因此无法安装 App 的旧版本。";
-"Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles." = "Homebrew 不再为 Intel Mac 构建 bottle，因此标准 Homebrew 在此会从源码编译大多数软件包。Intelbrew 是带有预构建 Intel bottle 的 Homebrew。";
 "Homebrew no longer installs or upgrades it." = "Homebrew 不再安装或升级它。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew 已不再维护它们，或即将停止维护。“已弃用”筛选会列出它们，并在 brew 给出替代项时一并显示。";
+"Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew 不再为 Intel Mac 提供 bottle（预构建的软件包），因此标准 Homebrew 在此会从源码编译大多数软件包，速度很慢。Intelbrew 是带有 Intel bottle 的 Homebrew。";
 "Homebrew not found" = "未找到 Homebrew";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew 记录的版本为 %@；对于自行更新的 App，brew 不比较版本。";
 "Homebrew still has it, but will disable it later." = "Homebrew 仍保留它，但之后会将其停用。";
@@ -489,8 +489,8 @@
 "Keep the previous version after upgrades" = "升级后保留上一个版本";
 "Keeps %@; upgrades skip it" = "保留 %@；升级会跳过它";
 "Keg-only" = "Keg-only";
-"Keg-only. Not linked into the prefix on purpose." = "Keg-only。有意不链接到前缀中。";
-"Keg-only: %@. Not linked into the prefix on purpose." = "Keg-only：%@。有意不链接到前缀中。";
+"Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only：%@。有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。";
+"Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only：有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。";
 "Kegs" = "Keg";
 "Kept" = "已保留";
 "Kind" = "种类";
@@ -790,6 +790,7 @@
 "Show new vulnerabilities in the menu bar" = "在菜单栏中显示新漏洞";
 "Show the Auto-update log" = "显示自动更新日志";
 "Showing the last data Tankard read." = "显示 Tankard 上次读取的数据。";
+"Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
 "Shows the brew commands first" = "先显示 brew 命令";
 "Size" = "大小";
 "Skip This Version" = "跳过此版本";

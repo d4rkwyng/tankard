@@ -1821,54 +1821,54 @@
         }
       }
     },
-    "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.": {
+    "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ ist verfügbar, aber brew führt für ein angeheftetes Paket kein Upgrade aus. „Alle aktualisieren“ lässt es aus. Löse die Anheftung, um es zu aktualisieren."
+            "value": "%@ ist verfügbar, aber dieses Paket ist fixiert: brew upgrade und „Alle upgraden“ überspringen es. Löse die Fixierung, um es zu upgraden."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ est disponible, mais brew ne met pas à niveau un paquet épinglé. « Tout mettre à niveau » l’ignore. Désépinglez-le pour le mettre à niveau."
+            "value": "%@ est disponible, mais ce paquet est épinglé : brew upgrade et « Tout mettre à niveau » l’ignorent. Désépinglez-le pour le mettre à niveau."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ está disponible, pero brew no actualiza un paquete fijado. Actualizar todo lo omite. Desfíjalo para actualizarlo."
+            "value": "%@ está disponible, pero este paquete está fijado: brew upgrade y Actualizar todo lo omiten. Desfíjalo para actualizarlo."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ は利用可能ですが、brewはピン留めされたパッケージをアップグレードしません。「すべてアップグレード」からも除外されます。アップグレードするにはピン留めを解除してください。"
+            "value": "%@ は利用可能ですが、このパッケージはピン留めされているため、brew upgradeと「すべてアップグレード」ではスキップされます。アップグレードするにはピン留めを解除してください。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 有可用更新，但 brew 不会升级已固定的软件包。“全部升级”会跳过它。取消固定后即可升级。"
+            "value": "%@ 已可用，但此软件包已固定：brew upgrade 和“全部升级”会跳过它。取消固定后即可升级。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ está disponível, mas o brew não atualiza um pacote fixado. Atualizar tudo o ignora. Desafixe para atualizar."
+            "value": "%@ está disponível, mas este pacote está fixado: o brew upgrade e Atualizar tudo o ignoram. Desafixe para atualizar."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ è disponibile, ma brew non aggiorna un pacchetto bloccato. Aggiorna tutto lo esclude. Sblocca per aggiornarlo."
+            "value": "%@ è disponibile, ma questo pacchetto è bloccato: brew upgrade e Aggiorna tutto lo saltano. Sbloccalo per aggiornarlo."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 업그레이드가 가능하지만 brew는 고정된 패키지를 업그레이드하지 않습니다. 모두 업그레이드에서도 제외됩니다. 업그레이드하려면 고정을 해제하세요."
+            "value": "%@ 업그레이드가 가능하지만 이 패키지는 고정되어 있어 brew upgrade와 모두 업그레이드에서 건너뜁니다. 업그레이드하려면 고정을 해제하세요."
           }
         }
       }
@@ -4681,54 +4681,54 @@
         }
       }
     },
-    "%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed.": {
+    "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld installierte Pakete stammen aus diesem Tap (%@). Deinstalliere sie zuerst; brew verweigert untap, solange sie installiert sind."
+            "value": "%lld installierte Pakete stammen aus diesem Tap (%@). Deinstalliere sie zuerst: brew entfernt keinen Tap, solange Pakete daraus installiert sind."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld paquets installés proviennent de ce tap (%@). Désinstallez-les d’abord ; brew refuse de retirer un tap tant qu’ils sont installés."
+            "value": "%lld paquets installés proviennent de ce tap (%@). Désinstallez-les d’abord : brew ne retire pas un tap tant que des paquets qui en proviennent sont installés."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld paquetes instalados provienen de este tap (%@). Desinstálalos primero; brew se niega a quitar el tap mientras estén instalados."
+            "value": "%lld paquetes instalados provienen de este tap (%@). Desinstálalos primero: brew no quita un tap mientras haya paquetes suyos instalados."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。インストール済みの間は、brewはuntapを拒否します。"
+            "value": "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们；只要它们仍已安装，brew 就拒绝 untap。"
+            "value": "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们：只要还装有来自该 tap 的软件包，brew 就不会移除它。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld pacotes instalados vêm deste tap (%@). Desinstale-os primeiro; o brew se recusa a executar untap enquanto estiverem instalados."
+            "value": "%lld pacotes instalados vêm deste tap (%@). Desinstale-os primeiro: o brew não remove um tap enquanto houver pacotes dele instalados."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld pacchetti installati provengono da questo tap (%@). Disinstallali prima; brew rifiuta di rimuovere il tap finché sono installati."
+            "value": "%lld pacchetti installati provengono da questo tap (%@). Disinstallali prima: brew non rimuove un tap finché ci sono pacchetti installati da esso."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 설치되어 있는 동안에는 brew가 untap을 거부합니다."
+            "value": "설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다."
           }
         }
       }
@@ -5806,7 +5806,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld angeheftetes Upgrade nicht enthalten (%@)"
+            "value": "%lld fixiertes Upgrade nicht enthalten (%@)"
           }
         },
         "fr": {
@@ -5858,7 +5858,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld angeheftete Upgrades nicht enthalten (%@)"
+            "value": "%lld fixierte Upgrades nicht enthalten (%@)"
           }
         },
         "fr": {
@@ -7517,54 +7517,54 @@
         }
       }
     },
-    "1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed.": {
+    "1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 installiertes Paket stammt aus diesem Tap (%@). Deinstalliere es zuerst; brew verweigert untap, solange es installiert ist."
+            "value": "1 installiertes Paket stammt aus diesem Tap (%@). Deinstalliere es zuerst: brew entfernt keinen Tap, solange Pakete daraus installiert sind."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 paquet installé provient de ce tap (%@). Désinstallez-le d’abord ; brew refuse de retirer un tap tant qu’ils sont installés."
+            "value": "1 paquet installé provient de ce tap (%@). Désinstallez-le d’abord : brew ne retire pas un tap tant que des paquets qui en proviennent sont installés."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 paquete instalado proviene de este tap (%@). Desinstálalo primero; brew se niega a quitar el tap mientras estén instalados."
+            "value": "1 paquete instalado proviene de este tap (%@). Desinstálalo primero: brew no quita un tap mientras haya paquetes suyos instalados."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このtap(%@)から1個のインストール済みパッケージが来ています。先にアンインストールしてください。インストール済みの間は、brewはuntapを拒否します。"
+            "value": "このtap(%@)から1個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这个 tap（%@）提供了 1 个已安装的软件包。请先卸载它；只要它仍已安装，brew 就拒绝 untap。"
+            "value": "这个 tap（%@）提供了 1 个已安装的软件包。请先卸载它：只要还装有来自该 tap 的软件包，brew 就不会移除它。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 pacote instalado vem deste tap (%@). Desinstale-o primeiro; o brew se recusa a executar untap enquanto estiverem instalados."
+            "value": "1 pacote instalado vem deste tap (%@). Desinstale-o primeiro: o brew não remove um tap enquanto houver pacotes dele instalados."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 pacchetto installato proviene da questo tap (%@). Disinstallalo prima; brew rifiuta di rimuovere il tap finché è installato."
+            "value": "1 pacchetto installato proviene da questo tap (%@). Disinstallalo prima: brew non rimuove un tap finché ci sono pacchetti installati da esso."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 패키지 1개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 설치되어 있는 동안에는 brew가 untap을 거부합니다."
+            "value": "설치된 패키지 1개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다."
           }
         }
       }
@@ -8245,6 +8245,58 @@
         }
       }
     },
+    "A newer version": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine neuere Version"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une version plus récente"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una versión más reciente"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma versão mais recente"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una versione più recente"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전"
+          }
+        }
+      }
+    },
     "A package needs something that isn't installed. Installing the missing ones fixes it.": {
       "localizations": {
         "de": {
@@ -8293,58 +8345,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "패키지에 설치되지 않은 항목이 필요합니다. 누락된 항목을 설치하면 해결됩니다."
-          }
-        }
-      }
-    },
-    "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Humpen mit der Anzahl bereiter Upgrades. Wenn aktiviert, bleibt Tankard beim Schließen des Fensters aktiv."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Une chope avec le nombre de mises à niveau prêtes. Activé, fermer la fenêtre laisse Tankard en cours d’exécution."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una jarra con el número de actualizaciones listas. Si está activado, al cerrar la ventana Tankard sigue en ejecución."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アップグレード可能な数を表示するTankardアイコン。オンにすると、ウインドウを閉じてもTankardは実行され続けます。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "带有待升级数量的 tankard 图标。开启后，关闭窗口时 Tankard 会继续运行。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uma caneca com o número de atualizações prontas. Ativado, fechar a janela mantém o Tankard em execução."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un tankard con il numero di aggiornamenti pronti. Se attivo, chiudere la finestra lascia Tankard in esecuzione."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "업그레이드 준비된 개수가 표시되는 tankard. 켜면 윈도우를 닫아도 Tankard가 계속 실행됩니다."
           }
         }
       }
@@ -17137,54 +17137,54 @@
         }
       }
     },
-    "Deprecated: it still installs, but won't be updated for long.": {
+    "Deprecated: it still installs, but Homebrew plans to disable it.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Veraltet: wird noch installiert, aber nicht mehr lange aktualisiert."
+            "value": "Veraltet: wird noch installiert, aber Homebrew wird es deaktivieren."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Obsolète : s’installe encore, mais ne sera bientôt plus mis à jour."
+            "value": "Obsolète : s’installe encore, mais Homebrew prévoit de le désactiver."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Obsoleta: aún se instala, pero no se actualizará por mucho tiempo."
+            "value": "Obsoleta: aún se instala, pero Homebrew planea deshabilitarla."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "非推奨: インストールはできますが、まもなく更新されなくなります。"
+            "value": "非推奨: インストールはできますが、Homebrewは今後無効化する予定です。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已弃用：仍可安装，但长期不会再更新。"
+            "value": "已弃用：仍可安装，但 Homebrew 计划将其停用。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Obsoleto: ainda instala, mas não será atualizado por muito tempo."
+            "value": "Obsoleto: ainda instala, mas o Homebrew planeja desativá-lo."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Obsoleto: si installa ancora, ma non sarà aggiornato a lungo."
+            "value": "Obsoleto: si installa ancora, ma Homebrew prevede di disabilitarlo."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "지원 중단: 아직 설치되지만 오래 업데이트되지 않습니다."
+            "value": "지원 중단: 아직 설치되지만 Homebrew가 나중에 비활성화할 예정입니다."
           }
         }
       }
@@ -22701,58 +22701,6 @@
         }
       }
     },
-    "Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew baut keine Bottles mehr für Intel-Macs, daher kompiliert Standard-Homebrew hier die meisten Pakete aus Quellcode. Intelbrew ist Homebrew mit vorgebauten Intel-Bottles."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew ne construit plus de bottles pour les Mac Intel, donc Homebrew standard compile ici la plupart des paquets depuis les sources. Intelbrew est Homebrew avec des bottles Intel précompilées."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew ya no crea bottles para Macs Intel, así que el Homebrew estándar compila aquí la mayoría de los paquetes desde el código fuente. Intelbrew es Homebrew con bottles de Intel precompilados."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HomebrewはIntel Mac用のbottleをもうビルドしないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされます。IntelbrewはIntel用のビルド済みbottleを備えたHomebrewです。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew 不再为 Intel Mac 构建 bottle，因此标准 Homebrew 在此会从源码编译大多数软件包。Intelbrew 是带有预构建 Intel bottle 的 Homebrew。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Homebrew não cria mais bottles para Macs Intel, então o Homebrew padrão compila a maioria dos pacotes do código-fonte aqui. O Intelbrew é o Homebrew com bottles Intel pré-compilados."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew non compila più bottle per i Mac Intel, quindi l'Homebrew standard compila qui la maggior parte dei pacchetti dai sorgenti. Intelbrew è Homebrew con bottle Intel precompilate."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homebrew는 더 이상 Intel Mac용 bottle을 빌드하지 않으므로, 표준 Homebrew는 여기서 대부분의 패키지를 소스에서 컴파일합니다. Intelbrew는 미리 빌드된 Intel bottle을 제공하는 Homebrew입니다."
-          }
-        }
-      }
-    },
     "Homebrew no longer installs or upgrades it.": {
       "localizations": {
         "de": {
@@ -22853,6 +22801,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew가 더 이상 유지 관리하지 않거나 곧 중단합니다. 지원 중단됨 필터에 나열되며, brew가 대체 항목을 알려주면 함께 표시됩니다."
+          }
+        }
+      }
+    },
+    "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew baut keine Bottles (fertige Pakete) mehr für Intel-Macs, daher kompiliert Standard-Homebrew hier die meisten Pakete langsam aus Quellcode. Intelbrew ist Homebrew mit Intel-Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne fournit plus de bottles (paquets précompilés) pour les Mac Intel, donc Homebrew standard compile ici la plupart des paquets depuis les sources, ce qui est lent. Intelbrew est Homebrew avec des bottles Intel."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no ofrece bottles (paquetes precompilados) para Macs Intel, así que el Homebrew estándar compila aquí la mayoría de los paquetes desde el código fuente, lo que es lento. Intelbrew es Homebrew con bottles de Intel."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomebrewはIntel Mac用のbottle(ビルド済みパッケージ)をもう提供していないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされ、時間がかかります。IntelbrewはIntel用bottleを備えたHomebrewです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 不再为 Intel Mac 提供 bottle（预构建的软件包），因此标准 Homebrew 在此会从源码编译大多数软件包，速度很慢。Intelbrew 是带有 Intel bottle 的 Homebrew。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não oferece mais bottles (pacotes pré-compilados) para Macs Intel, então o Homebrew padrão compila a maioria dos pacotes do código-fonte aqui, o que é lento. O Intelbrew é o Homebrew com bottles Intel."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non fornisce più bottle (pacchetti precompilati) per i Mac Intel, quindi l'Homebrew standard compila qui la maggior parte dei pacchetti dai sorgenti, il che è lento. Intelbrew è Homebrew con bottle Intel."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew는 더 이상 Intel Mac용 bottle(미리 빌드된 패키지)을 제공하지 않으므로, 표준 Homebrew는 여기서 대부분의 패키지를 소스에서 컴파일하며 오래 걸립니다. Intelbrew는 Intel bottle을 제공하는 Homebrew입니다."
           }
         }
       }
@@ -24838,7 +24838,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Installationen, Upgrades, Anheftungen und mehr erscheinen hier."
+            "value": "Installationen, Upgrades, Fixierungen und mehr erscheinen hier."
           }
         },
         "fr": {
@@ -25769,106 +25769,106 @@
         }
       }
     },
-    "Keg-only. Not linked into the prefix on purpose.": {
+    "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. Absichtlich nicht ins Präfix gelinkt."
+            "value": "Keg-only: %@. Absichtlich nicht in Homebrews Ordner gelinkt, daher findet die Shell seine Befehle nicht von selbst."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. Volontairement non lié au préfixe."
+            "value": "Keg-only : %@. Volontairement non lié aux dossiers partagés de Homebrew, donc le shell ne trouve pas ses commandes par défaut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. No se enlaza al prefijo a propósito."
+            "value": "Keg-only: %@. No se enlaza a propósito en las carpetas compartidas de Homebrew, así que la shell no encuentra sus comandos por defecto."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only。意図的にプレフィックスへリンクされていません。"
+            "value": "Keg-only: %@。意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only。有意不链接到前缀中。"
+            "value": "Keg-only：%@。有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. Não vinculado ao prefixo de propósito."
+            "value": "Keg-only: %@. Não vinculado às pastas compartilhadas do Homebrew de propósito, então o shell não encontra seus comandos por padrão."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. Non collegato al prefisso di proposito."
+            "value": "Keg-only: %@. Di proposito non collegato alle cartelle condivise di Homebrew, quindi la shell non trova i suoi comandi di default."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only. 의도적으로 prefix에 링크되지 않습니다."
+            "value": "Keg-only: %@. 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다."
           }
         }
       }
     },
-    "Keg-only: %@. Not linked into the prefix on purpose.": {
+    "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@. Absichtlich nicht ins Präfix gelinkt."
+            "value": "Keg-only: absichtlich nicht in Homebrews Ordner gelinkt, daher findet die Shell seine Befehle nicht von selbst."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only : %@. Volontairement non lié au préfixe."
+            "value": "Keg-only : volontairement non lié aux dossiers partagés de Homebrew, donc le shell ne trouve pas ses commandes par défaut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@. No se enlaza al prefijo a propósito."
+            "value": "Keg-only: no se enlaza a propósito en las carpetas compartidas de Homebrew, así que la shell no encuentra sus comandos por defecto."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@。意図的にプレフィックスへリンクされていません。"
+            "value": "Keg-only: 意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only：%@。有意不链接到前缀中。"
+            "value": "Keg-only：有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@. Não vinculado ao prefixo de propósito."
+            "value": "Keg-only: não vinculado às pastas compartilhadas do Homebrew de propósito, então o shell não encontra seus comandos por padrão."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@. Non collegato al prefisso di proposito."
+            "value": "Keg-only: di proposito non collegato alle cartelle condivise di Homebrew, quindi la shell non trova i suoi comandi di default."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keg-only: %@. 의도적으로 prefix에 링크되지 않습니다."
+            "value": "Keg-only: 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다."
           }
         }
       }
@@ -41470,6 +41470,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 마지막으로 읽은 데이터를 표시하고 있습니다."
+          }
+        }
+      }
+    },
+    "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt einen Humpen mit der Anzahl bereiter Upgrades. Solange aktiv, läuft Tankard nach dem Schließen des Fensters weiter."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affiche une chope avec le nombre de mises à niveau prêtes. Tant qu’elle est affichée, fermer la fenêtre laisse Tankard ouvert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muestra una jarra con el número de actualizaciones listas. Mientras está activado, al cerrar la ventana Tankard sigue abierto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra uma caneca com o número de atualizações prontas. Enquanto ativado, fechar a janela mantém o Tankard aberto."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra un tankard con il numero di aggiornamenti pronti. Finché è attivo, chiudere la finestra lascia Tankard in esecuzione."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드 준비된 개수를 tankard 아이콘으로 보여줍니다. 켜져 있는 동안에는 윈도우를 닫아도 Tankard가 계속 실행됩니다."
           }
         }
       }

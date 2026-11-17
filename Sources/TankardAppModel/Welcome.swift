@@ -70,7 +70,7 @@ public enum HomebrewInstaller: String, Sendable, CaseIterable, Identifiable {
     public var detail: String {
         switch self {
         case .intelbrew:
-            return String(localized: "Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles.")
+            return String(localized: "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles.")
         case .homebrew:
             return String(localized: "The official installer from brew.sh.")
         }

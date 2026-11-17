@@ -34,7 +34,7 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ has no Intelbrew bottle for this Mac, so brew compiles it";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ has no bottle for this Mac, so brew compiles it";
 "%@ has nothing left to upgrade." = "%@ has nothing left to upgrade.";
-"%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.";
+"%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade.";
 "%@ is installed" = "%@ is installed";
 "%@ is pinned" = "%@ is pinned";
 "%@ is running" = "%@ is running";
@@ -89,7 +89,7 @@
 "%lld hours" = "%lld hours";
 "%lld installed" = "%lld installed";
 "%lld installed from it" = "%lld installed from it";
-"%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed.";
+"%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.";
 "%lld installs in the last 30 days" = "%lld installs in the last 30 days";
 "%lld installs in the last 365 days" = "%lld installs in the last 365 days";
 "%lld installs in the last 90 days" = "%lld installs in the last 90 days";
@@ -138,7 +138,7 @@
 "1 cask" = "1 cask";
 "1 formula" = "1 formula";
 "1 hour" = "1 hour";
-"1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed." = "1 installed package comes from this tap (%@). Uninstall it first; brew refuses to untap while they're installed.";
+"1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed.";
 "1 item" = "1 item";
 "1 known vulnerability" = "1 known vulnerability";
 "1 known vulnerability (brew vulns): %@" = "1 known vulnerability (brew vulns): %@";
@@ -152,8 +152,8 @@
 "90 days" = "90 days";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "A download failed. Check the internet connection (or a VPN or proxy), then retry.";
+"A newer version" = "A newer version";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "A package needs something that isn't installed. Installing the missing ones fixes it.";
-"A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running." = "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.";
 "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces." = "A tap name is user/repo: letters, digits, '.', '_' or '-', one slash, no spaces.";
 "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@." = "A third-party tap is code from its author, not from Homebrew: its formulae and casks run Ruby on this Mac when brew loads them, and installs from it run their install steps. Add only taps you trust. brew clones %@.";
 "API" = "API";
@@ -323,7 +323,7 @@
 "Depends on" = "Depends on";
 "Deprecated" = "Deprecated";
 "Deprecated since %@" = "Deprecated since %@";
-"Deprecated: it still installs, but won't be updated for long." = "Deprecated: it still installs, but won't be updated for long.";
+"Deprecated: it still installs, but Homebrew plans to disable it." = "Deprecated: it still installs, but Homebrew plans to disable it.";
 "Didn't run" = "Didn't run";
 "Disabled" = "Disabled";
 "Disabled in its tap: brew won't install it." = "Disabled in its tap: brew won't install it.";
@@ -430,9 +430,9 @@
 "Homebrew isn't ready yet." = "Homebrew isn't ready yet.";
 "Homebrew isn't working" = "Homebrew isn't working";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew keeps only the current cask definition, so it can't install an older version of an app.";
-"Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles." = "Homebrew no longer builds bottles for Intel Macs, so standard Homebrew compiles most packages from source here. Intelbrew is Homebrew with prebuilt Intel bottles.";
 "Homebrew no longer installs or upgrades it." = "Homebrew no longer installs or upgrades it.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one.";
+"Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles.";
 "Homebrew not found" = "Homebrew not found";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves.";
 "Homebrew still has it, but will disable it later." = "Homebrew still has it, but will disable it later.";
@@ -489,8 +489,8 @@
 "Keep the previous version after upgrades" = "Keep the previous version after upgrades";
 "Keeps %@; upgrades skip it" = "Keeps %@; upgrades skip it";
 "Keg-only" = "Keg-only";
-"Keg-only. Not linked into the prefix on purpose." = "Keg-only. Not linked into the prefix on purpose.";
-"Keg-only: %@. Not linked into the prefix on purpose." = "Keg-only: %@. Not linked into the prefix on purpose.";
+"Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.";
+"Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.";
 "Kegs" = "Kegs";
 "Kept" = "Kept";
 "Kind" = "Kind";
@@ -790,6 +790,7 @@
 "Show new vulnerabilities in the menu bar" = "Show new vulnerabilities in the menu bar";
 "Show the Auto-update log" = "Show the Auto-update log";
 "Showing the last data Tankard read." = "Showing the last data Tankard read.";
+"Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.";
 "Shows the brew commands first" = "Shows the brew commands first";
 "Size" = "Size";
 "Skip This Version" = "Skip This Version";

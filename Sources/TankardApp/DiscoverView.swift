@@ -337,7 +337,7 @@ struct DiscoverDetail: View {
                 Label("Disabled in its tap: brew won't install it.", systemImage: "nosign")
                     .font(.system(size: 12)).foregroundStyle(.orange)
             } else if e.deprecated {
-                Label("Deprecated: it still installs, but won't be updated for long.", systemImage: "exclamationmark.triangle")
+                Label("Deprecated: it still installs, but Homebrew plans to disable it.", systemImage: "exclamationmark.triangle")
                     .font(.system(size: 12)).foregroundStyle(.orange)
             }
             let _ = store.buildTimesRevision

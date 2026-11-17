@@ -78,7 +78,7 @@ struct PinBox: View {
                     Text("Pinned at \(p.installedVersion)").font(.system(size: 12, weight: .medium))
                 }
                 Text(p.upgradeAvailable
-                     ? String(localized: "\(p.currentVersion ?? "A newer version") is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it.")
+                     ? String(localized: "\(p.currentVersion ?? String(localized: "A newer version")) is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade.")
                      : String(localized: "brew won't upgrade it, and Upgrade All leaves it out."))
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)

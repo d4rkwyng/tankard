@@ -78,7 +78,7 @@ struct V07TapsCoreTests {
         var xz = Package.command("xz")
         xz.tap = "homebrew/core"
         #expect(TapRemoval.check(yak, packages: [cli, xz]) == .inUse(["obsidian-cli"]))
-        #expect(TapRemoval.check(yak, packages: [cli]).reason?.contains("brew refuses to untap") == true)
+        #expect(TapRemoval.check(yak, packages: [cli]).reason?.contains("brew won't remove a tap") == true)
         // brew treats tap names case-insensitively.
         cli.tap = "YakiTrak/yakitrak"
         #expect(!TapRemoval.check(yak, packages: [cli]).isAllowed)
