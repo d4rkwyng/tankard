@@ -115,7 +115,10 @@ struct V06AHistoryTests {
         #expect(log.filtered(.category(.upgrade)).count == 3)
         #expect(log.filtered(.all, search: "jq").count == 1)
         let failed = log.filtered(.failed)
-        #expect(failed.allSatisfy { $0.canRetry })
+        // 0.6 review: only gated paths retry; an install shows a hint instead.
+        #expect(failed.first { $0.category == .upgrade }?.canRetry == true)
+        #expect(failed.first { $0.category == .install }?.canRetry == false)
+        #expect(failed.first { $0.category == .install }?.rerunHint != nil)
         log.clear()
         #expect(log.entries.isEmpty)
     }
@@ -209,4 +212,27 @@ final class OSAllocatedFlag: @unchecked Sendable {
 @MainActor final class Box<T> {
     var value: T
     init(_ v: T) { value = v }
+}
+
+@Suite struct HistoryRetryGateTests {
+    private func failed(_ args: [String]) -> HistoryEntry {
+        HistoryEntry(startedAt: Date(timeIntervalSince1970: 1_800_000_000), duration: 1,
+                     command: "brew " + args.joined(separator: " "), arguments: args, outcome: .failed)
+    }
+
+    @Test func destructiveCommandsNeverRetryInOneClick() {
+        for args in [["autoremove"], ["cleanup", "--prune=all"], ["uninstall", "--formula", "homebrew/core/xz"],
+                     ["install", "--formula", "homebrew/core/jq"], ["reinstall", "--cask", "homebrew/cask/firefox"]] {
+            let e = failed(args)
+            #expect(e.canRetry == false, "\(args)")
+            #expect(e.rerunHint != nil, "\(args)")
+        }
+    }
+
+    @Test func gatedCommandsRetry() {
+        for args in [["upgrade", "--formula", "homebrew/core/sqlite"], ["pin", "homebrew/core/xz"],
+                     ["services", "restart", "--", "php"], ["update"]] {
+            #expect(failed(args).canRetry, "\(args)")
+        }
+    }
 }

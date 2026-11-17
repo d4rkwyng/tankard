@@ -307,7 +307,11 @@ struct HistoryRow: View {
                     Button("Retry") { store.retry(e) }
                         .controlSize(.small)
                         .disabled(store.isBusy)
-                        .help("Run \(e.command) again, through the queue")
+                        .help(e.category == .upgrade
+                              ? "Upgrade again the usual way: compile warnings, pins and skipped versions still apply"
+                              : "Run \(e.command) again, through the queue")
+                } else if let hint = e.rerunHint {
+                    Image(systemName: "info.circle").foregroundStyle(.secondary).help(hint)
                 }
             }
             HStack(spacing: 8) {

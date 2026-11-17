@@ -57,7 +57,29 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     public var isFailure: Bool { outcome == .failed || outcome == .notStarted }
 
     /// Retry runs the same brew arguments again, through the queue.
-    public var canRetry: Bool { isFailure && category != .other && !arguments.isEmpty }
+    /// Retry is offered only where it goes back through the normal gated
+    /// path (0.6 review): upgrade re-enters requestUpgrade (compile warning,
+    /// pin/held rule, skip-this-version), and pin, services and update are
+    /// re-run as is. Uninstall, clean up, autoremove, install and reinstall
+    /// are never one click: they show `rerunHint` instead.
+    public var canRetry: Bool {
+        guard isFailure, !arguments.isEmpty else { return false }
+        switch category {
+        case .upgrade, .pin, .services, .update: return true
+        default: return false
+        }
+    }
+
+    /// Where to run a failed entry again when Retry isn't offered.
+    public var rerunHint: String? {
+        guard isFailure, !canRetry else { return nil }
+        switch category {
+        case .uninstall: return "Uninstall again from the package's details; it asks first."
+        case .cleanup: return "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first."
+        case .install, .reinstall: return "Install again from Discover or the package's details."
+        default: return nil
+        }
+    }
 
     /// "succeeded", "failed (exit 1)", "stopped", "didn't start".
     public var resultText: String {
@@ -281,6 +303,21 @@ public extension AppStore {
     func retry(_ e: HistoryEntry) {
         guard e.canRetry else { return }
         let args = e.arguments
+        if e.category == .upgrade {
+            // Back through the Upgrade button's path: the compile plan, the
+            // held rule and skip-this-version all apply again.
+            let names = Set(args.filter { !$0.hasPrefix("-") }.dropFirst())
+            let targets = packages.filter { p in
+                names.contains(p.fullName) || names.contains(p.name)
+                    || names.contains((p.tap.map { "\($0)/" } ?? "") + p.name)
+            }
+            if targets.isEmpty {
+                error = StoreError(title: "Nothing to retry", detail: "\(BrewCommands.display(args)) has nothing left to upgrade.")
+                return
+            }
+            requestUpgrade(targets)
+            return
+        }
         Task {
             guard let r = await runQuick(args) else { return }
             await refresh(manual: false)
