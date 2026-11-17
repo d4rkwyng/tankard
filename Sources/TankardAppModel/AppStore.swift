@@ -58,6 +58,8 @@ public final class AppStore {
         /// 0.3: Intelbrew's build times (Intelbrew mode only). When set,
         /// `classifier` should use it as its estimator.
         public var buildTimes: BuildTimeSource?
+        /// 0.4: where the vulnerability scan and sizes are cached (nil: memory only).
+        public var insightsCache: InsightsCache?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -97,6 +99,7 @@ public final class AppStore {
                 logURL: AppPaths.upgradeLog
             )
             d.appManagementGate = true
+            d.insightsCache = InsightsCache(url: InsightsCache.defaultURL)
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -106,7 +109,7 @@ public final class AppStore {
 
     // MARK: state
 
-    public private(set) var report: StatusReport?
+    public internal(set) var report: StatusReport?
     /// Where `report` came from on screen: the disk cache or a live read.
     public private(set) var reportFromCache = false
     public private(set) var isRefreshing = false
@@ -140,6 +143,8 @@ public final class AppStore {
     @ObservationIgnored public let queue: CommandQueue
     /// 0.3 settings (menu bar, notifications, the App Management flag).
     @ObservationIgnored public let settings: AppSettings
+    /// 0.4: vulnerabilities, sizes, caveats' notes, self-updating apps.
+    @ObservationIgnored public let insights: InsightsStore
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
@@ -147,6 +152,9 @@ public final class AppStore {
         self.deps = deps
         self.queue = CommandQueue(runner: deps.streamRunner)
         self.settings = settings ?? AppSettings.ephemeral()
+        self.insights = InsightsStore(settings: InsightSettings(defaults: self.settings.defaults),
+                                      cache: deps.insightsCache, ttl: deps.ttl, now: deps.now)
+        wireInsights()
     }
 
     // MARK: derived
@@ -195,11 +203,13 @@ public final class AppStore {
     /// is none or it is older than the TTL. Returns when that is done.
     public func start() async {
         if report == nil, let cached = deps.cache?.load() {
-            report = cached
+            report = insights.decorate(cached)
             reportFromCache = true
         }
         if isStale {
             await refresh(manual: false)
+        } else {
+            startInsights(force: false)
         }
     }
 
@@ -231,7 +241,7 @@ public final class AppStore {
         refreshTask = nil
     }
 
-    private func resolvedClient() throws -> BrewClient {
+    func resolvedClient() throws -> BrewClient {
         if let client { return client }
         let c = try deps.makeClient()
         client = c
@@ -265,12 +275,13 @@ public final class AppStore {
 
         refreshPhase = "Reading installed packages…"
         do {
-            let fresh = try await client.status()
-            report = fresh
+            let fresh = await withSelfUpdatingCasks(try await client.status(), client: client)
+            report = insights.decorate(fresh)
             reportFromCache = false
             try? deps.cache?.save(fresh)
             error = updateError
             homebrewState = .ready
+            startInsights(force: true)
         } catch {
             // Keep what's on screen; say what went wrong.
             self.error = updateError ?? StoreError(title: "Refresh failed", detail: String(describing: error))
@@ -524,9 +535,12 @@ public final class AppStore {
         let brew = client.installation.brewPath
         upgrade = UpgradeSession(
             packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
-            makeCommand: { p in
+            makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade] p in
                 let args = BrewCommands.arguments(action, for: p)
-                return QueuedCommand(executable: brew, arguments: args, environment: env, display: BrewCommands.display(args))
+                // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
+                let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
+                return QueuedCommand(executable: brew, arguments: args, environment: env.merging(extra) { $1 },
+                                     display: BrewCommands.display(args, environment: extra))
             },
             logURL: deps.logURL,
             onFinish: { [weak self] session in
@@ -537,8 +551,12 @@ public final class AppStore {
     }
 
     private func sessionFinished(_ session: UpgradeSession) {
-        // Reconcile: what brew now says, not what we assume.
-        Task { await self.refresh(manual: false) }
+        // Reconcile: what brew now says, not what we assume. Then (0.4)
+        // the caveats of what changed, once.
+        Task {
+            await self.refresh(manual: false)
+            self.offerPostInstallNotes(for: session)
+        }
         // A cask step macOS blocked: explain, offer one retry.
         if !session.isRetry, !session.blockedPackages.isEmpty {
             appManagementPrompt = AppManagementPrompt(reason: .blocked, action: session.action, packages: session.blockedPackages)
@@ -550,6 +568,7 @@ public final class AppStore {
     public func closeUpgrade() {
         showUpgradeSheet = false
         if upgrade?.isFinished == true { upgrade = nil }
+        insights.presentPending()
     }
 }
 

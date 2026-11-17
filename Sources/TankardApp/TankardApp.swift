@@ -48,6 +48,14 @@ struct LaunchOptions {
     var switchAppearance: (AppTheme, Double)?
     /// TANKARD_RESELECT=<name>@<seconds>: select another row later, as a click would.
     var reselect: (String, Double)?
+    /// 0.4, demo only: TANKARD_DEMO_NOTES=1 upgrades everything, closes the
+    /// finished sheet, and the post-install notes follow.
+    var demoNotes = false
+    /// 0.4, demo only: TANKARD_DEMO_VULN_NOTICE=1 turns the menu-bar
+    /// vulnerability notice on with an empty baseline (everything is new).
+    var demoVulnNotice = false
+    /// 0.4, demo only: TANKARD_SELF_UPDATING=1 turns "Include self-updating apps" on.
+    var demoSelfUpdating = false
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -68,12 +76,17 @@ struct LaunchOptions {
             o.demoAppManagement = env["TANKARD_DEMO_APPMGMT"].flatMap { $0.isEmpty ? nil : $0 }
             o.demoReplace = env["TANKARD_DEMO_REPLACE"] == "1"
             o.demoInstallConfirm = env["TANKARD_DEMO_INSTALL_CONFIRM"] == "1"
+            o.demoNotes = env["TANKARD_DEMO_NOTES"] == "1"
+            o.demoVulnNotice = env["TANKARD_DEMO_VULN_NOTICE"] == "1"
+            o.demoSelfUpdating = env["TANKARD_SELF_UPDATING"] == "1"
         }
         switch env["TANKARD_FILTER"]?.lowercased() {
         case "upgrades": o.filter = .upgrades
         case "source": o.filter = .source
         case "newer": o.filter = .newer
         case "bottle", "bottleavailable": o.filter = .bottleAvailable
+        case "vulnerable": o.filter = .vulnerable
+        case "notes", "hasnotes": o.filter = .hasNotes
         default: break
         }
         o.discoverAll = env["TANKARD_DISCOVER_ALL"] == "1"
@@ -133,6 +146,7 @@ struct TankardApp: App {
         if options.demoAppManagement == "fail" { settings.appManagementExplained = true }
         self.settings = settings
         store = AppStore(deps: deps, settings: settings)
+        if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
         appearance = AppearanceSettings(override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
@@ -186,7 +200,8 @@ struct TankardApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem)
+            SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem,
+                         insightSettings: store.insights.settings)
         }
     }
 }

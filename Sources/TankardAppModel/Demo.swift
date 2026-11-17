@@ -289,6 +289,7 @@ public enum Demo {
                     try await Task.sleep(for: .milliseconds(500))
                     return ProcessResult(exitCode: 0, stdout: Data(Demo.cleanupText(variant).utf8), stderr: Data())
                 }
+                if let r = try await Demo.insight(variant, state: state, arguments: arguments) { return r }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
                 if arguments.contains("--installed") {
                     return ProcessResult(exitCode: 0, stdout: state.info(variant, base: info), stderr: Data())
@@ -317,6 +318,44 @@ public enum Demo {
             default:
                 return ProcessResult(exitCode: 128, stdout: Data(), stderr: Data())
             }
+        }
+    }
+
+    /// 0.4: `brew vulns --json`, `brew info --sizes` and `brew outdated
+    /// --greedy --cask --json=v2`, captured read-only (the Intel VM and the
+    /// arm64 Mac). The Intel demo's older versions (`intelTweaks`) are
+    /// carried into the scan's checked versions, as brew would report them;
+    /// upgraded casks leave the greedy list. nil: not one of these.
+    static func insight(_ variant: Variant, state: State, arguments: [String]) async throws -> ProcessResult? {
+        let prefix = variant == .intelbrew ? "sonoma-intelbrew" : "arm64"
+        switch arguments {
+        case BrewClient.vulnsArguments:
+            try await Task.sleep(for: .milliseconds(1200)) // brew asks OSV.dev; never instant
+            var data = fixtureData("\(prefix)-vulns")
+            let upgraded = state.upgraded.withLock { $0 }
+            if variant == .intelbrew, var root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+               var findings = root["findings"] as? [[String: Any]] {
+                for i in findings.indices {
+                    let name = findings[i]["formula"] as? String ?? ""
+                    if let t = intelTweaks[name], !upgraded.contains(name) { findings[i]["version"] = t.installed }
+                }
+                root["findings"] = findings
+                data = (try? JSONSerialization.data(withJSONObject: root)) ?? data
+            }
+            // brew exits 1 when it finds anything; warnings go to stderr.
+            return ProcessResult(exitCode: 1, stdout: data, stderr: Data(fixtureText("\(prefix)-vulns-stderr").utf8))
+        case BrewClient.sizesArguments:
+            try await Task.sleep(for: .milliseconds(600))
+            return ProcessResult(exitCode: 0, stdout: Data(fixtureText("\(prefix)-sizes").utf8), stderr: Data())
+        case BrewClient.greedyOutdatedArguments:
+            let upgraded = state.upgraded.withLock { $0 }
+            var out = (try? JSONDecoder().decode(BrewOutdatedJSON.self, from: fixtureData("\(prefix)-outdated-greedy"))) ?? BrewOutdatedJSON()
+            out.casks.removeAll { upgraded.contains($0.name) }
+            let casks = out.casks.map { ["name": $0.name, "installed_versions": $0.installedVersions, "current_version": $0.currentVersion] as [String: Any] }
+            let json = (try? JSONSerialization.data(withJSONObject: ["formulae": [Any](), "casks": casks])) ?? Data()
+            return ProcessResult(exitCode: 0, stdout: json, stderr: Data())
+        default:
+            return nil
         }
     }
 

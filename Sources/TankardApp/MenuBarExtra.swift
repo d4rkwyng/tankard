@@ -62,6 +62,8 @@ struct MenuBarContent: View {
                 .padding(.vertical, 8)
             }
 
+            VulnerabilityMenuNotice(store: store, openMain: openMain)
+
             Divider()
             VStack(alignment: .leading, spacing: 1) {
                 MenuRow(title: "Upgrade all", systemImage: "arrow.up.circle", shortcut: nil,
@@ -147,6 +149,8 @@ struct MenuBarLabel: View {
         HStack(spacing: 2) {
             Image(systemName: summary.count > 0 ? "mug.fill" : "mug")
             if let badge = summary.badge { Text(badge) }
+            // 0.4: the optional notice for new vulnerabilities.
+            if !store.insights.newVulnerableFormulae.isEmpty { Image(systemName: "exclamationmark.triangle") }
         }
         .help(summary.title)
     }

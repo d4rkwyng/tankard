@@ -28,7 +28,22 @@ final class FakeInfoRunner: CommandRunning, @unchecked Sendable {
         self.info = info
     }
 
+    /// 0.4: the background reads (`brew vulns`, `brew info --sizes`,
+    /// `brew outdated --greedy`) are answered here and recorded apart, so
+    /// `log` stays the status reads and queued commands.
+    let insightLog = CallLog()
+    private var _insights: [[String]: ProcessResult] = [
+        BrewClient.vulnsArguments: ProcessResult(exitCode: 0, stdout: Data(#"{"findings":[],"skipped_formulae":[],"checked":0,"complete":true,"outdated_without_sbom":[],"unscanned_formulae":{}}"#.utf8), stderr: Data()),
+        BrewClient.sizesArguments: ProcessResult(exitCode: 0, stdout: Data(), stderr: Data()),
+        BrewClient.greedyOutdatedArguments: ProcessResult(exitCode: 0, stdout: Data(#"{"formulae":[],"casks":[]}"#.utf8), stderr: Data()),
+    ]
+    func setInsight(_ arguments: [String], _ result: ProcessResult) { lock.withLock { _insights[arguments] = result } }
+
     func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
+        if executable.hasSuffix("brew"), let r = lock.withLock({ _insights[arguments] }) {
+            insightLog.add(arguments)
+            return r
+        }
         if executable.hasSuffix("brew") {
             log.add(arguments)
             if failInfo { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: boom".utf8)) }

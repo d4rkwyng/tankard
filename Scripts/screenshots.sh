@@ -5,6 +5,7 @@
 #
 #   Scripts/screenshots.sh [OUT_DIR] [APP]     (default: dist/screenshots, dist/Tankard.app)
 #   SET=v0.3 Scripts/screenshots.sh [OUT_DIR]  only the v0.3 shots
+#   SET=v0.4b Scripts/screenshots.sh [OUT_DIR] only the 0.4 vulnerability/notes/size shots
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -62,7 +63,20 @@ v03() {
     shot about-dark 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=dark
     shot about-light 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=light
 }
+v04b() {
+    # v0.4 part B: vulnerabilities, caveats, sizes, self-updating apps (Dark and Tankard)
+    for t in dark tankard; do
+        shot "vulnerable-filter-$t" 4 TANKARD_DEMO=1 TANKARD_FILTER=vulnerable TANKARD_SELECT=openssl@4 TANKARD_APPEARANCE=$t
+        shot "notes-filter-$t" 4 TANKARD_DEMO=1 TANKARD_FILTER=notes TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=$t
+        shot "post-install-notes-$t" 9 TANKARD_DEMO=1 TANKARD_DEMO_NOTES=1 TANKARD_DEMO_PACE=0.05 TANKARD_APPEARANCE=$t
+        shot "sizes-arm64-$t" 4 TANKARD_DEMO=arm64 TANKARD_SELECT=visual-studio-code TANKARD_APPEARANCE=$t
+        shot "self-updating-arm64-$t" 4 TANKARD_DEMO=arm64 TANKARD_SELF_UPDATING=1 TANKARD_FILTER=upgrades TANKARD_SELECT=tailscale-app TANKARD_APPEARANCE=$t
+        shot "settings-upgrades-$t" 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=settings-upgrades TANKARD_APPEARANCE=$t
+        shot "menubar-vulnerability-notice-$t" 4 TANKARD_DEMO=1 TANKARD_DEMO_VULN_NOTICE=1 TANKARD_SNAPSHOT_VIEW=menubar TANKARD_APPEARANCE=$t
+    done
+}
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
+if [ "${SET:-all}" = v0.4b ]; then v04b; exit 0; fi
 
 shot intelbrew-demo-light 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=light
 shot intelbrew-demo-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=dark

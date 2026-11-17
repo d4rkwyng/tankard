@@ -6,8 +6,14 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     case all, upgrades, source, newer
     /// 0.3: source builds whose version has a bottle for this Mac.
     case bottleAvailable
+    /// 0.4: open vulnerabilities from `brew vulns`; caveats from `brew info`.
+    case vulnerable, hasNotes
 
     public var id: String { rawValue }
+
+    /// The summary strip's segments; the 0.4 filters sit in its menu.
+    public static let segmented: [PackageFilter] = [.all, .upgrades, .source, .newer, .bottleAvailable]
+    public static let more: [PackageFilter] = [.vulnerable, .hasNotes]
 
     public var title: String {
         switch self {
@@ -16,6 +22,8 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .source: return "From source"
         case .newer: return "Newer"
         case .bottleAvailable: return "Bottle available"
+        case .vulnerable: return "Vulnerable"
+        case .hasNotes: return "Has notes"
         }
     }
 
@@ -26,6 +34,8 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .source: return p.status == .source
         case .newer: return p.status == .newer
         case .bottleAvailable: return BottleReplacement.isEligible(p)
+        case .vulnerable: return p.isVulnerable
+        case .hasNotes: return p.hasCaveats
         }
     }
 }
