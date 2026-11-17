@@ -1095,3 +1095,5 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· 磁盘上 %@（brew info --sizes：keg 和 Caskroom 文件夹，App 通过其链接计算）";
 "· fetched %@" = "· 已获取 %@";
 "· measuring…" = "· 正在测量…";
+"Hide Dock icon when the window is closed" = "关闭窗口时隐藏程序坞图标";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "关闭所有 Tankard 窗口后，程序坞图标和应用菜单会消失，Tankard 保留在菜单栏中；打开窗口即可恢复。需要开启“在菜单栏中显示 Tankard”。默认开启。";

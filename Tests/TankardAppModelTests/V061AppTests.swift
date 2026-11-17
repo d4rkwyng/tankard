@@ -179,7 +179,7 @@ struct V061ScanProgressTests {
 
 struct V061SettingsHelpTests {
     @Test func everyExplanationHasText() {
-        #expect(SettingsHelp.all.count == 13)  // 0.8: + backgroundUpdate, keepPreviousVersion (its ⓘ)
+        #expect(SettingsHelp.all.count == 14)  // 0.8: + backgroundUpdate, keepPreviousVersion (its ⓘ); 0.8.1: + hideDockIcon
         for text in SettingsHelp.all {
             #expect(text.trimmingCharacters(in: .whitespacesAndNewlines).count > 20)
         }

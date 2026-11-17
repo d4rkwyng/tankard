@@ -190,6 +190,7 @@ struct TankardApp: App {
         checker = BackgroundChecker(store: store, settings: settings, notifier: notifier)
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings
+        AppDelegate.dock = DockIconController(settings: settings)
         let checker = self.checker
         AppDelegate.onLaunch = { if !options.isDemo && (options.script == nil || options.script?.background == true) { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
@@ -319,6 +320,8 @@ struct MenuBarPanel: View {
     }
 
     private func openMain() {
+        // 0.8.1: back to a Dock icon before the window shows.
+        AppDelegate.dock?.prepareToShowWindow()
         NSApp.activate(ignoringOtherApps: true)
         if let w = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true && $0.isVisible }) {
             w.makeKeyAndOrderFront(nil)
@@ -351,6 +354,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor static var initialTheme: AppTheme = .default
     @MainActor static var settings: AppSettings?
     @MainActor static var onLaunch: (() -> Void)?
+    /// 0.8.1: Hide Dock icon when the window is closed.
+    @MainActor static var dock: DockIconController?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Under `swift run` there is no bundle to say "regular app".
@@ -360,7 +365,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
-        MainActor.assumeIsolated { Self.onLaunch?() }
+        MainActor.assumeIsolated {
+            Self.onLaunch?()
+            Self.dock?.start()
+        }
+    }
+
+    /// Reopen (Finder, Spotlight, a notification click) while the Dock icon
+    /// is hidden: `.regular` first, then SwiftUI opens the window.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        MainActor.assumeIsolated { Self.dock?.prepareToShowWindow() }
+        return true
     }
 
     /// With the menu-bar icon on, closing the window keeps Tankard running
@@ -430,6 +445,12 @@ enum AppResources {
     }()
 
     private static var dockShowsIntelbrew = false
+
+    /// 0.8.1: after an .accessory → .regular switch, set the Intelbrew Dock
+    /// image again (the bundle's icon needs nothing).
+    static func reapplyDockIcon() {
+        if dockShowsIntelbrew { NSApp.applicationIconImage = intelbrewDockIcon }
+    }
 
     /// Intelbrew mode: the Dock shows the "i" mug; otherwise the bundle's icon.
     /// Only a real change touches NSApp, and never inside a view update (it

@@ -1095,3 +1095,5 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)";
 "· fetched %@" = "· fetched %@";
 "· measuring…" = "· measuring…";
+"Hide Dock icon when the window is closed" = "Hide Dock icon when the window is closed";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.";

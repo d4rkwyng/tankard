@@ -1095,3 +1095,5 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· 디스크 %@ (brew info --sizes: keg와 Caskroom 폴더, 앱은 링크를 통해)";
 "· fetched %@" = "· %@에 가져옴";
 "· measuring…" = "· 측정 중…";
+"Hide Dock icon when the window is closed" = "윈도우를 닫으면 Dock 아이콘 가리기";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬.";

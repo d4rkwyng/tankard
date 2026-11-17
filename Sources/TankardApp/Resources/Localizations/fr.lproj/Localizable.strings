@@ -1095,3 +1095,5 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ sur le disque (brew info --sizes : kegs et dossiers Caskroom, apps via leurs liens)";
 "· fetched %@" = "· récupéré %@";
 "· measuring…" = "· mesure en cours…";
+"Hide Dock icon when the window is closed" = "Masquer l’icône du Dock quand la fenêtre est fermée";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "Quand toutes les fenêtres de Tankard sont fermées, l’icône du Dock et le menu de l’app disparaissent et Tankard reste dans la barre des menus ; ouvrir une fenêtre les fait revenir. Nécessite « Afficher Tankard dans la barre des menus ». Activé par défaut.";

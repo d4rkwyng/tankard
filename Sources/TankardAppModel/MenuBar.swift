@@ -157,6 +157,7 @@ public final class AppSettings {
         static let lastBrewUpdate = "lastBrewUpdate"
         static let appManagementPendingRetry = "appManagementPendingRetry"
         static let onboardingDone = "onboardingDone"
+        static let hideDockIconWhenClosed = "hideDockIconWhenClosed"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -221,6 +222,11 @@ public final class AppSettings {
     }
     /// 0.8.1: the first-launch welcome sheet was closed.
     public var onboardingDone: Bool { didSet { defaults.set(onboardingDone, forKey: Key.onboardingDone) } }
+    /// 0.8.1: no Dock icon while every window is closed (needs the menu-bar
+    /// icon; see DockIconPolicy). Default on. Only a real change is written.
+    public var hideDockIconWhenClosed: Bool {
+        didSet { if hideDockIconWhenClosed != oldValue { defaults.set(hideDockIconWhenClosed, forKey: Key.hideDockIconWhenClosed) } }
+    }
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -235,6 +241,7 @@ public final class AppSettings {
         lastBrewUpdate = defaults.object(forKey: Key.lastBrewUpdate) as? Date
         appManagementPendingRetry = defaults.data(forKey: Key.appManagementPendingRetry)
         onboardingDone = defaults.bool(forKey: Key.onboardingDone)
+        hideDockIconWhenClosed = defaults.object(forKey: Key.hideDockIconWhenClosed) as? Bool ?? true
     }
 
     /// Settings that persist nowhere real (tests, demo mode): a private
