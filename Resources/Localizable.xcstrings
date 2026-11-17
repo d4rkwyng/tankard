@@ -15785,6 +15785,58 @@
         }
       }
     },
+    "Couldn't relaunch Tankard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard-Neustart fehlgeschlagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de relancer Tankard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo reiniciar Tankard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardを再起動できませんでした"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法重新启动 Tankard"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível reabrir o Tankard"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile riavviare Tankard"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard를 다시 시작할 수 없음"
+          }
+        }
+      }
+    },
     "Couldn't reload: %@": {
       "localizations": {
         "de": {
@@ -33721,6 +33773,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard 종료"
+          }
+        }
+      }
+    },
+    "Quit Tankard and open it again, then run it again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beende Tankard, öffne es erneut und führe es dann erneut aus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quittez Tankard, rouvrez-le, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cierra Tankard, ábrelo de nuevo y vuelve a ejecutarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardを終了してもう一度開き、もう一度実行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请退出 Tankard 并重新打开，然后再次运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerre o Tankard, abra-o de novo e execute de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci da Tankard, riaprilo e poi eseguilo di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard를 종료하고 다시 연 다음 다시 실행하세요."
           }
         }
       }

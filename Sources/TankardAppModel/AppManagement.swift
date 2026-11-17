@@ -91,11 +91,15 @@ extension AppManagement {
     ///
     /// The command that does it: a detached /bin/sh waits (at most ~10 s)
     /// for this process to exit, so the new one is a fresh process for TCC,
-    /// then `open -n` starts the bundle again. Arguments are passed as
+    /// then `open -n` starts the bundle again. If it is still running after
+    /// the wait, nothing is opened (a second Tankard would start): the
+    /// helper logs it (`logger -t Tankard`) and the user reopens it. Arguments are passed as
     /// positional parameters ($0 the bundle, $1 the pid), never spliced
     /// into the script.
-    public static func relaunchCommand(bundlePath: String, pid: Int32) -> (executable: String, arguments: [String]) {
-        let script = "i=0; while kill -0 \"$1\" 2>/dev/null && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; exec /usr/bin/open -n \"$0\""
+    public static func relaunchCommand(bundlePath: String, pid: Int32, waitTenths: Int = 100) -> (executable: String, arguments: [String]) {
+        let script = "i=0; while kill -0 \"$1\" 2>/dev/null && [ $i -lt \(waitTenths) ]; do sleep 0.1; i=$((i+1)); done; "
+            + "if kill -0 \"$1\" 2>/dev/null; then /usr/bin/logger -t Tankard \"relaunch: Tankard (pid $1) still running, not reopening\"; "
+            + "echo \"still running\" >&2; exit 1; fi; exec /usr/bin/open -n \"$0\""
         return ("/bin/sh", ["-c", script, bundlePath, String(pid)])
     }
 
@@ -121,6 +125,8 @@ public struct AppManagementPendingRetry: Codable, Equatable, Sendable {
     public var savedAt: Date
     /// Upgrade targets' ids that would compile when saved.
     public var compiling: [String]
+    /// An adopt's self-update choices (qualified name → SelfUpdatePolicy raw value).
+    public var policies: [String: String] = [:]
 
     public init(action: SessionAction, packages: [Package], savedAt: Date, compiling: Set<String> = []) {
         self.action = action.rawValue
@@ -175,7 +181,10 @@ public struct AppManagementPendingRetry: Codable, Equatable, Sendable {
                 if live == nil { run.append(saved) } else { dropped.append(saved.name) }
             }
         }
-        return run.isEmpty ? nil : AppManagementResume(action: a, packages: run, dropped: dropped)
+        guard !run.isEmpty else { return nil }
+        let keys = Set(run.map(\.qualifiedName))
+        return AppManagementResume(action: a, packages: run, dropped: dropped,
+                                   policies: policies.filter { keys.contains($0.key) })
     }
 
     public func encoded() -> Data? { try? JSONEncoder().encode(self) }
@@ -188,6 +197,8 @@ public struct AppManagementResume: Equatable, Sendable {
     public var packages: [Package]
     /// Saved targets that no longer apply (changed or already done).
     public var dropped: [String]
+    /// An adopt's saved self-update choices (raw values), restored on Run again.
+    public var policies: [String: String] = [:]
 }
 
 // MARK: probe (0.8.1)

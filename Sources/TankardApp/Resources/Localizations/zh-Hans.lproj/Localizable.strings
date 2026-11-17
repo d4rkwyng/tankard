@@ -297,6 +297,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "无法读取 cask 的详细信息，因此不会标记管理员密码。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "无法读取 formula 的详细信息，因此不会标记编译。";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "无法从 formulae.brew.sh 刷新（%@）；正在显示已存储的副本。";
+"Couldn't relaunch Tankard" = "无法重新启动 Tankard";
 "Couldn't reload: %@" = "无法重新载入：%@";
 "Couldn't run brew tap-info: %@" = "无法运行 brew tap-info：%@";
 "Couldn't tell" = "无法判断";
@@ -642,6 +643,7 @@
 "Preview from %@ (changes nothing)." = "来自 %@ 的预览（不会更改任何内容）。";
 "Private" = "私有";
 "Quit Tankard" = "退出 Tankard";
+"Quit Tankard and open it again, then run it again." = "请退出 Tankard 并重新打开，然后再次运行。";
 "Read from Homebrew's API; not tapped locally." = "读取自 Homebrew 的 API；未在本地添加 tap。";
 "Reading installed packages…" = "正在读取已安装的软件包…";
 "Reading package details…" = "正在读取软件包详情…";

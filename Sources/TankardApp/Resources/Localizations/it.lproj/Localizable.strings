@@ -297,6 +297,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Impossibile leggere i dettagli dei cask, quindi le password di amministratore non sono contrassegnate.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Impossibile leggere i dettagli delle formulae, quindi le compilazioni non sono contrassegnate.";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "Impossibile aggiornare da formulae.brew.sh (%@); viene mostrata la copia salvata.";
+"Couldn't relaunch Tankard" = "Impossibile riavviare Tankard";
 "Couldn't reload: %@" = "Impossibile ricaricare: %@";
 "Couldn't run brew tap-info: %@" = "Impossibile eseguire brew tap-info: %@";
 "Couldn't tell" = "Impossibile dirlo";
@@ -642,6 +643,7 @@
 "Preview from %@ (changes nothing)." = "Anteprima da %@ (non modifica nulla).";
 "Private" = "Privato";
 "Quit Tankard" = "Esci da Tankard";
+"Quit Tankard and open it again, then run it again." = "Esci da Tankard, riaprilo e poi eseguilo di nuovo.";
 "Read from Homebrew's API; not tapped locally." = "Letto dall'API di Homebrew; non aggiunto in locale come tap.";
 "Reading installed packages…" = "Lettura dei pacchetti installati…";
 "Reading package details…" = "Lettura dei dettagli del pacchetto…";

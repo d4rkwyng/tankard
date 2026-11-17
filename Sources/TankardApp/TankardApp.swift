@@ -162,7 +162,7 @@ struct TankardApp: App {
             && AppManagement.canRelaunch(bundlePath: Bundle.main.bundlePath) {
             deps.relaunch = { Relauncher.relaunch() }
         } else if options.demoAppManagement == "relaunch" {
-            deps.relaunch = {}
+            deps.relaunch = { false }
         }
         // 0.8: no background brew update in a snapshot run (a shot of real
         // data must not change under it). Demo dependencies never have it.
@@ -346,7 +346,10 @@ struct MenuBarPanel: View {
 /// 0.8.1: quit and start again (App Management applies to a new process).
 @MainActor
 enum Relauncher {
-    static func relaunch() {
+    /// Starts the helper, then quits on the next turn of the run loop (so
+    /// the caller can save first). False: the helper didn't start; Tankard
+    /// keeps running.
+    static func relaunch() -> Bool {
         let c = AppManagement.relaunchCommand(bundlePath: Bundle.main.bundlePath,
                                               pid: ProcessInfo.processInfo.processIdentifier)
         let p = Process()
@@ -356,9 +359,10 @@ enum Relauncher {
             try p.run()
         } catch {
             NSSound.beep()
-            return
+            return false
         }
-        NSApp.terminate(nil)
+        DispatchQueue.main.async { NSApp.terminate(nil) }
+        return true
     }
 }
 

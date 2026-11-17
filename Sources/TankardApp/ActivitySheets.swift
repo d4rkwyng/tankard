@@ -225,9 +225,11 @@ struct AppManagementSheet: View {
                 }
             }
             HStack {
-                Button("Continue without relaunching") { store.appManagementContinue() }
+                // Esc closes and runs nothing; continuing is a deliberate click.
+                Button("Cancel") { store.appManagementCancel() }
                     .keyboardShortcut(.cancelAction)
                 Spacer()
+                Button("Continue without relaunching") { store.appManagementContinue() }
                 Button {
                     store.appManagementRelaunch()
                 } label: {

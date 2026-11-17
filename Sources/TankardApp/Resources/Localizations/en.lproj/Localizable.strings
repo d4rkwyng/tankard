@@ -297,6 +297,7 @@
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Couldn't read the casks' details, so admin passwords aren't marked.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Couldn't read the formulae's details, so compiles aren't marked.";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy.";
+"Couldn't relaunch Tankard" = "Couldn't relaunch Tankard";
 "Couldn't reload: %@" = "Couldn't reload: %@";
 "Couldn't run brew tap-info: %@" = "Couldn't run brew tap-info: %@";
 "Couldn't tell" = "Couldn't tell";
@@ -642,6 +643,7 @@
 "Preview from %@ (changes nothing)." = "Preview from %@ (changes nothing).";
 "Private" = "Private";
 "Quit Tankard" = "Quit Tankard";
+"Quit Tankard and open it again, then run it again." = "Quit Tankard and open it again, then run it again.";
 "Read from Homebrew's API; not tapped locally." = "Read from Homebrew's API; not tapped locally.";
 "Reading installed packages…" = "Reading installed packages…";
 "Reading package details…" = "Reading package details…";

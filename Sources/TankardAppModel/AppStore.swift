@@ -63,7 +63,8 @@ public final class AppStore {
         public var appManagementGate: Bool = false
         /// 0.8.1: quits Tankard and starts it again (the app sets it, from
         /// a real bundle only). Nil: no "Relaunch Tankard" (tests, `swift run`).
-        public var relaunch: (@MainActor @Sendable () -> Void)?
+        /// True when the relaunch helper started (Tankard quits right after).
+        public var relaunch: (@MainActor @Sendable () -> Bool)?
         /// 0.8.1: the welcome sheet's App Management check (Onboarding.swift):
         /// the write test, and whether a candidate app exists. Demo fakes both.
         public var appManagementProbe: @Sendable (String) -> AppManagementProbe.Result = { AppManagementProbe.run(appPath: $0) }
@@ -721,12 +722,33 @@ public final class AppStore {
         guard let p = appManagementPrompt, let relaunch = deps.relaunch, !isUpgrading, !autoUpdate.isRunning else { return }
         settings.appManagementExplained = true
         let classifier = deps.classifier
-        settings.appManagementPendingRetry = p.canRetry
+        var pending = p.canRetry
             ? AppManagementPendingRetry.make(action: p.action, targets: p.packages, root: p.packages.first, savedAt: deps.now(),
-                                             compiles: { classifier.upgradeMethod($0).compiles })?.encoded()
+                                             compiles: { classifier.upgradeMethod($0).compiles })
             : nil
+        // An adopt's per-app self-update choices go with it.
+        if p.action == .adopt, !adopt.policiesToSave.isEmpty {
+            pending?.policies = adopt.policiesToSave.mapValues(\.rawValue)
+        }
         appManagementPrompt = nil
-        relaunch()
+        // Saved only once the helper has started; a failed start leaves
+        // nothing behind to offer at the next launch.
+        settings.appManagementPendingRetry = nil
+        if relaunch() {
+            settings.appManagementPendingRetry = pending?.encoded()
+        } else {
+            error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
+                               detail: String(localized: "Quit Tankard and open it again, then run it again."))
+            if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
+        }
+    }
+
+    /// 0.8.1: Esc on the relaunch page: close, run nothing.
+    public func appManagementCancel() {
+        guard appManagementPrompt != nil else { return }
+        settings.appManagementExplained = true
+        appManagementPrompt = nil
+        if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
     }
 
     /// Whether "Relaunch Tankard" can be offered now.
@@ -774,6 +796,9 @@ public final class AppStore {
             let run = r.packages.filter { !installedIDs.contains($0.id) }
             guard !run.isEmpty else { showUpgradeSheet = false; return }
             startSession(r.action, packages: run)
+            if r.action == .adopt, isUpgrading || appManagementPrompt != nil {
+                adopt.policiesToSave = r.policies.compactMapValues(SelfUpdatePolicy.init(rawValue:))
+            }
         }
     }
 
@@ -781,6 +806,7 @@ public final class AppStore {
     public func demoAppManagementResume(_ targets: [Package]) {
         settings.appManagementPendingRetry = AppManagementPendingRetry.make(
             action: .upgrade, targets: targets, root: nil, savedAt: deps.now(), compiles: { _ in false })?.encoded()
+        // (The demo's own launch never saves one: its settings are ephemeral.)
         resumeAppManagementRetry()
     }
 

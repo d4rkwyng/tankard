@@ -396,7 +396,8 @@ Security → App Management). Since 0.8.1 every action that writes into an Appli
 folder counts: installing a cask (from Discover, a Brewfile, a Health replacement), Adopt
 Apps (`brew install --cask --adopt` changes the app you already have), upgrades,
 uninstalls, a restore point's cask reinstall, and auto-update. Formulae, fonts and other
-casks with no app, and Replace with bottle never need it.
+casks with no app, and Replace with bottle never need it (Discover knows a cask's
+artifacts from its catalog, so a font installs without the explainer).
 
 - Before the first such action, a sheet explains this, with a button that opens the App
   Management pane (falling back to Privacy & Security). "Not now" remembers that you've
@@ -410,8 +411,11 @@ casks with no app, and Replace with bottle never need it.
   confirmation (which works out the unused dependencies again and rechecks each). Only the
   casks that change apps are kept (for an uninstall, the package you chose). An upgrade
   whose available version or bottle-or-compile answer has changed since, or anything already
-  done, is left out, and the sheet says so. "Continue without relaunching" runs it straight
-  away instead.
+  done, is left out, and the sheet says so. An adopt keeps its "who updates it" choices.
+  "Continue without relaunching" runs it straight away instead; Esc (Cancel) closes the page
+  and runs nothing. The operation is saved only once the relaunch helper has started; if
+  Tankard is still running after about 10 seconds, the helper doesn't open a second copy
+  (it writes a line tagged Tankard to the system log with `logger`, and you reopen Tankard).
   Relaunch is offered only from Tankard.app (not `swift run`) and not while brew runs.
 - When brew's output shows the block (brew's "does not have App Management permissions",
   macOS's "prevented from modifying apps", or "Operation not permitted" on an Applications

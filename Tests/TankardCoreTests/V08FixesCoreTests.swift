@@ -95,3 +95,24 @@ struct OrphanTests {
         #expect(nonEmpty > 0)
     }
 }
+
+// 0.8.1: Discover's cask entries carry the cask's artifacts, so the App
+// Management explainer can skip a font cask.
+@Suite struct V081CatalogArtifactTests {
+    func entry(_ json: String) throws -> CatalogEntry {
+        let c = try JSONDecoder().decode(BrewInfoJSON.Cask.self, from: Data(json.utf8))
+        return CatalogBuilder(platform: BottlePlatform(arch: .arm64, macOSVersion: "27", cellar: "/opt/homebrew/Cellar"),
+                              intelbrewMode: false).entry(c)
+    }
+
+    @Test func artifactsReachThePackage() throws {
+        let font = try entry(#"{"token":"font-fira-code","full_token":"font-fira-code","tap":"homebrew/cask","version":"6.2","artifacts":[{"font":["FiraCode-Bold.ttf"]}]}"#)
+        #expect(font.appPaths == [])
+        #expect(font.asPackage().appPaths == [])
+        #expect(font.asPackage().installsPkg == false)
+        let app = try entry(#"{"token":"anybar","full_token":"anybar","tap":"homebrew/cask","version":"1.0","artifacts":[{"app":["AnyBar.app"]}]}"#)
+        #expect(app.asPackage().appPaths?.count == 1)
+        let none = try entry(#"{"token":"x","full_token":"x","tap":"homebrew/cask","version":"1.0"}"#)
+        #expect(none.appPaths == nil) // unknown: the explainer still shows
+    }
+}
