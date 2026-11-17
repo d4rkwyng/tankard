@@ -9597,6 +9597,58 @@
         }
       }
     },
+    "After the relaunch, Tankard runs it again: %@ %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach dem Neustart führt Tankard es erneut aus: %1$@ %2$@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Après la relance, Tankard le relance : %1$@ %2$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tras reiniciar, Tankard lo ejecutará de nuevo: %1$@ %2$@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再起動後、Tankardがもう一度実行します: %1$@ %2$@。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新启动后，Tankard 会再次运行：%1$@ %2$@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Após reabrir, o Tankard executa de novo: %1$@ %2$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo il riavvio, Tankard lo esegue di nuovo: %1$@ %2$@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작한 후 Tankard가 다시 실행합니다: %1$@ %2$@."
+          }
+        }
+      }
+    },
     "All": {
       "localizations": {
         "de": {
@@ -9697,6 +9749,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "모든 버전"
+          }
+        }
+      }
+    },
+    "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard in „Datenschutz & Sicherheit“ → „App-Verwaltung“ erlauben, Tankard neu starten, dann erneut ausführen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisez Tankard dans Confidentialité et sécurité → Gestion des apps, relancez Tankard, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite Tankard en Privacidad y seguridad → Gestión de apps, reinicia Tankard y vuelve a ejecutarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「プライバシーとセキュリティ」→「App管理」でTankardを許可し、Tankardを再起動してからもう一度実行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“隐私与安全性”→“App 管理”中允许 Tankard，重新启动 Tankard，然后再次运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permita o Tankard em Privacidade e Segurança → Gerenciamento de Apps, reabra o Tankard e execute de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consenti Tankard in Privacy e sicurezza → Gestione app, riavvia Tankard e poi eseguilo di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개인정보 보호 및 보안 → 앱 관리에서 Tankard를 허용하고 Tankard를 다시 시작한 다음 다시 실행하세요."
           }
         }
       }
@@ -14221,6 +14325,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "컴파일"
+          }
+        }
+      }
+    },
+    "Continue without relaunching": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Neustart weiter"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer sans relancer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sin reiniciar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再起動せずに続ける"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不重新启动，继续"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sem reabrir"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continua senza riavviare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작하지 않고 계속"
           }
         }
       }
@@ -29357,6 +29513,58 @@
         }
       }
     },
+    "Nothing runs on its own after the relaunch.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach dem Neustart läuft nichts von selbst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne se lance tout seul après la relance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada se ejecuta solo después de reiniciar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再起動後に自動で実行されるものはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新启动后不会自动运行任何操作。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada é executado sozinho após reabrir."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo il riavvio non parte nulla da solo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작한 후 자동으로 실행되는 것은 없습니다."
+          }
+        }
+      }
+    },
     "Nothing to clean up": {
       "localizations": {
         "de": {
@@ -33513,6 +33721,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "보통 재설치하면 해결됩니다:"
+          }
+        }
+      }
+    },
+    "Relaunch Tankard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard neu starten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancer Tankard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar Tankard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardを再起動"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新启动 Tankard"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reabrir o Tankard"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riavvia Tankard"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 다시 시작"
           }
         }
       }
@@ -37987,7 +38247,8 @@
             "value": "\"자체 업데이트 앱 포함\"이 켜져 있을 때만 자체 업데이트 앱이 포함됩니다."
           }
         }
-      }
+      },
+      "extractionState": "stale"
     },
     "Self-updating apps not checked: %@": {
       "localizations": {
@@ -41469,6 +41730,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard는 %@ 또는 TANKARD_BREW에서 brew를 찾습니다."
+          }
+        }
+      }
+    },
+    "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard braucht die App-Verwaltung. Erlaube sie in „Datenschutz & Sicherheit“ → „App-Verwaltung“, starte Tankard neu und versuche es erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a besoin de l’autorisation Gestion des apps. Autorisez-la dans Réglages Système → Confidentialité et sécurité → Gestion des apps, relancez Tankard, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard necesita el permiso Gestión de apps. Permítelo en Ajustes del Sistema → Privacidad y seguridad → Gestión de apps, reinicia Tankard y vuelve a intentarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardにはApp管理の許可が必要です。「システム設定」→「プライバシーとセキュリティ」→「App管理」で許可し、Tankardを再起動してからもう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 需要“App 管理”权限。请在“系统设置”→“隐私与安全性”→“App 管理”中允许，重新启动 Tankard，然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard precisa da permissão Gerenciamento de Apps. Permita em Ajustes do Sistema → Privacidade e Segurança → Gerenciamento de Apps, reabra o Tankard e tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ha bisogno del permesso Gestione app. Consentilo in Impostazioni di Sistema → Privacy e sicurezza → Gestione app, riavvia Tankard e riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard에 앱 관리 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 앱 관리에서 허용하고 Tankard를 다시 시작한 다음 다시 시도하세요."
           }
         }
       }
@@ -53537,54 +53850,210 @@
         }
       }
     },
-    "macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications.": {
+    "macOS applies App Management the next time Tankard starts.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS fragt nach, bevor eine App andere Apps aktualisieren oder entfernen darf; Homebrew braucht das, um Apps im Ordner „Programme“ zu upgraden oder zu deinstallieren."
+            "value": "macOS wendet die App-Verwaltung beim nächsten Start von Tankard an."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS demande confirmation avant qu’une app puisse mettre à jour ou supprimer d’autres apps ; Homebrew en a donc besoin pour mettre à niveau ou désinstaller des apps dans Applications."
+            "value": "macOS applique Gestion des apps au prochain lancement de Tankard."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS pregunta antes de que una app pueda actualizar o quitar otras apps, así que Homebrew necesita esto para actualizar o desinstalar apps en Aplicaciones."
+            "value": "macOS aplica Gestión de apps la próxima vez que se abra Tankard."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOSでは、あるアプリが他のアプリを更新または削除する前に確認が入るため、Homebrewがアプリケーション内のアプリをアップグレードまたはアンインストールするにはこれが必要です。"
+            "value": "macOSはTankardの次回起動時にApp管理を適用します。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS 会在一个 App 更新或移除其他 App 前询问，因此 Homebrew 需要此权限才能升级或卸载“应用程序”中的 App。"
+            "value": "macOS 会在 Tankard 下次启动时应用“App 管理”权限。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O macOS pergunta antes de um app poder atualizar ou remover outros apps, então o Homebrew precisa disso para atualizar ou desinstalar apps em Aplicativos."
+            "value": "O macOS aplica o Gerenciamento de Apps na próxima vez que o Tankard abrir."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS chiede conferma prima che un'app possa aggiornare o rimuovere altre app, quindi Homebrew ne ha bisogno per aggiornare o disinstallare le app in Applicazioni."
+            "value": "macOS applica Gestione app al prossimo avvio di Tankard."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS는 한 앱이 다른 앱을 업데이트하거나 제거하기 전에 확인을 요청하므로, Homebrew가 응용 프로그램의 앱을 업그레이드하거나 제거하려면 이 권한이 필요합니다."
+            "value": "macOS는 Tankard가 다음에 시작될 때 앱 관리 권한을 적용합니다."
+          }
+        }
+      }
+    },
+    "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS fragt, bevor eine App andere Apps ändern darf. Homebrew braucht das, um Apps zu installieren, aktualisieren oder entfernen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS demande avant qu’une app puisse modifier d’autres apps : Homebrew en a besoin pour installer, mettre à jour ou supprimer des apps dans Applications."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS pregunta antes de que una app pueda cambiar otras apps, así que Homebrew lo necesita para instalar, actualizar o eliminar apps en Aplicaciones."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSはアプリが他のアプリを変更する前に確認します。Homebrewが「アプリケーション」内のアプリをインストール、アップデート、削除するにはこの許可が必要です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 会在一个 App 更改其他 App 前询问，因此 Homebrew 需要此权限才能在“应用程序”中安装、更新或移除 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS pergunta antes que um app possa alterar outros apps, então o Homebrew precisa disso para instalar, atualizar ou remover apps em Aplicativos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS chiede prima che un'app possa modificare altre app, quindi Homebrew ne ha bisogno per installare, aggiornare o rimuovere app in Applicazioni."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS는 한 앱이 다른 앱을 변경하기 전에 묻습니다. Homebrew가 응용 프로그램의 앱을 설치, 업데이트 또는 제거하려면 이 권한이 필요합니다."
+          }
+        }
+      }
+    },
+    "macOS blocked changing an app": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat eine App-Änderung blockiert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS a bloqué la modification d’une app"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS bloqueó el cambio de una app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSがアプリの変更をブロックしました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 阻止了更改 App"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS bloqueou a alteração de um app"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS ha bloccato la modifica di un'app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS가 앱 변경을 차단함"
+          }
+        }
+      }
+    },
+    "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat App-Änderungen blockiert: Tankard unter „App-Verwaltung“ erlauben, dann neu starten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS a bloqué la modification d’apps : autorisez Tankard dans Confidentialité et sécurité → Gestion des apps, puis relancez-le."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS bloqueó cambios en apps: permite Tankard en Privacidad y seguridad → Gestión de apps y reinícialo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSがアプリの変更をブロックしました:「プライバシーとセキュリティ」→「App管理」でTankardを許可し、再起動してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 阻止了更改 App：请在“隐私与安全性”→“App 管理”中允许 Tankard，然后重新启动它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS bloqueou alterações em apps: permita o Tankard em Privacidade e Segurança → Gerenciamento de Apps e reabra-o."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS ha bloccato modifiche alle app: consenti Tankard in Privacy e sicurezza → Gestione app, poi riavvialo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS가 앱 변경을 차단했습니다: 개인정보 보호 및 보안 → 앱 관리에서 Tankard를 허용한 다음 다시 시작하세요."
           }
         }
       }
@@ -53741,6 +54210,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "macOS가 %@을(를) 중지했습니다. 허용하면 Tankard가 한 번 더 시도합니다."
+          }
+        }
+      }
+    },
+    "macOS stopped a step that changes an app. Allow it, then run it again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat einen Schritt blockiert, der eine App ändert. Erlaube es, dann erneut ausführen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS a arrêté une étape qui modifie une app. Autorisez-la, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS detuvo un paso que cambia una app. Permítelo y vuelve a ejecutarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSがアプリを変更する手順を停止しました。許可してから、もう一度実行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 停止了一个会更改 App 的步骤。请允许后再次运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS interrompeu uma etapa que altera um app. Permita e execute de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS ha fermato un passaggio che modifica un'app. Consentilo, poi eseguilo di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS가 앱을 변경하는 단계를 중단했습니다. 허용한 다음 다시 실행하세요."
           }
         }
       }

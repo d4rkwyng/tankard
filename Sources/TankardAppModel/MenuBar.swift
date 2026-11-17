@@ -155,6 +155,8 @@ public final class AppSettings {
         static let appManagementExplained = "appManagementExplained"
         static let backgroundUpdate = "backgroundUpdate"
         static let lastBrewUpdate = "lastBrewUpdate"
+        static let appManagementPendingRetry = "appManagementPendingRetry"
+        static let onboardingDone = "onboardingDone"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -212,6 +214,13 @@ public final class AppSettings {
     /// 0.8: when a `brew update` Tankard ran last succeeded (any of them:
     /// the Refresh button, a background check, auto-update).
     public var lastBrewUpdate: Date? { didSet { defaults.set(lastBrewUpdate, forKey: Key.lastBrewUpdate) } }
+    /// 0.8.1: the operation to run again after "Relaunch Tankard"
+    /// (`AppManagementPendingRetry`, JSON). Read once at the next launch.
+    public var appManagementPendingRetry: Data? {
+        didSet { defaults.set(appManagementPendingRetry, forKey: Key.appManagementPendingRetry) }
+    }
+    /// 0.8.1: the first-launch welcome sheet was closed.
+    public var onboardingDone: Bool { didSet { defaults.set(onboardingDone, forKey: Key.onboardingDone) } }
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -224,6 +233,8 @@ public final class AppSettings {
         appManagementExplained = defaults.bool(forKey: Key.appManagementExplained)
         backgroundUpdate = defaults.object(forKey: Key.backgroundUpdate) as? Bool ?? true
         lastBrewUpdate = defaults.object(forKey: Key.lastBrewUpdate) as? Date
+        appManagementPendingRetry = defaults.data(forKey: Key.appManagementPendingRetry)
+        onboardingDone = defaults.bool(forKey: Key.onboardingDone)
     }
 
     /// Settings that persist nowhere real (tests, demo mode): a private

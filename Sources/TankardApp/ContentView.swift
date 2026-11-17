@@ -241,6 +241,12 @@ struct ContentView: View {
         if options.demo != nil && options.demoAppManagement == "1" {
             store.showAppManagementExplainer()
         }
+        // 0.8.1: the relaunch page, for a blocked upgrade.
+        if options.demo != nil && options.demoAppManagement == "relaunch",
+           let p = store.packages.first(where: { $0.kind == .cask }) {
+            store.showAppManagementExplainer(packages: [p], reason: .blocked)
+            store.appManagementDone()
+        }
         if options.demo != nil && options.demoReplace, let p = store.selectedPackage {
             store.startReplaceWithBottle([p])
         }

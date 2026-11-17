@@ -156,6 +156,14 @@ struct TankardApp: App {
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
+        // 0.8.1: Relaunch Tankard (App Management): the real app only, from
+        // its bundle. The demo of the relaunch page gets a button that does nothing.
+        if !options.isDemo && options.snapshot == nil && options.script == nil
+            && AppManagement.canRelaunch(bundlePath: Bundle.main.bundlePath) {
+            deps.relaunch = { Relauncher.relaunch() }
+        } else if options.demoAppManagement == "relaunch" {
+            deps.relaunch = {}
+        }
         // 0.8: no background brew update in a snapshot run (a shot of real
         // data must not change under it). Demo dependencies never have it.
         if options.snapshot != nil { deps.backgroundUpdates = false }
@@ -317,6 +325,25 @@ struct MenuBarPanel: View {
         } else {
             openWindow(id: "main")
         }
+    }
+}
+
+/// 0.8.1: quit and start again (App Management applies to a new process).
+@MainActor
+enum Relauncher {
+    static func relaunch() {
+        let c = AppManagement.relaunchCommand(bundlePath: Bundle.main.bundlePath,
+                                              pid: ProcessInfo.processInfo.processIdentifier)
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: c.executable)
+        p.arguments = c.arguments
+        do {
+            try p.run()
+        } catch {
+            NSSound.beep()
+            return
+        }
+        NSApp.terminate(nil)
     }
 }
 

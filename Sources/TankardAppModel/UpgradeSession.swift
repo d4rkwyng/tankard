@@ -320,9 +320,11 @@ public final class UpgradeSession: Identifiable {
             }
             if code != 0 {
                 if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
-                if AppManagement.isCaskChange(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {
+                // 0.8.1: every action that writes into /Applications (a
+                // restore's cask reinstall too); the failure kind says why.
+                if AppManagement.isCaskChange(action, items[i].package) || AppManagement.isCaskCommand(items[i].command.arguments),
+                   AppManagement.isPermissionBlock(commandLines) {
                     appManagementBlocked.append(items[i].id)
-                    note("macOS blocked changing the app (App Management permission)")
                 }
                 // 0.6: say why in words when brew's output shows it; the raw log stays above.
                 if let kind = BrewFailure.classify(commandLines) {

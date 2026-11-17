@@ -112,9 +112,13 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
     case network
     case diskFull
     case permissions
+    /// 0.8.1: macOS's App Management permission stopped a change to an app
+    /// in an Applications folder (Privacy & Security → App Management).
+    case appManagement
 
     public var title: String {
         switch self {
+        case .appManagement: return String(localized: "macOS blocked changing an app")
         case .locked: return String(localized: "Another Homebrew command is running")
         case .network: return String(localized: "Homebrew couldn't reach the network")
         case .diskFull: return String(localized: "The disk is full")
@@ -124,6 +128,8 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
 
     public var explanation: String {
         switch self {
+        case .appManagement:
+            return String(localized: "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again.")
         case .locked:
             return String(localized: "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry.")
         case .network:
@@ -146,6 +152,7 @@ public enum BrewFailure {
             || (text.contains("flock") && text.contains("lock")) {
             return .locked
         }
+        if isAppManagementBlock(lines.map { $0 }) { return .appManagement }
         if text.contains("no space left on device") || text.contains("disk full") || text.contains("enospc") {
             return .diskFull
         }
@@ -160,6 +167,25 @@ public enum BrewFailure {
             return .permissions
         }
         return nil
+    }
+
+    /// 0.8.1: brew's output shows macOS's App Management permission
+    /// blocking a change to an app. Matches brew 7's own messages
+    /// (cask/staged.rb, install_steps.rb: "... because your terminal does
+    /// not have App Management permissions."; cask/quarantine.rb: "Your
+    /// terminal does not have App Management permissions"), macOS's
+    /// "was prevented from modifying apps", and "Operation not permitted" on
+    /// a path in an Applications folder (what touch/rm/mv/chown print when
+    /// TCC refuses: brew's own write test prints
+    /// "touch: <app>/.homebrew-write-test: Operation not permitted").
+    public static func isAppManagementBlock<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
+        lines.contains { line in
+            let l = line.lowercased()
+            if l.contains("app management permission") { return true }
+            if l.contains("prevented from modifying apps") { return true }
+            if l.contains("operation not permitted"), l.contains("/applications/") { return true }
+            return false
+        }
     }
 }
 

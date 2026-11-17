@@ -490,7 +490,7 @@ public enum Demo {
                 state.replaced.withLock { _ = $0.insert(name) }
                 return 0
             }
-            if state.failAppManagement, arguments.contains("--cask"), arguments.first == "upgrade" || arguments.first == "uninstall",
+            if state.failAppManagement, AppManagement.isCaskCommand(arguments),
                let qualified = arguments.last {
                 let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
                 let first = state.appManagementFailed.withLock { $0.insert(name).inserted }

@@ -178,8 +178,10 @@
 "Adopting runs through Tankard's queue and History." = "Adopting runs through Tankard's queue and History.";
 "After adopting:" = "After adopting:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.";
+"After the relaunch, Tankard runs it again: %@ %@." = "After the relaunch, Tankard runs it again: %@ %@.";
 "All" = "All";
 "All versions" = "All versions";
+"Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again.";
 "Allow Tankard to update apps" = "Allow Tankard to update apps";
 "Allowed" = "Allowed";
 "Already above in this branch" = "Already above in this branch";
@@ -267,6 +269,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this.";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions.";
 "Compiles" = "Compiles";
+"Continue without relaunching" = "Continue without relaunching";
 "Copy Brewfile" = "Copy Brewfile";
 "Copy Command" = "Copy Command";
 "Copy Install Command" = "Copy Install Command";
@@ -558,6 +561,7 @@
 "Nothing here can be restored automatically" = "Nothing here can be restored automatically";
 "Nothing matches" = "Nothing matches";
 "Nothing matches “%@”." = "Nothing matches “%@”.";
+"Nothing runs on its own after the relaunch." = "Nothing runs on its own after the relaunch.";
 "Nothing to clean up" = "Nothing to clean up";
 "Nothing to remove" = "Nothing to remove";
 "Nothing to retry" = "Nothing to retry";
@@ -638,6 +642,7 @@
 "Reinstalling %@ from a bottle" = "Reinstalling %@ from a bottle";
 "Reinstalling %lld packages from bottles" = "Reinstalling %lld packages from bottles";
 "Reinstalling usually fixes this:" = "Reinstalling usually fixes this:";
+"Relaunch Tankard" = "Relaunch Tankard";
 "Reload" = "Reload";
 "Remove" = "Remove";
 "Remove %@?" = "Remove %@?";
@@ -723,7 +728,6 @@
 "Select a package" = "Select a package";
 "Select a service" = "Select a service";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\".";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "Self-updating apps are included only when \"Include self-updating apps\" is on.";
 "Self-updating apps not checked: %@" = "Self-updating apps not checked: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sends your installed formula names and versions to OSV.dev (via brew vulns).";
 "Service" = "Service";
@@ -791,6 +795,7 @@
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard looks for brew at %@, or TANKARD_BREW.";
+"Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again.";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard never runs sudo. Run this in Terminal:";
 "Tankard on GitHub" = "Tankard on GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard only controls your own services and never runs sudo. Run this in Terminal:";
@@ -1023,10 +1028,14 @@
 "its dependency %@ would compile from source" = "its dependency %@ would compile from source";
 "just now" = "just now";
 "macOS already provides this software" = "macOS already provides this software";
-"macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications." = "macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications.";
+"macOS applies App Management the next time Tankard starts." = "macOS applies App Management the next time Tankard starts.";
+"macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications.";
+"macOS blocked changing an app" = "macOS blocked changing an app";
+"macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it.";
 "macOS provides a similar version, which this would shadow" = "macOS provides a similar version, which this would shadow";
 "macOS refused: %@" = "macOS refused: %@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS stopped %@. Tankard will try once more after you allow it.";
+"macOS stopped a step that changes an app. Allow it, then run it again." = "macOS stopped a step that changes an app. Allow it, then run it again.";
 "macOS will ask when you turn this on" = "macOS will ask when you turn this on";
 "needs administrator rights" = "needs administrator rights";
 "newer" = "newer";

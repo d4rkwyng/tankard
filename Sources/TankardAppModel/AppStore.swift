@@ -61,6 +61,9 @@ public final class AppStore {
         /// 0.3: show the App Management explainer before the first cask
         /// upgrade or uninstall (the app and demo mode; tests opt in).
         public var appManagementGate: Bool = false
+        /// 0.8.1: quits Tankard and starts it again (the app sets it, from
+        /// a real bundle only). Nil: no "Relaunch Tankard" (tests, `swift run`).
+        public var relaunch: (@MainActor @Sendable () -> Void)?
         /// 0.3: bottle-or-compile, shared with Discover.
         public var classifier = CompileClassifier()
         /// 0.3: Intelbrew's build times (Intelbrew mode only). When set,
@@ -400,6 +403,10 @@ public final class AppStore {
             error = updateError
             homebrewState = .ready
             startInsights(force: kind != .afterUpdate, measureSizes: false)
+            // 0.8.1: relaunched for App Management: the operation it was for.
+            if settings.appManagementPendingRetry != nil {
+                Task { @MainActor in self.resumeAppManagementRetry() }
+            }
         } catch {
             // Keep what's on screen; say what went wrong.
             self.error = updateError ?? StoreError(title: String(localized: "Refresh failed"), detail: String(describing: error))
@@ -665,13 +672,61 @@ public final class AppStore {
 
     // MARK: App Management (0.3)
 
-    /// "I've done this": remember the explainer was seen, then run the
-    /// pending operation (first use) or retry the blocked one once.
+    /// "I've done this": remember the explainer was seen. 0.8.1: when
+    /// Tankard can relaunch itself, the sheet turns to the relaunch offer
+    /// (macOS applies the grant to a process started after it); otherwise
+    /// run the pending operation (first use) or retry the blocked one once.
     public func appManagementDone() {
+        guard var p = appManagementPrompt else { return }
+        settings.appManagementExplained = true
+        if deps.relaunch != nil, p.stage == .explain {
+            p.stage = .relaunch
+            appManagementPrompt = p
+            return
+        }
+        appManagementContinue()
+    }
+
+    /// 0.8.1: carry on in this process ("Continue without relaunching"):
+    /// first use runs what was asked for; a block is retried once.
+    public func appManagementContinue() {
         guard let p = appManagementPrompt else { return }
         settings.appManagementExplained = true
         appManagementPrompt = nil
+        guard p.canRetry else {
+            if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
+            return
+        }
         startSession(p.action, packages: p.packages, isRetry: p.reason == .blocked, skipGate: true)
+    }
+
+    /// 0.8.1: "Relaunch Tankard": keep the operation for the next launch
+    /// (run again then if it still applies, `resumeAppManagementRetry`),
+    /// then quit and start again. Not while brew is running.
+    public func appManagementRelaunch() {
+        guard let p = appManagementPrompt, let relaunch = deps.relaunch, !isUpgrading, !autoUpdate.isRunning else { return }
+        settings.appManagementExplained = true
+        settings.appManagementPendingRetry = p.canRetry
+            ? AppManagementPendingRetry(action: p.action, packages: p.packages, savedAt: deps.now()).encoded() : nil
+        appManagementPrompt = nil
+        relaunch()
+    }
+
+    /// Whether "Relaunch Tankard" can be offered now.
+    public var canRelaunch: Bool { deps.relaunch != nil && !isUpgrading && !autoUpdate.isRunning }
+
+    /// 0.8.1: after a relaunch for App Management, the operation it was for,
+    /// once (the saved one is cleared first), and only if it still applies
+    /// to what brew now says and is less than 15 minutes old. It runs
+    /// through the normal sheet, as a retry (no second explainer).
+    @discardableResult
+    func resumeAppManagementRetry() -> Bool {
+        guard let data = settings.appManagementPendingRetry else { return false }
+        settings.appManagementPendingRetry = nil
+        guard let pending = AppManagementPendingRetry.decode(data),
+              let (action, run) = pending.resolve(installed: packages, now: deps.now()) else { return false }
+        startSession(action, packages: run, isRetry: true, skipGate: true)
+        return upgrade != nil
     }
 
     /// "Not now": first use still runs what the user asked for (it may
@@ -680,7 +735,7 @@ public final class AppStore {
         guard let p = appManagementPrompt else { return }
         settings.appManagementExplained = true
         appManagementPrompt = nil
-        if p.reason == .firstUse {
+        if p.reason == .firstUse, p.canRetry {
             startSession(p.action, packages: p.packages, skipGate: true)
         } else if upgrade == nil {
             showUpgradeSheet = false
@@ -688,8 +743,8 @@ public final class AppStore {
     }
 
     /// Shows the explainer on its own (demo and screenshots).
-    public func showAppManagementExplainer(packages: [Package] = []) {
-        appManagementPrompt = AppManagementPrompt(reason: .firstUse, action: .upgrade, packages: packages)
+    public func showAppManagementExplainer(packages: [Package] = [], reason: AppManagementPrompt.Reason = .firstUse) {
+        appManagementPrompt = AppManagementPrompt(reason: reason, action: .upgrade, packages: packages)
         showUpgradeSheet = true
     }
 
@@ -774,9 +829,12 @@ public final class AppStore {
             await self.refresh(manual: false)
             self.offerPostInstallNotes(for: session)
         }
-        // A cask step macOS blocked: explain, offer one retry.
+        // A cask step macOS blocked: explain, offer one retry. 0.8.1: a
+        // restore's blocked step (a command row) is explained too, without
+        // a retry (Restore Points runs it again).
         if !session.isRetry, !session.blockedPackages.isEmpty {
-            appManagementPrompt = AppManagementPrompt(reason: .blocked, action: session.action, packages: session.blockedPackages)
+            let retry = AppManagement.retryable(session.action) ? session.blockedPackages : []
+            appManagementPrompt = AppManagementPrompt(reason: .blocked, action: session.action, packages: retry)
             showUpgradeSheet = true
         }
     }

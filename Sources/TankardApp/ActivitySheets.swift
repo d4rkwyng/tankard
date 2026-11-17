@@ -150,11 +150,20 @@ struct AppManagementSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
+            if prompt.stage == .relaunch { relaunchPage } else { explainPage }
+        }
+        .padding(20)
+        .frame(width: 480)
+        .background(theme.window ?? .clear)
+    }
+
+    private var explainPage: some View {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 14) {
                 BrandMark(size: 64, intelbrew: store.intelbrewMode)
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Allow Tankard to update apps").font(.system(size: 15, weight: .bold))
-                    Text("macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications.")
+                    Text("macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -162,36 +171,24 @@ struct AppManagementSheet: View {
             if prompt.reason == .blocked {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                    Text("macOS stopped \(prompt.packages.map(\.name).joined(separator: ", ")). Tankard will try once more after you allow it.")
-                        .font(.system(size: 12))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(AppManagement.steps().enumerated()), id: \.offset) { i, step in
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(verbatim: "\(i + 1)")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(theme.onAccent)
-                            .frame(width: 18, height: 18)
-                            .background(Circle().fill(theme.accent))
-                        Text(step).font(.system(size: 12.5)).fixedSize(horizontal: false, vertical: true)
+                    Group {
+                        if prompt.canRetry {
+                            Text("macOS stopped \(prompt.packages.map(\.name).joined(separator: ", ")). Tankard will try once more after you allow it.")
+                        } else {
+                            Text("macOS stopped a step that changes an app. Allow it, then run it again.")
+                        }
                     }
+                    .font(.system(size: 12))
+                    .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip))
+            AppManagementSteps()
 
             HStack {
                 Button("Not now") { store.appManagementNotNow() }
                     .keyboardShortcut(.cancelAction)
                 Spacer()
-                Button("Open System Settings") {
-                    if !NSWorkspace.shared.open(AppManagement.settingsURL) {
-                        NSWorkspace.shared.open(AppManagement.privacyURL)
-                    }
-                }
+                Button("Open System Settings") { AppManagementSteps.openSettings() }
                 Button {
                     store.appManagementDone()
                 } label: {
@@ -201,9 +198,74 @@ struct AppManagementSheet: View {
                 .keyboardShortcut(.defaultAction)
             }
         }
-        .padding(20)
-        .frame(width: 480)
-        .background(theme.window ?? .clear)
+    }
+
+    /// 0.8.1: macOS applies the grant to a process started after it.
+    private var relaunchPage: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 14) {
+                BrandMark(size: 64, intelbrew: store.intelbrewMode)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Relaunch Tankard").font(.system(size: 15, weight: .bold))
+                    Text("macOS applies App Management the next time Tankard starts.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Group {
+                        if prompt.canRetry {
+                            Text("After the relaunch, Tankard runs it again: \(prompt.action.verb) \(prompt.packages.map(\.name).joined(separator: ", ")).")
+                        } else {
+                            Text("Nothing runs on its own after the relaunch.")
+                        }
+                    }
+                    .font(.system(size: 12))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 4)
+                }
+            }
+            HStack {
+                Button("Continue without relaunching") { store.appManagementContinue() }
+                    .keyboardShortcut(.cancelAction)
+                Spacer()
+                Button {
+                    store.appManagementRelaunch()
+                } label: {
+                    Text("Relaunch Tankard").fontWeight(.semibold).modifier(OnAccentLabel(theme: theme))
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .disabled(!store.canRelaunch)
+            }
+        }
+    }
+}
+
+/// The numbered App Management steps (the sheet and the first-launch
+/// welcome).
+struct AppManagementSteps: View {
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(Array(AppManagement.steps().enumerated()), id: \.offset) { i, step in
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(verbatim: "\(i + 1)")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(theme.onAccent)
+                        .frame(width: 18, height: 18)
+                        .background(Circle().fill(theme.accent))
+                    Text(step).font(.system(size: 12.5)).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip))
+    }
+
+    static func openSettings() {
+        if !NSWorkspace.shared.open(AppManagement.settingsURL) {
+            NSWorkspace.shared.open(AppManagement.privacyURL)
+        }
     }
 }
 

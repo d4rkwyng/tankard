@@ -12,6 +12,8 @@ import Testing
 struct V08AdoptAppTests {
     func openedDemo() async throws -> AppStore {
         let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0))
+        // 0.8.1: adopt gets the App Management explainer first (tested in V081AppManagementTests).
+        store.settings.appManagementExplained = true
         await store.start()
         store.openAdopt()
         #expect(store.toolSheet == .adopt)

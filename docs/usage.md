@@ -368,17 +368,31 @@ out to be no bottle. The Bottle available filter has **Replace all**.
 
 ## App Management
 
-macOS asks before one app updates or deletes another (System Settings → Privacy &
-Security → App Management). Only upgrades and uninstalls of casks that install an app (or
-run an installer package) need it; formulae, fonts and other casks with no app, installs and
-Replace with bottle never do.
+macOS asks before one app installs, updates or deletes another (System Settings → Privacy &
+Security → App Management). Since 0.8.1 every action that writes into an Applications
+folder counts: installing a cask (from Discover, a Brewfile, a Health replacement), Adopt
+Apps (`brew install --cask --adopt` changes the app you already have), upgrades,
+uninstalls, a restore point's cask reinstall, and auto-update. Formulae, fonts and other
+casks with no app, and Replace with bottle never need it.
 
-- Before the first cask upgrade or uninstall, a sheet explains this, with a button that
-  opens the App Management pane (falling back to Privacy & Security). "I've done this" or
-  "Not now" both remember that you've seen it and carry on.
-- When brew's output shows the block ("does not have App Management permissions",
-  "prevented from modifying apps", or "Operation not permitted" on an /Applications path),
-  the sheet comes back and offers one retry through the queue.
+- Before the first such action, a sheet explains this, with a button that opens the App
+  Management pane (falling back to Privacy & Security). "Not now" remembers that you've
+  seen it and carries on.
+- "I've done this" turns the sheet to **Relaunch Tankard**: macOS applies the permission to
+  a process started after it (its own dialog says an app "will not be able to update or
+  delete other applications until it is quit"). Relaunching quits Tankard, starts it again
+  and, once the package list has loaded, runs the operation once more if it still applies
+  (an upgrade that is still outdated, an install that still isn't installed) and is less
+  than 15 minutes old. "Continue without relaunching" runs it straight away instead.
+  Relaunch is offered only from Tankard.app (not `swift run`) and not while brew runs.
+- When brew's output shows the block (brew's "does not have App Management permissions",
+  macOS's "prevented from modifying apps", or "Operation not permitted" on an Applications
+  path), the step's failure says "macOS blocked changing an app", in the sheet and in
+  History, and the sheet comes back with the same relaunch offer. A restore's blocked step
+  is explained without a retry: run the restore again from Restore Points.
+- Auto-update has no sheet: a blocked cask counts as failed with that reason, the
+  notification says to allow Tankard and relaunch it, and the explainer shows again before
+  the next cask change you make.
 - The permission is tied to the code signature: an ad-hoc build needs it again after every
   rebuild, a Developer ID build keeps it across updates.
 

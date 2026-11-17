@@ -178,8 +178,10 @@
 "Adopting runs through Tankard's queue and History." = "接管通过 Tankard 的队列和历史记录进行。";
 "After adopting:" = "接管后：";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "列表显示后，在后台运行 brew update，每个检查间隔最多一次，然后刷新升级数量。brew 忙碌时会等待，失败（离线）只记入日志。设置了 HOMEBREW_NO_AUTO_UPDATE 时关闭。默认开启。";
+"After the relaunch, Tankard runs it again: %@ %@." = "重新启动后，Tankard 会再次运行：%1$@ %2$@。";
 "All" = "全部";
 "All versions" = "所有版本";
+"Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "在“隐私与安全性”→“App 管理”中允许 Tankard，重新启动 Tankard，然后再次运行。";
 "Allow Tankard to update apps" = "允许 Tankard 更新 App";
 "Allowed" = "已允许";
 "Already above in this branch" = "已在此分支上方";
@@ -267,6 +269,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "你 shell 中的命令可能运行系统自带的副本，而不是 Homebrew 的。只有你的 shell 配置文件能改变这一点。";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "按 brew 的方式比较版本。不符合条件的软件包会被跳过并记入日志，需手动升级。无法比较的版本（日期、字母）只有在“所有版本”下才会自动升级。";
 "Compiles" = "编译";
+"Continue without relaunching" = "不重新启动，继续";
 "Copy Brewfile" = "拷贝 Brewfile";
 "Copy Command" = "拷贝命令";
 "Copy Install Command" = "拷贝安装命令";
@@ -558,6 +561,7 @@
 "Nothing here can be restored automatically" = "这里的内容无法自动恢复";
 "Nothing matches" = "没有匹配项";
 "Nothing matches “%@”." = "没有与“%@”匹配的项目。";
+"Nothing runs on its own after the relaunch." = "重新启动后不会自动运行任何操作。";
 "Nothing to clean up" = "无需清理";
 "Nothing to remove" = "没有可移除的项目";
 "Nothing to retry" = "没有可重试的项目";
@@ -638,6 +642,7 @@
 "Reinstalling %@ from a bottle" = "正在从 bottle 重新安装 %@";
 "Reinstalling %lld packages from bottles" = "正在从 bottle 重新安装 %lld 个软件包";
 "Reinstalling usually fixes this:" = "通常重新安装即可解决：";
+"Relaunch Tankard" = "重新启动 Tankard";
 "Reload" = "重新载入";
 "Remove" = "移除";
 "Remove %@?" = "移除 %@？";
@@ -723,7 +728,6 @@
 "Select a package" = "选择软件包";
 "Select a service" = "选择服务";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "只有开启“包含自行更新的 App”，或为该 App 选择了“由 Homebrew 更新”时，才会包含自行更新的 App；选择“App 自行更新”时则永不包含。";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "仅当“包含可自行更新的 App”开启时，才包含可自行更新的 App。";
 "Self-updating apps not checked: %@" = "未检查可自行更新的 App：%@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";
@@ -791,6 +795,7 @@
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard 会在 %@ 或 TANKARD_BREW 中查找 brew。";
+"Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard 需要“App 管理”权限。请在“系统设置”→“隐私与安全性”→“App 管理”中允许，重新启动 Tankard，然后重试。";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard 从不运行 sudo。请在“终端”中运行：";
 "Tankard on GitHub" = "GitHub 上的 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard 只控制你自己的服务，从不运行 sudo。请在“终端”中运行：";
@@ -1023,10 +1028,14 @@
 "its dependency %@ would compile from source" = "其依赖项 %@ 需要从源码编译";
 "just now" = "刚刚";
 "macOS already provides this software" = "macOS 已提供此软件";
-"macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications." = "macOS 会在一个 App 更新或移除其他 App 前询问，因此 Homebrew 需要此权限才能升级或卸载“应用程序”中的 App。";
+"macOS applies App Management the next time Tankard starts." = "macOS 会在 Tankard 下次启动时应用“App 管理”权限。";
+"macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOS 会在一个 App 更改其他 App 前询问，因此 Homebrew 需要此权限才能在“应用程序”中安装、更新或移除 App。";
+"macOS blocked changing an app" = "macOS 阻止了更改 App";
+"macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOS 阻止了更改 App：请在“隐私与安全性”→“App 管理”中允许 Tankard，然后重新启动它。";
 "macOS provides a similar version, which this would shadow" = "macOS 提供了类似的版本，此项会将其覆盖";
 "macOS refused: %@" = "macOS 已拒绝：%@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS 已停止 %@。你允许后，Tankard 会再试一次。";
+"macOS stopped a step that changes an app. Allow it, then run it again." = "macOS 停止了一个会更改 App 的步骤。请允许后再次运行。";
 "macOS will ask when you turn this on" = "开启时 macOS 会询问";
 "needs administrator rights" = "需要管理员权限";
 "newer" = "较新";

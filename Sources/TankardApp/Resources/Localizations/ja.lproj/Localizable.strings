@@ -178,8 +178,10 @@
 "Adopting runs through Tankard's queue and History." = "引き継ぎは Tankard のキューと履歴を通じて実行されます。";
 "After adopting:" = "引き継ぎ後:";
 "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "リストの表示後、確認間隔ごとに最大1回、バックグラウンドで brew update を実行し、アップグレード数を更新します。brew の使用中は待機し、失敗（オフライン）はログに記録するだけです。HOMEBREW_NO_AUTO_UPDATE が設定されているとオフ。デフォルトはオン。";
+"After the relaunch, Tankard runs it again: %@ %@." = "再起動後、Tankardがもう一度実行します: %1$@ %2$@。";
 "All" = "すべて";
 "All versions" = "すべてのバージョン";
+"Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "「プライバシーとセキュリティ」→「App管理」でTankardを許可し、Tankardを再起動してからもう一度実行してください。";
 "Allow Tankard to update apps" = "Tankardによるアプリのアップデートを許可";
 "Allowed" = "許可";
 "Already above in this branch" = "このブランチの上位にすでにあります";
@@ -267,6 +269,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "シェルのコマンドが、Homebrewのものではなくシステムのコピーを実行する場合があります。変更できるのはシェルプロファイルだけです。";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "バージョンをbrewと同じ方法で比較します。条件を満たさないパッケージはスキップされてログに記録されるので、手動でアップグレードしてください。比較できないバージョン(日付、文字)は「すべてのバージョン」の場合にのみ自動でアップグレードされます。";
 "Compiles" = "コンパイル";
+"Continue without relaunching" = "再起動せずに続ける";
 "Copy Brewfile" = "Brewfileをコピー";
 "Copy Command" = "コマンドをコピー";
 "Copy Install Command" = "インストールコマンドをコピー";
@@ -558,6 +561,7 @@
 "Nothing here can be restored automatically" = "ここにある項目は自動で復元できません";
 "Nothing matches" = "一致するものはありません";
 "Nothing matches “%@”." = "「%@」に一致するものはありません。";
+"Nothing runs on its own after the relaunch." = "再起動後に自動で実行されるものはありません。";
 "Nothing to clean up" = "クリーンアップするものはありません";
 "Nothing to remove" = "削除するものはありません";
 "Nothing to retry" = "再試行するものはありません";
@@ -638,6 +642,7 @@
 "Reinstalling %@ from a bottle" = "%@をbottleから再インストール中";
 "Reinstalling %lld packages from bottles" = "%lld個のパッケージをbottleから再インストール中";
 "Reinstalling usually fixes this:" = "通常は再インストールで解決します:";
+"Relaunch Tankard" = "Tankardを再起動";
 "Reload" = "再読み込み";
 "Remove" = "削除";
 "Remove %@?" = "%@を削除しますか？";
@@ -723,7 +728,6 @@
 "Select a package" = "パッケージを選択";
 "Select a service" = "サービスを選択";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "自己更新するアプリが含まれるのは、「自己更新するアプリを含める」がオンのとき、またはそのアプリで「Homebrew が更新」を選んだときだけです。「アプリが更新」を選んだ場合は含まれません。";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "自己アップデートするアプリは、「自己アップデートするアプリを含める」がオンの場合にのみ含まれます。";
 "Self-updating apps not checked: %@" = "自己アップデートするアプリは確認されていません: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "インストール済みformulaの名前とバージョンをOSV.dev（brew vulns経由）に送信します。";
 "Service" = "サービス";
@@ -791,6 +795,7 @@
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankardは%@またはTANKARD_BREWでbrewを探します。";
+"Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "TankardにはApp管理の許可が必要です。「システム設定」→「プライバシーとセキュリティ」→「App管理」で許可し、Tankardを再起動してからもう一度お試しください。";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankardはsudoを実行しません。ターミナルでこれを実行してください:";
 "Tankard on GitHub" = "GitHubのTankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankardは自分のサービスのみを制御し、sudoは実行しません。ターミナルでこれを実行してください:";
@@ -1023,10 +1028,14 @@
 "its dependency %@ would compile from source" = "依存関係%@がソースからコンパイルされることになります";
 "just now" = "たった今";
 "macOS already provides this software" = "macOSがすでにこのソフトウェアを提供しています";
-"macOS asks before one app can update or remove other apps, so Homebrew needs this to upgrade or uninstall apps in Applications." = "macOSでは、あるアプリが他のアプリを更新または削除する前に確認が入るため、Homebrewがアプリケーション内のアプリをアップグレードまたはアンインストールするにはこれが必要です。";
+"macOS applies App Management the next time Tankard starts." = "macOSはTankardの次回起動時にApp管理を適用します。";
+"macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOSはアプリが他のアプリを変更する前に確認します。Homebrewが「アプリケーション」内のアプリをインストール、アップデート、削除するにはこの許可が必要です。";
+"macOS blocked changing an app" = "macOSがアプリの変更をブロックしました";
+"macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOSがアプリの変更をブロックしました:「プライバシーとセキュリティ」→「App管理」でTankardを許可し、再起動してください。";
 "macOS provides a similar version, which this would shadow" = "macOSが類似のバージョンを提供しており、これはそれを上書きしてしまいます";
 "macOS refused: %@" = "macOSが拒否しました: %@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOSが%@を停止しました。許可後、Tankardがもう一度試します。";
+"macOS stopped a step that changes an app. Allow it, then run it again." = "macOSがアプリを変更する手順を停止しました。許可してから、もう一度実行してください。";
 "macOS will ask when you turn this on" = "オンにするとmacOSが確認します";
 "needs administrator rights" = "管理者権限が必要です";
 "newer" = "新しい";

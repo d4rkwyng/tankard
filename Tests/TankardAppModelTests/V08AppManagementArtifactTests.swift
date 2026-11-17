@@ -30,7 +30,9 @@ struct AppManagementArtifactTests {
         old.suitePaths = nil
         old.installsPkg = nil
         #expect(AppManagement.modifiesApps(.uninstall, old))
-        #expect(!AppManagement.modifiesApps(.install, cask(apps: ["/Applications/AnyBar.app"])))
+        // 0.8.1: an app cask's install gets it too; a font's doesn't.
+        #expect(AppManagement.modifiesApps(.install, cask(apps: ["/Applications/AnyBar.app"])))
+        #expect(!AppManagement.modifiesApps(.install, font))
     }
 
     @Test func aFontUninstallStartsWithoutTheExplainer() async throws {
