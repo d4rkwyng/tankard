@@ -225,3 +225,96 @@ struct V083LockWaitTests {
         #expect(s.lockWait == nil)
     }
 }
+
+@MainActor
+struct V083QuitGuardTests {
+    /// `brew upgrade` waits for `gate` (the second and later run until cancelled when `block`).
+    func store(settings: AppSettings, gate: Latch?, untilCancelled: Bool = false, calls: CallLog = CallLog()) -> AppStore {
+        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let runner = FakeStreamRunner(log: calls, behaviour: { args, _ in
+            guard args.first == "upgrade" else { return 0 }
+            if untilCancelled { try await sleepUntilCancelled() }
+            if let gate { await gate.wait() }
+            return 0
+        })
+        return AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil),
+                        settings: settings)
+    }
+
+    @Test func promptOnlyWhileARunIsGoing() async throws {
+        let settings = AppSettings.ephemeral("net.mindtricks.tankard.test.quit1")
+        let gate = Latch()
+        let store = store(settings: settings, gate: gate)
+        await store.start()
+        #expect(store.quitPrompt == nil)
+        let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).prefix(3))
+        #expect(pkgs.count == 3)
+        store.startUpgrade(pkgs)
+        #expect(await waitUntil { store.upgrade?.current != nil })
+        let p = try #require(store.quitPrompt)
+        #expect(p.message == "Homebrew is still upgrading \(pkgs[0].name) (1 of 3).")
+        gate.release()
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        #expect(store.quitPrompt == nil)
+        // A run that ended in Tankard leaves no journal.
+        #expect(settings.defaults.data(forKey: RunJournal.key) == nil)
+    }
+
+    @Test func quitNowKeepsTheRestForNextLaunch() async throws {
+        let name = "net.mindtricks.tankard.test.quit2"
+        let settings = AppSettings.ephemeral(name)
+        let store = store(settings: settings, gate: nil, untilCancelled: true)
+        await store.start()
+        let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).prefix(3))
+        store.startUpgrade(pkgs)
+        #expect(await waitUntil { store.upgrade?.current != nil })
+        #expect(settings.defaults.data(forKey: RunJournal.key) != nil, "saved when the run starts")
+        let quit = Box(false)
+        store.prepareToQuit(.now) { quit.value = true }
+        #expect(await waitUntil { quit.value })
+        #expect(store.upgrade?.items.allSatisfy { $0.state == .cancelled } == true)
+        let j = try #require(settings.defaults.data(forKey: RunJournal.key).flatMap(RunJournal.decode))
+        #expect(j.targets == pkgs.map(\.fullName))
+        // The next launch (same settings): offered, through the Upgrade path.
+        let next = self.store(settings: AppSettings(defaults: settings.defaults), gate: nil)
+        await next.start()
+        #expect(await waitUntil { next.interruptedRun != nil })
+        #expect(next.interruptedRun?.packages.map(\.fullName) == pkgs.map(\.fullName))
+        #expect(next.showUpgradeSheet)
+        #expect(settings.defaults.data(forKey: RunJournal.key) == nil, "offered once")
+        next.interruptedRunConfirm()
+        #expect(next.interruptedRun == nil)
+        #expect(await waitUntil { next.upgrade?.isFinished == true || next.upgradePlan != nil })
+        if let s = next.upgrade { #expect(s.items.map(\.package.fullName) == pkgs.map(\.fullName)) }
+    }
+
+    @Test func stopAfterCurrentKeepsOnlyTheRest() async throws {
+        let settings = AppSettings.ephemeral("net.mindtricks.tankard.test.quit3")
+        let gate = Latch()
+        let calls = CallLog()
+        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let runner = FakeStreamRunner(log: calls, behaviour: { args, _ in
+            guard args.first == "upgrade" else { return 0 }
+            await gate.wait()
+            return 0
+        })
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil),
+                             settings: settings)
+        await store.start()
+        let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).prefix(3))
+        store.startUpgrade(pkgs)
+        #expect(await waitUntil { store.upgrade?.current != nil })
+        let quit = Box(false)
+        store.prepareToQuit(.afterCurrent) { quit.value = true }
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!quit.value, "waits for the running step")
+        gate.release()
+        #expect(await waitUntil { quit.value })
+        #expect(store.upgrade?.items.map(\.state) == [.done, .cancelled, .cancelled])
+        let j = try #require(settings.defaults.data(forKey: RunJournal.key).flatMap(RunJournal.decode))
+        #expect(j.targets == pkgs.dropFirst().map(\.fullName))
+        #expect(j.finished == 1)
+        // Nothing offered in this process (it is quitting).
+        #expect(store.interruptedRun == nil)
+    }
+}

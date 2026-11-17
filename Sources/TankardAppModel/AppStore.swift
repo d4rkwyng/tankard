@@ -169,6 +169,10 @@ public final class AppStore {
     public internal(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
     public var showUpgradeSheet = false
+    /// 0.8.3: an upgrade run a quit interrupted, offered at the next launch (QuitGuard.swift).
+    public internal(set) var interruptedRun: InterruptedRunOffer?
+    /// 0.8.3: the running session is ending because Tankard quits.
+    var quittingMidRun = false
     /// Tankard ▸ Check for Tankard Updates…: the sheet and where the check stands.
     public var selfUpdate: SelfUpdateCheck?
     public var showSelfUpdate = false
@@ -452,6 +456,9 @@ public final class AppStore {
             // 0.8.1: relaunched for App Management: the operation it was for.
             if settings.appManagementPendingRetry != nil {
                 Task { @MainActor in self.resumeAppManagementRetry() }
+            } else if settings.defaults.data(forKey: RunJournal.key) != nil {
+                // 0.8.3: an upgrade run a quit or crash interrupted.
+                Task { @MainActor in self.offerInterruptedRun() }
             }
         } catch {
             // Keep what's on screen; say what went wrong.
@@ -884,6 +891,7 @@ public final class AppStore {
         }
         // 0.7: a restore point before every upgrade session.
         if action == .upgrade { saveRestorePoint(.upgrade, upgrading: targets) }
+        if action == .upgrade { saveRunJournal(targets) }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
         // where `brew update` runs.
@@ -948,6 +956,7 @@ public final class AppStore {
 
     private func sessionFinished(_ session: UpgradeSession) {
         if session.action == .adopt { adoptSessionFinished(session) }
+        runJournalSessionFinished(session)
         selfUpgradeFinished(session)
         // 0.8: an uninstalled cask's self-update choice goes with it.
         if session.action == .uninstall {
