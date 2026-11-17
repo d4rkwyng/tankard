@@ -1,3 +1,4 @@
+import AskpassSupport
 import Foundation
 import Observation
 import TankardCore
@@ -102,6 +103,9 @@ public final class UpgradeSession: Identifiable {
     /// Set when a step failed because it needed sudo: the command to run in
     /// Terminal instead.
     public private(set) var sudoCommand: String?
+    /// 0.8.3: why that step didn't get administrator rights (the dialog
+    /// was cancelled, the password was wrong, no dialog could ask).
+    public private(set) var sudoOutcome: SudoOutcome?
     /// 0.3: cask steps macOS blocked (App Management), by item id.
     public private(set) var appManagementBlocked: [UUID] = []
     /// 0.6: recognised failures (brew's lock, network, disk, permissions), in order.
@@ -327,6 +331,12 @@ public final class UpgradeSession: Identifiable {
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
             logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: Date())) \(header)"])
+            // 0.8.3: say up front that a password may be asked for, and how.
+            if items[i].command.environment[Askpass.askpassKey] != nil {
+                note(AdminPassword.required(items[i].package)
+                     ? "brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS)."
+                     : "If brew needs sudo for this step, Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+            }
         case .output(let data):
             let lines = log.feed(data)
             commandLines += lines
@@ -340,7 +350,15 @@ public final class UpgradeSession: Identifiable {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
             }
             if code != 0 {
-                if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
+                if SudoDetector.needsSudo(commandLines) {
+                    sudoCommand = items[i].command.display
+                    sudoOutcome = SudoOutcome.classify(commandLines) ?? .noPrompt
+                    switch sudoOutcome {
+                    case .cancelled: note("The password dialog was cancelled; sudo didn't run.")
+                    case .wrongPassword: note("sudo didn't accept the password.")
+                    default: break
+                    }
+                }
                 // 0.8.1: every action that writes into /Applications (a
                 // restore's cask reinstall too); the failure kind says why.
                 if AppManagement.isCaskChange(action, items[i].package) || AppManagement.isCaskCommand(items[i].command.arguments),

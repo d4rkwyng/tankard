@@ -2081,6 +2081,58 @@
         }
       }
     },
+    "%@ needs your administrator password": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ braucht dein Admin-Passwort"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nécessite votre mot de passe administrateur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ necesita tu contraseña de administrador"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@には管理者パスワードが必要です"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 需要你的管理员密码"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ precisa da sua senha de administrador"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ richiede la password di amministratore"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에는 관리자 암호가 필요합니다"
+          }
+        }
+      }
+    },
     "%@ of %@ %@ (%lld%%)": {
       "localizations": {
         "de": {
@@ -20101,6 +20153,110 @@
         }
       }
     },
+    "For this step of %@: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diesen Schritt von %@: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour cette étape de %@ : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para este paso de %@: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@のこのステップ: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于 %@ 的这一步：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para esta etapa de %@: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per questo passaggio di %@: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@의 이 단계: %@"
+          }
+        }
+      }
+    },
+    "For this step: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diesen Schritt: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour cette étape : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para este paso: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このステップ: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于这一步：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para esta etapa: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per questo passaggio: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 단계: %@"
+          }
+        }
+      }
+    },
     "Fork: behind (%@; %@ available)": {
       "localizations": {
         "de": {
@@ -27953,6 +28109,58 @@
         }
       }
     },
+    "Needs your administrator password": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Braucht dein Admin-Passwort"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessite votre mot de passe administrateur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Necesita tu contraseña de administrador"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理者パスワードが必要です"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要你的管理员密码"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Precisa da sua senha de administrador"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richiede la password di amministratore"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "관리자 암호가 필요합니다"
+          }
+        }
+      }
+    },
     "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).": {
       "localizations": {
         "de": {
@@ -33825,6 +34033,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "일부만 검사됨"
+          }
+        }
+      }
+    },
+    "Password:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mot de passe :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワード:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호:"
           }
         }
       }
@@ -44126,6 +44386,110 @@
         }
       }
     },
+    "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard fragt in einem Dialog danach und gibt es nur an sudo weiter; es wird nie gespeichert. Bei Abbrechen zeigt das Fenster den Befehl fürs Terminal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard le demande dans une fenêtre et le transmet uniquement à sudo ; il ne le conserve jamais. Si vous annulez, la feuille affiche la commande pour Terminal."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la pide en un cuadro de diálogo y solo se la pasa a sudo; nunca la guarda. Si cancelas, la hoja muestra el comando para Terminal."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardはダイアログでパスワードを尋ね、sudoにのみ渡します。保存することはありません。キャンセルすると、シートにターミナル用のコマンドが表示されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 会在对话框中询问密码，并只把它交给 sudo；从不存储。如果取消，表单会显示用于“终端”的命令。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard pede a senha em uma caixa de diálogo e a passa apenas para o sudo; nunca a guarda. Se você cancelar, a janela mostra o comando para o Terminal."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la chiede in una finestra e la passa solo a sudo; non la memorizza mai. Se annulli, il foglio mostra il comando per il Terminale."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard는 대화상자에서 암호를 묻고 sudo에만 전달하며, 절대 저장하지 않습니다. 취소하면 시트에 터미널용 명령이 표시됩니다."
+          }
+        }
+      }
+    },
+    "Tankard can't ask for it here, so the sheet will show the command for Terminal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard kann hier nicht danach fragen; das Fenster zeigt dann den Befehl fürs Terminal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ne peut pas le demander ici ; la feuille affichera donc la commande pour Terminal."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no puede pedirla aquí, así que la hoja mostrará el comando para Terminal."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここではパスワードを尋ねられないため、シートにターミナル用のコマンドが表示されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法在这里询问密码，因此表单会显示用于“终端”的命令。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não pode pedi-la aqui, então a janela mostrará o comando para o Terminal."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non può chiederla qui, quindi il foglio mostrerà il comando per il Terminale."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여기서는 암호를 물을 수 없으므로 시트에 터미널용 명령이 표시됩니다."
+          }
+        }
+      }
+    },
     "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.": {
       "localizations": {
         "de": {
@@ -44434,6 +44798,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard에 앱 관리 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 앱 관리에서 허용하고 Tankard를 다시 시작한 다음 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "Tankard needs your administrator password": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard braucht dein Admin-Passwort"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a besoin de votre mot de passe administrateur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard necesita tu contraseña de administrador"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardには管理者パスワードが必要です"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 需要你的管理员密码"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard precisa da sua senha de administrador"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard richiede la password di amministratore"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard에 관리자 암호가 필요합니다"
           }
         }
       }
@@ -46258,6 +46674,110 @@
         }
       }
     },
+    "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwortdialog abgebrochen, der Schritt lief nicht. Selbst ausführen im Terminal:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La fenêtre du mot de passe a été annulée : cette étape n’a pas été exécutée. Pour l’exécuter vous-même, utilisez Terminal :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se canceló el cuadro de la contraseña, así que este paso no se ejecutó. Para ejecutarlo tú, usa Terminal:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードダイアログがキャンセルされたため、このステップは実行されませんでした。自分で実行するには、ターミナルを使用してください:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A caixa de senha foi cancelada, então esta etapa não foi executada. Para executá-la você mesmo, use o Terminal:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La finestra della password è stata annullata, quindi questo passaggio non è stato eseguito. Per eseguirlo tu, usa il Terminale:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:"
+          }
+        }
+      }
+    },
+    "The password was incorrect. Try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsches Passwort. Versuche es erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mot de passe incorrect. Réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La contraseña no es correcta. Inténtalo de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードが正しくありません。もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码不正确。请再试一次。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha incorreta. Tente novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password errata. Riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호가 올바르지 않습니다. 다시 시도하세요."
+          }
+        }
+      }
+    },
     "The variables are unset first, so this brew update doesn't put the fork back.": {
       "localizations": {
         "de": {
@@ -46618,6 +47138,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "cask와 일치하지만 brew install --adopt로는 가져올 수 없습니다."
+          }
+        }
+      }
+    },
+    "These need your administrator password: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brauchen dein Admin-Passwort: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ceux-ci nécessitent votre mot de passe administrateur : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estos necesitan tu contraseña de administrador: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理者パスワードが必要です: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以下项目需要你的管理员密码：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estes precisam da sua senha de administrador: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richiedono la password di amministratore: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "관리자 암호가 필요한 항목: %@"
           }
         }
       }
@@ -47034,6 +47606,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "하나를 유지하려면 먼저 터미널에서 요청에 의해 설치됨으로 표시한 다음 다시 확인하세요:"
+          }
+        }
+      }
+    },
+    "To run the installer for %@: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für das Installationsprogramm von %@: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour exécuter le programme d’installation de %@ : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para ejecutar el instalador de %@: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@のインストーラを実行するため: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为运行 %@ 的安装器：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para executar o instalador de %@: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per eseguire il programma di installazione di %@: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@의 설치 프로그램 실행: %@"
           }
         }
       }
@@ -52758,6 +53382,58 @@
         }
       }
     },
+    "brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew hat sudo für diesen Schritt um Adminrechte gebeten. Dein Passwort geht direkt an sudo; Tankard speichert es nicht. Abbrechen stoppt diesen Schritt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew a demandé à sudo des droits d’administrateur pour cette étape. Votre mot de passe va directement à sudo ; Tankard ne le conserve pas. Annuler arrête cette étape."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew pidió a sudo permisos de administrador para este paso. Tu contraseña va directamente a sudo; Tankard no la guarda. Cancelar detiene este paso."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewがこのステップのためにsudoで管理者権限を要求しました。パスワードはsudoに直接渡され、Tankardは保存しません。キャンセルするとこのステップを中止します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 为这一步向 sudo 请求管理员权限。你的密码直接交给 sudo；Tankard 不会存储。取消会停止这一步。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew pediu ao sudo direitos de administrador para esta etapa. Sua senha vai direto para o sudo; o Tankard não a guarda. Cancelar interrompe esta etapa."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew ha chiesto a sudo i diritti di amministratore per questo passaggio. La password va direttamente a sudo; Tankard non la memorizza. Annulla interrompe questo passaggio."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 이 단계를 위해 sudo에 관리자 권한을 요청했습니다. 암호는 sudo로 바로 전달되며 Tankard는 저장하지 않습니다. 취소하면 이 단계가 중단됩니다."
+          }
+        }
+      }
+    },
     "brew bundle check failed:\n": {
       "localizations": {
         "de": {
@@ -53694,6 +54370,58 @@
         }
       }
     },
+    "brew is running a step that needs administrator rights (sudo).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew führt einen Schritt aus, der Adminrechte braucht (sudo)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew exécute une étape qui nécessite des droits d’administrateur (sudo)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew está ejecutando un paso que necesita permisos de administrador (sudo)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewが管理者権限(sudo)の必要なステップを実行しています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 正在运行一个需要管理员权限 (sudo) 的步骤。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew está executando uma etapa que precisa de direitos de administrador (sudo)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew sta eseguendo un passaggio che richiede i diritti di amministratore (sudo)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 관리자 권한(sudo)이 필요한 단계를 실행 중입니다."
+          }
+        }
+      }
+    },
     "brew link always links the newest version left, which isn't the one in this restore point.": {
       "localizations": {
         "de": {
@@ -54210,6 +54938,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "각각 brew reinstall --force-bottle --formula를 대기열을 통해 실행"
+          }
+        }
+      }
+    },
+    "brew removes the installer's files with sudo.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew entfernt die Dateien des Installers mit sudo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew supprime les fichiers du programme d’installation avec sudo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew elimina los archivos del instalador con sudo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewはsudoでインストーラのファイルを削除します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 使用 sudo 删除安装器的文件。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew remove os arquivos do instalador com sudo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew rimuove i file del programma di installazione con sudo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 sudo로 설치 프로그램의 파일을 제거합니다."
+          }
+        }
+      }
+    },
+    "brew runs the installer with sudo.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew startet das Installationsprogramm mit sudo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew exécute le programme d’installation avec sudo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew ejecuta el instalador con sudo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewはsudoでインストーラを実行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 使用 sudo 运行安装器。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew executa o instalador com sudo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew esegue il programma di installazione con sudo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 sudo로 설치 프로그램을 실행합니다."
           }
         }
       }
@@ -57698,6 +58530,58 @@
         }
       }
     },
+    "needs your administrator password; upgrade it by hand": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "braucht dein Admin-Passwort; von Hand aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nécessite votre mot de passe administrateur ; mettez-le à jour à la main"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "necesita tu contraseña de administrador; actualízalo a mano"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理者パスワードが必要です。手動でアップグレードしてください"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要你的管理员密码；请手动升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "precisa da sua senha de administrador; atualize manualmente"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "richiede la password di amministratore; aggiornalo a mano"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "관리자 암호가 필요합니다. 직접 업그레이드하세요"
+          }
+        }
+      }
+    },
     "newer": {
       "localizations": {
         "de": {
@@ -58526,6 +59410,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "성공"
+          }
+        }
+      }
+    },
+    "sudo didn't accept the password. To try again, run the step again, or run this in Terminal:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo hat das Passwort nicht akzeptiert. Führe den Schritt erneut aus oder dies im Terminal:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo n’a pas accepté le mot de passe. Pour réessayer, relancez l’étape ou exécutez ceci dans Terminal :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo no aceptó la contraseña. Para reintentarlo, vuelve a ejecutar el paso o ejecuta esto en Terminal:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudoがパスワードを受け付けませんでした。再試行するにはステップをもう一度実行するか、ターミナルで次を実行してください:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo 没有接受该密码。要重试，请再次运行这一步，或在“终端”中运行："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O sudo não aceitou a senha. Para tentar de novo, execute a etapa novamente ou execute isto no Terminal:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo non ha accettato la password. Per riprovare, esegui di nuovo il passaggio o esegui questo nel Terminale:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo가 암호를 받아들이지 않았습니다. 다시 시도하려면 단계를 다시 실행하거나 터미널에서 다음을 실행하세요:"
           }
         }
       }

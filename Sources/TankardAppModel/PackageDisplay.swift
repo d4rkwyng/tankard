@@ -265,11 +265,20 @@ public enum BrewCommands {
     }
 }
 
-/// Spots brew output that means a step needed sudo. The app has no way to
-/// type a password (stdin is /dev/null), so it tells the user to run the
-/// command in Terminal instead.
+/// Spots brew output that means a step needed sudo and didn't get it. brew
+/// has no terminal (stdin is /dev/null); 0.8.3: for cask changes Tankard's
+/// password dialog answers sudo (AdminPassword.swift), and when that was
+/// cancelled, the password was wrong, or there was no dialog, the sheet
+/// offers the command for Terminal.
 public enum SudoDetector {
     static let markers = [
+        // 0.8.3: sudo -A after the dialog: cancelled, or wrong three times.
+        "sudo: no password was provided",
+        "incorrect password attempt",
+        // 0.8.3: automatic updates set HOMEBREW_NO_SUDO (cask/installer.rb,
+        // system_command.rb).
+        "but homebrew_no_sudo is set",
+        "sudo is disabled by homebrew_no_sudo",
         "sudo: a terminal is required",
         "sudo: a password is required",
         "sudo: no tty present",

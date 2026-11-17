@@ -99,6 +99,11 @@ public final class AppStore {
         public var updateFeed: UpdateFeed?
         /// The running app, to tell a cask install from a zip download.
         public var bundlePath: String = Bundle.main.bundlePath
+        /// 0.8.3: the sudo password dialog (Tankard.app/Contents/MacOS/
+        /// tankard-askpass), set as SUDO_ASKPASS for cask changes. nil: none
+        /// (tests, `swift run`, demo mode); brew's sudo then fails as before
+        /// and the sheet offers the Terminal command.
+        public var askpassHelper: String?
         /// Screenshots only: act as if this cask installed the running app.
         public var selfCaskOverride: Package?
 
@@ -146,6 +151,7 @@ public final class AppStore {
             d.restorePointsURL = RestorePointStore.defaultDirectory
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
+            d.askpassHelper = AdminPassword.liveHelper()
             d.updateFeed = .live()
             let times = BuildTimeSource.live()
             d.buildTimes = times
@@ -636,7 +642,8 @@ public final class AppStore {
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
         let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
-        if plan.hasCompiling {
+        // 0.8.3: also when a cask's installer will ask for the password.
+        if plan.needsConfirmation {
             upgradePlan = plan
             showUpgradeSheet = true
         } else {
@@ -888,7 +895,8 @@ public final class AppStore {
         upgrade = UpgradeSession(
             packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
-                            keep = restorePoints.settings.keepPreviousVersion] p in
+                            keep = restorePoints.settings.keepPreviousVersion,
+                            askpass = deps.askpassHelper] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
@@ -896,8 +904,13 @@ public final class AppStore {
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
                     .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
                     .merging(Self.uninstallEnvironment(action)) { $1 }
-                return QueuedCommand(executable: brew, arguments: args, environment: env.merging(extra) { $1 },
-                                     display: BrewCommands.display(args, environment: extra))
+                let display = BrewCommands.display(args, environment: extra)
+                // 0.8.3: a cask change may run sudo: Tankard's password dialog
+                // (not in the command shown or copied).
+                let password = AdminPassword.environment(helper: askpass, arguments: args, package: p, display: display)
+                return QueuedCommand(executable: brew, arguments: args,
+                                     environment: env.merging(extra) { $1 }.merging(password) { $1 },
+                                     display: display)
             },
             logURL: deps.logURL,
             // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.

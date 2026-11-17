@@ -38,9 +38,11 @@ struct UpgradePlanView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.rows.count == 1 ? String(localized: "Upgrade 1 package?") : String(localized: "Upgrade \(plan.rows.count) packages?"))
                         .font(.system(size: 14, weight: .bold))
-                    Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if !compiling.isEmpty {
+                        Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
+                            .font(.system(size: 12)).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
             .padding(.bottom, 14)
@@ -57,13 +59,21 @@ struct UpgradePlanView: View {
             .frame(height: min(CGFloat(plan.rows.count) * 38 + 4, 240))
             .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip.opacity(0.6)))
 
-            Toggle(isOn: Binding(get: { plan.skipCompiling }, set: { store.setPlanSkipCompiling($0) })) {
-                Text("Skip packages that would compile (\(compiling.map(\.name).joined(separator: ", ")))")
-                    .lineLimit(1).truncationMode(.tail)
+            if !compiling.isEmpty {
+                Toggle(isOn: Binding(get: { plan.skipCompiling }, set: { store.setPlanSkipCompiling($0) })) {
+                    Text("Skip packages that would compile (\(compiling.map(\.name).joined(separator: ", ")))")
+                        .lineLimit(1).truncationMode(.tail)
+                }
+                .toggleStyle(.checkbox)
+                .font(.system(size: 12))
+                .padding(.top, 12)
             }
-            .toggleStyle(.checkbox)
-            .font(.system(size: 12))
-            .padding(.top, 12)
+            // 0.8.3: say before starting that brew's sudo will ask.
+            let password = plan.needingPassword
+            if !password.isEmpty {
+                AdminPasswordNote(names: password.map(\.name), helper: store.deps.askpassHelper != nil)
+                    .padding(.top, 12)
+            }
 
             HStack {
                 Text("Each runs as its own brew upgrade, one at a time.")
@@ -108,6 +118,10 @@ struct PlanRow: View {
             }
             .layoutPriority(1)
             Spacer()
+            if AdminPassword.required(p) {
+                Image(systemName: "lock.fill").font(.system(size: 10)).foregroundStyle(.orange)
+                    .help(Text("Needs your administrator password"))
+            }
             if let w = row.warning {
                 CompileBadge(text: skipped ? String(localized: "Skipped: would compile") : w.label)
             } else if p.kind == .cask {
@@ -120,6 +134,36 @@ struct PlanRow: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .opacity(skipped ? 0.55 : 1)
+    }
+}
+
+/// 0.8.3: "This needs your administrator password" before a cask change
+/// whose installer brew runs with sudo.
+struct AdminPasswordNote: View {
+    var names: [String]
+    /// false: no dialog in this build (`swift run`, demo): the Terminal way.
+    var helper: Bool
+    /// Uninstall: brew removes what the installer put in place.
+    var uninstall = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "lock.fill").foregroundStyle(.orange)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(names.count == 1 ? String(localized: "\(names[0]) needs your administrator password")
+                     : String(localized: "These need your administrator password: \(names.joined(separator: ", "))"))
+                    .font(.system(size: 12, weight: .semibold))
+                Text((uninstall ? String(localized: "brew removes the installer's files with sudo.")
+                      : String(localized: "brew runs the installer with sudo.")) + " "
+                     + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
+                        : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal.")))
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.10)))
     }
 }
 

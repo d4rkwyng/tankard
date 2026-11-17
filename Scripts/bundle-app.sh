@@ -39,22 +39,30 @@ VERSION=${TANKARD_VERSION:-0.8.2}
 # "Version 0.3.0" with no "(N)" build number after it.
 BUILD=$VERSION
 
+# 0.8.3: the sudo password helper (Sources/tankard-askpass) goes next to
+# the app's binary as Contents/MacOS/tankard-askpass.
+HELPER=tankard-askpass
 LIPO_FROM=()
+HELPER_LIPO_FROM=()
 if [ $UNIVERSAL = 1 ]; then
     echo "==> swift build -c release --arch x86_64 --arch arm64"
-    if swift build -c release --arch x86_64 --arch arm64 --product TankardApp; then
+    if swift build -c release --arch x86_64 --arch arm64 --product TankardApp \
+        && swift build -c release --arch x86_64 --arch arm64 --product "$HELPER"; then
         BIN=$(swift build -c release --arch x86_64 --arch arm64 --show-bin-path)
     else
         echo "==> one multi-arch build isn't available here; building each architecture and joining them"
         for arch in x86_64 arm64; do
             swift build -c release --arch "$arch" --product TankardApp
+            swift build -c release --arch "$arch" --product "$HELPER"
             LIPO_FROM+=("$(swift build -c release --arch "$arch" --show-bin-path)/TankardApp")
+            HELPER_LIPO_FROM+=("$(swift build -c release --arch "$arch" --show-bin-path)/$HELPER")
         done
         BIN=$(swift build -c release --arch arm64 --show-bin-path) # resources are the same for both
     fi
 else
     echo "==> swift build -c release ${ARCH_ARGS[*]:-}"
     swift build -c release ${ARCH_ARGS[@]+"${ARCH_ARGS[@]}"} --product TankardApp
+    swift build -c release ${ARCH_ARGS[@]+"${ARCH_ARGS[@]}"} --product "$HELPER"
     BIN=$(swift build -c release ${ARCH_ARGS[@]+"${ARCH_ARGS[@]}"} --show-bin-path)
 fi
 
@@ -69,6 +77,12 @@ if [ ${#LIPO_FROM[@]} -gt 0 ]; then
 else
     cp "$BIN/TankardApp" "$APP/Contents/MacOS/Tankard"
 fi
+if [ ${#HELPER_LIPO_FROM[@]} -gt 0 ]; then
+    lipo -create "${HELPER_LIPO_FROM[@]}" -output "$APP/Contents/MacOS/$HELPER"
+else
+    cp "$BIN/$HELPER" "$APP/Contents/MacOS/$HELPER"
+fi
+chmod 755 "$APP/Contents/MacOS/$HELPER"
 # SwiftPM resource bundles (logo, demo data). The app looks for them in
 # Contents/Resources; Bundle.main.bundleURL (the .app root) would break the
 # code signature's sealing rules.
@@ -145,4 +159,6 @@ if [ "$SIGN" = adhoc ]; then
     codesign --verify --deep --strict "$APP"
 fi
 
+[ "$(lipo -archs "$APP/Contents/MacOS/$HELPER")" = "$(lipo -archs "$APP/Contents/MacOS/Tankard")" ] \
+    || { echo "bundle-app.sh: $HELPER and Tankard have different architectures" >&2; exit 1; }
 echo "==> $APP ($VERSION): $(lipo -archs "$APP/Contents/MacOS/Tankard"), signing: $SIGN"

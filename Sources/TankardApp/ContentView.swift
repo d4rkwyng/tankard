@@ -226,6 +226,9 @@ struct ContentView: View {
         if options.demo != nil, let mode = options.demoAutoUpdate {
             await AutoUpdateDemo.apply(mode, store: store)
         }
+        if options.demo != nil, let name = ProcessInfo.processInfo.environment["TANKARD_DEMO_PASSWORD"], !name.isEmpty {
+            store.demoRequirePassword(name)
+        }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
         }

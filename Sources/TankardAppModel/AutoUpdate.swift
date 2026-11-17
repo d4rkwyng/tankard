@@ -1,3 +1,4 @@
+import AskpassSupport
 import Foundation
 import Observation
 import TankardCore
@@ -206,6 +207,9 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     case bumpRule(from: String, to: String, bump: String)
     /// 0.8: the user chose "App updates itself" for this cask.
     case appUpdatesItself
+    /// 0.8.3: a pkg (or sudo installer) cask: brew would ask for the
+    /// administrator password, and an automatic run never asks.
+    case needsPassword
 
     public var text: String {
         switch self {
@@ -219,6 +223,7 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .tankardItself: return String(localized: "Tankard updates itself through brew")
         case .versionSkipped(let v): return String(localized: "you chose to skip \(v)")
         case .appUpdatesItself: return String(localized: "set to update itself")
+        case .needsPassword: return String(localized: "needs your administrator password; upgrade it by hand")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
                 return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")
@@ -241,6 +246,15 @@ public struct AutoUpdatePlan: Equatable, Sendable {
 public enum AutoUpdateSafeMode {
     /// Tankard's own cask token.
     public static let tankardCask = "tankard"
+
+    /// 0.8.3: an automatic run's environment: whatever brew.env or the
+    /// caller set, no SUDO_ASKPASS and HOMEBREW_NO_SUDO=1.
+    public static func unattended(_ env: [String: String]) -> [String: String] {
+        var e = env.merging(AdminPassword.unattendedEnvironment) { $1 }
+        e[Askpass.askpassKey] = nil
+        e[Askpass.contextKey] = nil
+        return e
+    }
 
     public static func isTankard(_ p: Package) -> Bool {
         p.kind == .cask && (p.name == tankardCask || p.fullName.hasSuffix("/" + tankardCask))
@@ -282,6 +296,8 @@ public enum AutoUpdateSafeMode {
         for p in outdated {
             if p.isHeld { skipped.append((p, .pinned)); continue }
             if isTankard(p) { skipped.append((p, .tankardItself)); continue }
+            // 0.8.3: its installer runs with sudo: nobody is there to type the password.
+            if AdminPassword.required(p) { skipped.append((p, .needsPassword)); continue }
             // 0.6: skip this version, then the bump rule.
             if let reason = rules.skipReason(p) { skipped.append((p, reason)); continue }
             if p.kind == .formula {
@@ -819,7 +835,10 @@ public final class AutoUpdater {
         let args = BrewCommands.upgradeArguments(for: p)
         let keep = RollbackSettings.extraEnvironment(.upgrade, p, keep: store.restorePoints.settings.keepPreviousVersion)
         let extra = AutoUpdateSafeMode.environment(for: p).merging(keep) { $1 }
-        let env = client.environment(for: detection, readOnly: false).merging(extra) { $1 }
+        // 0.8.3: never a password prompt unattended: no SUDO_ASKPASS, and
+        // brew told not to run sudo at all (a SUDO_ASKPASS from brew.env
+        // can't bring a dialog up either).
+        let env = AutoUpdateSafeMode.unattended(client.environment(for: detection, readOnly: false).merging(extra) { $1 })
         let cmd = QueuedCommand(executable: client.installation.brewPath, arguments: args, environment: env,
                                 display: BrewCommands.display(args, environment: extra.filter {
                                     $0.key == InsightSettings.noQuitKey || $0.key == RollbackSettings.noInstallCleanupKey

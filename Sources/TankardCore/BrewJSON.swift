@@ -223,6 +223,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// 0.6: the cask runs a `.pkg` installer (`artifacts` → `pkg`), so
         /// macOS asks for an administrator password. nil when brew gave no artifacts.
         public var installsPkg: Bool?
+        /// 0.8.3: an `installer` stanza whose script brew runs with sudo.
+        /// nil when brew gave no artifacts.
+        public var sudoInstaller: Bool?
         /// 0.8: what "Adopt Apps" needs from `artifacts`: each app's and
         /// suite's installed target, whether a pkg runs, and every string
         /// in the `uninstall` and `zap` stanzas (where bundle ids are). nil
@@ -311,6 +314,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 appPaths = list.flatMap(\.appPaths)
                 quitBundleIDs = list.flatMap(\.quit)
                 installsPkg = list.contains(where: \.pkg)
+                sudoInstaller = list.contains(where: \.sudoInstaller)
                 adoptArtifacts = AdoptArtifacts(apps: list.flatMap(\.apps), suites: list.flatMap(\.suites),
                                                 pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings))
             }
@@ -325,6 +329,10 @@ public struct BrewInfoJSON: Decodable, Sendable {
             var appPaths: [String] = []
             var quit: [String] = []
             var pkg = false
+            /// 0.8.3: `"installer": [{"script": {"executable": …, "sudo": true}}]`
+            /// (cask/artifact/installer.rb: `requires_sudo?` is `args[:sudo] == true`;
+            /// the older `{"script": "path", "sudo": true}` form too).
+            var sudoInstaller = false
             var apps: [AdoptArtifacts.App] = []
             var suites: [String] = []
             var idStrings: [String] = []
@@ -349,6 +357,21 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 }
             }
 
+            /// One `installer` argument: `{"script": {…, "sudo": true}}`,
+            /// `{"script": "path", "sudo": true}`, or `{"manual": "X.app"}`.
+            struct InstallerItem: Decodable {
+                var sudo = false
+                init(from decoder: Decoder) throws {
+                    guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                    let sudoKey = Key(stringValue: "sudo")
+                    if (try? c.decodeIfPresent(Bool.self, forKey: sudoKey)) == true { sudo = true }
+                    if let script = try? c.nestedContainer(keyedBy: Key.self, forKey: Key(stringValue: "script")),
+                       (try? script.decodeIfPresent(Bool.self, forKey: sudoKey)) == true {
+                        sudo = true
+                    }
+                }
+            }
+
             /// `"uninstall": [{"quit": "com.example.app"}]` (a string or a list).
             struct Uninstall: Decodable {
                 var quit: [String] = []
@@ -363,6 +386,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
             init(from decoder: Decoder) throws {
                 guard let c = try? decoder.container(keyedBy: Key.self) else { return }
                 pkg = c.contains(Key(stringValue: "pkg"))
+                if let items = try? c.decodeIfPresent([InstallerItem].self, forKey: Key(stringValue: "installer")) {
+                    sudoInstaller = items.contains(where: \.sudo)
+                }
                 let top = try? c.decodeIfPresent(String.self, forKey: Key(stringValue: "target"))
                 if let items = try? c.decodeIfPresent([AppItem].self, forKey: Key(stringValue: "app")) {
                     // brew writes the installed path as "target"; a renamed

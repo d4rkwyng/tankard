@@ -171,6 +171,12 @@ struct TankardApp: App {
         // demo mode has no feed otherwise, so the item is disabled there.
         let env = ProcessInfo.processInfo.environment
         if let feed = env["TANKARD_UPDATE_FEED"], !feed.isEmpty { deps.updateFeed = .file(feed) }
+        // 0.8.3, demo only: TANKARD_DEMO_PASSWORD=<cask>: that cask runs a
+        // pkg installer (the "needs your administrator password" note).
+        // The demo's brew is fake, so the helper path is only shown, never run.
+        if options.demo != nil, env["TANKARD_DEMO_PASSWORD"].map({ !$0.isEmpty }) == true {
+            deps.askpassHelper = AdminPassword.liveHelper()
+        }
         if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
             deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
         }

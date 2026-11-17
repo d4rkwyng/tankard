@@ -59,8 +59,9 @@ struct UpgradeSheet: View {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "lock.fill").foregroundStyle(.orange)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:")
+                        Text((session.sudoOutcome ?? .noPrompt).message)
                             .font(.system(size: 12))
+                            .fixedSize(horizontal: false, vertical: true)
                         CommandBox(command: sudo)
                     }
                 }

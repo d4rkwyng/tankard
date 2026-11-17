@@ -85,6 +85,11 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
 
     public var compiling: [Package] { rows.filter { $0.warning != nil }.map(\.package) }
     public var hasCompiling: Bool { rows.contains { $0.warning != nil } }
+    /// 0.8.3: casks whose installer brew runs with sudo: the dialog will
+    /// ask for the administrator password.
+    public var needingPassword: [Package] { rows.map(\.package).filter(AdminPassword.required) }
+    /// Whether the plan page is shown before starting (else it starts at once).
+    public var needsConfirmation: Bool { hasCompiling || !needingPassword.isEmpty }
 
     /// What Start runs.
     public var toRun: [Package] {

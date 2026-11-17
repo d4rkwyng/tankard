@@ -62,13 +62,18 @@ extension AppStore {
     public func restoreCommands(_ steps: [RestoreStep]) -> [QueuedCommand]? {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
         return steps.map { Self.restoreCommand($0, brew: client.installation.brewPath,
-                                               base: client.environment(for: detection, readOnly: false)) }
+                                               base: client.environment(for: detection, readOnly: false),
+                                               askpass: deps.askpassHelper) }
     }
 
-    nonisolated static func restoreCommand(_ step: RestoreStep, brew: String, base: [String: String]) -> QueuedCommand {
+    nonisolated static func restoreCommand(_ step: RestoreStep, brew: String, base: [String: String],
+                                           askpass: String? = nil) -> QueuedCommand {
         var env = base
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
-        return QueuedCommand(executable: brew, arguments: step.arguments, environment: env.merging(step.environment) { $1 },
+        // 0.8.3: a cask reinstall or uninstall may run sudo: the password dialog.
+        let password = AdminPassword.environment(helper: askpass, arguments: step.arguments, package: nil, display: step.display)
+        return QueuedCommand(executable: brew, arguments: step.arguments,
+                             environment: env.merging(step.environment) { $1 }.merging(password) { $1 },
                              display: step.display)
     }
 
@@ -77,6 +82,7 @@ extension AppStore {
               let detection = report?.intelbrew else { return }
         let brew = client.installation.brewPath
         let base = client.environment(for: detection, readOnly: false)
+        let askpass = deps.askpassHelper
         // One sheet row per step; a rollback's steps chain (a failed
         // uninstall skips its link and pin).
         var byID: [String: RestoreStep] = [:]
@@ -90,7 +96,7 @@ extension AppStore {
                                guard let s = byID[p.id] else {
                                    return QueuedCommand(executable: brew, arguments: ["--version"], environment: base, display: "brew --version")
                                }
-                               return Self.restoreCommand(s, brew: brew, base: base)
+                               return Self.restoreCommand(s, brew: brew, base: base, askpass: askpass)
                            },
                            chainKey: { p in byID[p.id].flatMap { $0.kind == .reinstall ? nil : $0.package } },
                            precondition: { p in byID[p.id].flatMap { Self.kegCheck($0, client: client) } })

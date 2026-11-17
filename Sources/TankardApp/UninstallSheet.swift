@@ -49,6 +49,10 @@ struct UninstallSheet: View {
                         CommandBox(command: orphans.map { AppStore.uninstallDisplay($0) }.joined(separator: "\n"))
                     }
                 }
+                // 0.8.3: a pkg cask's uninstall runs sudo (pkgutil, its files).
+                if AdminPassword.required(package) {
+                    AdminPasswordNote(names: [package.name], helper: store.deps.askpassHelper != nil, uninstall: true)
+                }
             } else {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(dependents) { d in
