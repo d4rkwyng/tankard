@@ -41,7 +41,10 @@ enum MenuBarIcon {
     static func image(full: Bool) -> NSImage {
         let grid = rows(full: full)
         let size = NSSize(width: 16, height: grid.count)
-        let img = NSImage(size: size, flipped: true) { _ in
+        // @Sendable: AppKit may draw the image off the main thread, and a
+        // closure formed here would otherwise be main-actor isolated (the
+        // runtime check traps when it is called elsewhere: see Relauncher).
+        let img = NSImage(size: size, flipped: true) { @Sendable _ in
             NSColor.black.setFill()
             for (y, row) in grid.enumerated() {
                 for (x, ch) in row.enumerated() where ch == "#" {

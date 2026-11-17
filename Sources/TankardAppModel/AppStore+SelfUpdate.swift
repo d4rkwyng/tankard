@@ -11,15 +11,28 @@ extension AppStore {
         deps.selfCaskOverride ?? SelfInstall.brewPackage(in: packages, bundlePath: deps.bundlePath)
     }
 
-    /// One GET to GitHub, then the sheet shows the result.
+    /// One GET to GitHub, then the sheet shows the result. 0.8.3: when the
+    /// list on screen doesn't show the tankard cask but brew's Caskroom has
+    /// one (the cask was installed after the status cache was written, and
+    /// the cache is under an hour old), the list is re-read first, so the
+    /// sheet offers Upgrade with Homebrew rather than Download.
     public func checkForTankardUpdates() {
-        guard let feed = deps.updateFeed, selfUpdate != .checking else { return }
+        guard let feed = deps.updateFeed, selfUpdate != .checking, !selfReplaced else { return }
         selfUpdate = .checking
         showSelfUpdate = true
+        let reread = needsSelfCaskRead
         Task {
-            let result = await feed.check(current: TankardVersion.string)
-            self.selfUpdate = result
+            async let result = feed.check(current: TankardVersion.string)
+            if reread { await refresh(manual: false) }
+            self.selfUpdate = await result
         }
+    }
+
+    /// No tankard cask in the list, but `<prefix>/Caskroom/tankard` exists.
+    var needsSelfCaskRead: Bool {
+        guard tankardCask == nil, let client = try? resolvedClient() else { return false }
+        let room = (client.installation.prefix as NSString).appendingPathComponent("Caskroom/tankard")
+        return deps.selfCaskroomExists(room)
     }
 
     public func closeSelfUpdate() {
@@ -31,7 +44,7 @@ extension AppStore {
     /// brew's auto-update, and the tap must know the new version), then
     /// the normal upgrade of the cask through the queue and sheet.
     public func upgradeTankardWithBrew(to version: String) {
-        guard tankardCask != nil, !isBusy else { return }
+        guard tankardCask != nil, !isBusy, !selfReplaced else { return }
         showSelfUpdate = false
         Task {
             await refresh(manual: true)
@@ -50,8 +63,33 @@ extension AppStore {
     func selfUpgradeFinished(_ session: UpgradeSession) {
         guard session.action == .upgrade else { return }
         if session.items.contains(where: { $0.state == .done && SelfInstall.isTankardCask($0.package) }) {
+            selfReplaced = true
             offerRelaunch = true
         }
+    }
+
+    /// The "Tankard was upgraded" alert's Relaunch: the same quit-then-open
+    /// helper as the App Management relaunch (deps.relaunch). It closes
+    /// every sheet, quits this process, and the helper opens the new bundle
+    /// only once this pid has exited, so two Tankards never run. Without a
+    /// relaunch (a build run outside an app bundle) or if the helper can't
+    /// start: say to quit and reopen.
+    public func relaunchAfterSelfUpgrade() {
+        offerRelaunch = false
+        if let relaunch = deps.relaunch, relaunch() { return }
+        error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
+                           detail: Self.quitAndReopen)
+    }
+
+    /// The relaunch couldn't quit this copy (or couldn't start).
+    public static var quitAndReopen: String {
+        String(localized: "Quit Tankard and open it again to use the new version.")
+    }
+
+    /// The relaunch started but this process is still running: something
+    /// refused to let it quit. The helper opens nothing; the user quits.
+    public func relaunchGaveUp() {
+        error = StoreError(title: String(localized: "Couldn't relaunch Tankard"), detail: Self.quitAndReopen)
     }
 
     /// A stand-in tankard cask for screenshots of the brew-installed sheet.

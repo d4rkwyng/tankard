@@ -320,6 +320,8 @@ public final class BackgroundChecker {
     /// With both off it just looks again in 5 minutes.
     @discardableResult
     public func tick() async -> TimeInterval {
+        // 0.8.3: the bundle was replaced; the relaunched app checks.
+        if store.selfReplaced { return 300 }
         var waits: [TimeInterval] = []
         if store.autoUpdate.settings.enabled {
             let (wait, ran) = await autoUpdateStep()

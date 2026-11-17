@@ -10637,6 +10637,58 @@
         }
       }
     },
+    "An older copy of Tankard is still running. Quit it to finish updating.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine ältere Tankard-Kopie läuft noch. Beende sie, um das Update abzuschließen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une ancienne copie de Tankard est encore ouverte. Quittez-la pour terminer la mise à jour."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún hay una copia anterior de Tankard abierta. Ciérrala para terminar la actualización."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古いTankardがまだ実行中です。アップデートを完了するには終了してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "旧版 Tankard 仍在运行。请退出它以完成更新。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma cópia mais antiga do Tankard ainda está aberta. Encerre-a para concluir a atualização."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una copia precedente di Tankard è ancora aperta. Chiudila per completare l’aggiornamento."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 Tankard가 아직 실행 중입니다. 업데이트를 마치려면 종료하세요."
+          }
+        }
+      }
+    },
     "Another Homebrew command is running": {
       "localizations": {
         "de": {
@@ -34817,6 +34869,58 @@
         }
       }
     },
+    "Quit Tankard and open it again to use the new version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beende Tankard und öffne es erneut, um die neue Version zu nutzen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quittez Tankard et rouvrez-le pour utiliser la nouvelle version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sal de Tankard y vuelve a abrirlo para usar la nueva versión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョンを使うには、Tankardを終了してもう一度開いてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出 Tankard 并重新打开，以使用新版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerre o Tankard e abra-o novamente para usar a nova versão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci da Tankard e riaprilo per usare la nuova versione."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전을 사용하려면 Tankard를 종료한 다음 다시 여세요."
+          }
+        }
+      }
+    },
     "Quit Tankard and open it again, then run it again.": {
       "localizations": {
         "de": {
@@ -41054,6 +41158,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치됨 보기"
+          }
+        }
+      }
+    },
+    "Show Older Copy": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alte Kopie zeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher l’ancienne copie"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar copia anterior"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古いTankardを表示"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示旧版"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar cópia antiga"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra copia precedente"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 Tankard 보기"
           }
         }
       }

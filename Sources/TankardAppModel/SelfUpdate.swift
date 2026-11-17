@@ -187,7 +187,20 @@ public struct UpdateFeed: Sendable {
 /// Is this Tankard the one the d4rkwyng/tap cask installed?
 public enum SelfInstall {
     public static func isTankardCask(_ p: Package) -> Bool {
-        p.kind == .cask && p.name.lowercased() == "tankard" && p.tap?.lowercased() == "d4rkwyng/tap"
+        guard p.kind == .cask, p.name.lowercased() == "tankard", let tap = p.tap?.lowercased() else { return false }
+        return tap == "d4rkwyng/tap" || tap == e2eTap
+    }
+
+    /// 0.8.3, the self-update e2e only (ScriptLaunch, TANKARD_E2E_SELF_TAP):
+    /// a throwaway local tap whose `tankard` cask counts as Tankard's own.
+    /// Set once at launch, before any store exists; never in a normal launch.
+    nonisolated(unsafe) public static var e2eTap: String?
+
+    /// Only a throwaway tap name the e2e makes: `tankard-e2e-…/…`.
+    public static func validE2ETap(_ v: String?) -> String? {
+        guard let v = v?.lowercased(), v.hasPrefix("tankard-e2e-"), v.split(separator: "/").count == 2,
+              v.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "-" || $0 == "/" }) else { return nil }
+        return v
     }
 
     /// The installed tankard cask whose app is the running bundle (brew's

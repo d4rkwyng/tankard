@@ -101,7 +101,7 @@ extension AppStore {
     /// Returns whether the update succeeded and the list was re-read.
     @discardableResult
     public func runBackgroundUpdate() async -> Bool {
-        guard !backgroundUpdating, !isBusy, let client = try? resolvedClient() else { return false }
+        guard !backgroundUpdating, !isBusy, !selfReplaced, let client = try? resolvedClient() else { return false }
         backgroundUpdating = true
         backgroundUpdateRuns += 1
         defer { backgroundUpdating = false }

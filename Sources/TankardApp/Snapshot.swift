@@ -118,7 +118,7 @@ enum Snapshot {
         log("start", window.frame)
         // Once a second: the table's identity, scroll offset and column
         // widths, to see whether a theme switch rebuilds or scrolls it.
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak window] _ in
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { @Sendable [weak window] _ in
             MainActor.assumeIsolated {
                 guard let content = window?.contentView else { return }
                 for t in Snapshot.tables(in: content) {

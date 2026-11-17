@@ -198,6 +198,7 @@
 "Always dark." = "Immer dunkel.";
 "Always light." = "Immer hell.";
 "An independent app for Homebrew (brew.sh)." = "Eine unabhängige App für Homebrew (brew.sh).";
+"An older copy of Tankard is still running. Quit it to finish updating." = "Eine ältere Tankard-Kopie läuft noch. Beende sie, um das Update abzuschließen.";
 "Another Homebrew command is running" = "Ein anderer Homebrew-Befehl läuft";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "Ein anderes Installationsprogramm hat Dateien im Präfix von Homebrew abgelegt. Sie können Builds aus Quellcode stören.";
 "Another old version is installed" = "Eine andere alte Version ist installiert";
@@ -663,6 +664,7 @@
 "Preview from %@ (changes nothing)." = "Vorschau von %@ (ändert nichts).";
 "Private" = "Privat";
 "Quit Tankard" = "Tankard beenden";
+"Quit Tankard and open it again to use the new version." = "Beende Tankard und öffne es erneut, um die neue Version zu nutzen.";
 "Quit Tankard and open it again, then run it again." = "Beende Tankard, öffne es erneut und führe es dann erneut aus.";
 "Read from Homebrew's API; not tapped locally." = "Aus der Homebrew-API gelesen; nicht lokal getappt.";
 "Reading installed packages…" = "Installierte Pakete werden gelesen…";
@@ -782,6 +784,7 @@
 "Show Dependencies" = "Abhängigkeiten anzeigen";
 "Show Dependencies (%lld)" = "Abhängigkeiten anzeigen (%lld)";
 "Show Installed" = "Installierte anzeigen";
+"Show Older Copy" = "Alte Kopie zeigen";
 "Show Tankard in the menu bar" = "Tankard in der Menüleiste anzeigen";
 "Show Terminal Command" = "Terminalbefehl anzeigen";
 "Show What Uses It" = "Verwendung anzeigen";

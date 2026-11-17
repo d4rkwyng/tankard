@@ -439,7 +439,7 @@ public final class ScriptRunner {
     // MARK: the verbs
 
     /// Every step table. Add a feature's table here (see the header).
-    static let stepTables: [[String: ScriptStepDef]] = [coreSteps, adoptSteps, backgroundUpdateSteps, downloadSteps]
+    static let stepTables: [[String: ScriptStepDef]] = [coreSteps, adoptSteps, backgroundUpdateSteps, downloadSteps, selfUpdateSteps]
 
     public static let steps: [String: ScriptStepDef] = stepTables.reduce(into: [:]) { all, t in
         all.merge(t) { a, _ in a }

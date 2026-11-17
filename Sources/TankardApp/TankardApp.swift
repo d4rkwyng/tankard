@@ -1,4 +1,5 @@
 import AppKit
+import os
 import SwiftUI
 import TankardAppModel
 import TankardCore
@@ -146,6 +147,13 @@ struct TankardApp: App {
     init() {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
+        let env = ProcessInfo.processInfo.environment
+        // 0.8.3: one Tankard at a time (a demo, snapshot or script run is a
+        // dev instance tests run side by side: no guard, and never counted).
+        // A same-build second launch quits here, before any window.
+        if !SingleInstance.isDevRun(environment: env) { InstanceGuard.check() }
+        // The self-update e2e: its throwaway tap's cask counts as Tankard's own.
+        if options.script != nil { SelfInstall.e2eTap = SelfInstall.validE2ETap(env["TANKARD_E2E_SELF_TAP"]) }
         var deps: AppStore.Dependencies
         if let hw = options.noBrew {
             deps = Demo.noBrewDependencies(hardware: hw)
@@ -158,7 +166,9 @@ struct TankardApp: App {
         }
         // 0.8.1: Relaunch Tankard (App Management): the real app only, from
         // its bundle. The demo of the relaunch page gets a button that does nothing.
-        if !options.isDemo && options.snapshot == nil && options.script == nil
+        // 0.8.3: also the "Tankard was upgraded" alert's Relaunch; and the
+        // self-update e2e (a script run that acts as the real app).
+        if !SingleInstance.isDevRun(environment: env) && options.noBrew == nil
             && AppManagement.canRelaunch(bundlePath: Bundle.main.bundlePath) {
             deps.relaunch = { Relauncher.relaunch() }
         } else if options.demoAppManagement == "relaunch" {
@@ -169,7 +179,6 @@ struct TankardApp: App {
         if options.snapshot != nil { deps.backgroundUpdates = false }
         // Check for Tankard Updates…: a file instead of GitHub (e2e, shots);
         // demo mode has no feed otherwise, so the item is disabled there.
-        let env = ProcessInfo.processInfo.environment
         if let feed = env["TANKARD_UPDATE_FEED"], !feed.isEmpty { deps.updateFeed = .file(feed) }
         if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
             deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
@@ -184,6 +193,8 @@ struct TankardApp: App {
         if options.demoAppManagement == "fail" { settings.appManagementExplained = true }
         self.settings = settings
         store = AppStore(deps: deps, settings: settings)
+        let relaunchStore = store
+        Relauncher.onGaveUp = { relaunchStore.relaunchGaveUp() }
         if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
         // 0.5: the real power, idle and running-app checks. Demo runs keep
         // the default (never on AC), so nothing runs unless asked for.
@@ -357,25 +368,158 @@ struct MenuBarPanel: View {
 }
 
 /// 0.8.1: quit and start again (App Management applies to a new process).
+/// 0.8.3: also the self-upgrade's Relaunch (it replaces 0.8.2's
+/// `Relaunch.now()`, which opened the new copy first, then quit in an
+/// NSWorkspace completion handler: that closure was main-actor isolated,
+/// LaunchServices calls it on its own queue, and Swift's runtime isolation
+/// check trapped, so the old copy crashed with the new one already open).
+/// RelaunchSequence (TankardAppModel/SingleInstance.swift) is the order.
 @MainActor
 enum Relauncher {
-    /// Starts the helper, then quits on the next turn of the run loop (so
-    /// the caller can save first). False: the helper didn't start; Tankard
-    /// keeps running.
+    private static let log = Logger(subsystem: AppPaths.bundleID, category: "relaunch")
+    /// Still running after the retry: the store says to quit and reopen.
+    static var onGaveUp: (@MainActor () -> Void)?
+
+    /// Starts the helper, closes every sheet, then quits on the next turn
+    /// of the run loop (so the caller can save first). False: the helper
+    /// didn't start; Tankard keeps running.
     static func relaunch() -> Bool {
-        let c = AppManagement.relaunchCommand(bundlePath: Bundle.main.bundlePath,
-                                              pid: ProcessInfo.processInfo.processIdentifier)
+        let pid = ProcessInfo.processInfo.processIdentifier
+        let sequence = RelaunchSequence(
+            startHelper: { startHelper(pid: pid) },
+            closeSheets: closeSheets,
+            terminate: {
+                log.notice("relaunch: terminate pid \(pid, privacy: .public)")
+                NSApp.terminate(nil)
+            },
+            after: { delay, work in
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(delay))
+                    work()
+                }
+            },
+            gaveUp: {
+                log.error("relaunch: pid \(pid, privacy: .public) is still running after two terminate attempts; the helper opens nothing")
+                FileHandle.standardError.write(Data("relaunch: gave up, still running\n".utf8))
+                onGaveUp?()
+            })
+        return sequence.run()
+    }
+
+    private static func startHelper(pid: Int32) -> Bool {
+        let c = AppManagement.relaunchCommand(bundlePath: Bundle.main.bundlePath, pid: pid)
         let p = Process()
         p.executableURL = URL(fileURLWithPath: c.executable)
         p.arguments = c.arguments
         do {
             try p.run()
         } catch {
+            log.error("relaunch: helper didn't start: \(error.localizedDescription, privacy: .public)")
             NSSound.beep()
             return false
         }
-        DispatchQueue.main.async { NSApp.terminate(nil) }
+        log.notice("relaunch: helper \(p.processIdentifier, privacy: .public) waits for pid \(pid, privacy: .public)")
         return true
+    }
+
+    /// AppKit won't terminate while a sheet is up ("App termination blocked
+    /// by modal sheet"): end every window's sheets, and any modal session.
+    static func closeSheets() {
+        if NSApp.modalWindow != nil { NSApp.abortModal() }
+        for w in NSApp.windows {
+            var n = 0
+            while let sheet = w.attachedSheet, n < 8 {
+                w.endSheet(sheet)
+                sheet.orderOut(nil)
+                n += 1
+            }
+        }
+    }
+}
+
+/// 0.8.3: one Tankard at a time (SingleInstance in TankardAppModel decides).
+/// A same-build second launch (`open -n`, a second copy of the bundle)
+/// brings the running one forward and quits. A copy that launched before
+/// this app's executable was written runs a bundle Homebrew has replaced
+/// (0.8.2's Relaunch opened the new copy before quitting): it is asked to
+/// quit, never forced (it may be in the middle of a brew command), and this
+/// copy carries on. The relaunch helper opens the new copy only after the
+/// old pid has exited, so it never meets the guard.
+@MainActor
+enum InstanceGuard {
+    private static let log = Logger(subsystem: AppPaths.bundleID, category: "instance")
+    private static var stale: [NSRunningApplication] = []
+
+    static func note(_ s: String) {
+        log.notice("\(s, privacy: .public)")
+        FileHandle.standardError.write(Data("instance: \(s)\n".utf8))
+    }
+
+    static func check() {
+        guard let id = Bundle.main.bundleIdentifier else { return }
+        let me = ProcessInfo.processInfo.processIdentifier
+        let apps = NSRunningApplication.runningApplications(withBundleIdentifier: id)
+            .filter { $0.processIdentifier != me && !$0.isTerminated }
+        guard !apps.isEmpty else { return }
+        let others = apps.map { a in
+            SingleInstance.Other(pid: a.processIdentifier, launchDate: a.launchDate,
+                                 isDevRun: SingleInstance.environment(pid: a.processIdentifier).map(SingleInstance.isDevRun) ?? false)
+        }
+        let written = Bundle.main.executablePath.flatMap(SingleInstance.writtenDate)
+        let decision = SingleInstance.decide(others: others, executableWritten: written)
+        note("pid \(me): others \(others.map { "\($0.pid)\($0.isDevRun ? "(dev)" : "") launched \($0.launchDate.map { "\($0)" } ?? "?")" }.joined(separator: ", ")); executable written \(written.map { "\($0)" } ?? "?"); \(decision)")
+        switch decision {
+        case .proceed:
+            return
+        case .yield(let pid):
+            if let a = apps.first(where: { $0.processIdentifier == pid }) {
+                a.unhide()
+                a.activate(options: [.activateAllWindows])
+            }
+            exit(0)
+        case .replaceStale(let pids):
+            stale = apps.filter { pids.contains($0.processIdentifier) }
+            for a in stale { _ = a.terminate() }
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(SingleInstance.staleGrace))
+                alertIfStillRunning()
+            }
+        }
+    }
+
+    /// One alert while a stale copy refuses to quit (a sheet is up in it).
+    /// It closes itself once every stale copy has gone; its button asks
+    /// them to quit again and brings them forward so the user can close the sheet.
+    private static func alertIfStillRunning() {
+        let left = stale.filter { !$0.isTerminated }
+        guard !left.isEmpty else {
+            note("stale copies quit: \(stale.map(\.processIdentifier))")
+            return
+        }
+        note("stale copies still running after \(Int(SingleInstance.staleGrace)) s: \(left.map(\.processIdentifier)); alert")
+        let alert = NSAlert()
+        alert.messageText = SingleInstance.staleAlertMessage
+        alert.addButton(withTitle: SingleInstance.staleAlertButton)
+        // Fires on the main run loop (modal panel mode), so assumeIsolated
+        // holds; the closure itself is @Sendable, never main-actor isolated.
+        let timer = Timer(timeInterval: 0.5, repeats: true) { @Sendable _ in
+            MainActor.assumeIsolated {
+                if stale.allSatisfy(\.isTerminated) { NSApp.abortModal() }
+            }
+        }
+        RunLoop.main.add(timer, forMode: .modalPanel)
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+        timer.invalidate()
+        if response == .alertFirstButtonReturn {
+            note("alert: Show Older Copy")
+            for a in stale where !a.isTerminated {
+                _ = a.terminate()
+                a.activate(options: [.activateAllWindows])
+            }
+        } else {
+            note("alert closed: stale copies quit")
+        }
     }
 }
 
