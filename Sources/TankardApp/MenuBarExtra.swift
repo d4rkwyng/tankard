@@ -267,11 +267,11 @@ final class SystemNotifier: UpgradeNotifying {
         }
     }
 
-    /// System Settings ▸ Notifications, at Tankard's entry where macOS
-    /// supports it; the pane itself otherwise.
+    /// System Settings ▸ Notifications. Opens the pane itself: a `?id=<bundle id>`
+    /// deep link to Tankard's own entry is unverified on current macOS, and
+    /// NSWorkspace.open reports success even when the query is ignored.
     static func openSystemSettings() {
         let pane = "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
-        if let url = URL(string: pane + "?id=" + AppPaths.bundleID), NSWorkspace.shared.open(url) { return }
         if let url = URL(string: pane) { NSWorkspace.shared.open(url) }
     }
 }
