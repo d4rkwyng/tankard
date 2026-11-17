@@ -215,7 +215,9 @@ private struct UpgradedRow: View {
             if case .manual(let block) = eligibility {
                 let cmds = RollbackPolicy.manualCommands(change, block: block)
                 if !cmds.isEmpty {
-                    CommandBox(command: cmds.joined(separator: "\n"))
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(cmds, id: \.self) { CommandBox(command: $0) }
+                    }
                         .help(block == .cleanedUp
                               ? "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on."
                               : block.explanation)
@@ -236,8 +238,10 @@ struct RestoreConfirmView: View {
             Text("One at a time through Tankard's queue. Each is recorded in History.")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
             ScrollView {
-                CommandBox(command: plan.steps.map(\.display).joined(separator: "\n"))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(plan.steps) { s in CommandBox(command: s.display) }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             if !plan.manual.isEmpty {
                 Text("Not included: \(plan.manual.map(\.change.now.name).joined(separator: ", ")) (can't roll back automatically)")
