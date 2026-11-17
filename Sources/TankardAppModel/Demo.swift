@@ -53,15 +53,19 @@ public enum Demo {
         /// App Management block (these already failed and will succeed).
         let appManagementFailed = OSAllocatedUnfairLock<Set<String>>(initialState: [])
         let failAppManagement: Bool
+        /// 0.4a: pins and services (Demo+V04A.swift).
+        let v04a: V04AState
 
-        init(failAppManagement: Bool = false) {
+        init(failAppManagement: Bool = false, pinned: Set<String> = []) {
             self.failAppManagement = failAppManagement
+            self.v04a = V04AState(pinned: pinned)
         }
 
         func info(_ variant: Variant, base: Data) -> Data {
-            Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
-                             installed: installed.withLock { $0 }, removed: removed.withLock { $0 },
-                             replaced: replaced.withLock { $0 })
+            Demo.applyPins(Demo.currentInfo(variant, base: base, upgraded: upgraded.withLock { $0 },
+                                            installed: installed.withLock { $0 }, removed: removed.withLock { $0 },
+                                            replaced: replaced.withLock { $0 }),
+                           pinned: v04a.pinned.withLock { $0 }, variant: variant)
         }
     }
 
@@ -73,8 +77,8 @@ public enum Demo {
     }
 
     public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
-                                    failAppManagement: Bool = false) -> AppStore.Dependencies {
-        let state = State(failAppManagement: failAppManagement)
+                                    failAppManagement: Bool = false, pinned: Set<String> = []) -> AppStore.Dependencies {
+        let state = State(failAppManagement: failAppManagement, pinned: pinned)
         let installation: BrewInstallation
         let platform: BottlePlatform
         switch variant {
@@ -87,7 +91,10 @@ public enum Demo {
         }
         let runner = InfoRunner(variant: variant, state: state, info: fixtureInfo(variant))
         let client = BrewClient(installation: installation, platform: platform, runner: runner,
-                                sources: EnvironmentSources(process: ["HOME": NSHomeDirectory(), "USER": NSUserName()]),
+                                // The demo's own user (0.4: services and the revert sheet
+                                // show it, never this Mac's).
+                                sources: EnvironmentSources(process: variant == .intelbrew ? ["HOME": "/Users/demo", "USER": "demo"]
+                                                                                          : ["HOME": "/Users/you", "USER": "you"]),
                                 fileExists: { path in variant == .intelbrew && path.hasSuffix("homebrew-core/.git") })
         var deps = AppStore.Dependencies(
             makeClient: { client },
@@ -289,6 +296,7 @@ public enum Demo {
                     try await Task.sleep(for: .milliseconds(500))
                     return ProcessResult(exitCode: 0, stdout: Data(Demo.cleanupText(variant).utf8), stderr: Data())
                 }
+                if let r = Demo.v04aRead(variant, state: state, arguments: arguments) { return r }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
                 if arguments.contains("--installed") {
                     return ProcessResult(exitCode: 0, stdout: state.info(variant, base: info), stderr: Data())
@@ -350,6 +358,7 @@ public enum Demo {
                 output(Data(s.utf8))
                 try await Task.sleep(for: .milliseconds(Int(ms * pace)))
             }
+            if let code = try await Demo.v04aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if arguments.first == "update" {
                 try await say("==> Updating Homebrew...\n", 900)
                 try await say("Already up-to-date.\n", 50)

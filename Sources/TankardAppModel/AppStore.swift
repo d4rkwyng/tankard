@@ -20,8 +20,16 @@ public struct StoreError: Equatable, Sendable {
 /// The window's top-level switch.
 public enum MainTab: String, CaseIterable, Identifiable, Sendable {
     case installed, discover
+    /// 0.4: `brew services`.
+    case services
     public var id: String { rawValue }
-    public var title: String { self == .installed ? "Installed" : "Discover" }
+    public var title: String {
+        switch self {
+        case .installed: return "Installed"
+        case .discover: return "Discover"
+        case .services: return "Services"
+        }
+    }
 }
 
 /// The app's state. One per window.
@@ -112,7 +120,7 @@ public final class AppStore {
     public private(set) var isRefreshing = false
     /// What a running refresh is doing ("Running brew update…").
     public private(set) var refreshPhase: String?
-    public private(set) var error: StoreError?
+    public internal(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
     public var showUpgradeSheet = false
     /// Whether brew was found and runs (the welcome screen otherwise).
@@ -130,6 +138,13 @@ public final class AppStore {
     public var showCleanupSheet = false
     /// 0.3: bumped when build times arrive, so warnings re-render.
     public private(set) var buildTimesRevision = 0
+    /// 0.4a: a pin, unpin or service command running through the queue
+    /// (its display form). See Pins.swift and ServicesStore.swift.
+    public internal(set) var quickAction: String?
+    /// 0.4a: the Services tab's state, made when it is first opened.
+    public internal(set) var services: ServicesStore?
+    /// 0.4a: the Homebrew menu's sheet (revert to standard Homebrew, uninstall).
+    public var managementSheet: HomebrewManagement.Kind?
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -160,18 +175,22 @@ public final class AppStore {
         return deps.now().timeIntervalSince(t) > deps.ttl
     }
 
-    public func count(_ f: PackageFilter) -> Int { packages.filter(f.includes).count }
+    public func count(_ f: PackageFilter) -> Int {
+        let graph = f.needsGraph ? DependencyGraph(packages) : nil
+        return packages.filter { f.includes($0, graph: graph) }.count
+    }
 
     /// The rows for the table: filter, then search (name, full name, description).
     /// "deps:<name>" / "uses:<name>" (the context menu's Show Dependencies /
     /// Show What Uses It) list those packages instead.
     public var visiblePackages: [Package] {
+        let graph = filter.needsGraph ? DependencyGraph(packages) : nil
         if let related = RelatedSearch(search), let rows = related.rows(in: packages, selected: selectedPackage) {
-            return rows.filter(filter.includes)
+            return rows.filter { filter.includes($0, graph: graph) }
         }
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
         return packages.filter { p in
-            filter.includes(p) && (q.isEmpty
+            filter.includes(p, graph: graph) && (q.isEmpty
                 || p.name.lowercased().contains(q)
                 || p.fullName.lowercased().contains(q)
                 || (p.desc?.lowercased().contains(q) ?? false))
@@ -183,7 +202,9 @@ public final class AppStore {
         return packages.first { $0.id == selection }
     }
 
-    public var upgradable: [Package] { packages.filter(\.upgradeAvailable) }
+    /// What Upgrade all runs: pinned packages are left out (0.4), as
+    /// `brew upgrade` leaves them out.
+    public var upgradable: [Package] { packages.filter { $0.upgradeAvailable && !$0.pinned } }
     /// Ids of everything installed (Discover's "installed" mark).
     public var installedIDs: Set<String> { Set(packages.map(\.id)) }
     public var hasBrew: Bool { client != nil }
@@ -231,7 +252,7 @@ public final class AppStore {
         refreshTask = nil
     }
 
-    private func resolvedClient() throws -> BrewClient {
+    func resolvedClient() throws -> BrewClient {
         if let client { return client }
         let c = try deps.makeClient()
         client = c
@@ -388,7 +409,7 @@ public final class AppStore {
 
     /// Queues `brew upgrade` for each package, in order, and opens the sheet.
     public func startUpgrade(_ packages: [Package]? = nil) {
-        startSession(.upgrade, packages: (packages ?? upgradable).filter(\.upgradeAvailable))
+        startSession(.upgrade, packages: (packages ?? upgradable).filter { $0.upgradeAvailable && !$0.pinned })
     }
 
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
@@ -396,7 +417,7 @@ public final class AppStore {
     /// that would compile"; otherwise it starts at once, as before.
     public func requestUpgrade(_ packages: [Package]? = nil) {
         guard !isUpgrading else { return }
-        let targets = (packages ?? upgradable).filter(\.upgradeAvailable)
+        let targets = (packages ?? upgradable).filter { $0.upgradeAvailable && !$0.pinned }
         guard !targets.isEmpty else { return }
         let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
         if plan.hasCompiling {

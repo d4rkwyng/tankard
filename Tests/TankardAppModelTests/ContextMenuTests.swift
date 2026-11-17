@@ -34,7 +34,7 @@ struct ContextMenuTests {
     @Test func upToDateFormula() async throws {
         let p = try await formula()
         let m = ContextMenus.installed(p, dependents: [], dependencies: [], compileWarning: nil, busy: false, kegPath: nil)
-        #expect(ids(m) == ["uninstall", "-", "copy-name", "copy-command", "-", "show-dependencies", "show-dependents"])
+        #expect(ids(m) == ["pin", "uninstall", "-", "copy-name", "copy-command", "-", "show-dependencies", "show-dependents"])
         #expect(item(m, "uninstall")?.title == "Uninstall…")
         #expect(item(m, "uninstall")?.isEnabled == true)
         #expect(item(m, "uninstall")?.isDestructive == true)
@@ -44,8 +44,9 @@ struct ContextMenuTests {
         // Nothing related: shown, but disabled.
         #expect(item(m, "show-dependencies")?.isEnabled == false)
         #expect(item(m, "show-dependents")?.isEnabled == false)
-        // Pin/Unpin isn't in v0.3.
-        #expect(item(m, "pin") == nil)
+        // 0.4: Pin (it replaced v0.3's TODO).
+        #expect(item(m, "pin")?.action == .pin)
+        #expect(item(m, "unpin") == nil)
     }
 
     @Test func upgradeUsesTheDetailPaneCommand() async throws {
@@ -53,7 +54,7 @@ struct ContextMenuTests {
         p.upgradeAvailable = true
         p.currentVersion = "9.9.9"
         let m = ContextMenus.installed(p, dependents: [], dependencies: [], compileWarning: nil, busy: false, kegPath: nil)
-        #expect(ids(m).prefix(2) == ["upgrade", "uninstall"])
+        #expect(ids(m).prefix(3) == ["upgrade", "pin", "uninstall"])
         #expect(item(m, "upgrade")?.title == "Upgrade xz")
         #expect(item(m, "upgrade")?.action == .upgrade)
         #expect(item(m, "copy-command")?.title == "Copy Upgrade Command")
@@ -80,7 +81,7 @@ struct ContextMenuTests {
         p.currentHasBottle = true
         #expect(BottleReplacement.isEligible(p))
         let m = ContextMenus.installed(p, dependents: [], dependencies: [], compileWarning: nil, busy: false, kegPath: nil)
-        #expect(ids(m).prefix(2) == ["replace-bottle", "uninstall"])
+        #expect(ids(m).prefix(3) == ["replace-bottle", "pin", "uninstall"])
         #expect(item(m, "replace-bottle")?.action == .replaceWithBottle)
     }
 
@@ -114,7 +115,7 @@ struct ContextMenuTests {
         p.bottleURL = "https://github.com/d4rkwyng/intelbrew-core/releases/download/xz-5.8.1/xz-5.8.1.sonoma.bottle.tar.gz"
         let m = ContextMenus.installed(p, dependents: [], dependencies: [], compileWarning: nil, busy: false,
                                        kegPath: "/usr/local/Cellar/xz/5.8.1")
-        #expect(ids(m) == ["uninstall", "-", "copy-name", "copy-command", "-", "homepage", "release-page", "finder",
+        #expect(ids(m) == ["pin", "uninstall", "-", "copy-name", "copy-command", "-", "homepage", "release-page", "finder",
                            "-", "show-dependencies", "show-dependents"])
         #expect(item(m, "homepage")?.action == .open(URL(string: "https://tukaani.org/xz/")!))
         #expect(item(m, "release-page")?.action == .open(URL(string: "https://github.com/d4rkwyng/intelbrew-core/releases/tag/xz-5.8.1")!))

@@ -6,8 +6,27 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
     case all, upgrades, source, newer
     /// 0.3: source builds whose version has a bottle for this Mac.
     case bottleAvailable
+    /// 0.4: pinned with `brew pin`.
+    case pinned
+    /// 0.4: installed on request and needed by nothing installed
+    /// (`brew leaves --installed-on-request`, plus casks).
+    case leaves
 
     public var id: String { rawValue }
+
+    /// The segmented control's filters; the others are in its "More" menu.
+    public static let segmented: [PackageFilter] = [.all, .upgrades, .source, .newer, .bottleAvailable]
+    /// 0.4: the "More" menu next to the segmented control.
+    public static let more: [PackageFilter] = [.pinned, .leaves]
+
+    /// Whether `includes` needs the other packages (leaves do).
+    public var needsGraph: Bool { self == .leaves }
+
+    /// `includes`, with the installed set for filters that depend on it.
+    public func includes(_ p: Package, graph: DependencyGraph?) -> Bool {
+        if self == .leaves, let graph { return graph.isRequestedLeaf(p) }
+        return includes(p)
+    }
 
     public var title: String {
         switch self {
@@ -16,6 +35,8 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .source: return "From source"
         case .newer: return "Newer"
         case .bottleAvailable: return "Bottle available"
+        case .pinned: return "Pinned"
+        case .leaves: return "Requested only"
         }
     }
 
@@ -26,6 +47,10 @@ public enum PackageFilter: String, CaseIterable, Identifiable, Sendable {
         case .source: return p.status == .source
         case .newer: return p.status == .newer
         case .bottleAvailable: return BottleReplacement.isEligible(p)
+        case .pinned: return p.pinned
+        // Without the other packages only half the rule can be checked;
+        // AppStore always passes the graph.
+        case .leaves: return p.requested
         }
     }
 }

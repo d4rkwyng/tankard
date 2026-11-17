@@ -122,8 +122,10 @@ struct TankardApp: App {
             deps = Demo.noBrewDependencies(hardware: hw)
         } else {
             deps = options.demo.map {
-                Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail")
+                Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
+                                  pinned: V04ALaunch.demoPinned())
             } ?? .live()
+            if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
         // Demo runs never touch the real settings.
         let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral() : AppSettings()
@@ -171,6 +173,17 @@ struct TankardApp: App {
                     .keyboardShortcut("1", modifiers: .command)
                 Button("Discover") { store.tab = .discover }
                     .keyboardShortcut("2", modifiers: .command)
+                Button("Services") { store.tab = .services }
+                    .keyboardShortcut("3", modifiers: .command)
+            }
+            CommandMenu("Homebrew") {
+                // Revert exists only in Intelbrew mode.
+                if store.intelbrewMode {
+                    Button(HomebrewManagement.Kind.revert.title) { store.requestManagement(.revert) }
+                        .disabled(store.isBusy || store.report == nil)
+                }
+                Button(HomebrewManagement.Kind.uninstall.title) { store.requestManagement(.uninstall) }
+                    .disabled(store.isBusy || store.report == nil)
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }

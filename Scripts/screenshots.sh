@@ -5,6 +5,7 @@
 #
 #   Scripts/screenshots.sh [OUT_DIR] [APP]     (default: dist/screenshots, dist/Tankard.app)
 #   SET=v0.3 Scripts/screenshots.sh [OUT_DIR]  only the v0.3 shots
+#   SET=v0.4a Scripts/screenshots.sh [OUT_DIR] only the v0.4 part A shots
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -62,7 +63,23 @@ v03() {
     shot about-dark 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=dark
     shot about-light 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=light
 }
+v04a() {
+    # v0.4 part A: pins, Requested only, dependency links and tree, Services,
+    # the Homebrew menu's sheets. Dark and Tankard for each.
+    for t in dark tankard; do
+        shot pinned-detail-$t 3 TANKARD_DEMO=1 TANKARD_DEMO_PINNED=sqlite,xz TANKARD_SELECT=sqlite TANKARD_APPEARANCE=$t
+        shot pinned-filter-$t 3 TANKARD_DEMO=1 TANKARD_DEMO_PINNED=sqlite,xz TANKARD_FILTER=pinned TANKARD_SELECT=xz TANKARD_APPEARANCE=$t
+        shot requested-only-$t 3 TANKARD_DEMO=1 TANKARD_FILTER=leaves TANKARD_SELECT=vim TANKARD_APPEARANCE=$t
+        shot dependency-tree-$t 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_TREE=all TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+        shot services-$t 3.5 TANKARD_DEMO=1 TANKARD_TAB=services TANKARD_SERVICE_SELECT=postgresql@18 TANKARD_APPEARANCE=$t
+        shot services-root-$t 3.5 TANKARD_DEMO=1 TANKARD_TAB=services TANKARD_SERVICE_SELECT=unbound TANKARD_APPEARANCE=$t
+        shot revert-sheet-$t 3 TANKARD_DEMO=1 TANKARD_DEMO_MANAGE=revert TANKARD_DEMO_TYPED=revert TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+        shot uninstall-sheet-$t 3 TANKARD_DEMO=arm64 TANKARD_DEMO_MANAGE=uninstall TANKARD_APPEARANCE=$t
+    done
+}
+
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
+if [ "${SET:-all}" = v0.4a ]; then v04a; exit 0; fi
 
 shot intelbrew-demo-light 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=light
 shot intelbrew-demo-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=dark
