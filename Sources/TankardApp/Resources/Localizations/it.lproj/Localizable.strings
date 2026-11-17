@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "I cask non sono abilitati: esegui `brew tap homebrew/cask` (circa 620 MB)";
 "Changes since then" = "Modifiche da allora";
 "Check Again" = "Ricontrolla";
+"Check Brewfile…" = "Controlla un Brewfile…";
+"Check Now" = "Controlla ora";
 "Check a Brewfile" = "Controlla un Brewfile";
-"Check a Brewfile…" = "Controlla un Brewfile…";
 "Check again" = "Ricontrolla";
 "Check every" = "Controlla ogni";
 "Check for new versions in the background" = "Cerca nuove versioni in background";
-"Check now" = "Controlla ora";
 "Checked %@" = "Controllato %@";
 "Checking Brewfile…" = "Controllo del Brewfile…";
 "Checking for updates…" = "Ricerca aggiornamenti…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ disponibile";
 "Tankard (demo)" = "Tankard (demo)";
+"Tankard Help" = "Aiuto Tankard";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard non ha ancora letto il prefisso Homebrew di questo Mac. Prima aggiorna.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard stesso non viene mai aggiornato automaticamente: usa brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard esclude gli aggiornamenti di questa app da Aggiorna tutto, dai conteggi e dall'aggiornamento automatico. Il suo programma di aggiornamento la mantiene aggiornata. brew upgrade nel Terminal può comunque aggiornarla.";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "Aggiorna %lld (salta %lld)";
 "Upgrade %lld packages?" = "Aggiornare %lld pacchetti?";
 "Upgrade 1 package?" = "Aggiornare 1 pacchetto?";
+"Upgrade All" = "Aggiorna tutto";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Aggiorna Tankard con brew upgrade --cask tankard (l'aggiornamento automatico lascia Tankard a brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Aggiorna di nuovo nel modo consueto: gli avvisi di compilazione, i blocchi e le versioni saltate valgono ancora";
-"Upgrade all" = "Aggiorna tutto";
 "Upgrade available: %@" = "Aggiornamento disponibile: %@";
 "Upgrade builds from source" = "Aggiorna le compilazioni da sorgente";
 "Upgrade command" = "Comando di aggiornamento";

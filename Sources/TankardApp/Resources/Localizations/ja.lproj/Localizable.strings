@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "caskは有効ではありません: `brew tap homebrew/cask` を実行してください(約620 MB)";
 "Changes since then" = "それ以降の変更";
 "Check Again" = "再確認";
+"Check Brewfile…" = "Brewfileを確認…";
+"Check Now" = "今すぐ確認";
 "Check a Brewfile" = "Brewfileを確認";
-"Check a Brewfile…" = "Brewfileを確認…";
 "Check again" = "再確認";
 "Check every" = "確認間隔";
 "Check for new versions in the background" = "バックグラウンドで新しいバージョンを確認";
-"Check now" = "今すぐ確認";
 "Checked %@" = "%@を確認しました";
 "Checking Brewfile…" = "Brewfileを確認中…";
 "Checking for updates…" = "アップデートを確認中…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@が利用可能";
 "Tankard (demo)" = "Tankard（デモ）";
+"Tankard Help" = "Tankardヘルプ";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankardはこの MacのHomebrewのprefixをまだ読み込んでいません。先に更新してください。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "%lld件をアップグレード（%lld件をスキップ）";
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
+"Upgrade All" = "すべてアップグレード";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
-"Upgrade all" = "すべてアップグレード";
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";

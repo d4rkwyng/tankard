@@ -95,6 +95,8 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
 public enum AboutInfo {
     public static let repository = URL(string: "https://github.com/d4rkwyng/tankard")!
     public static let newIssue = URL(string: "https://github.com/d4rkwyng/tankard/issues/new")!
+    /// Help ▸ Tankard Help: the user guide.
+    public static let help = URL(string: "https://github.com/d4rkwyng/tankard/blob/main/docs/usage.md")!
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
     public static let author = String(localized: "Made by d4rkwyng")
     public static let licence = String(localized: "BSD-2-Clause licence")

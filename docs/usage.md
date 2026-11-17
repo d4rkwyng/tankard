@@ -147,8 +147,8 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
 ## Menu-bar icon
 
 A mug in the menu bar (`mug` / `mug.fill`, a template image) with the number of upgrades
-ready. Its menu lists the upgrades (a hammer on ones that compile), then **Upgrade all**
-(opens the window and the upgrade sheet), **Open Tankard**, **Check now** (`brew update`
+ready. Its menu lists the upgrades (a hammer on ones that compile), then **Upgrade All**
+(opens the window and the upgrade sheet), **Open Tankard**, **Check Now** (`brew update`
 and a re-read, the same as ⌘R) and **Quit**. It reads the same store, cache and refresh
 as the window.
 
@@ -350,7 +350,7 @@ sheet, the menu bar and Discover.
 
 ## Clean up
 
-View → Clean Up… opens a sheet that runs `brew cleanup -n`
+Homebrew ▸ Clean Up… opens a sheet that runs `brew cleanup -n`
 (a dry run, read-only), `brew --cache` and `du -sk` on the cache, and shows what would be
 removed, how much space it frees and the download cache's size. **Clean up** then runs
 `brew cleanup` through the queue with the live log. When brew prints no total (it exits
@@ -440,7 +440,19 @@ again. The toolbar search filters by name.
 
 ## Homebrew menu (0.4)
 
-Both items open a sheet that shows exactly what will run, need a word typed, and then write
+The Homebrew menu holds everything that runs brew or looks at the Homebrew install, in
+groups from the most used to the least:
+
+- **Refresh** (⌘R, the same as the toolbar button) and **Scan for Vulnerabilities**;
+- **Health…** and **History…**;
+- **Clean Up…** and **Remove Unused Dependencies…** (both show what they remove first);
+- **Taps…**, **Adopt Apps…** and **Restore Points…**;
+- **Revert to Standard Homebrew…** (Intelbrew mode only) and **Uninstall Homebrew…**, last.
+
+Brewfiles are in the File menu (**Check Brewfile…**, **Export Brewfile…**), the tabs in
+the View menu (Installed ⌘1, Discover ⌘2, Services ⌘3).
+
+Revert and Uninstall Homebrew each open a sheet that shows exactly what will run, need a word typed, and then write
 a `.command` script and open it in Terminal. The script lists the commands again and waits
 for Return; nothing runs inside the app. Demo mode opens nothing.
 
@@ -472,7 +484,8 @@ Tankard → About Tankard shows "Version <x.y.z>" (e.g. "Version 0.6.1"; no buil
 to the project and to Intelbrew (in Intelbrew mode, "Intelbrew bottles from
 d4rkwyng/intelbrew"), the licence, and that Tankard is an independent app for
 [Homebrew](https://brew.sh), not affiliated with or endorsed by the Homebrew project. The
-Help menu has "Tankard on GitHub" and "Report an Issue…".
+Help menu has "Tankard Help" (this guide, on GitHub), "Tankard on GitHub" and "Report an
+Issue…".
 
 ## How it behaves
 
@@ -495,7 +508,7 @@ Help menu has "Tankard on GitHub" and "Report an Issue…".
   install, uninstall, reinstall, cleanup, pin, unpin, services start/stop/restart) go through one strict FIFO queue, so two brews
   never run at once. Status reads stay off the queue.
 - **Network: Tankard's own requests are below, each only in one mode and only when
-  needed; no telemetry.** `brew update` (Refresh, Check now and the background update)
+  needed; no telemetry.** `brew update` (Refresh, Check Now and the background update)
   and an adopt's cask download are brew's own requests. Everything else comes from brew
   and git on this Mac. The links out are ones
   you click (release pages, homepages, the About panel).

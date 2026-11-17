@@ -208,17 +208,22 @@ struct TankardApp: App {
             CommandGroup(replacing: .appInfo) {
                 Button("About Tankard") { AboutPanel.show(intelbrew: store.intelbrewMode) }
             }
-            CommandGroup(replacing: .newItem) {}
-            CommandGroup(after: .toolbar) {
+            // File: Tankard's files are Brewfiles (export one, check one).
+            // No New Window: Tankard has one main window.
+            CommandGroup(replacing: .newItem) {
+                BrewfileMenuItems(store: store)
+            }
+            // View: only what changes how the window shows content (the
+            // tabs). Actions that run brew are in the Homebrew menu.
+            CommandGroup(before: .toolbar) {
                 ViewCommands(store: store)
             }
             CommandMenu("Homebrew") {
                 HomebrewCommands(store: store)
-                HealthCommands(store: store)
-                TapsCommands(store: store)
-                AdoptMenuCommands(store: store)
             }
             CommandGroup(replacing: .help) {
+                Button("Tankard Help") { NSWorkspace.shared.open(AboutInfo.help) }
+                Divider()
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
                 Button("Report an Issue…") { NSWorkspace.shared.open(AboutInfo.newIssue) }
             }
@@ -249,18 +254,12 @@ extension TankardApp {
     }
 }
 
-/// View menu items that follow the store (Refresh greys out while a refresh
-/// runs). A view, so the store reads are tracked here and not in App.body.
+/// View menu items: the tabs. A view, so the store reads are tracked here
+/// and not in App.body.
 struct ViewCommands: View {
     var store: AppStore
 
     var body: some View {
-        Button("Refresh") { Task { await store.refresh(manual: true) } }
-            .keyboardShortcut("r", modifiers: .command)
-            .disabled(store.isRefreshing)
-        Button("Clean Up…") { store.openCleanup() }
-            .disabled(store.isUpgrading || store.report == nil)
-        Divider()
         Button("Installed") { store.tab = .installed }
             .keyboardShortcut("1", modifiers: .command)
         Button("Discover") { store.tab = .discover }
@@ -270,13 +269,35 @@ struct ViewCommands: View {
     }
 }
 
-/// The Homebrew menu (0.4). A view for the same reason as ViewCommands:
-/// Revert shows only in Intelbrew mode and both grey out while brew runs,
+/// The Homebrew menu, in groups from most to least used, Revert and
+/// Uninstall Homebrew last. A view for the same reason as ViewCommands:
+/// items grey out while brew runs and Revert shows only in Intelbrew mode,
 /// and those store reads must not be tracked by App.body.
 struct HomebrewCommands: View {
     var store: AppStore
 
     var body: some View {
+        // Check: the toolbar's Refresh, and the scan on demand (0.6.1).
+        Button("Refresh") { Task { await store.refresh(manual: true) } }
+            .keyboardShortcut("r", modifiers: .command)
+            .disabled(store.isRefreshing || store.isUpgrading)
+        Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
+            .disabled(store.insights.scanState == .running || store.report == nil)
+        Divider()
+        // Look: what brew says about this Mac, and what Tankard ran.
+        HealthCommands(store: store)
+        Divider()
+        // Free space: old versions and caches, then unused dependencies.
+        Button("Clean Up…") { store.openCleanup() }
+            .disabled(store.isBusy || store.report == nil)
+        Button("Remove Unused Dependencies…") { store.openAutoremove() }
+            .disabled(store.isBusy || store.report == nil)
+        Divider()
+        // Manage: where packages come from, adopting apps, rolling back.
+        TapsCommands(store: store)
+        AdoptMenuCommands(store: store)
+        RestorePointsMenuItem(store: store)
+        Divider()
         // Revert exists only in Intelbrew mode.
         if store.intelbrewMode {
             Button(HomebrewManagement.Kind.revert.title) { store.requestManagement(.revert) }
@@ -284,15 +305,6 @@ struct HomebrewCommands: View {
         }
         Button(HomebrewManagement.Kind.uninstall.title) { store.requestManagement(.uninstall) }
             .disabled(store.isBusy || store.report == nil)
-        // 0.6: Export Brewfile…, Check a Brewfile…
-        Divider()
-        BrewfileMenuItems(store: store)
-        // 0.7: Restore Points…
-        RestorePointsMenuItem(store: store)
-        // 0.6.1: the scan on demand (was in the filter menu).
-        Divider()
-        Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
-            .disabled(store.insights.scanState == .running || store.report == nil)
     }
 }
 

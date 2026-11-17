@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)";
 "Changes since then" = "Changes since then";
 "Check Again" = "Check Again";
+"Check Brewfile…" = "Check Brewfile…";
+"Check Now" = "Check Now";
 "Check a Brewfile" = "Check a Brewfile";
-"Check a Brewfile…" = "Check a Brewfile…";
 "Check again" = "Check again";
 "Check every" = "Check every";
 "Check for new versions in the background" = "Check for new versions in the background";
-"Check now" = "Check now";
 "Checked %@" = "Checked %@";
 "Checking Brewfile…" = "Checking Brewfile…";
 "Checking for updates…" = "Checking for updates…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ available";
 "Tankard (demo)" = "Tankard (demo)";
+"Tankard Help" = "Tankard Help";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "Upgrade %lld (skip %lld)";
 "Upgrade %lld packages?" = "Upgrade %lld packages?";
 "Upgrade 1 package?" = "Upgrade 1 package?";
+"Upgrade All" = "Upgrade All";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
-"Upgrade all" = "Upgrade all";
 "Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";

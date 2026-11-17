@@ -4,6 +4,18 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Changed
+- **Menus reorganized** along Apple's menu bar guidelines. The View menu now holds only the tabs (Installed ⌘1, Discover ⌘2, Services ⌘3). **Refresh** (⌘R, unchanged) and **Clean Up…** moved from View to the **Homebrew** menu, which is grouped from the most used to the least: Refresh and Scan for Vulnerabilities; Health… and History…; Clean Up… and Remove Unused Dependencies…; Taps…, Adopt Apps… and Restore Points…; then Revert to Standard Homebrew… and Uninstall Homebrew… last (they were first).
+- **Check Brewfile…** (was "Check a Brewfile…") and **Export Brewfile…** moved from the Homebrew menu to the **File** menu. With them the File menu is back, and with it **Close** (⌘W) and **Close All**; in 0.8.0 there was no File menu at all.
+- The Help menu has **Tankard Help**, which opens the user guide on GitHub.
+- The menu-bar icon's menu says **Upgrade All** and **Check Now** (title case, like other menu items).
+- Refresh in the menu greys out while an upgrade runs, as the toolbar button already did; Clean Up… greys out whenever brew is busy, like Remove Unused Dependencies….
+
+### For contributors
+- `TANKARD_MENU_DUMP=<file>` writes the main menu as a text outline (shortcuts, disabled items, separators) after `TANKARD_SNAPSHOT_DELAY`, for reviewing menus.
+
 ## [0.8.0]
 
 ### Added

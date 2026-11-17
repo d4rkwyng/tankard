@@ -97,7 +97,7 @@ throttled `brew update` in the background, on by default and described below the
 
 | you click | Tankard runs |
 |---|---|
-| Refresh (⌘R) or Check now | `brew update` |
+| Refresh (⌘R) or Check Now | `brew update` |
 | Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package |
 | Install | `brew install --formula\|--cask <tap>/<name>` |
 | Uninstall (after a confirmation) | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then the no-longer-needed dependencies the sheet lists, one by one, when "Also remove these" is on |
@@ -150,7 +150,7 @@ refresh once you turn that on in Settings → Upgrades (off by default). It read
 brew prints. Casks aren't scanned.
 
 **brew's own request: `brew update`.** The background update (on by default, see above),
-Refresh and Check now run `brew update`, which fetches from GitHub and formulae.brew.sh
+Refresh and Check Now run `brew update`, which fetches from GitHub and formulae.brew.sh
 as it does in Terminal. Adopting an app makes brew download its cask.
 
 Everything else comes from brew and git on your Mac. Details:

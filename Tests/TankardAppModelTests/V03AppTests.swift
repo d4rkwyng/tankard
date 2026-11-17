@@ -718,6 +718,18 @@ struct AboutTests {
             #expect(line.count <= 56)
         }
     }
+
+    /// Help ▸ Tankard Help opens the user guide on GitHub: a file of this
+    /// repository, on main, so the link can't point at a missing page.
+    @Test func helpLinksToTheUsageGuideInThisRepository() throws {
+        let prefix = AboutInfo.repository.absoluteString + "/blob/main/"
+        let url = AboutInfo.help.absoluteString
+        #expect(url.hasPrefix(prefix))
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let path = root.appendingPathComponent(String(url.dropFirst(prefix.count))).path
+        #expect(path.hasSuffix("docs/usage.md"))
+        #expect(FileManager.default.fileExists(atPath: path))
+    }
 }
 
 // MARK: Intelbrew build times

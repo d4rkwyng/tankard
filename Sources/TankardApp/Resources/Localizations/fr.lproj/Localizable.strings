@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "Les casks ne sont pas activés : exécutez `brew tap homebrew/cask` (environ 620 Mo)";
 "Changes since then" = "Changements depuis";
 "Check Again" = "Vérifier à nouveau";
+"Check Brewfile…" = "Vérifier un Brewfile…";
+"Check Now" = "Vérifier maintenant";
 "Check a Brewfile" = "Vérifier un Brewfile";
-"Check a Brewfile…" = "Vérifier un Brewfile…";
 "Check again" = "Vérifier à nouveau";
 "Check every" = "Vérifier toutes les";
 "Check for new versions in the background" = "Rechercher les nouvelles versions en arrière-plan";
-"Check now" = "Vérifier maintenant";
 "Checked %@" = "Vérifié %@";
 "Checking Brewfile…" = "Vérification du Brewfile…";
 "Checking for updates…" = "Recherche de mises à jour…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ disponible";
 "Tankard (demo)" = "Tankard (démo)";
+"Tankard Help" = "Aide Tankard";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard n’a pas encore lu le préfixe Homebrew de ce Mac. Actualisez d’abord.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard n’est jamais mis à niveau automatiquement : utilisez brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard exclut les mises à niveau de cette app de Tout mettre à niveau, des compteurs et de la mise à jour auto. Son propre outil de mise à jour la garde à jour. brew upgrade dans Terminal peut toujours la mettre à niveau.";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "Mettre à niveau %lld (ignorer %lld)";
 "Upgrade %lld packages?" = "Mettre à niveau %lld paquets ?";
 "Upgrade 1 package?" = "Mettre à niveau 1 paquet ?";
+"Upgrade All" = "Tout mettre à niveau";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Mettez à niveau Tankard avec brew upgrade --cask tankard (la mise à jour automatique laisse Tankard à brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Mettre à niveau de nouveau normalement : les avertissements de compilation, les épingles et les versions ignorées s’appliquent toujours";
-"Upgrade all" = "Tout mettre à niveau";
 "Upgrade available: %@" = "Mise à niveau disponible : %@";
 "Upgrade builds from source" = "La mise à niveau compile depuis les sources";
 "Upgrade command" = "Commande de mise à niveau";

@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "Casks não estão ativados: execute `brew tap homebrew/cask` (cerca de 620 MB)";
 "Changes since then" = "Mudanças desde então";
 "Check Again" = "Verificar Novamente";
+"Check Brewfile…" = "Verificar um Brewfile…";
+"Check Now" = "Verificar agora";
 "Check a Brewfile" = "Verificar um Brewfile";
-"Check a Brewfile…" = "Verificar um Brewfile…";
 "Check again" = "Verificar novamente";
 "Check every" = "Verificar a cada";
 "Check for new versions in the background" = "Procurar novas versões em segundo plano";
-"Check now" = "Verificar agora";
 "Checked %@" = "Verificado %@";
 "Checking Brewfile…" = "Verificando o Brewfile…";
 "Checking for updates…" = "Procurando atualizações…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ disponível";
 "Tankard (demo)" = "Tankard (demo)";
+"Tankard Help" = "Ajuda do Tankard";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "O Tankard ainda não leu o prefixo do Homebrew deste Mac. Atualize primeiro.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "O próprio Tankard nunca é atualizado automaticamente: use brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "O Tankard deixa as atualizações deste app fora de Atualizar tudo, das contagens e da atualização automática. O próprio atualizador do app o mantém em dia. brew upgrade no Terminal ainda pode atualizá-lo.";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "Atualizar %lld (ignorar %lld)";
 "Upgrade %lld packages?" = "Atualizar %lld pacotes?";
 "Upgrade 1 package?" = "Atualizar 1 pacote?";
+"Upgrade All" = "Atualizar tudo";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Atualize o Tankard com brew upgrade --cask tankard (a atualização automática deixa o Tankard para o brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Atualize novamente da forma habitual: avisos de compilação, fixações e versões ignoradas continuam valendo";
-"Upgrade all" = "Atualizar tudo";
 "Upgrade available: %@" = "Atualização disponível: %@";
 "Upgrade builds from source" = "Atualização compila da origem";
 "Upgrade command" = "Comando de atualização";

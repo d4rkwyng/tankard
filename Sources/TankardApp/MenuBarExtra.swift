@@ -92,13 +92,13 @@ struct MenuBarContent: View {
 
             Divider()
             VStack(alignment: .leading, spacing: 1) {
-                MenuRow(title: String(localized: "Upgrade all"), systemImage: "arrow.up.circle", shortcut: nil,
+                MenuRow(title: String(localized: "Upgrade All"), systemImage: "arrow.up.circle", shortcut: nil,
                         enabled: summary.count > 0 && !store.isUpgrading && !store.isRefreshing) {
                     openMain()
                     store.requestUpgrade()
                 }
                 MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
-                MenuRow(title: String(localized: "Check now"), systemImage: "arrow.clockwise", shortcut: nil,
+                MenuRow(title: String(localized: "Check Now"), systemImage: "arrow.clockwise", shortcut: nil,
                         enabled: !store.isRefreshing && !store.isUpgrading) {
                     Task { await store.refresh(manual: true) }
                 }

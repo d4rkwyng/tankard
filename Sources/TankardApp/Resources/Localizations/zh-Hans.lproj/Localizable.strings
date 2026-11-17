@@ -243,12 +243,12 @@
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "未启用 cask：请运行 `brew tap homebrew/cask`（约 620 MB）";
 "Changes since then" = "此后的更改";
 "Check Again" = "再次检查";
+"Check Brewfile…" = "检查 Brewfile…";
+"Check Now" = "立即检查";
 "Check a Brewfile" = "检查 Brewfile";
-"Check a Brewfile…" = "检查 Brewfile…";
 "Check again" = "再次检查";
 "Check every" = "检查间隔";
 "Check for new versions in the background" = "在后台检查新版本";
-"Check now" = "立即检查";
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
 "Checking for updates…" = "正在检查更新…";
@@ -786,6 +786,7 @@
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ 可用";
 "Tankard (demo)" = "Tankard（演示）";
+"Tankard Help" = "Tankard 帮助";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
@@ -884,9 +885,9 @@
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
 "Upgrade 1 package?" = "升级 1 个软件包？";
+"Upgrade All" = "全部升级";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "用 brew upgrade --cask tankard 升级 Tankard（自动更新不处理 Tankard，留给 brew）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
-"Upgrade all" = "全部升级";
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";
