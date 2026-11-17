@@ -68,6 +68,13 @@ extension AppStore {
             || insights.sizesState == .running
     }
 
+    /// The sheet's first step is queued behind the background `brew update`
+    /// (the queue runs one brew at a time): the sheet says it is waiting for it.
+    public var sessionWaitsForBrewUpdate: Bool {
+        guard let u = upgrade else { return false }
+        return backgroundUpdating && u.notStarted
+    }
+
     /// HOMEBREW_NO_AUTO_UPDATE's source when the user set it (Settings shows it).
     public var backgroundUpdateOptOut: String? { BackgroundUpdatePolicy.optOut(brewSources) }
 

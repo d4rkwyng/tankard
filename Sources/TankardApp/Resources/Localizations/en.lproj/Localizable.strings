@@ -906,6 +906,7 @@
 "Vulnerable: %@" = "Vulnerable: %@";
 "Wait for the running brew to finish" = "Wait for the running brew to finish";
 "Waiting for approval in System Settings → General → Login Items." = "Waiting for approval in System Settings → General → Login Items.";
+"Waiting for brew update to finish…" = "Waiting for brew update to finish…";
 "Waiting for brew…" = "Waiting for brew…";
 "What brew printed" = "What brew printed";
 "What installing the missing items would do, before anything runs" = "What installing the missing items would do, before anything runs";

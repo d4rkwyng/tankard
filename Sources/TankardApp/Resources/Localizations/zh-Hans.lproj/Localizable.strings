@@ -906,6 +906,7 @@
 "Vulnerable: %@" = "存在漏洞：%@";
 "Wait for the running brew to finish" = "等待正在运行的 brew 完成";
 "Waiting for approval in System Settings → General → Login Items." = "正在等待在“系统设置 → 通用 → 登录项”中批准。";
+"Waiting for brew update to finish…" = "正在等待 brew update 完成…";
 "Waiting for brew…" = "正在等待 brew…";
 "What brew printed" = "brew 的输出";
 "What installing the missing items would do, before anything runs" = "在运行任何内容之前，显示安装缺失项会执行的操作";

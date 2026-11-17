@@ -247,7 +247,16 @@ public final class UpgradeSession: Identifiable {
     }
 
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
-    public var statusLine: String {
+    public var statusLine: String { statusLine(behindBrewUpdate: false) }
+
+    /// Nothing has started yet: the queue is still running something else.
+    public var notStarted: Bool { !isFinished && items.allSatisfy { $0.state == .waiting } }
+
+    /// 0.8: `behindBrewUpdate` (AppStore.sessionWaitsForBrewUpdate): the
+    /// first step is queued behind a background `brew update`, which can take
+    /// a minute or two; say so instead of a bare "Waiting for brew…".
+    public func statusLine(behindBrewUpdate: Bool) -> String {
+        if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
         if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
         if isFinished {

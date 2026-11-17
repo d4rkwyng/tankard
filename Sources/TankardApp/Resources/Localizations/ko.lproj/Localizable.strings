@@ -906,6 +906,7 @@
 "Vulnerable: %@" = "취약함: %@";
 "Wait for the running brew to finish" = "실행 중인 brew가 끝날 때까지 대기";
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";
+"Waiting for brew update to finish…" = "brew update가 끝나기를 기다리는 중…";
 "Waiting for brew…" = "brew를 기다리는 중…";
 "What brew printed" = "brew가 출력한 내용";
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";

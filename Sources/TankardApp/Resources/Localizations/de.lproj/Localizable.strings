@@ -906,6 +906,7 @@
 "Vulnerable: %@" = "Verwundbar: %@";
 "Wait for the running brew to finish" = "Auf das Ende des laufenden brew warten";
 "Waiting for approval in System Settings → General → Login Items." = "Warten auf Freigabe in Systemeinstellungen → Allgemein → Anmeldeobjekte.";
+"Waiting for brew update to finish…" = "Warten auf brew update…";
 "Waiting for brew…" = "Warten auf brew…";
 "What brew printed" = "Ausgabe von brew";
 "What installing the missing items would do, before anything runs" = "Was die Installation der fehlenden Objekte bewirken würde, bevor etwas läuft";

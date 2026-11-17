@@ -19,7 +19,7 @@ struct UpgradeSheet: View {
             .padding(.bottom, 14)
 
             HStack {
-                Text(session.statusLine)
+                Text(session.statusLine(behindBrewUpdate: store.sessionWaitsForBrewUpdate))
                 Spacer()
                 Text(session.countLine).foregroundStyle(.secondary).monospacedDigit()
             }

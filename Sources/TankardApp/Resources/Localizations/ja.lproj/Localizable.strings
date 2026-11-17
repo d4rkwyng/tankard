@@ -906,6 +906,7 @@
 "Vulnerable: %@" = "脆弱性あり: %@";
 "Wait for the running brew to finish" = "実行中のbrewが終了するのを待つ";
 "Waiting for approval in System Settings → General → Login Items." = "システム設定 → 一般 → ログイン項目 での承認を待っています。";
+"Waiting for brew update to finish…" = "brew update の完了を待機中…";
 "Waiting for brew…" = "brewを待機中…";
 "What brew printed" = "brewの出力";
 "What installing the missing items would do, before anything runs" = "不足している項目をインストールした場合の内容（何も実行される前に確認）";
