@@ -30,8 +30,8 @@ import TankardCore
 // The first failing step stops the script; later `always` steps still run
 // (cleanup). `ScriptRunner.help` lists the verbs.
 //
-// Adding steps (e.g. v0.8-adopt's "adopt-scan", "adopt", "self-update"):
-// write `extension ScriptRunner { static var adoptSteps: [String: ScriptStepDef] { [...] } }`
+// Adding steps (ScriptSteps+Adopt.swift is an example: adopt-scan, adopt,
+// self-update, expect-app): write `extension ScriptRunner { static var adoptSteps: [String: ScriptStepDef] { [...] } }`
 // in its own file, using the ScriptContext helpers (waitUntil, runSession,
 // package(_:kind:), check, snapshot), and add `adoptSteps` to `stepTables`
 // below (a computed var: a stored `static let` of these closures trips Swift 6.2's
@@ -433,7 +433,7 @@ public final class ScriptRunner {
     // MARK: the verbs
 
     /// Every step table. Add a feature's table here (see the header).
-    static let stepTables: [[String: ScriptStepDef]] = [coreSteps]
+    static let stepTables: [[String: ScriptStepDef]] = [coreSteps, adoptSteps]
 
     public static let steps: [String: ScriptStepDef] = stepTables.reduce(into: [:]) { all, t in
         all.merge(t) { a, _ in a }

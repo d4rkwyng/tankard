@@ -23,6 +23,10 @@
 #              Trust, Untrust, Trust, a probe formula 1.0 → 1.1 upgrade through the app,
 #              post-install notes, a manual restore point, a real rollback to
 #              1.0, pin/unpin, uninstall, Remove Tap
+#   adopt      Adopt Apps: AnyBar 0.2.3 (cask anybar), downloaded from the
+#              cask's own URL and sha256-checked, copied to /Applications by
+#              hand; the scan, adopt it (brew install --cask --adopt), the
+#              self-update choice, then uninstall the cask: the app is gone
 #
 # Each phase writes OUT/<scenario>/<phase>/: NN-step.png per step,
 # results.jsonl (one JSON line per step: pass/fail, checks, model state),
@@ -53,7 +57,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula cask security settings restore)
+ALL=(welcome formula cask security settings restore adopt)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -343,6 +347,40 @@ STEPS
     [ -e "$taps_dir/tankard-e2e/homebrew-probe" ] && qbrew untrust --tap "$tap" >/dev/null 2>&1
     [ -e "$taps_dir/tankard-e2e/homebrew-probe" ] && { echo "    cleanup: untapping $tap" >&2; qbrew untap "$tap"; }
     grep -q "tankard-e2e" ~/.homebrew/trust.json 2>/dev/null && echo "    note: ~/.homebrew/trust.json still names tankard-e2e" >&2
+}
+
+scenario_adopt() {
+    local c=anybar app=/Applications/AnyBar.app
+    need_absent cask $c || { record "adopt: SKIP ($c already installed)"; return; }
+    if [ -e "$app" ]; then record "adopt: SKIP ($app exists and isn't ours)"; return; fi
+    autoremove_clean || { record "adopt: SKIP (autoremove would remove something)"; return; }
+    fresh_state adopt
+    local work="$OUT/adopt/work" url sha
+    mkdir -p "$work"
+    read -r url sha < <(qbrew info --cask --json=v2 $c | python3 -c 'import json,sys; k=json.load(sys.stdin)["casks"][0]; print(k["url"], k["sha256"])')
+    if ! curl -fsSL -o "$work/anybar.zip" "$url" || [ "$(shasum -a 256 "$work/anybar.zip" | cut -d' ' -f1)" != "$sha" ]; then
+        record "adopt/setup: FAIL (download of $url failed or sha256 isn't the cask's $sha)"
+        return
+    fi
+    ditto -x -k "$work/anybar.zip" "$work/unzipped" && ditto "$work/unzipped/AnyBar.app" "$app" \
+        || { record "adopt/setup: FAIL (couldn't place $app)"; return; }
+    run_phase adopt 1-adopt <<STEPS
+expect-ready
+set keepPreviousVersion on
+adopt-scan
+adopt $app app
+expect installed $c
+self-update $c homebrew
+self-update $c app
+expect-app present $app
+always uninstall cask $c
+expect not-installed $c
+expect-app absent $app
+STEPS
+    # Leave nothing behind: the cask if still installed, else our own copy
+    # of the app (moved to the Trash, never deleted outright).
+    if qbrew list --cask $c >/dev/null 2>&1; then echo "    cleanup: uninstalling $c" >&2; qbrew uninstall --cask $c
+    elif [ -e "$app" ]; then echo "    cleanup: moving our $app to the Trash" >&2; mv "$app" ~/.Trash/AnyBar-e2e-$$.app; fi
 }
 
 for sc in "${SCENARIOS[@]}"; do
