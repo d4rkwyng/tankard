@@ -9,6 +9,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Fixed
 - The **More** filters are now a standard pop-up menu. This should stop the toolbar drag lock (after picking a More filter, the window couldn't be dragged by its toolbar until you switched to Discover and back).
 - The toolbar's logo now moves the window when dragged, like the rest of the toolbar.
+- Leaving the Installed tab clears a **More** filter (Has notes, Pinned…), so Installed comes back showing All.
 - The About examples in the docs no longer name an old version.
 
 ### Changed
