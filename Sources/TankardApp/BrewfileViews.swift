@@ -175,7 +175,8 @@ struct BrewfileSheet: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxHeight: 300)
+                // A ScrollView in a sheet has no height of its own: size it to the list.
+                .frame(height: min(CGFloat(r.missing.count) * 19 + CGFloat(Set(r.missing.map(\.kind)).count) * 30, 300))
             }
             HStack {
                 Spacer()
@@ -201,14 +202,14 @@ struct BrewfileSheet: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxHeight: 260)
+            .frame(height: min(CGFloat(p.items.count) * 27, 270))
             if !p.compiling.isEmpty {
                 Label("\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time.",
                       systemImage: "hammer.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.orange)
             }
             if !p.adminCasks.isEmpty {
-                Label("\(p.adminCasks.count) cask\(p.adminCasks.count == 1 ? "" : "s") run a pkg installer: macOS asks for an administrator password.",
+                Label("\(p.adminCasks.count) \(p.adminCasks.count == 1 ? "cask runs" : "casks run") a pkg installer: macOS asks for an administrator password.",
                       systemImage: "lock.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
                     .help("Marked from the cask's pkg artifact. Other casks may still ask for a password.")
