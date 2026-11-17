@@ -47,8 +47,7 @@ the Intelbrew forks.
   follow **Depends on**, **Used by** and the dependency tree from package to package.
 - **Services**: see `brew services` status and start, stop or restart your own services.
 - **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall the Homebrew
-  Tankard shows (its prefix only),
-  both in Terminal after showing every command.
+  Tankard shows (its prefix only), both in Terminal after showing every command.
 - **Vulnerabilities** from `brew vulns` (Homebrew 7): a ⚠ tag with severity, the advisory
   ids linked to OSV.dev, "fixed in", a Vulnerable filter and "Upgrade vulnerable
   packages". Scans run when you ask, or on every refresh if you opt in (brew sends your
@@ -66,8 +65,8 @@ the Intelbrew forks.
 - **Themes**: System (default, follows your Mac), Dark, Light, Tankard (purple and amber)
   and Dracula.
 
-More detail, including the command-line tool `tankard status`, is in
-[docs/usage.md](docs/usage.md).
+How to use each of these: [Tankard Help](docs/usage.md) (also **Help ▸ Tankard Help** in
+the app).
 
 ## Install
 
@@ -91,77 +90,22 @@ an Intel Mac, standard Homebrew on Apple silicon.
 
 ## What Tankard changes, and when
 
-Reading status never changes your Homebrew (brew runs with `HOMEBREW_NO_AUTO_UPDATE=1`).
-Your packages change only when you ask; the one thing Tankard runs on its own is a
-throttled `brew update` in the background, on by default and described below the table.
-
-| you click | Tankard runs |
-|---|---|
-| Refresh (⌘R) or Check Now | `brew update` |
-| Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package |
-| Install | `brew install --formula\|--cask <tap>/<name>` |
-| Uninstall (after a confirmation) | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then the no-longer-needed dependencies the sheet lists, one by one, when "Also remove these" is on |
-| Adopt (Adopt Apps, after a confirmation) | `brew install --cask --adopt <tap>/<name>`, one per app |
-| Clean up | `brew cleanup` |
-| Replace with bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
-| Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
-| Start / Stop / Restart (Services) | `brew services start\|stop\|restart -- <name>` |
-
-Reads that change nothing also run with each status read (side by side with `brew info`;
-the list appears first and sizes fill in; cached for an hour like status): `brew info --sizes`, `brew vulns --json` (only once you turn on
-"Scan for vulnerabilities when refreshing" in Settings → Upgrades, off by default; "Scan
-for Vulnerabilities Now" is always there; a scan is stopped after a minute), and, with
-"Include self-updating apps" on, `brew outdated --greedy --cask --json=v2`. With "Don't
-quit running apps during upgrades" on, cask upgrades run with
-`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, and the command shown says so.
-
-**Background `brew update` (on by default).** After the list is on screen, and then while
-Tankard runs, Tankard runs `brew update` at most once per check interval (Settings →
-General → Check every, 6 hours by default; longer if `HOMEBREW_AUTO_UPDATE_SECS` says so;
-any `brew update`, Terminal's too, counts), then re-reads the upgrade counts. `brew update`
-updates Homebrew and its package lists (taps, formula and cask data); it installs or
-upgrades none of your packages. Turn off Settings → General → "Check for new versions in
-the background" to stop it; it is also off when `HOMEBREW_NO_AUTO_UPDATE` is set. It waits
-while another brew command runs, and a failure (offline) is only logged. Notifications use the same update. Commands run one at a time, never with a shell, and never with
-sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
-Installing, adopting, upgrading or removing an app (a cask that installs one) needs macOS's App Management permission; Tankard
-explains how to allow it the first time and offers to relaunch itself so macOS applies it. The Homebrew menu's Revert and Uninstall never run
-in the app: after you type the confirmation word, they open Terminal with the commands.
+Reading status never changes your Homebrew. Your packages change only when you click (or
+when you turn on automatic updates, off by default), and every button shows the exact brew
+command it runs. Commands run one at a time, never with a shell and never with sudo. The
+one thing Tankard runs on its own is a throttled `brew update` in the background, which
+refreshes Homebrew's package lists and upgrades nothing; Settings ▸ General turns it off.
+The full list: [What Tankard runs](docs/usage.md#what-tankard-runs).
 
 ## Network and privacy
 
-No telemetry. Tankard's own requests, each in one mode only:
-
-- **Normal mode:** Discover downloads Homebrew's catalogue from formulae.brew.sh the first
-  time you open it, and keeps it for an hour. Right after, without holding up the search, it
-  downloads Homebrew's public install counts (the 30, 90 and 365-day files under
-  `formulae.brew.sh/api/analytics/`, about 13 MB together) and keeps them for a day. These are
-  the bulk files for every package, so the site never learns which packages you look at.
-  Adopt Apps reads the same cached cask list (and downloads it if Discover hasn't).
-- **Any mode, only when you ask:** Tankard ▸ Check for Tankard Updates… sends one request to
-  GitHub's API for Tankard's latest release (`api.github.com/repos/d4rkwyng/tankard/releases/latest`;
-  no account, no identifiers beyond the `Tankard/<version>` User-Agent). Never automatic.
-- **Any mode, only while a cask installs or upgrades:** to show download progress, Tankard
-  asks the cask's download server for the file size with one HEAD request to the same URL
-  brew downloads from (the cask's own URL from `brew info`). Bottles need no request: their
-  size comes from the manifest brew already fetched.
-- **Intelbrew mode:** when a compile warning is shown, Tankard reads Intelbrew's build
-  times (`build-times.json` from the intelbrew-core releases on GitHub) and keeps them for
-  a day. Discover reads your local taps instead of formulae.brew.sh.
-
-**brew's own request: `brew vulns`.** The vulnerability scan is brew's command, not
-Tankard's code: brew sends the source repository URL and version tag of each installed
-formula to OSV.dev (`api.osv.dev/v1/querybatch`, then `api.osv.dev/v1/vulns/<id>` for
-details). Tankard runs it only when you ask: Scan Now (Settings → Upgrades) or Homebrew ▸ Scan for Vulnerabilities, or after each
-refresh once you turn that on in Settings → Upgrades (off by default). It reads only what
-brew prints. Casks aren't scanned.
-
-**brew's own request: `brew update`.** The background update (on by default, see above),
-Refresh and Check Now run `brew update`, which fetches from GitHub and formulae.brew.sh
-as it does in Terminal. Adopting an app makes brew download its cask.
-
-Everything else comes from brew and git on your Mac. Details:
-[docs/usage.md](docs/usage.md#how-it-behaves).
+No telemetry, no account. Tankard's own requests are Homebrew's public catalogue and
+install-count files from formulae.brew.sh (whole files, so the site never learns which
+packages you look at), a file-size check while a cask downloads, Intelbrew's build times
+in Intelbrew mode, and a GitHub release check only when you choose **Check for Tankard
+Updates…**. brew's own `brew update` and, only if you scan, `brew vulns` (which sends
+formula names and versions to OSV.dev) contact the network as they do in Terminal.
+Details: [Privacy and network](docs/usage.md#privacy-and-network).
 
 ## Build from source
 
@@ -175,8 +119,8 @@ Scripts/bundle-app.sh --universal  # Intel + Apple silicon
 open dist/Tankard.app
 ```
 
-How it's put together, demo mode, screenshots, signing and releases:
-[docs/architecture.md](docs/architecture.md). What changed in each version:
+How it's put together, the `tankard status` command-line tool, demo mode, screenshots,
+signing and releases: [docs/architecture.md](docs/architecture.md). What changed in each version:
 [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence

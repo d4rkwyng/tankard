@@ -1,7 +1,8 @@
 # Tankard architecture
 
-How Tankard is built, how it runs brew, and how a release is made. What the app does is in
-[usage.md](usage.md).
+How Tankard is built, how it runs brew, and how a release is made. How to use the app is in
+[usage.md](usage.md); the mechanics behind each feature are in
+[App behaviour in detail](#app-behaviour-in-detail).
 
 ## Building
 
@@ -321,6 +322,313 @@ JSON.
 Formula versions include the `_N` revision. `bottleOrigin` is only set when the installed
 version equals the current one. Receipts don't record which bottle URL was poured, so for
 an older keg Tankard can't know.
+
+## Command-line tool
+
+`swift build -c release` builds `.build/release/tankard`. It is not part of Tankard.app or
+the cask.
+
+```
+tankard status [--json] [--filter upgrades|source|newer|nobottle|casks]
+               [--remote] [--timings] [--brew PATH]
+```
+
+Real output from the Intel test VM (core on the fork, brew still on upstream), trimmed:
+
+```
+NAME              INSTALLED   CURRENT     STATUS            NOTES
+ca-certificates   2026-11-05  2026-11-05  Homebrew bottle   dep
+curl-impersonate  2.3.2       2.3.2       Intelbrew bottle
+python@3.15       3.15.2      3.15.2      Intelbrew bottle
+vim               9.2.1355    9.2.1355    source
+xz                5.8.4       5.8.4       Intelbrew bottle  dep
+zstd              1.5.7_1     1.5.7_1     Homebrew bottle   dep
+
+20 installed · 19 bottled · 1 source · 0 newer · 0 upgrades (0 with bottles)
+
+Intelbrew mode (homebrew/core origin is https://github.com/d4rkwyng/intelbrew-core)
+  core: https://github.com/d4rkwyng/intelbrew-core, branch intelbrew-staging — Intelbrew fork
+  brew: https://github.com/Homebrew/brew at 7.0.14 — NOT the d4rkwyng/brew fork
+```
+
+- The status counts add up to "installed". The no-bottle and cask counts only appear when
+  they aren't zero. In the upgrades bracket, "compile" (formula upgrades with no bottle)
+  and "casks" also only appear when they aren't zero.
+- `--filter` narrows the table, or the `packages` array with `--json`. The summary still
+  counts everything.
+- `--remote` gets the brew fork's newest tag with `git ls-remote`, which needs the
+  network. Without it, Tankard uses the tags already in the local checkout, which are
+  current as of your last `brew update`.
+- Exit codes: 0 for success, 1 when brew isn't found or a brew call fails, 2 for a usage
+  error.
+
+## Package status
+
+Each installed package gets exactly one `status`. When more than one applies, the first
+in this list wins: newer, noBottle, source, bottle.
+
+| status | meaning |
+|---|---|
+| `bottle` | Poured from a bottle. In Intelbrew mode the label shows whose bottle it was: **Intelbrew bottle** (URL on `github.com/d4rkwyng/intelbrew-core`) or **Homebrew bottle** (`ghcr.io/v2/homebrew/core`, which the fork keeps for `all` bottles and the formulae it hasn't rebuilt). A package whose installed version is older than the tap's shows plain "Bottle". |
+| `source` | Built from source (`poured_from_bottle: false`), or a HEAD install. |
+| `newer` | The installed version is newer than the tap's current version, and brew doesn't call it outdated. This usually means it was installed from Homebrew's API before core was switched to the fork. brew never downgrades. |
+| `noBottle` | The current version has no bottle this Mac can pour, so a reinstall or upgrade would compile. This beats `source`: a source build whose formula has no bottle shows as `noBottle`. |
+| `cask` | A cask. Casks have no bottles. A cask can also be `newer`. |
+
+Other fields (see the [JSON schema](#json-output-tankard-status---json-schema-version-1))
+cover: upgrade available, whether that upgrade has a bottle, requested or dependency,
+pinned, keg-only, and formula or cask.
+
+**Upgrade available** is brew's own `outdated` flag from `brew info --json=v2
+--installed`. Tankard never decides that a package is outdated by comparing versions
+itself. On the arm64 Mac (23 outdated) and the Intel VM (none), the flag listed exactly
+the same packages as `brew outdated --json=v2`, so Tankard skips that second brew call. One
+consequence: a cask with `auto_updates true` that is behind the tap is not outdated, which
+is brew's rule. `upgradeHasBottle` is whether the current version has a pourable bottle.
+
+**Can this Mac pour the bottle?** Tankard follows brew's own matching rules:
+
+1. Use the exact tag: `sonoma` on Intel, `arm64_sonoma` on Apple silicon.
+2. Otherwise use `all`.
+3. Otherwise use the newest bottle built for an older macOS on the same CPU. This is how
+   an OpenCore Legacy Patcher Mac running Sequoia pours the fork's Sonoma bottles.
+4. Finally, the bottle's Cellar must be `:any`, `:any_skip_relocation`, or this
+   install's own Cellar. Otherwise brew compiles.
+
+**Replace with bottle** is offered for a formula built from source (`poured_from_bottle:
+false`) whose installed version is the current one, with no upgrade pending, not HEAD, and
+a bottle this Mac can pour. brew fails cleanly if there turns out to be no bottle.
+
+## Version comparison
+
+Tankard only compares versions to find `newer` packages. `BrewVersion` and `PkgVersion`
+are a Swift port of brew's `Version#<=>` and `PkgVersion#<=>` (`version.rb` and
+`pkg_version.rb`, brew 7.0.14). A version is split into tokens: numbers, words, and the
+special words alpha, beta, pre, rc, p and .post. The rules:
+
+- Pre-releases sort in this order: alpha < beta < pre < rc < release < p (patch) and
+  .post.
+- Trailing zeros are ignored (1.0 equals 1.0.0). Numbers compare as numbers, including
+  leading zeros and digit runs longer than 64 bits.
+- `_N` is the formula revision. It only counts when the versions are otherwise equal:
+  1.5.7_1 > 1.5.7, and 1.5.8 > 1.5.7_9.
+- `HEAD` and `HEAD-<sha>` count as newer than any release. HEAD installs are never
+  reported as `newer`.
+- Date versions (2026-11-05), r-numbers (r3222), and cask versions with commas or hash
+  suffixes (3.30.14,5f54c81; 3.6.11-0102f49a) are tokenised the same way brew does it.
+  Because of that, the hash part can decide the order when the numbers before it are
+  equal. That matches brew, even though it is arbitrary.
+
+Known gaps:
+
+- **`version_scheme`.** A formula can bump `version_scheme` to reset version ordering,
+  and brew then treats any keg with an older scheme as outdated. The installed entries in
+  `brew info` don't include the scheme (only INSTALL_RECEIPT.json has it). Tankard
+  doesn't read receipts, so a keg with a newer number under an older scheme could be
+  misreported as `newer`. In practice brew already flags such a keg as outdated, and
+  outdated packages are never classed as `newer`.
+- **Cask `latest`.** It is never compared, so it is never `newer`.
+- **Why not call brew to compare?** That would mean `brew ruby`, which is a developer
+  command. Running one switches `brew update` onto the default branch, and Intelbrew
+  depends on release tags.
+
+## App behaviour in detail
+
+The user guide ([usage.md](usage.md)) says what each feature does. This section keeps the
+mechanics behind it.
+
+**Cache first.** The last report is kept in
+`~/Library/Caches/net.mindtricks.tankard/status.json`. On launch the window shows it at
+once; if it is older than an hour, Tankard asks brew again in the background
+(stale-while-revalidate), and again when the window comes back to the front. If a refresh
+fails, the data on screen stays and a banner says what went wrong. Revalidating the cache
+never runs `brew update`. Sizes (`brew info --sizes`) and, with "Include self-updating
+apps" on, `brew outdated --greedy --cask --json=v2` run beside `brew info` and fill in
+when they arrive.
+
+**Commands.** Upgrades run one `brew upgrade --formula|--cask <tap>/<name>` per package,
+fully qualified so a formula and a cask with the same name can't be confused, with
+`HOMEBREW_NO_AUTO_UPDATE=1`, so you get exactly the versions the list showed. After a run,
+Tankard re-reads status rather than assuming what changed. `brew update` and every
+mutating command go through the one FIFO `CommandQueue`; status reads stay off it. brew's
+stdin is `/dev/null`, so it can't prompt for a password: when its output shows it needed
+sudo, the app shows the command to run in Terminal. The upgrade log's `\r` progress
+redraws collapse into one line.
+
+**Download progress (0.8.1).** brew prints no progress when it isn't in a terminal, so
+Tankard watches brew's downloads folder. A bottle's size comes from the manifest brew
+already fetched; for a cask, one HEAD request to the cask's own URL from `brew info`.
+Without a size, the bytes so far and an indeterminate bar.
+
+**Background `brew update` (0.8).** Starts at least 3 seconds after launch, once the list
+is on screen. Due once per check interval (Settings ▸ General ▸ Check every), or
+`HOMEBREW_AUTO_UPDATE_SECS` when that is longer. Any `brew update` counts, including one
+run in Terminal: Tankard reads when the brew repository last fetched, as brew's own
+throttle does. It re-reads status without measuring sizes again; selection, filter and
+search stay. A failure (offline, brew's lock) goes to the system log and
+`~/Library/Logs/Tankard/upgrade.log`, and the next try is at most an hour later. Off when
+`HOMEBREW_NO_AUTO_UPDATE` is set in the environment, a shell startup file or brew.env.
+Never in demo or snapshot runs.
+
+**Notifications for new upgrades.** A check is `brew update` through the queue, then the
+normal status read, every N hours, never sooner than 2 minutes after launch. A check
+missed during sleep runs at the next wake-up; one that meets a running upgrade or refresh
+retries in 15 minutes. The first check after turning notifications on only records what
+is outdated; after that, only a new package or a newer version of one already waiting
+posts. The baseline is kept in UserDefaults (`notifiedUpgrades`) and not changed by a
+failed check. Under `swift run` (no app bundle) notifications are skipped.
+
+**Automatic updates (0.5).** AC power comes from IOKit's power source (a battery or UPS
+waits); idle time from IOKit's `HIDIdleTime`. Never in the first 5 minutes after launch.
+No helper or launch agent. Each upgrade runs with `HOMEBREW_NO_AUTO_UPDATE=1` and
+`HOMEBREW_NO_ASK=1`. A formula is skipped when it, an outdated dependency, or any
+installed dependent brew would upgrade or rebuild with it has no bottle ("upgrading X
+would need Y rebuilt from source; upgrade by hand"). brew's installed-dependents check is
+never turned off: doing so could leave Y linked to the old keg's library after a library
+bump. Packages with a pinned outdated dependency are skipped too. A running cask app is
+matched by the app path and the bundle ids from `brew info`'s artifacts; every automatic
+cask upgrade runs with `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`. The log is
+`~/Library/Application Support/net.mindtricks.tankard/auto-update-log.json`. Test hooks:
+`defaults write net.mindtricks.tankard autoUpdateDryRun -bool true` (plan and log, run no
+brew command) and `defaults write net.mindtricks.tankard autoUpdateOnly -array xz` (limit
+a run to the named packages; `defaults delete … autoUpdateOnly` removes the limit).
+
+**Vulnerability scan (0.4).** `brew vulns --json`, stdout only (brew prints its warnings on
+stderr). brew marks a scan incomplete (`"complete": false`) when it skipped any formula (no
+source repository it can match, an untrusted tap, an old keg without an SBOM). Advisories
+link to `osv.dev/vulnerability/<id>`; "Fixed upstream in commit abc1234" means OSV only
+knows a commit. Findings apply only while the installed version is the one brew checked.
+Cached for an hour (`insights.json` next to `status.json`); with the setting on it runs
+again after a manual refresh and after every install, upgrade or uninstall. After 60
+seconds brew's whole process group is stopped; a failed or timed-out scan keeps the last
+result. brew sends each formula's source repository URL and version tag to
+`api.osv.dev/v1/querybatch`, then `api.osv.dev/v1/vulns/<id>`.
+
+**Sizes.** `brew info --sizes`: brew's own measurement (kegs, and each cask's Caskroom
+folder followed to the app), decimal units rounded to 0.1, so a row can be off by 0.05 of
+a unit.
+
+**Requested only, Depends on, Used by.** All from the `brew info --json=v2 --installed`
+data, no extra brew calls. Requested only is `brew leaves --installed-on-request`, plus
+casks nothing depends on; checked against `brew leaves` and `brew leaves -r` on the Intel
+VM and the arm64 Mac. Depends on comes from the receipts (recursive, what it was linked
+against): on the Intel VM it equals `brew deps --installed` for every formula; on the arm64
+Mac for 183 of 202, and the other 19 list a few more (linkage the formula doesn't declare,
+such as p11-kit under gnutls). Never fewer. Used by equals `brew uses --installed` for
+every formula on both Macs. The tree is built from the receipts' `declared_directly`
+entries in brew's order; for a report cached by an older Tankard, the recursive list minus
+what its members bring in.
+
+**Uninstall (0.8).** Runs with `HOMEBREW_NO_AUTOREMOVE=1` (brew 7 otherwise runs
+`brew autoremove` after every uninstall), then removes exactly the listed dependencies by
+name. "Needed by" comes from the receipts' runtime dependencies or a cask's `depends_on`.
+Each listed dependency is checked again (`brew info`) right before it goes and kept if it
+has since been installed on request, pinned, or needed by something else. brew refuses a
+pinned package but still reports success, so a run whose output has brew's refusal is
+shown as failed.
+
+**Self-updating casks.** brew's `outdated` skips casks with `auto_updates true` and
+`version :latest`. "Include self-updating apps" adds `brew outdated --greedy --cask
+--json=v2`; they upgrade with the same `brew upgrade --cask <tap>/<token>`, since brew
+upgrades a named cask as if `--greedy` was given. `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1` is
+brew's variable for its `--no-quit` switch. The per-app choice is kept per cask (tap
+included) and forgotten when the cask is uninstalled through Tankard.
+
+**Adopt Apps (0.8).** Scans /Applications (and one folder below it) and ~/Applications,
+and matches against formulae.brew.sh's `cask.json` (Discover's cached copy). Sure match:
+the bundle id is one the cask names; likely: same vendor. For a cask whose app updates
+itself, only a sure match is ticked. For Needs update first with a sure match, the
+`brew install --cask --force` command is shown to copy; Tankard never runs it. brew
+doesn't compare the download with the installed app for `auto_updates` casks. Not
+available with `HOMEBREW_NO_INSTALL_FROM_API` set.
+
+**App Management (0.8.1).** The welcome sheet's **Check** does what Homebrew does before
+changing an app (cask/quarantine.rb): it creates an empty `.tankard-write-test` file at
+the top of an app that an installed cask put in Applications, and deletes it at once. It
+never touches an app Homebrew doesn't manage. The attempt is also what makes macOS list
+Tankard in App Management. Blocks are recognised from brew's "does not have App Management
+permissions", macOS's "prevented from modifying apps", or "Operation not permitted" on an
+Applications path. **Relaunch Tankard** saves the operation once the relaunch helper has
+started; if Tankard is still running after about 10 seconds, the helper doesn't open a
+second copy (it writes a line tagged Tankard to the system log with `logger`). Run Again
+is offered if the operation is less than 15 minutes old; only the casks that change apps
+are kept, and an upgrade whose available version or bottle-or-compile answer changed is
+left out. Relaunch is offered only from Tankard.app (not `swift run`) and not while brew
+runs. A restore's blocked step is explained without a retry.
+
+**Discover.** Search is debounced and ranked: exact name, then name prefix, other names,
+name contains, description; within a tier, bottled before unknown before compiles, and in
+normal mode more-installed first. Normal mode: `formulae.brew.sh/api/formula.json` and
+`cask.json` (about 32 MB and 19 MB, gzip on the wire), first fetched when Discover opens,
+never at launch, kept in `~/Library/Caches/net.mindtricks.tankard/api/` with their ETag;
+within an hour used as is, after that revalidated with `If-None-Match`. On failure the
+saved copy is used and a banner says so. Install counts:
+`formulae.brew.sh/api/analytics/install/{30d,90d,365d}.json` and
+`analytics/cask-install/{30d,90d,365d}.json` (about 13 MB together), kept a day with
+their ETag. Intelbrew mode never uses formulae.brew.sh (it describes upstream Homebrew):
+Discover lists the local taps (`<repository>/Library/Taps/*/*`: file names, the `desc`
+line, Aliases), reads each formula's `bottle do` block and `depends_on` lines (no Ruby is
+run), and asks `brew info --json=v2 --formula <tap>/<name>…` in batches of up to 40 for
+the rows on screen. brew 7 refuses `--eval-all` and won't evaluate every formula of an
+untrusted tap, so `brew search --desc` can't do this. Measured on the Intel macOS 14 VM
+(8,732 formulae): 5,344 have a bottle that Mac can pour (554 on intelbrew-core); the index
+takes about 0.35 to 0.40 s in a release build, search 27 ms, `brew info` for the top 30
+rows 0.6 s. If homebrew/cask isn't tapped, Discover says so.
+
+**Intelbrew build times.** When a compile warning is shown, Tankard reads
+`https://github.com/d4rkwyng/intelbrew-core/releases/download/metadata/build-times.json`
+and caches it for 24 hours in `~/Library/Caches/net.mindtricks.tankard/build-times.json`.
+Never in normal mode. A 404, any error, bad JSON, another schema, an empty table or a
+response over 5 MB means "no new data": the cached copy stays, and Tankard asks again at
+most once an hour (30 s timeout). The estimate is the median (else the last build),
+rounded up; hours from 90 minutes; no data means no estimate, never zero.
+
+**Check for Tankard Updates (0.8.1).** One GET to
+`api.github.com/repos/d4rkwyng/tankard/releases/latest` with a `Tankard/<version>`
+User-Agent. Not in demo mode. Upgrade with Homebrew runs `brew update`, then
+`brew upgrade --cask d4rkwyng/tap/tankard` through the queue with
+`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, so brew doesn't quit the app running it.
+
+**Clean up.** `brew cleanup -n` (dry run), `brew --cache` and `du -sk` on the cache. When
+brew prints no total (it exits with an error on a Mac whose core tap brew 7 calls
+untrusted), Tankard shows its own sum of the items, labelled as such, with brew's error.
+
+**Services.** `brew services list --json` when the tab opens (off the queue) and
+`brew services info --json -- <name>` for the selection. A service that runs as another
+user or from /Library/LaunchDaemons gets no buttons; brew's "Service `x` is started as
+`root`" answer, or a sudo prompt, gets the same advice.
+
+**Revert to Standard Homebrew.** Follows d4rkwyng/intelbrew's README ("How do I go back to
+upstream Homebrew?"). The script: for each zsh or bash startup file with an Intelbrew line
+(`~/.zshenv`, `$ZDOTDIR/.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, `~/.bash_profile`,
+`.bash_login`, `.profile`, `.bashrc`), `cp -p` to `<file>.tankard-backup-<date>`, then
+delete the lines that assign `HOMEBREW_NO_INSTALL_FROM_API`, `HOMEBREW_CORE_GIT_REMOTE` or
+`HOMEBREW_BREW_GIT_REMOTE` (BSD sed); unset those variables; `git -C <repository> remote
+set-url origin https://github.com/Homebrew/brew`; `brew update`. brew.env files are
+reported, not edited. The optional `brew untap homebrew/core` is mentioned, not run.
+**Uninstall Homebrew** runs, verbatim from the Homebrew/install README,
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"`.
+Demo mode opens nothing.
+
+**Welcome screen (no brew).** Shown when no brew is found, or `brew --version` fails (with
+what it printed). Intel is `uname -m` x86_64, not translated by Rosetta,
+`hw.optional.arm64` 0. "Open in Terminal" writes the one-liner to a temporary `.command`
+file and opens it, because the installers ask for a password and wait for Return.
+Bringing the window to the front also looks for brew again.
+
+**Themes.** Saved in UserDefaults (`appearance`), applied app-wide including sheets,
+Settings and the menu-bar menu. Tankard: #1f0d3d to #4a2580, amber #f2a93b. The version
+columns are held at 7:1 (installed) and 5.5:1 (unchanged available) in every theme. The
+primary action green: Dark #30d158 with dark text, Light #1a7f37 with white text (5.1:1),
+Tankard #3fb950, Dracula #50fa7b; every text pair is checked at WCAG AA (4.5:1) and the
+green against the status bar at 3:1.
+
+**Open at login.** `SMAppService.mainApp`. The login item is tied to the code signature,
+so it is reliable with a Developer ID build; an ad-hoc build may be refused or forgotten.
+Not tested end to end.
+
+**Menu-bar icon.** `mug` / `mug.fill`, a template image; at most 8 upgrades listed, "99+"
+above 99. It reads the same store, cache and refresh as the window.
 
 ## Demo mode, screenshots and the layout check
 
