@@ -558,6 +558,7 @@
 "No data yet" = "No data yet";
 "No dependencies" = "No dependencies";
 "No fix listed" = "No fix listed";
+"No installed package matches “%@”." = "No installed package matches “%@”.";
 "No installs recorded" = "No installs recorded";
 "No known vulnerabilities" = "No known vulnerabilities";
 "No known vulnerabilities (brew vulns)." = "No known vulnerabilities (brew vulns).";
@@ -582,6 +583,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert.";
 "Not in Intelbrew mode: nothing to revert." = "Not in Intelbrew mode: nothing to revert.";
 "Not included: %@ (can't roll back automatically)" = "Not included: %@ (can't roll back automatically)";
+"Not installed" = "Not installed";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it.";
 "Not listed: %@." = "Not listed: %@.";
 "Not now" = "Not now";
@@ -604,6 +606,7 @@
 "Nothing to retry" = "Nothing to retry";
 "Nothing to upgrade" = "Nothing to upgrade";
 "Nothing upgraded" = "Nothing upgraded";
+"Nothing will compile from source." = "Nothing will compile from source.";
 "Nothing yet" = "Nothing yet";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Notifications are off for Tankard, so runs are only in the Auto-update log. ";
 "Notify me about new upgrades" = "Notify me about new upgrades";
@@ -766,6 +769,7 @@
 "Scanning…" = "Scanning…";
 "Scheduled" = "Scheduled";
 "Search %@ packages" = "Search %@ packages";
+"Search Discover for “%@”" = "Search Discover for “%@”";
 "Search Homebrew" = "Search Homebrew";
 "Search installed" = "Search installed";
 "Search services" = "Search services";
@@ -951,6 +955,7 @@
 "Upgrade %lld packages?" = "Upgrade %lld packages?";
 "Upgrade 1 package?" = "Upgrade 1 package?";
 "Upgrade All" = "Upgrade All";
+"Upgrade All…" = "Upgrade All…";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
 "Upgrade available: %@" = "Upgrade available: %@";

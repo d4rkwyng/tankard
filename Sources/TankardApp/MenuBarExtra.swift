@@ -261,6 +261,7 @@ final class SystemNotifier: UpgradeNotifying {
         guard Bundle.main.bundleURL.pathExtension == "app" else { return }
         let center = UNUserNotificationCenter.current()
         center.delegate = NotificationPresenter.shared
+        NotificationActions.registerCategories(center)
         Task {
             let status = await center.notificationSettings().authorizationStatus
             log.notice("authorization at launch: \(Self.describe(status), privacy: .public)")
@@ -299,6 +300,7 @@ final class SystemNotifier: UpgradeNotifying {
         let content = UNMutableNotificationContent()
         content.title = message.title
         content.body = message.body
+        NotificationActions.configure(content, for: message)
         let id = message.identifier
         Task {
             let status = await center.notificationSettings().authorizationStatus

@@ -558,6 +558,7 @@
 "No data yet" = "Aún no hay datos";
 "No dependencies" = "Sin dependencias";
 "No fix listed" = "No hay corrección indicada";
+"No installed package matches “%@”." = "Ningún paquete instalado coincide con “%@”.";
 "No installs recorded" = "Sin instalaciones registradas";
 "No known vulnerabilities" = "Sin vulnerabilidades conocidas";
 "No known vulnerabilities (brew vulns)." = "Sin vulnerabilidades conocidas (brew vulns).";
@@ -582,6 +583,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "No editado: quitar la línea %@ dejaría un bloque if, bucle o { } vacío, que bash rechaza. Quita las líneas manualmente (o pon : en el bloque) tras la reversión.";
 "Not in Intelbrew mode: nothing to revert." = "No está en modo Intelbrew: nada que revertir.";
 "Not included: %@ (can't roll back automatically)" = "No incluido: %@ (no se puede revertir automáticamente)";
+"Not installed" = "No instalado";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Sin enlazar: sus comandos no están en el bin de Homebrew. `brew link %@` lo enlaza.";
 "Not listed: %@." = "No listadas: %@.";
 "Not now" = "Ahora no";
@@ -604,6 +606,7 @@
 "Nothing to retry" = "Nada que reintentar";
 "Nothing to upgrade" = "Nada que actualizar";
 "Nothing upgraded" = "No se actualizó nada";
+"Nothing will compile from source." = "Nada se compilará desde el código fuente.";
 "Nothing yet" = "Todavía nada";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Las notificaciones están desactivadas para Tankard, así que las ejecuciones solo aparecen en el registro de actualización automática. ";
 "Notify me about new upgrades" = "Avisarme de nuevas actualizaciones";
@@ -766,6 +769,7 @@
 "Scanning…" = "Analizando…";
 "Scheduled" = "Programado";
 "Search %@ packages" = "Buscar en %@ paquetes";
+"Search Discover for “%@”" = "Buscar “%@” en Descubrir";
 "Search Homebrew" = "Buscar en Homebrew";
 "Search installed" = "Buscar en instalados";
 "Search services" = "Buscar servicios";
@@ -951,6 +955,7 @@
 "Upgrade %lld packages?" = "¿Actualizar %lld paquetes?";
 "Upgrade 1 package?" = "¿Actualizar 1 paquete?";
 "Upgrade All" = "Actualizar todo";
+"Upgrade All…" = "Actualizar todo…";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Actualiza Tankard con brew upgrade --cask tankard (la actualización automática deja Tankard a brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Actualiza de nuevo de la forma habitual: siguen aplicando las advertencias de compilación, los fijados y las versiones omitidas";
 "Upgrade available: %@" = "Actualización disponible: %@";

@@ -86,6 +86,13 @@ public enum UpgradeNotificationDiff {
         public var body: String
         /// The new keys (for tests and the notification's identifier).
         public var newKeys: Set<String>
+        /// 0.8.3: what a click opens (NotificationRoute). Upgrades ready
+        /// notifications also get the Upgrade All… / Later actions.
+        public var kind: Kind = .upgrades
+
+        public enum Kind: String, Sendable {
+            case upgrades, autoUpdate
+        }
 
         /// "upgrades-<sha256 of the sorted keys>": the same set gives the
         /// same id in every launch, so the system replaces rather than

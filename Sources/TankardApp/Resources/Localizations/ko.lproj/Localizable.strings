@@ -558,6 +558,7 @@
 "No data yet" = "아직 데이터 없음";
 "No dependencies" = "종속 항목 없음";
 "No fix listed" = "나열된 수정 없음";
+"No installed package matches “%@”." = "“%@”와(과) 일치하는 설치된 패키지가 없습니다.";
 "No installs recorded" = "설치 기록 없음";
 "No known vulnerabilities" = "알려진 취약점 없음";
 "No known vulnerabilities (brew vulns)." = "알려진 취약점 없음(brew vulns).";
@@ -582,6 +583,7 @@
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "편집되지 않음: %@번째 줄을 제거하면 빈 if, 반복문 또는 { } 블록이 남아 bash가 거부합니다. 되돌린 후 줄을 직접 제거하세요(또는 블록에 :를 넣으세요).";
 "Not in Intelbrew mode: nothing to revert." = "Intelbrew 모드가 아님: 되돌릴 것이 없습니다.";
 "Not included: %@ (can't roll back automatically)" = "포함되지 않음: %@(자동으로 되돌릴 수 없음)";
+"Not installed" = "설치되지 않음";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "링크되지 않음: 명령이 Homebrew의 bin에 없습니다. `brew link %@`로 링크하세요.";
 "Not listed: %@." = "목록에 없음: %@.";
 "Not now" = "나중에";
@@ -604,6 +606,7 @@
 "Nothing to retry" = "다시 시도할 항목 없음";
 "Nothing to upgrade" = "업그레이드할 항목 없음";
 "Nothing upgraded" = "업그레이드된 항목 없음";
+"Nothing will compile from source." = "소스에서 컴파일할 항목이 없습니다.";
 "Nothing yet" = "아직 없음";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Tankard의 알림이 꺼져 있어, 실행 내역은 자동 업데이트 로그에만 남습니다. ";
 "Notify me about new upgrades" = "새 업그레이드 알림 받기";
@@ -766,6 +769,7 @@
 "Scanning…" = "검사 중…";
 "Scheduled" = "예약됨";
 "Search %@ packages" = "%@ 패키지 검색";
+"Search Discover for “%@”" = "둘러보기에서 “%@” 검색";
 "Search Homebrew" = "Homebrew 검색";
 "Search installed" = "설치됨 검색";
 "Search services" = "서비스 검색";
@@ -951,6 +955,7 @@
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
+"Upgrade All…" = "모두 업그레이드…";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";

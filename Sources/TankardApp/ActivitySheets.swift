@@ -38,7 +38,15 @@ struct UpgradePlanView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.rows.count == 1 ? String(localized: "Upgrade 1 package?") : String(localized: "Upgrade \(plan.rows.count) packages?"))
                         .font(.system(size: 14, weight: .bold))
-                    Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
+                    // 0.8.3: a notification's Upgrade All… shows the plan
+                    // even when nothing compiles.
+                    Group {
+                        if compiling.isEmpty {
+                            Text("Nothing will compile from source.")
+                        } else {
+                            Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
+                        }
+                    }
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -57,13 +65,15 @@ struct UpgradePlanView: View {
             .frame(height: min(CGFloat(plan.rows.count) * 38 + 4, 240))
             .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip.opacity(0.6)))
 
-            Toggle(isOn: Binding(get: { plan.skipCompiling }, set: { store.setPlanSkipCompiling($0) })) {
-                Text("Skip packages that would compile (\(compiling.map(\.name).joined(separator: ", ")))")
-                    .lineLimit(1).truncationMode(.tail)
+            if !compiling.isEmpty {
+                Toggle(isOn: Binding(get: { plan.skipCompiling }, set: { store.setPlanSkipCompiling($0) })) {
+                    Text("Skip packages that would compile (\(compiling.map(\.name).joined(separator: ", ")))")
+                        .lineLimit(1).truncationMode(.tail)
+                }
+                .toggleStyle(.checkbox)
+                .font(.system(size: 12))
+                .padding(.top, 12)
             }
-            .toggleStyle(.checkbox)
-            .font(.system(size: 12))
-            .padding(.top, 12)
 
             HStack {
                 Text("Each runs as its own brew upgrade, one at a time.")

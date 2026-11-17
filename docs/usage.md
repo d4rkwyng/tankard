@@ -64,7 +64,10 @@ installs or upgrades anything on its own unless you turn on
 ## The Installed list at a glance
 
 - **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search. Search matches
-  the name and description.
+  the name and description. You can paste a whole command such as `brew install wget` or
+  `brew install --cask firefox` into either search field: Tankard searches for the package
+  name. When nothing installed matches, the list offers **Search Discover for "wget"**,
+  which opens Discover with the same search.
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
   until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
@@ -365,6 +368,10 @@ default. macOS asks for permission the first time.
   "Turn on notifications in Settings ▸ General".
 - If notifications for Tankard are off in **System Settings ▸ Notifications**, the toggle
   stays off, or shows a warning, with an **Open Notification Settings** button.
+- **Click a notification** to open Tankard on **Installed ▸ Upgrades**. Its **Upgrade All…**
+  action opens a sheet listing what would be upgraded; nothing runs until you click
+  **Upgrade N** there. **Later** just dismisses it. Clicking an automatic-update
+  notification opens the Auto-update log.
 
 **Show new vulnerabilities in the menu bar** (Settings ▸ Upgrades) is not a notification.
 It adds a ⚠ next to the menu-bar icon and a line in its menu. A scan never posts a
