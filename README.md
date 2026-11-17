@@ -36,9 +36,9 @@ the Intelbrew forks.
   can be handed to Homebrew (`brew install --cask --adopt`), so brew keeps them up to
   date. Tankard says how sure each match is, ticks only good matches, and says before
   anything runs that uninstalling the cask afterwards deletes the app.
-- **Clean up**: see what `brew cleanup` would remove and how much space it frees, then
+- **Clean Up**: see what `brew cleanup` would remove and how much space it frees, then
   run it.
-- **Replace with bottle**: a package you built from source whose version has a bottle
+- **Replace with Bottle**: a package you built from source whose version has a bottle
   gets swapped for the bottle in one click.
 - **Uninstall**, blocked (with the reasons listed) while other packages need it, or
   while it is pinned (**Unpin and Uninstall** does both). Dependencies that nothing else
@@ -46,6 +46,14 @@ the Intelbrew forks.
 - **Pin** packages so upgrades skip them, filter by **Pinned** or **Installed by you**, and
   follow **Depends on**, **Used by** and the dependency tree from package to package.
 - **Services**: see `brew services` status and start, stop or restart your own services.
+- **Automatic updates** (optional, off by default): bottles only, on a daily or weekly
+  schedule while the Mac is idle and on AC power, skipping pinned packages and running apps.
+- **Restore points** before every upgrade, with rollback of formulae whose previous version
+  you kept.
+- **Taps**: see, add and remove taps, and set Homebrew 7's trust for third-party ones.
+- **Health and History**: `brew doctor` warnings explained in plain English, and every
+  brew command Tankard ran, with Retry. **Brewfiles**: export one, or check what a
+  Brewfile needs that this Mac doesn't have.
 - **Homebrew menu**: revert from Intelbrew to standard Homebrew, or uninstall the Homebrew
   Tankard shows (its prefix only), both in Terminal after showing every command.
 - **Vulnerabilities** from `brew vulns` (Homebrew 7): a ⚠ tag with severity, the advisory
@@ -64,6 +72,9 @@ the Intelbrew forks.
   when new upgrades appear (off by default).
 - **Themes**: System (default, follows your Mac), Dark, Light, Tankard (purple and amber)
   and Dracula.
+- **Languages**: English, German, French, Spanish, Italian, Portuguese (Brazil), Japanese,
+  Korean and Simplified Chinese, following the macOS language. The translations are machine
+  translations; corrections are welcome.
 
 How to use each of these: [Tankard Help](docs/usage.md) (also **Help ▸ Tankard Help** in
 the app).
@@ -101,7 +112,7 @@ The full list: [What Tankard runs](docs/usage.md#what-tankard-runs).
 
 ## Network and privacy
 
-No telemetry, no account. Tankard's own requests are Homebrew's public catalogue and
+No telemetry, no account. Tankard's own requests are Homebrew's public catalog and
 install-count files from formulae.brew.sh (whole files, so the site never learns which
 packages you look at), a file-size check while a cask downloads, Intelbrew's build times
 in Intelbrew mode, and a GitHub release check only when you choose **Check for Tankard
@@ -125,11 +136,11 @@ How it's put together, the `tankard status` command-line tool, demo mode, screen
 signing and releases: [docs/architecture.md](docs/architecture.md). What changed in each version:
 [CHANGELOG.md](CHANGELOG.md).
 
-## Licence
+## License
 
-BSD-2-Clause, the same licence as Homebrew and Intelbrew. See [LICENSE](LICENSE). The
-Dracula theme's colours are by [Dracula Theme](https://draculatheme.com), used under the
-MIT licence.
+BSD-2-Clause, the same license as Homebrew and Intelbrew. See [LICENSE](LICENSE). The
+Dracula theme's colors are by [Dracula Theme](https://draculatheme.com), used under the
+MIT license.
 
 Tankard is an independent app for [Homebrew](https://brew.sh). Homebrew is © Homebrew
 contributors, BSD-2-Clause. Tankard is not affiliated with or endorsed by the Homebrew
