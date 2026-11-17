@@ -77,7 +77,9 @@ fi
 failed=0
 for run in $(seq 1 "$RUNS"); do
     before=$(crash_reports)
-    "${ENV_CLEAN[@]}" "$BIN_ABS" >/dev/null 2>&1 &
+    # -ApplePersistenceIgnoreState: test launches end with a kill, and without
+    # this macOS asks "reopen its windows?" on the next launch.
+    "${ENV_CLEAN[@]}" "$BIN_ABS" -ApplePersistenceIgnoreState YES >/dev/null 2>&1 &
     pid=$!
     alive=1
     for _ in $(seq 1 "$SECONDS_UP"); do
