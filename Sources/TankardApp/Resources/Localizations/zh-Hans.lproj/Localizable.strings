@@ -110,7 +110,7 @@
 "%lld upgrade ready" = "%lld 个可升级";
 "%lld upgraded" = "%lld 个已升级";
 "%lld upgrades ready" = "%lld 个可升级";
-"%lld vulnerable" = "%lld 个存在漏洞";
+"%lld vulnerable" = "%lld 个有漏洞";
 "%lld vulnerable packages; more filters" = "%lld 个存在漏洞的软件包；更多筛选";
 "%lld with bottles" = "%lld 个有 bottle";
 "%lld with no source repository brew can match" = "%lld 个没有 brew 可匹配的源码仓库";

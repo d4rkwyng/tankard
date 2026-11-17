@@ -5778,19 +5778,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld mit Schwachstellen"
+            "value": "%lld anfällig"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld vulnérable(s)"
+            "value": "%lld à risque"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld vulnerables"
+            "value": "%lld en riesgo"
           }
         },
         "ja": {
@@ -5802,19 +5802,19 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld 个存在漏洞"
+            "value": "%lld 个有漏洞"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld vulneráveis"
+            "value": "%lld em risco"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld vulnerabili"
+            "value": "%lld a rischio"
           }
         },
         "ko": {
@@ -10146,19 +10146,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aus Quellcode gebaut"
+            "value": "Aus Quellcode"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compilé depuis les sources"
+            "value": "Compilé"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compilado desde el código fuente"
+            "value": "Compilado"
           }
         },
         "ja": {
@@ -10176,13 +10176,13 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compilado do código-fonte"
+            "value": "Compilado"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compilato dai sorgenti"
+            "value": "Compilato"
           }
         },
         "ko": {

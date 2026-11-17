@@ -110,7 +110,7 @@
 "%lld upgrade ready" = "%lld aggiornamento pronto";
 "%lld upgraded" = "%lld aggiornati";
 "%lld upgrades ready" = "%lld aggiornamenti pronti";
-"%lld vulnerable" = "%lld vulnerabili";
+"%lld vulnerable" = "%lld a rischio";
 "%lld vulnerable packages; more filters" = "%lld pacchetti vulnerabili; altri filtri";
 "%lld with bottles" = "%lld con bottle";
 "%lld with no source repository brew can match" = "%lld senza repository sorgente che brew possa associare";
@@ -194,7 +194,7 @@
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "Solo bottle: una formula senza bottle, o il cui aggiornamento aggiornerebbe anche una dipendenza che non ne ha, viene saltata. Lo stesso vale per una formula il cui aggiornamento farebbe aggiornare o ricostruire a brew un dipendente installato che non ne ha: resta in Aggiornamenti da aggiornare manualmente.";
 "Brewfile" = "Brewfile";
 "Brewfile saved" = "Brewfile salvato";
-"Built from source" = "Compilato dai sorgenti";
+"Built from source" = "Compilato";
 "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same." = "Compilato dai sorgenti, ma %@ ha una bottle per questo Mac (%@). Sostituirlo installa la bottle; la versione resta la stessa.";
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "Compilato dai sorgenti, ma %@ ha una bottle per questo Mac. Sostituirlo installa la bottle; la versione resta la stessa.";
 "Built from source; a bottle exists for the current version" = "Compilato dai sorgenti; esiste una bottle per la versione attuale";
