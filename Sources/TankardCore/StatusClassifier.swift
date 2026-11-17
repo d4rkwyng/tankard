@@ -153,7 +153,9 @@ public struct StatusClassifier: Sendable {
             caveats: c.caveats,
             appPaths: c.appPaths,
             quitBundleIDs: c.quitBundleIDs,
-            lifecycle: c.lifecycle
+            lifecycle: c.lifecycle,
+            suitePaths: c.adoptArtifacts?.suites,
+            installsPkg: c.installsPkg
         )
     }
 

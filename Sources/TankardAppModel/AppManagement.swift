@@ -18,9 +18,26 @@ public enum AppManagement {
     public static let privacyURL = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
 
     /// Only cask upgrades and uninstalls replace or remove apps. Formula
-    /// operations (and Replace with bottle) never trigger the flow.
+    /// operations (and Replace with bottle) never trigger the flow. 0.8:
+    /// nor does a cask that puts nothing in an Applications folder (a font,
+    /// a CLI tool): the explainer is shown only for casks with an `app` or
+    /// `suite` artifact, or a pkg installer (which can install apps).
     public static func modifiesApps(_ action: SessionAction, _ p: Package) -> Bool {
+        isCaskChange(action, p) && hasApps(p)
+    }
+
+    /// A cask upgrade or uninstall, whatever it installs. brew's output is
+    /// still checked for the block on every one of these.
+    public static func isCaskChange(_ action: SessionAction, _ p: Package) -> Bool {
         p.kind == .cask && (action == .upgrade || action == .uninstall)
+    }
+
+    /// Whether the cask installs an app, a suite or a pkg. Unknown counts
+    /// as yes: no artifacts read (a Discover row, brew gave none) or a
+    /// report from before 0.8 (no suite/pkg fields yet).
+    public static func hasApps(_ p: Package) -> Bool {
+        guard let apps = p.appPaths, p.suitePaths != nil || p.installsPkg != nil else { return true }
+        return !apps.isEmpty || !(p.suitePaths ?? []).isEmpty || p.installsPkg == true
     }
 
     /// Whether brew's output for a cask step shows macOS blocking it.

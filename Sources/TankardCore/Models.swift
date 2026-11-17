@@ -132,6 +132,12 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// leave its upgrade out (a manual Upgrade still works). Filled in by
     /// the app.
     public var selfUpdateHeld: Bool? = nil
+    /// 0.8, casks: the suite folders it installs ("/Applications/KiCad")
+    /// and whether it runs a `.pkg` installer, from `brew info`'s
+    /// artifacts (with `appPaths`, what decides whether a change touches
+    /// apps). nil for formulae and in reports written before 0.8.
+    public var suitePaths: [String]? = nil
+    public var installsPkg: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

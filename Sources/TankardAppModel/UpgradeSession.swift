@@ -303,7 +303,7 @@ public final class UpgradeSession: Identifiable {
             }
             if code != 0 {
                 if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
-                if AppManagement.modifiesApps(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {
+                if AppManagement.isCaskChange(action, items[i].package), AppManagement.isPermissionBlock(commandLines) {
                     appManagementBlocked.append(items[i].id)
                     note("macOS blocked changing the app (App Management permission)")
                 }
