@@ -11,6 +11,7 @@
 #   SET=v0.5 Scripts/screenshots.sh [OUT_DIR]  the 0.5 auto-update shots
 #   SET=v0.6a Scripts/screenshots.sh [OUT_DIR] the 0.6 part A shots (deprecated, Health, History, autoremove)
 #   SET=v0.6b Scripts/screenshots.sh [OUT_DIR] skip version, Brewfile export/check/plan
+#   SET=v0.7-taps Scripts/screenshots.sh [OUT_DIR] the Taps sheet, Add, blocked Remove, Show Installed
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -128,6 +129,20 @@ v06b() {
     done
 }
 
+v07taps() {
+    # v0.7: Homebrew > Taps…: the arm64 Mac's real taps, Remove blocked
+    # (Intelbrew demo: everything comes from homebrew/core), Add's
+    # confirmation, Show Installed, and the Brewfile plan's Add Tap.
+    for t in dark tankard; do
+        shot "taps-list-$t" 4 TANKARD_DEMO=arm64 TANKARD_DEMO_SHEET=taps TANKARD_DEMO_TAP_SELECT=mull-project/mull TANKARD_SNAPSHOT_SIZE=1040x700 TANKARD_APPEARANCE=$t
+        shot "taps-remove-blocked-$t" 4 TANKARD_DEMO=1 TANKARD_DEMO_SHEET=taps TANKARD_DEMO_TAP_SELECT=homebrew/core TANKARD_SNAPSHOT_SIZE=1040x700 TANKARD_APPEARANCE=$t
+        shot "taps-add-confirm-$t" 4 TANKARD_DEMO=arm64 TANKARD_DEMO_SHEET=taps TANKARD_DEMO_TAP_ADD=me/tools TANKARD_SNAPSHOT_SIZE=1040x700 TANKARD_APPEARANCE=$t
+        shot "taps-show-installed-$t" 4 TANKARD_DEMO=arm64 TANKARD_DEMO_SHEET=taps TANKARD_DEMO_TAP_SELECT=homebrew/cask TANKARD_DEMO_TAP_SHOW=1 TANKARD_APPEARANCE=$t
+        shot "taps-brewfile-plan-$t" 7 TANKARD_DEMO=arm64 TANKARD_DEMO_BREWFILE=plan TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+    done
+}
+
+if [ "${SET:-all}" = v0.7-taps ]; then v07taps; exit 0; fi
 if [ "${SET:-all}" = v0.6b ]; then v06b; exit 0; fi
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
 if [ "${SET:-all}" = v0.6a ]; then v06a; exit 0; fi

@@ -10,6 +10,7 @@ import TankardCore
 //   TANKARD_DEMO_TAP_SELECT=<name>   demo: select a tap
 //   TANKARD_DEMO_TAP_ADD=<user/repo> demo: open Add's confirmation
 //   TANKARD_DEMO_TAP_REMOVE=1        demo: ask to remove the selection
+//   TANKARD_DEMO_TAP_SHOW=1          demo: Show Installed for the selection
 
 /// The Homebrew menu item. A view, so its store reads aren't tracked by App.body.
 struct TapsCommands: View {
@@ -226,8 +227,15 @@ struct TapsAlerts: ViewModifier {
 func applyTapsLaunchOptions(store: AppStore, options: LaunchOptions) async {
     guard options.demo != nil, options.demoSheet == .taps else { return }
     let env = ProcessInfo.processInfo.environment
-    await store.taps.load()
+    // openTaps' own read is under way; wait for it (a second read would
+    // supersede it).
+    for _ in 0..<100 where store.taps.taps.isEmpty { try? await Task.sleep(for: .milliseconds(50)) }
     if let s = env["TANKARD_DEMO_TAP_SELECT"] { store.taps.select(s.lowercased()) }
     if let a = env["TANKARD_DEMO_TAP_ADD"] { store.taps.requestAdd(name: a) }
+    if env["TANKARD_DEMO_TAP_SHOW"] == "1", let t = store.taps.selectedTap {
+        // As a click would: after the sheet is up.
+        try? await Task.sleep(for: .seconds(1.5))
+        store.showInstalled(from: t)
+    }
     if env["TANKARD_DEMO_TAP_REMOVE"] == "1", let t = store.taps.selectedTap { _ = store.taps.requestRemove(t, packages: store.packages) }
 }

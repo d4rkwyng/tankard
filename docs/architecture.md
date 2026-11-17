@@ -124,6 +124,11 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    the auto-update log's JSON format), HistoryRecorder (the
                    queue's observer: every queued command, its result and
                    duration), filters and Retry (through the queue)
+  TapsStore        0.7: the Taps sheet (`brew tap-info --installed --json`,
+                   read-only), Add/Remove (`brew tap`/`untap` through the queue
+                   and the activity sheet), Trust (`brew trust --tap`, one queued
+                   command), the "tap:" Installed search; TankardCore/Taps.swift
+                   decodes the JSON, checks names and URLs, and blocks untap
   HealthStore      0.6: the Health sheet (`brew doctor`, `config`, `missing`,
                    read-only), the autoremove sheet (`brew autoremove
                    --dry-run`, then `brew autoremove` through the queue), the
@@ -361,6 +366,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_VULN_NOTICE=1` | 0.4, demo only: the menu-bar vulnerability notice on, with nothing seen yet. |
 | `TANKARD_SELF_UPDATING=1` | 0.4, demo only: "Include self-updating apps" on. |
 | `TANKARD_SNAPSHOT_VIEW=settings-upgrades` | 0.4: Settings → Upgrades. |
+| `TANKARD_DEMO_SHEET=taps` | 0.7, demo only: the Taps sheet. `TANKARD_DEMO_TAP_SELECT=<tap>` selects one, `TANKARD_DEMO_TAP_ADD=<user/repo>` opens Add's confirmation, `TANKARD_DEMO_TAP_SHOW=1` clicks Show Installed, `TANKARD_DEMO_TAP_REMOVE=1` asks to remove the selection. |
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
 
 Demo runs and snapshot runs use throwaway settings, never the real UserDefaults. Demo
@@ -423,6 +429,7 @@ handed to scenes (`MenuBarExtra(isInserted:)`) ignore unchanged writes, and sett
 |---|---|
 | `sonoma-intelbrew-*.json` | Real output from an Intel macOS 14 VM with core on the Intelbrew fork: 20 formulae, one built from source (vim). Trimmed to the keys Tankard reads. |
 | `arm64-api-*.json` | Real output from an arm64 Mac in API mode: a subset with outdated formulae, source builds, and casks (one auto-updating cask that brew doesn't count as outdated). |
+| `arm64-tap-info.json` | 0.7: `brew tap-info --installed --json` on the arm64 Mac (brew 7.0.14, read-only), homebrew/core's and homebrew/cask's name lists trimmed to 25 (8733 and 7828 as captured). The demo copy must stay byte-identical; the Intelbrew demo derives an illustrative list from it. |
 | `synthetic-intel-*.json` | The same JSON shape with made-up values, for cases neither machine had: newer, newer by revision only, no bottle (arm64-only, missing, wrong Cellar, newer macOS only), HEAD, several kegs, an older-macOS bottle, an `all` bottle, a newer cask, and a `latest` cask. |
 
 Demo mode ships copies of the two `*-info.json` real fixtures in
