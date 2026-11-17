@@ -4,6 +4,22 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.8.2]
+
+### Changed
+- **The filter bar shows what has something in it.** All and Upgrades are always there; **Bottle available**, **From source** and **Newer** appear only when a package matches (the one you're on stays until you leave it), and Bottle available sits next to Upgrades.
+- **The More menu** lists **Vulnerable** first, shows a count on every item, and greys out the empty ones.
+- **Requested only is now Installed by you**, and it means what it says: every package you installed yourself (brew's installed-on-request), including ones another package also needs. Before, those were left out.
+- **Refresh and Check Now say what they found.** The status bar shows "N new upgrades" or "No new upgrades" for a few seconds. With **Notify me about new upgrades** on and the Tankard window not in front, they post a notification too; before, only the background check did. Upgrades seen this way aren't announced again.
+- With notifications off, the first Refresh that finds new upgrades adds a one-time hint to turn them on in Settings ▸ General.
+- Settings ▸ General warns when notifications are off for Tankard in System Settings, with **Open Notification Settings**.
+- **Clearer wording** across the app: plainer explanations of bottles, keg-only, taps, pins and deprecation; title case on buttons (Check Again, Copy Command, Replace with Bottle…); **Upgrade All** named the same everywhere; **Untrust** is now **Stop Trusting**; US spelling.
+- **The user guide** (Help ▸ Tankard Help) is rewritten as a task-based guide with a settings and menu reference; contributor detail moved to docs/architecture.md. The install help covers macOS 15's **Open Anyway** step.
+
+### Fixed
+- Notifications now show as banners while Tankard is the active app.
+- German showed English inside a sentence ("A newer version ist verfügbar"), and used two words for "pinned".
+
 ## [0.8.1]
 
 ### Added
@@ -221,6 +237,7 @@ First release.
 - Opens instantly from a cache; no telemetry; runs brew with a clean environment.
 - `tankard status` command-line tool (table or JSON).
 
+[0.8.2]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.2
 [0.8.1]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.1
 [0.8.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.8.0
 [0.7.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.7.0
