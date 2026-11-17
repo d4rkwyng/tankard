@@ -153,6 +153,8 @@ public final class AppSettings {
         static let notifiedUpgrades = "notifiedUpgrades"
         static let lastBackgroundCheck = "lastBackgroundCheck"
         static let appManagementExplained = "appManagementExplained"
+        static let backgroundUpdate = "backgroundUpdate"
+        static let lastBrewUpdate = "lastBrewUpdate"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -202,6 +204,14 @@ public final class AppSettings {
     public var lastBackgroundCheck: Date? { didSet { defaults.set(lastBackgroundCheck, forKey: Key.lastBackgroundCheck) } }
     /// The App Management explainer was shown and dismissed once.
     public var appManagementExplained: Bool { didSet { defaults.set(appManagementExplained, forKey: Key.appManagementExplained) } }
+    /// 0.8: `brew update` in the background, at most once per check
+    /// interval, so the upgrade counts are fresh. Default on.
+    public var backgroundUpdate: Bool {
+        didSet { if backgroundUpdate != oldValue { defaults.set(backgroundUpdate, forKey: Key.backgroundUpdate) } }
+    }
+    /// 0.8: when a `brew update` Tankard ran last succeeded (any of them:
+    /// the Refresh button, a background check, auto-update).
+    public var lastBrewUpdate: Date? { didSet { defaults.set(lastBrewUpdate, forKey: Key.lastBrewUpdate) } }
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -212,6 +222,8 @@ public final class AppSettings {
         notifiedUpgrades = (defaults.array(forKey: Key.notifiedUpgrades) as? [String]).map(Set.init)
         lastBackgroundCheck = defaults.object(forKey: Key.lastBackgroundCheck) as? Date
         appManagementExplained = defaults.bool(forKey: Key.appManagementExplained)
+        backgroundUpdate = defaults.object(forKey: Key.backgroundUpdate) as? Bool ?? true
+        lastBrewUpdate = defaults.object(forKey: Key.lastBrewUpdate) as? Date
     }
 
     /// Settings that persist nowhere real (tests, demo mode): a private
@@ -292,8 +304,33 @@ public final class BackgroundChecker {
             if ran { return wait }
             waits.append(wait)
         }
+        if store.deps.backgroundUpdates {
+            let (wait, updated) = await backgroundUpdateStep()
+            waits.append(wait)
+            // That update was the notification check's brew update too.
+            if updated, settings.notifyNewUpgrades {
+                settings.lastBackgroundCheck = now()
+                postIfNewUpgrades()
+            }
+        }
         if settings.notifyNewUpgrades { waits.append(await notificationStep()) }
         return waits.min() ?? 300
+    }
+
+    /// 0.8: the throttled background `brew update`. Returns the wait and
+    /// whether an update ran and the list was re-read.
+    private func backgroundUpdateStep() async -> (TimeInterval, Bool) {
+        let t = now()
+        let decision = store.backgroundUpdateDecision(launchedAt: launchedAt, now: t)
+        LaunchTiming.note("background update: \(decision)")
+        switch decision {
+        case .off, .optedOut: return (300, false)
+        case .notDue(let next): return (max(1, next.timeIntervalSince(t)), false)
+        case .waiting(let retry): return (retry, false)
+        case .run:
+            let ok = await store.runBackgroundUpdate()
+            return (BackgroundSchedule(intervalHours: settings.checkIntervalHours).interval, ok)
+        }
     }
 
     /// The 0.3 check: due by its interval.
@@ -326,6 +363,12 @@ public final class BackgroundChecker {
         await store.refresh(manual: true)
         settings.lastBackgroundCheck = now()
         guard store.report != nil, store.error == nil else { return } // keep the old baseline on failure
+        postIfNewUpgrades()
+    }
+
+    /// Compares the upgrades on screen with the last set seen; posts when
+    /// new ones appeared.
+    func postIfNewUpgrades() {
         // Turned off while brew update ran: post nothing, keep no baseline.
         guard settings.notifyNewUpgrades else { return }
         let keys = UpgradeNotificationDiff.keys(store.packages)

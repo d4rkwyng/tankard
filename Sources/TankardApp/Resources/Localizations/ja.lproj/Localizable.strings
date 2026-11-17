@@ -176,6 +176,7 @@
 "Adopting" = "引き継ぎ中";
 "Adopting runs through Tankard's queue and History." = "引き継ぎは Tankard のキューと履歴を通じて実行されます。";
 "After adopting:" = "引き継ぎ後:";
+"After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "リストの表示後、確認間隔ごとに最大1回、バックグラウンドで brew update を実行し、アップグレード数を更新します。brew の使用中は待機し、失敗（オフライン）はログに記録するだけです。HOMEBREW_NO_AUTO_UPDATE が設定されているとオフ。デフォルトはオン。";
 "All" = "すべて";
 "All versions" = "すべてのバージョン";
 "Allow Tankard to update apps" = "Tankardによるアプリのアップデートを許可";
@@ -245,9 +246,11 @@
 "Check a Brewfile…" = "Brewfileを確認…";
 "Check again" = "再確認";
 "Check every" = "確認間隔";
+"Check for new versions in the background" = "バックグラウンドで新しいバージョンを確認";
 "Check now" = "今すぐ確認";
 "Checked %@" = "%@を確認しました";
 "Checking Brewfile…" = "Brewfileを確認中…";
+"Checking for updates…" = "アップデートを確認中…";
 "Checking…" = "確認中…";
 "Clean Up…" = "クリーンアップ…";
 "Clean up" = "クリーンアップ";
@@ -412,7 +415,7 @@
 "Homebrew's official uninstaller" = "Homebrew公式のアンインストーラ";
 "Homebrew's own files have local changes" = "Homebrew自身のファイルにローカルの変更があります";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrewのsbinフォルダが PATH にありません";
-"How often the background check runs, while \"Notify me about new upgrades\" is on." = "「新しいアップグレードを通知」がオンのとき、バックグラウンド確認を実行する間隔。";
+"How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "「バックグラウンドで新しいバージョンを確認」または「新しいアップグレードを通知」がオンのとき、バックグラウンドで brew update を実行する間隔。";
 "I've done this" = "完了しました";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
 "Include self-updating apps" = "自己更新するアプリを含める";
@@ -564,6 +567,7 @@
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "デフォルトではオフです。スキャンで新たな脆弱性が見つかったとき、メニューバーのメニューに通知を表示します。ここの「今すぐスキャン」または Homebrew ▸ 脆弱性をスキャン を選ぶと、そのたびに1回スキャンを実行します。";
 "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "デフォルトではオフです。オンにすると、Tankardによるアップグレード、インストール、再インストール（手動および自動アップデート）は HOMEBREW_NO_INSTALL_CLEANUP=1 付きで実行され（コマンドに表示されます）、brewは古いバージョンをディスクに残すため、復元ポイントでロールバックできます。残された各バージョンは、クリーンアップで削除するまでディスク容量を使用します。Tankardの外でbrewが行う定期クリーンアップでも削除される場合があります。caskは常に古いバージョンを置き換えます。";
 "Off for Tankard in System Settings → Notifications" = "システム設定 → 通知 でTankardがオフになっています";
+"Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "オフ：HOMEBREW_NO_AUTO_UPDATE が設定されています（%@）。";
 "Official" = "公式";
 "Old version was cleaned up" = "古いバージョンはクリーンアップされました";
 "Old versions" = "古いバージョン";
@@ -715,6 +719,7 @@
 "Select a package" = "パッケージを選択";
 "Select a service" = "サービスを選択";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "自己更新するアプリが含まれるのは、「自己更新するアプリを含める」がオンのとき、またはそのアプリで「Homebrew が更新」を選んだときだけです。「アプリが更新」を選んだ場合は含まれません。";
+"Self-updating apps are included only when \"Include self-updating apps\" is on." = "自己アップデートするアプリは、「自己アップデートするアプリを含める」がオンの場合にのみ含まれます。";
 "Self-updating apps not checked: %@" = "自己アップデートするアプリは確認されていません: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "インストール済みformulaの名前とバージョンをOSV.dev（brew vulns経由）に送信します。";
 "Service" = "サービス";

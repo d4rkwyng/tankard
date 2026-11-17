@@ -176,6 +176,7 @@
 "Adopting" = "接管中";
 "Adopting runs through Tankard's queue and History." = "接管通过 Tankard 的队列和历史记录进行。";
 "After adopting:" = "接管后：";
+"After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "列表显示后，在后台运行 brew update，每个检查间隔最多一次，然后刷新升级数量。brew 忙碌时会等待，失败（离线）只记入日志。设置了 HOMEBREW_NO_AUTO_UPDATE 时关闭。默认开启。";
 "All" = "全部";
 "All versions" = "所有版本";
 "Allow Tankard to update apps" = "允许 Tankard 更新 App";
@@ -245,9 +246,11 @@
 "Check a Brewfile…" = "检查 Brewfile…";
 "Check again" = "再次检查";
 "Check every" = "检查间隔";
+"Check for new versions in the background" = "在后台检查新版本";
 "Check now" = "立即检查";
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
+"Checking for updates…" = "正在检查更新…";
 "Checking…" = "正在检查…";
 "Clean Up…" = "清理…";
 "Clean up" = "清理";
@@ -412,7 +415,7 @@
 "Homebrew's official uninstaller" = "Homebrew 官方卸载程序";
 "Homebrew's own files have local changes" = "Homebrew 自身文件有本地改动";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew 的 sbin 文件夹不在你的 PATH 中";
-"How often the background check runs, while \"Notify me about new upgrades\" is on." = "后台检查的运行频率，在“有新升级时通知我”开启时生效。";
+"How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "后台 brew update 的运行频率，在“在后台检查新版本”或“有新升级时通知我”开启时生效。";
 "I've done this" = "我已完成";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "Include self-updating apps" = "包含自行更新的 App";
@@ -564,6 +567,7 @@
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "默认关闭。当扫描发现以前没有的漏洞时，在菜单栏菜单中显示通知。随时可在此处点按“立即扫描”，或使用 Homebrew ▸ 扫描漏洞 来执行一次扫描。";
 "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "默认关闭。此时 Tankard 的升级、安装和重新安装（手动和自动更新）会带 HOMEBREW_NO_INSTALL_CLEANUP=1 运行（会显示在命令中），因此 brew 会在磁盘上保留旧版本，恢复点即可回滚。保留的每个版本都会占用磁盘空间，直到“清理”将其移除。Tankard 之外由 brew 自身执行的定期清理也可能将其移除。Cask 始终会替换旧版本。";
 "Off for Tankard in System Settings → Notifications" = "在“系统设置 → 通知”中，Tankard 的通知已关闭";
+"Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "已关闭：已设置 HOMEBREW_NO_AUTO_UPDATE（%@）。";
 "Official" = "官方";
 "Old version was cleaned up" = "旧版本已被清理";
 "Old versions" = "旧版本";
@@ -715,6 +719,7 @@
 "Select a package" = "选择软件包";
 "Select a service" = "选择服务";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "只有开启“包含自行更新的 App”，或为该 App 选择了“由 Homebrew 更新”时，才会包含自行更新的 App；选择“App 自行更新”时则永不包含。";
+"Self-updating apps are included only when \"Include self-updating apps\" is on." = "仅当“包含可自行更新的 App”开启时，才包含可自行更新的 App。";
 "Self-updating apps not checked: %@" = "未检查可自行更新的 App：%@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";

@@ -179,7 +179,7 @@ struct V061ScanProgressTests {
 
 struct V061SettingsHelpTests {
     @Test func everyExplanationHasText() {
-        #expect(SettingsHelp.all.count == 11)
+        #expect(SettingsHelp.all.count == 12)  // 0.8: + backgroundUpdate
         for text in SettingsHelp.all {
             #expect(text.trimmingCharacters(in: .whitespacesAndNewlines).count > 20)
         }

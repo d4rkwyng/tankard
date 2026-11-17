@@ -101,6 +101,16 @@ public struct BrewClient: Sendable {
         "\(cellar)/\(name)/\(version)"
     }
 
+    /// 0.8: when `brew update` last fetched, from anywhere (Tankard, Terminal,
+    /// brew's own auto-update): the mtime of the brew repository's
+    /// .git/FETCH_HEAD, the file brew's auto-update throttle checks
+    /// (Library/Homebrew/utils/auto-update.sh). nil when there is none.
+    public func lastFetch() -> Date? {
+        let path = installation.repository + "/.git/FETCH_HEAD"
+        guard fileExists(path) else { return nil }
+        return (try? FileManager.default.attributesOfItem(atPath: path))?[.modificationDate] as? Date
+    }
+
     /// The environment brew is run with for a given detection.
     public func environment(for detection: IntelbrewDetection, readOnly: Bool = true) -> [String: String] {
         BrewEnvironment.build(installation: installation, sources: sources, intelbrew: detection, readOnly: readOnly)
@@ -195,7 +205,10 @@ public struct BrewClient: Sendable {
     /// Upgrade-available is brew's own `outdated` flag from `brew info`
     /// (identical to `brew outdated --json=v2` on real data, one brew launch
     /// cheaper); Tankard never decides "outdated" by comparing versions.
-    public func status(checkRemote: Bool = false) async throws -> StatusReport {
+    ///
+    /// 0.8: `detection`, when the caller already has it (the app detects
+    /// first so it can start `brew info --sizes` beside this read).
+    public func status(checkRemote: Bool = false, detection known: IntelbrewDetection? = nil) async throws -> StatusReport {
         let clock = ContinuousClock()
         let t0 = clock.now
         func ms(_ d: Duration) -> Int {
@@ -203,7 +216,8 @@ public struct BrewClient: Sendable {
             return Int(c.seconds * 1000 + c.attoseconds / 1_000_000_000_000_000)
         }
 
-        let detection = await detectIntelbrew()
+        let detection: IntelbrewDetection
+        if let known { detection = known } else { detection = await detectIntelbrew() }
         let env = environment(for: detection)
         let tDetect = clock.now
 

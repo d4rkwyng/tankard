@@ -26,6 +26,12 @@ struct StatusBar: View {
                     separator
                     ProgressView().controlSize(.mini)
                     Text(phase)
+                } else if store.backgroundUpdating {
+                    // 0.8: the background brew update, kept quiet.
+                    separator
+                    ProgressView().controlSize(.mini)
+                    Text("Checking for updates…").foregroundStyle(.tertiary)
+                        .help(SettingsHelp.backgroundUpdate)
                 } else if store.error != nil {
                     separator
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)

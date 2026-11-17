@@ -176,6 +176,7 @@
 "Adopting" = "Adopting";
 "Adopting runs through Tankard's queue and History." = "Adopting runs through Tankard's queue and History.";
 "After adopting:" = "After adopting:";
+"After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default." = "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.";
 "All" = "All";
 "All versions" = "All versions";
 "Allow Tankard to update apps" = "Allow Tankard to update apps";
@@ -245,9 +246,11 @@
 "Check a Brewfile…" = "Check a Brewfile…";
 "Check again" = "Check again";
 "Check every" = "Check every";
+"Check for new versions in the background" = "Check for new versions in the background";
 "Check now" = "Check now";
 "Checked %@" = "Checked %@";
 "Checking Brewfile…" = "Checking Brewfile…";
+"Checking for updates…" = "Checking for updates…";
 "Checking…" = "Checking…";
 "Clean Up…" = "Clean Up…";
 "Clean up" = "Clean up";
@@ -412,7 +415,7 @@
 "Homebrew's official uninstaller" = "Homebrew's official uninstaller";
 "Homebrew's own files have local changes" = "Homebrew's own files have local changes";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew's sbin folder isn't in your PATH";
-"How often the background check runs, while \"Notify me about new upgrades\" is on." = "How often the background check runs, while \"Notify me about new upgrades\" is on.";
+"How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.";
 "I've done this" = "I've done this";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "If a download doesn't match, brew stops for that app and leaves it as it was.";
 "Include self-updating apps" = "Include self-updating apps";
@@ -564,6 +567,7 @@
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.";
 "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.";
 "Off for Tankard in System Settings → Notifications" = "Off for Tankard in System Settings → Notifications";
+"Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@).";
 "Official" = "Official";
 "Old version was cleaned up" = "Old version was cleaned up";
 "Old versions" = "Old versions";
@@ -715,6 +719,7 @@
 "Select a package" = "Select a package";
 "Select a service" = "Select a service";
 "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\".";
+"Self-updating apps are included only when \"Include self-updating apps\" is on." = "Self-updating apps are included only when \"Include self-updating apps\" is on.";
 "Self-updating apps not checked: %@" = "Self-updating apps not checked: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sends your installed formula names and versions to OSV.dev (via brew vulns).";
 "Service" = "Service";

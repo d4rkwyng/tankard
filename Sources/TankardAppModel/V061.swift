@@ -9,7 +9,9 @@ public enum SettingsHelp {
     // General
     public static let showMenuBarIcon = String(localized: "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
     public static let notifyNewUpgrades = String(localized: "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
-    public static let checkInterval = String(localized: "How often the background check runs, while \"Notify me about new upgrades\" is on.")
+    public static let checkInterval = String(localized: "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.")
+    /// 0.8: the background `brew update`.
+    public static let backgroundUpdate = String(localized: "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.")
     public static let openAtLogin = String(localized: "Opens Tankard when you log in, as a macOS login item.")
 
     // Upgrades
@@ -25,7 +27,7 @@ public enum SettingsHelp {
 
     /// Every explanation (tests: none is empty).
     public static var all: [String] {
-        [showMenuBarIcon, notifyNewUpgrades, checkInterval, openAtLogin,
+        [showMenuBarIcon, backgroundUpdate, notifyNewUpgrades, checkInterval, openAtLogin,
          includeSelfUpdatingApps, dontQuitApps, scanOnRefresh, notifyNewVulnerabilities,
          autoUpgrade, safeMode, bumpRule]
     }

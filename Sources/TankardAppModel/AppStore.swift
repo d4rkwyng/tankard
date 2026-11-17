@@ -76,6 +76,9 @@ public final class AppStore {
         public var restorePointsURL: URL?
         /// 0.8: Adopt Apps' scan (nil: the real cask.json and disk).
         public var adoptLoader: AdoptLoader?
+        /// 0.8: whether the background `brew update` may run at all. Only the
+        /// real app (`live()`) turns it on: never demo mode, tests opt in.
+        public var backgroundUpdates = false
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -119,6 +122,7 @@ public final class AppStore {
             d.autoUpdateLogURL = AutoUpdateLog.defaultURL
             d.historyURL = HistoryLog.defaultURL
             d.restorePointsURL = RestorePointStore.defaultDirectory
+            d.backgroundUpdates = true
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -172,6 +176,12 @@ public final class AppStore {
     public var toolSheet: ToolSheet?
     public internal(set) var health: HealthStore?
     public internal(set) var autoremove: AutoremoveStore?
+    /// 0.8: a background `brew update` is queued or running (the status
+    /// bar's "Checking for updates…"). See AppStore+BackgroundUpdate.swift.
+    public internal(set) var backgroundUpdating = false
+    /// 0.8: when the last background `brew update` failed (offline…), so the
+    /// next try waits instead of failing every few seconds.
+    @ObservationIgnored var lastBackgroundUpdateFailure: Date?
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -262,6 +272,11 @@ public final class AppStore {
     /// Ids of everything installed (Discover's "installed" mark).
     public var installedIDs: Set<String> { Set(packages.map(\.id)) }
     public var hasBrew: Bool { client != nil }
+    /// 0.8: the brew settings Tankard found (environment, brew.env, shell
+    /// profiles), once brew was located.
+    public var brewSources: EnvironmentSources? { client?.sources }
+    /// 0.8: the brew repository's last fetch (see `BrewClient.lastFetch`).
+    var brewLastFetch: Date? { client?.lastFetch() }
     public var isUpgrading: Bool { upgrade.map { !$0.isFinished } ?? false }
 
     // MARK: loading
@@ -272,6 +287,7 @@ public final class AppStore {
         if report == nil, let cached = deps.cache?.load() {
             report = insights.decorate(cached)
             reportFromCache = true
+            LaunchTiming.mark("list (cache)", once: true)
         }
         if isStale {
             await refresh(manual: false)
@@ -298,11 +314,27 @@ public final class AppStore {
 
     /// `manual`: the refresh button. Runs `brew update` first.
     public func refresh(manual: Bool) async {
+        await refresh(manual ? .manual : .automatic)
+    }
+
+    /// 0.8: what a refresh does besides reading status.
+    enum RefreshKind {
+        /// Re-read only; joins a refresh that is already running.
+        case automatic
+        /// `brew update` first, through the queue.
+        case manual
+        /// A background `brew update` just finished: re-read (always, even
+        /// when another read is running, which may have started before the
+        /// update), but don't measure sizes again: an update installs nothing.
+        case afterUpdate
+    }
+
+    func refresh(_ kind: RefreshKind) async {
         if let running = refreshTask {
             await running.value
-            if !manual { return }
+            if kind == .automatic { return }
         }
-        let task = Task { await performRefresh(manual: manual) }
+        let task = Task { await performRefresh(kind) }
         refreshTask = task
         await task.value
         refreshTask = nil
@@ -315,7 +347,7 @@ public final class AppStore {
         return c
     }
 
-    private func performRefresh(manual: Bool) async {
+    private func performRefresh(_ kind: RefreshKind) async {
         isRefreshing = true
         defer {
             isRefreshing = false
@@ -335,20 +367,34 @@ public final class AppStore {
         }
 
         var updateError: StoreError?
-        if manual {
+        if kind == .manual {
             refreshPhase = String(localized: "Running brew update…")
             updateError = await runUpdate(client)
         }
 
         refreshPhase = String(localized: "Reading installed packages…")
+        // 0.8: detection first (it decides brew's environment), then
+        // `brew info --installed`, `brew info --sizes` and (with "Include
+        // self-updating apps") `brew outdated --greedy` all at once. The list
+        // appears when `brew info` (and the greedy check, when on) answer;
+        // sizes fill in when they land (the Size column shows "–" until then).
+        let detection = await client.detectIntelbrew()
+        let env = client.environment(for: detection)
+        let measureSizes = kind != .afterUpdate
+        if measureSizes { insights.measureSizes(client: client, env: env) }
+        // 0.8: also when a cask is set to "Homebrew updates it" (Adopt).
+        let wantsGreedy = insights.settings.includeSelfUpdatingApps || !upgradeRules.homebrewUpdatedTokens.isEmpty
+        async let greedy = wantsGreedy ? Self.readGreedy(client, env: env) : nil
         do {
-            let fresh = await withSelfUpdatingCasks(try await client.status(), client: client)
+            let fresh = Self.markSelfUpdating(try await client.status(detection: detection), greedy: await greedy)
             report = insights.decorate(fresh)
             reportFromCache = false
+            LaunchTiming.mark("list (brew)", once: true)
+            LaunchTiming.note("status read " + fresh.timingsMs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: " "))
             try? deps.cache?.save(fresh)
             error = updateError
             homebrewState = .ready
-            startInsights(force: true)
+            startInsights(force: kind != .afterUpdate, measureSizes: false)
         } catch {
             // Keep what's on screen; say what went wrong.
             self.error = updateError ?? StoreError(title: String(localized: "Refresh failed"), detail: String(describing: error))
@@ -362,7 +408,7 @@ public final class AppStore {
     }
 
     /// `brew update` through the queue. nil on success.
-    private func runUpdate(_ client: BrewClient) async -> StoreError? {
+    func runUpdate(_ client: BrewClient) async -> StoreError? {
         let args = ["update"]
         let detection: IntelbrewDetection
         if let d = report?.intelbrew {
@@ -376,7 +422,10 @@ public final class AppStore {
         let collector = OutputCollector()
         do {
             let code = try await queue.run(cmd) { collector.add($0) }
-            guard code != 0 else { return nil }
+            guard code != 0 else {
+                settings.lastBrewUpdate = deps.now()
+                return nil
+            }
             let lines = collector.lines()
             let tail = lines.suffix(6).joined(separator: "\n")
             if SudoDetector.needsSudo(lines) {

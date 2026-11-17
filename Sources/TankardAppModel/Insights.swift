@@ -336,8 +336,9 @@ public final class InsightsStore {
 
     /// After a status read. `force`: the status changed (manual refresh,
     /// reconcile after a run); otherwise only what is older than the TTL.
-    public func refresh(client: BrewClient, env: [String: String], force: Bool, formulae: Int = 0) {
-        if force || isStale(sizes?.measuredAt) { measureSizes(client: client, env: env) }
+    /// `measureSizes` false: sizes are already being measured, or can't have changed.
+    public func refresh(client: BrewClient, env: [String: String], force: Bool, formulae: Int = 0, measureSizes measure: Bool = true) {
+        if measure, force || isStale(sizes?.measuredAt) { measureSizes(client: client, env: env) }
         if settings.scanVulnerabilitiesOnRefresh, force || isStale(vulnerabilityScan?.scannedAt) {
             scanVulnerabilities(client: client, env: env, formulae: formulae)
         }
@@ -441,6 +442,7 @@ public final class InsightsStore {
     }
 
     func sizesFinished(_ s: DiskSizes) {
+        LaunchTiming.mark("sizes", once: true)
         sizes = s
         sizesState = .idle
         save()

@@ -146,7 +146,7 @@ struct TankardApp: App {
     init() {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
-        let deps: AppStore.Dependencies
+        var deps: AppStore.Dependencies
         if let hw = options.noBrew {
             deps = Demo.noBrewDependencies(hardware: hw)
         } else {
@@ -156,6 +156,9 @@ struct TankardApp: App {
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
+        // 0.8: no background brew update in a snapshot run (a shot of real
+        // data must not change under it). Demo dependencies never have it.
+        if options.snapshot != nil { deps.backgroundUpdates = false }
         // Demo runs never touch the real settings.
         // A script run keeps its own settings suite (ScriptLaunch.swift).
         let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral()
