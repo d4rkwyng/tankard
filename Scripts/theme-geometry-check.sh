@@ -25,6 +25,8 @@
 #   KEEP=1       keep the default working directory too (dumps and PNGs)
 #   SNAP=1       also write a PNG of the window at every dump
 #   START=20     seconds after launch before the first dump
+# Exit 0 pass, 1 fail, 2 inconclusive (window occluded: unlock the screen).
+#
 #   STRICT=1     also fail on a frame where SwiftUI dropped the rows to
 #                re-measure them (see below; intermittent, not theme layout)
 #   ALLOW_RUNNING=1  run even though another Tankard is running (fine when
@@ -154,5 +156,11 @@ for f in "$OUT"/*-[0-9][0-9]-*.rows; do
     fi
 done
 echo "row colours: $rows samples compared with a fresh launch in the same theme"
+# On macOS 14 SwiftUI doesn't redraw an occluded window (screen locked), so
+# a switch shows nothing and these results say nothing about switching.
+if grep -q '(main window occluded)' "$OUT/probe.log"; then
+    echo "INCONCLUSIVE: the main window was occluded during the switches (screen locked?); it may not have redrawn" >&2
+    exit 2
+fi
 [ "$status" = 0 ] && echo "ok: geometry identical in every theme and through every switch; row colours match fresh launches"
 exit $status

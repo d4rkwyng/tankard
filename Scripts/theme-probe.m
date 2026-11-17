@@ -306,7 +306,12 @@ static BOOL clickTheme(NSString *theme, NSArray *order) {
     }
     NSView *r = radios[i];
     NSPoint p = [r convertPoint:NSMakePoint(NSMidX(r.bounds), NSMidY(r.bounds)) toView:nil];
-    [sw makeKeyAndOrderFront:nil];
+    // The main window stays in front and unobscured: on macOS 14 SwiftUI
+    // doesn't redraw a window the Settings window covers, so the dumps
+    // would show the old theme. The click goes to the Settings window
+    // directly, wherever it is.
+    NSWindow *m = mainWindow();
+    [sw orderWindow:NSWindowBelow relativeTo:m.windowNumber];
     NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
     NSEvent *down = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:p modifierFlags:0 timestamp:now
                                    windowNumber:sw.windowNumber context:nil eventNumber:1 clickCount:1 pressure:1];
@@ -314,7 +319,7 @@ static BOOL clickTheme(NSString *theme, NSArray *order) {
                                  windowNumber:sw.windowNumber context:nil eventNumber:2 clickCount:1 pressure:0];
     [NSApp postEvent:up atStart:NO];   // the button's tracking loop reads it
     [sw sendEvent:down];
-    plog(@"clicked %@", theme);
+    plog(@"clicked %@ (main window %@)", theme, (m.occlusionState & NSWindowOcclusionStateVisible) ? @"visible" : @"occluded");
     return YES;
 }
 
