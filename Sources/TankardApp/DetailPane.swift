@@ -15,7 +15,9 @@ struct DetailPane: View {
                           uninstall: { store.requestUninstall(p) },
                           replaceWithBottle: { store.startReplaceWithBottle([p]) },
                           insights: store.insights, prefix: store.report?.host.prefix,
-                          skipVersion: { store.setVersionSkipped(p, $0) })
+                          skipVersion: { store.setVersionSkipped(p, $0) },
+                          selfUpdate: p.kind == .cask && p.autoUpdates == true
+                              ? (store.selfUpdatePolicy(p), { store.setSelfUpdatePolicy(p, $0) }) : nil)
             .id(p.id)
             .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
@@ -44,6 +46,8 @@ struct PackageDetail: View {
     var prefix: String? = nil
     /// 0.6: "Skip This Version" (true) or "Don't Skip" (false).
     var skipVersion: ((Bool) -> Void)? = nil
+    /// 0.8: a self-updating cask's "who updates it" choice.
+    var selfUpdate: (policy: SelfUpdatePolicy, set: (SelfUpdatePolicy) -> Void)? = nil
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -118,6 +122,20 @@ struct PackageDetail: View {
                     if let bytes = p.diskBytes { row(String(localized: "On disk"), DiskSizes.format(bytes)) }
                 }
                 .font(.system(size: 12))
+
+                if let selfUpdate {
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text("Updates").font(.system(size: 12)).foregroundStyle(.secondary)
+                            Spacer(minLength: 4)
+                            SelfUpdatePolicyPicker(policy: selfUpdate.policy, set: selfUpdate.set)
+                        }
+                        if p.selfUpdateHeld == true, let v = p.currentVersion {
+                            Text("Left to the app: \(v) isn't in Upgrade all or auto-update.")
+                                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
 
                 Divider()
 

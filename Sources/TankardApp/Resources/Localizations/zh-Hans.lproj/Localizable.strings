@@ -2,6 +2,7 @@
 "\n\nTankard runs: " = "\n\nTankard 运行： ";
 " (default)" = " （默认）";
 " (from cache)" = " （来自缓存）";
+" (one per app)" = "（每个 App 一个）";
 " Asking VS Code for its extensions can hang brew bundle dump." = " 向 VS Code 查询其扩展可能会让 brew bundle dump 卡住。";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " 不检查 cask。运行超过一分钟的扫描会被停止。“立即扫描”会在你需要时运行一次扫描。默认关闭。";
 " It took %@." = " 耗时 %@。";
@@ -13,6 +14,7 @@
 " to confirm" = " 以确认";
 " · partial scan" = " · 部分扫描";
 " · source" = " · 源码";
+"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\n这会删除现有的 App，并在原位置安装 cask 的版本。";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ 失败（退出码 %d）";
 "%@ %@ needs administrator rights" = "%@ %@ 需要管理员权限";
@@ -55,6 +57,7 @@
 "%lld Homebrew bottles" = "%lld 个 Homebrew bottle";
 "%lld Intelbrew bottle" = "%lld 个 Intelbrew bottle";
 "%lld Intelbrew bottles" = "%lld 个 Intelbrew bottle";
+"%lld already from Homebrew" = "%lld 个已来自 Homebrew";
 "%lld bottle" = "%lld 个 bottle";
 "%lld bottle from Intelbrew" = "%lld 个来自 Intelbrew 的 bottle";
 "%lld bottles" = "%lld 个 bottle";
@@ -76,8 +79,10 @@
 "%lld failed" = "%lld 个失败";
 "%lld formula" = "%lld 个 formula";
 "%lld formulae" = "%lld 个 formula";
+"%lld from Apple" = "%lld 个来自 Apple";
 "%lld from an untrusted tap" = "%lld 个来自不受信任的 tap";
 "%lld from source" = "%lld 个来自源码";
+"%lld from the App Store" = "%lld 个来自 App Store";
 "%lld h ago" = "%lld 小时前";
 "%lld hours" = "%lld 小时";
 "%lld installed" = "%lld 个已安装";
@@ -152,11 +157,24 @@
 "Added (%lld)" = "已添加（%lld）";
 "Adding tap" = "正在添加 tap";
 "Admin password" = "管理员密码";
+"Adopt" = "接管";
+"Adopt %@?" = "接管“%@”？";
+"Adopt %lld Apps…" = "接管 %lld 个 App…";
+"Adopt %lld apps?" = "接管 %lld 个 App？";
+"Adopt 1 App…" = "接管 1 个 App…";
+"Adopt Apps" = "接管 App";
+"Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "“接管 App”会从 formulae.brew.sh 读取 Homebrew 的 cask 列表，而 Tankard 在此 Homebrew（Intelbrew 或 HOMEBREW_NO_INSTALL_FROM_API）下不使用该列表。";
+"Adopt Apps…" = "接管 App…";
+"Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "可通过 Homebrew ▸ 接管 App… 再次接管；操作前会先询问。";
+"Adopting" = "接管中";
+"Adopting runs through Tankard's queue and History." = "接管通过 Tankard 的队列和历史记录进行。";
+"After adopting:" = "接管后：";
 "All" = "全部";
 "All versions" = "所有版本";
 "Allow Tankard to update apps" = "允许 Tankard 更新 App";
 "Allowed" = "已允许";
 "Already above in this branch" = "已在此分支上方";
+"Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "已有从网上下载的 App？Homebrew 运行后，可通过 Homebrew ▸ 接管 App… 让 brew 为其保持最新。";
 "Already installed" = "已安装";
 "Also" = "另外";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "同时列出会自行更新的 App（带 auto_updates 的 cask）或总是下载最新版本的 App，与 brew outdated --greedy 相同。这些 App 通常会自行保持最新，因此默认关闭。";
@@ -167,7 +185,10 @@
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "另一个安装程序在 Homebrew 的前缀中放入了文件。它们可能干扰从源码构建。";
 "Another old version is installed" = "已安装另一个旧版本";
 "App Store apps" = "App Store App";
+"App updates itself" = "App 自行更新";
 "Appearance" = "外观";
+"Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自行更新的 App 会继续自行更新。你为每个 App 选择的更新方式会随接管一起保存。";
+"Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "你自行安装、且 Homebrew cask 也会安装的 App。接管后 brew 即可更新它们，无需重新安装。";
 "Asking brew info…" = "正在询问 brew info…";
 "Auto-update" = "自动更新";
 "Auto-update didn't run" = "自动更新未运行";
@@ -200,6 +221,7 @@
 "Built from source; a bottle exists for the current version" = "从源码构建；当前版本有可用的 bottle";
 "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it." = "默认情况下，brew 会在升级 cask 之前退出正在运行的 App，并在之后重新打开。开启此项后，Tankard 会在升级 cask 时设置 HOMEBREW_NO_UPGRADE_QUIT_CASKS=1（会显示在命令中）：App 保持运行，新版本会在你下次打开时启动。";
 "Can roll back" = "可回滚";
+"Can't adopt" = "无法接管";
 "Can't uninstall: needed by %lld installed packages" = "无法卸载：%lld 个已安装的软件包需要它";
 "Can't uninstall: needed by 1 installed package" = "无法卸载：1 个已安装的软件包需要它";
 "Cancel" = "取消";
@@ -234,6 +256,7 @@
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "按 brew 的方式比较版本。不符合条件的软件包会被跳过并记入日志，需手动升级。无法比较的版本（日期、字母）只有在“所有版本”下才会自动升级。";
 "Compiles" = "编译";
 "Copy Brewfile" = "拷贝 Brewfile";
+"Copy Command" = "拷贝命令";
 "Copy Install Command" = "拷贝安装命令";
 "Copy Name" = "拷贝名称";
 "Copy Upgrade Command" = "拷贝升级命令";
@@ -249,6 +272,7 @@
 "Couldn't load the catalogue" = "无法载入目录";
 "Couldn't open Terminal. Copy the command instead." = "无法打开“终端”。请改为拷贝该命令。";
 "Couldn't open Terminal. Copy the commands instead." = "无法打开“终端”。请改为拷贝这些命令。";
+"Couldn't read Homebrew's cask list: %@" = "无法读取 Homebrew 的 cask 列表：%@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "无法读取 cask 的详细信息，因此不会标记管理员密码。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "无法读取 formula 的详细信息，因此不会标记编译。";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "无法从 formulae.brew.sh 刷新（%@）；正在显示已存储的副本。";
@@ -261,6 +285,7 @@
 "Deep purple and amber, like the icon. Dark underneath." = "深紫与琥珀色，如同图标。底层为深色。";
 "Demo mode: Terminal not opened." = "演示模式：未打开“终端”。";
 "Demo mode: no log file written" = "演示模式：未写入日志文件";
+"Demo · %@ casks" = "演示 · %@ 个 cask";
 "Dependencies (%lld)" = "依赖项（%lld）";
 "Dependency" = "依赖项";
 "Dependency tree (%lld direct, %lld in all)" = "依赖树（%lld 个直接，共 %lld 个）";
@@ -317,9 +342,11 @@
 "Fixed in %@" = "已在 %@ 中修复";
 "Fixed upstream in commit %@" = "已在上游提交 %@ 中修复";
 "Fixed upstream in commit %@ (+%lld more)" = "已在上游提交 %@ 中修复（另有 +%lld 个）";
+"Follow the setting" = "跟随设置";
 "Follows macOS." = "跟随 macOS。";
 "For 1 Day" = "1 天";
 "For 1 Week" = "1 周";
+"For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "对每个 App，brew 会下载 cask，将下载内容与现有 App 比对，然后将 cask 记录为已安装。App 本身保留在原位置。";
 "Fork: behind (%@; %@ available)" = "分支：落后（%@；可用 %@）";
 "Fork: current (%@)" = "分支：最新（%@）";
 "Fork: not on a release tag (%@)" = "分支：不在发布标签上（%@）";
@@ -335,6 +362,7 @@
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "来自其收据：所有已安装且链接到它的内容（brew deps --installed 列出的可能更少）";
 "From source" = "从源码";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "来自 Homebrew/install README（“Uninstall Homebrew”），带 --path 选项，因此只会移除 Tankard 显示的那个 Homebrew。它在“终端”中运行，并在移除任何内容前再次询问。";
+"From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "此后这些 App 归 Homebrew 管理：brew upgrade 会将其替换为 cask 的版本，卸载 cask（在 Tankard 中或使用 brew uninstall）会删除该 App。";
 "Full log saved to %@" = "完整日志已存储到 %@";
 "Full scan" = "完整扫描";
 "General" = "通用";
@@ -354,6 +382,8 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
+"Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。";
+"Homebrew has disabled this cask." = "Homebrew 已停用此 cask。";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew 是 macOS 的软件包管理器：它安装命令行工具和 App，并使其保持最新。Tankard 是它的图形窗口，因此需要先安装 Homebrew。";
 "Homebrew isn't installed" = "未安装 Homebrew";
 "Homebrew isn't ready yet." = "Homebrew 尚未就绪。";
@@ -363,7 +393,9 @@
 "Homebrew no longer installs or upgrades it." = "Homebrew 不再安装或升级它。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew 已不再维护它们，或即将停止维护。“已弃用”筛选会列出它们，并在 brew 给出替代项时一并显示。";
 "Homebrew not found" = "未找到 Homebrew";
+"Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew 记录的版本为 %@；对于自行更新的 App，brew 不比较版本。";
 "Homebrew still has it, but will disable it later." = "Homebrew 仍保留它，但之后会将其停用。";
+"Homebrew updates it" = "由 Homebrew 更新";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew 贡献者，BSD-2-Clause。";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew 的 API（formulae.brew.sh）";
 "Homebrew's official uninstaller" = "Homebrew 官方卸载程序";
@@ -371,6 +403,7 @@
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew 的 sbin 文件夹不在你的 PATH 中";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "后台检查的运行频率，在“有新升级时通知我”开启时生效。";
 "I've done this" = "我已完成";
+"If a download doesn't match, brew stops for that app and leaves it as it was." = "如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "Include self-updating apps" = "包含自行更新的 App";
 "Install" = "安装";
 "Install %@" = "安装 %@";
@@ -383,6 +416,7 @@
 "Install standard Homebrew" = "安装标准 Homebrew";
 "Install with Tankard" = "使用 Tankard 安装";
 "Installed" = "已安装";
+"Installed %@; the cask installs %@." = "已安装 %1$@；cask 安装的是 %2$@。";
 "Installed as" = "安装为";
 "Installed as a dependency" = "作为依赖项安装";
 "Installed on" = "安装于";
@@ -416,10 +450,12 @@
 "Last auto-update: %@ · %@" = "上次自动更新：%@ · %@";
 "Last refresh failed" = "上次刷新失败";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "将 %@ 排除在“全部升级”、计数和自动更新之外。仍可手动升级；出现更新的版本后会自动解除。";
+"Left to the app: %@ isn't in Upgrade all or auto-update." = "交由 App：%@ 不在“全部升级”或自动更新中。";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "残留的链接指向已不存在的文件。通常无害；brew cleanup 会移除其中大部分。";
 "Let the current package finish, then skip the rest" = "让当前软件包完成，然后跳过其余的";
 "Licence" = "许可证";
 "Light" = "浅色";
+"Likely match" = "可能匹配";
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "列出 Brewfile 需要而这台 Mac 缺少的内容（brew bundle check）";
 "Loading Homebrew's catalogue…" = "正在载入 Homebrew 目录…";
 "Loading formulae.brew.sh…" = "正在载入 formulae.brew.sh…";
@@ -439,6 +475,8 @@
 "More filters" = "更多筛选";
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "更多筛选：已固定（brew 不会升级的软件包）、仅限主动安装（你自己安装且没有其他软件依赖的软件包，brew leaves -r）、存在漏洞、有说明、已弃用";
 "Name" = "名称";
+"Name only" = "仅名称";
+"Needs update first" = "需先更新";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "绝不退出 App：正在运行的 cask 会被跳过，除非开启了“不退出正在运行的 App”（此时会升级，新版本在下次打开时生效）。";
 "New vulnerabilities" = "新漏洞";
 "New: %@" = "新增：%@";
@@ -447,8 +485,10 @@
 "Newer than Intelbrew" = "比 Intelbrew 新";
 "Newer than tap" = "比 tap 新";
 "Next run: %@" = "下次运行：%@";
+"No Homebrew cask installs these apps." = "没有 Homebrew cask 会安装这些 App。";
 "No Homebrew status to work from" = "没有可用的 Homebrew 状态";
 "No Intelbrew bottle yet." = "暂无 Intelbrew bottle。";
+"No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "没有可接管的 App：“应用程序”中的所有内容都来自 Homebrew、App Store 或 Apple。";
 "No automatic runs yet." = "尚无自动运行记录。";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "这台 Mac 暂无 bottle。重新安装或升级会从源码编译。";
 "No bottle for this Mac." = "这台 Mac 没有 bottle。";
@@ -457,6 +497,7 @@
 "No bottle: compiles" = "无 bottle：需编译";
 "No bottle: will compile from source" = "无 bottle：将从源码编译";
 "No brew vulns" = "没有 brew vulns";
+"No cask" = "无 cask";
 "No data yet" = "暂无数据";
 "No dependencies" = "无依赖项";
 "No fix listed" = "未列出修复";
@@ -479,6 +520,7 @@
 "Not in Intelbrew mode: nothing to revert." = "不在 Intelbrew 模式：无需还原。";
 "Not included: %@ (can't roll back automatically)" = "未包含：%@（无法自动回滚）";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "未链接：它的命令不在 Homebrew 的 bin 中。`brew link %@` 可链接它。";
+"Not listed: %@." = "未列出：%@。";
 "Not now" = "暂不";
 "Not running" = "未运行";
 "Not scanned yet" = "尚未扫描";
@@ -515,6 +557,7 @@
 "One at a time through Tankard's queue. Each is recorded in History." = "通过 Tankard 的队列逐个执行。每项都会记录在“历史记录”中。";
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "每个 formula 和 cask 各执行一次 brew install，通过 Tankard 的队列和日志进行。请先用“添加 Tap…”添加 tap。";
 "Only available in Tankard.app." = "仅在 Tankard.app 中可用。";
+"Only the app's name matches. It may be a different app with the same name: check before adopting." = "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。";
 "Open Homepage" = "打开主页";
 "Open Release Page" = "打开发布页面";
 "Open System Settings" = "打开系统设置";
@@ -528,10 +571,12 @@
 "Opens Tankard when you log in, as a macOS login item." = "登录 Mac 时作为 macOS 登录项打开 Tankard。";
 "Opens Terminal. Nothing is typed or run for you." = "打开“终端”。不会为你输入或运行任何内容。";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "可选，不会运行：用 brew untap homebrew/core 删除 core 克隆。已打开的终端窗口在重新打开前仍使用旧设置。摘自 d4rkwyng/intelbrew 的 README，“How do I go back to upstream Homebrew?”。";
+"Or have Homebrew replace it, in Terminal:" = "或者在终端中让 Homebrew 替换它：";
 "Other" = "其他";
 "Other packages need it" = "其他软件包需要它";
 "PID" = "PID";
 "Package" = "软件包";
+"Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "属于 %@ 文件夹，cask 会整体安装该文件夹；brew 会比较每个文件，有任何不同就会拒绝。";
 "Partial scan" = "部分扫描";
 "Patch only" = "仅补丁";
 "Pause automatic updates. Manual upgrades still work." = "暂停自动更新。手动升级仍然可用。";
@@ -558,6 +603,8 @@
 "Reading services…" = "正在读取服务…";
 "Reading taps…" = "正在读取 tap…";
 "Reading the local taps…" = "正在读取本地 tap…";
+"Reading your apps and Homebrew's casks…" = "正在读取你的 App 和 Homebrew 的 cask…";
+"Ready to adopt" = "可以接管";
 "Refresh" = "刷新";
 "Refresh failed" = "刷新失败";
 "Refreshing" = "正在刷新";
@@ -628,6 +675,7 @@
 "Saved before each upgrade and auto-update run. The last %lld are kept." = "在每次升级和自动更新运行前存储。保留最近 %lld 个。";
 "Saved by hand" = "手动存储";
 "Saves what is installed now as a restore point" = "将当前已安装的内容存储为恢复点";
+"Scan Again" = "重新扫描";
 "Scan Now" = "立即扫描";
 "Scan failed" = "扫描失败";
 "Scan for Vulnerabilities" = "扫描漏洞";
@@ -648,11 +696,12 @@
 "Select %@" = "选择 %@";
 "Select a package" = "选择软件包";
 "Select a service" = "选择服务";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "仅当“包含可自行更新的 App”开启时，才包含可自行更新的 App。";
+"Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "只有开启“包含自行更新的 App”，或为该 App 选择了“由 Homebrew 更新”时，才会包含自行更新的 App；选择“App 自行更新”时则永不包含。";
 "Self-updating apps not checked: %@" = "未检查可自行更新的 App：%@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";
 "Services" = "服务";
+"Several casks install an app with this name. Pick the one you have." = "有多个 cask 会安装同名 App。请选择你所用的那个。";
 "Show" = "显示";
 "Show Auto-update Log…" = "显示自动更新日志…";
 "Show Dependencies" = "显示依赖项";
@@ -701,6 +750,7 @@
 "Stopped: auto-update was turned off during the run" = "已停止：运行期间自动更新被关闭";
 "Stops by itself after 60 seconds." = "60 秒后自动停止。";
 "Sunday" = "星期日";
+"Sure match" = "确定匹配";
 "Swaps source build for bottle" = "将源码构建替换为 bottle";
 "Swaps source builds for Intelbrew bottles" = "将源码构建替换为 Intelbrew bottle";
 "Swaps source builds for bottles" = "将源码构建替换为 bottle";
@@ -711,6 +761,8 @@
 "Tankard (demo)" = "Tankard（演示）";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
+"Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
+"Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard 会在 %@ 或 TANKARD_BREW 中查找 brew。";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard 从不运行 sudo。请在“终端”中运行：";
 "Tankard on GitHub" = "GitHub 上的 Tankard";
@@ -730,6 +782,11 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "此用户无法写入 Homebrew 文件夹。`brew doctor`（Homebrew ▸ 健康状况）通常会指出是哪些，以及修复命令。";
 "The Installed list, filtered to this tap (tap:%@)" = "“已安装”列表，已按此 tap 过滤 (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL 必须是 https://、http://、ssh://、git:// 或 file://，或 git@host:path，且不含空格。";
+"The app has no version brew can compare." = "该 App 没有 brew 可比较的版本。";
+"The app's bundle id is one the cask names." = "该 App 的 bundle ID 是 cask 中列出的之一。";
+"The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "此 cask 总是下载最新版本，因此 brew 会在下载后比较；如果不同，就不会改动该 App。";
+"The cask installs to %@; brew adopts only an app at that exact place." = "此 cask 安装到 %@；brew 只接管正好位于该位置的 App。";
+"The cask says this app updates itself (auto_updates)." = "此 cask 声明该 App 会自行更新（auto_updates）。";
 "The disk is full" = "磁盘已满";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "安装程序会要求输入密码并在“终端”中运行。完成后，请回来点按“再次检查”。";
 "The last %lld are kept in Application Support." = "最近 %lld 个保存在 Application Support 中。";
@@ -738,12 +795,15 @@
 "The official installer from brew.sh." = "来自 brew.sh 的官方安装程序。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "旧版本仍已安装。brew uninstall 会移除新版本，然后 brew link 会链接旧版本。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "这些变量会先被取消设置，因此这次 brew update 不会把 fork 放回去。";
+"The vendor matches, but the cask doesn't name this exact bundle id." = "开发者匹配，但 cask 未列出这个确切的 bundle ID。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "它们的命令和库不在 Homebrew 的前缀中。通常是安装或升级被中断所致。";
 "There are broken links in Homebrew's folders" = "Homebrew 文件夹中有损坏的链接";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "没有剩余空间用于下载或解包。请释放一些空间（“清理”会有帮助），然后重试。";
 "These installed packages need it. Uninstall them first, or keep %@." = "这些已安装的软件包需要它。请先卸载它们，或保留 %@。";
+"These match a cask, but brew install --adopt wouldn't take them over." = "这些 App 与某个 cask 匹配，但 brew install --adopt 不会接管它们。";
 "Third-party" = "第三方";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
+"This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";
@@ -783,6 +843,7 @@
 "Up to date" = "已是最新";
 "Update" = "更新";
 "Updated %@" = "已更新 %@";
+"Updates" = "更新";
 "Updates itself" = "自行更新";
 "Upgrade" = "升级";
 "Upgrade %@" = "升级 %@";
@@ -805,6 +866,7 @@
 "Upgrade vulnerable packages. " = "升级存在漏洞的软件包。 ";
 "Upgraded (%lld)" = "已升级 (%lld)";
 "Upgrades" = "升级";
+"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "brew 列出升级时即会显示；开启“包含自行更新的 App”后会显示每个新版本（设置 ▸ 升级）。";
 "Upgrading" = "正在升级";
 "Used by" = "被以下项使用";
 "User" = "用户";
@@ -834,6 +896,8 @@
 "Yes" = "是";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
+"adopted" = "已接管";
+"and %lld more" = "及另外 %lld 个";
 "and %lld more…" = "以及另外 %lld 项…";
 "at" = "于";
 "at least %@ on the Intelbrew builder" = "在 Intelbrew 构建器上至少为 %@";
@@ -841,6 +905,7 @@
 "bottle" = "bottle";
 "brew --cache, measured with du -sk" = "brew --cache，用 du -sk 测量";
 "brew --version exited %d" = "brew --version 已退出，代码 %d";
+"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew 只接管与 cask 安装版本完全相同的版本。请先用 App 自带的更新程序更新，然后点按“重新扫描”。Tankard 不会替你替换该 App。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew 一次只允许运行一条命令。请等另一条命令（在“终端”或其他 App 中）完成后再重试。";
 "brew bundle check failed:\n" = "brew bundle check 失败：\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle 未在 %lld 秒内完成，因此 Tankard 已将其停止。Homebrew 可能正忙或在等待网络；请稍后再试。";
@@ -858,6 +923,7 @@
 "brew doctor: %lld warning" = "brew doctor：%lld 条警告";
 "brew doctor: %lld warnings" = "brew doctor：%lld 条警告";
 "brew exited %lld" = "brew 已退出，代码 %lld";
+"brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt：brew 会下载 cask，将 App 的版本（短版本号和构建号）与已安装的版本比较，一致时记录该 cask 而不移动 App。来自 App Store 和 Apple 的 App，以及 Homebrew 已管理的 App，不会列出。";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install 会获取 Homebrew 当前的版本，可能比 %@ 更新。";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link 总是链接剩余的最新版本，而不是此恢复点中的版本。";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "对于 keg-only formula，brew link 需要 --force，这会把它链接到此前未链接的位置。";
@@ -905,6 +971,7 @@
 "failed" = "失败";
 "failed (exit %d)" = "失败（退出代码 %d）";
 "formulae.brew.sh answered %lld for %@" = "formulae.brew.sh 对 %2$@ 返回 %1$lld";
+"formulae.brew.sh · %@ casks" = "formulae.brew.sh · %@ 个 cask";
 "formulae.brew.sh · %@ formulae · %@ casks" = "formulae.brew.sh · %@ 个 formula · %@ 个 cask";
 "has a removed upstream repository" = "上游仓库已被移除";
 "has an archived upstream repository" = "上游仓库已归档";
@@ -940,6 +1007,7 @@
 "pin changed" = "固定状态已更改";
 "pinned" = "已固定";
 "reinstalled" = "已重新安装";
+"set to update itself" = "设为自行更新";
 "source" = "源码";
 "still outdated after brew upgrade" = "brew upgrade 后仍然过期";
 "stopped" = "已停止";

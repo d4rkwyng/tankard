@@ -42,7 +42,8 @@ public extension Package {
     /// notifications include: one is waiting and it isn't held. With
     /// "Include self-updating apps" on, the casks `brew outdated --greedy`
     /// adds have `upgradeAvailable` set, so they count too, unless pinned.
-    var isUpgradeTarget: Bool { upgradeAvailable && !isHeld && versionSkipped != true }
+    /// 0.8: a self-updating cask left to its own updater is out too.
+    var isUpgradeTarget: Bool { upgradeAvailable && !isHeld && versionSkipped != true && selfUpdateHeld != true }
 
     /// 0.6: what a manual Upgrade of this one package takes: a skipped
     /// version still upgrades by hand.

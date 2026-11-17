@@ -2,6 +2,7 @@
 "\n\nTankard runs: " = "\n\nTankardの実行内容: ";
 " (default)" = " (デフォルト)";
 " (from cache)" = " (キャッシュから)";
+" (one per app)" = "（アプリごとに1つ）";
 " Asking VS Code for its extensions can hang brew bundle dump." = " VS Codeに拡張機能を問い合わせると、brew bundle dump が止まることがあります。";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " cask は検査されません。1分を超えるスキャンは停止されます。「今すぐスキャン」は、指示したときに1回スキャンを実行します。デフォルトではオフです。";
 " It took %@." = " %@かかりました。";
@@ -13,6 +14,7 @@
 " to confirm" = " 確認のため";
 " · partial scan" = " · 部分スキャン";
 " · source" = " · ソース";
+"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\n既存のアプリを削除し、代わりに cask のバージョンをインストールします。";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ が失敗しました(終了コード %d)";
 "%@ %@ needs administrator rights" = "%@ %@ には管理者権限が必要です";
@@ -55,6 +57,7 @@
 "%lld Homebrew bottles" = "%lld個のHomebrew bottle";
 "%lld Intelbrew bottle" = "%lld個のIntelbrew bottle";
 "%lld Intelbrew bottles" = "%lld個のIntelbrew bottle";
+"%lld already from Homebrew" = "%lld個は Homebrew から導入済み";
 "%lld bottle" = "%lld個のbottle";
 "%lld bottle from Intelbrew" = "%lld個のbottle(Intelbrew提供)";
 "%lld bottles" = "%lld個のbottle";
@@ -76,8 +79,10 @@
 "%lld failed" = "%lld件が失敗";
 "%lld formula" = "%lld個のformula";
 "%lld formulae" = "%lld個のformulae";
+"%lld from Apple" = "%lld個は Apple 製";
 "%lld from an untrusted tap" = "%lld個が信頼されていないtapから";
 "%lld from source" = "%lld個がソースから";
+"%lld from the App Store" = "%lld個は App Store から";
 "%lld h ago" = "%lld時間前";
 "%lld hours" = "%lld時間";
 "%lld installed" = "%lld個がインストール済み";
@@ -152,11 +157,24 @@
 "Added (%lld)" = "追加済み(%lld)";
 "Adding tap" = "tapを追加中";
 "Admin password" = "管理者パスワード";
+"Adopt" = "引き継ぐ";
+"Adopt %@?" = "%@ を引き継ぎますか？";
+"Adopt %lld Apps…" = "%lld個のアプリを引き継ぐ…";
+"Adopt %lld apps?" = "%lld個のアプリを引き継ぎますか？";
+"Adopt 1 App…" = "1個のアプリを引き継ぐ…";
+"Adopt Apps" = "アプリを引き継ぐ";
+"Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "「アプリを引き継ぐ」は formulae.brew.sh から Homebrew の cask 一覧を読み込みますが、この Homebrew（Intelbrew、または HOMEBREW_NO_INSTALL_FROM_API）では Tankard はそれを使用しません。";
+"Adopt Apps…" = "アプリを引き継ぐ…";
+"Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Homebrew ▸ アプリを引き継ぐ… から再度引き継げます。実行前に確認があります。";
+"Adopting" = "引き継ぎ中";
+"Adopting runs through Tankard's queue and History." = "引き継ぎは Tankard のキューと履歴を通じて実行されます。";
+"After adopting:" = "引き継ぎ後:";
 "All" = "すべて";
 "All versions" = "すべてのバージョン";
 "Allow Tankard to update apps" = "Tankardによるアプリのアップデートを許可";
 "Allowed" = "許可";
 "Already above in this branch" = "このブランチの上位にすでにあります";
+"Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Web から入手したアプリがありますか？ Homebrew が動作したら、Homebrew ▸ アプリを引き継ぐ… で brew に最新の状態を保たせることができます。";
 "Already installed" = "インストール済み";
 "Also" = "その他";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "自己更新するアプリ(auto_updates を持つcask)や常に最新版をダウンロードするアプリも、brew outdated --greedy と同様に一覧に含めます。これらのアプリは通常自分で最新を保つため、デフォルトではオフです。";
@@ -167,7 +185,10 @@
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "別のインストーラがHomebrewのプレフィックスにファイルを置きました。ソースからのビルドに支障が出ることがあります。";
 "Another old version is installed" = "別の古いバージョンがインストールされています";
 "App Store apps" = "App Storeのアプリ";
+"App updates itself" = "アプリが更新";
 "Appearance" = "外観";
+"Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自己更新するアプリは引き続き自分で更新します。各アプリを誰が更新するかの選択は、引き継ぎと一緒に保存されます。";
+"Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "自分でインストールしたアプリのうち、Homebrew の cask でもインストールされるもの。引き継ぐと、再インストールせずに brew で更新できます。";
 "Asking brew info…" = "brew info を問い合わせ中…";
 "Auto-update" = "自動アップデート";
 "Auto-update didn't run" = "自動アップデートは実行されませんでした";
@@ -200,6 +221,7 @@
 "Built from source; a bottle exists for the current version" = "ソースからビルド。現在のバージョンのbottleがあります";
 "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it." = "通常、brewはcaskのアップグレード前に実行中のアプリを終了し、後で再び開きます。これをオンにすると、TankardはcaskのアップグレードにHOMEBREW_NO_UPGRADE_QUIT_CASKS=1を設定します(コマンドに表示されます)。アプリは実行されたままで、新しいバージョンは次に開いたときに起動します。";
 "Can roll back" = "ロールバック可能";
+"Can't adopt" = "引き継ぎ不可";
 "Can't uninstall: needed by %lld installed packages" = "アンインストールできません: %lld個のインストール済みパッケージが必要としています";
 "Can't uninstall: needed by 1 installed package" = "アンインストールできません: 1個のインストール済みパッケージが必要としています";
 "Cancel" = "キャンセル";
@@ -234,6 +256,7 @@
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "バージョンをbrewと同じ方法で比較します。条件を満たさないパッケージはスキップされてログに記録されるので、手動でアップグレードしてください。比較できないバージョン(日付、文字)は「すべてのバージョン」の場合にのみ自動でアップグレードされます。";
 "Compiles" = "コンパイル";
 "Copy Brewfile" = "Brewfileをコピー";
+"Copy Command" = "コマンドをコピー";
 "Copy Install Command" = "インストールコマンドをコピー";
 "Copy Name" = "名前をコピー";
 "Copy Upgrade Command" = "アップグレードコマンドをコピー";
@@ -249,6 +272,7 @@
 "Couldn't load the catalogue" = "カタログを読み込めませんでした";
 "Couldn't open Terminal. Copy the command instead." = "ターミナルを開けませんでした。代わりにコマンドをコピーしてください。";
 "Couldn't open Terminal. Copy the commands instead." = "ターミナルを開けませんでした。代わりにコマンドをコピーしてください。";
+"Couldn't read Homebrew's cask list: %@" = "Homebrew の cask 一覧を読み込めませんでした: %@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "caskの詳細を読み取れなかったため、管理者パスワードの表示がありません。";
 "Couldn't read the formulae's details, so compiles aren't marked." = "formulaeの詳細を読み取れなかったため、コンパイルの表示がありません。";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "formulae.brew.sh から更新できませんでした(%@)。保存済みのコピーを表示しています。";
@@ -261,6 +285,7 @@
 "Deep purple and amber, like the icon. Dark underneath." = "アイコンと同じ、深い紫とアンバー。下地はダーク。";
 "Demo mode: Terminal not opened." = "デモモード: ターミナルは開きませんでした。";
 "Demo mode: no log file written" = "デモモード: ログファイルは書き込まれていません";
+"Demo · %@ casks" = "デモ · %@ 個の cask";
 "Dependencies (%lld)" = "依存関係(%lld)";
 "Dependency" = "依存関係";
 "Dependency tree (%lld direct, %lld in all)" = "依存関係ツリー(直接 %lld、合計 %lld)";
@@ -317,9 +342,11 @@
 "Fixed in %@" = "%@で修正";
 "Fixed upstream in commit %@" = "アップストリームのコミット %@ で修正";
 "Fixed upstream in commit %@ (+%lld more)" = "アップストリームのコミット %@ で修正(ほか%lld件)";
+"Follow the setting" = "設定に従う";
 "Follows macOS." = "macOSに従います。";
 "For 1 Day" = "1日間";
 "For 1 Week" = "1週間";
+"For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "brew はアプリごとに cask をダウンロードし、既存のアプリと照合してから、cask をインストール済みとして記録します。アプリ自体はその場所に残ります。";
 "Fork: behind (%@; %@ available)" = "フォーク: 遅れています(%@、%@が利用可能)";
 "Fork: current (%@)" = "フォーク: 最新(%@)";
 "Fork: not on a release tag (%@)" = "フォーク: リリースタグ上にありません(%@)";
@@ -335,6 +362,7 @@
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "レシートより: インストール時にリンクされたすべて(brew deps --installed では少なく表示されることがあります)";
 "From source" = "ソースから";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "Homebrew/install のREADME(「Uninstall Homebrew」)に基づき、--path オプションを付けて、Tankardが表示しているHomebrewだけを削除します。ターミナルで実行され、削除前にもう一度確認します。";
+"From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "以降、これらのアプリは Homebrew が管理します。brew upgrade で cask のバージョンに置き換えられ、cask をアンインストールすると（Tankard でも brew uninstall でも）アプリは削除されます。";
 "Full log saved to %@" = "完全なログを %@ に保存しました";
 "Full scan" = "フルスキャン";
 "General" = "一般";
@@ -354,6 +382,8 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrewがネットワークに接続できませんでした";
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
+"Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "これらのアプリには Homebrew の cask があり、インストール済みのバージョンが一致しています（またはアプリが自己更新するため brew は比較しません）。";
+"Homebrew has disabled this cask." = "Homebrew はこの cask を無効にしています。";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "HomebrewはmacOS用のパッケージマネージャです。コマンドラインツールやアプリをインストールし、最新に保ちます。Tankardはそのウインドウなので、先にHomebrewが必要です。";
 "Homebrew isn't installed" = "Homebrewがインストールされていません";
 "Homebrew isn't ready yet." = "Homebrewの準備ができていません。";
@@ -363,7 +393,9 @@
 "Homebrew no longer installs or upgrades it." = "Homebrewはもうインストールもアップグレードもしません。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrewはもうメンテナンスしていないか、まもなく終了します。「非推奨」フィルタで一覧でき、brewが代替を示す場合はそれも表示されます。";
 "Homebrew not found" = "Homebrewが見つかりません";
+"Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew は %@ として記録します。自己更新するアプリについて brew はバージョンを比較しません。";
 "Homebrew still has it, but will disable it later." = "Homebrewにはまだありますが、後で無効化されます。";
+"Homebrew updates it" = "Homebrew が更新";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrewコントリビューター、BSD-2-Clause。";
 "Homebrew's API (formulae.brew.sh)" = "HomebrewのAPI(formulae.brew.sh)";
 "Homebrew's official uninstaller" = "Homebrew公式のアンインストーラ";
@@ -371,6 +403,7 @@
 "Homebrew's sbin folder isn't in your PATH" = "Homebrewのsbinフォルダが PATH にありません";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "「新しいアップグレードを通知」がオンのとき、バックグラウンド確認を実行する間隔。";
 "I've done this" = "完了しました";
+"If a download doesn't match, brew stops for that app and leaves it as it was." = "ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
 "Include self-updating apps" = "自己更新するアプリを含める";
 "Install" = "インストール";
 "Install %@" = "%@をインストール";
@@ -383,6 +416,7 @@
 "Install standard Homebrew" = "標準のHomebrewをインストール";
 "Install with Tankard" = "Tankardでインストール";
 "Installed" = "インストール済み";
+"Installed %@; the cask installs %@." = "インストール済み: %1$@。cask がインストールするのは %2$@ です。";
 "Installed as" = "インストール名";
 "Installed as a dependency" = "依存関係としてインストール";
 "Installed on" = "インストール日";
@@ -416,10 +450,12 @@
 "Last auto-update: %@ · %@" = "前回の自動アップデート: %@ · %@";
 "Last refresh failed" = "前回の更新に失敗しました";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@を「すべてアップグレード」、カウント、自動アップデートから除外します。手動でのアップグレードは引き続き使えます。新しいバージョンが出ると解除されます。";
+"Left to the app: %@ isn't in Upgrade all or auto-update." = "アプリに任せる: %@ は「すべてアップグレード」と自動アップデートの対象外です。";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "残ったリンクは、存在しないファイルを指しています。通常は問題ありません。brew cleanup でほとんど削除されます。";
 "Let the current package finish, then skip the rest" = "現在のパッケージの完了を待ち、残りをスキップする";
 "Licence" = "ライセンス";
 "Light" = "ライト";
+"Likely match" = "一致の可能性大";
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "このMacにないが、Brewfileが必要とするものを一覧表示します(brew bundle check)";
 "Loading Homebrew's catalogue…" = "Homebrewのカタログを読み込み中…";
 "Loading formulae.brew.sh…" = "formulae.brew.sh を読み込み中…";
@@ -439,6 +475,8 @@
 "More filters" = "その他のフィルタ";
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "その他のフィルタ: ピン留め(brewがアップグレードしないパッケージ)、要求したもののみ(自分でインストールし、他に必要とされないもの、brew leaves -r)、脆弱、メモあり、非推奨";
 "Name" = "名前";
+"Name only" = "名前のみ";
+"Needs update first" = "先に更新が必要";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "アプリを終了することはありません: アプリが実行中のcaskはスキップされます。「実行中のアプリを終了しない」がオンの場合を除きます(その場合はアップグレードされ、新しいバージョンは次回に開きます)。";
 "New vulnerabilities" = "新しい脆弱性";
 "New: %@" = "新規: %@";
@@ -447,8 +485,10 @@
 "Newer than Intelbrew" = "Intelbrewより新しい";
 "Newer than tap" = "tapより新しい";
 "Next run: %@" = "次回の実行: %@";
+"No Homebrew cask installs these apps." = "これらのアプリをインストールする Homebrew の cask はありません。";
 "No Homebrew status to work from" = "作業に使えるHomebrewの状態がありません";
 "No Intelbrew bottle yet." = "Intelbrew bottleはまだありません。";
+"No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "引き継ぐアプリはありません。アプリケーション内はすべて Homebrew、App Store、または Apple のものです。";
 "No automatic runs yet." = "自動実行はまだありません。";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "このMac用のbottleはまだありません。再インストールまたはアップグレードするとソースからコンパイルされます。";
 "No bottle for this Mac." = "このMac用のbottleがありません。";
@@ -457,6 +497,7 @@
 "No bottle: compiles" = "Bottleなし: コンパイル";
 "No bottle: will compile from source" = "Bottleなし: ソースからコンパイルされます";
 "No brew vulns" = "brew vulnsなし";
+"No cask" = "cask なし";
 "No data yet" = "データはまだありません";
 "No dependencies" = "依存関係なし";
 "No fix listed" = "修正は記載されていません";
@@ -479,6 +520,7 @@
 "Not in Intelbrew mode: nothing to revert." = "Intelbrewモードではありません: 元に戻すものはありません。";
 "Not included: %@ (can't roll back automatically)" = "含まれません: %@(自動でロールバックできません)";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "リンクされていません: コマンドがHomebrewのbinにありません。`brew link %@` でリンクします。";
+"Not listed: %@." = "一覧にないもの: %@。";
 "Not now" = "今はしない";
 "Not running" = "実行中ではありません";
 "Not scanned yet" = "まだスキャンされていません";
@@ -515,6 +557,7 @@
 "One at a time through Tankard's queue. Each is recorded in History." = "Tankardのキューで1つずつ実行されます。それぞれ履歴に記録されます。";
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "formulaとcaskごとに1回のbrew installを、Tankardのキューとログ経由で実行します。先に「Tapを追加…」でtapを追加してください。";
 "Only available in Tankard.app." = "Tankard.appでのみ利用できます。";
+"Only the app's name matches. It may be a different app with the same name: check before adopting." = "アプリ名だけが一致しています。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。";
 "Open Homepage" = "ホームページを開く";
 "Open Release Page" = "リリースページを開く";
 "Open System Settings" = "システム設定を開く";
@@ -528,10 +571,12 @@
 "Opens Tankard when you log in, as a macOS login item." = "ログイン時にmacOSのログイン項目としてTankardを開きます。";
 "Opens Terminal. Nothing is typed or run for you." = "ターミナルを開きます。入力や実行は自動では行われません。";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "任意。実行はされません: brew untap homebrew/core でcoreのクローンを削除します。すでに開いているターミナルウインドウは、開き直すまで古い設定のままです。d4rkwyng/intelbrewのREADME「How do I go back to upstream Homebrew?」より。";
+"Or have Homebrew replace it, in Terminal:" = "または、ターミナルで Homebrew に置き換えさせます:";
 "Other" = "その他";
 "Other packages need it" = "他のパッケージが必要としています";
 "PID" = "PID";
 "Package" = "パッケージ";
+"Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "%@ フォルダの一部で、cask はこのフォルダ全体をインストールします。brew はすべてのファイルを比較し、違いがあれば拒否します。";
 "Partial scan" = "部分的なスキャン";
 "Patch only" = "パッチのみ";
 "Pause automatic updates. Manual upgrades still work." = "自動アップデートを一時停止します。手動のアップグレードは引き続き使えます。";
@@ -558,6 +603,8 @@
 "Reading services…" = "サービスを読み込み中…";
 "Reading taps…" = "tapを読み込み中…";
 "Reading the local taps…" = "ローカルのtapを読み込み中…";
+"Reading your apps and Homebrew's casks…" = "アプリと Homebrew の cask を読み込み中…";
+"Ready to adopt" = "引き継ぎ可能";
 "Refresh" = "更新";
 "Refresh failed" = "更新に失敗しました";
 "Refreshing" = "更新中";
@@ -628,6 +675,7 @@
 "Saved before each upgrade and auto-update run. The last %lld are kept." = "アップグレードと自動アップデートの実行前に毎回保存されます。直近%lld件が保持されます。";
 "Saved by hand" = "手動で保存";
 "Saves what is installed now as a restore point" = "現在インストールされているものを復元ポイントとして保存します";
+"Scan Again" = "再スキャン";
 "Scan Now" = "今すぐスキャン";
 "Scan failed" = "スキャンに失敗しました";
 "Scan for Vulnerabilities" = "脆弱性をスキャン";
@@ -648,11 +696,12 @@
 "Select %@" = "%@を選択";
 "Select a package" = "パッケージを選択";
 "Select a service" = "サービスを選択";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "自己アップデートするアプリは、「自己アップデートするアプリを含める」がオンの場合にのみ含まれます。";
+"Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "自己更新するアプリが含まれるのは、「自己更新するアプリを含める」がオンのとき、またはそのアプリで「Homebrew が更新」を選んだときだけです。「アプリが更新」を選んだ場合は含まれません。";
 "Self-updating apps not checked: %@" = "自己アップデートするアプリは確認されていません: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "インストール済みformulaの名前とバージョンをOSV.dev（brew vulns経由）に送信します。";
 "Service" = "サービス";
 "Services" = "サービス";
+"Several casks install an app with this name. Pick the one you have." = "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。";
 "Show" = "表示";
 "Show Auto-update Log…" = "自動アップデートのログを表示…";
 "Show Dependencies" = "依存関係を表示";
@@ -701,6 +750,7 @@
 "Stopped: auto-update was turned off during the run" = "停止: 実行中に自動アップデートがオフにされました";
 "Stops by itself after 60 seconds." = "60秒後に自動的に停止します。";
 "Sunday" = "日曜日";
+"Sure match" = "確実に一致";
 "Swaps source build for bottle" = "ソースビルドをbottleに置き換えます";
 "Swaps source builds for Intelbrew bottles" = "ソースビルドをIntelbrewのbottleに置き換えます";
 "Swaps source builds for bottles" = "ソースビルドをbottleに置き換えます";
@@ -711,6 +761,8 @@
 "Tankard (demo)" = "Tankard（デモ）";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankardはこの MacのHomebrewのprefixをまだ読み込んでいません。先に更新してください。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
+"Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
+"Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankardは%@またはTANKARD_BREWでbrewを探します。";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankardはsudoを実行しません。ターミナルでこれを実行してください:";
 "Tankard on GitHub" = "GitHubのTankard";
@@ -730,6 +782,11 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "このユーザーはHomebrewのフォルダに書き込めません。通常は `brew doctor`（Homebrew ▸ ヘルス）で原因と修正コマンドが分かります。";
 "The Installed list, filtered to this tap (tap:%@)" = "このtapで絞り込んだインストール済みリスト (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URLは https://、http://、ssh://、git:// または file://、もしくは git@host:path 形式で、スペースを含められません。";
+"The app has no version brew can compare." = "このアプリには brew が比較できるバージョンがありません。";
+"The app's bundle id is one the cask names." = "アプリのバンドル ID が cask に記載されたものと一致します。";
+"The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "この cask は常に最新バージョンをダウンロードするため、brew はダウンロード後に比較します。違いがあればアプリには手を付けません。";
+"The cask installs to %@; brew adopts only an app at that exact place." = "この cask は %@ にインストールします。brew はその場所にあるアプリだけを引き継ぎます。";
+"The cask says this app updates itself (auto_updates)." = "cask によると、このアプリは自己更新します（auto_updates）。";
 "The disk is full" = "ディスクがいっぱいです";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "インストーラがパスワードを求め、ターミナルで実行されます。完了したら戻って「もう一度確認」をクリックしてください。";
 "The last %lld are kept in Application Support." = "直近%lld件がApplication Supportに保持されます。";
@@ -738,12 +795,15 @@
 "The official installer from brew.sh." = "brew.shの公式インストーラ。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "古いバージョンはまだインストールされています。brew uninstallで新しい方を削除し、brew linkで古い方をリンクします。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "この変数は先に解除されるため、このbrew updateでフォークが元に戻ることはありません。";
+"The vendor matches, but the cask doesn't name this exact bundle id." = "開発元は一致しますが、cask にはこのバンドル ID が記載されていません。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "それらのコマンドとライブラリはHomebrewのprefix内にありません。通常はインストールまたはアップグレードが中断されたことが原因です。";
 "There are broken links in Homebrew's folders" = "Homebrewのフォルダに壊れたリンクがあります";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "ダウンロードや展開に使える容量がありません。容量を空けて（クリーンアップが役立ちます）から再試行してください。";
 "These installed packages need it. Uninstall them first, or keep %@." = "インストール済みのこれらのパッケージが必要としています。先にアンインストールするか、%@を残してください。";
+"These match a cask, but brew install --adopt wouldn't take them over." = "cask と一致しますが、brew install --adopt では引き継げません。";
 "Third-party" = "サードパーティ";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "このbrewには `brew vulns` がありません（Homebrew 7で追加）。`brew update` で入手してください。";
+"This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "この cask はインストーラパッケージを実行し、--adopt を無視します。brew はパスワードを使ってインストーラを再実行することになります。";
 "This macOS version isn't supported by Homebrew" = "このバージョンのmacOSはHomebrewでサポートされていません";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "この復元ポイントのtap、formula、caskをBrewfileとして（バージョンなし: Brewfileにはバージョンがありません）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "この手順には管理者権限が必要ですが、Tankardは要求できません。ターミナルでこれを実行してください:";
@@ -783,6 +843,7 @@
 "Up to date" = "最新です";
 "Update" = "アップデート";
 "Updated %@" = "%@を更新しました";
+"Updates" = "アップデート";
 "Updates itself" = "自己アップデート";
 "Upgrade" = "アップグレード";
 "Upgrade %@" = "%@をアップグレード";
@@ -805,6 +866,7 @@
 "Upgrade vulnerable packages. " = "脆弱性のあるパッケージをアップグレードします。 ";
 "Upgraded (%lld)" = "アップグレード済み (%lld)";
 "Upgrades" = "アップグレード";
+"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "アップグレードは brew が一覧に挙げたときに表示されます。「自己更新するアプリを含める」がオンなら新しいバージョンをすべて表示します（設定 ▸ アップグレード）。";
 "Upgrading" = "アップグレード中";
 "Used by" = "使用元";
 "User" = "ユーザ";
@@ -834,6 +896,8 @@
 "Yes" = "はい";
 "Your PATH finds other tools before Homebrew's" = "PATHでHomebrewより先に他のツールが見つかります";
 "a symlink to %@: that file is backed up and edited" = "%@へのシンボリックリンク: そのファイルがバックアップされ、編集されます";
+"adopted" = "引き継ぎ済み";
+"and %lld more" = "ほか%lld個";
 "and %lld more…" = "他%lld件…";
 "at" = "場所:";
 "at least %@ on the Intelbrew builder" = "Intelbrewビルダー上で%@以上";
@@ -841,6 +905,7 @@
 "bottle" = "bottle";
 "brew --cache, measured with du -sk" = "brew --cache、du -skで計測";
 "brew --version exited %d" = "brew --versionが%dで終了しました";
+"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew は cask がインストールするのと同じバージョンしか引き継ぎません。アプリ自身のアップデート機能で更新してから「再スキャン」してください。Tankard がアプリを置き換えることはありません。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brewは一度に1つのコマンドしか実行できません。もう一方（ターミナルまたは別のアプリ内）が終了するのを待ってから、再試行してください。";
 "brew bundle check failed:\n" = "brew bundle checkに失敗しました:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundleが%lld秒以内に終了しなかったため、Tankardが停止しました。Homebrewがビジー状態か、ネットワークを待っている可能性があります。しばらくしてからもう一度お試しください。";
@@ -858,6 +923,7 @@
 "brew doctor: %lld warning" = "brew doctor: 警告%lld件";
 "brew doctor: %lld warnings" = "brew doctor: 警告%lld件";
 "brew exited %lld" = "brewが%lldで終了しました";
+"brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt: brew は cask をダウンロードし、アプリのバージョン（短いバージョンとビルド）をインストール済みのものと比較して、一致すればアプリを移動せずに cask を記録します。App Store と Apple のアプリ、および Homebrew が管理済みのアプリは表示されません。";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew installはHomebrewの現在のバージョンを取得します。%@より新しい場合があります。";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew linkは常に残っている最新バージョンをリンクします。それはこの復元ポイントのものではありません。";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "keg-onlyのformulaでは、brew linkに--forceが必要です。これは、以前リンクされていなかった場所にリンクします。";
@@ -905,6 +971,7 @@
 "failed" = "失敗";
 "failed (exit %d)" = "失敗（終了コード%d）";
 "formulae.brew.sh answered %lld for %@" = "formulae.brew.shが%2$@に対して%1$lldを返しました";
+"formulae.brew.sh · %@ casks" = "formulae.brew.sh · %@ 個の cask";
 "formulae.brew.sh · %@ formulae · %@ casks" = "formulae.brew.sh · formula %@個 · cask %@個";
 "has a removed upstream repository" = "上流リポジトリが削除されています";
 "has an archived upstream repository" = "上流リポジトリがアーカイブされています";
@@ -940,6 +1007,7 @@
 "pin changed" = "ピン留めを変更しました";
 "pinned" = "ピン留め済み";
 "reinstalled" = "再インストール済み";
+"set to update itself" = "自己更新に設定";
 "source" = "ソース";
 "still outdated after brew upgrade" = "brew upgrade後も古いままです";
 "stopped" = "停止済み";

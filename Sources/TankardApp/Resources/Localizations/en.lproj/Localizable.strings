@@ -2,6 +2,7 @@
 "\n\nTankard runs: " = "\n\nTankard runs: ";
 " (default)" = " (default)";
 " (from cache)" = " (from cache)";
+" (one per app)" = " (one per app)";
 " Asking VS Code for its extensions can hang brew bundle dump." = " Asking VS Code for its extensions can hang brew bundle dump.";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default.";
 " It took %@." = " It took %@.";
@@ -13,6 +14,7 @@
 " to confirm" = " to confirm";
 " · partial scan" = " · partial scan";
 " · source" = " · source";
+"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\nThis deletes the app that is there and installs the cask's version in its place.";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ failed (exit %d)";
 "%@ %@ needs administrator rights" = "%@ %@ needs administrator rights";
@@ -55,6 +57,7 @@
 "%lld Homebrew bottles" = "%lld Homebrew bottles";
 "%lld Intelbrew bottle" = "%lld Intelbrew bottle";
 "%lld Intelbrew bottles" = "%lld Intelbrew bottles";
+"%lld already from Homebrew" = "%lld already from Homebrew";
 "%lld bottle" = "%lld bottle";
 "%lld bottle from Intelbrew" = "%lld bottle from Intelbrew";
 "%lld bottles" = "%lld bottles";
@@ -76,8 +79,10 @@
 "%lld failed" = "%lld failed";
 "%lld formula" = "%lld formula";
 "%lld formulae" = "%lld formulae";
+"%lld from Apple" = "%lld from Apple";
 "%lld from an untrusted tap" = "%lld from an untrusted tap";
 "%lld from source" = "%lld from source";
+"%lld from the App Store" = "%lld from the App Store";
 "%lld h ago" = "%lld h ago";
 "%lld hours" = "%lld hours";
 "%lld installed" = "%lld installed";
@@ -152,11 +157,24 @@
 "Added (%lld)" = "Added (%lld)";
 "Adding tap" = "Adding tap";
 "Admin password" = "Admin password";
+"Adopt" = "Adopt";
+"Adopt %@?" = "Adopt %@?";
+"Adopt %lld Apps…" = "Adopt %lld Apps…";
+"Adopt %lld apps?" = "Adopt %lld apps?";
+"Adopt 1 App…" = "Adopt 1 App…";
+"Adopt Apps" = "Adopt Apps";
+"Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API).";
+"Adopt Apps…" = "Adopt Apps…";
+"Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first.";
+"Adopting" = "Adopting";
+"Adopting runs through Tankard's queue and History." = "Adopting runs through Tankard's queue and History.";
+"After adopting:" = "After adopting:";
 "All" = "All";
 "All versions" = "All versions";
 "Allow Tankard to update apps" = "Allow Tankard to update apps";
 "Allowed" = "Allowed";
 "Already above in this branch" = "Already above in this branch";
+"Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.";
 "Already installed" = "Already installed";
 "Also" = "Also";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.";
@@ -167,7 +185,10 @@
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "Another installer put files in Homebrew's prefix. They can confuse builds from source.";
 "Another old version is installed" = "Another old version is installed";
 "App Store apps" = "App Store apps";
+"App updates itself" = "App updates itself";
 "Appearance" = "Appearance";
+"Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption.";
+"Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling.";
 "Asking brew info…" = "Asking brew info…";
 "Auto-update" = "Auto-update";
 "Auto-update didn't run" = "Auto-update didn't run";
@@ -200,6 +221,7 @@
 "Built from source; a bottle exists for the current version" = "Built from source; a bottle exists for the current version";
 "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it." = "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.";
 "Can roll back" = "Can roll back";
+"Can't adopt" = "Can't adopt";
 "Can't uninstall: needed by %lld installed packages" = "Can't uninstall: needed by %lld installed packages";
 "Can't uninstall: needed by 1 installed package" = "Can't uninstall: needed by 1 installed package";
 "Cancel" = "Cancel";
@@ -234,6 +256,7 @@
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions.";
 "Compiles" = "Compiles";
 "Copy Brewfile" = "Copy Brewfile";
+"Copy Command" = "Copy Command";
 "Copy Install Command" = "Copy Install Command";
 "Copy Name" = "Copy Name";
 "Copy Upgrade Command" = "Copy Upgrade Command";
@@ -249,6 +272,7 @@
 "Couldn't load the catalogue" = "Couldn't load the catalogue";
 "Couldn't open Terminal. Copy the command instead." = "Couldn't open Terminal. Copy the command instead.";
 "Couldn't open Terminal. Copy the commands instead." = "Couldn't open Terminal. Copy the commands instead.";
+"Couldn't read Homebrew's cask list: %@" = "Couldn't read Homebrew's cask list: %@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Couldn't read the casks' details, so admin passwords aren't marked.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Couldn't read the formulae's details, so compiles aren't marked.";
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy.";
@@ -261,6 +285,7 @@
 "Deep purple and amber, like the icon. Dark underneath." = "Deep purple and amber, like the icon. Dark underneath.";
 "Demo mode: Terminal not opened." = "Demo mode: Terminal not opened.";
 "Demo mode: no log file written" = "Demo mode: no log file written";
+"Demo · %@ casks" = "Demo · %@ casks";
 "Dependencies (%lld)" = "Dependencies (%lld)";
 "Dependency" = "Dependency";
 "Dependency tree (%lld direct, %lld in all)" = "Dependency tree (%lld direct, %lld in all)";
@@ -317,9 +342,11 @@
 "Fixed in %@" = "Fixed in %@";
 "Fixed upstream in commit %@" = "Fixed upstream in commit %@";
 "Fixed upstream in commit %@ (+%lld more)" = "Fixed upstream in commit %@ (+%lld more)";
+"Follow the setting" = "Follow the setting";
 "Follows macOS." = "Follows macOS.";
 "For 1 Day" = "For 1 Day";
 "For 1 Week" = "For 1 Week";
+"For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.";
 "Fork: behind (%@; %@ available)" = "Fork: behind (%@; %@ available)";
 "Fork: current (%@)" = "Fork: current (%@)";
 "Fork: not on a release tag (%@)" = "Fork: not on a release tag (%@)";
@@ -335,6 +362,7 @@
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)";
 "From source" = "From source";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything.";
+"From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app.";
 "Full log saved to %@" = "Full log saved to %@";
 "Full scan" = "Full scan";
 "General" = "General";
@@ -354,6 +382,8 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew couldn't reach the network";
 "Homebrew couldn't write to its folders" = "Homebrew couldn't write to its folders";
+"Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).";
+"Homebrew has disabled this cask." = "Homebrew has disabled this cask.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first.";
 "Homebrew isn't installed" = "Homebrew isn't installed";
 "Homebrew isn't ready yet." = "Homebrew isn't ready yet.";
@@ -363,7 +393,9 @@
 "Homebrew no longer installs or upgrades it." = "Homebrew no longer installs or upgrades it.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one.";
 "Homebrew not found" = "Homebrew not found";
+"Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves.";
 "Homebrew still has it, but will disable it later." = "Homebrew still has it, but will disable it later.";
+"Homebrew updates it" = "Homebrew updates it";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew contributors, BSD-2-Clause.";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew's API (formulae.brew.sh)";
 "Homebrew's official uninstaller" = "Homebrew's official uninstaller";
@@ -371,6 +403,7 @@
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew's sbin folder isn't in your PATH";
 "How often the background check runs, while \"Notify me about new upgrades\" is on." = "How often the background check runs, while \"Notify me about new upgrades\" is on.";
 "I've done this" = "I've done this";
+"If a download doesn't match, brew stops for that app and leaves it as it was." = "If a download doesn't match, brew stops for that app and leaves it as it was.";
 "Include self-updating apps" = "Include self-updating apps";
 "Install" = "Install";
 "Install %@" = "Install %@";
@@ -383,6 +416,7 @@
 "Install standard Homebrew" = "Install standard Homebrew";
 "Install with Tankard" = "Install with Tankard";
 "Installed" = "Installed";
+"Installed %@; the cask installs %@." = "Installed %@; the cask installs %@.";
 "Installed as" = "Installed as";
 "Installed as a dependency" = "Installed as a dependency";
 "Installed on" = "Installed on";
@@ -416,10 +450,12 @@
 "Last auto-update: %@ · %@" = "Last auto-update: %@ · %@";
 "Last refresh failed" = "Last refresh failed";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this.";
+"Left to the app: %@ isn't in Upgrade all or auto-update." = "Left to the app: %@ isn't in Upgrade all or auto-update.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them.";
 "Let the current package finish, then skip the rest" = "Let the current package finish, then skip the rest";
 "Licence" = "Licence";
 "Light" = "Light";
+"Likely match" = "Likely match";
 "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)" = "Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)";
 "Loading Homebrew's catalogue…" = "Loading Homebrew's catalogue…";
 "Loading formulae.brew.sh…" = "Loading formulae.brew.sh…";
@@ -439,6 +475,8 @@
 "More filters" = "More filters";
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated";
 "Name" = "Name";
+"Name only" = "Name only";
+"Needs update first" = "Needs update first";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).";
 "New vulnerabilities" = "New vulnerabilities";
 "New: %@" = "New: %@";
@@ -447,8 +485,10 @@
 "Newer than Intelbrew" = "Newer than Intelbrew";
 "Newer than tap" = "Newer than tap";
 "Next run: %@" = "Next run: %@";
+"No Homebrew cask installs these apps." = "No Homebrew cask installs these apps.";
 "No Homebrew status to work from" = "No Homebrew status to work from";
 "No Intelbrew bottle yet." = "No Intelbrew bottle yet.";
+"No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple.";
 "No automatic runs yet." = "No automatic runs yet.";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "No bottle for this Mac yet. Reinstalling or upgrading compiles from source.";
 "No bottle for this Mac." = "No bottle for this Mac.";
@@ -457,6 +497,7 @@
 "No bottle: compiles" = "No bottle: compiles";
 "No bottle: will compile from source" = "No bottle: will compile from source";
 "No brew vulns" = "No brew vulns";
+"No cask" = "No cask";
 "No data yet" = "No data yet";
 "No dependencies" = "No dependencies";
 "No fix listed" = "No fix listed";
@@ -479,6 +520,7 @@
 "Not in Intelbrew mode: nothing to revert." = "Not in Intelbrew mode: nothing to revert.";
 "Not included: %@ (can't roll back automatically)" = "Not included: %@ (can't roll back automatically)";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it.";
+"Not listed: %@." = "Not listed: %@.";
 "Not now" = "Not now";
 "Not running" = "Not running";
 "Not scanned yet" = "Not scanned yet";
@@ -515,6 +557,7 @@
 "One at a time through Tankard's queue. Each is recorded in History." = "One at a time through Tankard's queue. Each is recorded in History.";
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap….";
 "Only available in Tankard.app." = "Only available in Tankard.app.";
+"Only the app's name matches. It may be a different app with the same name: check before adopting." = "Only the app's name matches. It may be a different app with the same name: check before adopting.";
 "Open Homepage" = "Open Homepage";
 "Open Release Page" = "Open Release Page";
 "Open System Settings" = "Open System Settings";
@@ -528,10 +571,12 @@
 "Opens Tankard when you log in, as a macOS login item." = "Opens Tankard when you log in, as a macOS login item.";
 "Opens Terminal. Nothing is typed or run for you." = "Opens Terminal. Nothing is typed or run for you.";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\".";
+"Or have Homebrew replace it, in Terminal:" = "Or have Homebrew replace it, in Terminal:";
 "Other" = "Other";
 "Other packages need it" = "Other packages need it";
 "PID" = "PID";
 "Package" = "Package";
+"Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs.";
 "Partial scan" = "Partial scan";
 "Patch only" = "Patch only";
 "Pause automatic updates. Manual upgrades still work." = "Pause automatic updates. Manual upgrades still work.";
@@ -558,6 +603,8 @@
 "Reading services…" = "Reading services…";
 "Reading taps…" = "Reading taps…";
 "Reading the local taps…" = "Reading the local taps…";
+"Reading your apps and Homebrew's casks…" = "Reading your apps and Homebrew's casks…";
+"Ready to adopt" = "Ready to adopt";
 "Refresh" = "Refresh";
 "Refresh failed" = "Refresh failed";
 "Refreshing" = "Refreshing";
@@ -628,6 +675,7 @@
 "Saved before each upgrade and auto-update run. The last %lld are kept." = "Saved before each upgrade and auto-update run. The last %lld are kept.";
 "Saved by hand" = "Saved by hand";
 "Saves what is installed now as a restore point" = "Saves what is installed now as a restore point";
+"Scan Again" = "Scan Again";
 "Scan Now" = "Scan Now";
 "Scan failed" = "Scan failed";
 "Scan for Vulnerabilities" = "Scan for Vulnerabilities";
@@ -648,11 +696,12 @@
 "Select %@" = "Select %@";
 "Select a package" = "Select a package";
 "Select a service" = "Select a service";
-"Self-updating apps are included only when \"Include self-updating apps\" is on." = "Self-updating apps are included only when \"Include self-updating apps\" is on.";
+"Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\"." = "Self-updating apps are included only when \"Include self-updating apps\" is on, or when you chose \"Homebrew updates it\" for that app; never when you chose \"App updates itself\".";
 "Self-updating apps not checked: %@" = "Self-updating apps not checked: %@";
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sends your installed formula names and versions to OSV.dev (via brew vulns).";
 "Service" = "Service";
 "Services" = "Services";
+"Several casks install an app with this name. Pick the one you have." = "Several casks install an app with this name. Pick the one you have.";
 "Show" = "Show";
 "Show Auto-update Log…" = "Show Auto-update Log…";
 "Show Dependencies" = "Show Dependencies";
@@ -701,6 +750,7 @@
 "Stopped: auto-update was turned off during the run" = "Stopped: auto-update was turned off during the run";
 "Stops by itself after 60 seconds." = "Stops by itself after 60 seconds.";
 "Sunday" = "Sunday";
+"Sure match" = "Sure match";
 "Swaps source build for bottle" = "Swaps source build for bottle";
 "Swaps source builds for Intelbrew bottles" = "Swaps source builds for Intelbrew bottles";
 "Swaps source builds for bottles" = "Swaps source builds for bottles";
@@ -711,6 +761,8 @@
 "Tankard (demo)" = "Tankard (demo)";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.";
+"Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.";
+"Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does." = "Tankard lists every newer version of this cask, upgrades it with Upgrade all and auto-update, and replaces the app the way brew does.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard looks for brew at %@, or TANKARD_BREW.";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard never runs sudo. Run this in Terminal:";
 "Tankard on GitHub" = "Tankard on GitHub";
@@ -730,6 +782,11 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.";
 "The Installed list, filtered to this tap (tap:%@)" = "The Installed list, filtered to this tap (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces.";
+"The app has no version brew can compare." = "The app has no version brew can compare.";
+"The app's bundle id is one the cask names." = "The app's bundle id is one the cask names.";
+"The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone.";
+"The cask installs to %@; brew adopts only an app at that exact place." = "The cask installs to %@; brew adopts only an app at that exact place.";
+"The cask says this app updates itself (auto_updates)." = "The cask says this app updates itself (auto_updates).";
 "The disk is full" = "The disk is full";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again." = "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check again.";
 "The last %lld are kept in Application Support." = "The last %lld are kept in Application Support.";
@@ -738,12 +795,15 @@
 "The official installer from brew.sh." = "The official installer from brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "The old version is still installed. brew uninstall removes the new one, then brew link links the old one.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "The variables are unset first, so this brew update doesn't put the fork back.";
+"The vendor matches, but the cask doesn't name this exact bundle id." = "The vendor matches, but the cask doesn't name this exact bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.";
 "There are broken links in Homebrew's folders" = "There are broken links in Homebrew's folders";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "There's no space left to download or unpack. Free some space (Clean Up helps), then retry.";
 "These installed packages need it. Uninstall them first, or keep %@." = "These installed packages need it. Uninstall them first, or keep %@.";
+"These match a cask, but brew install --adopt wouldn't take them over." = "These match a cask, but brew install --adopt wouldn't take them over.";
 "Third-party" = "Third-party";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it.";
+"This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password.";
 "This macOS version isn't supported by Homebrew" = "This macOS version isn't supported by Homebrew";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:";
@@ -783,6 +843,7 @@
 "Up to date" = "Up to date";
 "Update" = "Update";
 "Updated %@" = "Updated %@";
+"Updates" = "Updates";
 "Updates itself" = "Updates itself";
 "Upgrade" = "Upgrade";
 "Upgrade %@" = "Upgrade %@";
@@ -805,6 +866,7 @@
 "Upgrade vulnerable packages. " = "Upgrade vulnerable packages. ";
 "Upgraded (%lld)" = "Upgraded (%lld)";
 "Upgrades" = "Upgrades";
+"Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).";
 "Upgrading" = "Upgrading";
 "Used by" = "Used by";
 "User" = "User";
@@ -834,6 +896,8 @@
 "Yes" = "Yes";
 "Your PATH finds other tools before Homebrew's" = "Your PATH finds other tools before Homebrew's";
 "a symlink to %@: that file is backed up and edited" = "a symlink to %@: that file is backed up and edited";
+"adopted" = "adopted";
+"and %lld more" = "and %lld more";
 "and %lld more…" = "and %lld more…";
 "at" = "at";
 "at least %@ on the Intelbrew builder" = "at least %@ on the Intelbrew builder";
@@ -841,6 +905,7 @@
 "bottle" = "bottle";
 "brew --cache, measured with du -sk" = "brew --cache, measured with du -sk";
 "brew --version exited %d" = "brew --version exited %d";
+"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry.";
 "brew bundle check failed:\n" = "brew bundle check failed:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment.";
@@ -858,6 +923,7 @@
 "brew doctor: %lld warning" = "brew doctor: %lld warning";
 "brew doctor: %lld warnings" = "brew doctor: %lld warnings";
 "brew exited %lld" = "brew exited %lld";
+"brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed.";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install gets the version Homebrew has now, which may be newer than %@.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link always links the newest version left, which isn't the one in this restore point.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link would need --force for a keg-only formula, which links it where it wasn't before.";
@@ -905,6 +971,7 @@
 "failed" = "failed";
 "failed (exit %d)" = "failed (exit %d)";
 "formulae.brew.sh answered %lld for %@" = "formulae.brew.sh answered %lld for %@";
+"formulae.brew.sh · %@ casks" = "formulae.brew.sh · %@ casks";
 "formulae.brew.sh · %@ formulae · %@ casks" = "formulae.brew.sh · %@ formulae · %@ casks";
 "has a removed upstream repository" = "has a removed upstream repository";
 "has an archived upstream repository" = "has an archived upstream repository";
@@ -940,6 +1007,7 @@
 "pin changed" = "pin changed";
 "pinned" = "pinned";
 "reinstalled" = "reinstalled";
+"set to update itself" = "set to update itself";
 "source" = "source";
 "still outdated after brew upgrade" = "still outdated after brew upgrade";
 "stopped" = "stopped";

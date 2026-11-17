@@ -223,6 +223,38 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// 0.6: the cask runs a `.pkg` installer (`artifacts` → `pkg`), so
         /// macOS asks for an administrator password. nil when brew gave no artifacts.
         public var installsPkg: Bool?
+        /// 0.8: what "Adopt Apps" needs from `artifacts`: each app's and
+        /// suite's installed target, whether a pkg runs, and every string
+        /// in the `uninstall` and `zap` stanzas (where bundle ids are). nil
+        /// when brew gave no artifacts.
+        public var adoptArtifacts: AdoptArtifacts?
+        /// 0.8: the download URL (formulae.brew.sh and `brew info` give it).
+        public var url: String?
+
+        public struct AdoptArtifacts: Sendable, Equatable {
+            /// One installed app: `source` is the name in the download
+            /// ("Foo.app"), `target` where brew puts it ("/Applications/Bar.app").
+            public struct App: Sendable, Equatable {
+                public var source: String
+                public var target: String
+                public init(source: String, target: String) {
+                    self.source = source
+                    self.target = target
+                }
+            }
+            public var apps: [App]
+            /// Suite folders' targets ("/Applications/KiCad").
+            public var suites: [String]
+            public var pkg: Bool
+            public var idStrings: [String]
+
+            public init(apps: [App] = [], suites: [String] = [], pkg: Bool = false, idStrings: [String] = []) {
+                self.apps = apps
+                self.suites = suites
+                self.pkg = pkg
+                self.idStrings = idStrings
+            }
+        }
 
         /// The parts of `depends_on` Tankard reads: other packages.
         public struct DependsOn: Decodable, Sendable {
@@ -249,7 +281,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         }
 
         enum CodingKeys: String, CodingKey {
-            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage, caveats, artifacts
+            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage, caveats, artifacts, url
             case dependsOn = "depends_on"
             case fullToken = "full_token"
             case installedTime = "installed_time"
@@ -279,7 +311,10 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 appPaths = list.flatMap(\.appPaths)
                 quitBundleIDs = list.flatMap(\.quit)
                 installsPkg = list.contains(where: \.pkg)
+                adoptArtifacts = AdoptArtifacts(apps: list.flatMap(\.apps), suites: list.flatMap(\.suites),
+                                                pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings))
             }
+            url = try? c.decodeIfPresent(String.self, forKey: .url)
         }
 
         /// One entry of `artifacts`: an object with one stanza key ("app",
@@ -290,6 +325,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
             var appPaths: [String] = []
             var quit: [String] = []
             var pkg = false
+            var apps: [AdoptArtifacts.App] = []
+            var suites: [String] = []
+            var idStrings: [String] = []
 
             struct Key: CodingKey {
                 var stringValue: String
@@ -325,10 +363,10 @@ public struct BrewInfoJSON: Decodable, Sendable {
             init(from decoder: Decoder) throws {
                 guard let c = try? decoder.container(keyedBy: Key.self) else { return }
                 pkg = c.contains(Key(stringValue: "pkg"))
+                let top = try? c.decodeIfPresent(String.self, forKey: Key(stringValue: "target"))
                 if let items = try? c.decodeIfPresent([AppItem].self, forKey: Key(stringValue: "app")) {
                     // brew writes the installed path as "target"; a renamed
                     // app's item carries its own target name.
-                    let top = try? c.decodeIfPresent(String.self, forKey: Key(stringValue: "target"))
                     if let top {
                         appPaths = [top]
                     } else {
@@ -337,13 +375,59 @@ public struct BrewInfoJSON: Decodable, Sendable {
                         appPaths = (targets.isEmpty ? items.compactMap(\.name) : targets)
                             .map { $0.hasPrefix("/") ? $0 : "/Applications/" + $0 }
                     }
+                    // 0.8: source name and target, paired, for Adopt Apps.
+                    let names = items.compactMap(\.name)
+                    if let first = names.first, names.count == 1 || top != nil {
+                        apps = [AdoptArtifacts.App(source: first, target: appPaths.first ?? "/Applications/" + first)]
+                    } else {
+                        apps = zip(names, appPaths).map { AdoptArtifacts.App(source: $0, target: $1) }
+                    }
+                }
+                if c.contains(Key(stringValue: "suite")) {
+                    let names = (try? c.decodeIfPresent([AppItem].self, forKey: Key(stringValue: "suite")))?.compactMap(\.name) ?? []
+                    if let t = top ?? names.first.map({ "/Applications/" + $0 }) { suites = [t] }
                 }
                 if let u = try? c.decodeIfPresent([Uninstall].self, forKey: Key(stringValue: "uninstall")) {
                     quit = u.flatMap(\.quit)
                 }
+                for k in ["uninstall", "zap"] {
+                    if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) {
+                        idStrings += all.strings
+                    }
+                }
             }
         }
     }
+}
+
+/// Every string anywhere inside a JSON value (objects' values, arrays,
+/// nested), in order. Numbers, booleans and nulls are skipped.
+struct JSONStrings: Decodable {
+    var strings: [String] = []
+
+    struct Key: CodingKey {
+        var stringValue: String
+        var intValue: Int? { nil }
+        init(stringValue: String) { self.stringValue = stringValue }
+        init?(intValue: Int) { nil }
+    }
+
+    init(from decoder: Decoder) throws {
+        if let s = try? decoder.singleValueContainer().decode(String.self) {
+            strings = [s]
+        } else if var a = try? decoder.unkeyedContainer() {
+            while !a.isAtEnd {
+                if let v = try? a.decode(JSONStrings.self) { strings += v.strings } else { _ = try? a.decode(Skip.self) }
+            }
+        } else if let o = try? decoder.container(keyedBy: Key.self) {
+            for k in o.allKeys {
+                if let v = try? o.decode(JSONStrings.self, forKey: k) { strings += v.strings }
+            }
+        }
+    }
+
+    /// Consumes one element of any shape (so an unkeyed container moves on).
+    private struct Skip: Decodable { init(from decoder: Decoder) throws {} }
 }
 
 /// brew's `license` field: an SPDX id, or nested `any_of` / `all_of`

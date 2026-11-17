@@ -42,6 +42,13 @@ struct WelcomeView: View {
                     .frame(maxWidth: 560)
                 }
 
+                // 0.8: the next step once brew runs.
+                Label("Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.",
+                      systemImage: "square.and.arrow.down.on.square")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: 560)
+
                 VStack(spacing: 12) {
                     ForEach(Array(options.enumerated()), id: \.element) { i, installer in
                         InstallerCard(installer: installer, primary: i == 0, isDemo: isDemo)

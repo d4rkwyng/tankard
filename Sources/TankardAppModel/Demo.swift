@@ -144,6 +144,8 @@ public enum Demo {
             hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
         deps.appManagementGate = true
+        // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
+        deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {
             // Illustrative build times from a bundled file; nothing is fetched.
             let times = BuildTimeSource(fetch: { (Demo.fixtureData("demo-build-times"), 200) }, cacheURL: nil)
@@ -439,6 +441,7 @@ public enum Demo {
             if let code = try await Demo.v04aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if let code = try await Demo.v06aStream(variant, state: state, arguments: arguments, say: say) { return code }
             if let code = try await Demo.tapsStream(variant, state: state.taps, arguments: arguments, say: say) { return code }
+            if let code = try await Demo.adoptStream(state: state, arguments: arguments, say: say) { return code }
             if arguments.first == "update" {
                 try await say("==> Updating Homebrew...\n", 900)
                 try await say("Already up-to-date.\n", 50)

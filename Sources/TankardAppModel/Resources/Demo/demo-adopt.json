@@ -1,0 +1,771 @@
+{
+ "_comment": "Demo fixture for Adopt Apps (0.8). casks: entries copied from formulae.brew.sh/api/cask.json on 2026-11-17. apps: illustrative; no real Mac's /Applications.",
+ "apps": [
+  {
+   "path": "/Applications/Firefox.app",
+   "root": "/Applications",
+   "relativePath": "Firefox.app",
+   "bundleID": "org.mozilla.firefox",
+   "shortVersion": "160.0",
+   "bundleVersion": "16025.11.10",
+   "displayName": "Firefox",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Hidden Bar.app",
+   "root": "/Applications",
+   "relativePath": "Hidden Bar.app",
+   "bundleID": "com.dwarvesv.minimalbar",
+   "shortVersion": "1.13.0",
+   "bundleVersion": "14",
+   "displayName": "Hidden Bar",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/LibreOffice.app",
+   "root": "/Applications",
+   "relativePath": "LibreOffice.app",
+   "bundleID": "org.libreoffice.script",
+   "shortVersion": "26.8.3",
+   "bundleVersion": "26.8.3.2",
+   "displayName": "LibreOffice",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Obsidian.app",
+   "root": "/Applications",
+   "relativePath": "Obsidian.app",
+   "bundleID": "md.obsidian",
+   "shortVersion": "1.12.4",
+   "bundleVersion": "1.12.4",
+   "displayName": "Obsidian",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/GIMP.app",
+   "root": "/Applications",
+   "relativePath": "GIMP.app",
+   "bundleID": "org.gimp.gimp-3.2",
+   "shortVersion": "3.2.6",
+   "bundleVersion": "3.2.6",
+   "displayName": "GIMP",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Impactor.app",
+   "root": "/Applications",
+   "relativePath": "Impactor.app",
+   "bundleID": "com.saurik.Impactor",
+   "shortVersion": "0.9.56",
+   "bundleVersion": "0.9.56",
+   "displayName": "Impactor",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/KiCad/KiCad.app",
+   "root": "/Applications",
+   "relativePath": "KiCad/KiCad.app",
+   "bundleID": "org.kicad.kicad",
+   "shortVersion": "10.0.6",
+   "bundleVersion": "10.0.6",
+   "displayName": "KiCad",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/zoom.us.app",
+   "root": "/Applications",
+   "relativePath": "zoom.us.app",
+   "bundleID": "us.zoom.xos",
+   "shortVersion": "7.2.0 (90044)",
+   "bundleVersion": "7.2.0.90044",
+   "displayName": "zoom.us",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Users/you/Applications/Inkscape.app",
+   "root": "/Users/you/Applications",
+   "relativePath": "Inkscape.app",
+   "bundleID": "org.inkscape.Inkscape",
+   "shortVersion": "1.4.4",
+   "bundleVersion": "1.4.4",
+   "displayName": "Inkscape",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Acme Widgets.app",
+   "root": "/Applications",
+   "relativePath": "Acme Widgets.app",
+   "bundleID": "com.example.acmewidgets",
+   "shortVersion": "2.1",
+   "bundleVersion": "210",
+   "displayName": "Acme Widgets",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Things3.app",
+   "root": "/Applications",
+   "relativePath": "Things3.app",
+   "bundleID": "com.culturedcode.ThingsMac",
+   "shortVersion": "3.21",
+   "bundleVersion": "32100",
+   "displayName": "Things",
+   "hasMASReceipt": true,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Safari.app",
+   "root": "/Applications",
+   "relativePath": "Safari.app",
+   "bundleID": "com.apple.Safari",
+   "shortVersion": "27.0",
+   "bundleVersion": "27622.1.1",
+   "displayName": "Safari",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Visual Studio Code.app",
+   "root": "/Applications",
+   "relativePath": "Visual Studio Code.app",
+   "bundleID": "com.microsoft.VSCode",
+   "shortVersion": "1.140.0",
+   "bundleVersion": "1.140.0",
+   "displayName": "Visual Studio Code",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  }
+ ],
+ "casks": [
+  {
+   "token": "firefox",
+   "full_token": "firefox",
+   "tap": "homebrew/cask",
+   "name": [
+    "Mozilla Firefox"
+   ],
+   "desc": "Web browser",
+   "homepage": "https://www.mozilla.org/firefox/",
+   "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/160.0/mac/en-US/Firefox%20160.0.dmg",
+   "version": "160.0",
+   "auto_updates": true,
+   "artifacts": [
+    {
+     "uninstall": [
+      {
+       "quit": "org.mozilla.firefox"
+      }
+     ]
+    },
+    {
+     "app": [
+      "Firefox.app"
+     ],
+     "target": "/Applications/Firefox.app"
+    },
+    {
+     "command_wrapper": [
+      "firefox",
+      {
+       "executable": "$APPDIR/Firefox.app/Contents/MacOS/firefox"
+      }
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/firefox"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "/Library/Logs/DiagnosticReports/firefox_*",
+        "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+        "~/Library/Application Support/CrashReporter/firefox_*",
+        "~/Library/Application Support/Firefox",
+        "~/Library/Caches/Firefox",
+        "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+        "~/Library/Caches/org.mozilla.crashreporter",
+        "~/Library/Caches/org.mozilla.firefox",
+        "~/Library/Preferences/org.mozilla.crashreporter.plist",
+        "~/Library/Preferences/org.mozilla.firefox.plist",
+        "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+        "~/Library/WebKit/org.mozilla.firefox"
+       ],
+       "rmdir": [
+        "~/Library/Application Support/Mozilla",
+        "~/Library/Caches/Mozilla",
+        "~/Library/Caches/Mozilla/updates",
+        "~/Library/Caches/Mozilla/updates/Applications"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {}
+   }
+  },
+  {
+   "token": "firefox@beta",
+   "full_token": "firefox@beta",
+   "tap": "homebrew/cask",
+   "name": [
+    "Mozilla Firefox Beta"
+   ],
+   "desc": "Web browser",
+   "homepage": "https://www.mozilla.org/firefox/channel/desktop/#beta",
+   "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/161.0b4/mac/en-US/Firefox%20161.0b4.dmg",
+   "version": "161.0b4",
+   "auto_updates": true,
+   "artifacts": [
+    {
+     "app": [
+      "Firefox.app"
+     ],
+     "target": "/Applications/Firefox.app"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "/Library/Logs/DiagnosticReports/firefox_*",
+        "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+        "~/Library/Application Support/CrashReporter/firefox_*",
+        "~/Library/Application Support/Firefox",
+        "~/Library/Caches/Firefox",
+        "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+        "~/Library/Caches/org.mozilla.crashreporter",
+        "~/Library/Caches/org.mozilla.firefox",
+        "~/Library/Preferences/org.mozilla.crashreporter.plist",
+        "~/Library/Preferences/org.mozilla.firefox.plist",
+        "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+        "~/Library/WebKit/org.mozilla.firefox"
+       ],
+       "rmdir": [
+        "~/Library/Application Support/Mozilla",
+        "~/Library/Caches/Mozilla",
+        "~/Library/Caches/Mozilla/updates",
+        "~/Library/Caches/Mozilla/updates/Applications"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {}
+   }
+  },
+  {
+   "token": "hiddenbar",
+   "full_token": "hiddenbar",
+   "tap": "homebrew/cask",
+   "name": [
+    "Hidden Bar"
+   ],
+   "desc": "Utility to hide menu bar items",
+   "homepage": "https://github.com/dwarvesf/hidden/",
+   "url": "https://github.com/dwarvesf/hidden/releases/download/v1.13.0/Hidden-Bar-v1.13.0-macos.zip",
+   "version": "1.13.0",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "uninstall": [
+      {
+       "launchctl": "com.dwarvesv.LauncherApplication",
+       "quit": "com.dwarvesv.minimalbar"
+      }
+     ]
+    },
+    {
+     "app": [
+      "Hidden Bar.app"
+     ],
+     "target": "/Applications/Hidden Bar.app"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/Library/Application Scripts/com.dwarvesv.LauncherApplication",
+        "~/Library/Application Scripts/com.dwarvesv.minimalbar",
+        "~/Library/Containers/com.dwarvesv.LauncherApplication",
+        "~/Library/Containers/com.dwarvesv.minimalbar",
+        "~/Library/Preferences/com.dwarvesv.minimalbar.plist"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {
+     ">=": [
+      "13"
+     ]
+    }
+   }
+  },
+  {
+   "token": "gimp",
+   "full_token": "gimp",
+   "tap": "homebrew/cask",
+   "name": [
+    "GIMP",
+    "GNU Image Manipulation Program"
+   ],
+   "desc": "Free and open-source image editor",
+   "homepage": "https://www.gimp.org/",
+   "url": "https://download.gimp.org/gimp/v3.2/macos/gimp-3.2.8-arm64.dmg",
+   "version": "3.2.8",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "app": [
+      "GIMP.app"
+     ],
+     "target": "/Applications/GIMP.app"
+    },
+    {
+     "command_wrapper": [
+      "gimp",
+      {
+       "executable": "$APPDIR/GIMP.app/Contents/MacOS/gimp"
+      }
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/gimp"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/Library/Application Support/Gimp",
+        "~/Library/Caches/GIMP",
+        "~/Library/Preferences/org.gimp.gimp-3.2.plist",
+        "~/Library/Preferences/org.gimp.gimp.plist",
+        "~/Library/Saved Application State/org.gimp.gimp-3.2.savedState"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {}
+  },
+  {
+   "token": "libreoffice",
+   "full_token": "libreoffice",
+   "tap": "homebrew/cask",
+   "name": [
+    "LibreOffice"
+   ],
+   "desc": "Free cross-platform office suite, fresh version",
+   "homepage": "https://www.libreoffice.org/",
+   "url": "https://download.documentfoundation.org/libreoffice/stable/26.8.3/mac/aarch64/LibreOffice_26.8.3_MacOS_aarch64.dmg",
+   "version": "26.8.3",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "app": [
+      "LibreOffice.app"
+     ],
+     "target": "/Applications/LibreOffice.app"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/gengal"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/gengal"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/regview"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/regview"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/senddoc"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/senddoc"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/uno"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/uno"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/unopkg"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/unopkg"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/uri-encode"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/uri-encode"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/xpdfimport"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/xpdfimport"
+    },
+    {
+     "command_wrapper": [
+      "soffice",
+      {
+       "executable": "$APPDIR/LibreOffice.app/Contents/MacOS/soffice"
+      }
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/soffice"
+    },
+    {
+     "binary": [
+      "$APPDIR/LibreOffice.app/Contents/MacOS/unoinfo"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/unoinfo"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.libreoffice.script.sfl*",
+        "~/Library/Application Support/LibreOffice",
+        "~/Library/Preferences/org.libreoffice.script.plist",
+        "~/Library/Saved Application State/org.libreoffice.script.savedState"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {}
+   }
+  },
+  {
+   "token": "obsidian",
+   "full_token": "obsidian",
+   "tap": "homebrew/cask",
+   "name": [
+    "Obsidian"
+   ],
+   "desc": "Knowledge base that works on top of a local folder of plain text Markdown files",
+   "homepage": "https://obsidian.md/",
+   "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.15.1/Obsidian-1.15.1.dmg",
+   "version": "1.15.1",
+   "auto_updates": true,
+   "artifacts": [
+    {
+     "app": [
+      "Obsidian.app"
+     ],
+     "target": "/Applications/Obsidian.app"
+    },
+    {
+     "binary": [
+      "$APPDIR/Obsidian.app/Contents/MacOS/obsidian-cli",
+      {
+       "target": "obsidian"
+      }
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/obsidian"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/md.obsidian.sfl*",
+        "~/Library/Application Support/obsidian",
+        "~/Library/Preferences/md.obsidian.plist",
+        "~/Library/Saved Application State/md.obsidian.savedState"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {
+     ">=": [
+      "12"
+     ]
+    }
+   }
+  },
+  {
+   "token": "kicad",
+   "full_token": "kicad",
+   "tap": "homebrew/cask",
+   "name": [
+    "KiCad"
+   ],
+   "desc": "Electronics design automation suite",
+   "homepage": "https://kicad.org/",
+   "url": "https://github.com/KiCad/kicad-source-mirror/releases/download/10.0.8/kicad-unified-universal-10.0.8.dmg",
+   "version": "10.0.8",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "suite": [
+      "KiCad"
+     ],
+     "target": "/Applications/KiCad"
+    },
+    {
+     "artifact": [
+      "demos",
+      {
+       "target": "/Library/Application Support/kicad/demos"
+      }
+     ],
+     "target": "/Library/Application Support/kicad/demos"
+    },
+    {
+     "binary": [
+      "$APPDIR/KiCad/KiCad.app/Contents/MacOS/idf2vrml"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/idf2vrml"
+    },
+    {
+     "binary": [
+      "$APPDIR/KiCad/KiCad.app/Contents/MacOS/idfcyl"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/idfcyl"
+    },
+    {
+     "binary": [
+      "$APPDIR/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/kicad-cli"
+    },
+    {
+     "binary": [
+      "$APPDIR/KiCad/KiCad.app/Contents/MacOS/idfrect"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/idfrect"
+    },
+    {
+     "binary": [
+      "$APPDIR/KiCad/KiCad.app/Contents/MacOS/dxf2idf"
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/dxf2idf"
+    },
+    {
+     "zap": [
+      {
+       "delete": "/Library/Application Support/kicad",
+       "trash": [
+        "~/Library/Application Support/kicad",
+        "~/Library/Caches/KiCad",
+        "~/Library/Preferences/kicad",
+        "~/Library/Preferences/org.kicad-pcb.*",
+        "~/Library/Preferences/org.kicad.*",
+        "~/Library/Saved Application State/org.kicad-pcb.*",
+        "~/Library/Saved Application State/org.kicad.*"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {}
+   }
+  },
+  {
+   "token": "zoom",
+   "full_token": "zoom",
+   "tap": "homebrew/cask",
+   "name": [
+    "Zoom"
+   ],
+   "desc": "Video communication and virtual meeting platform",
+   "homepage": "https://www.zoom.us/",
+   "url": "https://cdn.zoom.us/prod/7.2.5.90525/arm64/zoomusInstallerFull.pkg",
+   "version": "7.2.5.90525",
+   "auto_updates": true,
+   "artifacts": [
+    {
+     "uninstall": [
+      {
+       "launchctl": [
+        "us.zoom.updater",
+        "us.zoom.updater.login.check",
+        "us.zoom.ZoomDaemon"
+       ],
+       "signal": [
+        "KILL",
+        "us.zoom.xos"
+       ],
+       "pkgutil": "us.zoom.pkg.videomeeting",
+       "delete": [
+        "/Applications/zoom.us.app",
+        "/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+        "/Library/Logs/DiagnosticReports/zoom.us*",
+        "/Library/PrivilegedHelperTools/us.zoom.ZoomDaemon"
+       ]
+      }
+     ]
+    },
+    {
+     "pkg": [
+      "zoomusInstallerFull.pkg"
+     ]
+    },
+    {
+     "postflight_steps": [
+      {
+       "steps": [
+        {
+         "name": "/Applications/zoom.us.app",
+         "match": "full",
+         "attempts": 3,
+         "notices": [
+          "The Zoom package postinstall script launches the Zoom app",
+          "Attempting to close zoom.us.app to avoid unwanted user intervention"
+         ],
+         "failure_message": "Unable to forcibly close zoom.us.app",
+         "type": "terminate_process"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "zap": [
+      {
+       "delete": "/Library/Logs/zoomusinstall.log",
+       "trash": [
+        "~/.zoomus",
+        "~/Desktop/Zoom",
+        "~/Documents/Zoom",
+        "~/Library/Application Scripts/*.ZoomClient3rd",
+        "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings",
+        "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings.plist",
+        "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/us.zoom*.sfl*",
+        "~/Library/Application Support/CrashReporter/zoom.us*",
+        "~/Library/Application Support/zoom.us",
+        "~/Library/Application Support/ZoomUpdater",
+        "~/Library/Caches/us.zoom.xos",
+        "~/Library/Cookies/us.zoom.xos.binarycookies",
+        "~/Library/Group Containers/*.ZoomClient3rd",
+        "~/Library/HTTPStorages/us.zoom.xos",
+        "~/Library/HTTPStorages/us.zoom.xos.binarycookies",
+        "~/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+        "~/Library/Logs/zoom.us",
+        "~/Library/Logs/zoominstall.log",
+        "~/Library/Logs/ZoomPhone",
+        "~/Library/Preferences/us.zoom.*.plist",
+        "~/Library/Preferences/ZoomChat.plist",
+        "~/Library/Saved Application State/us.zoom.xos.savedState",
+        "~/Library/WebKit/us.zoom.xos"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {}
+  },
+  {
+   "token": "inkscape",
+   "full_token": "inkscape",
+   "tap": "homebrew/cask",
+   "name": [
+    "Inkscape"
+   ],
+   "desc": "Vector graphics editor",
+   "homepage": "https://inkscape.org/",
+   "url": "https://media.inkscape.org/dl/resources/file/Inkscape-1.4.4_arm64.dmg",
+   "version": "1.4.4",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "app": [
+      "Inkscape.app"
+     ],
+     "target": "/Applications/Inkscape.app"
+    },
+    {
+     "command_wrapper": [
+      "inkscape",
+      {
+       "executable": "$APPDIR/Inkscape.app/Contents/MacOS/inkscape"
+      }
+     ],
+     "target": "$HOMEBREW_PREFIX/bin/inkscape"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/.config/inkscape",
+        "~/Library/Application Support/Inkscape",
+        "~/Library/Application Support/org.inkscape.Inkscape",
+        "~/Library/Caches/org.inkscape.Inkscape*",
+        "~/Library/Preferences/org.inkscape.Inkscape.plist",
+        "~/Library/Saved Application State/org.inkscape.Inkscape.savedState"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {}
+  },
+  {
+   "token": "impactor",
+   "full_token": "impactor",
+   "tap": "homebrew/cask",
+   "name": [
+    "Impactor"
+   ],
+   "desc": "Sideloading application for iOS/tvOS",
+   "homepage": "https://github.com/khcrysalis/Impactor/",
+   "url": "https://github.com/khcrysalis/Impactor/releases/download/v2.7.2/Impactor-macos-universal.dmg",
+   "version": "2.7.2",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "app": [
+      "Impactor.app"
+     ],
+     "target": "/Applications/Impactor.app"
+    },
+    {
+     "zap": [
+      {
+       "trash": "~/.config/PlumeImpactor"
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false,
+   "depends_on": {
+    "macos": {}
+   }
+  }
+ ]
+}

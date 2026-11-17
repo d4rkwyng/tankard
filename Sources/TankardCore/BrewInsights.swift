@@ -83,10 +83,11 @@ public enum SelfUpdatingCasks {
     }
 
     /// Undoes `mark` (the setting was turned off): back to brew's own flag.
-    public static func unmark(_ report: StatusReport) -> StatusReport {
-        guard report.packages.contains(where: { $0.selfUpdatingUpgrade == true }) else { return report }
+    /// 0.8: `keeping` keeps the casks the user chose "Homebrew updates it" for.
+    public static func unmark(_ report: StatusReport, keeping: (Package) -> Bool = { _ in false }) -> StatusReport {
+        guard report.packages.contains(where: { $0.selfUpdatingUpgrade == true && !keeping($0) }) else { return report }
         var r = report
-        for i in r.packages.indices where r.packages[i].selfUpdatingUpgrade == true {
+        for i in r.packages.indices where r.packages[i].selfUpdatingUpgrade == true && !keeping(r.packages[i]) {
             r.packages[i].upgradeAvailable = false
             r.packages[i].selfUpdatingUpgrade = nil
         }
