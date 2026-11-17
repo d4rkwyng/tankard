@@ -1,5 +1,4 @@
 import Foundation
-import AppKit
 import SwiftUI
 import TankardAppModel
 import TankardCore
@@ -43,10 +42,6 @@ func applyV04ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     if options.demo != nil, let scan = env["TANKARD_DEMO_SCAN"] {
         if scan == "slow" { Demo.scanDelay = .seconds(30) }
         store.scanVulnerabilitiesNow()
-    }
-    // 0.6.1, screenshots: open Settings (TANKARD_SETTINGS_TAB picks the tab).
-    if options.demo != nil, env["TANKARD_DEMO_OPEN_SETTINGS"] == "1" {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
     if env["TANKARD_TAB"]?.lowercased() == "services" {
         store.tab = .services
