@@ -752,6 +752,8 @@ public final class AutoUpdater {
         logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: started)) auto-update (safe mode): "
                          + "\(plan.run.count) to upgrade, \(plan.skipped.count) skipped"])
         for s in plan.skipped { logFile?.append(["tankard: skipped \(s.package.name): \(s.reason.text)"]) }
+        // 0.7: a restore point before the run upgrades anything.
+        if !plan.run.isEmpty { store.saveRestorePoint(.autoUpdate, upgrading: plan.run) }
         for p in plan.run {
             guard settings.enabled else {
                 record.note = "Stopped: auto-update was turned off during the run"
@@ -798,11 +800,12 @@ public final class AutoUpdater {
             return (-1, ["brew not found"])
         }
         let args = BrewCommands.upgradeArguments(for: p)
-        let extra = AutoUpdateSafeMode.environment(for: p)
+        let keep = RollbackSettings.extraEnvironment(.upgrade, p, keep: store.restorePoints.settings.keepPreviousVersion)
+        let extra = AutoUpdateSafeMode.environment(for: p).merging(keep) { $1 }
         let env = client.environment(for: detection, readOnly: false).merging(extra) { $1 }
         let cmd = QueuedCommand(executable: client.installation.brewPath, arguments: args, environment: env,
                                 display: BrewCommands.display(args, environment: extra.filter {
-                                    $0.key == InsightSettings.noQuitKey
+                                    $0.key == InsightSettings.noQuitKey || $0.key == RollbackSettings.noInstallCleanupKey
                                 }))
         logFile?.append(["$ \(cmd.display)"])
         let collector = OutputCollector()

@@ -223,7 +223,8 @@ struct TankardApp: App {
 
         Settings {
             SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem,
-                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate)
+                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate,
+                         rollbackSettings: store.restorePoints.settings)
         }
     }
 }
@@ -276,6 +277,8 @@ struct HomebrewCommands: View {
         // 0.6: Export Brewfile…, Check a Brewfile…
         Divider()
         BrewfileMenuItems(store: store)
+        // 0.7: Restore Points…
+        RestorePointsMenuItem(store: store)
     }
 }
 

@@ -72,6 +72,8 @@ public final class AppStore {
         public var autoUpdateLogURL: URL?
         /// 0.6: the History file (nil: memory only).
         public var historyURL: URL?
+        /// 0.7: the restore points folder (nil: memory only).
+        public var restorePointsURL: URL?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -114,6 +116,7 @@ public final class AppStore {
             d.insightsCache = InsightsCache(url: InsightsCache.defaultURL)
             d.autoUpdateLogURL = AutoUpdateLog.defaultURL
             d.historyURL = HistoryLog.defaultURL
+            d.restorePointsURL = RestorePointStore.defaultDirectory
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -185,6 +188,8 @@ public final class AppStore {
     @ObservationIgnored public let brewfile = BrewfileStore()
     /// 0.7: the Taps sheet (TapsStore.swift).
     @ObservationIgnored public let taps = TapsStore()
+    /// 0.7: restore points and "Keep the previous version" (RestorePoints.swift).
+    @ObservationIgnored public let restorePoints: RestorePointStore
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
@@ -196,6 +201,8 @@ public final class AppStore {
         })
         self.history = HistoryLog(url: deps.historyURL)
         self.settings = settings ?? AppSettings.ephemeral()
+        self.restorePoints = RestorePointStore(directory: deps.restorePointsURL,
+                                               settings: RollbackSettings(defaults: self.settings.defaults))
         self.insights = InsightsStore(settings: InsightSettings(defaults: self.settings.defaults),
                                       cache: deps.insightsCache, ttl: deps.ttl, now: deps.now)
         self.autoUpdate = AutoUpdater(settings: AutoUpdateSettings(defaults: self.settings.defaults, now: deps.now),
@@ -586,6 +593,8 @@ public final class AppStore {
             showUpgradeSheet = true
             return
         }
+        // 0.7: a restore point before every upgrade session.
+        if action == .upgrade { saveRestorePoint(.upgrade, upgrading: targets) }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
         // where `brew update` runs.
@@ -593,10 +602,13 @@ public final class AppStore {
         let brew = client.installation.brewPath
         upgrade = UpgradeSession(
             packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
-            makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade] p in
+            makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
+                            keep = restorePoints.settings.keepPreviousVersion] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
+                // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP for formulae.
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
+                    .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
                 return QueuedCommand(executable: brew, arguments: args, environment: env.merging(extra) { $1 },
                                      display: BrewCommands.display(args, environment: extra))
             },
@@ -605,6 +617,16 @@ public final class AppStore {
                 self?.sessionFinished(session)
             })
         upgrade?.isRetry = isRetry
+        showUpgradeSheet = true
+    }
+
+    /// 0.7: a sheet run whose commands come from the caller (a restore).
+    func startCustomSession(_ action: SessionAction, packages rows: [Package], intelbrewMode: Bool,
+                            makeCommand: (Package) -> QueuedCommand, chainKey: ((Package) -> String?)?) {
+        guard !isUpgrading, !autoUpdate.isRunning, !rows.isEmpty else { return }
+        upgrade = UpgradeSession(packages: rows, intelbrewMode: intelbrewMode, action: action, queue: queue,
+                                 makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
+                                 onFinish: { [weak self] session in self?.sessionFinished(session) })
         showUpgradeSheet = true
     }
 

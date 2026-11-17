@@ -199,6 +199,8 @@ public enum BrewCommands {
         case .autoremove: return AutoremovePlan.runArguments
         case .tap: return TapCommands.tap(p.fullName, url: p.desc)
         case .untap: return TapCommands.untap(p.fullName)
+        // A restore's commands come from its plan (RestorePoints.swift).
+        case .restore: return []
         }
     }
 
