@@ -144,6 +144,9 @@ public enum Demo {
             hardware: hardware ?? (variant == .intelbrew ? .intel : .appleSilicon)
         )
         deps.appManagementGate = true
+        // 0.8.1: the welcome's check never touches a real app in the demo.
+        deps.appManagementProbe = { _ in .blocked }
+        deps.appManagementProbeExists = { _ in true }
         // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
         deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {

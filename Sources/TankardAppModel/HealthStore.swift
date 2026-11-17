@@ -14,6 +14,8 @@ public enum ToolSheet: String, Identifiable, Sendable {
     case taps
     /// 0.8: Homebrew ▸ Adopt Apps… (AdoptStore.swift).
     case adopt
+    /// 0.8.1: the first-launch welcome (Onboarding.swift).
+    case welcome
     public var id: String { rawValue }
 }
 

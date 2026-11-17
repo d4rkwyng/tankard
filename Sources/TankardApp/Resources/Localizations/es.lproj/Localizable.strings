@@ -181,6 +181,7 @@
 "After the relaunch, Tankard runs it again: %@ %@." = "Tras reiniciar, Tankard lo ejecutará de nuevo: %1$@ %2$@.";
 "All" = "Todo";
 "All versions" = "Todas las versiones";
+"Allow App Management" = "Permitir Gestión de apps";
 "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "Permite Tankard en Privacidad y seguridad → Gestión de apps, reinicia Tankard y vuelve a ejecutarlo.";
 "Allow Tankard to update apps" = "Permitir que Tankard actualice apps";
 "Allowed" = "Permitido";
@@ -200,6 +201,7 @@
 "App updates itself" = "La propia app";
 "Appearance" = "Apariencia";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "Las apps que se actualizan solas lo siguen haciendo. Lo que elijas sobre quién actualiza cada una se guarda con la adopción.";
+"Apps you installed yourself that Homebrew can manage: %lld" = "Apps que instalaste tú y que Homebrew puede gestionar: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "Apps que instalaste tú y que un cask de Homebrew también instala. Adoptarlas permite que brew las actualice, sin reinstalar.";
 "Asking brew info…" = "Consultando brew info…";
 "Auto-update" = "Actualización automática";
@@ -244,6 +246,7 @@
 "Casks" = "Casks";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "Los casks no están habilitados: ejecuta `brew tap homebrew/cask` (unos 620 MB)";
 "Changes since then" = "Cambios desde entonces";
+"Check" = "Comprobar";
 "Check Again" = "Comprobar de nuevo";
 "Check a Brewfile" = "Comprobar un Brewfile";
 "Check a Brewfile…" = "Comprobar un Brewfile…";
@@ -293,6 +296,7 @@
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "No se pudo actualizar desde formulae.brew.sh (%@); se muestra la copia guardada.";
 "Couldn't reload: %@" = "No se pudo recargar: %@";
 "Couldn't run brew tap-info: %@" = "No se pudo ejecutar brew tap-info: %@";
+"Couldn't tell" = "No se sabe";
 "Couldn't write the script: %@" = "No se pudo escribir el script: %@";
 "Count %@ as an upgrade again" = "Volver a contar %@ como actualización";
 "Critical" = "Crítica";
@@ -509,6 +513,7 @@
 "Newer than Intelbrew" = "Más reciente que Intelbrew";
 "Newer than tap" = "Más reciente que el tap";
 "Next run: %@" = "Próxima ejecución: %@";
+"No Homebrew app to check with yet" = "Aún no hay ninguna app de Homebrew para comprobar";
 "No Homebrew cask installs these apps." = "Ningún cask de Homebrew instala estas apps.";
 "No Homebrew status to work from" = "Sin estado de Homebrew con el que trabajar";
 "No Intelbrew bottle yet." = "Aún no hay bottle de Intelbrew.";
@@ -539,6 +544,7 @@
 "None of the installed formulae has a background service." = "Ninguna de las formulae instaladas tiene un servicio en segundo plano.";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "Ninguno de tus archivos de inicio de zsh o bash los define, así que no se edita nada.";
 "Not affiliated with or endorsed by the Homebrew project." = "No está afiliado ni respaldado por el proyecto Homebrew.";
+"Not allowed yet" = "Aún no permitido";
 "Not checked by brew vulns." = "No comprobado por brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "No comprobado por brew vulns: no tiene repositorio de código fuente con el que asociarlo.";
 "Not checked by brew vulns: untrusted tap." = "No comprobado por brew vulns: tap no confiable.";
@@ -724,6 +730,7 @@
 "Search Homebrew" = "Buscar en Homebrew";
 "Search installed" = "Buscar en instalados";
 "Search services" = "Buscar servicios";
+"See what Homebrew installed, what's out of date, and upgrade it in one place." = "Mira qué instaló Homebrew, qué está desactualizado y actualízalo todo en un solo lugar.";
 "Select %@" = "Seleccionar %@";
 "Select a package" = "Selecciona un paquete";
 "Select a service" = "Selecciona un servicio";
@@ -799,6 +806,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard nunca ejecuta sudo. Ejecuta esto en Terminal:";
 "Tankard on GitHub" = "Tankard en GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard solo controla tus propios servicios y nunca ejecuta sudo. Ejecuta esto en Terminal:";
+"Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard ejecuta brew update en segundo plano para que los números estén al día. Se desactiva en Ajustes → General.";
 "Tankard update available" = "Actualización de Tankard disponible";
 "Tankard updates itself through brew" = "Tankard se actualiza a sí mismo mediante brew";
 "Tankard upgraded %lld package" = "Tankard actualizó %lld paquete";
@@ -843,6 +851,7 @@
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Este paso requiere derechos de administrador, que Tankard no puede pedir. Ejecuta esto en Terminal:";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "Para conservar uno, márcalo primero como instalado a petición en Terminal y luego vuelve a comprobar:";
 "Top 200 results for “%@”" = "Los 200 mejores resultados para “%@”";
+"Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Prueba una escritura inofensiva en una app instalada por Homebrew, como hace Homebrew, y la elimina al instante";
 "Trust" = "Confiar";
 "Trust %@?" = "¿Confiar en %@?";
 "Trust?" = "¿Confiar?";
@@ -919,6 +928,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "Esperando aprobación en Ajustes del Sistema → General → Ítems de inicio de sesión.";
 "Waiting for brew update to finish…" = "Esperando a que termine brew update…";
 "Waiting for brew…" = "Esperando a brew…";
+"Welcome to Tankard" = "Te damos la bienvenida a Tankard";
 "What brew printed" = "Lo que imprimió brew";
 "What installing the missing items would do, before anything runs" = "Lo que haría instalar los elementos que faltan, antes de ejecutar nada";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "Lo instalado cambió desde que se creó esta lista. Todavía no se ha ejecutado nada. Revisa los comandos y vuelve a hacer clic en Restaurar.";
@@ -1029,9 +1039,11 @@
 "just now" = "ahora mismo";
 "macOS already provides this software" = "macOS ya proporciona este software";
 "macOS applies App Management the next time Tankard starts." = "macOS aplica Gestión de apps la próxima vez que se abra Tankard.";
+"macOS asks before Tankard can install, update or remove apps in Applications. Turn on Tankard in Privacy & Security → App Management." = "macOS pregunta antes de que Tankard pueda instalar, actualizar o eliminar apps en Aplicaciones. Activa Tankard en Privacidad y seguridad → Gestión de apps.";
 "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOS pregunta antes de que una app pueda cambiar otras apps, así que Homebrew lo necesita para instalar, actualizar o eliminar apps en Aplicaciones.";
 "macOS blocked changing an app" = "macOS bloqueó el cambio de una app";
 "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOS bloqueó cambios en apps: permite Tankard en Privacidad y seguridad → Gestión de apps y reinícialo.";
+"macOS may apply it only after Tankard relaunches." = "Puede que macOS lo aplique solo tras reiniciar Tankard.";
 "macOS provides a similar version, which this would shadow" = "macOS proporciona una versión similar, que esta ocultaría";
 "macOS refused: %@" = "macOS lo rechazó: %@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS detuvo %@. Tankard lo intentará una vez más cuando lo permitas.";

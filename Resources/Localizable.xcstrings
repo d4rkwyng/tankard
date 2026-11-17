@@ -9753,6 +9753,58 @@
         }
       }
     },
+    "Allow App Management": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Verwaltung erlauben"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser Gestion des apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permitir Gestión de apps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App管理を許可"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "允许“App 管理”"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permitir Gerenciamento de Apps"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consenti Gestione app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 관리 허용"
+          }
+        }
+      }
+    },
     "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again.": {
       "localizations": {
         "de": {
@@ -10737,6 +10789,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "자체 업데이트하는 앱은 계속 스스로 업데이트합니다. 각 앱을 누가 업데이트할지 선택한 내용은 가져오기와 함께 저장됩니다."
+          }
+        }
+      }
+    },
+    "Apps you installed yourself that Homebrew can manage: %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selbst installierte Apps, die Homebrew verwalten kann: %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps installées par vous que Homebrew peut gérer : %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps que instalaste tú y que Homebrew puede gestionar: %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分でインストールしたアプリのうちHomebrewで管理できるもの: %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你自行安装、Homebrew 可以管理的 App：%lld"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps que você instalou e que o Homebrew pode gerenciar: %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App installate da te che Homebrew può gestire: %lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "직접 설치한 앱 중 Homebrew가 관리할 수 있는 앱: %lld"
           }
         }
       }
@@ -13025,6 +13129,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "그 이후 변경 사항"
+          }
+        }
+      }
+    },
+    "Check": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifica"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인"
           }
         }
       }
@@ -15573,6 +15729,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew tap-info를 실행할 수 없음: %@"
+          }
+        }
+      }
+    },
+    "Couldn't tell": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unklar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible à dire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se sabe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "判定できません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法判断"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível saber"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile dirlo"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알 수 없음"
           }
         }
       }
@@ -26809,6 +27017,58 @@
         }
       }
     },
+    "No Homebrew app to check with yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Homebrew-App zum Prüfen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune app Homebrew pour vérifier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay ninguna app de Homebrew para comprobar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認に使えるHomebrewのアプリがまだありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有可用于检查的 Homebrew App"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum app do Homebrew para verificar ainda"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora nessuna app di Homebrew da verificare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 확인할 Homebrew 앱이 없음"
+          }
+        }
+      }
+    },
     "No Homebrew cask installs these apps.": {
       "localizations": {
         "de": {
@@ -28365,6 +28625,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew 프로젝트와 제휴하거나 승인받지 않았습니다."
+          }
+        }
+      }
+    },
+    "Not allowed yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht erlaubt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore autorisé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no permitido"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ許可されていません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未允许"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não permitido"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non ancora consentito"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 허용되지 않음"
           }
         }
       }
@@ -37989,6 +38301,58 @@
         }
       }
     },
+    "See what Homebrew installed, what's out of date, and upgrade it in one place.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sieh, was Homebrew installiert hat und was veraltet ist, und aktualisiere alles an einem Ort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voyez ce que Homebrew a installé, ce qui est obsolète, et mettez tout à jour au même endroit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mira qué instaló Homebrew, qué está desactualizado y actualízalo todo en un solo lugar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewでインストールしたもの、古くなったものを確認し、1か所でアップデートできます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看 Homebrew 安装了什么、哪些已过期，并在一个地方完成更新。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja o que o Homebrew instalou, o que está desatualizado, e atualize tudo em um só lugar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vedi cosa ha installato Homebrew, cosa è obsoleto, e aggiorna tutto in un unico posto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 설치한 항목과 오래된 항목을 보고 한곳에서 업데이트하세요."
+          }
+        }
+      }
+    },
     "Select %@": {
       "localizations": {
         "de": {
@@ -41942,6 +42306,58 @@
         }
       }
     },
+    "Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard führt brew update im Hintergrund aus, damit die Zahlen aktuell bleiben. Abschalten unter Einstellungen → Allgemein."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard exécute brew update en arrière-plan pour garder les chiffres à jour. Réglages → Général permet de le désactiver."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ejecuta brew update en segundo plano para que los números estén al día. Se desactiva en Ajustes → General."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」→「一般」でオフにできます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”→“通用”中关闭。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard executa brew update em segundo plano para manter os números atualizados. Desative em Ajustes → Geral."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard esegue brew update in background per tenere aggiornati i conteggi. Si disattiva in Impostazioni → Generali."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 → 일반에서 끌 수 있습니다."
+          }
+        }
+      }
+    },
     "Tankard update available": {
       "localizations": {
         "de": {
@@ -44226,6 +44642,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "“%@” 상위 200개 결과"
+          }
+        }
+      }
+    },
+    "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibt testweise in eine Homebrew-App, wie Homebrew selbst, und entfernt es sofort"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tente une écriture sans risque dans une app installée par Homebrew, comme Homebrew, et la supprime aussitôt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba una escritura inofensiva en una app instalada por Homebrew, como hace Homebrew, y la elimina al instante"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewと同じように、Homebrewでインストールしたアプリに無害な書き込みを試し、すぐに削除します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "像 Homebrew 一样，在 Homebrew 安装的 App 中尝试一次无害写入，并立即移除"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenta uma gravação inofensiva em um app instalado pelo Homebrew, como o Homebrew faz, e a remove na hora"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prova una scrittura innocua in un'app installata da Homebrew, come fa Homebrew, e la rimuove subito"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew처럼 Homebrew가 설치한 앱에 무해한 쓰기를 시도하고 바로 제거합니다"
           }
         }
       }
@@ -48178,6 +48646,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew를 기다리는 중…"
+          }
+        }
+      }
+    },
+    "Welcome to Tankard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkommen bei Tankard"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bienvenue dans Tankard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te damos la bienvenida a Tankard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardへようこそ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎使用 Tankard"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boas-vindas ao Tankard"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benvenuto in Tankard"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard에 오신 것을 환영합니다"
           }
         }
       }
@@ -53902,6 +54422,58 @@
         }
       }
     },
+    "macOS asks before Tankard can install, update or remove apps in Applications. Turn on Tankard in Privacy & Security → App Management.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS fragt, bevor Tankard Apps installieren, aktualisieren oder entfernen darf. Schalte Tankard unter „Datenschutz & Sicherheit“ → „App-Verwaltung“ ein."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS demande avant que Tankard puisse installer, mettre à jour ou supprimer des apps dans Applications. Activez Tankard dans Confidentialité et sécurité → Gestion des apps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS pregunta antes de que Tankard pueda instalar, actualizar o eliminar apps en Aplicaciones. Activa Tankard en Privacidad y seguridad → Gestión de apps."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSは、Tankardが「アプリケーション」内のアプリをインストール、アップデート、削除する前に確認します。「プライバシーとセキュリティ」→「App管理」でTankardをオンにしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 会在 Tankard 安装、更新或移除“应用程序”中的 App 前询问。请在“隐私与安全性”→“App 管理”中打开 Tankard。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS pergunta antes que o Tankard possa instalar, atualizar ou remover apps em Aplicativos. Ative o Tankard em Privacidade e Segurança → Gerenciamento de Apps."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS chiede prima che Tankard possa installare, aggiornare o rimuovere app in Applicazioni. Attiva Tankard in Privacy e sicurezza → Gestione app."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS는 Tankard가 응용 프로그램의 앱을 설치, 업데이트 또는 제거하기 전에 묻습니다. 개인정보 보호 및 보안 → 앱 관리에서 Tankard를 켜세요."
+          }
+        }
+      }
+    },
     "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications.": {
       "localizations": {
         "de": {
@@ -54054,6 +54626,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "macOS가 앱 변경을 차단했습니다: 개인정보 보호 및 보안 → 앱 관리에서 Tankard를 허용한 다음 다시 시작하세요."
+          }
+        }
+      }
+    },
+    "macOS may apply it only after Tankard relaunches.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS wendet es evtl. erst nach einem Neustart von Tankard an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS ne l’applique parfois qu’après la relance de Tankard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puede que macOS lo aplique solo tras reiniciar Tankard."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOSはTankardの再起動後に適用する場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 可能要在 Tankard 重新启动后才会应用。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS pode aplicar isso só depois de reabrir o Tankard."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS potrebbe applicarlo solo dopo il riavvio di Tankard."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS는 Tankard를 다시 시작한 후에만 적용할 수 있습니다."
           }
         }
       }

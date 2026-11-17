@@ -181,6 +181,7 @@
 "After the relaunch, Tankard runs it again: %@ %@." = "再起動後、Tankardがもう一度実行します: %1$@ %2$@。";
 "All" = "すべて";
 "All versions" = "すべてのバージョン";
+"Allow App Management" = "App管理を許可";
 "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "「プライバシーとセキュリティ」→「App管理」でTankardを許可し、Tankardを再起動してからもう一度実行してください。";
 "Allow Tankard to update apps" = "Tankardによるアプリのアップデートを許可";
 "Allowed" = "許可";
@@ -200,6 +201,7 @@
 "App updates itself" = "アプリが更新";
 "Appearance" = "外観";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自己更新するアプリは引き続き自分で更新します。各アプリを誰が更新するかの選択は、引き継ぎと一緒に保存されます。";
+"Apps you installed yourself that Homebrew can manage: %lld" = "自分でインストールしたアプリのうちHomebrewで管理できるもの: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "自分でインストールしたアプリのうち、Homebrew の cask でもインストールされるもの。引き継ぐと、再インストールせずに brew で更新できます。";
 "Asking brew info…" = "brew info を問い合わせ中…";
 "Auto-update" = "自動アップデート";
@@ -244,6 +246,7 @@
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "caskは有効ではありません: `brew tap homebrew/cask` を実行してください(約620 MB)";
 "Changes since then" = "それ以降の変更";
+"Check" = "確認";
 "Check Again" = "再確認";
 "Check a Brewfile" = "Brewfileを確認";
 "Check a Brewfile…" = "Brewfileを確認…";
@@ -293,6 +296,7 @@
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "formulae.brew.sh から更新できませんでした(%@)。保存済みのコピーを表示しています。";
 "Couldn't reload: %@" = "再読み込みできませんでした: %@";
 "Couldn't run brew tap-info: %@" = "brew tap-info を実行できませんでした: %@";
+"Couldn't tell" = "判定できません";
 "Couldn't write the script: %@" = "スクリプトを書き込めませんでした: %@";
 "Count %@ as an upgrade again" = "%@ をアップグレードとして再び数える";
 "Critical" = "重大";
@@ -509,6 +513,7 @@
 "Newer than Intelbrew" = "Intelbrewより新しい";
 "Newer than tap" = "tapより新しい";
 "Next run: %@" = "次回の実行: %@";
+"No Homebrew app to check with yet" = "確認に使えるHomebrewのアプリがまだありません";
 "No Homebrew cask installs these apps." = "これらのアプリをインストールする Homebrew の cask はありません。";
 "No Homebrew status to work from" = "作業に使えるHomebrewの状態がありません";
 "No Intelbrew bottle yet." = "Intelbrew bottleはまだありません。";
@@ -539,6 +544,7 @@
 "None of the installed formulae has a background service." = "インストール済みのformulaeにバックグラウンドサービスを持つものはありません。";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "zshやbashの起動ファイルにそれらを設定しているものはないため、何も編集されません。";
 "Not affiliated with or endorsed by the Homebrew project." = "Homebrewプロジェクトとは提携しておらず、承認も受けていません。";
+"Not allowed yet" = "まだ許可されていません";
 "Not checked by brew vulns." = "brew vulnsでは確認されていません。";
 "Not checked by brew vulns: no source repository it can match." = "brew vulnsでは確認されていません: 照合できるソースリポジトリがありません。";
 "Not checked by brew vulns: untrusted tap." = "brew vulnsでは確認されていません: 信頼されていないtapです。";
@@ -724,6 +730,7 @@
 "Search Homebrew" = "Homebrewを検索";
 "Search installed" = "インストール済みを検索";
 "Search services" = "サービスを検索";
+"See what Homebrew installed, what's out of date, and upgrade it in one place." = "Homebrewでインストールしたもの、古くなったものを確認し、1か所でアップデートできます。";
 "Select %@" = "%@を選択";
 "Select a package" = "パッケージを選択";
 "Select a service" = "サービスを選択";
@@ -799,6 +806,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankardはsudoを実行しません。ターミナルでこれを実行してください:";
 "Tankard on GitHub" = "GitHubのTankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankardは自分のサービスのみを制御し、sudoは実行しません。ターミナルでこれを実行してください:";
+"Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」→「一般」でオフにできます。";
 "Tankard update available" = "Tankardのアップデートがあります";
 "Tankard updates itself through brew" = "Tankardはbrew経由で自己アップデートします";
 "Tankard upgraded %lld package" = "Tankardが%lld個のパッケージをアップグレードしました";
@@ -843,6 +851,7 @@
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "この手順には管理者権限が必要ですが、Tankardは要求できません。ターミナルでこれを実行してください:";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "残すには、先にターミナルでリクエストによるインストールとしてマークしてから、もう一度確認してください:";
 "Top 200 results for “%@”" = "「%@」の上位200件の結果";
+"Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Homebrewと同じように、Homebrewでインストールしたアプリに無害な書き込みを試し、すぐに削除します";
 "Trust" = "信頼";
 "Trust %@?" = "%@を信頼しますか？";
 "Trust?" = "信頼しますか？";
@@ -919,6 +928,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "システム設定 → 一般 → ログイン項目 での承認を待っています。";
 "Waiting for brew update to finish…" = "brew update の完了を待機中…";
 "Waiting for brew…" = "brewを待機中…";
+"Welcome to Tankard" = "Tankardへようこそ";
 "What brew printed" = "brewの出力";
 "What installing the missing items would do, before anything runs" = "不足している項目をインストールした場合の内容（何も実行される前に確認）";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "このリストの作成後に、インストール済みの内容が変わりました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。";
@@ -1029,9 +1039,11 @@
 "just now" = "たった今";
 "macOS already provides this software" = "macOSがすでにこのソフトウェアを提供しています";
 "macOS applies App Management the next time Tankard starts." = "macOSはTankardの次回起動時にApp管理を適用します。";
+"macOS asks before Tankard can install, update or remove apps in Applications. Turn on Tankard in Privacy & Security → App Management." = "macOSは、Tankardが「アプリケーション」内のアプリをインストール、アップデート、削除する前に確認します。「プライバシーとセキュリティ」→「App管理」でTankardをオンにしてください。";
 "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOSはアプリが他のアプリを変更する前に確認します。Homebrewが「アプリケーション」内のアプリをインストール、アップデート、削除するにはこの許可が必要です。";
 "macOS blocked changing an app" = "macOSがアプリの変更をブロックしました";
 "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOSがアプリの変更をブロックしました:「プライバシーとセキュリティ」→「App管理」でTankardを許可し、再起動してください。";
+"macOS may apply it only after Tankard relaunches." = "macOSはTankardの再起動後に適用する場合があります。";
 "macOS provides a similar version, which this would shadow" = "macOSが類似のバージョンを提供しており、これはそれを上書きしてしまいます";
 "macOS refused: %@" = "macOSが拒否しました: %@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOSが%@を停止しました。許可後、Tankardがもう一度試します。";

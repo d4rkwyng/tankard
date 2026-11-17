@@ -64,6 +64,10 @@ public final class AppStore {
         /// 0.8.1: quits Tankard and starts it again (the app sets it, from
         /// a real bundle only). Nil: no "Relaunch Tankard" (tests, `swift run`).
         public var relaunch: (@MainActor @Sendable () -> Void)?
+        /// 0.8.1: the welcome sheet's App Management check (Onboarding.swift):
+        /// the write test, and whether a candidate app exists. Demo fakes both.
+        public var appManagementProbe: @Sendable (String) -> AppManagementProbe.Result = { AppManagementProbe.run(appPath: $0) }
+        public var appManagementProbeExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
         /// 0.3: bottle-or-compile, shared with Discover.
         public var classifier = CompileClassifier()
         /// 0.3: Intelbrew's build times (Intelbrew mode only). When set,
@@ -180,6 +184,8 @@ public final class AppStore {
     public var showAutoUpdateLog = false
     /// 0.6: Health, History or Remove Unused Dependencies (HealthStore.swift).
     public var toolSheet: ToolSheet?
+    /// 0.8.1: the first-launch welcome's state, while it shows.
+    public internal(set) var onboarding: OnboardingState?
     public internal(set) var health: HealthStore?
     public internal(set) var autoremove: AutoremoveStore?
     /// 0.8: a background `brew update` is queued or running (the status

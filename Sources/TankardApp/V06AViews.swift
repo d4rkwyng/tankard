@@ -114,6 +114,8 @@ struct ToolSheetView: View {
             TapsSheet(store: store, taps: store.taps)
         case .adopt:
             AdoptSheet(store: store, adopt: store.adopt)
+        case .welcome:
+            if let o = store.onboarding { OnboardingSheet(store: store, state: o) }
         }
     }
 }
@@ -445,6 +447,7 @@ func applyV06ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     case .autoremove?: store.openAutoremove()
     case .taps?: store.openTaps()
     case .adopt?: store.openAdopt()
+    case .welcome?: store.presentOnboarding()
     case nil: break
     }
 }

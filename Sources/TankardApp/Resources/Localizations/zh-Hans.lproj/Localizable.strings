@@ -181,6 +181,7 @@
 "After the relaunch, Tankard runs it again: %@ %@." = "重新启动后，Tankard 会再次运行：%1$@ %2$@。";
 "All" = "全部";
 "All versions" = "所有版本";
+"Allow App Management" = "允许“App 管理”";
 "Allow Tankard in Privacy & Security → App Management and relaunch Tankard, then run it again." = "在“隐私与安全性”→“App 管理”中允许 Tankard，重新启动 Tankard，然后再次运行。";
 "Allow Tankard to update apps" = "允许 Tankard 更新 App";
 "Allowed" = "已允许";
@@ -200,6 +201,7 @@
 "App updates itself" = "App 自行更新";
 "Appearance" = "外观";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自行更新的 App 会继续自行更新。你为每个 App 选择的更新方式会随接管一起保存。";
+"Apps you installed yourself that Homebrew can manage: %lld" = "你自行安装、Homebrew 可以管理的 App：%lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "你自行安装、且 Homebrew cask 也会安装的 App。接管后 brew 即可更新它们，无需重新安装。";
 "Asking brew info…" = "正在询问 brew info…";
 "Auto-update" = "自动更新";
@@ -244,6 +246,7 @@
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "未启用 cask：请运行 `brew tap homebrew/cask`（约 620 MB）";
 "Changes since then" = "此后的更改";
+"Check" = "检查";
 "Check Again" = "再次检查";
 "Check a Brewfile" = "检查 Brewfile";
 "Check a Brewfile…" = "检查 Brewfile…";
@@ -293,6 +296,7 @@
 "Couldn't refresh from formulae.brew.sh (%@); showing the saved copy." = "无法从 formulae.brew.sh 刷新（%@）；正在显示已存储的副本。";
 "Couldn't reload: %@" = "无法重新载入：%@";
 "Couldn't run brew tap-info: %@" = "无法运行 brew tap-info：%@";
+"Couldn't tell" = "无法判断";
 "Couldn't write the script: %@" = "无法写入脚本：%@";
 "Count %@ as an upgrade again" = "再次将 %@ 计为可升级";
 "Critical" = "严重";
@@ -509,6 +513,7 @@
 "Newer than Intelbrew" = "比 Intelbrew 新";
 "Newer than tap" = "比 tap 新";
 "Next run: %@" = "下次运行：%@";
+"No Homebrew app to check with yet" = "还没有可用于检查的 Homebrew App";
 "No Homebrew cask installs these apps." = "没有 Homebrew cask 会安装这些 App。";
 "No Homebrew status to work from" = "没有可用的 Homebrew 状态";
 "No Intelbrew bottle yet." = "暂无 Intelbrew bottle。";
@@ -539,6 +544,7 @@
 "None of the installed formulae has a background service." = "已安装的 formula 都没有后台服务。";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "你的 zsh 或 bash 启动文件都没有设置它们，因此不会编辑任何内容。";
 "Not affiliated with or endorsed by the Homebrew project." = "与 Homebrew 项目无关联，也未获其认可。";
+"Not allowed yet" = "尚未允许";
 "Not checked by brew vulns." = "brew vulns 未检查。";
 "Not checked by brew vulns: no source repository it can match." = "brew vulns 未检查：没有可匹配的源码仓库。";
 "Not checked by brew vulns: untrusted tap." = "brew vulns 未检查：不受信任的 tap。";
@@ -724,6 +730,7 @@
 "Search Homebrew" = "搜索 Homebrew";
 "Search installed" = "搜索已安装项";
 "Search services" = "搜索服务";
+"See what Homebrew installed, what's out of date, and upgrade it in one place." = "查看 Homebrew 安装了什么、哪些已过期，并在一个地方完成更新。";
 "Select %@" = "选择 %@";
 "Select a package" = "选择软件包";
 "Select a service" = "选择服务";
@@ -799,6 +806,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard 从不运行 sudo。请在“终端”中运行：";
 "Tankard on GitHub" = "GitHub 上的 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard 只控制你自己的服务，从不运行 sudo。请在“终端”中运行：";
+"Tankard runs brew update in the background so the counts stay fresh. Settings → General turns it off." = "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”→“通用”中关闭。";
 "Tankard update available" = "Tankard 有可用更新";
 "Tankard updates itself through brew" = "Tankard 通过 brew 自行更新";
 "Tankard upgraded %lld package" = "Tankard 已升级 %lld 个软件包";
@@ -843,6 +851,7 @@
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "若要保留某项，请先在“终端”中将其标记为按需安装，然后再次检查：";
 "Top 200 results for “%@”" = "“%@”的前 200 条结果";
+"Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "像 Homebrew 一样，在 Homebrew 安装的 App 中尝试一次无害写入，并立即移除";
 "Trust" = "信任";
 "Trust %@?" = "信任 %@？";
 "Trust?" = "信任？";
@@ -919,6 +928,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "正在等待在“系统设置 → 通用 → 登录项”中批准。";
 "Waiting for brew update to finish…" = "正在等待 brew update 完成…";
 "Waiting for brew…" = "正在等待 brew…";
+"Welcome to Tankard" = "欢迎使用 Tankard";
 "What brew printed" = "brew 的输出";
 "What installing the missing items would do, before anything runs" = "在运行任何内容之前，显示安装缺失项会执行的操作";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "自此列表生成以来，已安装的内容发生了变化。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
@@ -1029,9 +1039,11 @@
 "just now" = "刚刚";
 "macOS already provides this software" = "macOS 已提供此软件";
 "macOS applies App Management the next time Tankard starts." = "macOS 会在 Tankard 下次启动时应用“App 管理”权限。";
+"macOS asks before Tankard can install, update or remove apps in Applications. Turn on Tankard in Privacy & Security → App Management." = "macOS 会在 Tankard 安装、更新或移除“应用程序”中的 App 前询问。请在“隐私与安全性”→“App 管理”中打开 Tankard。";
 "macOS asks before one app can change other apps, so Homebrew needs this to install, update or remove apps in Applications." = "macOS 会在一个 App 更改其他 App 前询问，因此 Homebrew 需要此权限才能在“应用程序”中安装、更新或移除 App。";
 "macOS blocked changing an app" = "macOS 阻止了更改 App";
 "macOS blocked changing apps: allow Tankard in Privacy & Security → App Management, then relaunch it." = "macOS 阻止了更改 App：请在“隐私与安全性”→“App 管理”中允许 Tankard，然后重新启动它。";
+"macOS may apply it only after Tankard relaunches." = "macOS 可能要在 Tankard 重新启动后才会应用。";
 "macOS provides a similar version, which this would shadow" = "macOS 提供了类似的版本，此项会将其覆盖";
 "macOS refused: %@" = "macOS 已拒绝：%@";
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS 已停止 %@。你允许后，Tankard 会再试一次。";

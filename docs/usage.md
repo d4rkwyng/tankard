@@ -366,6 +366,25 @@ intelbrew-core) and a **Replace with bottle** button in the detail pane. It runs
 `brew reinstall --force-bottle --formula <tap>/<name>`; brew fails cleanly if there turns
 out to be no bottle. The Bottle available filter has **Replace all**.
 
+## Welcome sheet (0.8.1)
+
+The first time Tankard opens with a working Homebrew, a welcome sheet shows over the list
+(once; **Done** closes it for good). It has two cards:
+
+- **Allow App Management**: Open System Settings, **Check**, and Relaunch Tankard. Check
+  does what Homebrew itself does before changing an app (cask/quarantine.rb): it creates an
+  empty `.tankard-write-test` file at the top of an app that an installed cask put in
+  Applications, and deletes it at once. It never touches an app Homebrew doesn't manage, and
+  runs only when you click it. "Not allowed yet" means macOS refused the write; the attempt
+  is also what makes macOS list Tankard in App Management and show its notice.
+- **Adopt Apps**, once the Adopt scan (run in the background; the sheet doesn't wait)
+  finds apps you installed yourself that a cask can manage. Adopt Apps… opens that sheet.
+  The card stays hidden when the scan finds none or fails (Intelbrew mode has no scan).
+
+A line says that brew update runs in the background and that Settings → General turns it
+off. The welcome never shows in demo, script, e2e or snapshot runs
+(`TANKARD_DEMO_ONBOARDING=1|check` shows it in the demo).
+
 ## App Management
 
 macOS asks before one app installs, updates or deletes another (System Settings → Privacy &
