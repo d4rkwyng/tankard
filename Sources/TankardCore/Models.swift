@@ -91,6 +91,16 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     public var caskDependencies: [String]? = nil
 
     public var isDependency: Bool { !requested }
+
+    /// A placeholder row for a sheet run that isn't about one package
+    /// (`brew cleanup`). Not a real package: its id starts with "command:".
+    public static func command(_ title: String) -> Package {
+        Package(id: "command:\(title)", kind: .formula, name: title, fullName: title, tap: nil, desc: nil,
+                status: .bottle, statusLabel: "", installedVersion: "", installedVersions: [], currentVersion: nil,
+                requested: true, pinned: false, kegOnly: nil, deprecated: false, disabled: false,
+                pouredFromBottle: nil, currentHasBottle: nil, bottleTag: nil, bottleOrigin: nil, bottleURL: nil,
+                installedAt: nil, upgradeAvailable: false, upgradeHasBottle: true, autoUpdates: nil)
+    }
 }
 
 public struct StatusSummary: Codable, Sendable, Equatable {

@@ -9,13 +9,24 @@ public struct TapIndexEntry: Sendable, Equatable {
     public var desc: String?
     /// Formula aliases (from the tap's Aliases directory); cask display names.
     public var otherNames: [String]
+    /// Formulae (0.3): the `bottle do` block read from the file. nil when
+    /// not scanned (the bottle is then unknown until `brew info`); an empty
+    /// spec means the formula has no bottle block, so it compiles.
+    public var bottle: BrewInfoJSON.BottleSpec?
+    /// Formulae (0.3): `depends_on` names for macOS (runtime, and build-only).
+    public var dependencies: [String]
+    public var buildDependencies: [String]
 
-    public init(kind: PackageKind, name: String, tap: String, desc: String?, otherNames: [String] = []) {
+    public init(kind: PackageKind, name: String, tap: String, desc: String?, otherNames: [String] = [],
+                bottle: BrewInfoJSON.BottleSpec? = nil, dependencies: [String] = [], buildDependencies: [String] = []) {
         self.kind = kind
         self.name = name
         self.tap = tap
         self.desc = desc
         self.otherNames = otherNames
+        self.bottle = bottle
+        self.dependencies = dependencies
+        self.buildDependencies = buildDependencies
     }
 
     /// brew's full name: short in the two default taps, tap-qualified elsewhere.
@@ -24,8 +35,21 @@ public struct TapIndexEntry: Sendable, Equatable {
     }
 
     public func catalogEntry() -> CatalogEntry {
-        CatalogEntry(kind: kind, name: name, fullName: fullName, tap: tap, desc: desc, otherNames: otherNames,
+        CatalogEntry(kind: kind, name: name, fullName: fullName, tap: tap, desc: desc,
+                     dependencies: dependencies, buildDependencies: buildDependencies, otherNames: otherNames,
                      bottle: kind == .cask ? .cask : .unknown, detailsLoaded: false)
+    }
+
+    /// With the scanned bottle block judged for this Mac (Intelbrew-mode
+    /// Discover knows every formula's bottle before any `brew info`).
+    public func catalogEntry(builder: CatalogBuilder) -> CatalogEntry {
+        var e = catalogEntry()
+        guard kind == .formula, let spec = bottle else { return e }
+        let (badge, tag, url) = builder.bottle(spec: spec)
+        e.bottle = badge
+        e.bottleTag = tag
+        e.bottleURL = url
+        return e
     }
 }
 
@@ -93,10 +117,17 @@ public struct TapIndexer: Sendable {
             }
             for file in formulaFiles {
                 let name = file.deletingPathExtension().lastPathComponent
-                let head = Self.head(of: file)
+                var head = Self.head(of: file)
+                if head.count == Self.headSize, head.range(of: Data("\n  bottle do".utf8)) == nil,
+                   let whole = try? Data(contentsOf: file) {
+                    head = whole // a long formula: the bottle block may come later
+                }
+                let scanned = FormulaScanner.scan(head, tap: tap)
                 entries.append(TapIndexEntry(kind: .formula, name: name, tap: tap,
                                              desc: Self.argument("desc", in: head),
-                                             otherNames: aliases[name] ?? []))
+                                             otherNames: aliases[name] ?? [],
+                                             bottle: scanned.bottle,
+                                             dependencies: scanned.runtime, buildDependencies: scanned.build))
             }
             for file in Self.rubyFiles(in: dir.appendingPathComponent("Casks")) {
                 let head = Self.head(of: file)
@@ -135,11 +166,13 @@ public struct TapIndexer: Sendable {
     }
 
     /// The first 16 KB of a file: `desc` and `name` come near the top.
+    static let headSize = 16 * 1024
+
     static func head(of url: URL) -> Data {
         let fd = open(url.path, O_RDONLY)
         guard fd >= 0 else { return Data() }
         defer { close(fd) }
-        var buffer = Data(count: 16 * 1024)
+        var buffer = Data(count: headSize)
         let n = buffer.withUnsafeMutableBytes { read(fd, $0.baseAddress, $0.count) }
         return n > 0 ? buffer.prefix(n) : Data()
     }
@@ -186,5 +219,166 @@ public struct TapIndexer: Sendable {
             return nil
         }
         return nil
+    }
+}
+
+/// Reads the two things Discover needs from a formula file without running
+/// Ruby: the `bottle do` block and the `depends_on` lines. Only literal,
+/// conventionally formatted lines are understood (brew's own style, which
+/// `brew style` enforces in homebrew/core); anything else is skipped, and
+/// `brew info` fills in the truth for the rows being looked at.
+///
+/// One pass over the bytes, no String per line: Intelbrew-mode Discover
+/// scans every formula in the taps (8,732 on the Intel VM).
+public enum FormulaScanner {
+    public struct Result: Sendable, Equatable {
+        /// Empty files (and nil root URL) when the formula has no bottle block.
+        public var bottle: BrewInfoJSON.BottleSpec
+        public var runtime: [String]
+        public var build: [String]
+    }
+
+    public static func bottle(in source: String, tap: String) -> BrewInfoJSON.BottleSpec {
+        scan(Data(source.utf8), tap: tap).bottle
+    }
+
+    public static func dependencies(in source: String) -> (runtime: [String], build: [String]) {
+        let r = scan(Data(source.utf8), tap: "homebrew/core")
+        return (r.runtime, r.build)
+    }
+
+    /// - bottle: `bottle do … end` at two-space indent; `root_url "…"` and
+    ///   `sha256 [cellar: X,] <tag>: "…"` lines (brew pads the tag column).
+    ///   Without `root_url`, homebrew/core bottles come from ghcr.io; without
+    ///   `cellar:`, brew's default Cellar for the tag.
+    /// - dependencies: `depends_on "x"` at top level and inside `on_macos`,
+    ///   `on_intel`/`on_arm` and `on_<codename>` blocks; not inside `on_linux`,
+    ///   `on_system`, `head`, `resource`, `test` or other blocks. `=> :build`
+    ///   goes to `build`, `=> :test` is dropped. Arch blocks aren't told apart
+    ///   (both kept), a slight overcount. Stops at the first method (`  def `):
+    ///   brew style puts every depends_on and the bottle block before it.
+    public static func scan(_ data: Data, tap: String) -> Result {
+        var files: [String: BrewInfoJSON.BottleFile] = [:]
+        var rootURL: String?
+        var runtime: [String] = [], build: [String] = []
+        data.withUnsafeBytes { (raw: UnsafeRawBufferPointer) in
+            let p = raw.bindMemory(to: UInt8.self)
+            let n = p.count
+            var inBottle = false
+            var stack: [Bool] = []
+            var excluded = 0
+            var i = 0
+            func has(_ lit: StaticString, at k: Int, end: Int) -> Bool {
+                let c = lit.utf8CodeUnitCount
+                guard end - k >= c else { return false }
+                let l = lit.utf8Start
+                for x in 0..<c where p[k + x] != l[x] { return false }
+                return true
+            }
+            func string(_ a: Int, _ b: Int) -> String {
+                String(decoding: UnsafeBufferPointer(rebasing: p[a..<b]), as: UTF8.self)
+            }
+            /// The "…" literal starting at k (after spaces), without escapes.
+            func quoted(from k: Int, end: Int) -> (String, Int)? {
+                var a = k
+                while a < end && p[a] == 32 { a += 1 }
+                guard a < end, p[a] == 34 || p[a] == 39 else { return nil }
+                let q = p[a]
+                var b = a + 1
+                while b < end && p[b] != q {
+                    if p[b] == 92 || (p[b] == 35 && b + 1 < end && p[b + 1] == 123) { return nil } // \ or #{
+                    b += 1
+                }
+                guard b < end else { return nil }
+                return (string(a + 1, b), b + 1)
+            }
+            func contains(_ lit: StaticString, _ a: Int, _ b: Int) -> Bool {
+                var k = a
+                while k < b { if has(lit, at: k, end: b) { return true }; k += 1 }
+                return false
+            }
+            while i < n {
+                var j = i
+                while j < n && p[j] != 10 { j += 1 }
+                defer { i = j + 1 }
+                var s = i
+                while s < j && (p[s] == 32 || p[s] == 9) { s += 1 }
+                var e = j
+                while e > s && (p[e - 1] == 32 || p[e - 1] == 9 || p[e - 1] == 13) { e -= 1 }
+                guard s < e, p[s] != 35 else { continue } // blank or comment
+                let indent = s - i
+                if indent == 2 && has("def ", at: s, end: e) { break }
+                let isEnd = e - s == 3 && has("end", at: s, end: e)
+                if inBottle {
+                    if isEnd {
+                        inBottle = false
+                    } else if has("root_url ", at: s, end: e) {
+                        rootURL = quoted(from: s + 9, end: e)?.0
+                    } else if has("sha256 ", at: s, end: e) {
+                        var k = s + 7
+                        while k < e && p[k] == 32 { k += 1 }
+                        var cellar: String?
+                        if has("cellar: ", at: k, end: e) {
+                            k += 8
+                            var c = k
+                            while c < e && p[c] != 44 { c += 1 } // ","
+                            guard c < e else { continue }
+                            var a = k, b = c
+                            while b > a && p[b - 1] == 32 { b -= 1 }
+                            if b - a >= 2 && p[a] == 34 && p[b - 1] == 34 { a += 1; b -= 1 }
+                            cellar = string(a, b)
+                            k = c + 1
+                            while k < e && p[k] == 32 { k += 1 }
+                        }
+                        var t = k
+                        while t < e, (p[t] >= 97 && p[t] <= 122) || (p[t] >= 48 && p[t] <= 57) || p[t] == 95 { t += 1 }
+                        guard t > k, t < e, p[t] == 58 else { continue } // "tag:"
+                        let tag = string(k, t)
+                        files[tag] = BrewInfoJSON.BottleFile(cellar: cellar ?? defaultCellar(tag: tag), url: nil)
+                    }
+                    continue
+                }
+                if indent == 2 && e - s == 9 && has("bottle do", at: s, end: e) {
+                    inBottle = true
+                    continue
+                }
+                if isEnd {
+                    if let last = stack.popLast(), !last { excluded -= 1 }
+                    continue
+                }
+                let opens = (e - s >= 3 && has(" do", at: e - 3, end: e)) || contains(" do |", s, e)
+                if opens {
+                    var w = s
+                    while w < e && p[w] != 32 { w += 1 }
+                    let included = has("on_", at: s, end: w) && !has("on_linux", at: s, end: w) && !has("on_system", at: s, end: w)
+                    stack.append(included)
+                    if !included { excluded += 1 }
+                    continue
+                }
+                guard excluded == 0, has("depends_on ", at: s, end: e), let (name, after) = quoted(from: s + 11, end: e) else { continue }
+                if contains(":build", after, e) {
+                    build.append(name)
+                } else if !contains(":test", after, e) {
+                    runtime.append(name)
+                }
+            }
+        }
+        if rootURL == nil && !files.isEmpty && tap == "homebrew/core" {
+            rootURL = "https://ghcr.io/v2/homebrew/core"
+        }
+        let r = dedupe(runtime)
+        return Result(bottle: BrewInfoJSON.BottleSpec(rootURL: rootURL, files: files),
+                      runtime: r, build: dedupe(build.filter { !r.contains($0) }))
+    }
+
+    /// brew's default Cellar for a tag when the line names none.
+    static func defaultCellar(tag: String) -> String {
+        if tag.hasSuffix("_linux") { return "/home/linuxbrew/.linuxbrew/Cellar" }
+        return tag.hasPrefix("arm64_") ? "/opt/homebrew/Cellar" : "/usr/local/Cellar"
+    }
+
+    static func dedupe(_ a: [String]) -> [String] {
+        var seen: Set<String> = []
+        return a.filter { seen.insert($0).inserted }
     }
 }

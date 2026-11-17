@@ -31,6 +31,8 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     public var license: String?
     /// Formula dependencies (declared); casks: `depends_on` formulae.
     public var dependencies: [String]
+    /// Formulae: build-only dependencies (installed too when it compiles).
+    public var buildDependencies: [String]
     /// Casks: `depends_on` casks.
     public var caskDependencies: [String]
     /// Formula aliases and old names; cask display names ("Mozilla Firefox").
@@ -52,7 +54,7 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
 
     public init(kind: PackageKind, name: String, fullName: String, tap: String?, desc: String?,
                 version: String? = nil, homepage: String? = nil, license: String? = nil,
-                dependencies: [String] = [], caskDependencies: [String] = [], otherNames: [String] = [],
+                dependencies: [String] = [], buildDependencies: [String] = [], caskDependencies: [String] = [], otherNames: [String] = [],
                 deprecated: Bool = false, disabled: Bool = false, bottle: CatalogBottle,
                 bottleTag: String? = nil, bottleURL: String? = nil, detailsLoaded: Bool = true) {
         self.id = "\(kind.rawValue):" + StatusClassifier.qualified(tap: tap, name: fullName)
@@ -65,6 +67,7 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
         self.homepage = homepage
         self.license = license
         self.dependencies = dependencies
+        self.buildDependencies = buildDependencies
         self.caskDependencies = caskDependencies
         self.otherNames = otherNames
         self.deprecated = deprecated
@@ -89,6 +92,9 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     public func merging(_ details: CatalogEntry) -> CatalogEntry {
         var e = details
         if e.desc == nil { e.desc = desc }
+        // brew info --json=v2 of a single formula always has build deps when
+        // there are any; keep the scanned ones if it gave none.
+        if e.buildDependencies.isEmpty { e.buildDependencies = buildDependencies }
         if e.otherNames.isEmpty { e.otherNames = otherNames; e.keyOther = keyOther }
         e.keyDesc = (e.desc ?? "").lowercased()
         return e
@@ -121,7 +127,11 @@ public struct CatalogBuilder: Sendable {
     }
 
     public func bottle(for f: BrewInfoJSON.Formula) -> (CatalogBottle, String?, String?) {
-        guard let match = platform.bottle(in: f.bottle["stable"]), match.usable else { return (.fromSource, nil, nil) }
+        bottle(spec: f.bottle["stable"])
+    }
+
+    public func bottle(spec: BrewInfoJSON.BottleSpec?) -> (CatalogBottle, String?, String?) {
+        guard let match = platform.bottle(in: spec), match.usable else { return (.fromSource, nil, nil) }
         let origin = StatusClassifier.bottleOrigin(url: match.url)
         return (intelbrewMode && origin == .intelbrew ? .intelbrew : .forThisMac, match.tag, match.url)
     }
@@ -131,6 +141,7 @@ public struct CatalogBuilder: Sendable {
         return CatalogEntry(kind: .formula, name: f.name, fullName: f.fullName, tap: f.tap, desc: f.desc,
                             version: f.currentPkgVersion ?? f.versions.head.map { "HEAD (\($0))" },
                             homepage: f.homepage, license: f.license, dependencies: f.dependencies ?? [],
+                            buildDependencies: f.buildDependencies ?? [],
                             otherNames: (f.aliases ?? []) + (f.oldnames ?? []),
                             deprecated: f.deprecated ?? false, disabled: f.disabled ?? false,
                             bottle: badge, bottleTag: tag, bottleURL: url)
@@ -206,22 +217,49 @@ public enum CatalogSearch {
 
     /// The best `limit` matches, best first. Ties: shorter name, then
     /// alphabetical, then formula before cask.
+    /// `preferBottled` (0.3): within the same relevance tier, formulae with
+    /// a bottle for this Mac come before unknown ones, and those before
+    /// formulae that compile. `bottledOnly` drops formulae known to compile
+    /// (unknown ones and casks stay).
     public static func search(_ query: String, in entries: [CatalogEntry], kind: CatalogKindFilter = .all,
-                              limit: Int = 200) -> [CatalogEntry] {
+                              limit: Int = 200, preferBottled: Bool = false, bottledOnly: Bool = false) -> [CatalogEntry] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
         var hits: [(Int, CatalogEntry)] = []
-        for e in entries where kind.includes(e.kind) {
+        for e in entries where kind.includes(e.kind) && !(bottledOnly && e.bottle == .fromSource) {
             if let s = score(e, query: q, words: words) { hits.append((s, e)) }
         }
         hits.sort { a, b in
             if a.0 != b.0 { return a.0 > b.0 }
+            if preferBottled {
+                let x = bottleRank(a.1), y = bottleRank(b.1)
+                if x != y { return x < y }
+            }
             if a.1.name.count != b.1.name.count { return a.1.name.count < b.1.name.count }
             if a.1.name != b.1.name { return a.1.name < b.1.name }
             return a.1.kind == .formula && b.1.kind == .cask
         }
         return hits.prefix(limit).map(\.1)
+    }
+
+    /// 0 pours a bottle (or is a cask), 1 not known yet, 2 compiles.
+    static func bottleRank(_ e: CatalogEntry) -> Int {
+        switch e.bottle {
+        case .forThisMac, .intelbrew, .cask: return 0
+        case .unknown: return 1
+        case .fromSource: return 2
+        }
+    }
+
+    /// Formulae with a bottle for this Mac, and all formulae.
+    public static func bottledCount(_ entries: [CatalogEntry]) -> (bottled: Int, formulae: Int) {
+        var b = 0, f = 0
+        for e in entries where e.kind == .formula {
+            f += 1
+            if e.bottle == .forThisMac || e.bottle == .intelbrew { b += 1 }
+        }
+        return (b, f)
     }
 }
 

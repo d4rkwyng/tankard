@@ -29,6 +29,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var disabled: Bool?
         /// Declared runtime dependencies (formula names, tap-qualified when not in core).
         public var dependencies: [String]?
+        /// Build-only dependencies (needed when the formula compiles).
+        public var buildDependencies: [String]?
         public var homepage: String?
         /// SPDX expression, flattened to text ("MIT", "Apache-2.0 or MIT").
         public var license: String?
@@ -39,6 +41,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
             case name, tap, desc, versions, revision, bottle, installed, pinned, outdated, deprecated, disabled
             case dependencies, homepage, license, aliases, oldnames
             case fullName = "full_name"
+            case buildDependencies = "build_dependencies"
             case versionScheme = "version_scheme"
             case linkedKeg = "linked_keg"
             case kegOnly = "keg_only"
@@ -62,6 +65,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
             deprecated = try c.decodeIfPresent(Bool.self, forKey: .deprecated)
             disabled = try c.decodeIfPresent(Bool.self, forKey: .disabled)
             dependencies = try c.decodeIfPresent([String].self, forKey: .dependencies)
+            buildDependencies = try? c.decodeIfPresent([String].self, forKey: .buildDependencies)
             homepage = try c.decodeIfPresent(String.self, forKey: .homepage)
             license = (try? c.decodeIfPresent(LicenseExpression.self, forKey: .license))?.topLevel
             aliases = try? c.decodeIfPresent([String].self, forKey: .aliases)
@@ -82,7 +86,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var bottle: Bool?
     }
 
-    public struct BottleSpec: Decodable, Sendable {
+    public struct BottleSpec: Decodable, Sendable, Equatable {
         public var rebuild: Int?
         public var rootURL: String?
         /// Keyed by bottle tag: "sonoma", "arm64_sonoma", "all", "x86_64_linux", ...
@@ -107,7 +111,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         }
     }
 
-    public struct BottleFile: Decodable, Sendable {
+    public struct BottleFile: Decodable, Sendable, Equatable {
         /// ":any", ":any_skip_relocation", or an absolute Cellar path.
         public var cellar: String?
         public var url: String?
