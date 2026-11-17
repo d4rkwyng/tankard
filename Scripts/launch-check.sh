@@ -13,13 +13,18 @@
 #   --seconds N   how long it must stay up (default: 15)
 #   --runs N      launch it N times in a row (default: 3)
 #   --lang L      launch it in language L (-AppleLanguages "(L)"), e.g. de
+#   --allow-brew-update
+#                 let the app run its background `brew update` (0.8+); by
+#                 default the app is launched with HOMEBREW_NO_AUTO_UPDATE=1
 #
 # It reads the real settings and the real brew state, and quits the app
 # afterwards; it never installs, upgrades or removes anything. A normal
-# launch reads Homebrew's status, as every launch does, and (0.8) may run
-# the background `brew update` a few seconds in, when the last one is older
-# than the check interval and "Check for new versions in the background" is
-# on: a fetch of Homebrew's metadata, as `brew update` in Terminal.
+# launch reads Homebrew's status, as every launch does. Since 0.8 a launch
+# may also run the background `brew update` a few seconds in (a fetch of
+# Homebrew's metadata, as `brew update` in Terminal), which takes brew's
+# lock and moves its FETCH_HEAD. So launch-check sets
+# HOMEBREW_NO_AUTO_UPDATE=1 (the app honours it and skips the update)
+# unless --allow-brew-update is given.
 #
 # Why it exists: 0.3.0 shipped a launch crash (App.body re-evaluated in a
 # loop until the stack overflowed) that every demo and snapshot run hid.
@@ -39,6 +44,7 @@ SECONDS_UP=15
 RUNS=3
 LANG_ARGS=()
 BUILD=1
+ALLOW_UPDATE=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -46,7 +52,8 @@ while [ $# -gt 0 ]; do
         --seconds) SECONDS_UP=$2; shift ;;
         --runs) RUNS=$2; shift ;;
         --lang) LANG_ARGS=(-AppleLanguages "($2)"); shift ;;
-        -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+        --allow-brew-update) ALLOW_UPDATE=1 ;;
+        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
         *.app|*.app/) APP=${1%/}; BUILD=0 ;;
         *) echo "launch-check.sh: unknown option $1" >&2; exit 2 ;;
     esac
@@ -72,6 +79,8 @@ reports_for() {
 # The demo/snapshot switches hid the 0.3.0 crash: launch without any of them.
 ENV_CLEAN=(env)
 for v in $(env | sed -n 's/^\(TANKARD_[A-Z_]*\)=.*/\1/p'); do ENV_CLEAN+=(-u "$v"); done
+# No background `brew update` unless asked (see the header).
+[ $ALLOW_UPDATE = 1 ] || ENV_CLEAN+=(HOMEBREW_NO_AUTO_UPDATE=1)
 
 BIN_ABS=$(cd "$(dirname "$BIN")" && pwd)/Tankard
 if pgrep -f "^$BIN_ABS" >/dev/null; then
