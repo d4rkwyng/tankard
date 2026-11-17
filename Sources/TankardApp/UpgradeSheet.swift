@@ -106,7 +106,7 @@ struct Chip: View {
                 ProgressView().controlSize(.mini).scaleEffect(0.7).frame(width: 11, height: 11)
             case .failed:
                 Image(systemName: "xmark").font(.system(size: 9, weight: .bold))
-            case .cancelled:
+            case .cancelled, .skipped:
                 Image(systemName: "minus").font(.system(size: 9, weight: .bold))
             case .waiting:
                 EmptyView()

@@ -78,7 +78,7 @@ struct V08AdoptAppTests {
         #expect(session.items.map(\.command.arguments) == [["install", "--cask", "--adopt", "homebrew/cask/obsidian"]])
         #expect(await waitUntil { store.upgrade?.isFinished == true })
         #expect(session.succeededCount == 1)
-        #expect(store.upgradeRules.selfUpdatePolicy("obsidian") == .app)
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/obsidian") == .app)
         #expect(await waitUntil { store.history.entries.contains { $0.arguments.contains("--adopt") } })
         #expect(store.history.entries.first { $0.arguments.contains("--adopt") }?.category == .install)
         // The refresh after the run lists the adopted cask.
@@ -124,15 +124,15 @@ struct V08AdoptAppTests {
     }
 
     @Test func selfUpdateRuleHoldsOnlySelfUpdatingCasks() {
-        let tokens: Set<String> = ["obsidian", "plain"]
+        let tokens: Set<String> = ["homebrew/cask/obsidian", "homebrew/cask/plain"]
         #expect(SelfUpdateRule.leftToApp(cask("obsidian"), appTokens: tokens))
         #expect(!SelfUpdateRule.leftToApp(cask("plain", autoUpdates: false), appTokens: tokens))
         #expect(!SelfUpdateRule.leftToApp(cask("other"), appTokens: tokens))
-        let snap = UpgradeRuleSnapshot(appUpdates: ["obsidian"])
+        let snap = UpgradeRuleSnapshot(appUpdates: ["homebrew/cask/obsidian"])
         #expect(snap.skipReason(cask("obsidian")) == .appUpdatesItself)
         #expect(snap.skipReason(cask("firefox")) == nil)
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: []) == false)
-        #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: ["a"]))
+        #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: false, packages: [cask("a")], homebrewTokens: ["homebrew/cask/a"]))
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: true, packages: [cask("a")], homebrewTokens: []))
         #expect(SelfUpdateRule.needsGreedy(includeSelfUpdating: true, packages: [], homebrewTokens: []) == false)
     }
@@ -142,15 +142,15 @@ struct V08AdoptAppTests {
         let rules = UpgradeRulesSettings(defaults: defaults)
         var changes = 0
         rules.onPolicyChange = { changes += 1 }
-        rules.setSelfUpdatePolicy("obsidian", .app)
+        rules.setSelfUpdatePolicy("homebrew/cask/obsidian", .app)
         rules.setSelfUpdatePolicy("firefox", .homebrew)
         rules.setSelfUpdatePolicy("firefox", .homebrew) // unchanged: no write, no notice
         #expect(changes == 2)
         let again = UpgradeRulesSettings(defaults: defaults)
-        #expect(again.selfUpdatePolicy("obsidian") == .app)
+        #expect(again.selfUpdatePolicy("homebrew/cask/obsidian") == .app)
         #expect(again.selfUpdatePolicy("firefox") == .homebrew)
         #expect(again.selfUpdatePolicy("other") == .automatic)
-        #expect(again.homebrewUpdatedTokens == ["firefox"] && again.appUpdatedTokens == ["obsidian"])
+        #expect(again.homebrewUpdatedTokens == ["firefox"] && again.appUpdatedTokens == ["homebrew/cask/obsidian"])
         again.setSelfUpdatePolicy("firefox", .automatic)
         #expect(again.selfUpdatePolicies["firefox"] == nil)
 
@@ -166,7 +166,7 @@ struct V08AdoptAppTests {
 
     @Test func autoUpdatePlanSkipsAppUpdatedCasks() {
         let plan = AutoUpdateSafeMode.plan([cask("obsidian"), cask("firefox")], classifier: CompileClassifier(), running: [],
-                                           dontQuitApps: true, rules: UpgradeRuleSnapshot(appUpdates: ["obsidian"]))
+                                           dontQuitApps: true, rules: UpgradeRuleSnapshot(appUpdates: ["homebrew/cask/obsidian"]))
         #expect(plan.run.map(\.name) == ["firefox"])
         #expect(plan.skipped.map(\.package.name) == ["obsidian"])
         #expect(plan.skipped.first?.reason == .appUpdatesItself)
@@ -180,12 +180,12 @@ struct V08AdoptAppTests {
         #expect(store.insights.settings.includeSelfUpdatingApps == false)
         let ts = { store.packages.first { $0.name == "tailscale-app" } }
         #expect(ts()?.upgradeAvailable == false)
-        store.upgradeRules.setSelfUpdatePolicy("tailscale-app", .homebrew) // re-reads with --greedy
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew) // re-reads with --greedy
         #expect(await waitUntil { ts()?.upgradeAvailable == true })
         #expect(ts()?.selfUpdatingUpgrade == true && ts()?.isUpgradeTarget == true)
         #expect(store.upgradable.contains { $0.name == "tailscale-app" })
         // "App updates itself": still listed by brew, but not a target.
-        store.upgradeRules.setSelfUpdatePolicy("tailscale-app", .app)
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .app)
         #expect(await waitUntil { ts()?.selfUpdateHeld == true || ts()?.upgradeAvailable == false })
         #expect(!store.upgradable.contains { $0.name == "tailscale-app" })
     }
@@ -199,5 +199,196 @@ struct V08AdoptAppTests {
         // Keep the previous version applies (an install can start brew's cleanup).
         #expect(RollbackSettings.appliesTo(.adopt))
         #expect(!AppManagement.modifiesApps(.adopt, Package.command("x")))
+    }
+    // MARK: review: default ticks for self-updating casks
+
+    /// A store on a hand-made index (no demo, no I/O).
+    func adoptStore(_ casks: [AdoptCask], _ apps: [InstalledApp]) -> AdoptStore {
+        let a = AdoptStore()
+        a.apply(AdoptInput(index: AdoptIndex(casks: casks), apps: apps, source: "test"))
+        return a
+    }
+
+    static func app(_ rel: String, _ bid: String, _ v: String) -> InstalledApp {
+        InstalledApp(path: "/Applications/" + rel, root: "/Applications", relativePath: rel, bundleID: bid,
+                     shortVersion: v, bundleVersion: v)
+    }
+
+    @Test func selfUpdatingCaskTicksOnlyASureMatch() throws {
+        let target = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app")]
+        // The review's case: Alice's io.github.alice.Foo vs Bob's GitHub-hosted auto_updates cask "foo".
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
+        var a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        var row = try #require(a.scan.rows.first)
+        #expect(a.group(row) == .ready && a.confidence(row) == .low)
+        #expect(!a.isTicked(row) && a.plan.isEmpty)
+        // Same vendor (owner alice) but not the exact bundle id: still not ticked for a self-updating cask.
+        var alices = bobs
+        alices.web = "https://github.com/alice/foo"
+        a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .medium && !a.isTicked(row))
+        // The user can still tick it by hand.
+        a.setTicked(row, true)
+        #expect(a.plan.map(\.token) == ["foo"])
+        // The bundle id named by the cask: ticked.
+        alices.bundleIDs = ["io.github.alice.foo"]
+        a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .high && a.isTicked(row))
+        // Not self-updating: a likely match at the same version is ticked (brew compares the download).
+        var plain = AdoptCask(token: "foo", version: "1.0", web: "https://github.com/alice/foo", apps: target)
+        a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .medium && a.isTicked(row))
+        plain.web = "https://github.com/bob/foo"
+        a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        row = try #require(a.scan.rows.first)
+        #expect(a.confidence(row) == .low && !a.isTicked(row))
+    }
+    // MARK: review: the confirmation says what brew actually checks
+
+    static func item(_ token: String, auto: Bool, _ conf: AdoptConfidence = .high) -> AdoptPlanItem {
+        AdoptPlanItem(token: token, qualifiedName: "homebrew/cask/\(token)", appPath: "/Applications/\(token.capitalized).app",
+                      appVersion: "1.0", caskVersion: "1.0", autoUpdates: auto, policy: .automatic, confidence: conf)
+    }
+
+    @Test func confirmationTextMatchesWhatBrewChecks() {
+        let checked = AdoptStore.confirmationText([Self.item("gimp", auto: false)])
+        #expect(checked.contains("checks the download against the app"))
+        #expect(checked.contains("If a download doesn't match, brew stops"))
+        #expect(!checked.contains("without a version check") && !checked.contains("Name only"))
+
+        let auto = AdoptStore.confirmationText([Self.item("obsidian", auto: true)])
+        #expect(!auto.contains("checks the download"))
+        #expect(!auto.contains("doesn't match"))
+        #expect(auto.contains("Adopted without a version check: Obsidian."))
+        #expect(auto.contains("deletes the app"))
+
+        let mixed = AdoptStore.confirmationText([Self.item("gimp", auto: false), Self.item("obsidian", auto: true)])
+        #expect(!mixed.contains("checks the download against the app that is there, and then"))
+        #expect(mixed.contains("Adopted without a version check: Obsidian."))
+        #expect(mixed.contains("The other apps are checked"))
+
+        // A name-only row the user ticked by hand: warned, first.
+        let low = AdoptStore.confirmationText([Self.item("foo", auto: true, .low), Self.item("gimp", auto: false, .medium)])
+        #expect(low.hasPrefix("Name only: Foo."))
+        #expect(!low.contains("Gimp. Nothing"))
+    }
+
+    @Test func confirmationCarriesTheRowsConfidence() throws {
+        let target = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app")]
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
+        let a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
+        let row = try #require(a.scan.rows.first)
+        a.setTicked(row, true)
+        a.requestAdopt()
+        let items = try #require(a.pendingConfirm)
+        #expect(items.map(\.confidence) == [.low])
+        #expect(AdoptStore.confirmationText(items).hasPrefix("Name only: Foo."))
+    }
+    // MARK: review: small items
+
+    @Test func confirmationListsEveryCommand() {
+        let items = [Self.item("gimp", auto: false), Self.item("obsidian", auto: true)]
+        let text = AdoptStore.commandsText(items)
+        #expect(text.contains("brew install --cask --adopt homebrew/cask/gimp\nbrew install --cask --adopt homebrew/cask/obsidian"))
+        #expect(!text.contains("<cask>") && !text.contains("one per app"))
+        #expect(AdoptStore.commandsText([items[0]]) == "brew install --cask --adopt homebrew/cask/gimp")
+        let many = (1...10).map { Self.item("c\($0)", auto: false) }
+        let t = AdoptStore.commandsText(many)
+        #expect(t.contains("homebrew/cask/c8") && !t.contains("homebrew/cask/c9") && t.contains("and 2 more"))
+    }
+
+    @Test func selfUpdateChoiceIsSavedOnlyWhenTheAdoptSucceeds() async throws {
+        let store = try await openedDemo()
+        // The demo's brew has no such cask: the adopt fails.
+        let bad = AdoptPlanItem(token: "no-such-cask", qualifiedName: "homebrew/cask/no-such-cask", appPath: "/Applications/Nope.app",
+                                appVersion: "1.0", caskVersion: "1.0", autoUpdates: true, policy: .app)
+        #expect(store.startAdopt([bad]))
+        // Not saved before the run.
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/no-such-cask") == .automatic)
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        #expect(store.upgrade?.failedItems.count == 1)
+        #expect(store.upgradeRules.selfUpdatePolicy("homebrew/cask/no-such-cask") == .automatic)
+    }
+
+    @Test func uninstallTooltipMatchesTheSheet() {
+        var p = Package.command("luarocks"); p.kind = .formula
+        var lua = Package.command("lua"); lua.kind = .formula
+        let one = AppStore.uninstallDisplay(p)
+        #expect(one.contains("HOMEBREW_NO_AUTOREMOVE=1") && one.contains("brew uninstall") && one.hasSuffix("luarocks"))
+        let lines = AppStore.uninstallDisplay(p, orphans: [lua]).split(separator: "\n")
+        #expect(lines.count == 2 && lines.allSatisfy { $0.contains("HOMEBREW_NO_AUTOREMOVE=1") } && lines[1].hasSuffix("lua"))
+    }
+    // MARK: QA: self-update choices are per qualified cask and leave with it
+
+    @Test func selfUpdateChoiceIsPerTapAndClearedOnUninstall() async throws {
+        let store = try await openedDemo()
+        let ob = try #require(store.packages.first { $0.kind == .cask && $0.autoUpdates == true })
+        var other = ob
+        other.id = "cask:someone/tap/\(ob.name)"
+        other.tap = "someone/tap"
+        other.fullName = "someone/tap/\(ob.name)"
+        store.setSelfUpdatePolicy(ob, .app)
+        #expect(store.selfUpdatePolicy(ob) == .app)
+        #expect(store.selfUpdatePolicy(other) == .automatic)
+        #expect(store.upgradeRules.selfUpdatePolicies.keys.contains(SelfUpdateRule.key(ob)))
+        #expect(!SelfUpdateRule.leftToApp(other, appTokens: store.upgradeRules.appUpdatedTokens))
+        // Uninstalling the cask removes its choice.
+        store.closeToolSheet()
+        store.settings.appManagementExplained = true // no first-use explainer in between
+        store.requestUninstall(ob)
+        store.startUninstall(ob)
+        #expect(await waitUntil(timeout: .seconds(10)) { store.upgrade?.isFinished == true })
+        #expect(store.upgrade?.succeededCount == 1)
+        #expect(store.upgradeRules.selfUpdatePolicies[SelfUpdateRule.key(ob)] == nil)
+    }
+    /// QA: something takes brew in the 450 ms between the confirmation
+    /// and the run: the status bar says the adopt didn't start.
+    @Test func adoptThatCantStartSaysSo() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let demoRunner = deps.streamRunner
+        let latch = Latch()
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "upgrade" { await latch.wait(); return 0 }
+            return try await demoRunner.stream("/opt/homebrew/bin/brew", args, environment: [:], output: out)
+        }
+        let store = AppStore(deps: deps)
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let target = try #require(store.upgradable.first { $0.kind == .formula })
+        store.adopt.requestAdopt()
+        #expect(store.adopt.pendingConfirm != nil)
+        store.confirmAdopt()
+        store.startUpgrade([target])
+        #expect(store.upgrade?.action == .upgrade)
+        #expect(await waitUntil { store.busyNotice != nil })
+        #expect(store.busyNotice?.contains("didn't start: an upgrade is still running") == true)
+        #expect(store.upgrade?.action == .upgrade)
+        latch.release()
+    }
+    @Test func replaceCommandOnlyForASureMatch() async throws {
+        let store = try await openedDemo()
+        let a = store.adopt
+        let im = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "Impactor" })
+        #expect(a.confidence(im) == .low && !a.offersReplace(im))
+        let gimp = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "GIMP" })
+        #expect(a.offersReplace(gimp) == (a.confidence(gimp) == .high))
+        // Never outside "Needs update first".
+        #expect(a.rows(.ready).allSatisfy { !a.offersReplace($0) })
+    }
+    /// QA: a cask with two apps is two rows but one adopt.
+    @Test func twoAppsOfOneCaskAdoptOnce() throws {
+        let apps = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app"),
+                    BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo Helper.app", target: "/Applications/Foo Helper.app")]
+        let c = AdoptCask(token: "foo", version: "1.0", apps: apps, bundleIDs: ["com.foo.foo", "com.foo.helper"])
+        let a = adoptStore([c], [Self.app("Foo.app", "com.foo.foo", "1.0"), Self.app("Foo Helper.app", "com.foo.helper", "1.0")])
+        #expect(a.rows(.ready).count == 2 && a.rows(.ready).allSatisfy(a.isTicked))
+        #expect(a.plan.map(\.token) == ["foo"])
+        a.requestAdopt()
+        #expect(a.pendingConfirm?.count == 1)
+        #expect(AdoptStore.commandsText(a.pendingConfirm ?? []) == "brew install --cask --adopt homebrew/cask/foo")
     }
 }

@@ -10,6 +10,8 @@ struct DetailPane: View {
             let _ = store.buildTimesRevision
             PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.isUpgrading,
                           dependents: store.dependents(of: p),
+                          // The sheet opens with "Also remove these" on: its commands.
+                          uninstallCommand: AppStore.uninstallDisplay(p, orphans: store.uninstallOrphans(of: p)),
                           compileWarning: store.deps.classifier.upgradeWarning(p),
                           upgrade: { store.requestUpgrade([p]) },
                           uninstall: { store.requestUninstall(p) },
@@ -39,6 +41,8 @@ struct PackageDetail: View {
     var canUpgrade: Bool
     /// Installed packages that need this one (uninstall is blocked).
     var dependents: [Package]
+    /// The uninstall's commands, as the sheet shows them (the button's tooltip).
+    var uninstallCommand: String? = nil
     var compileWarning: CompileWarning?
     var upgrade: () -> Void
     var uninstall: () -> Void
@@ -180,7 +184,8 @@ struct PackageDetail: View {
                     }
                 }
 
-                UninstallSection(package: p, dependents: dependents, enabled: canUpgrade, uninstall: uninstall)
+                UninstallSection(package: p, dependents: dependents, enabled: canUpgrade, uninstall: uninstall,
+                                 command: uninstallCommand ?? AppStore.uninstallDisplay(p))
 
                 if let page = p.releasePageURL {
                     Link(destination: page) {
@@ -294,6 +299,8 @@ struct UninstallSection: View {
     var dependents: [Package]
     var enabled: Bool
     var uninstall: () -> Void
+    /// What runs (the sheet's commands, HOMEBREW_NO_AUTOREMOVE=1 included).
+    var command: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -302,7 +309,7 @@ struct UninstallSection: View {
                 Button("Uninstall \(package.name)…", role: .destructive, action: uninstall)
                     .controlSize(.small)
                     .disabled(!enabled)
-                    .help(BrewCommands.display(BrewCommands.uninstallArguments(for: package)))
+                    .help(command)
             } else {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "lock").foregroundStyle(.secondary)

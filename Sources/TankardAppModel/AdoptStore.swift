@@ -79,6 +79,8 @@ public extension AdoptBlock {
             return String(localized: "Homebrew has disabled this cask.")
         case .noVersion:
             return String(localized: "The app has no version brew can compare.")
+        case .symlink:
+            return String(localized: "This is a symbolic link, not the app itself. Tankard doesn't adopt links.")
         }
     }
 }
@@ -111,6 +113,8 @@ public struct AdoptPlanItem: Sendable, Equatable, Identifiable {
     public var autoUpdates: Bool
     /// After adopting: who updates it (only for self-updating apps).
     public var policy: SelfUpdatePolicy
+    /// How sure the match is (a name-only one the user ticked gets a warning).
+    public var confidence: AdoptConfidence = .high
     public var id: String { token }
 
     public var arguments: [String] { AdoptCommands.arguments(qualifiedName: qualifiedName) }
@@ -158,6 +162,9 @@ public final class AdoptStore {
     /// What brew already owns (set by AppStore, from the installed casks).
     @ObservationIgnored public var managed: @MainActor (AdoptIndex) -> ManagedApps = { _ in ManagedApps() }
     @ObservationIgnored private var loadToken = 0
+    /// The running adoption's self-update choices, saved per app only once
+    /// its adopt succeeded (qualified name → policy).
+    @ObservationIgnored var policiesToSave: [String: SelfUpdatePolicy] = [:]
 
     public init() {}
 
@@ -201,11 +208,22 @@ public final class AdoptStore {
     public func group(_ row: AdoptRow) -> AdoptGroup { AdoptGroup.of(verdict(row)) }
     public func policy(_ row: AdoptRow) -> SelfUpdatePolicy { policies[row.id] ?? .automatic }
 
-    /// Ticked by default: ready, not name-only, and a version brew can
-    /// check before downloading.
+    /// Ticked by default: ready and not name-only. For a cask that updates
+    /// itself only a sure match (the bundle id): brew adopts those without
+    /// comparing versions or files (moved.rb:102), so a wrong match would
+    /// succeed, and a later upgrade or uninstall would replace or delete
+    /// someone else's app.
     public func defaultTicked(_ row: AdoptRow) -> Bool {
         guard verdict(row) == .ready, let c = confidence(row) else { return false }
+        if cask(row)?.autoUpdates == true { return c == .high }
         return c != .low
+    }
+
+    /// "Needs update first": the copyable `brew install --cask --force`,
+    /// only for a sure match (on a weaker one it could overwrite a
+    /// different app with the same name).
+    public func offersReplace(_ row: AdoptRow) -> Bool {
+        group(row) == .needsUpdate && confidence(row) == .high
     }
 
     public func rows(_ g: AdoptGroup) -> [AdoptRow] {
@@ -233,14 +251,26 @@ public final class AdoptStore {
 
     // MARK: adopting
 
-    /// The ticked apps, as the queue will run them.
+    /// The ticked apps, as the queue will run them: one item per cask. A
+    /// cask with two apps (two rows) is adopted once; the item names the
+    /// first app, takes the weaker confidence and a self-update choice
+    /// that isn't automatic.
     public var plan: [AdoptPlanItem] {
-        rows(.ready).filter(isTicked).compactMap { row in
-            guard let c = cask(row) else { return nil }
-            return AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
-                                 appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
-                                 policy: c.autoUpdates ? policy(row) : .automatic)
+        var out: [AdoptPlanItem] = []
+        for row in rows(.ready).filter(isTicked) {
+            guard let c = cask(row) else { continue }
+            let item = AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
+                                     appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
+                                     policy: c.autoUpdates ? policy(row) : .automatic,
+                                     confidence: confidence(row) ?? .low)
+            if let i = out.firstIndex(where: { $0.qualifiedName == item.qualifiedName }) {
+                out[i].confidence = min(out[i].confidence, item.confidence)
+                if out[i].policy == .automatic { out[i].policy = item.policy }
+            } else {
+                out.append(item)
+            }
         }
+        return out
     }
 
     /// "Adopt N Apps…": the confirmation.
@@ -257,15 +287,45 @@ public final class AdoptStore {
         return pendingConfirm
     }
 
-    /// The confirmation's text: what adopting does.
+    /// The confirmation's text: what adopting does. brew compares the
+    /// download with the app only for casks that don't update themselves
+    /// (moved.rb:102), so it says which apps go without that check, and
+    /// warns about name-only matches the user ticked.
     public nonisolated static func confirmationText(_ items: [AdoptPlanItem]) -> String {
-        var lines = [String(localized: "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is.")]
+        func names(_ xs: [AdoptPlanItem]) -> String {
+            xs.map { (($0.appPath as NSString).lastPathComponent as NSString).deletingPathExtension }.formatted(.list(type: .and))
+        }
+        let unchecked = items.filter(\.autoUpdates)
+        let checked = items.filter { !$0.autoUpdates }
+        var lines: [String] = []
+        let nameOnly = items.filter { $0.confidence == .low }
+        if !nameOnly.isEmpty {
+            lines.append(String(localized: "Name only: \(names(nameOnly)). Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it."))
+        }
+        if unchecked.isEmpty {
+            lines.append(String(localized: "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is."))
+        } else {
+            lines.append(String(localized: "For each app, brew downloads the cask and records it as installed. The app itself stays where it is."))
+            lines.append(String(localized: "Adopted without a version check: \(names(unchecked)). These apps update themselves, so brew doesn't compare the download with the app that is there."))
+        }
         lines.append(String(localized: "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app."))
-        if items.contains(where: \.autoUpdates) {
+        if !unchecked.isEmpty {
             lines.append(String(localized: "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption."))
         }
-        lines.append(String(localized: "If a download doesn't match, brew stops for that app and leaves it as it was."))
+        if unchecked.isEmpty {
+            lines.append(String(localized: "If a download doesn't match, brew stops for that app and leaves it as it was."))
+        } else if !checked.isEmpty {
+            lines.append(String(localized: "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was."))
+        }
         return lines.joined(separator: "\n\n")
+    }
+
+    /// The confirmation's commands: each one, as the queue runs them (the
+    /// first 8, then "and N more").
+    public nonisolated static func commandsText(_ items: [AdoptPlanItem]) -> String {
+        let shown = items.prefix(8).map(\.command)
+        let more = items.count > 8 ? [String(localized: "and \(items.count - 8) more")] : []
+        return (items.count == 1 ? "" : "\n") + (shown + more).joined(separator: "\n")
     }
 
     /// "4 apps, 1 already managed, 2 from the App Store, 3 Apple": the footer.
@@ -315,16 +375,22 @@ public extension AppStore {
         Task { await adopt.load() }
     }
 
-    /// The confirmed adoption: saves the self-update choices, then
-    /// `brew install --cask --adopt` per app through the queue and the
-    /// live log. The sheet closes first; the activity sheet opens once it
+    /// The confirmed adoption: `brew install --cask --adopt` per app
+    /// through the queue and the live log; each self-update choice is
+    /// saved once that app's adopt has succeeded. The sheet closes first; the activity sheet opens once it
     /// has gone. A refresh follows the run (as after any session).
     func confirmAdopt() {
         guard let items = adopt.takeConfirm() else { return }
         closeToolSheet()
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(450))
-            self.startAdopt(items)
+            // Something took brew in the gap (an automatic update): say so,
+            // so the confirmed click isn't silently lost.
+            if !self.startAdopt(items) {
+                let what = items.count == 1 ? items[0].command : String(localized: "Adopt Apps…")
+                self.showBusyNotice(Self.notStartedNotice(what, running: self.quickAction,
+                                                          upgrading: self.isUpgrading || self.autoUpdate.isRunning))
+            }
         }
     }
 
@@ -333,11 +399,22 @@ public extension AppStore {
     @discardableResult
     func startAdopt(_ items: [AdoptPlanItem]) -> Bool {
         guard !items.isEmpty, !isUpgrading, !autoUpdate.isRunning, report != nil else { return false }
-        for i in items where i.autoUpdates && i.policy != .automatic {
-            upgradeRules.setSelfUpdatePolicy(i.token, i.policy)
-        }
         startSession(.adopt, packages: items.map { $0.asPackage() })
-        return isUpgrading
+        guard isUpgrading else { return false }
+        adopt.policiesToSave = Dictionary(items.filter { $0.autoUpdates && $0.policy != .automatic }.map { ($0.qualifiedName, $0.policy) },
+                                          uniquingKeysWith: { $1 })
+        return true
+    }
+
+    /// After an adopt session: the self-update choices of the apps it adopted
+    /// (a failed or skipped adopt saves nothing).
+    func adoptSessionFinished(_ session: UpgradeSession) {
+        let policies = adopt.policiesToSave
+        adopt.policiesToSave = [:]
+        for item in session.items where item.state == .done {
+            let key = SelfUpdateRule.key(item.package)
+            if let policy = policies[key] { upgradeRules.setSelfUpdatePolicy(key, policy) }
+        }
     }
 }
 

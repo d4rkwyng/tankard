@@ -44,17 +44,20 @@ struct InstallAnalyticsTests {
 
     @Test func badShapeThrows() {
         #expect(throws: (any Error).self) { try InstallAnalytics.decode([(.formula, .days30, Data("[]".utf8))]) }
-        #expect(throws: (any Error).self) { try InstallAnalytics.decode([(.formula, .days30, Data(#"{"end_date":"x"}"#.utf8))]) }
     }
 
-    /// One malformed row is skipped; every other count stays.
-    @Test func aMalformedItemSkipsOnlyThatItem() throws {
-        let bad = Data(#"{"end_date":"2026-11-17","items":[{"formula":"xz","count":"lots"},{"formula":"hello","count":"17,697"},{"count":"5"},"junk",{"formula":"git","count":null},{"formula":"wget","count":"1,234"}]}"#.utf8)
-        let a = try InstallAnalytics.decode([(.formula, .days30, bad), (.formula, .days90, doc("formula", [("xz", #""1,001""#)]))])
-        #expect(a["formula:homebrew/core/hello"]?.days30 == 17_697)
-        #expect(a["formula:homebrew/core/wget"]?.days30 == 1234)
-        #expect(a["formula:homebrew/core/xz"] == InstallCounts(days30: 0, days90: 1001, days365: 0))
-        #expect(a["formula:homebrew/core/git"] == nil)
+    /// Review: one unreadable count used to throw the whole file (and every
+    /// count) away; now only that entry is skipped.
+    @Test func badCountSkipsOnlyThatEntry() throws {
+        let a = try InstallAnalytics.decode([
+            (.formula, .days30, doc("formula", [("xz", #""lots""#), ("hello", #""1,234""#), ("sl", "null"),
+                                                ("jq", #""-3""#), ("wget", #""""#), ("git", "42"), ("lua", #"{"n":1}"#)])),
+        ])
+        #expect(a[InstallAnalytics.id(kind: .formula, name: "hello")]?.days30 == 1234)
+        #expect(a[InstallAnalytics.id(kind: .formula, name: "git")]?.days30 == 42)
+        for bad in ["xz", "sl", "jq", "wget", "lua"] {
+            #expect(a[InstallAnalytics.id(kind: .formula, name: bad)] == nil, "\(bad)")
+        }
         #expect(a.endDate == "2026-11-17")
     }
 

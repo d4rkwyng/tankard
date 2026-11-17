@@ -223,4 +223,126 @@ struct V08AdoptCoreTests {
         #expect(out.packages.map(\.upgradeAvailable) == [false, true])
         #expect(SelfUpdatingCasks.unmark(r).packages.map(\.upgradeAvailable) == [false, false])
     }
+    // MARK: vendor check (review: wrong-app adoption)
+
+    /// io.github.alice.Foo must not match an unrelated GitHub-hosted cask
+    /// "foo": "github" is everyone's, the owner is bob.
+    @Test func githubLabelIsNotAVendor() throws {
+        let alice = Self.app("Foo.app", "io.github.alice.Foo", "1.0")
+        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true,
+                             web: "https://github.com/bob/foo https://github.com/bob/foo/releases/download/v2.0/Foo.dmg",
+                             apps: [.init(source: "Foo.app", target: "/Applications/Foo.app")])
+        #expect(!AdoptMatcher.vendorInWeb("io.github.alice.foo", bobs.web))
+        #expect(AdoptMatcher.confidence(app: alice, cask: bobs, ambiguous: false) == .low)
+        // auto_updates: brew wouldn't compare versions, so it is "ready"...
+        let row = AdoptMatcher.row(for: alice, index: AdoptIndex(casks: [bobs]))
+        #expect(row.verdicts["foo"] == .ready && row.confidence["foo"] == .low)
+        // ...but Alice's own cask is the same vendor.
+        var alices = bobs
+        alices.web = "https://github.com/alice/foo"
+        #expect(AdoptMatcher.confidence(app: alice, cask: alices, ambiguous: false) == .medium)
+        #expect(AdoptMatcher.vendorInWeb("io.github.alice.foo", "https://alice.github.io/foo/"))
+        // Bundle ids under a code host's namespace share only the host: not a vendor prefix.
+        var named = bobs
+        named.bundleIDs = ["io.github.bob.foo"]
+        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .low)
+        named.bundleIDs = ["io.github.alice.foohelper"]
+        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .medium)
+        // The plain vendor prefix still works (org.scummvm.app vs org.scummvm.scummvm).
+        let scumm = AdoptCask(token: "scummvm", version: "1", bundleIDs: ["org.scummvm.scummvm"])
+        #expect(AdoptMatcher.confidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm, ambiguous: false) == .medium)
+    }
+
+    @Test func vendorIsTheHostOrTheCodeHostOwner() {
+        func v(_ u: String) -> [String] { AdoptVendor.vendors(of: u) }
+        #expect(v("https://www.saurik.com/impactor/") == ["saurik"])
+        #expect(v("https://dl.saurik.com/x.dmg") == ["saurik"])
+        #expect(v("https://www.example.co.uk/app") == ["example"])
+        #expect(v("https://download.mozilla.org/?product=firefox") == ["mozilla"])
+        #expect(v("https://github.com/dwarvesf/hidden/") == ["dwarvesf"])
+        #expect(v("https://github.com/") == [])
+        #expect(v("https://objects.githubusercontent.com/github-production-release-asset/123") == [])
+        #expect(v("https://raw.githubusercontent.com/alice/foo/main/x") == ["alice"])
+        #expect(v("https://alice.github.io/foo") == ["alice"])
+        #expect(v("https://gitlab.com/bob/foo/-/releases") == ["bob"])
+        #expect(v("https://bitbucket.org/carol/foo") == ["carol"])
+        #expect(v("https://codeberg.org/dave/foo") == ["dave"])
+        #expect(v("https://git.sr.ht/~erin/foo") == ["erin"])
+        #expect(v("https://sourceforge.net/projects/inkscape/") == ["inkscape"])
+        #expect(v("https://downloads.sourceforge.net/project/gimp/x.dmg") == ["gimp"])
+        #expect(v("https://scummvm.sourceforge.net/") == ["scummvm"])
+        #expect(v("https://code.google.com/p/frank/") == ["frank"])
+        #expect(v("not a url") == [])
+        // Only the vendor label counts, not a label anywhere in the URL.
+        #expect(!AdoptMatcher.vendorInWeb("com.saurik.impactor", "https://example.com/mirrors/saurik/impactor.dmg"))
+        #expect(AdoptMatcher.vendorInWeb("com.saurik.impactor", "https://example.com/x https://cydia.saurik.com/x.dmg"))
+        // Code hosts are never a vendor label.
+        #expect(!AdoptMatcher.vendorInWeb("com.github.foo", "https://github.com/foo"))
+        #expect(!AdoptMatcher.vendorInWeb("net.sourceforge.thing", "https://sourceforge.net/projects/thing"))
+    }
+    // MARK: review: location and symlinks
+
+    @Test func appOutsideApplicationsNeverMatchesATargetOutsideIt() {
+        // Both outside /Applications: nil must not equal nil.
+        let home = AdoptCask(token: "homey", version: "1.0", apps: [.init(source: "Homey.app", target: "~/Applications/Homey.app")])
+        let dollar = AdoptCask(token: "dollar", version: "1.0", apps: [.init(source: "Homey.app", target: "$APPDIR/Homey.app")])
+        let a = Self.app("Homey.app", "com.homey.homey", "1.0", root: "/Users/you/Applications")
+        #expect(AdoptMatcher.verdict(app: a, cask: home, how: .name) == .blocked(.location(expected: "~/Applications/Homey.app")))
+        #expect(AdoptMatcher.verdict(app: a, cask: dollar, how: .name) == .blocked(.location(expected: "$APPDIR/Homey.app")))
+        // In /Applications against a target outside it: blocked too.
+        #expect(AdoptMatcher.verdict(app: Self.app("Homey.app", "com.homey.homey", "1.0"), cask: home, how: .name)
+                == .blocked(.location(expected: "~/Applications/Homey.app")))
+    }
+
+    @Test func symlinkedAppIsBlocked() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-adopt-link-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let real = root.appendingPathComponent("elsewhere/Foo.app/Contents")
+        try FileManager.default.createDirectory(at: real, withIntermediateDirectories: true)
+        let plist: [String: Any] = ["CFBundleIdentifier": "com.foo.foo", "CFBundleShortVersionString": "1.0", "CFBundleVersion": "1"]
+        try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: real.appendingPathComponent("Info.plist"))
+        let apps = root.appendingPathComponent("apps")
+        try FileManager.default.createDirectory(at: apps, withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: apps.appendingPathComponent("Foo.app"),
+                                                   withDestinationURL: root.appendingPathComponent("elsewhere/Foo.app"))
+        let scanned = try #require(AppScanner.scan(roots: [apps.path]).first)
+        #expect(scanned.isSymlink && scanned.bundleID == "com.foo.foo")
+        // As if it were in /Applications, at the cask's target, same version, sure match: still blocked.
+        let link = InstalledApp(path: "/Applications/Foo.app", root: "/Applications", relativePath: "Foo.app", bundleID: "com.foo.foo",
+                                shortVersion: "1.0", bundleVersion: "1", isSymlink: true)
+        let c = AdoptCask(token: "foo", version: "1.0", apps: [.init(source: "Foo.app", target: "/Applications/Foo.app")],
+                          bundleIDs: ["com.foo.foo"])
+        let row = AdoptMatcher.row(for: link, index: AdoptIndex(casks: [c]))
+        #expect(row.confidence["foo"] == .high && row.verdicts["foo"] == .blocked(.symlink))
+        var plain = link
+        plain.isSymlink = false
+        #expect(AdoptMatcher.row(for: plain, index: AdoptIndex(casks: [c])).verdicts["foo"] == .ready)
+    }
+    /// QA: an installed cask's zap ids name other apps (choosy's zap lists
+    /// Opera's preferences); a hand-installed Opera must not be hidden as
+    /// "already from Homebrew".
+    @Test func zapIDsDontHideOtherApps() throws {
+        let json = #"""
+        [{"token":"choosy","full_token":"choosy","tap":"homebrew/cask","version":"2.6","artifacts":[
+          {"uninstall":[{"quit":"com.choosyosx.choosy"}]},{"app":["Choosy.app"],"target":"/Applications/Choosy.app"},
+          {"zap":[{"trash":["~/Library/Preferences/com.operasoftware.Opera.plist","~/Library/Preferences/com.choosyosx.choosy.plist"]}]}]},
+         {"token":"opera","full_token":"opera","tap":"homebrew/cask","version":"120.0","auto_updates":true,"artifacts":[
+          {"uninstall":[{"quit":"com.operasoftware.Opera"}]},{"app":["Opera.app"],"target":"/Applications/Opera.app"}]}]
+        """#
+        let casks = try JSONDecoder().decode([BrewInfoJSON.Cask].self, from: Data(json.utf8))
+        let idx = AdoptIndex(casks: casks.map(AdoptCask.init))
+        #expect(idx.byToken["choosy"]?.bundleIDs.contains("com.operasoftware.opera") == true) // still a matching hint
+        var choosy = Package.command("choosy")
+        choosy.kind = .cask
+        choosy.appPaths = ["/Applications/Choosy.app"]
+        choosy.quitBundleIDs = casks[0].quitBundleIDs
+        let managed = ManagedApps(packages: [choosy], index: idx)
+        let opera = Self.app("Opera.app", "com.operasoftware.Opera", "119.0")
+        #expect(!managed.owns(opera))
+        #expect(managed.owns(Self.app("Choosy.app", "com.choosyosx.choosy", "2.6")))
+        // Moved, same quit id: still Homebrew's.
+        #expect(managed.owns(Self.app("Choosy Moved.app", "com.choosyosx.choosy", "2.6")))
+        let scan = AdoptMatcher.match([opera], index: idx, managed: managed)
+        #expect(scan.skipped.managed.isEmpty && scan.rows.first?.bestToken == "opera")
+    }
 }
