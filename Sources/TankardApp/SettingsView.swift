@@ -72,6 +72,7 @@ struct GeneralSettings: View {
     /// 0.8: where HOMEBREW_NO_AUTO_UPDATE is set, when it is.
     var backgroundUpdateOptOut: String?
     private let notificationNote = State<String?>(initialValue: nil)
+    private let notificationsDenied = State<Bool>(initialValue: false)
     private let loginOn = State<Bool?>(initialValue: nil)
     private let loginNote = State<String?>(initialValue: nil)
 
@@ -105,6 +106,7 @@ struct GeneralSettings: View {
                                 let ok = await notifier.requestAuthorization()
                                 settings.notifyNewUpgrades = ok
                                 notificationNote.wrappedValue = ok ? nil : await notifier.authorizationText()
+                                notificationsDenied.wrappedValue = await notifier.isDenied()
                             }
                         } else {
                             settings.notifyNewUpgrades = false
@@ -120,8 +122,18 @@ struct GeneralSettings: View {
                 .help(SettingsHelp.checkInterval)
                 InfoButton(text: SettingsHelp.checkInterval)
             }
-            if let note = notificationNote.wrappedValue {
-                Text(note).font(.system(size: 11)).foregroundStyle(.orange)
+            // 0.8.2: also when it was allowed once and later turned off in
+            // System Settings (the toggle stays on, but nothing would show).
+            if let note = notificationNote.wrappedValue
+                ?? (notificationsDenied.wrappedValue && settings.notifyNewUpgrades
+                    ? String(localized: "Off for Tankard in System Settings → Notifications") : nil) {
+                HStack(spacing: 8) {
+                    Text(note).font(.system(size: 11)).foregroundStyle(.orange)
+                    if notificationsDenied.wrappedValue {
+                        Button("Open Notification Settings") { SystemNotifier.openSystemSettings() }
+                            .controlSize(.small)
+                    }
+                }
             }
 
             Divider().padding(.vertical, 4)
@@ -140,5 +152,6 @@ struct GeneralSettings: View {
             }
         }
         .padding(20)
+        .task { notificationsDenied.wrappedValue = await notifier.isDenied() }
     }
 }

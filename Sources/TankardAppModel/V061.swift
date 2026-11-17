@@ -10,7 +10,7 @@ public enum SettingsHelp {
     public static let showMenuBarIcon = String(localized: "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running.")
     /// 0.8.1: Hide Dock icon when the window is closed.
     public static let hideDockIcon = String(localized: "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.")
-    public static let notifyNewUpgrades = String(localized: "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default.")
+    public static let notifyNewUpgrades = String(localized: "Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default.")
     public static let checkInterval = String(localized: "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.")
     /// 0.8: the background `brew update`.
     public static let backgroundUpdate = String(localized: "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.")

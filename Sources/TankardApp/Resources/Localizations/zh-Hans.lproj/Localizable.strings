@@ -100,6 +100,7 @@
 "%lld min %lld s" = "%lld 分 %lld 秒";
 "%lld min ago" = "%lld 分钟前";
 "%lld missing from this Mac" = "%lld 个这台 Mac 上缺失";
+"%lld new upgrades" = "%lld 个新升级";
 "%lld newer" = "%lld 个较新";
 "%lld no bottle" = "%lld 个无 bottle";
 "%lld not checked" = "%lld 个未检查";
@@ -141,6 +142,7 @@
 "1 item" = "1 项";
 "1 known vulnerability" = "1 个已知漏洞";
 "1 known vulnerability (brew vulns): %@" = "1 个已知漏洞（brew vulns）：%@";
+"1 new upgrade" = "1 个新升级";
 "1 vulnerable package; more filters" = "1 个存在漏洞的软件包；更多筛选";
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 个将从源码编译：没有适用于这台 Mac 的 bottle。这可能需要很长时间。";
 "1. Remove the Intelbrew lines from your shell profile" = "1. 从你的 shell 配置文件中移除 Intelbrew 相关行";
@@ -559,6 +561,7 @@
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "No longer needed by anything: %@" = "已不再被任何软件包需要：%@";
 "No matches" = "无匹配项";
+"No new upgrades" = "没有新的升级";
 "No package matches “%@”." = "没有与“%@”匹配的软件包。";
 "No packages in this group." = "此分组中没有软件包。";
 "No restore points yet. One is saved before the next upgrade." = "暂无还原点。下次升级前会保存一个。";
@@ -619,6 +622,7 @@
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "仅限 %@ 所需的项。原本就未使用的依赖项仍保持安装。";
 "Open Homepage" = "打开主页";
+"Open Notification Settings" = "打开通知设置";
 "Open Release Page" = "打开发布页面";
 "Open System Settings" = "打开系统设置";
 "Open Tankard" = "打开 Tankard";
@@ -733,8 +737,8 @@
 "Running brew update…" = "正在运行 brew update…";
 "Runs" = "运行记录";
 "Runs as %@ (started with sudo). Tankard only controls your own services and never runs sudo. To change it, run this in Terminal:" = "以 %@ 身份运行（通过 sudo 启动）。Tankard 只控制你自己的服务，从不运行 sudo。如需更改，请在“终端”中运行：";
-"Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default." = "在后台运行 brew update 并检查升级。仅在出现新升级时才会通知。默认关闭。";
 "Runs brew update first, then upgrades one package at a time through Tankard's queue." = "先运行 brew update，然后通过 Tankard 的队列逐个升级软件包。";
+"Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default." = "在后台运行 brew update，出现新升级时发送通知。“刷新”和“立即检查”仅在 Tankard 窗口不在最前面时发送通知；否则由列表和状态栏显示新内容。默认关闭。";
 "Runs brew vulns after each refresh. " = "每次刷新后运行 brew vulns。 ";
 "Runs brew vulns once now." = "立即运行一次 brew vulns。";
 "Runs only while Tankard is running, on AC power, after %lld minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default." = "仅在 Tankard 运行期间、接通电源且键盘和鼠标已闲置 %lld 分钟后运行。错过的运行（Mac 处于睡眠或 Tankard 未打开）会在下一次有机会时补运行一次。默认关闭。";
@@ -901,6 +905,7 @@
 "Try another filter." = "请尝试其他过滤条件。";
 "Turn automatic updates back on now" = "立即重新开启自动更新";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "开启 Tankard。如果列表中没有，请点按 + 并在“应用程序”中选择 Tankard。";
+"Turn on notifications in Settings ▸ General" = "可在“设置 ▸ 通用”中打开通知";
 "Type" = "类型";
 "Type " = "输入 ";
 "Type a name or a word from a description." = "输入名称或描述中的词语。";

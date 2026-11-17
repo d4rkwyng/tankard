@@ -197,6 +197,13 @@ public final class AppStore {
     /// seconds. See `runQuick`.
     public internal(set) var busyNotice: String?
     @ObservationIgnored var busyNoticeToken = 0
+    /// 0.8.2: what the last Refresh / Check Now found ("3 new upgrades"),
+    /// shown in the status bar for a few seconds. See UserCheckFeedback.swift.
+    public internal(set) var checkNote: String?
+    @ObservationIgnored var checkNoteToken = 0
+    /// 0.8.2: posts a notification for a check the user started while the
+    /// window wasn't in front (the app's SystemNotifier; nil in tests).
+    @ObservationIgnored public var notifier: UpgradeNotifying?
     /// 0.4a: the Services tab's state, made when it is first opened.
     public internal(set) var services: ServicesStore?
     /// 0.4a: the Homebrew menu's sheet (revert to standard Homebrew, uninstall).

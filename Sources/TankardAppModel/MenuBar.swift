@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Observation
+import os
 import TankardCore
 
 // v0.3: the menu-bar extra, background checks and their notifications.
@@ -158,6 +159,7 @@ public final class AppSettings {
         static let appManagementPendingRetry = "appManagementPendingRetry"
         static let onboardingDone = "onboardingDone"
         static let hideDockIconWhenClosed = "hideDockIconWhenClosed"
+        static let notifyHintShown = "notifyHintShown"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -228,6 +230,9 @@ public final class AppSettings {
         didSet { if hideDockIconWhenClosed != oldValue { defaults.set(hideDockIconWhenClosed, forKey: Key.hideDockIconWhenClosed) } }
     }
 
+    /// 0.8.2: the "Turn on notifications…" hint after a Refresh was shown once.
+    public var notifyHintShown: Bool { didSet { defaults.set(notifyHintShown, forKey: Key.notifyHintShown) } }
+
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         _showMenuBarIcon = defaults.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
@@ -242,6 +247,7 @@ public final class AppSettings {
         appManagementPendingRetry = defaults.data(forKey: Key.appManagementPendingRetry)
         onboardingDone = defaults.bool(forKey: Key.onboardingDone)
         hideDockIconWhenClosed = defaults.object(forKey: Key.hideDockIconWhenClosed) as? Bool ?? true
+        notifyHintShown = defaults.bool(forKey: Key.notifyHintShown)
     }
 
     /// Settings that persist nowhere real (tests, demo mode): a private
@@ -390,9 +396,9 @@ public final class BackgroundChecker {
         // Turned off while brew update ran: post nothing, keep no baseline.
         guard settings.notifyNewUpgrades else { return }
         let keys = UpgradeNotificationDiff.keys(store.packages)
-        if let message = UpgradeNotificationDiff.decide(previous: settings.notifiedUpgrades, current: keys, packages: store.packages) {
-            notifier?.post(message)
-        }
+        let message = UpgradeNotificationDiff.decide(previous: settings.notifiedUpgrades, current: keys, packages: store.packages)
+        AppStore.notificationLog.notice("background check: \(keys.count, privacy: .public) upgrades, baseline=\(self.settings.notifiedUpgrades?.count ?? -1, privacy: .public), post=\(message != nil, privacy: .public)")
+        if let message { notifier?.post(message) }
         settings.notifiedUpgrades = keys
     }
 }

@@ -43,9 +43,12 @@ extension ScriptRunner {
             c.check("no restore points yet", s.restorePoints.points.isEmpty, "\(s.restorePoints.points.count)")
             c.check("no History yet", s.history.entries.isEmpty, "\(s.history.entries.count)")
         },
-        "refresh": ScriptStepDef("refresh [manual]  (manual: the Refresh button, brew update first)") { c in
-            let manual = c.arg(0) == "manual"
-            await c.store.refresh(manual: manual)
+        "refresh": ScriptStepDef("refresh [manual|away]  (manual: brew update first; away: Check Now with the window behind, 0.8.2)") { c in
+            if c.arg(0) == "away" {
+                await c.store.refreshFromUser(windowInFront: { false })
+            } else {
+                await c.store.refresh(manual: c.arg(0) == "manual")
+            }
             try await c.settle()
             c.check("refresh left no error", c.store.error == nil, c.store.error.map { $0.title + ": " + $0.detail })
         },
