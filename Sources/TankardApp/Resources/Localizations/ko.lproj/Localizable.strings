@@ -2,7 +2,6 @@
 "\n\nTankard runs: " = "\n\nTankard 실행: ";
 " (default)" = " (기본값)";
 " (from cache)" = " (캐시에서)";
-" (one per app)" = " (앱당 하나)";
 " Asking VS Code for its extensions can hang brew bundle dump." = " VS Code에 확장 프로그램을 요청하면 brew bundle dump가 멈출 수 있습니다.";
 " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default." = " cask는 검사하지 않습니다. 1분을 넘기는 검사는 중단됩니다. 지금 검사는 요청할 때마다 한 번 검사합니다. 기본적으로 꺼져 있습니다.";
 " It took %@." = " %@ 걸렸습니다.";
@@ -165,6 +164,7 @@
 "Adding tap" = "tap 추가 중";
 "Admin password" = "관리자 암호";
 "Adopt" = "가져오기";
+"Adopt %@" = "%@ 가져오기";
 "Adopt %@?" = "%@ 앱을 가져오겠습니까?";
 "Adopt %lld Apps…" = "앱 %lld개 가져오기…";
 "Adopt %lld apps?" = "앱 %lld개를 가져오겠습니까?";
@@ -173,6 +173,7 @@
 "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API)." = "앱 가져오기는 formulae.brew.sh에서 Homebrew의 cask 목록을 읽는데, 이 Homebrew(Intelbrew 또는 HOMEBREW_NO_INSTALL_FROM_API)에서는 Tankard가 이를 사용하지 않습니다.";
 "Adopt Apps…" = "앱 가져오기…";
 "Adopt it again from Homebrew ▸ Adopt Apps…; it asks first." = "Homebrew ▸ 앱 가져오기…에서 다시 가져올 수 있습니다. 먼저 확인을 묻습니다.";
+"Adopted without a version check: %@. These apps update themselves, so brew doesn't compare the download with the app that is there." = "버전 확인 없이 가져옴: %@. 이 앱들은 스스로 업데이트하므로 brew는 다운로드를 기존 앱과 비교하지 않습니다.";
 "Adopting" = "가져오는 중";
 "Adopting runs through Tankard's queue and History." = "가져오기는 Tankard의 대기열과 기록을 통해 실행됩니다.";
 "After adopting:" = "가져온 후:";
@@ -357,6 +358,7 @@
 "Follows macOS." = "macOS를 따릅니다.";
 "For 1 Day" = "1일 동안";
 "For 1 Week" = "1주 동안";
+"For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "각 앱에 대해 brew는 Cask를 다운로드하고 설치된 것으로 기록합니다. 앱 자체는 그 자리에 그대로 있습니다.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "brew는 앱마다 cask를 다운로드하고, 다운로드를 기존 앱과 대조한 뒤 cask를 설치됨으로 기록합니다. 앱 자체는 그대로 있습니다.";
 "Fork: behind (%@; %@ available)" = "포크: 뒤처짐(%@; %@ 사용 가능)";
 "Fork: current (%@)" = "포크: 최신(%@)";
@@ -415,6 +417,7 @@
 "Homebrew's official uninstaller" = "Homebrew 공식 제거 프로그램";
 "Homebrew's own files have local changes" = "Homebrew 자체 파일에 로컬 변경 사항이 있음";
 "Homebrew's sbin folder isn't in your PATH" = "Homebrew의 sbin 폴더가 PATH에 없음";
+"How adopting works" = "가져오기 작동 방식";
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "\"백그라운드에서 새 버전 확인\" 또는 \"새 업그레이드 알림\"이 켜져 있을 때 백그라운드에서 brew update를 실행하는 빈도.";
 "I've done this" = "완료했음";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
@@ -493,6 +496,7 @@
 "More filters: Pinned (packages brew won't upgrade), Requested only (what you installed yourself that nothing else needs, brew leaves -r), Vulnerable, Has notes, Deprecated" = "필터 더 보기: 고정됨(brew가 업그레이드하지 않는 패키지), 요청한 것만(직접 설치했고 다른 항목이 필요로 하지 않는 것, brew leaves -r), 취약, 노트 있음, 지원 중단됨";
 "Name" = "이름";
 "Name only" = "이름만 일치";
+"Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "앱을 종료하지 않습니다: 앱이 실행 중인 cask는 \"실행 중인 앱 종료 안 함\"이 켜져 있지 않으면 건너뜁니다(켜져 있으면 업그레이드되고 새 버전은 다음에 열립니다).";
 "New vulnerabilities" = "새 취약점";
@@ -817,6 +821,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
+"The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "이들의 명령과 라이브러리가 Homebrew 접두사에 없습니다. 보통 설치나 업그레이드가 중단되었기 때문입니다.";
@@ -827,6 +832,7 @@
 "Third-party" = "서드파티";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다.";
+"This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다.";
 "This macOS version isn't supported by Homebrew" = "이 macOS 버전은 Homebrew에서 지원하지 않습니다";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";
@@ -911,6 +917,7 @@
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "이 목록을 만든 뒤 설치된 항목이 바뀌었습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew가 formulae와 cask를 가져오는 곳입니다. tap을 클릭하면 그곳에서 설치한 항목을 볼 수 있습니다.";
+"Who updates %@" = "%@ 업데이트 주체";
 "With the dependencies nothing else needs" = "더 이상 필요 없는 의존성도 함께";
 "Would free about %@" = "약 %@ 확보 가능";
 "Would remove %lld formulae" = "formulae %lld개를 제거합니다";

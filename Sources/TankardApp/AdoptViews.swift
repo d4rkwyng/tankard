@@ -25,6 +25,8 @@ struct AdoptMenuCommands: View {
 /// "Who updates it": for a cask whose app updates itself.
 struct SelfUpdatePolicyPicker: View {
     var policy: SelfUpdatePolicy
+    /// VoiceOver's name for the menu (its visible label sits beside it).
+    var accessibilityName: String = String(localized: "Updates")
     var set: (SelfUpdatePolicy) -> Void
 
     var body: some View {
@@ -38,6 +40,7 @@ struct SelfUpdatePolicyPicker: View {
         .fixedSize()
         .controlSize(.small)
         .help(policy.help)
+        .accessibilityLabel(accessibilityName)
     }
 }
 
@@ -132,6 +135,7 @@ struct AdoptSheet: View {
             if g == .ready {
                 Toggle(isOn: Binding(get: { adopt.isTicked(r) }, set: { adopt.setTicked(r, $0) })) { EmptyView() }
                     .toggleStyle(.checkbox).labelsHidden()
+                    .accessibilityLabel(String(localized: "Adopt \(r.app.displayName)"))
                     .disabled(store.isBusy)
             } else {
                 Image(systemName: g == .needsUpdate ? "arrow.up.circle" : "nosign")
@@ -160,10 +164,13 @@ struct AdoptSheet: View {
                 if g == .ready, cask?.autoUpdates == true {
                     HStack(spacing: 6) {
                         Text("After adopting:").font(.system(size: 11)).foregroundStyle(.secondary)
-                        SelfUpdatePolicyPicker(policy: adopt.policy(r)) { adopt.setPolicy($0, for: r) }
+                        SelfUpdatePolicyPicker(policy: adopt.policy(r),
+                                               accessibilityName: String(localized: "Who updates \(r.app.displayName)")) { adopt.setPolicy($0, for: r) }
                     }
                 }
-                if g == .needsUpdate, let cask {
+                // Replacing the app is offered only for a sure match: on a
+                // weaker one it could overwrite a different app.
+                if adopt.offersReplace(r), let cask {
                     HStack(spacing: 6) {
                         Text("Or have Homebrew replace it, in Terminal:").font(.system(size: 11)).foregroundStyle(.secondary)
                         let cmd = BrewCommands.display(AdoptCommands.replaceArguments(qualifiedName: cask.qualifiedName))
@@ -189,6 +196,7 @@ struct AdoptSheet: View {
             } label: { EmptyView() }
                 .pickerStyle(.menu).labelsHidden().fixedSize().controlSize(.small)
                 .help("Several casks install an app with this name. Pick the one you have.")
+                .accessibilityLabel(String(localized: "Cask"))
         } else if let t = adopt.token(r) {
             Text(t).font(.system(size: 11.5, design: .monospaced)).foregroundStyle(.secondary)
         }
@@ -219,6 +227,7 @@ struct AdoptSheet: View {
             }
             HStack {
                 Image(systemName: "info.circle").foregroundStyle(.secondary)
+                    .accessibilityLabel(String(localized: "How adopting works"))
                     .help("brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed.")
                 Text("Adopting runs through Tankard's queue and History.").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
@@ -262,10 +271,8 @@ struct AdoptConfirmation: ViewModifier {
     static func message(_ items: [AdoptPlanItem]) -> String {
         let list = items.prefix(8).map { "• \(($0.appPath as NSString).lastPathComponent) → \($0.token) \($0.caskVersion)" }
             + (items.count > 8 ? [String(localized: "and \(items.count - 8) more")] : [])
-        let commands = items.count == 1 ? items[0].command
-            : BrewCommands.display(AdoptCommands.arguments(qualifiedName: "<cask>")) + String(localized: " (one per app)")
         return list.joined(separator: "\n") + "\n\n" + AdoptStore.confirmationText(items)
-            + String(localized: "\n\nTankard runs: ") + commands
+            + String(localized: "\n\nTankard runs: ") + AdoptStore.commandsText(items)
     }
 }
 

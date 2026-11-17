@@ -98,6 +98,25 @@ public struct DependencyGraph: Sendable {
     /// among `roots`' own dependencies: packages that were already unused
     /// before are not included. In removal order: each one comes after
     /// everything here that needs it.
+    /// 0.8: an orphan the uninstall sheet listed, re-checked against what
+    /// is installed right before its own uninstall runs (the list may be
+    /// stale: brew install in Terminal since). nil: still unneeded, remove
+    /// it. Otherwise why it is kept: no longer installed, now installed on
+    /// request, pinned, or needed by something still installed.
+    public static func recheckOrphan(_ orphan: Package, live: [Package]) -> String? {
+        let graph = DependencyGraph(live)
+        guard let now = live.first(where: { $0.id == orphan.id }) ?? graph.formula(named: orphan.fullName) else {
+            return "Skipped \(orphan.name): it is no longer installed."
+        }
+        if now.requested { return "Kept \(now.name): it is now installed on request, so it isn't unused any more." }
+        if now.pinned { return "Kept \(now.name): it is pinned." }
+        let users = graph.dependents(of: now)
+        if !users.isEmpty {
+            return "Kept \(now.name): still needed by \(users.map(\.name).joined(separator: ", "))."
+        }
+        return nil
+    }
+
     public func orphans(afterRemoving roots: [Package]) -> [Package] {
         var removing = Set(roots.map(\.id))
         var seen = Set<String>()
