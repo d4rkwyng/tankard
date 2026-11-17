@@ -141,6 +141,8 @@ public final class AppStore {
     public private(set) var homebrewState: HomebrewState = .checking
     /// The package the uninstall confirmation is open for.
     public var uninstallCandidate: Package?
+    /// 0.8: the uninstall sheet's "Also remove these" (its no-longer-needed dependencies).
+    public var uninstallRemovesOrphans = true
     /// Discover's store, made when Discover is first opened.
     public private(set) var discover: DiscoverStore?
     /// 0.3: the upgrade sheet's first page when something would compile.
@@ -451,18 +453,31 @@ public final class AppStore {
         search = related.query
     }
 
-    /// Opens the uninstall confirmation.
+    /// Opens the uninstall confirmation. "Also remove these" starts on,
+    /// as brew's own uninstall would remove them (its autoremove).
     public func requestUninstall(_ p: Package) {
+        uninstallRemovesOrphans = true
         uninstallCandidate = p
+    }
+
+    /// 0.8: the dependencies nothing needs once `p` is gone (the sheet
+    /// lists them, with "Also remove these"). Never the ones that were
+    /// unused before: those stay for Remove Unused Dependencies.
+    public func uninstallOrphans(of p: Package) -> [Package] {
+        dependencyGraph.orphans(afterRemoving: [p])
     }
 
     /// Runs `brew uninstall` for a package nothing depends on. 0.8: not
     /// for a pinned one either (brew refuses it, and still exits 0); the
-    /// sheet offers Unpin and Uninstall instead.
+    /// sheet offers Unpin and Uninstall instead. With "Also remove these"
+    /// on, its no-longer-needed dependencies follow, each by name (brew's
+    /// autoremove stays off, so nothing else goes), and are skipped if an
+    /// earlier step fails.
     public func startUninstall(_ p: Package) {
         uninstallCandidate = nil
         guard dependents(of: p).isEmpty, !p.pinned else { return }
-        startSession(.uninstall, packages: [p])
+        let orphans = uninstallRemovesOrphans ? uninstallOrphans(of: p) : []
+        startSession(.uninstall, packages: [p] + orphans)
     }
 
     // MARK: upgrades
@@ -621,6 +636,8 @@ public final class AppStore {
                                      display: BrewCommands.display(args, environment: extra))
             },
             logURL: deps.logURL,
+            // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.
+            chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })

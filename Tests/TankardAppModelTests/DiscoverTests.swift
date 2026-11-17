@@ -427,6 +427,10 @@ struct InstallUninstallTests {
         let vim = try #require(store.packages.first { $0.name == "vim" })
         #expect(store.dependents(of: vim).isEmpty)
         store.requestUninstall(vim)
+        // 0.8: vim's own dependencies would be left unneeded; "Also remove
+        // these" off keeps this to vim alone (V08UninstallOrphansTests has the rest).
+        #expect(!store.uninstallOrphans(of: vim).isEmpty)
+        store.uninstallRemovesOrphans = false
         store.startUninstall(vim)
         let session = try #require(store.upgrade)
         #expect(session.title == "Uninstalling vim")

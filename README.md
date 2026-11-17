@@ -109,7 +109,7 @@ quit running apps during upgrades" on, cask upgrades run with
 With notifications turned on, Tankard also runs `brew update` in the background every few
 hours (6 by default). Commands run one at a time, never with a shell, and never with
 sudo (services that run as root are left alone): when brew needs a password, Tankard gives you the command to run in Terminal.
-Upgrading or removing an app (a cask) needs macOS's App Management permission; Tankard
+Upgrading or removing an app (a cask that installs one) needs macOS's App Management permission; Tankard
 explains how to allow it the first time. The Homebrew menu's Revert and Uninstall never run
 in the app: after you type the confirmation word, they open Terminal with the commands.
 

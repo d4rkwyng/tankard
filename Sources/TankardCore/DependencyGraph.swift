@@ -91,6 +91,34 @@ public struct DependencyGraph: Sendable {
         Dependents.of(p, among: packages)
     }
 
+    /// 0.8: the dependencies that nothing would need any more once `roots`
+    /// are uninstalled: formulae installed as a dependency (not on
+    /// request, not pinned) whose every dependent is being removed too,
+    /// transitively. What `brew autoremove` would then remove, but only
+    /// among `roots`' own dependencies: packages that were already unused
+    /// before are not included. In removal order: each one comes after
+    /// everything here that needs it.
+    public func orphans(afterRemoving roots: [Package]) -> [Package] {
+        var removing = Set(roots.map(\.id))
+        var seen = Set<String>()
+        let candidates = roots.flatMap { dependencies(of: $0) }.filter { c in
+            c.kind == .formula && !c.requested && !c.pinned && !removing.contains(c.id) && seen.insert(c.id).inserted
+        }
+        var out: [Package] = []
+        var changed = true
+        while changed {
+            changed = false
+            for c in candidates where !removing.contains(c.id) {
+                if dependents(of: c).allSatisfy({ removing.contains($0.id) }) {
+                    removing.insert(c.id)
+                    out.append(c)
+                    changed = true
+                }
+            }
+        }
+        return out
+    }
+
     /// The names `p` depends on directly, in brew's order.
     public func directNames(of p: Package) -> [String] {
         if p.kind == .cask { return (p.dependencies ?? []) + (p.caskDependencies ?? []) }

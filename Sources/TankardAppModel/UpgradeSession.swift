@@ -207,6 +207,8 @@ public final class UpgradeSession: Identifiable {
     /// "4 bottles from Intelbrew · 1 build from source (rust)"
     public var subtitle: String {
         if action == .uninstall {
+            // 0.8: more than one item is the package and its no-longer-needed dependencies.
+            if total > 1 { return String(localized: "With the dependencies nothing else needs") }
             return String(localized: "Its dependencies stay installed (brew autoremove removes unused ones)")
         }
         if action == .cleanup {

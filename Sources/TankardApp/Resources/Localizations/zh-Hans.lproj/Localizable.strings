@@ -185,6 +185,7 @@
 "Already installed" = "已安装";
 "Also" = "另外";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "同时列出会自行更新的 App（带 auto_updates 的 cask）或总是下载最新版本的 App，与 brew outdated --greedy 相同。这些 App 通常会自行保持最新，因此默认关闭。";
+"Also remove these" = "同时移除这些";
 "Always dark." = "始终为深色。";
 "Always light." = "始终为浅色。";
 "An independent app for Homebrew (brew.sh)." = "一款独立的 Homebrew App（brew.sh）。";
@@ -517,6 +518,7 @@
 "No installs recorded" = "没有安装记录";
 "No known vulnerabilities (brew vulns)." = "没有已知漏洞（brew vulns）。";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
+"No longer needed by anything: %@" = "已不再被任何软件包需要：%@";
 "No matches" = "无匹配项";
 "No package matches “%@”." = "没有与“%@”匹配的软件包。";
 "No packages in this group." = "此分组中没有软件包。";
@@ -572,6 +574,7 @@
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "每个 formula 和 cask 各执行一次 brew install，通过 Tankard 的队列和日志进行。请先用“添加 Tap…”添加 tap。";
 "Only available in Tankard.app." = "仅在 Tankard.app 中可用。";
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。";
+"Only what %@ needed. Dependencies that were already unused stay installed." = "仅限 %@ 所需的项。原本就未使用的依赖项仍保持安装。";
 "Open Homepage" = "打开主页";
 "Open Release Page" = "打开发布页面";
 "Open System Settings" = "打开系统设置";
@@ -636,6 +639,7 @@
 "Remove tap?" = "移除 tap？";
 "Remove unused" = "移除未使用项";
 "Removed (%lld)" = "已移除 (%lld)";
+"Removes %@ %@." = "移除 %@ %@。";
 "Removes %@ %@. Its dependencies stay installed." = "移除 %@ %@。其依赖项仍保持安装。";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "移除 Homebrew 及用它安装的所有软件包：%lld 个 formula 和 %lld 个 cask。此操作无法撤销。";
 "Removes old versions, stale downloads and old logs" = "移除旧版本、过期的下载和旧日志";
@@ -902,6 +906,7 @@
 "What installing the missing items would do, before anything runs" = "在运行任何内容之前，显示安装缺失项会执行的操作";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "自此列表生成以来，已安装的内容发生了变化。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew 获取 formula 和 cask 的来源。点按某个 tap 可查看你从中安装了什么。";
+"With the dependencies nothing else needs" = "连同不再被需要的依赖项";
 "Would free about %@" = "预计可释放约 %@";
 "Would remove %lld formulae" = "将移除 %lld 个 formula";
 "Would remove 1 formula" = "将移除 1 个 formula";

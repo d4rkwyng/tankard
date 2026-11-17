@@ -101,19 +101,40 @@ extension ScriptRunner {
             c.check("\(name) installed", p != nil)
             if let p { c.store.reveal(p.id) }
         },
-        "uninstall": ScriptStepDef("uninstall formula|cask <name>  (Uninstall…, then the sheet's Uninstall)") { c in
+        "uninstall": ScriptStepDef("uninstall formula|cask <name> [deps on|off [<dep>...]]  (Uninstall…, then the sheet's Uninstall; deps: \"Also remove these\", and the dependencies it must list)") { c in
             let kind = try c.kind(0)
             let name = try c.arg(1, "name")
             let p = try c.requirePackage(name, kind: kind)
             c.store.tab = .installed
             c.store.reveal(p.id)
             c.store.requestUninstall(p)
+            let orphans = c.store.uninstallOrphans(of: p)
+            var removeDeps = true
+            if c.arg(2) == "deps" {
+                let v = try c.arg(3, "on|off")
+                guard ["on", "off"].contains(v) else { throw ScriptFailure("deps on or off, not \(v)") }
+                removeDeps = v == "on"
+                c.store.uninstallRemovesOrphans = removeDeps
+                let want = Array(c.args.dropFirst(4)).sorted()
+                if !want.isEmpty {
+                    c.check("the sheet lists \(want.joined(separator: ", ")) as no longer needed",
+                            orphans.map(\.name).sorted() == want, orphans.map(\.name).joined(separator: ", "))
+                }
+            }
+            orphans.forEach { c.watchName($0.name) }
             await c.snapshot("confirm")
             let needs = c.store.dependents(of: p).map(\.name)
             guard needs.isEmpty else { throw ScriptFailure("uninstall is blocked: \(needs.joined(separator: ", ")) need \(name)") }
             guard !p.pinned else { throw ScriptFailure("uninstall is blocked: \(name) is pinned (the sheet offers Unpin and Uninstall)") }
-            try await c.runSession("uninstall \(name)") { c.store.startUninstall(p) }
+            let session = try await c.runSession("uninstall \(name)") { c.store.startUninstall(p) }
             c.check("\(name) gone", c.package(name, kind: kind) == nil)
+            let ran = session.items.map(\.package.name)
+            c.check("ran \(removeDeps ? "with" : "without") its \(orphans.count) unneeded dependencies",
+                    ran == [p.name] + (removeDeps ? orphans.map(\.name) : []), ran.joined(separator: ", "))
+            for o in orphans {
+                let still = c.package(o.name, kind: .formula) != nil
+                c.check("\(o.name) \(removeDeps ? "removed" : "kept")", still != removeDeps)
+            }
         },
         "uninstall-blocked": ScriptStepDef("uninstall-blocked formula|cask <name> pinned  (Uninstall…: the sheet blocks it; its Uninstall would run nothing)") { c in
             let kind = try c.kind(0)

@@ -185,6 +185,7 @@
 "Already installed" = "インストール済み";
 "Also" = "その他";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "自己更新するアプリ(auto_updates を持つcask)や常に最新版をダウンロードするアプリも、brew outdated --greedy と同様に一覧に含めます。これらのアプリは通常自分で最新を保つため、デフォルトではオフです。";
+"Also remove these" = "これらも削除";
 "Always dark." = "常にダーク。";
 "Always light." = "常にライト。";
 "An independent app for Homebrew (brew.sh)." = "Homebrew(brew.sh)の独立したアプリ。";
@@ -517,6 +518,7 @@
 "No installs recorded" = "インストールの記録なし";
 "No known vulnerabilities (brew vulns)." = "既知の脆弱性はありません(brew vulns)。";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Cellarにもう存在しません: %@。このリストの作成後にbrew cleanupが削除したため、ロールバックできず、復元から外されました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。";
+"No longer needed by anything: %@" = "もう何にも必要とされていません: %@";
 "No matches" = "一致なし";
 "No package matches “%@”." = "「%@」に一致するパッケージはありません。";
 "No packages in this group." = "このグループにパッケージはありません。";
@@ -572,6 +574,7 @@
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "formulaとcaskごとに1回のbrew installを、Tankardのキューとログ経由で実行します。先に「Tapを追加…」でtapを追加してください。";
 "Only available in Tankard.app." = "Tankard.appでのみ利用できます。";
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "アプリ名だけが一致しています。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。";
+"Only what %@ needed. Dependencies that were already unused stay installed." = "%@ が必要としていたものだけです。すでに使われていなかった依存関係はインストールされたままです。";
 "Open Homepage" = "ホームページを開く";
 "Open Release Page" = "リリースページを開く";
 "Open System Settings" = "システム設定を開く";
@@ -636,6 +639,7 @@
 "Remove tap?" = "tapを削除しますか？";
 "Remove unused" = "未使用を削除";
 "Removed (%lld)" = "削除済み (%lld)";
+"Removes %@ %@." = "%@ %@を削除します。";
 "Removes %@ %@. Its dependencies stay installed." = "%@ %@を削除します。その依存関係はインストールされたままです。";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Homebrewと、それでインストールしたすべてのパッケージ（%lld個のformulaと%lld個のcask）を削除します。この操作は取り消せません。";
 "Removes old versions, stale downloads and old logs" = "古いバージョン、不要なダウンロード、古いログを削除します";
@@ -902,6 +906,7 @@
 "What installing the missing items would do, before anything runs" = "不足している項目をインストールした場合の内容（何も実行される前に確認）";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "このリストの作成後に、インストール済みの内容が変わりました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrewがformulaとcaskを取得する場所です。tapをクリックすると、そこからインストールしたものが表示されます。";
+"With the dependencies nothing else needs" = "ほかに必要とされていない依存関係も含みます";
 "Would free about %@" = "約%@を解放できます";
 "Would remove %lld formulae" = "%lld個のformulaが削除されます";
 "Would remove 1 formula" = "1個のformulaが削除されます";

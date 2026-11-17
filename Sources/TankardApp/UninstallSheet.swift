@@ -14,6 +14,8 @@ struct UninstallSheet: View {
     var body: some View {
         let dependents = store.dependents(of: package)
         let pinned = dependents.isEmpty && package.pinned
+        // 0.8: what nothing would need any more (only this package's own dependencies).
+        let orphans = dependents.isEmpty ? store.uninstallOrphans(of: package) : []
         let command = BrewCommands.display(BrewCommands.uninstallArguments(for: package),
                                            environment: AppStore.uninstallEnvironment(.uninstall))
         VStack(alignment: .leading, spacing: 14) {
@@ -28,6 +30,8 @@ struct UninstallSheet: View {
                         .font(.system(size: 14, weight: .bold))
                     Text(pinned
                          ? String(localized: "Homebrew doesn't uninstall pinned packages. Unpin \(package.name) first, or keep it.")
+                         : dependents.isEmpty && !orphans.isEmpty
+                         ? String(localized: "Removes \(package.name) \(package.installedVersion).")
                          : dependents.isEmpty
                          ? String(localized: "Removes \(package.name) \(package.installedVersion). Its dependencies stay installed.")
                          : String(localized: "These installed packages need it. Uninstall them first, or keep \(package.name)."))
@@ -37,10 +41,16 @@ struct UninstallSheet: View {
                 }
             }
             if dependents.isEmpty {
+                if !orphans.isEmpty { orphanSection(orphans) }
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
                     if pinned { CommandBox(command: PinCommands.display(pin: false, for: package)) }
                     CommandBox(command: command)
+                    if store.uninstallRemovesOrphans, !orphans.isEmpty {
+                        CommandBox(command: orphans.map {
+                            BrewCommands.display(BrewCommands.uninstallArguments(for: $0), environment: AppStore.uninstallEnvironment(.uninstall))
+                        }.joined(separator: "\n"))
+                    }
                 }
             } else {
                 VStack(alignment: .leading, spacing: 4) {
@@ -79,5 +89,24 @@ struct UninstallSheet: View {
         .padding(20)
         .frame(width: 440)
         .background(theme.window ?? .clear)
+    }
+
+    /// "No longer needed by anything: a, b" with "Also remove these".
+    private func orphanSection(_ orphans: [Package]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(String(localized: "No longer needed by anything: \(orphans.map(\.name).sorted().joined(separator: ", "))"))
+                .font(.system(size: 12, weight: .medium))
+                .fixedSize(horizontal: false, vertical: true)
+            Toggle("Also remove these", isOn: $store.uninstallRemovesOrphans)
+                .toggleStyle(.checkbox)
+                .font(.system(size: 12))
+            Text(String(localized: "Only what \(package.name) needed. Dependencies that were already unused stay installed."))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip))
     }
 }

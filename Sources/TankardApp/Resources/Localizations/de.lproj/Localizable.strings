@@ -185,6 +185,7 @@
 "Already installed" = "Bereits installiert";
 "Also" = "Auch";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "Listet auch Apps, die sich selbst aktualisieren (Casks mit auto_updates) oder immer die neueste Version laden, wie brew outdated --greedy. Diese Apps halten sich meist selbst aktuell, daher ist das standardmäßig aus.";
+"Also remove these" = "Auch diese entfernen";
 "Always dark." = "Immer dunkel.";
 "Always light." = "Immer hell.";
 "An independent app for Homebrew (brew.sh)." = "Eine unabhängige App für Homebrew (brew.sh).";
@@ -517,6 +518,7 @@
 "No installs recorded" = "Keine Installationen erfasst";
 "No known vulnerabilities (brew vulns)." = "Keine bekannten Schwachstellen (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Nicht mehr im Cellar: %@. brew cleanup hat die Version entfernt, nachdem diese Liste erstellt wurde. Sie kann daher nicht zurückgesetzt werden und wurde aus der Wiederherstellung genommen. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“.";
+"No longer needed by anything: %@" = "Nicht mehr benötigt: %@";
 "No matches" = "Keine Treffer";
 "No package matches “%@”." = "Kein Paket passt zu „%@“.";
 "No packages in this group." = "Keine Pakete in dieser Gruppe.";
@@ -572,6 +574,7 @@
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "Ein brew install pro Formula und Cask, über Warteschlange und Protokoll von Tankard. Füge zuerst Taps mit „Tap hinzufügen…“ hinzu.";
 "Only available in Tankard.app." = "Nur in Tankard.app verfügbar.";
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "Nur der Name passt. Es kann eine andere App gleichen Namens sein – vor dem Übernehmen prüfen.";
+"Only what %@ needed. Dependencies that were already unused stay installed." = "Nur was %@ brauchte. Bereits ungenutzte Abhängigkeiten bleiben installiert.";
 "Open Homepage" = "Homepage öffnen";
 "Open Release Page" = "Release-Seite öffnen";
 "Open System Settings" = "Systemeinstellungen öffnen";
@@ -636,6 +639,7 @@
 "Remove tap?" = "Tap entfernen?";
 "Remove unused" = "Nicht benötigte entfernen";
 "Removed (%lld)" = "Entfernt (%lld)";
+"Removes %@ %@." = "Entfernt %@ %@.";
 "Removes %@ %@. Its dependencies stay installed." = "Entfernt %@ %@. Die Abhängigkeiten bleiben installiert.";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Entfernt Homebrew und alle damit installierten Pakete: %lld Formulae und %lld Casks. Das lässt sich nicht rückgängig machen.";
 "Removes old versions, stale downloads and old logs" = "Entfernt alte Versionen, veraltete Downloads und alte Protokolle";
@@ -902,6 +906,7 @@
 "What installing the missing items would do, before anything runs" = "Was die Installation der fehlenden Objekte bewirken würde, bevor etwas läuft";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "Was installiert ist, hat sich seit dem Erstellen dieser Liste geändert. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Woher Homebrew Formulae und Casks bezieht. Klicke auf einen Tap, um zu sehen, was du daraus installiert hast.";
+"With the dependencies nothing else needs" = "Samt nicht mehr benötigter Abhängigkeiten";
 "Would free about %@" = "Würde etwa %@ freigeben";
 "Would remove %lld formulae" = "Würde %lld Formulae entfernen";
 "Would remove 1 formula" = "Würde 1 Formula entfernen";

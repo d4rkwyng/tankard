@@ -29,7 +29,12 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   have no page, so there is no link. **Uninstall…** opens a confirmation with the exact
   `brew uninstall --formula|--cask <tap>/<name>` command. When other installed packages
   need it (from their receipts' runtime dependencies, or a cask's `depends_on`), uninstall
-  is blocked and the pane and dialog list them. brew refuses such an uninstall too. An
+  is blocked and the pane and dialog list them. brew refuses such an uninstall too. A
+  pinned package is blocked too (brew refuses it but still reports success); the dialog
+  offers **Unpin and Uninstall**. Dependencies that nothing else would need afterwards
+  are listed ("No longer needed by anything") with **Also remove these** (on by
+  default, as brew's own uninstall would remove them): Tankard uninstalls exactly those
+  by name, with brew's autoremove off, so packages that were already unused stay. An
   upgrade that compiles is flagged here too, with the Intelbrew build time when known, and
   a source build whose version has a bottle gets the *Replace with bottle* box.
 - **Vulnerabilities (0.4):** on **Scan Now** (Settings → Upgrades) or **Homebrew ▸ Scan for

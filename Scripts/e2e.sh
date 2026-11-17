@@ -16,6 +16,10 @@
 #   formula    install `hello` from Discover, pin, unpin, uninstall
 #   pinned     install `hello`, pin it; Uninstall is blocked (brew would
 #              refuse a pinned formula and still exit 0); Unpin and Uninstall
+#   orphans    install `luarocks` (needs `lua`, not installed beforehand),
+#              uninstall with "Also remove these" on: both gone; again
+#              with it off: lua stays, and `brew autoremove --dry-run` lists
+#              exactly what the sheet listed; then uninstall lua
 #   cask       install the font cask `font-press-start-2p` from Discover
 #              (no app in /Applications), uninstall (App Management explainer)
 #   security   Scan for Vulnerabilities (real brew vulns), then no leftover
@@ -40,7 +44,7 @@
 # points are not read or written.
 #
 # What it changes on this Mac: it installs and removes the scenario's own
-# throwaway packages (hello, font-press-start-2p, tankard-e2e-probe) and
+# throwaway packages (hello, luarocks + lua, font-press-start-2p, tankard-e2e-probe) and
 # adds/removes its own tap (tankard-e2e/probe). Safety checks first:
 #   - a scenario is skipped if its package is already installed (it would
 #     uninstall yours) or its tap already exists;
@@ -59,7 +63,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula pinned cask security settings restore adopt)
+ALL=(welcome formula pinned orphans cask security settings restore adopt)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -67,7 +71,7 @@ while [ $# -gt 0 ]; do
         --out) OUT=$2; shift ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,52p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,56p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -218,6 +222,46 @@ STEPS
         echo "    cleanup: hello still installed, unpinning and removing" >&2
         qbrew unpin hello >/dev/null 2>&1; qbrew uninstall --formula hello
     fi
+}
+
+scenario_orphans() {
+    local f=luarocks d=lua
+    need_absent formula $f || { record "orphans: SKIP ($f already installed)"; return; }
+    need_absent formula $d || { record "orphans: SKIP ($d already installed: it wouldn't be an unneeded dependency)"; return; }
+    autoremove_clean || { record "orphans: SKIP (autoremove would remove something)"; return; }
+    fresh_state orphans
+    run_phase orphans 1-remove-deps <<STEPS
+expect-ready
+set keepPreviousVersion on
+install formula $f
+expect installed $d
+uninstall formula $f deps on $d
+expect not-installed $f
+expect not-installed $d
+STEPS
+    run_phase orphans 2-keep-deps <<STEPS
+expect-ready cached
+refresh
+install formula $f
+uninstall formula $f deps off $d
+expect not-installed $f
+expect installed $d
+STEPS
+    # Cross-check: what brew itself would now autoremove is exactly what
+    # the sheet listed.
+    local would
+    would=$(qbrew autoremove --dry-run 2>/dev/null | grep -v '^==>' | tr -s ' \n' '\n' | grep -v '^$' | sort | tr '\n' ' ')
+    if [ "$would" = "$d " ]; then record "orphans/autoremove-dry-run: PASS (brew would remove: $would)"
+    else record "orphans/autoremove-dry-run: FAIL (brew would remove: '${would}', the sheet listed: $d)"; fi
+    run_phase orphans 3-cleanup <<STEPS
+expect-ready cached
+refresh
+uninstall formula $d
+expect not-installed $d
+STEPS
+    for x in $f $d; do
+        qbrew list --formula $x >/dev/null 2>&1 && { echo "    cleanup: $x still installed, removing" >&2; qbrew uninstall --formula $x; }
+    done
 }
 
 scenario_cask() {

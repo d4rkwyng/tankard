@@ -185,6 +185,7 @@
 "Already installed" = "Already installed";
 "Also" = "Also";
 "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default." = "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.";
+"Also remove these" = "Also remove these";
 "Always dark." = "Always dark.";
 "Always light." = "Always light.";
 "An independent app for Homebrew (brew.sh)." = "An independent app for Homebrew (brew.sh).";
@@ -517,6 +518,7 @@
 "No installs recorded" = "No installs recorded";
 "No known vulnerabilities (brew vulns)." = "No known vulnerabilities (brew vulns).";
 "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.";
+"No longer needed by anything: %@" = "No longer needed by anything: %@";
 "No matches" = "No matches";
 "No package matches “%@”." = "No package matches “%@”.";
 "No packages in this group." = "No packages in this group.";
@@ -572,6 +574,7 @@
 "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap…." = "One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap….";
 "Only available in Tankard.app." = "Only available in Tankard.app.";
 "Only the app's name matches. It may be a different app with the same name: check before adopting." = "Only the app's name matches. It may be a different app with the same name: check before adopting.";
+"Only what %@ needed. Dependencies that were already unused stay installed." = "Only what %@ needed. Dependencies that were already unused stay installed.";
 "Open Homepage" = "Open Homepage";
 "Open Release Page" = "Open Release Page";
 "Open System Settings" = "Open System Settings";
@@ -636,6 +639,7 @@
 "Remove tap?" = "Remove tap?";
 "Remove unused" = "Remove unused";
 "Removed (%lld)" = "Removed (%lld)";
+"Removes %@ %@." = "Removes %@ %@.";
 "Removes %@ %@. Its dependencies stay installed." = "Removes %@ %@. Its dependencies stay installed.";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone.";
 "Removes old versions, stale downloads and old logs" = "Removes old versions, stale downloads and old logs";
@@ -902,6 +906,7 @@
 "What installing the missing items would do, before anything runs" = "What installing the missing items would do, before anything runs";
 "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.";
+"With the dependencies nothing else needs" = "With the dependencies nothing else needs";
 "Would free about %@" = "Would free about %@";
 "Would remove %lld formulae" = "Would remove %lld formulae";
 "Would remove 1 formula" = "Would remove 1 formula";

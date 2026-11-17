@@ -9673,6 +9673,58 @@
         }
       }
     },
+    "Also remove these": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auch diese entfernen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer aussi celles-ci"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar también estas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これらも削除"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同时移除这些"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remover estas também"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuovi anche queste"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이것들도 제거"
+          }
+        }
+      }
+    },
     "Always dark.": {
       "localizations": {
         "de": {
@@ -26937,6 +26989,58 @@
         }
       }
     },
+    "No longer needed by anything: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht mehr benötigt: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus nécessaires à rien : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya no las necesita nada: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう何にも必要とされていません: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已不再被任何软件包需要：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não são mais necessárias para nada: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non più necessarie a nulla: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 이상 필요로 하는 항목 없음: %@"
+          }
+        }
+      }
+    },
     "No matches": {
       "localizations": {
         "de": {
@@ -29793,6 +29897,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱 이름만 일치합니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요."
+          }
+        }
+      }
+    },
+    "Only what %@ needed. Dependencies that were already unused stay installed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur was %@ brauchte. Bereits ungenutzte Abhängigkeiten bleiben installiert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seulement ce dont %@ avait besoin. Les dépendances déjà inutilisées restent installées."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo lo que necesitaba %@. Las dependencias que ya no se usaban siguen instaladas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ が必要としていたものだけです。すでに使われていなかった依存関係はインストールされたままです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅限 %@ 所需的项。原本就未使用的依赖项仍保持安装。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só o que %@ usava. Dependências que já não eram usadas continuam instaladas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo ciò che serviva a %@. Le dipendenze già inutilizzate restano installate."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 필요했던 것만 해당됩니다. 이미 사용되지 않던 의존성은 그대로 설치되어 있습니다."
           }
         }
       }
@@ -33121,6 +33277,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "제거됨 (%lld)"
+          }
+        }
+      }
+    },
+    "Removes %@ %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %@ %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprime %@ %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quita %@ %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@を削除します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除 %@ %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@ %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuove %@ %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@을(를) 제거합니다."
           }
         }
       }
@@ -46953,6 +47161,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew가 formulae와 cask를 가져오는 곳입니다. tap을 클릭하면 그곳에서 설치한 항목을 볼 수 있습니다."
+          }
+        }
+      }
+    },
+    "With the dependencies nothing else needs": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Samt nicht mehr benötigter Abhängigkeiten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec les dépendances dont plus rien n'a besoin"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con las dependencias que ya nada necesita"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ほかに必要とされていない依存関係も含みます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连同不再被需要的依赖项"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com as dependências que nada mais usa"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con le dipendenze che non servono più a nulla"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 이상 필요 없는 의존성도 함께"
           }
         }
       }

@@ -32,3 +32,66 @@ struct V08FixesCoreTests {
         #expect(back.suitePaths == ["/Applications/KiCad"])
     }
 }
+
+// v0.8: the dependencies an uninstall leaves unneeded (the uninstall
+// sheet's "No longer needed by anything").
+struct OrphanTests {
+    func pkg(_ name: String, _ deps: [String] = [], requested: Bool = false, pinned: Bool = false,
+             kind: PackageKind = .formula) -> Package {
+        var p = Package.command(name)
+        p.id = "\(kind.rawValue):homebrew/\(kind == .cask ? "cask" : "core")/\(name)"
+        p.kind = kind
+        p.name = name
+        p.fullName = name
+        p.tap = kind == .cask ? "homebrew/cask" : "homebrew/core"
+        p.dependencies = deps     // a receipt's runtime dependencies are already recursive
+        p.requested = requested
+        p.pinned = pinned
+        return p
+    }
+
+    @Test func onlyWhatNothingElseNeedsInRemovalOrder() throws {
+        // app → lib → base; app → shared (also needed by other); app → asked
+        // (installed on request); app → held (pinned); stale was unused before.
+        let app = pkg("app", ["lib", "base", "shared", "asked", "held"], requested: true)
+        let other = pkg("other", ["shared"], requested: true)
+        let lib = pkg("lib", ["base"])
+        let all = [pkg("base"), app, other, lib, pkg("shared"), pkg("asked", requested: true),
+                   pkg("held", pinned: true), pkg("stale")]
+        let g = DependencyGraph(all)
+        let out = g.orphans(afterRemoving: [app]).map(\.name)
+        #expect(Set(out) == ["lib", "base"])
+        // lib needs base: lib goes first, or brew would refuse base.
+        #expect(out == ["lib", "base"])
+        // Nothing for a package with no dependencies, or one whose deps others need.
+        #expect(g.orphans(afterRemoving: [other]).isEmpty)
+        #expect(g.orphans(afterRemoving: [pkg("leaf", requested: true)]).isEmpty)
+        // Removing both: shared goes too.
+        #expect(Set(g.orphans(afterRemoving: [app, other]).map(\.name)) == ["lib", "base", "shared"])
+    }
+
+    @Test func aCasksFormulaDependenciesCount() {
+        let c = pkg("tool-app", ["helper"], requested: true, kind: .cask)
+        let g = DependencyGraph([c, pkg("helper")])
+        #expect(g.orphans(afterRemoving: [c]).map(\.name) == ["helper"])
+    }
+
+    /// The real arm64 capture: every orphan is a non-requested formula
+    /// whose dependents are all in the removed set.
+    @Test func realGraphOrphansAreConsistent() throws {
+        let info = try JSONDecoder().decode(BrewInfoJSON.self, from: Fixture.data("arm64-deps-info"))
+        let pkgs = StatusClassifier(platform: .armGoldenGate, intelbrewMode: false).classify(info: info)
+        let g = DependencyGraph(pkgs)
+        var nonEmpty = 0
+        for p in pkgs where p.requested && g.isLeaf(p) {
+            let out = g.orphans(afterRemoving: [p])
+            if !out.isEmpty { nonEmpty += 1 }
+            let removed = Set([p.id] + out.map(\.id))
+            for o in out {
+                #expect(o.kind == .formula && !o.requested && !o.pinned)
+                #expect(g.dependents(of: o).allSatisfy { removed.contains($0.id) }, "\(p.name) → \(o.name)")
+            }
+        }
+        #expect(nonEmpty > 0)
+    }
+}
