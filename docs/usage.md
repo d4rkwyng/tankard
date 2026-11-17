@@ -32,7 +32,8 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
   is blocked and the pane and dialog list them. brew refuses such an uninstall too. An
   upgrade that compiles is flagged here too, with the Intelbrew build time when known, and
   a source build whose version has a bottle gets the *Replace with bottle* box.
-- **Vulnerabilities (0.4):** after each status read Tankard runs `brew vulns --json`
+- **Vulnerabilities (0.4):** on **Scan for Vulnerabilities Now**, or after each status
+  read once "Scan for vulnerabilities when refreshing" is on, Tankard runs `brew vulns --json`
   (Homebrew 7; reads stdout only, because brew prints its warnings on stderr). A formula
   with open advisories gets a ⚠ tag in the Package column ("High · 3"; "Vulnerable" when
   OSV gives no severity). The detail pane lists each advisory: its id linked to
@@ -50,10 +51,13 @@ Tankard runs brew, and the command-line tool. Building, the code and releases ar
     the green **Upgrade N** runs the normal upgrade (plan sheet, queue) for the vulnerable
     packages that have an upgrade; pinned ones are left out. Its tooltip names the ones
     with no upgrade yet.
-  - The scan is cached for an hour (`insights.json` next to `status.json`) and runs again
-    after a manual refresh and after every install, upgrade or uninstall. A failed scan
-    keeps the last result. On a brew without `vulns` the menu says so.
-  - Settings → Upgrades: "Scan for vulnerabilities when refreshing" (on) and "Show new
+  - The scan is cached for an hour (`insights.json` next to `status.json`) and, with the
+    setting on, runs again after a manual refresh and after every install, upgrade or
+    uninstall. A scan still running after 60 seconds is stopped (brew's whole process
+    group) and the strip says "Scan timed out". A failed or timed-out scan keeps the last
+    result. On a brew without `vulns` the menu says so.
+  - Settings → Upgrades: "Scan for vulnerabilities when refreshing" (off: brew sends your
+    installed formula names and versions to OSV.dev, so it waits for you to opt in) and "Show new
     vulnerabilities in the menu bar" (off). With the notice on, the menu-bar menu shows
     "New vulnerabilities: …" when a scan finds an advisory that wasn't there at the last
     look (the first scan is the baseline); **Show** opens the Vulnerable list and marks

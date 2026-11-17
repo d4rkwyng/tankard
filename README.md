@@ -44,7 +44,9 @@ the Intelbrew forks.
   both in Terminal after showing every command.
 - **Vulnerabilities** from `brew vulns` (Homebrew 7): a ⚠ tag with severity, the advisory
   ids linked to OSV.dev, "fixed in", a Vulnerable filter and "Upgrade vulnerable
-  packages". brew reports most scans as partial, and Tankard says so.
+  packages". Scans run when you ask, or on every refresh if you opt in (brew sends your
+  formula names and versions to OSV.dev). brew reports most scans as partial, and Tankard
+  says so.
 - **Notes from brew** (caveats) in each package's details, a "Has notes" filter, and a
   one-time "Post-install notes" sheet after an install or upgrade.
 - **Size on disk** per package (a sortable column) and in total, from `brew info --sizes`.
@@ -97,8 +99,9 @@ brew only changes things when you ask:
 | Start / Stop / Restart (Services) | `brew services start\|stop\|restart <name>` |
 
 Reads that change nothing also run after each status read (in the background, cached for
-an hour like status): `brew info --sizes`, `brew vulns --json` (Settings → Upgrades can
-turn the automatic scan off; "Scan for Vulnerabilities Now" is always there), and, with
+an hour like status): `brew info --sizes`, `brew vulns --json` (only once you turn on
+"Scan for vulnerabilities when refreshing" in Settings → Upgrades, off by default; "Scan
+for Vulnerabilities Now" is always there; a scan is stopped after a minute), and, with
 "Include self-updating apps" on, `brew outdated --greedy --cask --json=v2`. With "Don't
 quit running apps during upgrades" on, cask upgrades run with
 `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, and the command shown says so.
@@ -123,8 +126,9 @@ No telemetry. Tankard makes two requests of its own, each in one mode only:
 **brew's own request: `brew vulns`.** The vulnerability scan is brew's command, not
 Tankard's code: brew sends the source repository URL and version tag of each installed
 formula to OSV.dev (`api.osv.dev/v1/querybatch`, then `api.osv.dev/v1/vulns/<id>` for
-details). Tankard runs it after each refresh unless you turn that off in Settings →
-Upgrades, and reads only what brew prints. Casks aren't scanned.
+details). Tankard runs it only when you ask: "Scan for Vulnerabilities Now", or after each
+refresh once you turn that on in Settings → Upgrades (off by default). It reads only what
+brew prints. Casks aren't scanned.
 
 Everything else comes from brew and git on your Mac. Details:
 [docs/usage.md](docs/usage.md#how-it-behaves).

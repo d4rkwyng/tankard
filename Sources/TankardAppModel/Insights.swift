@@ -56,7 +56,9 @@ public final class InsightSettings {
         }
     }
     @ObservationIgnored private var _dontQuitAppsDuringUpgrade: Bool
-    /// Run `brew vulns` after each status read. Default on.
+    /// Run `brew vulns` after each status read. Default off: brew sends the
+    /// installed formula names and versions to OSV.dev, so that happens only
+    /// once the user turns this on, or clicks Scan now.
     public var scanVulnerabilitiesOnRefresh: Bool {
         get { access(keyPath: \.scanVulnerabilitiesOnRefresh); return _scanVulnerabilitiesOnRefresh }
         set {
@@ -93,7 +95,7 @@ public final class InsightSettings {
         self.defaults = defaults
         _includeSelfUpdatingApps = defaults.bool(forKey: Key.includeSelfUpdating)
         _dontQuitAppsDuringUpgrade = defaults.bool(forKey: Key.dontQuitApps)
-        _scanVulnerabilitiesOnRefresh = defaults.object(forKey: Key.scanOnRefresh) as? Bool ?? true
+        _scanVulnerabilitiesOnRefresh = defaults.bool(forKey: Key.scanOnRefresh)
         _notifyNewVulnerabilities = defaults.bool(forKey: Key.notifyNewVulnerabilities)
         _seenVulnerabilities = (defaults.array(forKey: Key.seenVulnerabilities) as? [String]).map(Set.init)
     }
@@ -107,6 +109,9 @@ public final class InsightSettings {
     }
 
     public nonisolated static let noQuitKey = "HOMEBREW_NO_UPGRADE_QUIT_CASKS"
+
+    /// The line beside the scan toggle.
+    public nonisolated static let scanPrivacyNote = "Sends your installed formula names and versions to OSV.dev (via brew vulns)."
 }
 
 public extension BrewCommands {
@@ -269,6 +274,11 @@ public final class InsightsStore {
     /// use. A hook so tests can hold others.
     @ObservationIgnored public var isHeld: (Package) -> Bool = { $0.isHeld }
     @ObservationIgnored private var scanTask: Task<Void, Never>?
+    /// How long `brew vulns` may run before it is stopped (its whole
+    /// process group, as for any cancelled brew call) and the scan reported
+    /// as timed out. A setting so tests can shorten it.
+    @ObservationIgnored public var scanTimeout: Duration = .seconds(60)
+    public static let scanTimedOutMessage = "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept."
     @ObservationIgnored private var sizesTask: Task<Void, Never>?
 
     public init(settings: InsightSettings, cache: InsightsCache?, ttl: TimeInterval, now: @escaping @Sendable () -> Date) {
@@ -318,15 +328,30 @@ public final class InsightsStore {
         }
     }
 
-    /// `brew vulns --json` in the background (a new request replaces a running one).
+    /// `brew vulns --json` in the background (a new request replaces a
+    /// running one), stopped after `scanTimeout`.
     public func scanVulnerabilities(client: BrewClient, env: [String: String]) {
         scanTask?.cancel()
         scanState = .running
         let now = self.now
+        let timeout = scanTimeout
         scanTask = Task { [weak self] in
             do {
-                let scan = try await client.vulnerabilityScan(env: env, now: now())
+                // Race the scan against the clock. When the clock wins,
+                // cancelling the scan's task makes ProcessRunner SIGTERM
+                // (then SIGKILL) brew's process group.
+                let result = try await withThrowingTaskGroup(of: VulnerabilityScan?.self) { group in
+                    group.addTask { try await client.vulnerabilityScan(env: env, now: now()) }
+                    group.addTask { try await Task.sleep(for: timeout); return nil }
+                    let first = try await group.next() ?? nil
+                    group.cancelAll()
+                    return first
+                }
                 guard !Task.isCancelled else { return }
+                guard let scan = result else {
+                    self?.scanState = .failed(Self.scanTimedOutMessage)
+                    return
+                }
                 self?.scanFinished(scan)
             } catch is CancellationError {
             } catch {

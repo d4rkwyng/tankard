@@ -48,6 +48,14 @@ final class Flag: @unchecked Sendable {
     AppSettings.ephemeral(name)
 }
 
+/// Test settings with "Scan for vulnerabilities when refreshing" on (0.4:
+/// off by default), for tests about what a scan finds.
+@MainActor func scanningSettings() -> AppSettings {
+    let s = testSettings()
+    InsightSettings(defaults: s.defaults).scanVulnerabilitiesOnRefresh = true
+    return s
+}
+
 // MARK: menu bar
 
 @MainActor

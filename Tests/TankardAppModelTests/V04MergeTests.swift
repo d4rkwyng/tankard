@@ -13,7 +13,7 @@ struct V04HeldUpgradeTests {
     /// notification keys and Upgrade vulnerable packages all leave a pinned
     /// package out, through `Package.isHeld`.
     @Test func pinnedVulnerablePackageIsLeftOutEverywhere() async throws {
-        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0, pinned: ["openssl@4"]), settings: testSettings())
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0, pinned: ["openssl@4"]), settings: scanningSettings())
         await store.start()
         await store.insights.waitForIdle()
         let openssl = try #require(store.packages.first { $0.name == "openssl@4" })

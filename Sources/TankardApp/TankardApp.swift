@@ -153,6 +153,9 @@ struct TankardApp: App {
         self.settings = settings
         store = AppStore(deps: deps, settings: settings)
         if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
+        // The demo's scan is a fixture (no network), so it shows what a scan
+        // finds; a real session scans on refresh only once the user opts in.
+        if options.demo != nil { store.insights.settings.scanVulnerabilitiesOnRefresh = true }
         appearance = AppearanceSettings(override: options.appearance)
         notifier = SystemNotifier()
         loginItem = LoginItem()
