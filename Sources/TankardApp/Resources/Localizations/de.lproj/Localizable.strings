@@ -741,7 +741,7 @@
 "Saves what is installed now as a restore point" = "Sichert den aktuellen Installationsstand als Wiederherstellungspunkt";
 "Scan Again" = "Neu prüfen";
 "Scan Now" = "Jetzt scannen";
-"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "„Jetzt scannen“ führt brew vulns aus und findet installierte Formeln mit bekannten Schwachstellen.";
+"Scan Now runs brew vulns to find installed formulae with known vulnerabilities." = "„Jetzt scannen“ führt brew vulns aus und findet installierte Formulae mit bekannten Schwachstellen.";
 "Scan failed" = "Scan fehlgeschlagen";
 "Scan for Vulnerabilities" = "Nach Schwachstellen suchen";
 "Scan for vulnerabilities when refreshing" = "Beim Aktualisieren nach Schwachstellen suchen";
