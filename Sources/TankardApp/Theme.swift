@@ -262,6 +262,7 @@ struct BrandMark: View {
                 .accessibilityLabel(intelbrew ? "Intelbrew" : "Tankard")
         } else {
             Image(systemName: "mug.fill")
+                .scaleEffect(x: -1, y: 1)   // handle on the left, like the logo
                 .font(.system(size: size * 0.62, weight: .semibold))
                 .foregroundStyle(.orange)
                 .frame(width: size, height: size)
