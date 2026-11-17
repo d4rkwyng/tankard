@@ -101,6 +101,14 @@ struct SnapshotHook: NSViewRepresentable {
 
 @MainActor
 enum Snapshot {
+    /// Every table view under `view`. A static function, not a local one
+    /// with `??` and `flatMap(tables)`: Swift 6.0 (CLT 16, the macOS 14 VM)
+    /// rejects those as a nonisolated autoclosure and a throwing call.
+    static func tables(in view: NSView) -> [NSTableView] {
+        if let t = view as? NSTableView { return [t] }
+        return view.subviews.flatMap { tables(in: $0) }
+    }
+
     /// Prints the window's frame now and on every move or resize.
     static func logFrames(of window: NSWindow) {
         @Sendable func log(_ why: String, _ f: NSRect) {
@@ -113,8 +121,7 @@ enum Snapshot {
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak window] _ in
             MainActor.assumeIsolated {
                 guard let content = window?.contentView else { return }
-                func tables(_ v: NSView) -> [NSTableView] { (v as? NSTableView).map { [$0] } ?? v.subviews.flatMap(tables) }
-                for t in tables(content) {
+                for t in Snapshot.tables(in: content) {
                     let clip = t.enclosingScrollView?.contentView.bounds.origin ?? .zero
                     let widths = t.tableColumns.map { String(format: "%.0f", $0.width) }.joined(separator: "/")
                     FileHandle.standardError.write(Data(String(format: "table: %@ scroll=%.0f,%.0f cols=%@ t=%.2f\n",
@@ -137,10 +144,7 @@ enum Snapshot {
         var out = ["layout: window \(r(window.frame))"]
         guard let content = window.contentView else { return out.joined(separator: "\n") + "\n" }
         out.append("layout: content \(r(content.frame))")
-        func tables(_ v: NSView) -> [NSTableView] {
-            (v as? NSTableView).map { [$0] } ?? v.subviews.flatMap(tables)
-        }
-        for t in tables(content) {
+        for t in tables(in: content) {
             let sv = t.enclosingScrollView
             out.append("layout: table \(r(t.convert(t.bounds, to: nil))) style=\(t.style.rawValue) spacing=\(t.intercellSpacing) "
                        + "insets=\(sv.map { "\($0.contentInsets)" } ?? "-") scroll=\(sv.map { r($0.convert($0.bounds, to: nil)) } ?? "-")"
