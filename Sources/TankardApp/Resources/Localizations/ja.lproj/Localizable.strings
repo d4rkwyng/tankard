@@ -896,6 +896,7 @@
 "Updated %@" = "%@を更新しました";
 "Updates" = "アップデート";
 "Updates itself" = "自己アップデート";
+"Updates itself (auto_updates).\nUpdates: %@" = "自己アップデート (auto_updates)。\nアップデート: %@";
 "Upgrade" = "アップグレード";
 "Upgrade %@" = "%@をアップグレード";
 "Upgrade %@ (compiles)" = "%@をアップグレード（コンパイルあり）";

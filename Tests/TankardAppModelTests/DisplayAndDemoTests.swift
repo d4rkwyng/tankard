@@ -47,6 +47,26 @@ struct DisplayAndDemoTests {
         #expect(try pkg("zstd").subtitle == "Tap has 1.5.7_1")
     }
 
+    /// 0.8.1: a self-updating cask gets a symbol next to its name, not an
+    /// "Updates itself" line under it; the tooltip names who updates it.
+    @Test func selfUpdatingCaskIsASymbolNotSubtitleText() async throws {
+        let client = BrewClient(installation: BrewInstallation(brewPath: "/opt/homebrew/bin/brew", prefix: "/opt/homebrew", repository: "/opt/homebrew"),
+                                platform: BottlePlatform(arch: .arm64, macOSVersion: "27", cellar: "/opt/homebrew/Cellar"),
+                                runner: FakeInfoRunner(log: CallLog(), info: Demo.fixtureInfo(.arm64)),
+                                sources: EnvironmentSources(process: ["HOME": "/Users/t"]), fileExists: { _ in false })
+        let r = try await client.status()
+        let chrome = try #require(r.packages.first { $0.name == "google-chrome" })
+        #expect(chrome.autoUpdates == true)
+        #expect(chrome.selfUpdates)
+        #expect(chrome.subtitle == nil)
+        #expect(r.packages.allSatisfy { !($0.subtitle ?? "").contains("Updates itself") })
+        #expect(chrome.selfUpdateHelp(policy: .automatic) == "Updates itself (auto_updates).\nUpdates: Follow the setting")
+        #expect(chrome.selfUpdateHelp(policy: .app).hasSuffix("Updates: App updates itself"))
+        #expect(chrome.selfUpdateHelp(policy: .homebrew).hasSuffix("Updates: Homebrew updates it"))
+        let cmake = try #require(r.packages.first { $0.name == "cmake" })
+        #expect(!cmake.selfUpdates)
+    }
+
     @Test func summaryText() async throws {
         let r = try await intelReport()
         #expect(SummaryText.line(r.summary, intelbrewMode: true)

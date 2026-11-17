@@ -46986,6 +46986,58 @@
         }
       }
     },
+    "Updates itself (auto_updates).\nUpdates: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert sich selbst (auto_updates).\nUpdates: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se met à jour seul (auto_updates).\nMises à jour : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se actualiza solo (auto_updates).\nActualizaciones: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自己アップデート (auto_updates)。\nアップデート: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自行更新 (auto_updates)。\n更新：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualiza sozinho (auto_updates).\nAtualizações: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si aggiorna da solo (auto_updates).\nAggiornamenti: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자체 업데이트 (auto_updates).\n업데이트: %@"
+          }
+        }
+      }
+    },
     "Upgrade": {
       "localizations": {
         "de": {

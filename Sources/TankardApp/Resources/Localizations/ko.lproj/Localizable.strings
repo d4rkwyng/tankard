@@ -896,6 +896,7 @@
 "Updated %@" = "%@에 업데이트됨";
 "Updates" = "업데이트";
 "Updates itself" = "자체 업데이트";
+"Updates itself (auto_updates).\nUpdates: %@" = "자체 업데이트 (auto_updates).\n업데이트: %@";
 "Upgrade" = "업그레이드";
 "Upgrade %@" = "%@ 업그레이드";
 "Upgrade %@ (compiles)" = "%@ 업그레이드 (컴파일)";

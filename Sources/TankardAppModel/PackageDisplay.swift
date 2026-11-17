@@ -126,8 +126,19 @@ public extension Package {
         if status == .newer, let current = currentVersion {
             parts.append(String(localized: "Tap has \(current)"))
         }
-        if autoUpdates == true && kind == .cask { parts.append(String(localized: "Updates itself")) }
+        // A self-updating cask is marked with a symbol next to the name
+        // (selfUpdates/selfUpdateHelp), not with text here.
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    /// 0.8.1: a cask whose `auto_updates` is set. The Installed list marks it
+    /// with a small symbol next to the name; the detail pane's Kind row says it in words.
+    var selfUpdates: Bool { autoUpdates == true && kind == .cask }
+
+    /// The tooltip for that symbol: what it means and who updates the app
+    /// (the per-app choice in the detail pane).
+    func selfUpdateHelp(policy: SelfUpdatePolicy) -> String {
+        String(localized: "Updates itself (auto_updates).\nUpdates: \(policy.title)")
     }
 
     private func bottleOrigin(of url: String?) -> BottleOrigin? {

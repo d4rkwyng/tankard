@@ -896,6 +896,7 @@
 "Updated %@" = "已更新 %@";
 "Updates" = "更新";
 "Updates itself" = "自行更新";
+"Updates itself (auto_updates).\nUpdates: %@" = "自行更新 (auto_updates)。\n更新：%@";
 "Upgrade" = "升级";
 "Upgrade %@" = "升级 %@";
 "Upgrade %@ (compiles)" = "升级 %@（需编译）";
