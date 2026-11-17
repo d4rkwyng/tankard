@@ -242,7 +242,12 @@ struct EnvironmentList: View {
         switch e.status {
         case .passed: return String(localized: "Passed to brew.")
         case .partial: return caskOptions(e.caskOptions)
-        case .brewEnv: return String(localized: "From brew.env: brew reads it itself.")
+        case .brewEnv:
+            // CASK_OPTS in brew.env with options Tankard would drop: they apply anyway.
+            if e.caskOptions != nil {
+                return String(localized: "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.")
+            }
+            return String(localized: "From brew.env: brew reads it itself.")
         case .ignored: return String(localized: "Ignored: not on Tankard's list of settings it passes to brew.")
         case .tankard(let why):
             switch why {

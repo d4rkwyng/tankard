@@ -226,7 +226,11 @@ ignored. Intelbrew mode's remotes win, unchanged.
 go, which Adopt's location verdicts and the App Management probe rely on), `--[no-]binaries`,
 and `--force`/`--adopt`/`--no-quarantine` (no effect there in brew 7, named so the user sees
 it). If nothing is left, the variable isn't set. Health shows it as partly applied, with
-each dropped option and why.
+each dropped option and why. A `CASK_OPTS` in a brew.env file can't be filtered: bin/brew
+`export`s every brew.env line over the environment (checked on 7.0.14 with a throwaway
+HOME: `--require-sha` in the environment, `--appdir=/x --force` in `~/.homebrew/brew.env`
+gives `brew config` `["--appdir=/x", "--force"]`, and an empty value in the environment
+loses too). Health warns on that row when it has options Tankard would drop.
 
 Proxy variables (`http_proxy` and the rest) in shell profiles aren't read yet; bin/brew
 honours them from brew.env.

@@ -802,6 +802,7 @@
 "Set by Intelbrew mode." = "由 Intelbrew 模式设置。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "由 Tankard 为检查和升级设置：何时运行 brew update 由 Tankard 决定。";
 "Set by Tankard: it reads brew's output." = "由 Tankard 设置：它需要读取 brew 的输出。";
+"Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "在 brew.env 中设置，因此也会作用于 Tankard 的安装；接管 App 的位置检查假定为 /Applications。";
 "Several casks install an app with this name. Pick the one you have." = "有多个 cask 会安装同名 App。请选择你所用的那个。";
 "Show" = "显示";
 "Show %@ in Tankard" = "在 Tankard 中显示 %@";
