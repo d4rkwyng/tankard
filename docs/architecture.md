@@ -232,6 +232,15 @@ HOME: `--require-sha` in the environment, `--appdir=/x --force` in `~/.homebrew/
 gives `brew config` `["--appdir=/x", "--force"]`, and an empty value in the environment
 loses too). Health warns on that row when it has options Tankard would drop.
 
+For the same reason a brew.env `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` would reach
+auto-update's runs, whose safe mode relies on that check. `AutoUpdater.checkPause` reads
+the brew.env files (re-read from disk each background tick in the app) with bin/brew's
+precedence (`EnvironmentSources.brewEnvSetting`: the last file wins, except `/etc` when it
+sets `HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY`) and brew's `boolean: true` rule (`BrewBoolean`:
+blank, `0`, `false`, `no`, `off` and `nil` mean unset). When it is set, every automatic run
+is skipped: an upgrade.log line, an Auto-update log entry, the menu-bar note and the
+Settings status say why. Manual upgrades are unaffected.
+
 Proxy variables (`http_proxy` and the rest) in shell profiles aren't read yet; bin/brew
 honours them from brew.env.
 

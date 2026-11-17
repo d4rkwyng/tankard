@@ -371,6 +371,7 @@ public final class BackgroundChecker {
     /// 0.5: an automatic update, when AutoUpdatePolicy says so.
     private func autoUpdateStep() async -> (TimeInterval, Bool) {
         let t = now()
+        store.autoUpdate.checkPause(store: store)
         switch store.autoUpdate.decide(store: store, launchedAt: launchedAt, now: t) {
         case .off: return (300, false)
         case .snoozed: return (300, false)

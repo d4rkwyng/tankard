@@ -1075,6 +1075,7 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew ne désinstallera pas une formula épinglée. Désépinglez-la d’abord.";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew ne la mettra pas à niveau et Tout mettre à niveau l’exclut.";
 "brew's output" = "sortie de brew";
+"brew.env turns off brew's dependents check; automatic updates paused." = "brew.env désactive la vérification des dépendants de brew ; mises à jour auto en pause.";
 "cancelled" = "annulé";
 "cask" = "cask";
 "changes where apps go, which Adopt and App Management rely on" = "change l'emplacement des apps, dont dépendent l'adoption et la gestion des apps";

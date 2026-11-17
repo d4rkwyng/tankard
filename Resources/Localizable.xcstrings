@@ -56294,6 +56294,58 @@
         }
       }
     },
+    "brew.env turns off brew's dependents check; automatic updates paused.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env schaltet brews Prüfung der Abhängigen aus; Auto-Updates pausiert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env désactive la vérification des dépendants de brew ; mises à jour auto en pause."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env desactiva la comprobación de dependientes de brew; actualizaciones automáticas en pausa."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で brew の依存元チェックがオフになっているため、自動アップデートを一時停止しています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env 关闭了 brew 的依赖项检查；自动更新已暂停。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew.env desativa a verificação de dependentes do brew; atualizações automáticas pausadas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env disattiva il controllo dei dipendenti di brew; aggiornamenti automatici in pausa."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env가 brew의 종속 항목 검사를 끕니다. 자동 업데이트가 일시 중지되었습니다."
+          }
+        }
+      }
+    },
     "cancelled": {
       "localizations": {
         "de": {

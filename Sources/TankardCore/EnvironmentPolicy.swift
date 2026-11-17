@@ -229,10 +229,7 @@ public enum EnvironmentPolicy {
         var forced: [String: String] = [:]
         applyControlled(&forced, readOnly: readOnly)
         return keys.sorted().compactMap { key in
-            var brewEnv: EnvSetting?
-            for (label, vars) in sources.brewEnvFiles.reversed() {
-                if let v = vars[key] { brewEnv = EnvSetting(value: v, source: label); break }
-            }
+            let brewEnv = sources.brewEnvSetting(key)
             let user = brewEnv ?? shellSetting(key, sources)
             let tankard = intelbrew.env[key] ?? forced[key]
             let status: Status

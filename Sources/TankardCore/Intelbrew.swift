@@ -199,14 +199,49 @@ public struct EnvironmentSources: Sendable {
     /// top); the live process environment beats profile files (it already
     /// reflects them when Tankard runs from a terminal).
     public func effective(_ key: String) -> EnvSetting? {
-        for (label, vars) in brewEnvFiles.reversed() {
-            if let v = vars[key] { return EnvSetting(value: v, source: label) }
-        }
+        if let s = brewEnvSetting(key) { return s }
         if let v = process[key] { return EnvSetting(value: v, source: "environment") }
         for (label, vars) in shellProfiles.reversed() {
             if let v = vars[key] { return EnvSetting(value: v, source: label) }
         }
         return nil
+    }
+}
+
+extension EnvironmentSources {
+    /// The system brew.env, which HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY puts last.
+    public static let systemBrewEnv = "/etc/homebrew/brew.env"
+
+    /// 0.8.3: the value brew takes from its brew.env files, by bin/brew's
+    /// rule: it `export`s each file's lines over the environment in order
+    /// (/etc, the prefix's, the user's), so the last file that sets `key`
+    /// wins; but when HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY is non-empty right
+    /// after the /etc file is read (Tankard never passes it, so only the /etc
+    /// file can set it), /etc is read again last and wins. nil: no file sets it.
+    public func brewEnvSetting(_ key: String) -> EnvSetting? {
+        Self.brewEnvSetting(key, files: brewEnvFiles)
+    }
+
+    public static func brewEnvSetting(_ key: String, files: [(String, [String: String])]) -> EnvSetting? {
+        let system = files.first { $0.0 == systemBrewEnv }
+        if let system, let p = system.1["HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY"], !p.isEmpty, let v = system.1[key] {
+            return EnvSetting(value: v, source: system.0)
+        }
+        for (label, vars) in files.reversed() {
+            if let v = vars[key] { return EnvSetting(value: v, source: label) }
+        }
+        return nil
+    }
+}
+
+/// brew's `boolean: true` environment variables (env_config.rb): set when
+/// the value isn't blank and isn't false, no, off, nil or 0 (any case).
+public enum BrewBoolean {
+    public static let falsy: Set<String> = ["false", "no", "off", "nil", "0"]
+
+    public static func isSet(_ value: String?) -> Bool {
+        guard let value, !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        return !falsy.contains(value.lowercased())
     }
 }
 

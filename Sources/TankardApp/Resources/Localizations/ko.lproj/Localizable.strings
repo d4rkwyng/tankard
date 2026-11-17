@@ -1075,6 +1075,7 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew는 고정된 formula를 제거하지 않습니다. 먼저 고정을 해제하세요.";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew가 업그레이드하지 않으며, 모두 업그레이드에서도 제외됩니다.";
 "brew's output" = "brew의 출력";
+"brew.env turns off brew's dependents check; automatic updates paused." = "brew.env가 brew의 종속 항목 검사를 끕니다. 자동 업데이트가 일시 중지되었습니다.";
 "cancelled" = "취소됨";
 "cask" = "cask";
 "changes where apps go, which Adopt and App Management rely on" = "앱 설치 위치를 바꿉니다(가져오기와 앱 관리가 이에 의존)";

@@ -187,7 +187,11 @@ struct TankardApp: App {
         if options.demoSelfUpdating { store.insights.settings.includeSelfUpdatingApps = true }
         // 0.5: the real power, idle and running-app checks. Demo runs keep
         // the default (never on AC), so nothing runs unless asked for.
-        if !options.isDemo && options.snapshot == nil && options.script == nil { store.autoUpdate.conditions = SystemConditions() }
+        if !options.isDemo && options.snapshot == nil && options.script == nil {
+            store.autoUpdate.conditions = SystemConditions()
+            // 0.8.3: re-read the real brew.env files at each check (the pause rule).
+            store.autoUpdate.brewEnvFiles = { EnvironmentSources.load(prefix: $0.installation.prefix).brewEnvFiles }
+        }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.
         // TANKARD_DEMO_SCAN=off: no scan at all, to show "not scanned yet".
