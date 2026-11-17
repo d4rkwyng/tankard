@@ -36,7 +36,11 @@ More detail, including the command-line tool `tankard status`, is in
 
 ## Install
 
-Download `Tankard.zip` from [Releases](https://github.com/d4rkwyng/tankard/releases),
+```sh
+brew install --cask d4rkwyng/tap/tankard     # later: brew upgrade --cask tankard
+```
+
+Or download `Tankard.zip` from [Releases](https://github.com/d4rkwyng/tankard/releases),
 unzip it and move Tankard.app to Applications. Releases are signed with a Developer ID and
 notarized.
 
