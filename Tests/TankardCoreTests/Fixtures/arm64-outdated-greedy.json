@@ -1,0 +1,32 @@
+{
+  "formulae": [],
+  "casks": [
+    {
+      "name": "google-chrome",
+      "installed_versions": [
+        "157.0.8103.51"
+      ],
+      "current_version": "157.0.8103.79",
+      "pinned": false,
+      "pinned_version": null
+    },
+    {
+      "name": "tailscale-app",
+      "installed_versions": [
+        "1.104.5"
+      ],
+      "current_version": "1.104.7",
+      "pinned": false,
+      "pinned_version": null
+    },
+    {
+      "name": "visual-studio-code",
+      "installed_versions": [
+        "1.145.2"
+      ],
+      "current_version": "1.146.0",
+      "pinned": false,
+      "pinned_version": null
+    }
+  ]
+}

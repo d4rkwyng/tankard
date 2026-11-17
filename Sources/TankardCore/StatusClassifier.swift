@@ -104,7 +104,8 @@ public struct StatusClassifier: Sendable {
             upgradeHasBottle: outdated ? currentHasBottle : nil,
             autoUpdates: nil,
             dependencies: latest.runtimeDependencies.map { $0.map(\.fullName) } ?? f.dependencies ?? [],
-            homepage: f.homepage
+            homepage: f.homepage,
+            caveats: f.caveats
         )
     }
 
@@ -144,7 +145,8 @@ public struct StatusClassifier: Sendable {
             autoUpdates: c.autoUpdates,
             dependencies: c.dependsOn?.formula ?? [],
             caskDependencies: c.dependsOn?.cask ?? [],
-            homepage: c.homepage
+            homepage: c.homepage,
+            caveats: c.caveats
         )
     }
 

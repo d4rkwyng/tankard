@@ -1,0 +1,22 @@
+==> Formulae sizes:
+python@3.15       77.3MB
+ruby              56.1MB
+vim               45.4MB
+gettext             34MB
+openssl@4           25MB
+curl-impersonate  17.4MB
+ncurses            9.9MB
+libunistring       5.9MB
+sqlite             5.3MB
+readline           2.6MB
+xz                 2.5MB
+zstd               2.5MB
+libsodium          1.3MB
+lua              867.1KB
+lz4              790.1KB
+expat            770.5KB
+mpdecimal        560.4KB
+libyaml          339.2KB
+json-c           323.8KB
+ca-certificates  194.7KB
+Total            289.1MB

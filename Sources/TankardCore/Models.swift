@@ -92,6 +92,19 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// The formula's or cask's homepage, from `brew info`. nil in reports
     /// written before Tankard 0.3, or when brew gives none.
     public var homepage: String? = nil
+    /// 0.4: brew's caveats for this formula or cask (`$HOMEBREW_PREFIX`
+    /// as brew writes it). nil when there are none.
+    public var caveats: String? = nil
+    /// 0.4: bytes on disk, from `brew info --sizes`. Filled in by the app,
+    /// not by `tankard status`.
+    public var diskBytes: Int64? = nil
+    /// 0.4: open vulnerabilities from `brew vulns` (formulae only). nil when
+    /// there is no scan result for it. Filled in by the app.
+    public var vulnerabilities: [PackageVulnerability]? = nil
+    /// 0.4: a cask upgrade that only `brew outdated --greedy` reports (it
+    /// updates itself, or is `version :latest`). Filled in by the app when
+    /// "Include self-updating apps" is on.
+    public var selfUpdatingUpgrade: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

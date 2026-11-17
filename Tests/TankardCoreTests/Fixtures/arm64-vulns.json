@@ -1,0 +1,681 @@
+{
+  "findings": [
+    {
+      "formula": "ffmpeg",
+      "version": "9.0.2",
+      "tag": "9.0.2",
+      "repo_url": "https://github.com/ffmpeg/ffmpeg",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-125202",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg through 9.0.2 Heap Buffer Overflow via HEVC VAAPI Tile Arrays",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-125219",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg through 9.0.2 Heap Buffer Overflow via HEVC VDPAU Tile Arrays",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-125237",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg 8.1 through 9.0.2 Denial of Service via DPX Vulkan Hwaccel Error Path",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-125239",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg through 9.0.2 Heap Buffer Overflow via HEVC DXVA Tile Parameters",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-125248",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg 9.0 through 9.0.2 Integer Overflow via FFV1 Vulkan Encoder Remap Buffer",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-125249",
+          "severity": "UNKNOWN",
+          "summary": "FFmpeg 7.1 through 9.0.2 Heap Out-of-Bounds Write via Vulkan Slice Buffer Sizing",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "game-music-emu",
+      "version": "0.6.5",
+      "tag": "0.6.5",
+      "repo_url": "https://github.com/libgme/game-music-emu",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-0016",
+          "severity": "LOW",
+          "summary": null,
+          "aliases": [
+            "A-460933604",
+            "ASB-A-460933604"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-0017",
+          "severity": "HIGH",
+          "summary": null,
+          "aliases": [
+            "A-444673089",
+            "ASB-A-444673089"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-0018",
+          "severity": "MEDIUM",
+          "summary": null,
+          "aliases": [
+            "A-449392803",
+            "ASB-A-449392803"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-111152",
+          "severity": "UNKNOWN",
+          "summary": "Game Music Emu (libgme) through 0.6.5 Heap Out-of-Bounds Read via AY Loader",
+          "aliases": [],
+          "fixed_versions": [
+            "ae10a8f05479e3c8f80429e7a59759fed06f8c13"
+          ]
+        },
+        {
+          "id": "CVE-2026-111153",
+          "severity": "UNKNOWN",
+          "summary": "Game Music Emu (libgme) through 0.6.5 Out-of-Bounds Read via Classic_Emu::mute_voices_",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "libxmp",
+      "version": "4.7.4",
+      "tag": "4.7.4",
+      "repo_url": "https://github.com/libxmp/libxmp",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-111131",
+          "severity": "UNKNOWN",
+          "summary": "libxmp through 4.7.4 Stack Out-of-Bounds Read via P61A Depacker",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "boost",
+      "version": "1.92.0",
+      "tag": "boost-1.92.0",
+      "repo_url": "https://github.com/boostorg/boost",
+      "vulnerabilities": [
+        {
+          "id": "OSV-2024-112",
+          "severity": "LOW",
+          "summary": "Stack-overflow in boost::read_graphviz_detail::parser::parse_subgraph",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "OSV-2024-914",
+          "severity": "MEDIUM",
+          "summary": "UNKNOWN READ in boost::re_detail_500::basic_regex_formatter<std::__1::ostream_iterator<char, cha",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "openjpeg",
+      "version": "2.5.4",
+      "tag": "v2.5.4",
+      "repo_url": "https://github.com/uclouvain/openjpeg",
+      "vulnerabilities": [],
+      "patched": [
+        {
+          "id": "CVE-2026-6192",
+          "severity": "UNKNOWN",
+          "summary": "uclouvain openjpeg pi.c opj_pi_initialise_encode integer overflow",
+          "aliases": [],
+          "fixed_versions": [
+            "839936aa33eb8899bbbd80fda02796bb65068951"
+          ]
+        },
+        {
+          "id": "OSV-2025-219",
+          "severity": "HIGH",
+          "summary": "Heap-buffer-overflow in opj_j2k_read_tile_header",
+          "aliases": [],
+          "fixed_versions": [
+            "d33cbecc148d3affcdf403211fddc2cc5d442379",
+            "91d08b11a72764f6d199f32fa0c1b1abd4edc2ad"
+          ]
+        }
+      ]
+    },
+    {
+      "formula": "net-snmp",
+      "version": "5.9.5.2",
+      "tag": "5.9.5.2",
+      "repo_url": "https://github.com/net-snmp/net-snmp",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-89147",
+          "severity": "UNKNOWN",
+          "summary": "Net-SNMP through 5.9.5.2 Denial of Service via Blocking Unauthenticated SMUX Read",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "capstone",
+      "version": "5.0.9",
+      "tag": "5.0.9",
+      "repo_url": "https://github.com/capstone-engine/capstone",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-55893",
+          "severity": "UNKNOWN",
+          "summary": "Capstone SH disassembler `set_reg_n` heap buffer overflow via crafted SH2A FPU bytecode",
+          "aliases": [
+            "GHSA-3hpv-wr3j-rxwh"
+          ],
+          "fixed_versions": [
+            "6ef3f4856689e340db794cceec23b155eefb541b",
+            "09e76802380b9e94d9720c44458d9d5282219e7e",
+            "e17ee44a8307ea33375b4727ac4f987650bf7bed"
+          ]
+        },
+        {
+          "id": "CVE-2026-55894",
+          "severity": "UNKNOWN",
+          "summary": "Capstone SH disassembler `sh_disassemble` out-of-bounds read via crafted SH2A bytecode",
+          "aliases": [
+            "GHSA-gf2c-xwcp-hvf4"
+          ],
+          "fixed_versions": [
+            "6ef3f4856689e340db794cceec23b155eefb541b",
+            "09e76802380b9e94d9720c44458d9d5282219e7e",
+            "e17ee44a8307ea33375b4727ac4f987650bf7bed"
+          ]
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "openssl@3",
+      "version": "3.5.9",
+      "tag": "openssl-3.5.9",
+      "repo_url": "https://github.com/openssl/openssl",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-88822",
+          "severity": "UNKNOWN",
+          "summary": "QUIC Uses Uninitialized Stack Bytes During Automated Peer Detection",
+          "aliases": [],
+          "fixed_versions": [
+            "7b4f5344aa0401e7b777640050b5257ed2a70e88",
+            "911eee8eb7550b95a206f1ad8cbdb986098982f3",
+            "1a73dc590cbad62d6f0329ea4779eadaa8d8fd75"
+          ]
+        },
+        {
+          "id": "CVE-2026-88823",
+          "severity": "UNKNOWN",
+          "summary": "AES-GCM-SIV AAD Forgery After Zero-length Incremental AAD Update",
+          "aliases": [],
+          "fixed_versions": [
+            "6747b1a278816dd7db46438040a70b0b5e5e0a90",
+            "2f5fc833ff9b5bfe00b32f8b5c74f73c5773c682",
+            "159e1de0c448d7b9f09ad768c8e141def4aa1eb4"
+          ]
+        },
+        {
+          "id": "CVE-2026-95691",
+          "severity": "UNKNOWN",
+          "summary": "Retransmitted QUIC CRYPTO Frames Can Cause DoS or One-byte Disclosure",
+          "aliases": [],
+          "fixed_versions": [
+            "dd90ceb99a3c2ddba336bb4a00be9ebabd84c2a1",
+            "ec9d4de9d03989b29db5a3d7efdb4c285deaf386",
+            "f6244675833e097c2429a40d1b206d95385bd42f"
+          ]
+        },
+        {
+          "id": "CVE-2026-95692",
+          "severity": "UNKNOWN",
+          "summary": "Out-of-Bounds Read and Incorrect IV Length Handling in AES-GCM-SIV",
+          "aliases": [],
+          "fixed_versions": [
+            "70a47ac78b6f3be1b22fb1551bd0bfcff4f29613",
+            "510872388f5d145cf870868b3d288a23822cb776",
+            "257a3427aa0ef8d9dd2ef5b3e2d1c021a221b116"
+          ]
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "libssh2",
+      "version": "1.11.1",
+      "tag": "1.11.1",
+      "repo_url": "https://github.com/libssh2/libssh2",
+      "vulnerabilities": [
+        {
+          "id": "OSV-2025-433",
+          "severity": "UNKNOWN",
+          "summary": "Null-dereference READ in _libssh2_packet_add",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": [
+        {
+          "id": "CVE-2025-15661",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 - Heap Buffer Over-read via sftp_symlink() in sftp.c",
+          "aliases": [],
+          "fixed_versions": [
+            "2dae3024897e1898d389835151f4e9606227721d"
+          ]
+        },
+        {
+          "id": "CVE-2026-55199",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 - Pre-Authentication DoS via SSH_MSG_EXT_INFO Handler",
+          "aliases": [],
+          "fixed_versions": [
+            "17626857d20b3c9a1addfa45979dadcee1cd84a4"
+          ]
+        },
+        {
+          "id": "CVE-2026-55200",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 - Out-of-Bounds Write via Unchecked packet_length in transport.c",
+          "aliases": [],
+          "fixed_versions": [
+            "97acf3dfda80c91c3a8c9f2372546301d4a1a7a8"
+          ]
+        },
+        {
+          "id": "CVE-2026-58050",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 - Integer Overflow in publickey Subsystem Attribute Allocation",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-58051",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 - Free of Uninitialized Pointer in publickey List Cleanup",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-66032",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 Double-Free Heap Corruption via sftp_open()",
+          "aliases": [],
+          "fixed_versions": [
+            "5e4776146552d898b9c0e1b313cd093fa8dc92d0"
+          ]
+        },
+        {
+          "id": "CVE-2026-66033",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 Integer Underflow DoS via AES-GCM Cipher Negotiation",
+          "aliases": [],
+          "fixed_versions": [
+            "a2ed82d40964bbc0d64cd717aa0a5a892117d2e6"
+          ]
+        },
+        {
+          "id": "CVE-2026-66034",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 Heap Out-of-Bounds Read via publickey subsystem",
+          "aliases": [],
+          "fixed_versions": [
+            "a13bb6c773f0d55ad1628cede57e99803cd898d9"
+          ]
+        },
+        {
+          "id": "CVE-2026-66035",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 Heap Buffer Overflow via ETM Cipher Negotiation",
+          "aliases": [],
+          "fixed_versions": [
+            "42e33d81577ed4b95d4b4f6f845e5ee8efe5eeb4"
+          ]
+        },
+        {
+          "id": "CVE-2026-7598",
+          "severity": "UNKNOWN",
+          "summary": "libssh2 userauth.c userauth_password integer overflow",
+          "aliases": [],
+          "fixed_versions": [
+            "256d04b60d80bf1190e96b0ad1e91b2174d744b1"
+          ]
+        },
+        {
+          "id": "OSV-2022-24",
+          "severity": "UNKNOWN",
+          "summary": "Null-dereference READ in session_startup",
+          "aliases": [],
+          "fixed_versions": [
+            "b89858b83d68d7e29e0c5b0bb803f8a68271710c"
+          ]
+        },
+        {
+          "id": "OSV-2024-847",
+          "severity": "UNKNOWN",
+          "summary": "Null-dereference READ in _libssh2_packet_add",
+          "aliases": [],
+          "fixed_versions": [
+            "b89858b83d68d7e29e0c5b0bb803f8a68271710c"
+          ]
+        },
+        {
+          "id": "OSV-2025-90",
+          "severity": "UNKNOWN",
+          "summary": "Null-dereference READ in ubsan_GetStackTrace",
+          "aliases": [],
+          "fixed_versions": [
+            "631e2f82a32ef016299ebb1af66efeae0161f68e"
+          ]
+        },
+        {
+          "id": "OSV-2025-92",
+          "severity": "UNKNOWN",
+          "summary": "Null-dereference READ in session_startup",
+          "aliases": [],
+          "fixed_versions": [
+            "631e2f82a32ef016299ebb1af66efeae0161f68e"
+          ]
+        }
+      ]
+    },
+    {
+      "formula": "openssl@4",
+      "version": "4.1.0",
+      "tag": "openssl-4.1.0",
+      "repo_url": "https://github.com/openssl/openssl",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2026-88822",
+          "severity": "UNKNOWN",
+          "summary": "QUIC Uses Uninitialized Stack Bytes During Automated Peer Detection",
+          "aliases": [],
+          "fixed_versions": [
+            "7b4f5344aa0401e7b777640050b5257ed2a70e88",
+            "911eee8eb7550b95a206f1ad8cbdb986098982f3",
+            "1a73dc590cbad62d6f0329ea4779eadaa8d8fd75"
+          ]
+        },
+        {
+          "id": "CVE-2026-88823",
+          "severity": "UNKNOWN",
+          "summary": "AES-GCM-SIV AAD Forgery After Zero-length Incremental AAD Update",
+          "aliases": [],
+          "fixed_versions": [
+            "6747b1a278816dd7db46438040a70b0b5e5e0a90",
+            "2f5fc833ff9b5bfe00b32f8b5c74f73c5773c682",
+            "159e1de0c448d7b9f09ad768c8e141def4aa1eb4"
+          ]
+        },
+        {
+          "id": "CVE-2026-95691",
+          "severity": "UNKNOWN",
+          "summary": "Retransmitted QUIC CRYPTO Frames Can Cause DoS or One-byte Disclosure",
+          "aliases": [],
+          "fixed_versions": [
+            "dd90ceb99a3c2ddba336bb4a00be9ebabd84c2a1",
+            "ec9d4de9d03989b29db5a3d7efdb4c285deaf386",
+            "f6244675833e097c2429a40d1b206d95385bd42f"
+          ]
+        },
+        {
+          "id": "CVE-2026-95692",
+          "severity": "UNKNOWN",
+          "summary": "Out-of-Bounds Read and Incorrect IV Length Handling in AES-GCM-SIV",
+          "aliases": [],
+          "fixed_versions": [
+            "70a47ac78b6f3be1b22fb1551bd0bfcff4f29613",
+            "510872388f5d145cf870868b3d288a23822cb776",
+            "257a3427aa0ef8d9dd2ef5b3e2d1c021a221b116"
+          ]
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "tidy-html5",
+      "version": "5.8.0",
+      "tag": "5.8.0",
+      "repo_url": "https://github.com/htacg/tidy-html5",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2025-6496",
+          "severity": "UNKNOWN",
+          "summary": "HTACG tidy-html5 parser.c InsertNodeAsParent null pointer dereference",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2025-6497",
+          "severity": "UNKNOWN",
+          "summary": "HTACG tidy-html5 parser.c prvTidyParseNamespace assertion",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2025-6498",
+          "severity": "UNKNOWN",
+          "summary": "HTACG tidy-html5 alloc.c defaultAlloc memory leak",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "jpeg-xl",
+      "version": "0.12.0",
+      "tag": "v0.12.0",
+      "repo_url": "https://github.com/libjxl/libjxl",
+      "vulnerabilities": [
+        {
+          "id": "OSV-2022-608",
+          "severity": "HIGH",
+          "summary": "Heap-use-after-free in jxl::WriteToPixelCallbackStage::ProcessRow",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "OSV-2022-725",
+          "severity": "HIGH",
+          "summary": "Heap-buffer-overflow in jxl::N_EMU128::WriteToU8Stage::ProcessRow",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "OSV-2026-564",
+          "severity": "MEDIUM",
+          "summary": "Use-of-uninitialized-value in DoTestOneInput",
+          "aliases": [],
+          "fixed_versions": [
+            "ec2982b1f79e9eebf5a514df759d0bb41b8f240d"
+          ]
+        },
+        {
+          "id": "OSV-2026-711",
+          "severity": "MEDIUM",
+          "summary": "Use-of-uninitialized-value in jxl::PerformMulBlending",
+          "aliases": [],
+          "fixed_versions": [
+            "ec2982b1f79e9eebf5a514df759d0bb41b8f240d"
+          ]
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "poppler",
+      "version": "26.11.0",
+      "tag": "26.11.0",
+      "repo_url": "https://gitlab.freedesktop.org/poppler/poppler",
+      "vulnerabilities": [
+        {
+          "id": "OSV-2026-1121",
+          "severity": "MEDIUM",
+          "summary": "Heap-buffer-overflow in cairo_type1_font_subset_for_each_glyph",
+          "aliases": [],
+          "fixed_versions": []
+        }
+      ],
+      "patched": []
+    },
+    {
+      "formula": "libsndfile",
+      "version": "1.2.2",
+      "tag": "1.2.2",
+      "repo_url": "https://github.com/libsndfile/libsndfile",
+      "vulnerabilities": [
+        {
+          "id": "CVE-2024-50612",
+          "severity": "MEDIUM",
+          "summary": null,
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2024-50613",
+          "severity": "MEDIUM",
+          "summary": null,
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2025-52194",
+          "severity": "HIGH",
+          "summary": null,
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2025-56226",
+          "severity": "MEDIUM",
+          "summary": null,
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-109828",
+          "severity": "UNKNOWN",
+          "summary": "libsndfile WAV Parsing wavlike.c wavlike_subchunk_parse uninitialized variable",
+          "aliases": [],
+          "fixed_versions": []
+        },
+        {
+          "id": "CVE-2026-37555",
+          "severity": "HIGH",
+          "summary": null,
+          "aliases": [],
+          "fixed_versions": [
+            "9a829113c88a51e57c1e46473e90609e4b7df151"
+          ]
+        }
+      ],
+      "patched": []
+    }
+  ],
+  "skipped_formulae": [
+    "hfsutils",
+    "lame",
+    "libtiff",
+    "libtool",
+    "pinentry",
+    "xorgproto",
+    "libksba",
+    "gpgme",
+    "libxau",
+    "little-cms2",
+    "ncurses",
+    "nettle",
+    "pixman",
+    "mpdecimal",
+    "libxdmcp",
+    "freetype",
+    "python@3.14",
+    "python@3.13",
+    "mpg123",
+    "libunistring",
+    "apr-util",
+    "cffi",
+    "python@3.15",
+    "glib",
+    "libxcb",
+    "readline",
+    "binutils",
+    "nss",
+    "libarchive",
+    "libassuan",
+    "htmlcxx",
+    "sqlite",
+    "libgpg-error",
+    "libgcrypt",
+    "giflib",
+    "krb5",
+    "libxrender",
+    "ca-certificates",
+    "gettext",
+    "dav1d",
+    "apr",
+    "autoconf",
+    "libpq",
+    "libxext",
+    "libthai",
+    "m4",
+    "libtasn1",
+    "sshpass",
+    "gpgmepp",
+    "texinfo",
+    "libzip",
+    "openldap",
+    "nspr",
+    "gnupg",
+    "bison",
+    "libx11",
+    "lzo",
+    "gnutls",
+    "fortune",
+    "npth"
+  ],
+  "checked": 142,
+  "complete": false,
+  "outdated_without_sbom": [],
+  "unscanned_formulae": {
+    "obsidian-cli": "untrusted_tap"
+  }
+}

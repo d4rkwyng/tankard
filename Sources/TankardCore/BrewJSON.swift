@@ -36,10 +36,13 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var license: String?
         public var aliases: [String]?
         public var oldnames: [String]?
+        /// 0.4: what brew prints after installing ("To start…", PATH notes).
+        /// brew writes the prefix as `$HOMEBREW_PREFIX`.
+        public var caveats: String?
 
         enum CodingKeys: String, CodingKey {
             case name, tap, desc, versions, revision, bottle, installed, pinned, outdated, deprecated, disabled
-            case dependencies, homepage, license, aliases, oldnames
+            case dependencies, homepage, license, aliases, oldnames, caveats
             case fullName = "full_name"
             case buildDependencies = "build_dependencies"
             case versionScheme = "version_scheme"
@@ -70,6 +73,12 @@ public struct BrewInfoJSON: Decodable, Sendable {
             license = (try? c.decodeIfPresent(LicenseExpression.self, forKey: .license))?.topLevel
             aliases = try? c.decodeIfPresent([String].self, forKey: .aliases)
             oldnames = try? c.decodeIfPresent([String].self, forKey: .oldnames)
+            caveats = Self.nonEmpty(try? c.decodeIfPresent(String.self, forKey: .caveats))
+        }
+
+        static func nonEmpty(_ s: String?) -> String? {
+            guard let s, !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+            return s
         }
 
         /// stable version plus `_revision`, as brew prints it ("1.5.7_1").
@@ -167,6 +176,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var disabled: Bool?
         public var homepage: String?
         public var dependsOn: DependsOn?
+        /// 0.4: the cask's caveats, as text.
+        public var caveats: String?
 
         /// The parts of `depends_on` Tankard reads: other packages.
         public struct DependsOn: Decodable, Sendable {
@@ -193,7 +204,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         }
 
         enum CodingKeys: String, CodingKey {
-            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage
+            case token, name, desc, tap, version, installed, outdated, pinned, deprecated, disabled, homepage, caveats
             case dependsOn = "depends_on"
             case fullToken = "full_token"
             case installedTime = "installed_time"
@@ -217,6 +228,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
             disabled = try c.decodeIfPresent(Bool.self, forKey: .disabled)
             homepage = try? c.decodeIfPresent(String.self, forKey: .homepage)
             dependsOn = try? c.decodeIfPresent(DependsOn.self, forKey: .dependsOn)
+            caveats = Formula.nonEmpty(try? c.decodeIfPresent(String.self, forKey: .caveats))
         }
     }
 }
