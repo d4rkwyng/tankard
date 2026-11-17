@@ -272,6 +272,10 @@ public final class HistoryRecorder: @unchecked Sendable {
             case .finished(let code):
                 let r = map.removeValue(forKey: id) ?? Running(command: command, started: now)
                 return (r, code == 0 ? .succeeded : .failed, code)
+            case .skipped:
+                // Never ran: not history (the session's log says why).
+                map.removeValue(forKey: id)
+                return nil
             case .cancelled:
                 // A command cancelled before it started never ran: not history.
                 guard let r = map.removeValue(forKey: id) else { return nil }

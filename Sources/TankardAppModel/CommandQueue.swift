@@ -29,6 +29,9 @@ public enum CommandEvent: Sendable, Equatable {
     case cancelled
     /// Could not be started (missing executable, ...).
     case failed(String)
+    /// 0.8: not run because its skip check, made right before it would
+    /// start, said so (the reason). Not a failure: a chain goes on.
+    case skipped(String)
 }
 
 /// A strict FIFO queue for brew commands that change things (update,
@@ -50,11 +53,16 @@ public final class CommandQueue: Sendable {
     /// 0.7: checked right before a command would start; a non-nil result
     /// is why it must not run (it ends as `.failed` with that message).
     public typealias Precondition = @Sendable () -> String?
+    /// 0.8: checked right before a command would start, after everything
+    /// before it finished; a non-nil result skips it (`.skipped`, with
+    /// that reason). For checks that read brew again (they may take a while).
+    public typealias SkipCheck = @Sendable () async -> String?
 
     struct Job: Sendable {
         var id: UUID
         var command: QueuedCommand
         var precondition: Precondition?
+        var skipCheck: SkipCheck?
         var handler: Handler
     }
 
@@ -90,7 +98,7 @@ public final class CommandQueue: Sendable {
     /// for it arrive on `handler`, from a background thread.
     @discardableResult
     public func enqueue(_ command: QueuedCommand, id: UUID = UUID(), precondition: Precondition? = nil,
-                        handler: @escaping Handler) -> UUID {
+                        skipCheck: SkipCheck? = nil, handler: @escaping Handler) -> UUID {
         var handler = handler
         if let observer {
             let inner = handler
@@ -103,7 +111,7 @@ public final class CommandQueue: Sendable {
         // the order of enqueue calls even from different threads.
         state.withLockUnchecked { s in
             s.pending.append(id)
-            continuation.yield(Job(id: id, command: command, precondition: precondition, handler: handler))
+            continuation.yield(Job(id: id, command: command, precondition: precondition, skipCheck: skipCheck, handler: handler))
         }
         return id
     }
@@ -120,6 +128,7 @@ public final class CommandQueue: Sendable {
                 case .finished(let code): cont.resume(returning: code)
                 case .cancelled: cont.resume(throwing: ProcessRunnerError.cancelled)
                 case .failed(let message): cont.resume(throwing: CommandQueueError.failed(message))
+                case .skipped: cont.resume(throwing: ProcessRunnerError.cancelled)
                 }
             }
         }
@@ -149,14 +158,26 @@ public final class CommandQueue: Sendable {
         // Checked now, when everything before it in the queue has finished
         // (outside the lock: it may touch the disk).
         let refusal = job.precondition?()
+        // A skip check only for a job still meant to run (it may run brew).
+        let skip: String?
+        if refusal == nil, let check = job.skipCheck, !state.withLockUnchecked({ $0.cancelled.contains(job.id) }) {
+            skip = await check()
+        } else {
+            skip = nil
+        }
         // Decide skip-or-start under one lock, so a cancel can't fall
         // between the check and the task being registered as running.
         var refused = false
+        var skipped = false
         let task: Task<Int32, Error>? = state.withLockUnchecked { s in
             s.pending.removeAll { $0 == job.id }
             if s.cancelled.remove(job.id) != nil { return nil }
             if refusal != nil {
                 refused = true
+                return nil
+            }
+            if skip != nil {
+                skipped = true
                 return nil
             }
             let t = Task<Int32, Error> {
@@ -172,6 +193,8 @@ public final class CommandQueue: Sendable {
         guard let task else {
             if refused, let refusal {
                 handler(.failed(refusal))
+            } else if skipped, let skip {
+                handler(.skipped(skip))
             } else {
                 handler(.cancelled)
             }

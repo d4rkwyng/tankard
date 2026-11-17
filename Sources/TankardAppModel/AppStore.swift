@@ -486,7 +486,36 @@ public final class AppStore {
         uninstallCandidate = nil
         guard dependents(of: p).isEmpty, !p.pinned else { return }
         let orphans = uninstallRemovesOrphans ? uninstallOrphans(of: p) : []
-        startSession(.uninstall, packages: [p] + orphans)
+        // The list is from the last refresh: right before each dependency's
+        // own uninstall, what is installed is read again, and one that is
+        // now on request, pinned or needed stays (the log says why).
+        let ids = Set(orphans.map(\.id))
+        var skipCheck: ((Package) -> CommandQueue.SkipCheck?)?
+        if let check = orphanRecheck() {
+            skipCheck = { pkg in
+                guard ids.contains(pkg.id) else { return nil }
+                let skip: CommandQueue.SkipCheck = { await check(pkg) }
+                return skip
+            }
+        }
+        startSession(.uninstall, packages: [p] + orphans, skipCheck: skipCheck)
+    }
+
+    /// 0.8: reads the installed packages again (`brew info --json=v2
+    /// --installed`) and re-checks one orphan against them. A failed read
+    /// keeps the dependency.
+    func orphanRecheck() -> (@Sendable (Package) async -> String?)? {
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
+        let env = client.environment(for: detection)
+        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected)
+        return { orphan in
+            do {
+                let live = classifier.classify(info: try await client.installedInfo(env: env))
+                return DependencyGraph.recheckOrphan(orphan, live: live)
+            } catch {
+                return "Kept \(orphan.name): couldn't read what is installed now (\(error))."
+            }
+        }
     }
 
     // MARK: upgrades
@@ -613,7 +642,8 @@ public final class AppStore {
     // MARK: sessions
 
     /// One sheet run of `action` over `targets`, each a queued command.
-    func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false) {
+    func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false,
+                      skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil) {
         // 0.5: an automatic run has the queue; its commands go first.
         guard !isUpgrading, !autoUpdate.isRunning, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
@@ -647,6 +677,7 @@ public final class AppStore {
             logURL: deps.logURL,
             // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.
             chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
+            skipCheck: skipCheck,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })

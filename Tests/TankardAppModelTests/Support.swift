@@ -15,8 +15,13 @@ final class CallLog: @unchecked Sendable {
 /// Answers `brew info` (from a fixture, or failing) and git probes.
 final class FakeInfoRunner: CommandRunning, @unchecked Sendable {
     let log: CallLog
-    let info: Data
     private let lock = NSLock()
+    private var _info: Data
+    /// What `brew info` answers (settable: brew's state changing mid-run).
+    var info: Data {
+        get { lock.withLock { _info } }
+        set { lock.withLock { _info = newValue } }
+    }
     private var _failInfo = false
     var failInfo: Bool {
         get { lock.withLock { _failInfo } }
@@ -25,7 +30,7 @@ final class FakeInfoRunner: CommandRunning, @unchecked Sendable {
 
     init(log: CallLog, info: Data) {
         self.log = log
-        self.info = info
+        self._info = info
     }
 
     /// 0.4: the background reads (`brew vulns`, `brew info --sizes`,
