@@ -10,6 +10,7 @@
 #   SET=v0.4 Scripts/screenshots.sh [OUT_DIR]  both 0.4 sets
 #   SET=v0.5 Scripts/screenshots.sh [OUT_DIR]  the 0.5 auto-update shots
 #   SET=v0.6a Scripts/screenshots.sh [OUT_DIR] the 0.6 part A shots (deprecated, Health, History, autoremove)
+#   SET=v0.6b Scripts/screenshots.sh [OUT_DIR] skip version, Brewfile export/check/plan
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -116,6 +117,18 @@ v06a() {
     done
 }
 
+v06b() {
+    # v0.6 part B: Skip This Version (taller window, so the button shows),
+    # the Brewfile export summary, check result and restore plan (fixtures).
+    for t in dark tankard; do
+        shot "skip-version-detail-$t" 3 TANKARD_DEMO=1 TANKARD_FILTER=upgrades TANKARD_SELECT=sqlite TANKARD_SNAPSHOT_SIZE=1040x860 TANKARD_APPEARANCE=$t
+        shot "brewfile-export-summary-$t" 5 TANKARD_DEMO=arm64 TANKARD_DEMO_BREWFILE=export TANKARD_APPEARANCE=$t
+        shot "brewfile-check-result-$t" 5 TANKARD_DEMO=arm64 TANKARD_DEMO_BREWFILE=check TANKARD_APPEARANCE=$t
+        shot "brewfile-restore-plan-$t" 7 TANKARD_DEMO=arm64 TANKARD_DEMO_BREWFILE=plan TANKARD_SNAPSHOT_SIZE=1040x760 TANKARD_APPEARANCE=$t
+    done
+}
+
+if [ "${SET:-all}" = v0.6b ]; then v06b; exit 0; fi
 if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
 if [ "${SET:-all}" = v0.6a ]; then v06a; exit 0; fi
 if [ "${SET:-all}" = v0.5 ]; then v05; exit 0; fi

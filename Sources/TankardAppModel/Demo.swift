@@ -325,6 +325,7 @@ public enum Demo {
                 }
                 if let r = Demo.v04aRead(variant, state: state, arguments: arguments) { return r }
                 if let r = try await Demo.v06aRead(variant, state: state, arguments: arguments) { return r }
+                if let r = try await Demo.brewfile(variant, state: state, info: info, arguments: arguments) { return r }
                 if let r = try await Demo.insight(variant, state: state, arguments: arguments) { return r }
                 guard arguments.first == "info" else { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data()) }
                 if arguments.contains("--installed") {

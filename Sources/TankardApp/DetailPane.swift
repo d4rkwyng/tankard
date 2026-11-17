@@ -14,7 +14,8 @@ struct DetailPane: View {
                           upgrade: { store.requestUpgrade([p]) },
                           uninstall: { store.requestUninstall(p) },
                           replaceWithBottle: { store.startReplaceWithBottle([p]) },
-                          insights: store.insights, prefix: store.report?.host.prefix)
+                          insights: store.insights, prefix: store.report?.host.prefix,
+                          skipVersion: { store.setVersionSkipped(p, $0) })
             .id(p.id)
             .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
@@ -41,6 +42,8 @@ struct PackageDetail: View {
     /// 0.4: the scan behind the vulnerability list, and brew's prefix for caveats.
     var insights: InsightsStore? = nil
     var prefix: String? = nil
+    /// 0.6: "Skip This Version" (true) or "Don't Skip" (false).
+    var skipVersion: ((Bool) -> Void)? = nil
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -135,6 +138,9 @@ struct PackageDetail: View {
                         .buttonStyle(.primaryAction)
                         .disabled(!canUpgrade || p.isHeld)
                         .help(p.isHeld ? "Pinned: unpin it first" : command)
+                        if let skipVersion, !p.isHeld, let v = p.currentVersion {
+                            SkipVersionRow(skipped: p.versionSkipped == true, version: v, toggle: skipVersion)
+                        }
                     }
                 }
 

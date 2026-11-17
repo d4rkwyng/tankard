@@ -75,6 +75,7 @@ struct MenuBarContent: View {
 
             VulnerabilityMenuNotice(store: store, openMain: openMain)
             AutoUpdateMenuLine(store: store, openLog: openAutoUpdateLog)
+            AutoUpdateSnoozeMenuRow(updater: store.autoUpdate)
 
             Divider()
             VStack(alignment: .leading, spacing: 1) {

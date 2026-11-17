@@ -123,6 +123,10 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// casks and in older reports.
     public var kegOnlyReason: String? = nil
     public var linked: Bool? = nil
+    /// 0.6: the user chose "Skip this version" for exactly the version on
+    /// offer. Filled in by the app; auto-update and the upgrade counts
+    /// leave it out, a manual Upgrade still works.
+    public var versionSkipped: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

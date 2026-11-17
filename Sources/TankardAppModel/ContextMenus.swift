@@ -32,6 +32,8 @@ public struct MenuItemModel: Equatable, Sendable, Identifiable {
         case pin
         /// 0.4: `AppStore.setPinned(p, false)`: `brew unpin` through the queue.
         case unpin
+        /// 0.6: `AppStore.setVersionSkipped(p, true/false)`. No brew command.
+        case skipVersion(Bool)
     }
 
     /// Stable per menu ("upgrade", "copy-name", ...), for tests and ForEach.
@@ -86,6 +88,13 @@ public enum ContextMenus {
                                          title: compileWarning == nil ? "Upgrade \(p.name)" : "Upgrade \(p.name) (compiles)",
                                          systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
                                          action: .upgrade, isEnabled: !busy))
+            if let v = p.currentVersion {
+                actions.append(p.versionSkipped == true
+                    ? MenuItemModel(id: "unskip-version", title: "Don't Skip \(v)", systemImage: "forward.end",
+                                    action: .skipVersion(false))
+                    : MenuItemModel(id: "skip-version", title: "Skip Version \(v)", systemImage: "forward.end",
+                                    action: .skipVersion(true)))
+            }
         }
         if BottleReplacement.isEligible(p) {
             actions.append(MenuItemModel(id: "replace-bottle", title: "Replace with Bottle",
