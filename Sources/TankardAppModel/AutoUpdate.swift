@@ -699,6 +699,15 @@ public final class AutoUpdater {
     public private(set) var isRunning = false
     /// "Auto-update: brew upgrade --formula homebrew/core/xz" while it runs.
     public private(set) var activity: String?
+    /// 0.8.3: why automatic runs are paused (brew.env turns off brew's
+    /// installed-dependents check), or nil. Updated by `checkPause` (each
+    /// background tick and at the start of a run); Settings and the menu
+    /// bar show it.
+    public private(set) var pausedReason: String?
+    /// The brew.env files to check, in bin/brew's order. Defaults to what
+    /// the client read at launch (tests, demo); the app re-reads the real
+    /// files each time, so an edit takes effect without a relaunch.
+    @ObservationIgnored public var brewEnvFiles: @MainActor (BrewClient) -> [(String, [String: String])] = { $0.sources.brewEnvFiles }
 
     public init(settings: AutoUpdateSettings, log: AutoUpdateLog, conditions: AutoUpdateConditions = NeverConditions(),
                 rules: UpgradeRulesSettings? = nil) {
@@ -717,6 +726,35 @@ public final class AutoUpdater {
                                 calendar: calendar)
     }
 
+    /// 0.8.3: safe mode relies on brew's installed-dependents check (see
+    /// `dependentThatCompiles`). brew.env beats the environment Tankard
+    /// passes (bin/brew exports it over the top), so a
+    /// HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK there would turn the check off
+    /// for automatic runs too. Then every automatic run is skipped until it
+    /// is gone. Manual upgrades are unaffected. Returns the setting.
+    @discardableResult
+    public func checkPause(store: AppStore) -> EnvSetting? {
+        guard let client = try? store.resolvedClient() else { return nil }
+        let s = Self.dependentsCheckOff(brewEnvFiles(client))
+        let reason = s == nil ? nil : Self.pausedText
+        if pausedReason != reason { pausedReason = reason }
+        return s
+    }
+
+    public nonisolated static let dependentsCheckKey = "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"
+    public static var pausedText: String {
+        String(localized: "brew.env turns off brew's dependents check; automatic updates paused.")
+    }
+
+    /// The brew.env setting that turns the check off, by brew's own rules
+    /// (file precedence; `boolean: true`, so "0", "false", "no", "off",
+    /// "nil" and blank leave it on). nil: the check is on.
+    public nonisolated static func dependentsCheckOff(_ files: [(String, [String: String])]) -> EnvSetting? {
+        guard let s = EnvironmentSources.brewEnvSetting(dependentsCheckKey, files: files),
+              BrewBoolean.isSet(s.value) else { return nil }
+        return s
+    }
+
     /// One automatic run: `brew update` and a re-read (the store's manual
     /// refresh, through the queue), the safe-mode plan, one `brew upgrade`
     /// per package through the queue, a re-read, the log and the
@@ -733,6 +771,16 @@ public final class AutoUpdater {
         // Recorded first, so a slot never runs twice, even if this one fails.
         settings.lastRun = started
         var record = AutoUpdateRun(startedAt: started, dryRun: settings.dryRun)
+
+        // 0.8.3: brew.env turned brew's dependents check off: skip the whole run.
+        if let s = checkPause(store: store) {
+            record.note = Self.pausedText
+            let logFile = store.deps.logURL.map(LogFile.init)
+            logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: started)) auto-update (safe mode): skipped: "
+                             + "\(Self.dependentsCheckKey)=\(s.value) in \(s.source) turns off brew's installed-dependents check"])
+            logFile?.close()
+            return finish(record, store: store, notifier: notifier, now: now)
+        }
 
         if !settings.dryRun {
             activity = String(localized: "Auto-update: brew update")

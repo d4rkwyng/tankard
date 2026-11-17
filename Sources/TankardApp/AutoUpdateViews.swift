@@ -117,6 +117,8 @@ struct AutoUpdateSettingsSection: View {
     /// IOKit reads in a view body).
     private func statusLine(_ s: AutoUpdateSettings) -> String {
         guard s.enabled else { return String(localized: "Off") }
+        // 0.8.3: brew.env turned brew's dependents check off.
+        if let paused = updater.pausedReason { return paused }
         let now = Date()
         if updater.rules.isSnoozed(now: now) { return AutoUpdateText.snoozed(until: updater.rules.snoozeEnds, now: now) }
         let d = AutoUpdatePolicy.decide(enabled: true, schedule: s.schedule, since: s.since, lastRun: s.lastRun,
@@ -264,9 +266,16 @@ struct AutoUpdateMenuLine: View {
         let updater = store.autoUpdate
         let selfUpdate = MenuBarSummary.selfUpdateLine(store.report?.packages)
         let line = updater.activity ?? AutoUpdateText.lastLine(updater.log.latest, now: Date())
-        if line != nil || selfUpdate != nil {
+        let paused = updater.settings.enabled && !updater.isRunning ? updater.pausedReason : nil
+        if line != nil || selfUpdate != nil || paused != nil {
             Divider()
             VStack(alignment: .leading, spacing: 4) {
+                // 0.8.3: brew.env turned brew's dependents check off.
+                if let paused {
+                    Label(paused, systemImage: "pause.circle")
+                        .font(.system(size: 11)).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 if let line {
                     Button(action: openLog) {
                         HStack(alignment: .firstTextBaseline, spacing: 6) {

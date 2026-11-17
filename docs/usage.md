@@ -613,7 +613,9 @@ To use one of those anyway, put it in a `brew.env` file, such as `~/.homebrew/br
 brew reads that itself however it is started, and a brew.env value wins over anything
 Tankard passes. So a `HOMEBREW_CASK_OPTS` with `--appdir` there applies to Tankard's
 installs too; Health ▸ Environment warns about it, because Adopt Apps' location checks
-assume `/Applications`. Details are in
+assume `/Applications`. A brew.env that sets `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`
+pauses automatic updates (their safe mode relies on that check); Settings and the menu bar
+say so. Manual upgrades still run. Details are in
 [architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
 
 ### "Check for new versions in the background" is grayed out

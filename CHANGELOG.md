@@ -10,6 +10,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off. Privacy and behaviour settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=` pass: `--appdir` and the other folder options would move apps out of where Adopt Apps and the App Management check look.
 
 ### Added
+- **Automatic updates pause when a brew.env file turns off brew's dependents check** (`HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`), which their safe mode relies on. The menu bar, Settings and the Auto-update log say why; manual upgrades still run.
 - **Homebrew ▸ Health ▸ Environment** lists every `HOMEBREW_*` setting, where it comes from, and whether Tankard's brew gets it, with the reason when it doesn't.
 
 ## [0.8.2]
