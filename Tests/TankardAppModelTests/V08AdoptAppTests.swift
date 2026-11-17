@@ -344,4 +344,29 @@ struct V08AdoptAppTests {
         #expect(store.upgrade?.succeededCount == 1)
         #expect(store.upgradeRules.selfUpdatePolicies[SelfUpdateRule.key(ob)] == nil)
     }
+    /// QA: something takes brew in the 450 ms between the confirmation
+    /// and the run: the status bar says the adopt didn't start.
+    @Test func adoptThatCantStartSaysSo() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let demoRunner = deps.streamRunner
+        let latch = Latch()
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "upgrade" { await latch.wait(); return 0 }
+            return try await demoRunner.stream("/opt/homebrew/bin/brew", args, environment: [:], output: out)
+        }
+        let store = AppStore(deps: deps)
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let target = try #require(store.upgradable.first { $0.kind == .formula })
+        store.adopt.requestAdopt()
+        #expect(store.adopt.pendingConfirm != nil)
+        store.confirmAdopt()
+        store.startUpgrade([target])
+        #expect(store.upgrade?.action == .upgrade)
+        #expect(await waitUntil { store.busyNotice != nil })
+        #expect(store.busyNotice?.contains("didn't start: an upgrade is still running") == true)
+        #expect(store.upgrade?.action == .upgrade)
+        latch.release()
+    }
 }

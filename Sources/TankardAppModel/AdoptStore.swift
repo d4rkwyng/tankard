@@ -366,7 +366,13 @@ public extension AppStore {
         closeToolSheet()
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(450))
-            self.startAdopt(items)
+            // Something took brew in the gap (an automatic update): say so,
+            // so the confirmed click isn't silently lost.
+            if !self.startAdopt(items) {
+                let what = items.count == 1 ? items[0].command : String(localized: "Adopt Apps…")
+                self.showBusyNotice(Self.notStartedNotice(what, running: self.quickAction,
+                                                          upgrading: self.isUpgrading || self.autoUpdate.isRunning))
+            }
         }
     }
 
