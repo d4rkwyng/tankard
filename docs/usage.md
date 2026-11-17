@@ -103,8 +103,20 @@ right-click it and choose **Upgrade <name>**.
 The upgrade sheet shows each package, the exact command and brew's live output. Packages
 upgrade one at a time; a failure doesn't stop the rest.
 
-- **Stop After Current** lets the running package finish and skips the rest. It then
-  becomes **Stop Now**, which stops brew straight away.
+- **Stop Now** stops brew straight away, for one package or many. brew undoes the step it
+  was in the middle of: an install stopped while pouring leaves nothing installed, and a
+  stopped upgrade keeps the old version. While brew is changing a package (not while it
+  downloads) Tankard asks first. History records the step as stopped.
+- **Stop After Current** (several packages) lets the running package finish and skips the
+  rest.
+- **Retry** (one package) or **Retry Failed (N)** runs the failed steps again, with the
+  same checks as the Upgrade and Install buttons; right-click a failed package for
+  **Retry <name>**. Under the log, one line says what to do about a failure Tankard
+  recognises (the network, a full disk, a checksum mismatch, folders brew can't write).
+- **Quitting** while brew runs asks first: **Keep Running**, **Stop After Current and
+  Quit**, or **Quit Now** (stops brew as Stop Now does). brew can't carry on after Tankard
+  quits, so an interrupted run's remaining packages are offered at the next launch:
+  **Upgrade the Remaining N Packages**.
 - **Hide** keeps the run going in the background. A button in the status bar brings it
   back.
 - The full log is saved to `~/Library/Logs/Tankard/upgrade.log`.
@@ -509,10 +521,22 @@ you made yourself needs it again after every rebuild.
 Tankard doesn't have App Management permission yet, or macOS hasn't applied it. See
 [App Management](#app-management).
 
+### "Waiting for another Homebrew command to finish…"
+
+A brew in Terminal (or another app) holds brew's lock on what this step needs. Tankard
+waits for it to finish and then runs the step again, by itself; the rest of the run
+waits too. **Stop Now** ends the wait.
+
 ### "Another Homebrew command is running"
 
-brew runs one command at a time. Wait for the other one (in Terminal or another app) to
-finish, then try again. **Homebrew ▸ History…** has **Retry** for failed commands.
+The other brew kept its lock for 15 minutes, so Tankard gave up on that step. Wait for
+it to finish, then **Retry** in the sheet (or **Homebrew ▸ History…**).
+
+### "A download didn't match its checksum"
+
+The file brew downloaded isn't the one it expected: often an interrupted download, or a
+package that changed upstream since brew last updated. Click **Refresh** (it runs
+`brew update`), then **Retry**.
 
 ### "Waiting for brew update to finish…"
 

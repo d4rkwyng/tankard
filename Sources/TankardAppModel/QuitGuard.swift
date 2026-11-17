@@ -47,17 +47,22 @@ public struct InterruptedRunOffer: Equatable, Sendable {
 
 /// What the quit alert says: "Homebrew is still upgrading xz (3 of 7)."
 public struct QuitPrompt: Equatable, Sendable {
-    public var gerund: String
     public var name: String
     public var index: Int
     public var total: Int
 
+    public var isUpgrade: Bool
     public var message: String {
-        total > 1 ? String(localized: "Homebrew is still \(gerund.lowercased()) \(name) (\(index) of \(total)).")
-            : String(localized: "Homebrew is still \(gerund.lowercased()) \(name).")
+        if isUpgrade {
+            return total > 1 ? String(localized: "Homebrew is still upgrading \(name) (\(index) of \(total)).")
+                : String(localized: "Homebrew is still upgrading \(name).")
+        }
+        return total > 1 ? String(localized: "Homebrew is still working on \(name) (\(index) of \(total)).")
+            : String(localized: "Homebrew is still working on \(name).")
     }
     public var detail: String {
-        total > 1 ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time.")
+        total > 1 && isUpgrade ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time.")
+            : total > 1 ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run.")
             : String(localized: "Quitting now stops it: Homebrew undoes the unfinished step.")
     }
 }
@@ -76,7 +81,7 @@ extension AppStore {
         let c = s.current ?? s.items.first { $0.state == .waiting }
         guard let c else { return nil }
         let index = (s.items.firstIndex { $0.id == c.id } ?? 0) + 1
-        return QuitPrompt(gerund: s.action.gerund, name: c.package.name, index: index, total: s.total)
+        return QuitPrompt(name: c.package.name, index: index, total: s.total, isUpgrade: s.action == .upgrade)
     }
 
     /// The quit alert's choice: keep the journal, stop, and call `done` once
