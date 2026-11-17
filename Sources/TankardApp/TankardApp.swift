@@ -24,6 +24,11 @@ struct LaunchOptions {
     var demoUninstall: String?
     /// TANKARD_DEMO_NOBREW=intel|arm64: the welcome screen, as on that Mac.
     var noBrew: MacHardware?
+    /// TANKARD_SWITCH_APPEARANCE=<theme>@<seconds>: switch theme at runtime,
+    /// as Settings does (not saved), to test a live switch.
+    var switchAppearance: (AppTheme, Double)?
+    /// TANKARD_RESELECT=<name>@<seconds>: select another row later, as a click would.
+    var reselect: (String, Double)?
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -50,6 +55,14 @@ struct LaunchOptions {
         if o.discoverQuery != nil { o.tab = .discover }
         o.discoverSelect = env["TANKARD_DISCOVER_SELECT"]
         o.snapshot = SnapshotRequest(environment: env)
+        func timed(_ v: String?) -> (String, Double)? {
+            guard let parts = v?.split(separator: "@"), parts.count == 2, let t = Double(parts[1]) else { return nil }
+            return (String(parts[0]), t)
+        }
+        if let (name, t) = timed(env["TANKARD_SWITCH_APPEARANCE"]), let theme = AppTheme(name: name) {
+            o.switchAppearance = (theme, t)
+        }
+        o.reselect = timed(env["TANKARD_RESELECT"])
         return o
     }
 }
@@ -77,6 +90,10 @@ struct TankardApp: App {
         appearance = AppearanceSettings(override: options.appearance)
         AppDelegate.initialTheme = appearance.theme
         appearance.onChange = { theme in applyAppearance(theme) }
+        if let (theme, delay) = options.switchAppearance {
+            let a = appearance
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { a.preview(theme) }
+        }
     }
 
     var body: some Scene {

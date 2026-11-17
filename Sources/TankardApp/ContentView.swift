@@ -125,6 +125,12 @@ struct ContentView: View {
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
+        if let (name, delay) = options.reselect {
+            Task {
+                try? await Task.sleep(for: .seconds(delay))
+                if let p = store.packages.first(where: { $0.name == name }) { store.selection = p.id }
+            }
+        }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
         }

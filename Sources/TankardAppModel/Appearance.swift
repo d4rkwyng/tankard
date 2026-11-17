@@ -56,9 +56,17 @@ public final class AppearanceSettings {
 
     public var theme: AppTheme {
         didSet {
-            defaults.set(theme.rawValue, forKey: Self.defaultsKey)
+            if persists { defaults.set(theme.rawValue, forKey: Self.defaultsKey) }
+            persists = true
             onChange?(theme)
         }
+    }
+    @ObservationIgnored private var persists = true
+
+    /// Switches theme like Settings does, without saving (testing hook).
+    public func preview(_ t: AppTheme) {
+        persists = false
+        theme = t
     }
 
     /// `override` (TANKARD_APPEARANCE, for screenshots) is used for this

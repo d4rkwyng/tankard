@@ -7,6 +7,8 @@ import SwiftUI
 ///   TANKARD_SNAPSHOT_DELAY=4         seconds after launch (default 4)
 ///   TANKARD_SNAPSHOT_QUIT=1          quit after writing
 ///   TANKARD_SNAPSHOT_SIZE=1040x620   content size to set first
+///   TANKARD_SNAPSHOT_LAYOUT=1        also print the layout (window, table,
+///                                    rows, cells) to stderr, for comparing themes
 ///
 /// The window draws itself into a bitmap (`cacheDisplay`), so this works
 /// without Screen Recording permission and while the screen is locked,
@@ -45,6 +47,9 @@ struct SnapshotHook: NSViewRepresentable {
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in
                 guard let window = v?.window else { return }
+                if ProcessInfo.processInfo.environment["TANKARD_SNAPSHOT_LAYOUT"] == "1" {
+                    FileHandle.standardError.write(Data(Snapshot.layout(of: window).utf8))
+                }
                 Snapshot.write(window: window, to: request.path)
                 // exit, not terminate: AppKit won't terminate with a sheet up.
                 if request.quit { exit(0) }
@@ -58,6 +63,35 @@ struct SnapshotHook: NSViewRepresentable {
 
 @MainActor
 enum Snapshot {
+    /// The geometry that must not depend on the theme: the window, the
+    /// content view, and for each table its scroll view's insets, spacing,
+    /// and the first rows' and cells' frames in window coordinates.
+    static func layout(of window: NSWindow) -> String {
+        func r(_ f: NSRect) -> String { String(format: "%.1f,%.1f %.1fx%.1f", f.minX, f.minY, f.width, f.height) }
+        var out = ["layout: window \(r(window.frame))"]
+        guard let content = window.contentView else { return out.joined(separator: "\n") + "\n" }
+        out.append("layout: content \(r(content.frame))")
+        func tables(_ v: NSView) -> [NSTableView] {
+            (v as? NSTableView).map { [$0] } ?? v.subviews.flatMap(tables)
+        }
+        for t in tables(content) {
+            let sv = t.enclosingScrollView
+            out.append("layout: table \(r(t.convert(t.bounds, to: nil))) style=\(t.style.rawValue) spacing=\(t.intercellSpacing) "
+                       + "insets=\(sv.map { "\($0.contentInsets)" } ?? "-") scroll=\(sv.map { r($0.convert($0.bounds, to: nil)) } ?? "-")")
+            for i in 0..<min(t.numberOfRows, 4) {
+                guard let row = t.rowView(atRow: i, makeIfNecessary: false) else { continue }
+                var line = "layout:  row \(i) \(r(row.convert(row.bounds, to: nil)))"
+                for c in 0..<t.numberOfColumns {
+                    if let cell = t.view(atColumn: c, row: i, makeIfNecessary: false) {
+                        line += " | c\(c) \(r(cell.convert(cell.bounds, to: nil)))"
+                    }
+                }
+                out.append(line)
+            }
+        }
+        return out.joined(separator: "\n") + "\n"
+    }
+
     static func render(_ window: NSWindow) -> NSBitmapImageRep? {
         // The frame view includes the title bar and toolbar.
         guard let view = window.contentView?.superview ?? window.contentView else { return nil }
