@@ -109,6 +109,11 @@ public final class UpgradeSession: Identifiable {
     /// 0.3: this run is the one retry after the App Management sheet.
     public var isRetry = false
     public private(set) var stopRequested = false
+    /// 0.8.3: Stop Now was clicked: brew is being interrupted (it can take
+    /// a few seconds to undo its unfinished step).
+    public private(set) var stoppingNow = false
+    /// 0.8.3: the sheet's "Stop now?" confirmation is up.
+    public var confirmingStop = false
     public private(set) var isFinished = false
     public let intelbrewMode: Bool
     public let action: SessionAction
@@ -270,6 +275,7 @@ public final class UpgradeSession: Identifiable {
     /// a minute or two; say so instead of a bare "Waiting for brew…".
     public func statusLine(behindBrewUpdate: Bool) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
+        if stoppingNow, let c = current { return String(localized: "Stopping \(c.package.name)…") }
         if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
         if let c = current, let d = download {
             // 0.8: "Downloading font-inter… 12.3 of 33.7 MB (36%)"; a
@@ -306,6 +312,7 @@ public final class UpgradeSession: Identifiable {
     /// Stops the running command too (its whole process group).
     public func stopNow() {
         stopRequested = true
+        if current != nil { stoppingNow = true }
         queue.cancel(items.filter { !$0.state.isTerminal }.map(\.id))
     }
 

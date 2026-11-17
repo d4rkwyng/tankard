@@ -84,13 +84,17 @@ struct UpgradeSheet: View {
                         .buttonStyle(.primaryAction)
                         .keyboardShortcut(.defaultAction)
                 } else {
-                    if session.stopRequested {
-                        Button("Stop Now", role: .destructive) { session.stopNow() }
-                            .help("Stop the running brew (and everything it started) immediately")
-                    } else {
+                    // 0.8.3: every running sheet can stop now, one package
+                    // or many; while brew changes a package it asks first.
+                    if session.total > 1 && !session.stopRequested {
                         Button("Stop After Current") { session.stopAfterCurrent() }
                             .help("Let the current package finish, then skip the rest")
                     }
+                    Button("Stop Now", role: .destructive) {
+                        session.requestStopNow()
+                    }
+                    .help("Stop the running brew (and everything it started) immediately")
+                    .disabled(!session.canStopNow)
                     Button("Hide") { store.showUpgradeSheet = false }
                         .keyboardShortcut(.cancelAction)
                 }
@@ -102,6 +106,12 @@ struct UpgradeSheet: View {
         .padding(.bottom, 16)
         .frame(width: 600)
         .background(theme.window ?? .clear)
+        .alert("Stop now?", isPresented: Binding(get: { session.confirmingStop }, set: { session.confirmingStop = $0 })) {
+            Button("Stop Now", role: .destructive) { session.stopNow() }
+            Button("Keep Running", role: .cancel) {}
+        } message: {
+            Text(session.stopNowWarning)
+        }
     }
 }
 
