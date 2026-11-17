@@ -26,13 +26,9 @@ struct ContentView: View {
             }
             if !store.homebrewState.needsWelcome {
                 ToolbarItem(placement: .principal) {
-                    Picker("View", selection: $store.tab) {
-                        ForEach(MainTab.allCases) { t in Text(t.title).tag(t) }
-                    }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .fixedSize()
-                    .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
+                    ThemedSegmentedPicker(title: "View", selection: $store.tab, options: MainTab.allCases, label: \.title)
+                        .environment(\.theme, Theme.of(appearance.theme))
+                        .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -155,6 +151,12 @@ struct ContentView: View {
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
+        if let (name, delay) = options.reselect {
+            Task {
+                try? await Task.sleep(for: .seconds(delay))
+                if let p = store.packages.first(where: { $0.name == name }) { store.selection = p.id }
+            }
+        }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
         }
@@ -219,8 +221,8 @@ struct SummaryStrip: View {
                         .truncationMode(.tail)
                     HStack(spacing: 6) {
                         if let (ready, detail) = SummaryText.upgrades(report.summary) {
-                            Circle().fill(theme.accent).frame(width: 7, height: 7)
-                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.accent)
+                            Circle().fill(theme.upgrade).frame(width: 7, height: 7)
+                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
                             Text(detail).foregroundStyle(.secondary)
                         } else {
                             Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
@@ -240,14 +242,9 @@ struct SummaryStrip: View {
 
             FilterActions(store: store)
 
-            Picker("Filter", selection: $store.filter) {
-                ForEach(PackageFilter.allCases) { f in
-                    Text("\(f.title)  \(store.count(f))").tag(f)
-                }
+            ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.allCases) { f in
+                "\(f.title)  \(store.count(f))"
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -385,8 +382,7 @@ struct PackageTable: View {
             .width(min: 150, ideal: 220)
 
             TableColumn("Installed", value: \Package.installedVersion, comparator: .localizedStandard) { p in
-                Text(p.installedVersion).foregroundStyle(.secondary).monospacedDigit()
-                    .lineLimit(1).truncationMode(.middle)
+                VersionText(text: p.installedVersion)
             }
             .width(min: 70, ideal: 110)
 
@@ -403,10 +399,10 @@ struct PackageTable: View {
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
-        .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
-        .background(theme.window ?? .clear)
-        .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
+        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
+        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
+        .background(theme.table ?? .clear)
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay {
             if store.report != nil && rows.isEmpty {
                 ContentUnavailableView(store.search.isEmpty ? "Nothing here" : "No matches",
@@ -431,13 +427,11 @@ struct AvailableCell: View {
                 Image(systemName: "arrow.up").font(.system(size: 10, weight: .bold))
                 Text(v).fontWeight(.semibold).monospacedDigit()
             }
-            .foregroundStyle(prominence == .increased && !theme.isTankard ? Color.white : theme.accent)
+            .foregroundStyle(prominence == .increased && !theme.isCustom ? Color.white : theme.upgrade)
             .lineLimit(1)
             .help("Upgrade available")
         } else {
-            // Tankard's selected row: secondary, so it stays AA on the amber blend.
-            Text(v).foregroundStyle(prominence == .increased && theme.isTankard ? HierarchicalShapeStyle.secondary : .tertiary)
-                .monospacedDigit().lineLimit(1).truncationMode(.middle)
+            VersionText(text: v, same: true)
         }
     }
 }

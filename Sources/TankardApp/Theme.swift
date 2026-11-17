@@ -55,16 +55,16 @@ struct BadgePalette {
         }
     }
 
-    /// The Tankard theme's badges, re-tinted for the purple background
-    /// (values and their contrast check live in `TankardPalette`).
-    static func tankard(_ kind: BadgeKind) -> BadgePalette {
+    /// A palette theme's badges (Tankard, Dracula; values and their
+    /// contrast check live in `TankardColors`).
+    static func custom(_ kind: BadgeKind, _ p: TankardColors) -> BadgePalette {
         let b: TankardPalette.Badge
         switch kind {
-        case .bottle: b = TankardPalette.bottle
-        case .source: b = TankardPalette.source
-        case .newer: b = TankardPalette.newer
-        case .noBottle: b = TankardPalette.noBottle
-        case .cask: b = TankardPalette.cask
+        case .bottle: b = p.bottle
+        case .source: b = p.source
+        case .newer: b = p.newer
+        case .noBottle: b = p.noBottle
+        case .cask: b = p.cask
         }
         return BadgePalette(background: Color(hex: b.tint, alpha: b.tintAlpha), foreground: Color(hex: b.text), dot: Color(hex: b.dot))
     }
@@ -86,12 +86,29 @@ struct Theme {
     var accent: Color
     /// Text on an accent-filled button or selection.
     var onAccent: Color
-    /// The window/table background; nil = the system's.
+    /// "Upgrade available": arrows, versions, the upgrade-ready line.
+    var upgrade: Color
+    /// The primary action (Upgrade, Install, Done): green fill, its text,
+    /// and the Upgrade count's pill (see `PrimaryActionStyle`).
+    var action: Color
+    var onAction: Color
+    var actionPill: Color
+    var actionPillText: Color
+    /// The window background; nil = the system's.
     var window: Color?
-    var isTankard: Bool { kind == .tankard }
+    /// The table's background (its rows); nil = the system's.
+    var table: Color?
+    /// Version columns: the installed version, and an Available version
+    /// that is the same (see `TankardColors.versionInstalled`).
+    var versionInstalled: Color
+    var versionSame: Color
+    /// The palette for Tankard and Dracula; nil for the system themes. All
+    /// themes share the same layout code: a palette only changes colours.
+    var palette: TankardColors?
+    var isCustom: Bool { palette != nil }
 
     func badge(_ kind: BadgeKind) -> BadgePalette {
-        isTankard ? BadgePalette.tankard(kind) : BadgePalette.standard(kind)
+        palette.map { BadgePalette.custom(kind, $0) } ?? BadgePalette.standard(kind)
     }
 
     static let standard = Theme(
@@ -106,24 +123,45 @@ struct Theme {
         chip: Color(light: NSColor(white: 0, alpha: 0.06), dark: NSColor(white: 1, alpha: 0.07)),
         accent: .accentColor,
         onAccent: .white,
-        window: nil)
+        upgrade: .accentColor,
+        action: Color(light: NSColor(hex: StandardActionGreen.light), dark: NSColor(hex: StandardActionGreen.dark)),
+        onAction: Color(light: NSColor(hex: StandardActionGreen.onLight), dark: NSColor(hex: StandardActionGreen.onDark)),
+        actionPill: Color(light: NSColor(hex: StandardActionGreen.lightPill), dark: NSColor(hex: StandardActionGreen.darkPill)),
+        actionPillText: Color(light: NSColor(hex: StandardActionGreen.lightPillText), dark: NSColor(hex: StandardActionGreen.darkPillText)),
+        window: nil,
+        table: nil,
+        versionInstalled: Color(light: NSColor(hex: StandardVersionText.lightInstalled), dark: NSColor(hex: StandardVersionText.darkInstalled)),
+        versionSame: Color(light: NSColor(hex: StandardVersionText.lightSame), dark: NSColor(hex: StandardVersionText.darkSame)),
+        palette: nil)
 
-    static let tankard = Theme(
-        kind: .tankard,
-        strip: Color(hex: TankardPalette.strip),
-        pane: Color(hex: TankardPalette.pane),
-        bar: Color(hex: TankardPalette.bar),
-        logBackground: Color(hex: TankardPalette.log),
-        logText: Color(hex: TankardPalette.foam),
-        logArrow: Color(hex: TankardPalette.amber),
-        logGood: Color(hex: TankardPalette.bottle.text),
-        chip: Color(hex: TankardPalette.plate, alpha: 0.55),
-        accent: Color(hex: TankardPalette.amber),
-        onAccent: Color(hex: TankardPalette.onAmber),
-        window: Color(hex: TankardPalette.window))
+    /// A palette theme (Tankard, Dracula).
+    static func custom(_ kind: AppTheme, _ p: TankardColors) -> Theme {
+        Theme(
+            kind: kind,
+            strip: Color(hex: p.strip),
+            pane: Color(hex: p.pane),
+            bar: Color(hex: p.bar),
+            logBackground: Color(hex: p.log),
+            logText: Color(hex: p.foam),
+            logArrow: Color(hex: p.accent),
+            logGood: Color(hex: p.bottle.text),
+            chip: Color(hex: p.plate, alpha: 0.55),
+            accent: Color(hex: p.accent),
+            onAccent: Color(hex: p.onAccent),
+            upgrade: Color(hex: p.upgrade),
+            action: Color(hex: p.action),
+            onAction: Color(hex: p.onAction),
+            actionPill: Color(hex: p.actionPill),
+            actionPillText: Color(hex: p.actionPillText),
+            window: Color(hex: p.window),
+            table: Color(hex: p.table),
+            versionInstalled: Color(hex: p.versionInstalled),
+            versionSame: Color(hex: p.versionSame),
+            palette: p)
+    }
 
     static func of(_ t: AppTheme) -> Theme {
-        if t == .tankard { return tankard }
+        if let p = TankardPalette.palette(for: t) { return custom(t, p) }
         var s = standard
         s.kind = t
         return s
@@ -142,24 +180,26 @@ extension EnvironmentValues {
 }
 
 /// Applies a theme to a view tree: the environment value, the accent
-/// (`tint`), and for Tankard the text hierarchy and backgrounds. Used on
+/// (`tint`), and for Tankard and Dracula the text hierarchy and backgrounds. Used on
 /// the main window, every sheet and the Settings window.
 struct Themed: ViewModifier {
     var theme: Theme
 
+    // One modifier chain for every theme, only the values differ. An
+    // if/else here gave each theme a different view identity, so a theme
+    // switch rebuilt the whole window: a new NSTableView (scroll position,
+    // column widths and the selected row's place lost), visibly jumping.
     func body(content: Content) -> some View {
-        if theme.isTankard {
-            content
-                .environment(\.theme, theme)
-                .tint(theme.accent)
-                .foregroundStyle(Color(hex: TankardPalette.foam), Color(hex: TankardPalette.lavender), Color(hex: TankardPalette.muted))
-                .background(theme.window ?? .clear)
-                .toolbarBackground(theme.window ?? .clear, for: .windowToolbar)
-                .toolbarBackground(.visible, for: .windowToolbar)
-        } else {
-            content
-                .environment(\.theme, theme)
-        }
+        let p = theme.palette
+        content
+            .environment(\.theme, theme)
+            .tint(p == nil ? nil : theme.accent)
+            .foregroundStyle(p.map { AnyShapeStyle(Color(hex: $0.foam)) } ?? AnyShapeStyle(HierarchicalShapeStyle.primary),
+                             p.map { AnyShapeStyle(Color(hex: $0.lavender)) } ?? AnyShapeStyle(HierarchicalShapeStyle.secondary),
+                             p.map { AnyShapeStyle(Color(hex: $0.muted)) } ?? AnyShapeStyle(HierarchicalShapeStyle.tertiary))
+            .background(theme.window ?? .clear)
+            .toolbarBackground(theme.window ?? .clear, for: .windowToolbar)
+            .toolbarBackground(p == nil ? .automatic : .visible, for: .windowToolbar)
     }
 }
 
@@ -187,8 +227,8 @@ struct SourceBadge: View {
 
     var body: some View {
         let p = theme.badge(kind)
-        // Tankard's selection is a dark amber blend: badges keep their colours.
-        let selected = prominence == .increased && !theme.isTankard
+        // Palette themes paint their own selection: badges keep their colours.
+        let selected = prominence == .increased && !theme.isCustom
         let onSelection = Color.white
         HStack(spacing: 5) {
             Circle().fill(selected ? onSelection : p.dot).frame(width: 6, height: 6)
@@ -310,5 +350,113 @@ struct CommandBox: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))
+    }
+}
+
+/// A segmented picker. The system one (NSSegmentedControl) draws its
+/// selected segment in a fixed grey that ignores `.tint` and
+/// `selectedSegmentBezelColor` under SwiftUI, so the palette themes draw
+/// their own: an accent-filled selected segment (amber in Tankard, purple
+/// in Dracula) on a track. Other themes get the system control.
+struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
+    var title: String
+    @Binding var selection: Value
+    var options: [Value]
+    var label: (Value) -> String
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        if let p = theme.palette {
+            HStack(spacing: 2) {
+                ForEach(options) { option in
+                    let selected = option == selection
+                    Button {
+                        selection = option
+                    } label: {
+                        Text(label(option))
+                            .font(.system(size: 12, weight: selected ? .semibold : .regular))
+                            .foregroundStyle(selected ? theme.onAccent : Color(hex: p.foam))
+                            .padding(.horizontal, 10)
+                            .frame(height: 20)
+                            .background(RoundedRectangle(cornerRadius: 5).fill(selected ? theme.accent : .clear))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(selected ? .isSelected : [])
+                }
+            }
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: 7).fill(Color(hex: p.plate, alpha: TankardPalette.segmentTrackAlpha)))
+            .fixedSize()
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(title)
+        } else {
+            Picker(title, selection: $selection) {
+                ForEach(options) { option in Text(label(option)).tag(option) }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+        }
+    }
+}
+
+/// A version number in a table column: the installed version (`same:
+/// false`) or an Available version equal to it (`same: true`). White on
+/// the system's accent selection; palette themes' selections keep the colours.
+struct VersionText: View {
+    var text: String
+    var same = false
+    @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Text(text)
+            .foregroundStyle(prominence == .increased && !theme.isCustom ? Color.white
+                             : same ? theme.versionSame : theme.versionInstalled)
+            .monospacedDigit()
+            .lineLimit(1)
+            .truncationMode(.middle)
+    }
+}
+
+/// The primary action button (Upgrade, Install, the upgrade sheet's Done):
+/// filled with the theme's green whatever the system accent, focus or key
+/// window, so it looks the same live and in snapshots. Disabled, it stays
+/// green but muted.
+struct PrimaryActionStyle: ButtonStyle {
+    @Environment(\.theme) private var theme
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(theme.onAction)
+            .padding(.horizontal, 11)
+            .frame(minHeight: 24)
+            .background(RoundedRectangle(cornerRadius: 6).fill(theme.action))
+            .overlay(RoundedRectangle(cornerRadius: 6).fill(Color.black.opacity(configuration.isPressed ? 0.15 : 0)))
+            .opacity(isEnabled ? 1 : 0.45)
+            .saturation(isEnabled ? 1 : 0.6)
+            .contentShape(RoundedRectangle(cornerRadius: 6))
+    }
+}
+
+extension ButtonStyle where Self == PrimaryActionStyle {
+    static var primaryAction: PrimaryActionStyle { PrimaryActionStyle() }
+}
+
+/// The count on the Upgrade button.
+struct ActionCountPill: View {
+    var count: Int
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Text("\(count)")
+            .font(.system(size: 11, weight: .semibold))
+            .monospacedDigit()
+            .foregroundStyle(theme.actionPillText)
+            .padding(.horizontal, 6)
+            .background(Capsule().fill(theme.actionPill))
     }
 }

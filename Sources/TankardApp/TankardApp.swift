@@ -43,6 +43,11 @@ struct LaunchOptions {
     /// 0.3, demo only: TANKARD_DEMO_INSTALL_CONFIRM=1 opens the "Install
     /// (compiles)" confirmation for the Discover selection.
     var demoInstallConfirm = false
+    /// TANKARD_SWITCH_APPEARANCE=<theme>@<seconds>: switch theme at runtime,
+    /// as Settings does (not saved), to test a live switch.
+    var switchAppearance: (AppTheme, Double)?
+    /// TANKARD_RESELECT=<name>@<seconds>: select another row later, as a click would.
+    var reselect: (String, Double)?
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -83,6 +88,14 @@ struct LaunchOptions {
         if o.discoverQuery != nil { o.tab = .discover }
         o.discoverSelect = env["TANKARD_DISCOVER_SELECT"]
         o.snapshot = SnapshotRequest(environment: env)
+        func timed(_ v: String?) -> (String, Double)? {
+            guard let parts = v?.split(separator: "@"), parts.count == 2, let t = Double(parts[1]) else { return nil }
+            return (String(parts[0]), t)
+        }
+        if let (name, t) = timed(env["TANKARD_SWITCH_APPEARANCE"]), let theme = AppTheme(name: name) {
+            o.switchAppearance = (theme, t)
+        }
+        o.reselect = timed(env["TANKARD_RESELECT"])
         return o
     }
 }
@@ -129,6 +142,10 @@ struct TankardApp: App {
         let checker = self.checker
         AppDelegate.onLaunch = { if !options.isDemo { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
+        if let (theme, delay) = options.switchAppearance {
+            let a = appearance
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { a.preview(theme) }
+        }
     }
 
     var body: some Scene {
@@ -261,13 +278,13 @@ enum AppResources {
         ctx.saveGState()
         ctx.setShadow(offset: CGSize(width: 0, height: -size * 0.01), blur: size * 0.02, color: CGColor(gray: 0, alpha: 0.35))
         ctx.addPath(path)
-        ctx.setFillColor(color(TankardPalette.window))
+        ctx.setFillColor(color(TankardPalette.iconWindow))
         ctx.fillPath()
         ctx.restoreGState()
         ctx.saveGState()
         ctx.addPath(path)
         ctx.clip()
-        let gradient = CGGradient(colorsSpace: space, colors: [color(TankardPalette.plate), color(TankardPalette.window)] as CFArray, locations: [0, 1])!
+        let gradient = CGGradient(colorsSpace: space, colors: [color(TankardPalette.iconPlate), color(TankardPalette.iconWindow)] as CFArray, locations: [0, 1])!
         ctx.drawLinearGradient(gradient, start: CGPoint(x: 0, y: plate.maxY), end: CGPoint(x: 0, y: plate.minY), options: [])
         ctx.restoreGState()
         ctx.interpolationQuality = .none

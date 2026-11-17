@@ -37,6 +37,17 @@ struct DiscoverStrip: View {
     @Bindable var discover: DiscoverStore
     @Environment(\.theme) private var theme
 
+    /// The Bottles chip as a two-option picker (bottled only, or all).
+    enum BottleScope: String, CaseIterable, Identifiable {
+        case bottled, all
+        var id: Self { self }
+    }
+
+    private var bottleScope: Binding<BottleScope> {
+        Binding(get: { discover.bottledOnly ? .bottled : .all },
+                set: { discover.bottledOnly = $0 == .bottled })
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
@@ -61,24 +72,15 @@ struct DiscoverStrip: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if discover.phase == .ready && discover.formulaCount > 0 {
-                Picker("Bottles", selection: $discover.bottledOnly) {
-                    Text("\(discover.bottledChipTitle) (\(discover.bottledCountText))").tag(true)
-                    Text("All").tag(false)
+                ThemedSegmentedPicker(title: "Bottles", selection: bottleScope, options: BottleScope.allCases) { scope in
+                    scope == .bottled ? "\(discover.bottledChipTitle) (\(discover.bottledCountText))" : "All"
                 }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .fixedSize()
                 .help(discover.isLocalTaps
                       ? "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed."
                       : "Formulae with a bottle for this Mac. The rest compile from source when installed.")
             }
 
-            Picker("Kind", selection: $discover.kind) {
-                ForEach(CatalogKindFilter.allCases) { k in Text(k.title).tag(k) }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
+            ThemedSegmentedPicker(title: "Kind", selection: $discover.kind, options: CatalogKindFilter.allCases, label: \.title)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -145,9 +147,7 @@ struct DiscoverTable: View {
             .width(min: 180, ideal: 300)
 
             TableColumn("Version") { (e: CatalogEntry) in
-                Text(e.version ?? (e.detailsLoaded ? "–" : "…"))
-                    .foregroundStyle(.secondary).monospacedDigit()
-                    .lineLimit(1).truncationMode(.middle)
+                VersionText(text: e.version ?? (e.detailsLoaded ? "–" : "…"))
             }
             .width(min: 60, ideal: 90)
 
@@ -164,10 +164,10 @@ struct DiscoverTable: View {
         .contextMenu(forSelectionType: CatalogEntry.ID.self) { ids in
             ContextMenuActions.discover(store: store, discover: discover, ids: ids)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
-        .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
-        .background(theme.window ?? .clear)
-        .background(TableSelectionStyler(tankard: theme.isTankard, token: rowsToken))
+        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
+        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
+        .background(theme.table ?? .clear)
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay { overlay }
     }
 
@@ -208,7 +208,7 @@ struct InstalledMark: View {
     @Environment(\.theme) private var theme
 
     var body: some View {
-        let selected = prominence == .increased && !theme.isTankard
+        let selected = prominence == .increased && !theme.isCustom
         HStack(spacing: 2) {
             Image(systemName: "checkmark").font(.system(size: 8, weight: .bold))
             Text("installed").font(.system(size: 9.5, weight: .medium))
@@ -252,8 +252,7 @@ struct DiscoverDetail: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
                 RoundedRectangle(cornerRadius: 9)
-                    .fill(LinearGradient(colors: theme.isTankard ? [Color(hex: TankardPalette.plate), Color(hex: TankardPalette.window)]
-                                                                  : [Color(hex: 0x3a3a3c), Color(hex: 0x1c1c1e)],
+                    .fill(LinearGradient(colors: theme.palette.map { [Color(hex: $0.plate), Color(hex: $0.window)] } ?? [Color(hex: 0x3a3a3c), Color(hex: 0x1c1c1e)],
                                          startPoint: .top, endPoint: .bottom))
                     .frame(width: 40, height: 40)
                     .overlay(Image(systemName: e.kind == .cask ? "macwindow" : "shippingbox.fill")
@@ -360,10 +359,8 @@ struct DiscoverDetail: View {
                         if compiles { discover.confirmInstall = e.id } else { store.startInstall(e) }
                     } label: {
                         Label(compiles ? "Install (compiles)" : "Install \(e.name)", systemImage: compiles ? "hammer" : "arrow.down.circle")
-                            .fontWeight(.semibold)
-                            .modifier(OnAccentLabel(theme: theme))
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.primaryAction)
                     .disabled(store.isUpgrading || e.disabled)
                     .help(store.isUpgrading ? "Wait for the running brew to finish" : e.installDisplay)
                 }

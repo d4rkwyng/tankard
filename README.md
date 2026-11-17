@@ -126,9 +126,14 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
   nothing is run inside the app. "Check again", or bringing the window to the front,
   looks for brew again.
 - **Themes:** Settings (⌘,) → Appearance: **Dark** (the default), Light, System (follows
-  macOS), and **Tankard**: deep purples from the icon plate (#1f0d3d to #4a2580), amber
-  (#f2a93b) for buttons, progress and the table selection, foam-white text, badges
-  re-tinted. Every Tankard text colour pair is checked against WCAG AA (4.5:1) by a test.
+  macOS), **Tankard** and **Dracula**. **Tankard**: deep purples from the icon plate (#1f0d3d to #4a2580), amber
+  (#f2a93b) for buttons, progress, the segmented pickers and the table selection,
+  foam-white text, striped rows, a purple column header, badges re-tinted. Every Tankard and Dracula
+  text colour pair is checked against WCAG AA (4.5:1) by a test, and the version columns
+  against 7:1 (installed) and 5.5:1 (unchanged available) in Tankard, Dracula, Dark and
+  Light. **Dracula**: the [Dracula](https://draculatheme.com) colours (MIT licence): charcoal
+  backgrounds, purple accent, Dracula's badge colours, with Tankard's amber kept for
+  upgrades. Theme colours by Dracula Theme, used under the MIT licence.
   Saved in UserDefaults (`appearance`), applied app-wide including sheets.
 
 ### How it behaves
