@@ -155,7 +155,8 @@ public struct StatusClassifier: Sendable {
             quitBundleIDs: c.quitBundleIDs,
             lifecycle: c.lifecycle,
             suitePaths: c.adoptArtifacts?.suites,
-            installsPkg: c.installsPkg
+            installsPkg: c.installsPkg,
+            sudoInstaller: c.sudoInstaller
         )
     }
 

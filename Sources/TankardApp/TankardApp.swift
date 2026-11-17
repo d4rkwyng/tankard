@@ -172,6 +172,12 @@ struct TankardApp: App {
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
+        // 0.8.3: real brew runs only (live and scripted, never demo): find
+        // the password helper and yield focus to it, since macOS 14+
+        // activation is cooperative and a background helper can't take it.
+        if !options.isDemo, let helper = deps.askpassHelper {
+            deps.askpassFocus = AskpassFocus(find: AskpassFocus.liveFind(helper: helper), yield: AskpassYield.yield)
+        }
         // 0.8.1: Relaunch Tankard (App Management): the real app only, from
         // its bundle. The demo of the relaunch page gets a button that does nothing.
         // 0.8.3: also the "Tankard was upgraded" alert's Relaunch; and the
@@ -188,6 +194,12 @@ struct TankardApp: App {
         // Check for Tankard Updates…: a file instead of GitHub (e2e, shots);
         // demo mode has no feed otherwise, so the item is disabled there.
         if let feed = env["TANKARD_UPDATE_FEED"], !feed.isEmpty { deps.updateFeed = .file(feed) }
+        // 0.8.3, demo only: TANKARD_DEMO_PASSWORD=<cask>: that cask runs a
+        // pkg installer (the "needs your administrator password" note).
+        // The demo's brew is fake, so the helper path is only shown, never run.
+        if options.demo != nil, env["TANKARD_DEMO_PASSWORD"].map({ !$0.isEmpty }) == true {
+            deps.askpassHelper = AdminPassword.liveHelper()
+        }
         if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
             deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
         }
@@ -657,5 +669,15 @@ enum AppResources {
         DispatchQueue.main.async {
             NSApp.applicationIconImage = intelbrew ? intelbrewDockIcon : nil
         }
+    }
+}
+
+/// 0.8.3: hands focus to the password helper. Called on the main actor
+/// (UpgradeSession's watcher); no NSWorkspace notifications or KVO, so
+/// nothing arrives on another thread.
+enum AskpassYield {
+    @MainActor static func yield(_ pid: pid_t) {
+        guard let helper = NSRunningApplication(processIdentifier: pid) else { return }
+        NSApp.yieldActivation(to: helper)
     }
 }

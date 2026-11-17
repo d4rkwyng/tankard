@@ -39,6 +39,7 @@
 "%@ is pinned" = "%@이(가) 고정됨";
 "%@ is running" = "%@ 실행 중";
 "%@ is there but doesn't run. It said:" = "%@이(가) 있지만 실행되지 않습니다. 출력:";
+"%@ needs your administrator password" = "%@에는 관리자 암호가 필요합니다";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
 "%@ printed JSON Tankard couldn't read: %@" = "%@이(가) Tankard에서 읽을 수 없는 JSON을 출력했습니다: %@";
@@ -387,6 +388,8 @@
 "For 1 Week" = "1주 동안";
 "For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "각 앱에 대해 brew는 Cask를 다운로드하고 설치된 것으로 기록합니다. 앱 자체는 그 자리에 그대로 있습니다.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "brew는 앱마다 cask를 다운로드하고, 다운로드를 기존 앱과 대조한 뒤 cask를 설치됨으로 기록합니다. 앱 자체는 그대로 있습니다.";
+"For this step of %@: %@" = "%@의 이 단계: %@";
+"For this step: %@" = "이 단계: %@";
 "Fork: behind (%@; %@ available)" = "포크: 뒤처짐(%@; %@ 사용 가능)";
 "Fork: current (%@)" = "포크: 최신(%@)";
 "Fork: not on a release tag (%@)" = "포크: 릴리스 태그가 아님(%@)";
@@ -549,6 +552,7 @@
 "Name only" = "이름만 일치";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
+"Needs your administrator password" = "관리자 암호가 필요합니다";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "앱을 종료하지 않습니다: 앱이 실행 중인 cask는 \"실행 중인 앱 종료 안 함\"이 켜져 있지 않으면 건너뜁니다(켜져 있으면 업그레이드되고 새 버전은 다음에 열립니다).";
 "New vulnerabilities" = "새 취약점";
 "New: %@" = "새로움: %@";
@@ -677,6 +681,7 @@
 "Partial scan" = "일부만 검사됨";
 "Partly applied: %@" = "일부 적용: %@";
 "Passed to brew." = "brew에 전달됩니다.";
+"Password:" = "암호:";
 "Patch only" = "패치만";
 "Pause automatic updates. Manual upgrades still work." = "자동 업데이트를 일시 중지합니다. 수동 업그레이드는 계속 사용할 수 있습니다.";
 "Pin" = "고정";
@@ -896,12 +901,15 @@
 "Tankard (demo)" = "Tankard (데모)";
 "Tankard Help" = "Tankard 도움말";
 "Tankard Updates" = "Tankard 업데이트";
+"Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard는 대화상자에서 암호를 묻고 sudo에만 전달하며, 절대 저장하지 않습니다. 취소하면 시트에 터미널용 명령이 표시됩니다.";
+"Tankard can't ask for it here, so the sheet will show the command for Terminal." = "여기서는 암호를 물을 수 없으므로 시트에 터미널용 명령이 표시됩니다.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard가 아직 이 Mac의 Homebrew 접두사를 읽지 않았습니다. 먼저 새로 고치세요.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard는 이 cask의 모든 새 버전을 표시하고, 모두 업그레이드와 자동 업데이트로 업그레이드하며, brew와 같은 방식으로 앱을 교체합니다.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard는 %@ 또는 TANKARD_BREW에서 brew를 찾습니다.";
 "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard에 앱 관리 권한이 필요합니다. 시스템 설정 → 개인정보 보호 및 보안 → 앱 관리에서 허용하고 Tankard를 다시 시작한 다음 다시 시도하세요.";
+"Tankard needs your administrator password" = "Tankard에 관리자 암호가 필요합니다";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard는 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
 "Tankard on GitHub" = "GitHub의 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard는 사용자 본인의 서비스만 제어하며 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
@@ -940,6 +948,8 @@
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
+"The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:";
+"The password was incorrect. Try again." = "암호가 올바르지 않습니다. 다시 시도하세요.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "이들의 명령과 라이브러리가 Homebrew 접두사에 없습니다. 보통 설치나 업그레이드가 중단되었기 때문입니다.";
@@ -947,6 +957,7 @@
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "다운로드하거나 압축을 풀 공간이 없습니다. 공간을 확보한 다음(정리가 도움이 됩니다) 다시 시도하세요.";
 "These installed packages need it. Uninstall them first, or keep %@." = "설치된 이 패키지들이 필요로 합니다. 먼저 제거하거나 %@을(를) 유지하세요.";
 "These match a cask, but brew install --adopt wouldn't take them over." = "cask와 일치하지만 brew install --adopt로는 가져올 수 없습니다.";
+"These need your administrator password: %@" = "관리자 암호가 필요한 항목: %@";
 "Third-party" = "서드파티";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다.";
@@ -955,6 +966,7 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "하나를 유지하려면 먼저 터미널에서 요청에 의해 설치됨으로 표시한 다음 다시 확인하세요:";
+"To run the installer for %@: %@" = "%@의 설치 프로그램 실행: %@";
 "Top 200 results for “%@”" = "“%@” 상위 200개 결과";
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Homebrew처럼 Homebrew가 설치한 앱에 무해한 쓰기를 시도하고 바로 제거합니다";
 "Trust" = "신뢰";
@@ -1039,6 +1051,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";
 "Waiting for brew update to finish…" = "brew update가 끝나기를 기다리는 중…";
 "Waiting for brew…" = "brew를 기다리는 중…";
+"Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Tankard 대화상자에서 암호를 기다리는 중입니다. 보이지 않나요? 취소하고 터미널에서 다음을 실행하세요:";
 "Welcome to Tankard" = "Tankard에 오신 것을 환영합니다";
 "What brew printed" = "brew가 출력한 내용";
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";
@@ -1070,6 +1083,7 @@
 "brew --version exited %d" = "brew --version이 %d(으)로 종료됨";
 "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew는 cask가 설치하는 버전과 정확히 같은 버전만 가져옵니다. 앱 자체 업데이터로 업데이트한 다음 다시 스캔하세요. Tankard가 대신 앱을 교체하지 않습니다.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew는 한 번에 하나의 명령만 허용합니다. 다른 명령(터미널 또는 다른 앱)이 끝날 때까지 기다린 후 다시 시도하세요.";
+"brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step." = "brew가 이 단계를 위해 sudo에 관리자 권한을 요청했습니다. 암호는 sudo로 바로 전달되며 Tankard는 저장하지 않습니다. 취소하면 이 단계가 중단됩니다.";
 "brew bundle check failed:\n" = "brew bundle check 실패:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle이 %lld초 안에 끝나지 않아 Tankard가 중지했습니다. Homebrew가 바쁘거나 네트워크를 기다리는 중일 수 있습니다. 잠시 후 다시 시도하세요.";
 "brew bundle dump failed:\n" = "brew bundle dump 실패:\n";
@@ -1088,6 +1102,7 @@
 "brew exited %lld" = "brew가 %lld(으)로 종료됨";
 "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt: brew는 cask를 다운로드하고 앱 버전(짧은 버전 및 빌드)을 설치된 버전과 비교하여, 일치하면 앱을 옮기지 않고 cask를 기록합니다. App Store 및 Apple 앱과 Homebrew가 이미 관리하는 앱은 표시되지 않습니다.";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install은 Homebrew에 현재 있는 버전을 받으며, %@보다 새 버전일 수 있습니다.";
+"brew is running a step that needs administrator rights (sudo)." = "brew가 관리자 권한(sudo)이 필요한 단계를 실행 중입니다.";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link는 항상 남아 있는 가장 최신 버전을 링크하며, 이는 이 복원 지점의 버전이 아닙니다.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "keg-only formula에는 brew link에 --force가 필요하며, 이전에 없던 위치에 링크하게 됩니다.";
 "brew marks it incomplete" = "brew가 불완전하다고 표시함";
@@ -1099,6 +1114,8 @@
 "brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew는 brew.env 파일을 직접 읽으므로, 거기 있는 설정은 이 목록과 관계없이 brew에 적용됩니다.";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew는 설치된 다른 패키지가 필요로 하는 formula의 제거를 거부하며, Homebrew는 그 아래에서 버전을 섞는 것을 지원하지 않습니다.";
 "brew reinstall --force-bottle --formula each one, through the queue" = "각각 brew reinstall --force-bottle --formula를 대기열을 통해 실행";
+"brew removes the installer's files with sudo." = "brew가 sudo로 설치 프로그램의 파일을 제거합니다.";
+"brew runs the installer with sudo." = "brew가 sudo로 설치 프로그램을 실행합니다.";
 "brew says the scan is incomplete: %@." = "brew가 검사가 불완전하다고 알립니다: %@.";
 "brew says these warnings are for Homebrew maintainers: if everything works, you can ignore them." = "brew는 이 경고들이 Homebrew 관리자용이라고 알립니다. 모든 것이 정상 작동하면 무시해도 됩니다.";
 "brew services failed" = "brew services 실패";
@@ -1168,6 +1185,7 @@
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS가 앱을 변경하는 단계를 중단했습니다. 허용한 다음 다시 실행하세요.";
 "macOS will ask when you turn this on" = "이것을 켜면 macOS가 확인을 요청합니다";
 "needs administrator rights" = "관리자 권한이 필요함";
+"needs your administrator password; upgrade it by hand" = "관리자 암호가 필요합니다. 직접 업그레이드하세요";
 "newer" = "더 새로움";
 "no bottle" = "bottle 없음";
 "no bottle, would compile from source" = "bottle 없음, 소스에서 컴파일해야 함";
@@ -1185,6 +1203,7 @@
 "still outdated after brew upgrade" = "brew upgrade 후에도 여전히 오래됨";
 "stopped" = "중지됨";
 "succeeded" = "성공";
+"sudo didn't accept the password. To try again, run the step again, or run this in Terminal:" = "sudo가 암호를 받아들이지 않았습니다. 다시 시도하려면 단계를 다시 실행하거나 터미널에서 다음을 실행하세요:";
 "tap added" = "tap 추가됨";
 "tap removed" = "tap 제거됨";
 "tapped" = "탭됨";

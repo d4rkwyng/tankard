@@ -1,3 +1,4 @@
+import AskpassSupport
 import Foundation
 import Observation
 import TankardCore
@@ -102,6 +103,9 @@ public final class UpgradeSession: Identifiable {
     /// Set when a step failed because it needed sudo: the command to run in
     /// Terminal instead.
     public private(set) var sudoCommand: String?
+    /// 0.8.3: why that step didn't get administrator rights (the dialog
+    /// was cancelled, the password was wrong, no dialog could ask).
+    public private(set) var sudoOutcome: SudoOutcome?
     /// 0.3: cask steps macOS blocked (App Management), by item id.
     public private(set) var appManagementBlocked: [UUID] = []
     /// 0.6: recognised failures (brew's lock, network, disk, permissions), in order.
@@ -145,6 +149,14 @@ public final class UpgradeSession: Identifiable {
     /// Per fetch step (by id): its state, and how many of its packages it finished.
     public private(set) var fetchStates: [UUID: ItemState] = [:]
     private var fetchFinished: [UUID: Int] = [:]
+    /// 0.8.3: brew's sudo is showing Tankard's password dialog now (the
+    /// helper process is running for this command). The sheet then keeps
+    /// the Terminal route in view.
+    public private(set) var awaitingPassword = false
+    /// 0.8.3: finds the helper and hands it focus (AskpassFocus). nil: no
+    /// watching (tests that don't ask, demo mode).
+    @ObservationIgnored public var passwordFocus: AskpassFocus?
+    @ObservationIgnored private var passwordTask: Task<Void, Never>?
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -373,16 +385,27 @@ public final class UpgradeSession: Identifiable {
         // item's cancel must not stop the running one's watcher.)
         switch event {
         case .started, .output: break
-        default: if items[i].state == .running { stopWatchingDownloads() }
+        default:
+            if items[i].state == .running {
+                stopWatchingDownloads()
+                stopWatchingPassword()
+            }
         }
         switch event {
         case .started:
             items[i].state = .running
             watchDownloads(of: items[i].package)
+            if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
             commandLines = []
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
             logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: Date())) \(header)"])
+            // 0.8.3: say up front that a password may be asked for, and how.
+            if items[i].command.environment[Askpass.askpassKey] != nil {
+                note(AdminPassword.required(items[i].package)
+                     ? "brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS)."
+                     : "If brew needs sudo for this step, Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+            }
         case .output(let data):
             let lines = log.feed(data)
             commandLines += lines
@@ -397,7 +420,15 @@ public final class UpgradeSession: Identifiable {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
             }
             if code != 0 {
-                if SudoDetector.needsSudo(commandLines) { sudoCommand = items[i].command.display }
+                if SudoDetector.needsSudo(commandLines) {
+                    sudoCommand = items[i].command.display
+                    sudoOutcome = SudoOutcome.classify(commandLines) ?? .noPrompt
+                    switch sudoOutcome {
+                    case .cancelled: note("The password dialog was cancelled; sudo didn't run.")
+                    case .wrongPassword: note("sudo didn't accept the password.")
+                    default: break
+                    }
+                }
                 // 0.8.1: every action that writes into /Applications (a
                 // restore's cask reinstall too); the failure kind says why.
                 if AppManagement.isCaskChange(action, items[i].package) || AppManagement.isCaskCommand(items[i].command.arguments),
@@ -531,6 +562,40 @@ public final class UpgradeSession: Identifiable {
     private func showDownload(_ p: DownloadProgress?) {
         if p != nil { downloadObservations += 1 }
         if download != p { download = p }
+    }
+
+    /// 0.8.3: while a command that may run sudo is running, look for the
+    /// password helper. When it appears: `awaitingPassword`, and Tankard
+    /// yields focus to it (macOS 14+ activation is cooperative, so the
+    /// helper can't take focus by itself). When it goes: not awaiting.
+    private func watchPassword() {
+        stopWatchingPassword()
+        guard let focus = passwordFocus else { return }
+        passwordTask = Task { @MainActor [weak self] in
+            var yielded: pid_t?
+            while !Task.isCancelled {
+                // The process table walk happens off the main actor.
+                let pid = await Task.detached(priority: .userInitiated) { focus.find() }.value
+                guard !Task.isCancelled, let self else { return }
+                if let pid {
+                    if yielded != pid {
+                        yielded = pid
+                        focus.yield(pid)
+                        self.note("The password dialog is open (process \(pid)); Tankard handed it the focus.")
+                    }
+                    if !self.awaitingPassword { self.awaitingPassword = true }
+                } else if self.awaitingPassword {
+                    self.awaitingPassword = false
+                }
+                try? await Task.sleep(for: focus.interval)
+            }
+        }
+    }
+
+    private func stopWatchingPassword() {
+        passwordTask?.cancel()
+        passwordTask = nil
+        if awaitingPassword { awaitingPassword = false }
     }
 
     private func stopWatchingDownloads() {

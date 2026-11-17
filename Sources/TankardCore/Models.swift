@@ -138,8 +138,16 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// apps). nil for formulae and in reports written before 0.8.
     public var suitePaths: [String]? = nil
     public var installsPkg: Bool? = nil
+    /// 0.8.3, casks: an `installer` script that brew runs with sudo
+    /// (`installer script: {…, sudo: true}`). With `installsPkg`, what says
+    /// a change needs the administrator password. nil for formulae, when
+    /// brew gave no artifacts, and in older reports.
+    public var sudoInstaller: Bool? = nil
 
     public var isDependency: Bool { !requested }
+
+    /// 0.8.3: a `command(_:)` row, not a package.
+    public var isCommandRow: Bool { id.hasPrefix("command:") }
 
     /// A placeholder row for a sheet run that isn't about one package
     /// (`brew cleanup`). Not a real package: its id starts with "command:".

@@ -105,7 +105,11 @@ an Intel Mac, standard Homebrew on Apple silicon.
 
 Reading status never changes your Homebrew. Your packages change only when you click (or
 when you turn on automatic updates, off by default), and every button shows the exact brew
-command it runs. Commands run one at a time, never with a shell and never with sudo. The
+command it runs. Commands run one at a time and never through a shell. Tankard never runs
+sudo itself; when a cask's installer needs your administrator password (a `.pkg` such as
+Windows App), a Tankard dialog passes it straight to sudo, or you can run the command in
+Terminal. Tankard never stores the password, and automatic updates never ask for it; they
+skip those casks. The
 one thing Tankard runs on its own is a throttled `brew update` in the background, which
 refreshes Homebrew's package lists and upgrades nothing; Settings ▸ General turns it off.
 The full list: [What Tankard runs](docs/usage.md#what-tankard-runs).

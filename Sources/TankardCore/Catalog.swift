@@ -51,6 +51,8 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     public var appPaths: [String]?
     public var suitePaths: [String]?
     public var installsPkg: Bool?
+    /// 0.8.3: an installer script brew runs with sudo.
+    public var sudoInstaller: Bool?
 
     // Lower-cased once, for search.
     var keyName: String
@@ -118,7 +120,8 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
                 installedAt: nil, upgradeAvailable: false,
                 upgradeHasBottle: kind == .formula ? (bottle == .forThisMac || bottle == .intelbrew) : nil,
                 autoUpdates: nil, dependencies: dependencies, caskDependencies: caskDependencies,
-                homepage: homepage, appPaths: appPaths, suitePaths: suitePaths, installsPkg: installsPkg)
+                homepage: homepage, appPaths: appPaths, suitePaths: suitePaths, installsPkg: installsPkg,
+                sudoInstaller: sudoInstaller)
     }
 }
 
@@ -165,6 +168,7 @@ public struct CatalogBuilder: Sendable {
             e.appPaths = c.appPaths ?? a.apps.map(\.target)
             e.suitePaths = a.suites
             e.installsPkg = a.pkg
+            e.sudoInstaller = c.sudoInstaller
         }
         return e
     }

@@ -13,6 +13,13 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Automatic updates pause when a brew.env file turns off brew's dependents check** (`HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`), which their safe mode relies on. The menu bar, Settings and the Auto-update log say why; manual upgrades still run.
 - **Homebrew ▸ Health ▸ Environment** lists every `HOMEBREW_*` setting, where it comes from, and whether Tankard's brew gets it, with the reason when it doesn't.
 
+### Added
+- **Casks that need your administrator password install and upgrade from Tankard.** A cask whose `.pkg` installer brew runs with `sudo` (Windows App, for one) used to fail with "This step needs administrator rights, which Tankard can't ask for". Now Tankard shows a password dialog that names the cask and the command; the password goes straight to sudo and is never stored. **Cancel** (or three wrong passwords) leaves the step undone and the sheet shows the Terminal command, as before. The upgrade plan and the uninstall confirmation say "needs your administrator password" before anything starts. Tankard still never runs sudo itself: brew's sudo asks through `SUDO_ASKPASS`, set only for cask installs, upgrades, reinstalls, adopts and uninstalls.
+
+### Changed
+- **Automatic updates never ask for a password.** Safe mode skips casks whose installer needs it ("needs your administrator password; upgrade it by hand"), and brew is told not to run sudo at all during an automatic run (`HOMEBREW_NO_SUDO=1`). If your Mac is set up for passwordless sudo, automatic updates used to upgrade those casks; now they are skipped and listed in the Auto-update Log, and you upgrade them by hand.
+- **The password dialog answers only Tankard's own brew commands.** It checks that it was started by the real `/usr/bin/sudo` under this copy of Tankard (and, in signed releases, Tankard's signature) and refuses anything else without showing a window.
+
 ## [0.8.2]
 
 ### Changed

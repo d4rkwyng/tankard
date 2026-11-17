@@ -11,12 +11,24 @@ let package = Package(
         .library(name: "TankardCore", targets: ["TankardCore"]),
         .executable(name: "tankard", targets: ["tankard"]),
         .executable(name: "TankardApp", targets: ["TankardApp"]),
+        .executable(name: "tankard-askpass", targets: ["tankard-askpass"]),
     ],
     targets: [
         // Models, brew JSON decoding, status classification, version
         // comparison, environment construction and Intelbrew detection.
         // No UI dependencies: the SwiftUI app (step 2) links this.
         .target(name: "TankardCore"),
+
+        // 0.8.3: what the sudo password helper and the app share (variable
+        // names, reading the request, the dialog's words). Foundation only.
+        .target(name: "AskpassSupport"),
+
+        // 0.8.3: the helper itself, Tankard.app/Contents/MacOS/tankard-askpass
+        // (SUDO_ASKPASS for brew's sudo). AppKit; nothing else linked.
+        .executableTarget(
+            name: "tankard-askpass",
+            dependencies: ["AskpassSupport"]
+        ),
 
         .executableTarget(
             name: "tankard",
@@ -28,7 +40,7 @@ let package = Package(
         // assembler, the status cache and demo mode. Tested on its own.
         .target(
             name: "TankardAppModel",
-            dependencies: ["TankardCore"],
+            dependencies: ["TankardCore", "AskpassSupport"],
             resources: [.copy("Resources/Demo")]
         ),
 
@@ -47,7 +59,7 @@ let package = Package(
 
         .testTarget(
             name: "TankardAppModelTests",
-            dependencies: ["TankardAppModel", "TankardCore"]
+            dependencies: ["TankardAppModel", "TankardCore", "AskpassSupport"]
         ),
 
         .testTarget(

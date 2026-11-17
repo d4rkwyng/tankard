@@ -39,6 +39,7 @@
 "%@ is pinned" = "%@ está fijado";
 "%@ is running" = "%@ se está ejecutando";
 "%@ is there but doesn't run. It said:" = "%@ está ahí pero no se ejecuta. Dijo:";
+"%@ needs your administrator password" = "%@ necesita tu contraseña de administrador";
 "%@ of %@ %@ (%lld%%)" = "%@ de %@ %@ (%lld %%)";
 "%@ of %@ bottled" = "%@ de %@ con bottle";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ imprimió JSON que Tankard no pudo leer: %@";
@@ -387,6 +388,8 @@
 "For 1 Week" = "Durante 1 semana";
 "For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "Para cada app, brew descarga el cask y lo registra como instalado. La app se queda donde está.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "Para cada app, brew descarga el cask, comprueba la descarga con la app existente y luego registra el cask como instalado. La app se queda donde está.";
+"For this step of %@: %@" = "Para este paso de %@: %@";
+"For this step: %@" = "Para este paso: %@";
 "Fork: behind (%@; %@ available)" = "Fork: desactualizado (%@; %@ disponible)";
 "Fork: current (%@)" = "Fork: actual (%@)";
 "Fork: not on a release tag (%@)" = "Fork: no está en una etiqueta de versión (%@)";
@@ -549,6 +552,7 @@
 "Name only" = "Solo nombre";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Solo el nombre: %@. Solo coincide el nombre, así que puede ser otra app; si lo es, brew upgrade la reemplazaría y desinstalar el cask la eliminaría.";
 "Needs update first" = "Actualizar antes";
+"Needs your administrator password" = "Necesita tu contraseña de administrador";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Nunca cierra una app: se omite un cask cuya app está en ejecución, salvo que \"No cerrar apps en ejecución\" esté activado (entonces se actualiza y la nueva versión se abre la próxima vez).";
 "New vulnerabilities" = "Nuevas vulnerabilidades";
 "New: %@" = "Nuevo: %@";
@@ -677,6 +681,7 @@
 "Partial scan" = "Análisis parcial";
 "Partly applied: %@" = "Aplicada en parte: %@";
 "Passed to brew." = "Se pasa a brew.";
+"Password:" = "Contraseña:";
 "Patch only" = "Solo parches";
 "Pause automatic updates. Manual upgrades still work." = "Pausa las actualizaciones automáticas. Las actualizaciones manuales siguen funcionando.";
 "Pin" = "Fijar";
@@ -896,12 +901,15 @@
 "Tankard (demo)" = "Tankard (demo)";
 "Tankard Help" = "Ayuda de Tankard";
 "Tankard Updates" = "Actualizaciones de Tankard";
+"Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard la pide en un cuadro de diálogo y solo se la pasa a sudo; nunca la guarda. Si cancelas, la hoja muestra el comando para Terminal.";
+"Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard no puede pedirla aquí, así que la hoja mostrará el comando para Terminal.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard aún no ha leído el prefijo de Homebrew de este Mac. Actualiza primero.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard nunca se actualiza a sí mismo automáticamente: usa brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard deja las actualizaciones de esta app fuera de Actualizar todo, los recuentos y la actualización automática. Su propio actualizador la mantiene al día. brew upgrade en Terminal aún puede actualizarla.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard muestra cada versión nueva de este cask, lo actualiza con Actualizar todo y la actualización automática, y reemplaza la app como lo hace brew.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard busca brew en %@, o en TANKARD_BREW.";
 "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard necesita el permiso Gestión de apps. Permítelo en Ajustes del Sistema → Privacidad y seguridad → Gestión de apps, reinicia Tankard y vuelve a intentarlo.";
+"Tankard needs your administrator password" = "Tankard necesita tu contraseña de administrador";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard nunca ejecuta sudo. Ejecuta esto en Terminal:";
 "Tankard on GitHub" = "Tankard en GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard solo controla tus propios servicios y nunca ejecuta sudo. Ejecuta esto en Terminal:";
@@ -940,6 +948,8 @@
 "The official installer from brew.sh." = "El instalador oficial de brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "La versión anterior sigue instalada. brew uninstall quita la nueva y luego brew link enlaza la anterior.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Las demás apps se comprueban: si una descarga no coincide, brew se detiene para esa app y la deja como estaba.";
+"The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "Se canceló el cuadro de la contraseña, así que este paso no se ejecutó. Para ejecutarlo tú, usa Terminal:";
+"The password was incorrect. Try again." = "La contraseña no es correcta. Inténtalo de nuevo.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Las variables se desactivan primero, así que este brew update no vuelve a poner el fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "El desarrollador coincide, pero el cask no indica este bundle id exacto.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Sus comandos y bibliotecas no están en el prefijo de Homebrew. Normalmente se interrumpió una instalación o actualización.";
@@ -947,6 +957,7 @@
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "No queda espacio para descargar o descomprimir. Libera espacio (Limpiar ayuda) y reintenta.";
 "These installed packages need it. Uninstall them first, or keep %@." = "Estos paquetes instalados lo necesitan. Desinstálalos primero, o conserva %@.";
 "These match a cask, but brew install --adopt wouldn't take them over." = "Coinciden con un cask, pero brew install --adopt no las asumiría.";
+"These need your administrator password: %@" = "Estos necesitan tu contraseña de administrador: %@";
 "Third-party" = "De terceros";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Este brew no tiene `brew vulns` (es nuevo en Homebrew 7). Ejecuta `brew update` para obtenerlo.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Este cask ejecuta un paquete de instalación, que ignora --adopt: brew volvería a ejecutar el instalador, con tu contraseña.";
@@ -955,6 +966,7 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Los taps, formulae y casks de este punto de restauración como Brewfile (sin versiones: los Brewfiles no las tienen)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Este paso requiere derechos de administrador, que Tankard no puede pedir. Ejecuta esto en Terminal:";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "Para conservar uno, márcalo primero como instalado a petición en Terminal y luego vuelve a comprobar:";
+"To run the installer for %@: %@" = "Para ejecutar el instalador de %@: %@";
 "Top 200 results for “%@”" = "Los 200 mejores resultados para “%@”";
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Prueba una escritura inofensiva en una app instalada por Homebrew, como hace Homebrew, y la elimina al instante";
 "Trust" = "Confiar";
@@ -1039,6 +1051,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "Esperando aprobación en Ajustes del Sistema → General → Ítems de inicio de sesión.";
 "Waiting for brew update to finish…" = "Esperando a que termine brew update…";
 "Waiting for brew…" = "Esperando a brew…";
+"Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Esperando tu contraseña en el cuadro de Tankard. ¿No lo ves? Cancélalo y ejecuta esto en Terminal:";
 "Welcome to Tankard" = "Te damos la bienvenida a Tankard";
 "What brew printed" = "Lo que imprimió brew";
 "What installing the missing items would do, before anything runs" = "Lo que haría instalar los elementos que faltan, antes de ejecutar nada";
@@ -1070,6 +1083,7 @@
 "brew --version exited %d" = "brew --version terminó con %d";
 "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y luego Volver a analizar. Tankard no reemplaza la app por ti.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew permite un comando a la vez. Espera a que termine el otro (en Terminal u otra app) y reintenta.";
+"brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step." = "brew pidió a sudo permisos de administrador para este paso. Tu contraseña va directamente a sudo; Tankard no la guarda. Cancelar detiene este paso.";
 "brew bundle check failed:\n" = "brew bundle check falló:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle no terminó en %lld segundos, así que Tankard lo detuvo. Puede que Homebrew esté ocupado o esperando a la red; inténtalo de nuevo en un momento.";
 "brew bundle dump failed:\n" = "brew bundle dump falló:\n";
@@ -1088,6 +1102,7 @@
 "brew exited %lld" = "brew terminó con %lld";
 "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt: brew descarga el cask, compara la versión de la app (versión corta y build) con la ya instalada y, si coinciden, registra el cask sin mover la app. Las apps del App Store y de Apple, y las que Homebrew ya gestiona, no se muestran.";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install obtiene la versión que Homebrew tiene ahora, que puede ser más reciente que %@.";
+"brew is running a step that needs administrator rights (sudo)." = "brew está ejecutando un paso que necesita permisos de administrador (sudo).";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link siempre enlaza la versión más reciente que queda, que no es la de este punto de restauración.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link necesitaría --force para una formula keg-only, lo que la enlaza donde antes no estaba.";
 "brew marks it incomplete" = "brew la marca como incompleta";
@@ -1099,6 +1114,8 @@
 "brew reads brew.env files itself, so a setting there reaches brew whatever this list says." = "brew lee los archivos brew.env por sí mismo, así que un ajuste ahí llega a brew diga lo que diga esta lista.";
 "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them." = "brew se niega a desinstalar una formula que otros paquetes instalados necesitan, y Homebrew no admite mezclar versiones debajo de ellos.";
 "brew reinstall --force-bottle --formula each one, through the queue" = "brew reinstall --force-bottle --formula una a una, mediante la cola";
+"brew removes the installer's files with sudo." = "brew elimina los archivos del instalador con sudo.";
+"brew runs the installer with sudo." = "brew ejecuta el instalador con sudo.";
 "brew says the scan is incomplete: %@." = "brew indica que el análisis está incompleto: %@.";
 "brew says these warnings are for Homebrew maintainers: if everything works, you can ignore them." = "brew indica que estas advertencias son para los mantenedores de Homebrew: si todo funciona, puedes ignorarlas.";
 "brew services failed" = "brew services falló";
@@ -1168,6 +1185,7 @@
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS detuvo un paso que cambia una app. Permítelo y vuelve a ejecutarlo.";
 "macOS will ask when you turn this on" = "macOS preguntará cuando lo actives";
 "needs administrator rights" = "requiere derechos de administrador";
+"needs your administrator password; upgrade it by hand" = "necesita tu contraseña de administrador; actualízalo a mano";
 "newer" = "más reciente";
 "no bottle" = "sin bottle";
 "no bottle, would compile from source" = "sin bottle, se compilaría desde el código fuente";
@@ -1185,6 +1203,7 @@
 "still outdated after brew upgrade" = "sigue desactualizado tras brew upgrade";
 "stopped" = "detenido";
 "succeeded" = "correcto";
+"sudo didn't accept the password. To try again, run the step again, or run this in Terminal:" = "sudo no aceptó la contraseña. Para reintentarlo, vuelve a ejecutar el paso o ejecuta esto en Terminal:";
 "tap added" = "tap añadido";
 "tap removed" = "tap quitado";
 "tapped" = "con tap";

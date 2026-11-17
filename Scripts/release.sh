@@ -115,11 +115,16 @@ if [ $DRY = 0 ]; then
     while IFS= read -r -d '' f; do
         run "${SIGN[@]}" "$f"
     done < <(find "$APP/Contents" \( -name '*.dylib' -o -name '*.framework' -o -name '*.xpc' -o -name '*.appex' \) -print0)
-else
-    echo "+ (sign any nested .dylib/.framework/.xpc/.appex first; this app has none today)"
 fi
+# 0.8.3: the sudo password helper, a second executable in Contents/MacOS:
+# its own Developer ID signature with the hardened runtime and a secure
+# timestamp (notarization requires both), before the app is sealed.
+HELPER="$APP/Contents/MacOS/tankard-askpass"
+[ $DRY = 1 ] || [ -x "$HELPER" ] || fail "missing $HELPER (bundle-app.sh builds it)"
+run "${SIGN[@]}" --identifier net.mindtricks.tankard.askpass "$HELPER"
 run "${SIGN[@]}" "$APP"
 run codesign --verify --strict --deep --verbose=2 "$APP"
+run codesign --verify --strict --verbose=2 "$HELPER"
 
 # 4b. Launch the signed app for real (no demo, no snapshot) and fail the
 #     release if it crashes or quits. 0.3.0 shipped a launch crash that only

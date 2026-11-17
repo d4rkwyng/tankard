@@ -507,9 +507,89 @@ fully qualified so a formula and a cask with the same name can't be confused, wi
 `HOMEBREW_NO_AUTO_UPDATE=1`, so you get exactly the versions the list showed. After a run,
 Tankard re-reads status rather than assuming what changed. `brew update` and every
 mutating command go through the one FIFO `CommandQueue`; status reads stay off it. brew's
-stdin is `/dev/null`, so it can't prompt for a password: when its output shows it needed
-sudo, the app shows the command to run in Terminal. The upgrade log's `\r` progress
+stdin is `/dev/null` and it has no terminal, so sudo can't read a password from it. For a
+cask change (0.8.3) Tankard sets `SUDO_ASKPASS` to its own helper (see *sudo password
+dialog* below); when the output still shows sudo failed (Cancel, three wrong passwords, no
+helper), the app shows the command to run in Terminal. The upgrade log's `\r` progress
 redraws collapse into one line.
+
+**sudo password dialog (0.8.3).** Homebrew passes `-A` to `/usr/bin/sudo` when
+`SUDO_ASKPASS` is set (`system_command.rb`, `env_config.rb`), and `bin/brew` keeps
+`SUDO_ASKPASS` and every `HOMEBREW_*` variable when it rebuilds its environment. sudo runs
+the askpass program as the user (not root), with its prompt as argv[1], and reads the
+password from its stdout; a non-zero exit makes sudo fail with "no password was provided".
+
+- *Helper.* `Sources/tankard-askpass` (AppKit, links only `AskpassSupport`), shipped as
+  `Tankard.app/Contents/MacOS/tankard-askpass`. Living in Contents/MacOS makes Tankard.app
+  its main bundle, so the dialog gets Tankard's icon and Localizable.strings. It is an
+  `NSAlert` with an `NSSecureTextField` (no echo, no copy, secure keyboard entry while
+  focused). OK writes the password plus a newline to stdout once and wipes that byte
+  buffer; Cancel, a 5-minute timeout, or the calling sudo going away exit 1. Stop Now's
+  SIGTERM to brew's process group reaches sudo and the helper too (brew starts sudo without
+  a new process group: `pgroup: sudo? ? nil : true` in system_command.rb; sudo itself
+  ignores SIGTERM while it waits for a password, the helper doesn't). It
+  refuses to run with stdout on a terminal, writes nothing to disk, logs or defaults, and
+  never executes anything from its environment.
+- *Gate (security review).* Before drawing or reading anything, debug hooks included, the
+  helper checks `AskpassGate.decide` (pure, tested) over kernel facts: the parent's
+  `proc_pidpath` must be exactly `/usr/bin/sudo` (SIP-protected; never p_comm), and within
+  10 processes above sudo (brew's ruby, bash, …) there must be this bundle's own
+  `Contents/MacOS/Tankard`, derived from the helper's own `proc_pidpath` (so a symlink
+  resolves to the real helper, and a copy outside a `.app/Contents/MacOS/` has no Tankard).
+  When the helper carries a Team ID (Developer ID release), that Tankard process must pass
+  `SecCodeCheckValidity` and have the same Team ID, which stops a copied helper in a
+  home-made bundle next to a program named Tankard. Anything else: exit 1, one
+  "refused: …" line on stderr, no window; sudo then fails as on Cancel. Residual risk,
+  inherent to Homebrew: brew's prefix is user-writable, so a process that already runs as
+  the user can replace `brew` itself, and the real Tankard would then run that brew, which
+  could ask through the dialog for a command of its choosing. The same is true of
+  `brew` in Terminal.
+- *Focus.* macOS 14+ activation is cooperative: a background helper started by sudo can't
+  take focus. While a command with `SUDO_ASKPASS` runs, the session polls (every 0.4 s, off
+  the main actor) for a process whose `proc_pidpath` is this bundle's helper and whose
+  ancestors include this Tankard process (`AskpassProcess.find`); when one appears, Tankard
+  calls `NSApp.yieldActivation(to:)` with its `NSRunningApplication` once, on the main
+  actor (no NSWorkspace notifications or KVO), and the sheet shows "Waiting for your
+  password in the Tankard dialog…" with the Terminal command. The helper calls the
+  cooperative `NSApp.activate()` before and just after showing the alert, sets
+  `.modalPanel`, `makeKeyAndOrderFront`, `orderFrontRegardless()` (the fallback when focus
+  never comes: in front of other apps' windows, a click focuses it), and makes the secure
+  field first responder.
+- *Context.* `HOMEBREW_TANKARD_ASKPASS_CONTEXT`, set per command by Tankard (already
+  localized), cleaned to one line of at most 400 characters with no control characters.
+  A `HOMEBREW_` name because `bin/brew` drops other unknown variables; verified to reach the
+  helper through `brew` → `sudo -A` on brew 7.0.14. The context is not secret.
+- *Retry wording.* sudo calls the helper again after a wrong password, from the same sudo
+  process. If that sudo started more than 1.5 s before the helper (sudo waits about 2 s after a wrong password), the dialog says the
+  password was incorrect (kernel process start time via `sysctl`; no state file).
+- *Why not `osascript`.* `display dialog … with hidden answer` would work, but the dialog
+  belongs to osascript (its icon, not Tankard's), the context would have to be passed into
+  AppleScript source or read with `system attribute`, there is no clean timeout or
+  parent-gone handling, and the script would be an unsigned shell wrapper. A small signed
+  Mach-O keeps the code that touches the password tiny and reviewable.
+- *Which commands.* `AdminPassword.mayNeedSudo`: `install|reinstall|upgrade|uninstall
+  --cask` (adopt is `install --cask --adopt`), for sessions and restore steps. Never
+  formulae, `brew update`, cleanup, taps, services, or reads. The variables are not in the
+  displayed command (the Terminal fallback must ask in Terminal); the log notes it.
+- *Before starting.* `AdminPassword.required`: the cask has a `pkg` artifact or an
+  `installer` script with `sudo: true` (`BrewInfoJSON.Cask.sudoInstaller`). The upgrade plan
+  page opens for those ("needs your administrator password"), and the uninstall sheet says it.
+- *Auto-update.* Safe mode skips `required` casks (`AutoUpdateSkip.needsPassword`) and every
+  automatic command gets `HOMEBREW_NO_SUDO=1` and no `SUDO_ASKPASS`, even one from
+  brew.env: brew then refuses sudo ("…requires sudo, but HOMEBREW_NO_SUDO is set").
+- *Timestamp.* Before its first sudo, brew runs `sudo --reset-timestamp`
+  (`utils/sudo.sh`), so every brew command asks once; later sudo calls from the same brew
+  process reuse sudo's ppid-keyed timestamp (no tty), so they don't ask again.
+- *Failure.* `SudoOutcome.classify`: "no password was provided" is a cancel, "N incorrect
+  password attempts" a wrong password; both keep the Terminal command in the sheet.
+- *Signing.* `bundle-app.sh` builds and copies the helper (lipo for universal);
+  `release.sh` signs it first with the hardened runtime, a secure timestamp and identifier
+  `net.mindtricks.tankard.askpass`, then seals the app; notarization covers both.
+- *Debug hooks* (never set by Tankard, and only after the gate allows the request):
+  `TANKARD_ASKPASS_DESCRIBE=1` prints the dialog's text to stderr and exits 1;
+  `TANKARD_ASKPASS_SNAPSHOT=<png>` draws the empty dialog to a PNG and exits 1;
+  `TANKARD_ASKPASS_RETRY=1` shows the retry wording. None reads a password. bin/brew drops
+  these names, so in practice they work only in a test harness that is itself under Tankard.
 
 **Download progress (0.8.1).** brew prints no progress when it isn't in a terminal, so
 Tankard watches brew's downloads folder. A bottle's size comes from the manifest brew

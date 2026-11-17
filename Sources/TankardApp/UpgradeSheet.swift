@@ -62,12 +62,29 @@ struct UpgradeSheet: View {
                 CommandBox(command: cmd).padding(.bottom, 8)
             }
 
+            // 0.8.3: the password dialog is up: keep the Terminal route in view.
+            if session.awaitingPassword, let cmd = session.current?.command.display {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "key.fill").foregroundStyle(.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:")
+                            .font(.system(size: 12))
+                            .fixedSize(horizontal: false, vertical: true)
+                        CommandBox(command: cmd)
+                    }
+                }
+                .padding(8)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.10)))
+                .padding(.bottom, 8)
+            }
+
             if let sudo = session.sudoCommand {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "lock.fill").foregroundStyle(.orange)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:")
+                        Text((session.sudoOutcome ?? .noPrompt).message)
                             .font(.system(size: 12))
+                            .fixedSize(horizontal: false, vertical: true)
                         CommandBox(command: sudo)
                     }
                 }
