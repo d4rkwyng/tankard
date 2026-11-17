@@ -69,8 +69,8 @@ shot intelbrew-demo-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APP
 shot upgrade-sheet-demo-dark 8.5 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=1 TANKARD_APPEARANCE=dark
 shot arm64-demo-dark 3 TANKARD_DEMO=arm64 TANKARD_SELECT=google-chrome TANKARD_APPEARANCE=dark
 
-# v0.2: the four themes on the main window
-for t in dark light system tankard; do
+# The five themes on the main window
+for t in dark light system tankard dracula; do
     shot "theme-$t" 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=$t
 done
 # Discover: normal mode (formulae.brew.sh slice) and Intelbrew mode (local taps + brew info)

@@ -46,7 +46,7 @@ jobs:
             [ -n "${!s}" ] || missing="$missing $s"
           done
           if [ -n "$missing" ]; then
-            echo "::error::Missing repository secrets:$missing. Add them under Settings → Secrets and variables → Actions (see the README, 'Signing a release')."
+            echo "::error::Missing repository secrets:$missing. Add them under Settings → Secrets and variables → Actions (see docs/architecture.md, 'Signing a release')."
             exit 1
           fi
 
