@@ -25,8 +25,14 @@ extension ScriptContext {
         var captured: String?
         var firstLine: String?
         var sawDeterminate = false
+        var fetchLine: String?
         while !session.isFinished {
             if Date() > deadline { throw ScriptFailure("timed out after \(Int(timeout))s waiting for \(what) to finish") }
+            // 0.8.3: the prefetch's combined line, "Downloading 0 of 2 · 3.1 of 24.0 MB (12%)".
+            if session.isFetching, session.download?.fraction != nil, fetchLine == nil {
+                fetchLine = session.statusLine
+                await snapshot("prefetch", settle: 0.05)
+            }
             if let d = session.download {
                 if firstLine == nil { firstLine = session.statusLine }
                 if d.fraction != nil { sawDeterminate = true }
@@ -44,5 +50,8 @@ extension ScriptContext {
         check("\(what): download progress shown", session.downloadObservations > 0,
               captured.map { "\"\($0)\" (\(session.downloadObservations) polls)" } ?? "no download seen")
         check("\(what): download total known", sawDeterminate, captured)
+        if !session.prefetch.isEmpty {
+            check("\(what): combined progress shown during brew fetch", fetchLine?.contains(" · ") == true, fetchLine ?? "not seen")
+        }
     }
 }

@@ -173,16 +173,29 @@ extension ScriptRunner {
             c.check("\(name) gone", c.package(name, kind: kind) == nil)
             c.check("no error", c.store.error == nil, c.store.error?.detail)
         },
-        "upgrade": ScriptStepDef("upgrade <name>  (the detail pane's Upgrade; a compile plan is confirmed)") { c in
-            let p = try c.requirePackage(try c.arg(0, "name"))
-            c.check("\(p.name) has an upgrade", p.upgradeAvailable, "\(p.installedVersion) → \(p.currentVersion ?? "?")")
+        "upgrade": ScriptStepDef("upgrade <name> [<name>...]  (the detail pane's Upgrade; several: Upgrade on a selection, 0.8.3: with the prefetch; a compile plan is confirmed)") { c in
+            _ = try c.arg(0, "name")
+            let ps = try c.args.map { try c.requirePackage($0) }
+            for p in ps {
+                c.check("\(p.name) has an upgrade", p.upgradeAvailable, "\(p.installedVersion) → \(p.currentVersion ?? "?")")
+            }
             let before = c.store.restorePoints.points.count
-            try await c.runSession("upgrade \(p.name)") {
-                c.store.requestUpgrade([p])
+            let names = ps.map(\.name).joined(separator: " ")
+            let session = try await c.runSession("upgrade \(names)") {
+                c.store.requestUpgrade(ps)
                 if c.store.upgradePlan != nil { c.store.confirmUpgradePlan() }
             }
             c.check("a restore point was saved before the upgrade", c.store.restorePoints.points.count == before + 1,
                     "\(before) → \(c.store.restorePoints.points.count)")
+            if ps.count > 1 {
+                // 0.8.3: one `brew fetch` first, then the upgrades from the cache.
+                let fetches = session.prefetch.map(\.command.display)
+                c.check("one brew fetch ran before the upgrades", !fetches.isEmpty
+                        && session.fetchStates.values.allSatisfy { $0 == .done }
+                        && session.log.lines.first == "$ " + (fetches.first ?? ""), fetches.joined(separator: "; "))
+                c.check("brew fetch finished every package", session.fetchedCount == session.fetchTotal,
+                        "\(session.fetchedCount) of \(session.fetchTotal)")
+            }
         },
         "pin": ScriptStepDef("pin <name>") { c in try await c.setPinned(true) },
         "unpin": ScriptStepDef("unpin <name>") { c in try await c.setPinned(false) },
