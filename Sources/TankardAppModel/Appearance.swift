@@ -56,13 +56,23 @@ public final class AppearanceSettings {
     /// Called after every change (the app sets NSApp.appearance here).
     @ObservationIgnored public var onChange: ((AppTheme) -> Void)?
 
+    /// Setting the theme it already has does nothing (no observer
+    /// notification, no NSApp.appearance write), so a binding that writes
+    /// back an unchanged value can't start an update loop.
     public var theme: AppTheme {
-        didSet {
-            if persists { defaults.set(theme.rawValue, forKey: Self.defaultsKey) }
+        get {
+            access(keyPath: \.theme)
+            return _theme
+        }
+        set {
+            guard newValue != _theme else { persists = true; return }
+            withMutation(keyPath: \.theme) { _theme = newValue }
+            if persists { defaults.set(newValue.rawValue, forKey: Self.defaultsKey) }
             persists = true
-            onChange?(theme)
+            onChange?(newValue)
         }
     }
+    @ObservationIgnored private var _theme: AppTheme
     @ObservationIgnored private var persists = true
 
     /// Switches theme like Settings does, without saving (testing hook).
@@ -75,7 +85,7 @@ public final class AppearanceSettings {
     /// run and not saved; choosing a theme in Settings still saves.
     public init(defaults: UserDefaults = .standard, override: AppTheme? = nil) {
         self.defaults = defaults
-        theme = override ?? AppTheme(name: defaults.string(forKey: Self.defaultsKey)) ?? .default
+        _theme = override ?? AppTheme(name: defaults.string(forKey: Self.defaultsKey)) ?? .default
     }
 }
 

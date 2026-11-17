@@ -316,6 +316,20 @@ be rebuilt. It uses the layout dump, so it works with the screen locked, but nee
 window server (it isn't part of `swift test`). `REAL=1` runs it on this Mac's Homebrew,
 read-only.
 
+`Scripts/launch-check.sh [APP]` launches the app for real (no demo, no snapshot, no
+`TANKARD_*` variables, real settings and real brew, read-only) several times and fails
+if it doesn't stay up or leaves a new crash report in `~/Library/Logs/DiagnosticReports`.
+With no APP it builds `dist/Tankard.app` first; give it the downloaded release
+(`Scripts/launch-check.sh --runs 5 ~/Downloads/Tankard.app`) to check what actually
+ships. `release.sh` runs it on the signed app before notarizing. 0.3.0 crashed at
+launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
+and local build missed it: it needed the release toolchain and the signed app. The rule
+that came out of it: **App.body is pure**. It reads no @Observable state that changes and
+writes none; menu items that follow the store are views (`ViewCommands`), bindings
+handed to scenes (`MenuBarExtra(isInserted:)`) ignore unchanged writes, and settings
+(`AppSettings.showMenuBarIcon`, `AppearanceSettings.theme`) don't notify on an
+unchanged value, whatever the compiler's @Observable does.
+
 ## Tests and fixtures
 
 `Tests/TankardCoreTests/Fixtures/` (inside the test target so SwiftPM can bundle it):
@@ -383,7 +397,10 @@ It builds universal (`--host-arch` for this Mac's architecture only), finds the
 `codesign --verify --strict --deep`, submits a zip with `notarytool --wait` (profile name:
 `TANKARD_NOTARY_PROFILE`, default `tankard`), fails unless the status is Accepted, staples,
 checks with `spctl -a -vv`, and zips the stapled app with `ditto -c -k --keepParent`.
-`--skip-notarize` stops after signing.
+`--skip-notarize` stops after signing. Before notarizing it real-launches the signed app
+five times with `Scripts/launch-check.sh` and stops if it crashes (`--skip-launch-check`
+only on a Mac with no GUI session; then run the check on the downloaded zip before
+publishing the draft).
 
 The hardened runtime needs no entitlements: the app is plain Swift with no third-party
 libraries, plug-ins or JIT, and brew is a child process started with `posix_spawn`, which

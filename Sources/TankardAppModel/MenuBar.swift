@@ -137,7 +137,25 @@ public final class AppSettings {
     @ObservationIgnored public let defaults: UserDefaults
 
     /// The mug in the menu bar. Default on.
-    public var showMenuBarIcon: Bool { didSet { defaults.set(showMenuBarIcon, forKey: Key.showMenuBarIcon) } }
+    ///
+    /// Writing the value it already has does nothing, and in particular does
+    /// not notify observers. 0.3.0 crashed at launch without this: SwiftUI
+    /// writes `MenuBarExtra(isInserted:)`'s binding back with the same value
+    /// while it builds the scenes, App.body reads this property, and
+    /// @Observable notifies on every write, equal or not, so each write
+    /// re-ran App.body, which wrote it again (a loop until the stack ran out).
+    public var showMenuBarIcon: Bool {
+        get {
+            access(keyPath: \.showMenuBarIcon)
+            return _showMenuBarIcon
+        }
+        set {
+            guard newValue != _showMenuBarIcon else { return }
+            withMutation(keyPath: \.showMenuBarIcon) { _showMenuBarIcon = newValue }
+            defaults.set(newValue, forKey: Key.showMenuBarIcon)
+        }
+    }
+    @ObservationIgnored private var _showMenuBarIcon: Bool
     /// Background `brew update` + a notification when new upgrades appear.
     /// Default off (opt-in): it is the only thing Tankard does on its own.
     public var notifyNewUpgrades: Bool {
@@ -166,7 +184,7 @@ public final class AppSettings {
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        showMenuBarIcon = defaults.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
+        _showMenuBarIcon = defaults.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
         notifyNewUpgrades = defaults.bool(forKey: Key.notifyNewUpgrades)
         let h = defaults.integer(forKey: Key.checkIntervalHours)
         checkIntervalHours = BackgroundSchedule(intervalHours: h == 0 ? BackgroundSchedule.defaultHours : h).intervalHours

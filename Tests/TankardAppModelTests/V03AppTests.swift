@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import Observation
 import Testing
 import TankardCore
 @testable import TankardAppModel
@@ -33,6 +34,14 @@ final class FakeNotifier: UpgradeNotifying {
     var authorizationRequests = 0
     func requestAuthorization() async -> Bool { authorizationRequests += 1; return true }
     func post(_ message: UpgradeNotificationDiff.Message) { posted.append(message) }
+}
+
+/// Set from an observation onChange (a @Sendable closure).
+final class Flag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _value = false
+    var value: Bool { lock.withLock { _value } }
+    func set() { lock.withLock { _value = true } }
 }
 
 @MainActor func testSettings(_ name: String = "net.mindtricks.tankard.tests.\(UUID().uuidString)") -> AppSettings {
@@ -157,6 +166,54 @@ struct NotificationDiffTests {
         #expect(b.notifiedUpgrades == ["y@2"])
         #expect(b.appManagementExplained)
         UserDefaults(suiteName: name)!.removePersistentDomain(forName: name)
+    }
+
+    /// 0.3.0's launch crash: SwiftUI writes `MenuBarExtra(isInserted:)` back
+    /// with an unchanged value while building scenes. If that write notifies
+    /// observers, App.body (which reads the setting) re-runs and the binding
+    /// is written again, forever. An unchanged write must notify nothing.
+    @Test func unchangedMenuBarWriteNotifiesNothing() {
+        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
+        let s = testSettings(name)
+        defer { UserDefaults(suiteName: name)!.removePersistentDomain(forName: name) }
+        for value in [true, false] {
+            if s.showMenuBarIcon != value { s.showMenuBarIcon = value }
+            let notified = Flag()
+            withObservationTracking { _ = s.showMenuBarIcon } onChange: { notified.set() }
+            s.showMenuBarIcon = value
+            #expect(!notified.value, "writing \(value) over \(value) notified observers")
+        }
+        // A real change still notifies and persists.
+        let notified = Flag()
+        withObservationTracking { _ = s.showMenuBarIcon } onChange: { notified.set() }
+        s.showMenuBarIcon = true
+        #expect(notified.value)
+        #expect(AppSettings(defaults: UserDefaults(suiteName: name)!).showMenuBarIcon)
+    }
+
+    /// The same for the theme: an unchanged write neither notifies nor
+    /// re-applies NSApp.appearance (onChange).
+    @Test func unchangedThemeWriteNotifiesNothing() {
+        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
+        let d = UserDefaults(suiteName: name)!
+        defer { d.removePersistentDomain(forName: name) }
+        let a = AppearanceSettings(defaults: d)
+        var applied: [AppTheme] = []
+        a.onChange = { applied.append($0) }
+        let notified = Flag()
+        withObservationTracking { _ = a.theme } onChange: { notified.set() }
+        a.theme = a.theme
+        #expect(!notified.value)
+        #expect(applied.isEmpty)
+        a.theme = .dracula
+        #expect(notified.value)
+        #expect(applied == [.dracula])
+        #expect(AppearanceSettings(defaults: d).theme == .dracula)
+        // preview() of the current theme changes nothing, and the next real
+        // choice still saves.
+        a.preview(.dracula)
+        a.theme = .tankard
+        #expect(AppearanceSettings(defaults: d).theme == .tankard)
     }
 
     @Test func backgroundCheckRunsUpdateAndNotifiesOnlyOnNewUpgrades() async throws {

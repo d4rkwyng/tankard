@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.3.1]
+
+### Fixed
+- Tankard 0.3.0 could crash at launch (on about half of all launches, with a Dark, Light, Tankard or Dracula theme). The app's scene description re-ran in a loop when the menu-bar setting was written back unchanged, until it ran out of stack.
+
 ## [0.3.0]
 
 ### Added
@@ -62,6 +67,7 @@ First release.
 - Opens instantly from a cache; no telemetry; runs brew with a clean environment.
 - `tankard status` command-line tool (table or JSON).
 
+[0.3.1]: https://github.com/d4rkwyng/tankard/releases/tag/v0.3.1
 [0.3.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.3.0
 [0.2.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.2.0
 [0.1.1]: https://github.com/d4rkwyng/tankard/releases/tag/v0.1.1

@@ -152,6 +152,12 @@ struct TankardApp: App {
         }
     }
 
+    // App.body must stay pure: it reads no @Observable state that changes
+    // (store, settings) and writes none. Anything it reads is tracked, and a
+    // change re-runs it and rebuilds every scene, so the menu items that
+    // follow the store live in views (ViewCommands below), and the menu-bar
+    // binding never writes an unchanged value (see AppSettings.showMenuBarIcon).
+    // 0.3.0 broke this and crashed at launch; Scripts/launch-check.sh guards it.
     var body: some Scene {
         WindowGroup(options.isDemo ? "Tankard (demo)" : "Tankard", id: "main") {
             ContentView(store: store, options: options, appearance: appearance)
@@ -165,16 +171,7 @@ struct TankardApp: App {
             }
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .toolbar) {
-                Button("Refresh") { Task { await store.refresh(manual: true) } }
-                    .keyboardShortcut("r", modifiers: .command)
-                    .disabled(store.isRefreshing)
-                Button("Clean Up…") { store.openCleanup() }
-                    .disabled(store.isUpgrading || store.report == nil)
-                Divider()
-                Button("Installed") { store.tab = .installed }
-                    .keyboardShortcut("1", modifiers: .command)
-                Button("Discover") { store.tab = .discover }
-                    .keyboardShortcut("2", modifiers: .command)
+                ViewCommands(store: store)
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
@@ -182,7 +179,7 @@ struct TankardApp: App {
             }
         }
 
-        MenuBarExtra(isInserted: Binding(get: { settings.showMenuBarIcon }, set: { settings.showMenuBarIcon = $0 })) {
+        MenuBarExtra(isInserted: menuBarInserted) {
             MenuBarPanel(store: store, appearance: appearance)
         } label: {
             MenuBarLabel(store: store)
@@ -192,6 +189,35 @@ struct TankardApp: App {
         Settings {
             SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem)
         }
+    }
+}
+
+extension TankardApp {
+    /// SwiftUI writes this binding back while it builds the scenes, often
+    /// with the value it already has; only a real change reaches the setting.
+    private var menuBarInserted: Binding<Bool> {
+        let settings = settings
+        return Binding(get: { settings.showMenuBarIcon },
+                       set: { if settings.showMenuBarIcon != $0 { settings.showMenuBarIcon = $0 } })
+    }
+}
+
+/// View menu items that follow the store (Refresh greys out while a refresh
+/// runs). A view, so the store reads are tracked here and not in App.body.
+struct ViewCommands: View {
+    var store: AppStore
+
+    var body: some View {
+        Button("Refresh") { Task { await store.refresh(manual: true) } }
+            .keyboardShortcut("r", modifiers: .command)
+            .disabled(store.isRefreshing)
+        Button("Clean Up…") { store.openCleanup() }
+            .disabled(store.isUpgrading || store.report == nil)
+        Divider()
+        Button("Installed") { store.tab = .installed }
+            .keyboardShortcut("1", modifiers: .command)
+        Button("Discover") { store.tab = .discover }
+            .keyboardShortcut("2", modifiers: .command)
     }
 }
 
@@ -298,8 +324,16 @@ enum AppResources {
         return NSImage(cgImage: image, size: NSSize(width: n, height: n))
     }()
 
+    private static var dockShowsIntelbrew = false
+
     /// Intelbrew mode: the Dock shows the "i" mug; otherwise the bundle's icon.
+    /// Only a real change touches NSApp, and never inside a view update (it
+    /// is called from onChange): the write is deferred to the next turn.
     static func updateDockIcon(intelbrew: Bool) {
-        NSApp.applicationIconImage = intelbrew ? intelbrewDockIcon : nil
+        guard intelbrew != dockShowsIntelbrew else { return }
+        dockShowsIntelbrew = intelbrew
+        DispatchQueue.main.async {
+            NSApp.applicationIconImage = intelbrew ? intelbrewDockIcon : nil
+        }
     }
 }

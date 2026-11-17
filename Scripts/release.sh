@@ -3,12 +3,15 @@
 # it for distribution. Run on a Mac whose keychain holds a "Developer ID
 # Application" certificate. The GitHub release workflow runs this too.
 #
-#   Scripts/release.sh [--dry-run] [--host-arch] [--skip-notarize]
+#   Scripts/release.sh [--dry-run] [--host-arch] [--skip-notarize] [--skip-launch-check]
 #
 #   --dry-run        print every command instead of running it (the identity
 #                    lookup still runs: it only reads the keychain)
 #   --host-arch      build only this Mac's architecture (default: universal)
 #   --skip-notarize  sign and verify only
+#   --skip-launch-check
+#                    don't real-launch the signed app (Scripts/launch-check.sh);
+#                    only for a Mac with no logged-in GUI session
 #
 # Settings (environment):
 #   TANKARD_SIGN_ID          signing identity; default: the first
@@ -32,12 +35,14 @@ cd "$(dirname "$0")/.."
 DRY=0
 UNIVERSAL=1
 NOTARIZE=1
+LAUNCH_CHECK=1
 for a in "$@"; do
     case "$a" in
         --dry-run) DRY=1 ;;
         --host-arch) UNIVERSAL=0 ;;
         --skip-notarize) NOTARIZE=0 ;;
-        -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+        --skip-launch-check) LAUNCH_CHECK=0 ;;
+        -h|--help) sed -n '2,33p' "$0"; exit 0 ;;
         *) echo "release.sh: unknown option $a" >&2; exit 2 ;;
     esac
 done
@@ -115,6 +120,17 @@ else
 fi
 run "${SIGN[@]}" "$APP"
 run codesign --verify --strict --deep --verbose=2 "$APP"
+
+# 4b. Launch the signed app for real (no demo, no snapshot) and fail the
+#     release if it crashes or quits. 0.3.0 shipped a launch crash that only
+#     the signed release build showed, and only on a real launch; the local
+#     build and every demo/snapshot run looked fine. Several runs, because
+#     that crash hit about half of all launches.
+if [ $LAUNCH_CHECK = 1 ]; then
+    run Scripts/launch-check.sh "$APP" --runs 5 --seconds 10
+else
+    echo "NOTE: --skip-launch-check: the signed app was not launched. Run Scripts/launch-check.sh $APP before publishing." >&2
+fi
 
 if [ $NOTARIZE = 0 ]; then
     run ditto -c -k --keepParent "$APP" "$ZIP"
