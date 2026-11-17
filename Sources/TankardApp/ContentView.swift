@@ -400,6 +400,9 @@ struct PackageTable: View {
             }
             .width(min: 120, ideal: 170)
         }
+        .contextMenu(forSelectionType: Package.ID.self) { ids in
+            ContextMenuActions.installed(store: store, ids: ids)
+        }
         .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
         .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
         .background(theme.window ?? .clear)

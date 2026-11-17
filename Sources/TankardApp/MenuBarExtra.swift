@@ -51,6 +51,8 @@ struct MenuBarContent: View {
                             Text(row.versions).font(.system(size: 11)).monospacedDigit()
                                 .foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
                         }
+                        .contentShape(Rectangle())
+                        .contextMenu { menuBarRowMenu(row) }
                     }
                     if summary.moreCount > 0 {
                         Text("and \(summary.moreCount) more").font(.system(size: 11)).foregroundStyle(.secondary)
@@ -83,6 +85,26 @@ struct MenuBarContent: View {
         .frame(width: 300)
         .background(theme.window ?? .clear)
         .task { if store.report == nil { await store.start() } }
+    }
+}
+
+extension MenuBarContent {
+    /// Upgrade (the window's path, so a compiling upgrade shows its plan
+    /// first) and Copy Name.
+    @ViewBuilder
+    func menuBarRowMenu(_ row: MenuBarSummary.Row) -> some View {
+        if let p = store.packages.first(where: { $0.id == row.id }) {
+            MenuEntries(entries: ContextMenus.menuBarRow(p, compileWarning: store.deps.classifier.upgradeWarning(p),
+                                                         busy: store.isUpgrading || store.isRefreshing)) { action in
+                switch action {
+                case .upgrade:
+                    openMain()
+                    store.requestUpgrade([p])
+                case .copy(let s): ContextMenuActions.copy(s)
+                default: break
+                }
+            }
+        }
     }
 }
 

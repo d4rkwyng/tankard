@@ -111,7 +111,8 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
                 bottleTag: bottleTag, bottleOrigin: bottle == .intelbrew ? .intelbrew : nil, bottleURL: bottleURL,
                 installedAt: nil, upgradeAvailable: false,
                 upgradeHasBottle: kind == .formula ? (bottle == .forThisMac || bottle == .intelbrew) : nil,
-                autoUpdates: nil, dependencies: dependencies, caskDependencies: caskDependencies)
+                autoUpdates: nil, dependencies: dependencies, caskDependencies: caskDependencies,
+                homepage: homepage)
     }
 }
 
@@ -284,6 +285,20 @@ public enum Dependents {
             guard p.id != target.id else { return false }
             let deps = target.kind == .formula ? (p.dependencies ?? []) : (p.caskDependencies ?? [])
             return deps.contains { names($0, target) }
+        }
+        .sorted { $0.name < $1.name }
+    }
+
+    /// Installed packages that `target` needs (its formula and cask
+    /// dependencies that are installed), sorted by name.
+    public static func dependencies(of target: Package, among installed: [Package]) -> [Package] {
+        let formulae = target.dependencies ?? []
+        let casks = target.caskDependencies ?? []
+        guard !formulae.isEmpty || !casks.isEmpty else { return [] }
+        return installed.filter { p in
+            guard p.id != target.id else { return false }
+            let deps = p.kind == .formula ? formulae : casks
+            return deps.contains { names($0, p) }
         }
         .sorted { $0.name < $1.name }
     }

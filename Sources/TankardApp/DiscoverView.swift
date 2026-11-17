@@ -161,6 +161,9 @@ struct DiscoverTable: View {
             }
             .width(min: 120, ideal: 160)
         }
+        .contextMenu(forSelectionType: CatalogEntry.ID.self) { ids in
+            ContextMenuActions.discover(store: store, discover: discover, ids: ids)
+        }
         .tableStyle(.inset(alternatesRowBackgrounds: !theme.isTankard))
         .scrollContentBackground(theme.isTankard ? .hidden : .automatic)
         .background(theme.window ?? .clear)

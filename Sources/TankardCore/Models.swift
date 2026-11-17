@@ -89,6 +89,9 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     public var dependencies: [String]? = nil
     /// Casks: `depends_on` casks. nil for formulae.
     public var caskDependencies: [String]? = nil
+    /// The formula's or cask's homepage, from `brew info`. nil in reports
+    /// written before Tankard 0.3, or when brew gives none.
+    public var homepage: String? = nil
 
     public var isDependency: Bool { !requested }
 

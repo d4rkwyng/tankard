@@ -163,7 +163,12 @@ public final class AppStore {
     public func count(_ f: PackageFilter) -> Int { packages.filter(f.includes).count }
 
     /// The rows for the table: filter, then search (name, full name, description).
+    /// "deps:<name>" / "uses:<name>" (the context menu's Show Dependencies /
+    /// Show What Uses It) list those packages instead.
     public var visiblePackages: [Package] {
+        if let related = RelatedSearch(search), let rows = related.rows(in: packages, selected: selectedPackage) {
+            return rows.filter(filter.includes)
+        }
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
         return packages.filter { p in
             filter.includes(p) && (q.isEmpty
@@ -347,6 +352,24 @@ public final class AppStore {
     /// Installed packages that need `p` (uninstall is blocked while any do).
     public func dependents(of p: Package) -> [Package] {
         Dependents.of(p, among: packages)
+    }
+
+    /// The context menu's Show Dependencies: keeps `p` selected (its detail
+    /// stays in the pane) and lists the installed packages it needs.
+    public func showDependencies(of p: Package) {
+        showRelated(.dependencies(of: p.fullName), selecting: p)
+    }
+
+    /// The context menu's Show What Uses It: the installed packages that need `p`.
+    public func showDependents(of p: Package) {
+        showRelated(.dependents(of: p.fullName), selecting: p)
+    }
+
+    private func showRelated(_ related: RelatedSearch, selecting p: Package) {
+        tab = .installed
+        filter = .all
+        selection = p.id
+        search = related.query
     }
 
     /// Opens the uninstall confirmation.
