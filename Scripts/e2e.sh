@@ -33,6 +33,11 @@
 #              cask's own URL and sha256-checked, copied to /Applications by
 #              hand; the scan, adopt it (brew install --cask --adopt), the
 #              self-update choice, then uninstall the cask: the app is gone
+#   progress   download progress in the sheet: install the font cask
+#              `font-inter` (~34 MB zip, no app) with its cached download
+#              removed first, so brew really downloads it; the sheet must
+#              show "Downloading font-inter… x of y MB (n%)" (captured as
+#              NN-install-mid-download.png); then uninstall
 #   background the throttled background `brew update` on the real brew (a
 #              seconds interval in the run's suite; FETCH_HEAD only read):
 #              due -> exactly one update; a relaunch inside the interval
@@ -57,7 +62,7 @@
 # A second run refuses with the holder's pid, or with --wait waits for it.
 #
 # What it changes on this Mac: it installs and removes the scenario's own
-# throwaway packages (hello, luarocks + lua, font-press-start-2p, tankard-e2e-probe) and
+# throwaway packages (hello, luarocks + lua, font-press-start-2p, font-inter, tankard-e2e-probe) and
 # adds/removes its own tap (tankard-e2e/probe). Safety checks first:
 #   - a scenario is skipped if its package is already installed (it would
 #     uninstall yours) or its tap already exists;
@@ -79,7 +84,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula pinned orphans cask security settings restore adopt background)
+ALL=(welcome formula pinned orphans cask progress security settings restore adopt background)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -88,7 +93,7 @@ while [ $# -gt 0 ]; do
         --wait) WAIT_LOCK=1 ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,72p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,77p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -365,6 +370,31 @@ expect-ready
 set keepPreviousVersion on
 install cask $c
 expect installed $c
+always uninstall cask $c
+expect not-installed $c
+STEPS
+    qbrew list --cask $c >/dev/null 2>&1 && { echo "    cleanup: $c still installed, removing" >&2; qbrew uninstall --cask $c; }
+}
+
+scenario_progress() {
+    local c=font-inter
+    need_absent cask $c || { record "progress: SKIP ($c already installed)"; return; }
+    autoremove_clean || { record "progress: SKIP (autoremove would remove something)"; return; }
+    # Only this cask's own cached download (brew --cache names it), so the
+    # install has something to download. Nothing else in the cache is touched.
+    local cached
+    cached=$(qbrew --cache --cask $c 2>/dev/null)
+    case "$cached" in
+        */downloads/*) rm -f "$cached" "$cached.incomplete" ;;
+    esac
+    fresh_state progress
+    run_phase progress 1-download <<STEPS
+expect-ready
+set keepPreviousVersion on
+watch-downloads on
+install cask $c
+expect installed $c
+watch-downloads off
 always uninstall cask $c
 expect not-installed $c
 STEPS

@@ -113,6 +113,11 @@ public final class UpgradeSession: Identifiable {
     public let intelbrewMode: Bool
     public let action: SessionAction
     public let logURL: URL?
+    /// 0.8: what the running command is downloading now (nil: nothing, or
+    /// not known). Watched from brew's downloads folder, not its output.
+    public private(set) var download: DownloadProgress?
+    /// 0.8: how many times a download was seen (e2e checks, tests).
+    public private(set) var downloadObservations = 0
 
     @ObservationIgnored private let queue: CommandQueue
     @ObservationIgnored private let logFile: LogFile?
@@ -124,14 +129,18 @@ public final class UpgradeSession: Identifiable {
     /// its chain still waiting is skipped (a restore's link after a failed
     /// uninstall).
     @ObservationIgnored private var chainKey: ((Package) -> String?)?
+    @ObservationIgnored private let downloads: DownloadMonitor?
+    @ObservationIgnored private var downloadTask: Task<Void, Never>?
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
          chainKey: ((Package) -> String?)? = nil,
          precondition: ((Package) -> (@Sendable () -> String?)?)? = nil,
          skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil,
+         downloads: DownloadMonitor? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
+        self.downloads = DownloadMonitor.watches(action) ? downloads : nil
         self.intelbrewMode = intelbrewMode
         self.action = action
         self.queue = queue
@@ -262,6 +271,11 @@ public final class UpgradeSession: Identifiable {
     public func statusLine(behindBrewUpdate: Bool) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
         if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
+        if let c = current, let d = download {
+            // 0.8: "Downloading font-inter… 12.3 of 33.7 MB (36%)"; a
+            // dependency's bottle by its own name.
+            return String(localized: "Downloading \(d.name ?? c.package.name)…") + " " + d.detail
+        }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
         if isFinished {
             var parts = [String(localized: "\(succeededCount) \(action.past)")]
@@ -299,9 +313,16 @@ public final class UpgradeSession: Identifiable {
 
     private func apply(_ event: CommandEvent, to itemID: UUID) {
         guard let i = items.firstIndex(where: { $0.id == itemID }) else { return }
+        // The running command ended: its downloads are over too. (A waiting
+        // item's cancel must not stop the running one's watcher.)
+        switch event {
+        case .started, .output: break
+        default: if items[i].state == .running { stopWatchingDownloads() }
+        }
         switch event {
         case .started:
             items[i].state = .running
+            watchDownloads(of: items[i].package)
             commandLines = []
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
@@ -354,6 +375,39 @@ public final class UpgradeSession: Identifiable {
             onFinish = nil
             done?(self)
         }
+    }
+
+    // MARK: download progress (0.8)
+
+    /// Polls brew's downloads folder while this command runs. Stopped by
+    /// the command's end (any of finished, cancelled, failed).
+    private func watchDownloads(of package: Package) {
+        stopWatchingDownloads()
+        guard let m = downloads else { return }
+        let since = m.now()
+        downloadTask = Task { [weak self] in
+            guard let dir = await m.directory(), !Task.isCancelled else { return }
+            let watcher = DownloadWatcher(directory: dir, reader: m.reader, lengths: m.lengths, since: since)
+            let hints = Task { await watcher.addURLs(await m.urls(package)) }
+            defer { hints.cancel() }
+            while !Task.isCancelled {
+                let p = await watcher.poll()
+                guard !Task.isCancelled, let self else { return }
+                self.showDownload(p)
+                try? await Task.sleep(for: m.interval)
+            }
+        }
+    }
+
+    private func showDownload(_ p: DownloadProgress?) {
+        if p != nil { downloadObservations += 1 }
+        if download != p { download = p }
+    }
+
+    private func stopWatchingDownloads() {
+        downloadTask?.cancel()
+        downloadTask = nil
+        download = nil
     }
 
     private func noteChainSkipped(after i: Int) {

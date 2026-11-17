@@ -17,6 +17,7 @@
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ が失敗しました(終了コード %d)";
 "%@ %@ needs administrator rights" = "%@ %@ には管理者権限が必要です";
+"%@ %@ so far" = "%@ %@ 受信済み";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld個のパッケージ";
@@ -38,6 +39,7 @@
 "%@ is pinned" = "%@ はピン留めされています";
 "%@ is running" = "%@ は実行中です";
 "%@ is there but doesn't run. It said:" = "%@ はありますが、実行できません。出力:";
+"%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
 "%@ printed JSON Tankard could not read: %@" = "%@ がTankardで読み取れないJSONを出力しました: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ は %@ として実行されます: %@ にはsudoが必要です";
@@ -317,6 +319,7 @@
 "Don't quit running apps during upgrades" = "アップグレード中に実行中のアプリを終了しない";
 "Done" = "完了";
 "Download cache" = "ダウンロードキャッシュ";
+"Downloading %@…" = "%@をダウンロード中…";
 "Downloads" = "ダウンロード";
 "Dracula" = "Dracula";
 "Dracula colours (draculatheme.com, MIT)" = "Draculaカラー(draculatheme.com、MIT)";
@@ -378,6 +381,7 @@
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "以降、これらのアプリは Homebrew が管理します。brew upgrade で cask のバージョンに置き換えられ、cask をアンインストールすると（Tankard でも brew uninstall でも）アプリは削除されます。";
 "Full log saved to %@" = "完全なログを %@ に保存しました";
 "Full scan" = "フルスキャン";
+"GB" = "GB";
 "General" = "一般";
 "HEAD build" = "HEADビルド";
 "HEAD builds have no fixed version to go back to." = "HEADビルドには、戻る先の固定バージョンがありません。";
@@ -457,6 +461,7 @@
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "%@ のHomebrewファイルと、/Applications にcaskとしてインストールされたアプリを含め、インストール済みのすべてのformulaとcaskを削除します。このMac上の別のHomebrew(別のプレフィックス)には手を触れません。パスワードを求められる場合があります。";
 "It took %@; expect longer on an older Mac." = "%@かかりました。古いMacではもっとかかります。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
+"KB" = "KB";
 "Keep the previous version after upgrades" = "アップグレード後も以前のバージョンを残す";
 "Keeps %@; upgrades skip it" = "%@を維持します。アップグレードではスキップされます";
 "Keg-only" = "Keg-only";
@@ -486,6 +491,7 @@
 "Log" = "ログ";
 "Logs and other" = "ログその他";
 "Low" = "低";
+"MB" = "MB";
 "Made by d4rkwyng" = "作者: d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "caskのpkgアーティファクトから判定しています。他のcaskもパスワードを要求する場合があります。";
 "Medium" = "中";

@@ -17,6 +17,7 @@
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ non riuscito (uscita %d)";
 "%@ %@ needs administrator rights" = "%@ %@ richiede i diritti di amministratore";
+"%@ %@ so far" = "%@ %@ finora";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld pacchetto";
@@ -38,6 +39,7 @@
 "%@ is pinned" = "%@ è bloccato";
 "%@ is running" = "%@ è in esecuzione";
 "%@ is there but doesn't run. It said:" = "%@ è presente ma non si avvia. Ha risposto:";
+"%@ of %@ %@ (%lld%%)" = "%@ di %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@ di %@ con bottle";
 "%@ printed JSON Tankard could not read: %@" = "%@ ha stampato JSON che Tankard non ha potuto leggere: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ viene eseguito come %@: %@ richiede sudo";
@@ -317,6 +319,7 @@
 "Don't quit running apps during upgrades" = "Non chiudere le app in esecuzione durante gli aggiornamenti";
 "Done" = "Fatto";
 "Download cache" = "Cache dei download";
+"Downloading %@…" = "Download di %@…";
 "Downloads" = "Download";
 "Dracula" = "Dracula";
 "Dracula colours (draculatheme.com, MIT)" = "Colori Dracula (draculatheme.com, MIT)";
@@ -378,6 +381,7 @@
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "Da quel momento Homebrew gestisce queste app: brew upgrade le sostituisce con la versione del cask, e disinstallare il cask (in Tankard o con brew uninstall) elimina l'app.";
 "Full log saved to %@" = "Registro completo salvato in %@";
 "Full scan" = "Scansione completa";
+"GB" = "GB";
 "General" = "Generali";
 "HEAD build" = "Build HEAD";
 "HEAD builds have no fixed version to go back to." = "Le build HEAD non hanno una versione fissa a cui tornare.";
@@ -457,6 +461,7 @@
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "Elimina i file Homebrew di %@ e ogni formula e cask installati, incluse le app installate come cask in /Applications. Un altro Homebrew su questo Mac (in un prefisso diverso) non viene toccato. Potrebbe chiedere la password.";
 "It took %@; expect longer on an older Mac." = "Ha richiesto %@; aspettati tempi più lunghi su un Mac meno recente.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Le sue dipendenze restano installate (brew autoremove rimuove quelle inutilizzate)";
+"KB" = "KB";
 "Keep the previous version after upgrades" = "Conserva la versione precedente dopo gli aggiornamenti";
 "Keeps %@; upgrades skip it" = "Mantiene %@; gli aggiornamenti lo saltano";
 "Keg-only" = "Keg-only";
@@ -486,6 +491,7 @@
 "Log" = "Registro";
 "Logs and other" = "Registri e altro";
 "Low" = "Bassa";
+"MB" = "MB";
 "Made by d4rkwyng" = "Realizzato da d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Contrassegnato dall'artefatto pkg del cask. Altri cask potrebbero comunque chiedere una password.";
 "Medium" = "Media";
