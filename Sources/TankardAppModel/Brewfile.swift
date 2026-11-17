@@ -33,11 +33,12 @@ public struct BrewfileEntry: Equatable, Hashable, Sendable {
 }
 
 public enum BrewfileCommands {
-    /// `brew bundle dump --file=<path>`; `--force` only after the save
-    /// panel confirmed an overwrite. `--no-vscode` for the retry when
-    /// VS Code's `code` doesn't answer (it hangs on some Macs).
-    public static func dump(path: String, force: Bool, noVSCode: Bool = false) -> [String] {
-        ["bundle", "dump", "--file=\(path)"] + (force ? ["--force"] : []) + (noVSCode ? ["--no-vscode"] : [])
+    /// `brew bundle dump --file=<path> --no-vscode --no-mas`; `--force`
+    /// only after the save panel confirmed an overwrite. VS Code
+    /// extensions and App Store apps are always left out: asking VS Code's
+    /// `code` for its extensions hung dump for over 100 s on one Mac.
+    public static func dump(path: String, force: Bool) -> [String] {
+        ["bundle", "dump", "--file=\(path)", "--no-vscode", "--no-mas"] + (force ? ["--force"] : [])
     }
 
     public static func check(path: String) -> [String] {
@@ -50,7 +51,12 @@ public enum BrewfileCommands {
 
     /// What the user can run in Terminal instead (Tankard never runs a shell).
     public static func installDisplay(path: String) -> String {
-        "brew bundle install --file=" + ShellQuote.quote(path)
+        "brew bundle install --file=" + ShellQuote.quote(path) + " --no-upgrade"
+    }
+
+    /// `brew tap <name>`, shown for a missing tap (Tankard has no tap support).
+    public static func tapDisplay(_ name: String) -> String {
+        "brew tap " + ShellQuote.quote(name)
     }
 }
 

@@ -172,6 +172,8 @@ public final class AppStore {
     @ObservationIgnored public let insights: InsightsStore
     /// 0.5: automatic updates (settings, log, the run itself).
     @ObservationIgnored public let autoUpdate: AutoUpdater
+    /// 0.6: Brewfile export, check and restore.
+    @ObservationIgnored public let brewfile = BrewfileStore()
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 

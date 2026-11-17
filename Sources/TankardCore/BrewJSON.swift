@@ -191,6 +191,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// lists none (fonts, CLI tools); nil when brew gave no artifacts.
         public var appPaths: [String]?
         public var quitBundleIDs: [String]?
+        /// 0.6: the cask runs a `.pkg` installer (`artifacts` → `pkg`), so
+        /// macOS asks for an administrator password. nil when brew gave no artifacts.
+        public var installsPkg: Bool?
 
         /// The parts of `depends_on` Tankard reads: other packages.
         public struct DependsOn: Decodable, Sendable {
@@ -245,6 +248,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
             if let list = try? c.decodeIfPresent([Artifact].self, forKey: .artifacts) {
                 appPaths = list.flatMap(\.appPaths)
                 quitBundleIDs = list.flatMap(\.quit)
+                installsPkg = list.contains(where: \.pkg)
             }
         }
 
@@ -255,6 +259,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
         struct Artifact: Decodable {
             var appPaths: [String] = []
             var quit: [String] = []
+            var pkg = false
 
             struct Key: CodingKey {
                 var stringValue: String
@@ -289,6 +294,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
 
             init(from decoder: Decoder) throws {
                 guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                pkg = c.contains(Key(stringValue: "pkg"))
                 if let items = try? c.decodeIfPresent([AppItem].self, forKey: Key(stringValue: "app")) {
                     // brew writes the installed path as "target"; a renamed
                     // app's item carries its own target name.
