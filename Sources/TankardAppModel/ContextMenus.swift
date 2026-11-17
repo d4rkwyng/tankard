@@ -28,6 +28,10 @@ public struct MenuItemModel: Equatable, Sendable, Identifiable {
         case showDependencies
         /// Installed: list the installed packages that need it.
         case showDependents
+        /// 0.4: `AppStore.setPinned(p, true)`: `brew pin` through the queue.
+        case pin
+        /// 0.4: `AppStore.setPinned(p, false)`: `brew unpin` through the queue.
+        case unpin
     }
 
     /// Stable per menu ("upgrade", "copy-name", ...), for tests and ForEach.
@@ -68,7 +72,11 @@ public enum ContextMenus {
     public static func installed(_ p: Package, dependents: [Package], dependencies: [Package],
                                  compileWarning: CompileWarning?, busy: Bool, kegPath: String?) -> [MenuEntry] {
         var actions: [MenuItemModel] = []
-        if p.upgradeAvailable {
+        if p.upgradeAvailable && p.pinned {
+            // brew won't upgrade a pinned package; unpin first.
+            actions.append(MenuItemModel(id: "upgrade", title: "Upgrade \(p.name) (pinned)", systemImage: "pin",
+                                         action: .upgrade, isEnabled: false))
+        } else if p.upgradeAvailable {
             actions.append(MenuItemModel(id: "upgrade",
                                          title: compileWarning == nil ? "Upgrade \(p.name)" : "Upgrade \(p.name) (compiles)",
                                          systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
@@ -79,6 +87,9 @@ public enum ContextMenus {
                                          systemImage: "shippingbox.and.arrow.backward",
                                          action: .replaceWithBottle, isEnabled: !busy))
         }
+        actions.append(p.pinned
+            ? MenuItemModel(id: "unpin", title: "Unpin", systemImage: "pin.slash", action: .unpin, isEnabled: !busy)
+            : MenuItemModel(id: "pin", title: "Pin", systemImage: "pin", action: .pin, isEnabled: !busy))
         actions.append(MenuItemModel(id: "uninstall", title: uninstallTitle(dependents: dependents),
                                      systemImage: dependents.isEmpty ? "trash" : "lock",
                                      action: .uninstall, isEnabled: !busy && dependents.isEmpty,
@@ -114,8 +125,6 @@ public enum ContextMenus {
                           title: dependents.isEmpty ? "Show What Uses It" : "Show What Uses It (\(dependents.count))",
                           systemImage: "arrow.up.left.circle", action: .showDependents, isEnabled: !dependents.isEmpty),
         ]
-        // TODO: Pin / Unpin (`brew pin`) once it goes through the queue; not in v0.3.
-
         return joined([actions, copy, open, related])
     }
 

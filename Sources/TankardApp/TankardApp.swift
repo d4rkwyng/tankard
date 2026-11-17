@@ -126,8 +126,10 @@ struct TankardApp: App {
             deps = Demo.noBrewDependencies(hardware: hw)
         } else {
             deps = options.demo.map {
-                Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail")
+                Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
+                                  pinned: V04ALaunch.demoPinned())
             } ?? .live()
+            if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
         // Demo runs never touch the real settings.
         let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral() : AppSettings()
@@ -172,6 +174,9 @@ struct TankardApp: App {
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .toolbar) {
                 ViewCommands(store: store)
+            }
+            CommandMenu("Homebrew") {
+                HomebrewCommands(store: store)
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
@@ -218,6 +223,25 @@ struct ViewCommands: View {
             .keyboardShortcut("1", modifiers: .command)
         Button("Discover") { store.tab = .discover }
             .keyboardShortcut("2", modifiers: .command)
+        Button("Services") { store.tab = .services }
+            .keyboardShortcut("3", modifiers: .command)
+    }
+}
+
+/// The Homebrew menu (0.4). A view for the same reason as ViewCommands:
+/// Revert shows only in Intelbrew mode and both grey out while brew runs,
+/// and those store reads must not be tracked by App.body.
+struct HomebrewCommands: View {
+    var store: AppStore
+
+    var body: some View {
+        // Revert exists only in Intelbrew mode.
+        if store.intelbrewMode {
+            Button(HomebrewManagement.Kind.revert.title) { store.requestManagement(.revert) }
+                .disabled(store.isBusy || store.report == nil)
+        }
+        Button(HomebrewManagement.Kind.uninstall.title) { store.requestManagement(.uninstall) }
+            .disabled(store.isBusy || store.report == nil)
     }
 }
 

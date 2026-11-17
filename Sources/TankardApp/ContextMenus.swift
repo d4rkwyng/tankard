@@ -53,7 +53,7 @@ enum ContextMenuActions {
                 dependents: store.dependents(of: p),
                 dependencies: Dependents.dependencies(of: p, among: store.packages),
                 compileWarning: store.deps.classifier.upgradeWarning(p),
-                busy: store.isUpgrading,
+                busy: store.isBusy,
                 kegPath: existingKegPath(p, store: store))) { action in
                     perform(action, on: p, store: store)
                 }
@@ -78,6 +78,8 @@ enum ContextMenuActions {
         case .revealInFinder(let path): reveal(path)
         case .showDependencies: store.showDependencies(of: p)
         case .showDependents: store.showDependents(of: p)
+        case .pin: store.setPinned(p, true)
+        case .unpin: store.setPinned(p, false)
         case .install, .showInInstalled: break // Discover only
         }
     }

@@ -1,0 +1,20 @@
+ca-certificates: curl-impersonate openssl@4 python@3.15 ruby 
+curl-impersonate: 
+expat: python@3.15 
+gettext: vim 
+json-c: gettext vim 
+libsodium: vim 
+libunistring: gettext vim 
+libyaml: ruby 
+lua: 
+lz4: python@3.15 zstd 
+mpdecimal: python@3.15 
+ncurses: vim 
+openssl@4: python@3.15 ruby 
+python@3.15: 
+readline: python@3.15 sqlite 
+ruby: 
+sqlite: python@3.15 
+vim: 
+xz: python@3.15 zstd 
+zstd: python@3.15 

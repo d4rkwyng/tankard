@@ -67,6 +67,7 @@ struct ContentView: View {
         }
         .onChange(of: store.tab) { _, tab in
             if tab == .discover { openDiscover() }
+            if tab == .services { store.openServices() }
         }
         .onChange(of: store.intelbrewMode, initial: true) { _, intelbrew in
             AppResources.updateDockIcon(intelbrew: intelbrew)
@@ -109,7 +110,9 @@ struct ContentView: View {
                         .frame(maxHeight: .infinity)
                         .background(theme.pane)
                 }
-            } else if let discover = store.discover {
+            } else if store.tab == .services, let services = store.services {
+                ServicesView(store: store, services: services)
+            } else if store.tab == .discover, let discover = store.discover {
                 DiscoverView(store: store, discover: discover)
             } else {
                 ContentUnavailableView("Discover needs Homebrew's status first", systemImage: "magnifyingglass",
@@ -125,17 +128,30 @@ struct ContentView: View {
         .sheet(isPresented: $store.showCleanupSheet) {
             if let c = store.cleanup { CleanupSheet(store: store, cleanup: c).themed(theme) }
         }
+        .sheet(item: $store.managementSheet) { kind in
+            HomebrewManagementSheet(store: store, kind: kind, isDemo: options.isDemo).themed(theme)
+        }
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
-                    prompt: store.tab == .installed ? "Search installed" : "Search Homebrew")
+                    prompt: store.tab == .installed ? "Search installed" : store.tab == .services ? "Search services" : "Search Homebrew")
     }
 
     /// The toolbar search field searches the tab on screen.
     private var searchBinding: Binding<String> {
         Binding(
-            get: { store.tab == .installed ? store.search : (store.discover?.query ?? "") },
+            get: {
+                switch store.tab {
+                case .installed: return store.search
+                case .discover: return store.discover?.query ?? ""
+                case .services: return store.services?.query ?? ""
+                }
+            },
             set: { v in
-                if store.tab == .installed { store.search = v } else { store.discover?.query = v }
+                switch store.tab {
+                case .installed: store.search = v
+                case .discover: store.discover?.query = v
+                case .services: store.services?.query = v
+                }
             })
     }
 
@@ -148,6 +164,7 @@ struct ContentView: View {
     @MainActor
     private func applyLaunchOptions() async {
         if let f = options.filter { store.filter = f }
+        await applyV04ALaunchOptions(store: store, options: options)
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
@@ -248,9 +265,10 @@ struct SummaryStrip: View {
 
             FilterActions(store: store)
 
-            ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.allCases) { f in
+            ThemedSegmentedPicker(title: "Filter", selection: $store.filter, options: PackageFilter.segmented) { f in
                 "\(f.title)  \(store.count(f))"
             }
+            MoreFiltersMenu(store: store)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -359,6 +377,7 @@ struct PackageTable: View {
                                 .fixedSize()
                                 .help("Installed as a dependency")
                         }
+                        if p.pinned { PinnedBadge() }
                     }
                     if let w = store.deps.classifier.upgradeWarning(p) {
                         // Orange in every list, not only Upgrades: it's what the user is about to wait for.

@@ -1,0 +1,203 @@
+abseil: node summarize 
+ada-url: node summarize 
+aom: gd libavif php sdl2_image 
+apr: apr-util php 
+apr-util: php 
+argon2: php 
+autoconf: php 
+bchunk: 
+binutils: 
+bison: 
+blake3: ccache 
+boost: innoextract lgogdownloader 
+brotli: cairo curl freetype gd harfbuzz jpeg-xl node php poppler sdl2_image summarize tesseract 
+c-ares: node summarize 
+ca-certificates: apr-util ccache certifi coreutils curl ffmpeg freetds gnupg gnutls gpgme gpgmepp hiredis iperf3 krb5 libevent libngtcp2 libpq libssh libssh2 net-snmp node openldap openssl@3 openssl@4 opusfile p11-kit php pipx poppler python@3.13 python@3.14 python@3.15 qemu sdl2_mixer summarize tmux yt-dlp 
+cairo: harfbuzz pango poppler summarize tesseract 
+capstone: qemu 
+ccache: 
+cdrdao: 
+certifi: summarize yt-dlp 
+cffi: summarize yt-dlp 
+cmake: 
+coreutils: 
+cowsay: 
+cppcheck: 
+curl: php 
+dav1d: ffmpeg gd libavif php sdl2_image summarize 
+deno: summarize yt-dlp 
+dtc: qemu 
+fastfetch: 
+ffmpeg: summarize 
+flac: fluid-synth libsndfile rom-tools sdl2_mixer 
+fluid-synth: sdl2_mixer 
+fmt: ada-url ccache node summarize 
+fontconfig: cairo gd harfbuzz pango php poppler summarize tesseract 
+fortune: 
+freetds: php 
+freetype: cairo fontconfig gd harfbuzz pango php poppler summarize tesseract 
+fribidi: pango summarize tesseract 
+game-music-emu: sdl2_mixer 
+gcc: 
+gd: php 
+gettext: cairo capstone fluid-synth fontconfig gd glib gnupg gnutls gpgme gpgmepp harfbuzz libassuan libgcrypt libgpg-error libidn2 libksba libslirp pango php pinentry poppler qemu sdl2_mixer summarize tesseract 
+gh: 
+giflib: deno gd jpeg-xl leptonica libtiff little-cms2 openexr openjpeg openjph php poppler sdl2_image summarize tesseract webp yt-dlp 
+git-filter-repo: 
+glib: cairo harfbuzz libslirp pango poppler qemu summarize tesseract 
+gmp: coreutils gcc gnupg gnutls gpgme gpgmepp isl libmpc mpfr nettle php poppler qemu shellcheck 
+gnupg: gpgme gpgmepp poppler 
+gnutls: gnupg gpgme gpgmepp poppler qemu 
+go: 
+gpgme: gpgmepp poppler 
+gpgmepp: poppler 
+graphite2: harfbuzz pango poppler summarize tesseract 
+harfbuzz: pango poppler summarize tesseract 
+hdrhistogram_c: node summarize 
+hfsutils: 
+highway: jpeg-xl node sdl2_image summarize 
+hiredis: ccache 
+htmlcxx: lgogdownloader 
+icu4c@78: ada-url innoextract lgogdownloader merve pango 
+icu4c@79: boost harfbuzz libpq node php poppler simdutf summarize tesseract 
+imath: jpeg-xl openexr sdl2_image 
+innoextract: 
+iperf3: 
+isl: gcc 
+jemalloc: tmux 
+jpeg-turbo: deno gd jpeg-xl leptonica libavif libtiff little-cms2 openexr openjpeg openjph php poppler qemu sdl2_image summarize tesseract webp yt-dlp 
+jpeg-xl: sdl2_image 
+json-c: cairo capstone fluid-synth fontconfig gd glib gnupg gnutls gpgme gpgmepp harfbuzz libassuan libgcrypt libgpg-error libidn2 libksba libslirp pango php pinentry poppler qemu sdl2_mixer summarize tesseract 
+jsoncpp: lgogdownloader 
+krb5: libpq php 
+lame: cdrdao ffmpeg fluid-synth libsndfile sdl2_mixer summarize 
+leptonica: summarize tesseract 
+lgogdownloader: 
+libao: cdrdao 
+libarchive: summarize tesseract 
+libassuan: gnupg gpgme gpgmepp pinentry poppler 
+libavif: gd php sdl2_image 
+libb2: libarchive summarize tesseract 
+libdatrie: libthai pango summarize tesseract 
+libdeflate: jpeg-xl openexr sdl2_image 
+libevent: tmux 
+libffi: node summarize 
+libgcrypt: gnupg gpgme gpgmepp poppler 
+libgpg-error: gnupg gpgme gpgmepp libassuan libgcrypt libksba pinentry poppler 
+libidn2: gnupg gnutls gpgme gpgmepp poppler qemu 
+libksba: gnupg gpgme gpgmepp poppler 
+libmpc: gcc 
+libnghttp2: curl node php summarize 
+libnghttp3: curl php 
+libngtcp2: curl php 
+libogg: cdrdao flac fluid-synth libsndfile libvorbis opusfile rom-tools sdl2_mixer 
+libpng: cairo deno fontconfig freetype gd harfbuzz jpeg-xl leptonica libavif libtiff little-cms2 openexr openjpeg openjph pango php poppler qemu sdl2_image summarize tesseract webp yt-dlp 
+libpq: php 
+libpsl: curl php 
+libslirp: qemu 
+libsndfile: fluid-synth sdl2_mixer 
+libsodium: php 
+libssh: qemu 
+libssh2: curl php 
+libtasn1: gnupg gnutls gpgme gpgmepp p11-kit poppler qemu 
+libthai: pango summarize tesseract 
+libtiff: deno gd jpeg-xl leptonica little-cms2 openexr openjpeg openjph php poppler sdl2_image summarize tesseract webp yt-dlp 
+libtool: freetds php unixodbc 
+libunistring: cairo capstone fluid-synth fontconfig gd gettext glib gnupg gnutls gpgme gpgmepp harfbuzz libassuan libgcrypt libgpg-error libidn2 libksba libslirp pango php pinentry poppler qemu sdl2_mixer summarize tesseract 
+libusb: gnupg gpgme gpgmepp poppler qemu 
+libuv: node summarize uvwasi 
+libvmaf: aom ffmpeg gd libavif php sdl2_image summarize 
+libvorbis: cdrdao fluid-synth libsndfile sdl2_mixer 
+libvpx: ffmpeg summarize 
+libx11: cairo harfbuzz libxext libxrender pango poppler summarize tesseract 
+libxau: cairo harfbuzz libx11 libxcb libxext libxrender pango poppler summarize tesseract 
+libxcb: cairo harfbuzz libx11 libxext libxrender pango poppler summarize tesseract 
+libxdmcp: cairo harfbuzz libx11 libxcb libxext libxrender pango poppler summarize tesseract 
+libxext: cairo harfbuzz pango poppler summarize tesseract 
+libxmp: sdl2_mixer 
+libxrender: cairo harfbuzz pango poppler summarize tesseract 
+libyaml: dtc qemu 
+libzip: php 
+little-cms2: deno jpeg-xl leptonica openjpeg poppler sdl2_image summarize tesseract yt-dlp 
+llhttp: node summarize 
+lolcat: 
+lz4: binutils boost ccache curl deno gcc gd innoextract jpeg-xl leptonica lgogdownloader libarchive libtiff libzip little-cms2 node openexr openjpeg openjph php pipx poppler python@3.14 python@3.15 qemu rom-tools sdl2_image summarize tesseract webp yt-dlp zstd 
+lzo: cairo harfbuzz pango poppler qemu summarize tesseract 
+m4: autoconf freetds libtool php unixodbc 
+mad: cdrdao 
+merve: node summarize 
+mpdecimal: pipx python@3.13 python@3.14 python@3.15 summarize yt-dlp 
+mpfr: gcc libmpc 
+mpg123: ffmpeg fluid-synth lame libsndfile sdl2_mixer summarize 
+nbytes: node summarize 
+ncurses: qemu tmux 
+net-snmp: php 
+nettle: gnupg gnutls gpgme gpgmepp poppler qemu 
+node: summarize 
+npth: gnupg gpgme gpgmepp poppler 
+nspr: nss poppler 
+nss: poppler 
+obsidian-cli: 
+oniguruma: php 
+openexr: jpeg-xl sdl2_image 
+openjpeg: leptonica poppler summarize tesseract 
+openjph: jpeg-xl openexr sdl2_image 
+openldap: php 
+openssl@3: python@3.13 sdl2_mixer 
+openssl@4: apr-util ccache coreutils curl ffmpeg freetds hiredis iperf3 krb5 libevent libngtcp2 libpq libssh libssh2 net-snmp node openldap opusfile php pipx python@3.14 python@3.15 qemu summarize tmux yt-dlp 
+opus: ffmpeg fluid-synth libsndfile opusfile sdl2_mixer summarize 
+opusfile: sdl2_mixer 
+p11-kit: gnupg gnutls gpgme gpgmepp poppler qemu 
+p7zip: 
+pango: summarize tesseract 
+pcre2: cairo glib harfbuzz libslirp pango php poppler qemu ripgrep summarize tesseract 
+php: 
+pinentry: gnupg gpgme gpgmepp poppler 
+pipx: 
+pixman: cairo harfbuzz pango poppler qemu summarize tesseract 
+pkgconf: 
+poppler: 
+portaudio: fluid-synth sdl2_mixer 
+portmidi: 
+pycparser: cffi summarize yt-dlp 
+python@3.13: 
+python@3.14: 
+python@3.15: pipx summarize yt-dlp 
+qemu: 
+readline: deno fluid-synth gnupg gpgme gpgmepp libpq node php pipx poppler python@3.13 python@3.14 python@3.15 sdl2_mixer sqlite summarize yt-dlp 
+rhash: lgogdownloader 
+ripgrep: 
+rom-tools: 
+sdl2-compat: ffmpeg sdl2_image sdl2_mixer summarize 
+sdl2_image: 
+sdl2_mixer: 
+sdl3: ffmpeg rom-tools sdl2-compat sdl2_image sdl2_mixer summarize 
+shellcheck: 
+simdjson: node summarize 
+simdutf: ada-url merve node summarize 
+snappy: qemu 
+sqlite: deno node php pipx python@3.13 python@3.14 python@3.15 summarize yt-dlp 
+sshpass: 
+summarize: 
+svt-av1: ffmpeg summarize 
+tesseract: summarize 
+texinfo: 
+tidy-html5: lgogdownloader php 
+tinyxml2: cppcheck lgogdownloader 
+tmux: 
+unar: 
+unixodbc: freetds php 
+utf8proc: rom-tools tmux 
+uvwasi: node summarize 
+vde: qemu 
+wakeonlan: 
+wavpack: sdl2_mixer 
+webp: deno gd jpeg-xl leptonica libtiff little-cms2 openexr openjpeg openjph php poppler sdl2_image summarize tesseract yt-dlp 
+x264: ffmpeg summarize 
+x265: ffmpeg summarize 
+xorgproto: cairo harfbuzz libx11 libxau libxcb libxdmcp libxext libxrender pango poppler summarize tesseract 
+xxhash: ccache 
+xz: binutils boost ccache curl deno ffmpeg gcc gd innoextract jpeg-xl leptonica lgogdownloader libarchive libtiff libzip little-cms2 node openexr openjpeg openjph php pipx poppler python@3.13 python@3.14 python@3.15 qemu rom-tools sdl2_image summarize tesseract webp yt-dlp zstd 
+yt-dlp: summarize 
+yyjson: fastfetch 
+zstd: binutils boost ccache curl deno gcc gd innoextract jpeg-xl leptonica lgogdownloader libarchive libtiff libzip little-cms2 node openexr openjpeg openjph php pipx poppler python@3.14 python@3.15 qemu rom-tools sdl2_image summarize tesseract webp yt-dlp 

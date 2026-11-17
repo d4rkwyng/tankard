@@ -52,6 +52,9 @@ struct StatusBar: View {
                 .controlSize(.small)
             }
             let n = store.upgradable.count
+            if let note = store.pinnedUpgradeNote {
+                Label(note, systemImage: "pin").lineLimit(1).help("Pinned packages aren't upgraded: brew upgrade skips them. Unpin one to include it.")
+            }
             Button {
                 store.requestUpgrade()
             } label: {

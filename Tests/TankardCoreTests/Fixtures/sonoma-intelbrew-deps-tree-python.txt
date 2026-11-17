@@ -1,0 +1,13 @@
+python@3.15
+├── ca-certificates
+├── mpdecimal
+├── openssl@4
+│   └── ca-certificates
+├── sqlite
+│   └── readline
+├── xz
+├── zstd
+│   ├── lz4
+│   └── xz
+└── expat
+

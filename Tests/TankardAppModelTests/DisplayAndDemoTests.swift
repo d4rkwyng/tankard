@@ -89,7 +89,7 @@ struct DisplayAndDemoTests {
         // must stay byte-identical to the tested originals.
         let fixtures = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
             .deletingLastPathComponent().appendingPathComponent("TankardCoreTests/Fixtures")
-        for name in ["sonoma-intelbrew-info", "arm64-api-info"] {
+        for name in ["sonoma-intelbrew-info", "arm64-api-info", "sonoma-intelbrew-deps-info"] {
             let original = try Data(contentsOf: fixtures.appendingPathComponent("\(name).json"))
             #expect(Demo.fixtureData(name) == original, "\(name) differs")
         }

@@ -138,7 +138,13 @@ public struct BrewInfoJSON: Decodable, Sendable {
 
         public struct RuntimeDependency: Decodable, Sendable {
             public var fullName: String
-            enum CodingKeys: String, CodingKey { case fullName = "full_name" }
+            /// 0.4: the formula declares it itself (not only through
+            /// another dependency). nil in receipts that don't say.
+            public var declaredDirectly: Bool?
+            enum CodingKeys: String, CodingKey {
+                case fullName = "full_name"
+                case declaredDirectly = "declared_directly"
+            }
         }
 
         enum CodingKeys: String, CodingKey {

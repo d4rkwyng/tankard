@@ -4,6 +4,20 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.4.0]
+
+Part A. (Vulnerabilities, caveats, sizes and the greedy toggle are part B.)
+
+### Added
+- **Pin and Unpin** (`brew pin` / `brew unpin --formula|--cask <tap>/<name>`, through the queue) in the detail pane and the right-click menu, replacing v0.3's placeholder. Pinned packages get a "pinned" badge, a box in the detail pane with the exact command, and a **Pinned** filter. Upgrade all, the menu-bar count and upgrade notifications leave pinned packages out, and the status bar says so ("1 pinned upgrade not included (sqlite)"); a pinned package's own Upgrade button is disabled until it is unpinned.
+- **Requested only** filter: packages you installed yourself that nothing installed needs (`brew leaves --installed-on-request`, plus casks). Pinned and Requested only are in a menu next to the segmented filter.
+- **Depends on and Used by** in the detail pane, as links that select that package, from the `brew info` receipts Tankard already reads (no extra brew calls). Used by matches `brew uses --installed` exactly on both test Macs; Depends on matches `brew deps --installed` or lists a little more (linkage brew doesn't declare).
+- **Dependency tree**: an expandable `brew deps --tree` in the detail pane, from the receipts' `declared_directly` entries in brew's order.
+- **Services** tab (⌘3): `brew services list --json` with status, user, exit code and plist, and `brew services info --json` for the selected service (label, PID, logs, the command it runs). Start, Stop and Restart run through the queue with the exact command shown. Services that run as root (started with sudo) are never touched: Tankard shows the `sudo brew services …` command to run in Terminal, and turns brew's own "started as `root`" error into the same advice.
+- **Homebrew menu**: **Revert to Standard Homebrew…** (Intelbrew mode only) and **Uninstall Homebrew…**. Each opens a sheet with every command it will run, needs the word typed ("revert", "uninstall"), and then opens Terminal with a `.command` script that lists the commands again and waits for Return. Revert follows Intelbrew's README: it removes the three `HOMEBREW_*` lines from the zsh and bash startup files (each backed up first), points Homebrew/brew's origin back to upstream and runs `brew update`. Uninstall runs Homebrew's official uninstaller, which asks once more. Neither runs inside the app.
+
+### Changed
+- `tankard status --json` packages gain `directDependencies` (formulae; schema version 1, an added field).
 ## [0.3.1]
 
 ### Fixed
@@ -67,6 +81,7 @@ First release.
 - Opens instantly from a cache; no telemetry; runs brew with a clean environment.
 - `tankard status` command-line tool (table or JSON).
 
+[0.4.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.4.0
 [0.3.1]: https://github.com/d4rkwyng/tankard/releases/tag/v0.3.1
 [0.3.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.3.0
 [0.2.0]: https://github.com/d4rkwyng/tankard/releases/tag/v0.2.0

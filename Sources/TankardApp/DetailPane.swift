@@ -15,6 +15,7 @@ struct DetailPane: View {
                           uninstall: { store.requestUninstall(p) },
                           replaceWithBottle: { store.startReplaceWithBottle([p]) })
             .id(p.id)
+            .environment(store)
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
         } else {
             VStack(spacing: 8) {
@@ -110,6 +111,8 @@ struct PackageDetail: View {
 
                 sourceLine(p).font(.system(size: 12))
 
+                PackageRelationsSection(package: p)
+
                 if p.upgradeAvailable {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Upgrade command").font(.system(size: 11)).foregroundStyle(.secondary)
@@ -118,7 +121,8 @@ struct PackageDetail: View {
                             Label("Upgrade \(p.name)", systemImage: "arrow.up")
                         }
                         .buttonStyle(.primaryAction)
-                        .disabled(!canUpgrade)
+                        .disabled(!canUpgrade || p.pinned)
+                        .help(p.pinned ? "Pinned: unpin it first" : BrewCommands.upgradeDisplay(for: p))
                     }
                 }
 

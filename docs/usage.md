@@ -187,9 +187,93 @@ installs and Replace with bottle never do.
 - The permission is tied to the code signature: an ad-hoc build needs it again after every
   rebuild, a Developer ID build keeps it across updates.
 
+## Pins (0.4)
+
+- **Pin** in the detail pane or the right-click menu runs `brew pin --formula|--cask
+  <tap>/<name>` through the queue, then re-reads status; **Unpin** runs `brew unpin`. brew
+  7.0.14 pins casks too. The command is shown (and copyable) in the pin box.
+- A pinned package has a blue "pinned" tag in the table and a box in the detail pane. Its
+  own Upgrade button is disabled ("Pinned: unpin it first") and the right-click menu shows
+  "Upgrade x (pinned)", greyed out: `brew upgrade` won't upgrade a pinned package.
+- **Upgrade all** (the status bar, the menu bar, notifications) leaves pinned packages
+  out, as `brew upgrade` does. The Upgrades filter still lists them, and the status bar says
+  "N pinned upgrades not included (…)".
+- The **Pinned** filter is in the menu next to the segmented filter.
+
+## Requested only, Depends on, Used by and the tree (0.4)
+
+All from the `brew info --json=v2 --installed` data Tankard already reads; no extra brew
+calls.
+
+- **Requested only** (the filter menu): installed on request, and nothing installed needs
+  it. For formulae that is `brew leaves --installed-on-request`; casks nothing depends on
+  count too. Checked against `brew leaves` and `brew leaves -r` on the Intel VM and the
+  arm64 Mac.
+- **Depends on (N)**: every installed package it needs, from its receipt (recursive, what
+  it was linked against). On the Intel VM this equals `brew deps --installed` for every
+  formula; on the arm64 Mac it does for 183 of 202 formulae, and the other 19 list a few
+  more (linkage the formula doesn't declare, such as p11-kit under gnutls, which brew deps
+  leaves out). Never fewer.
+- **Used by (N)**: installed packages whose receipts list it. Equals
+  `brew uses --installed` for every formula on both Macs.
+- Each name is a link: clicking it selects that package (clearing a filter or search that
+  would hide it).
+- **Dependency tree**: collapsed under the links; open it for `brew deps --tree
+  --installed`, built from the receipts' `declared_directly` entries in brew's order. Each
+  row expands, and a dependency already above in its branch is marked instead of repeated.
+  For a report cached by an older Tankard (no `declared_directly`), the tree uses the
+  recursive list minus what its members bring in.
+
+## Services (0.4)
+
+The Services tab (⌘3) runs `brew services list --json` when opened (a read, off the queue),
+and `brew services info --json <name>` for the selected service. **Reload** reads the list
+again. The toolbar search filters by name.
+
+- The table: name, status (Running, Scheduled, Stopped, Error with its exit code, Not
+  running, Unknown, Other), user, exit code and plist path.
+- The pane: user, PID, exit code, launchd label, plist, log and error log paths, and the
+  command it runs, then the actions with their exact commands. A service that isn't loaded
+  gets **Start** (which also registers it to launch at login); a loaded one gets **Stop**
+  (which also unregisters it) and **Restart**. They run through the queue, then the list is
+  read again.
+- **Only your own services.** A service that runs as another user (root, after `sudo brew
+  services start`) or from /Library/LaunchDaemons gets no buttons: the pane shows the `sudo
+  brew services …` commands to run in Terminal and an Open Terminal button (which only opens
+  Terminal). If brew answers "Service `x` is started as `root`. Try: sudo brew services …",
+  or sudo asks for a password, Tankard shows the same advice.
+
+## Homebrew menu (0.4)
+
+Both items open a sheet that shows exactly what will run, need a word typed, and then write
+a `.command` script and open it in Terminal. The script lists the commands again and waits
+for Return; nothing runs inside the app. Demo mode opens nothing.
+
+- **Revert to Standard Homebrew…** (only in Intelbrew mode) follows d4rkwyng/intelbrew's
+  README ("How do I go back to upstream Homebrew?"). Type `revert`. The script:
+  1. for each zsh or bash startup file with an Intelbrew line (`~/.zshenv`,
+     `$ZDOTDIR/.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, `~/.bash_profile`,
+     `.bash_login`, `.profile`, `.bashrc`): `cp -p` it to `<file>.tankard-backup-<date>`,
+     then deletes the lines that assign `HOMEBREW_NO_INSTALL_FROM_API`,
+     `HOMEBREW_CORE_GIT_REMOTE` or `HOMEBREW_BREW_GIT_REMOTE` (with BSD sed; the sheet lists
+     the exact lines first);
+  2. unsets those three variables (the README says to open a new terminal here; the script
+     runs in a shell that read the old profile);
+  3. `git -C <repository> remote set-url origin https://github.com/Homebrew/brew`;
+  4. `brew update`.
+
+  brew.env files that set an Intelbrew variable are reported, not edited (the installer
+  never writes them). The README's optional `brew untap homebrew/core` is mentioned, not
+  run.
+- **Uninstall Homebrew…** warns that it removes every installed package, needs
+  `uninstall` typed, then runs Homebrew's official uninstaller, verbatim from the
+  Homebrew/install README:
+  `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"`.
+  It asks once more itself. In Intelbrew mode the sheet notes that the profile lines stay.
+
 ## About and Help
 
-Tankard → About Tankard shows "Version 0.3.0" (no build number), "Made by d4rkwyng", links
+Tankard → About Tankard shows "Version 0.4.0" (no build number), "Made by d4rkwyng", links
 to the project and to Intelbrew (in Intelbrew mode, "Intelbrew bottles from
 d4rkwyng/intelbrew"), the licence, and that Tankard is an independent app for
 [Homebrew](https://brew.sh), not affiliated with or endorsed by the Homebrew project. The
@@ -212,7 +296,7 @@ Help menu has "Tankard on GitHub" and "Report an Issue…".
 - **sudo.** Tankard can't type a password (brew's stdin is `/dev/null`). When brew's output
   shows it needed sudo, the app says so and gives the exact command to run in Terminal.
 - **One queue.** `brew update` and every command that changes Homebrew (upgrade,
-  install, uninstall, reinstall, cleanup) go through one strict FIFO queue, so two brews
+  install, uninstall, reinstall, cleanup, pin, unpin, services start/stop/restart) go through one strict FIFO queue, so two brews
   never run at once. Status reads stay off the queue.
 - **Network: two requests of its own, each only in one mode and only when needed; no
   telemetry.** Everything else comes from brew and git on this Mac. The links out are ones
