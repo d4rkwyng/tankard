@@ -183,7 +183,7 @@ struct TankardApp: App {
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings
         let checker = self.checker
-        AppDelegate.onLaunch = { if !options.isDemo && options.script == nil { checker.start() } }
+        AppDelegate.onLaunch = { if !options.isDemo && (options.script == nil || options.script?.background == true) { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
         if let (theme, delay) = options.switchAppearance {
             let a = appearance

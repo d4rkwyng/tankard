@@ -329,7 +329,7 @@ public final class BackgroundChecker {
         case .waiting(let retry): return (retry, false)
         case .run:
             let ok = await store.runBackgroundUpdate()
-            return (BackgroundSchedule(intervalHours: settings.checkIntervalHours).interval, ok)
+            return (store.deps.backgroundUpdateInterval ?? BackgroundSchedule(intervalHours: settings.checkIntervalHours).interval, ok)
         }
     }
 

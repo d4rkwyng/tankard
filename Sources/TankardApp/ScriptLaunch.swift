@@ -17,6 +17,10 @@ import TankardCore
 ///                                 the phases of one scenario; empty it for a
 ///                                 first launch.
 ///   TANKARD_SCRIPT_STAY=1         keep the app open after the script
+///   TANKARD_E2E_BACKGROUND=1      start the background checker (it runs
+///                                 the throttled `brew update`); the suite's
+///                                 e2eBackgroundUpdateInterval (seconds)
+///                                 replaces Settings' hours
 ///   TANKARD_E2E_SUITE=name        the defaults suite for settings (default
 ///                                 `net.mindtricks.tankard.e2e`); only names
 ///                                 under that prefix are accepted. e2e.sh
@@ -27,9 +31,11 @@ import TankardCore
 /// (e2e.sh deletes it for a first launch), files in TANKARD_E2E_STATE. It
 /// runs the REAL brew (or the demo's, with TANKARD_DEMO), so it really
 /// installs and removes what the script says. No background check and no
-/// auto-update run during it.
+/// auto-update run during it, unless TANKARD_E2E_BACKGROUND=1.
 struct ScriptLaunch {
     static let defaultsSuite = "net.mindtricks.tankard.e2e"
+    /// Seconds; set by e2e.sh in the run's suite (`defaults write`).
+    static let backgroundIntervalKey = "e2eBackgroundUpdateInterval"
 
     var scriptPath: String
     /// The settings suite: `defaultsSuite`, or a per-run one below it.
@@ -37,6 +43,9 @@ struct ScriptLaunch {
     var outputDirectory: URL
     var stateDirectory: URL
     var stay: Bool
+    /// TANKARD_E2E_BACKGROUND=1: run the background checker (the throttled
+    /// `brew update`), which a script run otherwise never starts.
+    var background: Bool
 
     init?(environment env: [String: String]) {
         guard env["TANKARD_E2E"] == "1", let s = env["TANKARD_SCRIPT"], !s.isEmpty else { return nil }
@@ -46,6 +55,7 @@ struct ScriptLaunch {
         stateDirectory = env["TANKARD_E2E_STATE"].flatMap { $0.isEmpty ? nil : URL(fileURLWithPath: $0, isDirectory: true) }
             ?? outputDirectory.appendingPathComponent("state", isDirectory: true)
         stay = env["TANKARD_SCRIPT_STAY"] == "1"
+        background = env["TANKARD_E2E_BACKGROUND"] == "1"
         suiteName = Self.suite(env["TANKARD_E2E_SUITE"])
     }
 
@@ -70,6 +80,11 @@ struct ScriptLaunch {
         d.autoUpdateLogURL = s.appendingPathComponent("auto-update-log.json")
         d.historyURL = s.appendingPathComponent("history.json")
         d.restorePointsURL = s.appendingPathComponent("restore-points", isDirectory: true)
+        // The background-update scenario: a tiny interval (seconds) from
+        // this run's settings suite, so the update is due without touching
+        // brew's FETCH_HEAD.
+        let secs = defaults.double(forKey: Self.backgroundIntervalKey)
+        if secs > 0 { d.backgroundUpdateInterval = secs }
         // Discover's and Adopt Apps' formulae.brew.sh cache.
         APICache.redirect(to: s.appendingPathComponent("api", isDirectory: true))
         return d

@@ -79,6 +79,9 @@ public final class AppStore {
         /// 0.8: whether the background `brew update` may run at all. Only the
         /// real app (`live()`) turns it on: never demo mode, tests opt in.
         public var backgroundUpdates = false
+        /// 0.8, e2e only: the background update's interval in seconds instead
+        /// of Settings' hours (Scripts/e2e.sh's background scenario).
+        public var backgroundUpdateInterval: TimeInterval?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -182,6 +185,8 @@ public final class AppStore {
     /// 0.8: when the last background `brew update` failed (offline…), so the
     /// next try waits instead of failing every few seconds.
     @ObservationIgnored var lastBackgroundUpdateFailure: Date?
+    /// 0.8: background `brew update`s this launch ran (the e2e harness counts them).
+    @ObservationIgnored public internal(set) var backgroundUpdateRuns = 0
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all

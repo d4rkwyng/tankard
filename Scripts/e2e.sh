@@ -33,6 +33,12 @@
 #              cask's own URL and sha256-checked, copied to /Applications by
 #              hand; the scan, adopt it (brew install --cask --adopt), the
 #              self-update choice, then uninstall the cask: the app is gone
+#   background the throttled background `brew update` on the real brew (a
+#              seconds interval in the run's suite; FETCH_HEAD only read):
+#              due -> exactly one update; a relaunch inside the interval
+#              runs none; HOMEBREW_NO_AUTO_UPDATE=1 runs none; Upgrade on a
+#              throwaway tap's probe (1.0 -> 1.1) clicked during an update:
+#              the sheet says it waits for brew update, then upgrades
 #
 # Each phase writes OUT/<scenario>/<phase>/: NN-step.png per step,
 # results.jsonl (one JSON line per step: pass/fail, checks, model state),
@@ -73,7 +79,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula pinned orphans cask security settings restore adopt)
+ALL=(welcome formula pinned orphans cask security settings restore adopt background)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -82,7 +88,7 @@ while [ $# -gt 0 ]; do
         --wait) WAIT_LOCK=1 ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,66p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,72p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -541,6 +547,115 @@ STEPS
     # of the app (moved to the Trash, never deleted outright).
     if qbrew list --cask $c >/dev/null 2>&1; then echo "    cleanup: uninstalling $c" >&2; qbrew uninstall --cask $c
     elif [ -e "$app" ]; then echo "    cleanup: moving our $app to the Trash" >&2; mv "$app" ~/.Trash/AnyBar-e2e-$$.app; fi
+}
+
+# The throttled background `brew update` (0.8), on the real brew. The
+# interval is seconds here (the run's suite: e2eBackgroundUpdateInterval),
+# never brew's FETCH_HEAD: the shell only reads its mtime.
+scenario_background() {
+    local repo fh tap=tankard-e2e/probe f=tankard-e2e-probe taps_dir
+    repo=$(qbrew --repository); fh="$repo/.git/FETCH_HEAD"
+    taps_dir="$repo/Library/Taps"
+    fetched() { stat -f %m "$fh" 2>/dev/null || echo 0; }
+    fresh_state background
+    # 1: due (brew's last fetch is older than the interval): exactly one
+    # real `brew update`, and FETCH_HEAD moves. If someone fetched in the
+    # last 2 minutes, wait until that is older than the interval.
+    local iv=120 age m0 m1 m2 m3
+    age=$(( $(date +%s) - $(fetched) ))
+    if [ $age -lt $iv ]; then
+        echo "    brew fetched ${age}s ago: waiting $((iv - age + 2))s so the update is due" >&2
+        sleep $((iv - age + 2))
+    fi
+    defaults write "$SUITE" e2eBackgroundUpdateInterval -float $iv
+    m0=$(fetched)
+    run_phase background 1-due TANKARD_E2E_BACKGROUND=1 <<'STEPS'
+expect-ready
+wait-background-update
+expect-background-updates 1 after 8
+expect-background-decision not-due
+STEPS
+    m1=$(fetched)
+    if [ "$m1" -gt "$m0" ]; then record "background/fetch-head: PASS (brew update fetched: FETCH_HEAD $(date -r "$m0" +%T) -> $(date -r "$m1" +%T))"
+    else record "background/fetch-head: FAIL (FETCH_HEAD didn't move: no real brew update ran)"; fi
+    # 2: a second launch inside the interval runs none.
+    run_phase background 2-again TANKARD_E2E_BACKGROUND=1 <<'STEPS'
+expect-ready cached
+expect-background-updates 0 after 15
+expect-background-decision not-due
+STEPS
+    m2=$(fetched)
+    if [ "$m2" = "$m1" ]; then record "background/two-launches: PASS (exactly one brew update across both launches)"
+    else record "background/two-launches: FAIL (FETCH_HEAD moved again: $(date -r "$m1" +%T) -> $(date -r "$m2" +%T))"; fi
+    # 3: HOMEBREW_NO_AUTO_UPDATE=1 set: none, even with the update due.
+    defaults write "$SUITE" e2eBackgroundUpdateInterval -float 5
+    sleep 6
+    run_phase background 3-opted-out TANKARD_E2E_BACKGROUND=1 HOMEBREW_NO_AUTO_UPDATE=1 <<'STEPS'
+expect-ready cached
+expect-background-decision opted-out
+expect-background-updates 0 after 15
+STEPS
+    m3=$(fetched)
+    if [ "$m3" = "$m2" ]; then record "background/opted-out: PASS (HOMEBREW_NO_AUTO_UPDATE=1: FETCH_HEAD untouched)"
+    else record "background/opted-out: FAIL (FETCH_HEAD moved with HOMEBREW_NO_AUTO_UPDATE=1)"; fi
+
+    # 4: Upgrade clicked while the update runs: a throwaway local tap's probe
+    # 1.0 -> 1.1 (as in restore), the sheet waits for the update.
+    if [ -e "$taps_dir/tankard-e2e" ]; then record "background/upgrade: SKIP ($taps_dir/tankard-e2e exists)"; return; fi
+    need_absent formula $f || { record "background/upgrade: SKIP ($f installed)"; return; }
+    autoremove_clean || { record "background/upgrade: SKIP (autoremove would remove something)"; return; }
+    local work="$OUT/background/work"
+    mkdir -p "$work/src" "$work/tap/Formula"
+    for v in 1.0 1.1; do
+        mkdir -p "$work/src/$f-$v"
+        printf '#!/bin/sh\necho "tankard e2e probe %s"\n' "$v" > "$work/src/$f-$v/$f"
+        chmod +x "$work/src/$f-$v/$f"
+        tar -C "$work/src" -czf "$work/$f-$v.tar.gz" "$f-$v"
+    done
+    probe() { # version
+        cat <<RUBY
+class TankardE2eProbe < Formula
+  desc "Throwaway formula for Tankard's e2e tests"
+  homepage "https://github.com/d4rkwyng/tankard"
+  url "file://$work/$f-$1.tar.gz"
+  sha256 "$(shasum -a 256 "$work/$f-$1.tar.gz" | cut -d' ' -f1)"
+  license "MIT"
+
+  def install
+    bin.install "$f"
+  end
+end
+RUBY
+    }
+    probe 1.0 > "$work/tap/Formula/$f.rb"
+    git -C "$work/tap" init -q -b main && git -C "$work/tap" add -A \
+        && git -C "$work/tap" -c user.name=e2e -c user.email=e2e@localhost commit -qm "probe 1.0"
+    if qbrew tap "$tap" "file://$work/tap" >"$OUT/background/setup.log" 2>&1 \
+        && qbrew trust --tap "$tap" >>"$OUT/background/setup.log" 2>&1 \
+        && qbrew install "$tap/$f" >>"$OUT/background/setup.log" 2>&1; then
+        # 1.1 in the tap's origin, pulled into the tap: the update that
+        # runs in the phase then finds nothing new there.
+        probe 1.1 > "$work/tap/Formula/$f.rb"
+        git -C "$work/tap" -c user.name=e2e -c user.email=e2e@localhost commit -qam "probe 1.1"
+        git -C "$taps_dir/tankard-e2e/homebrew-probe" pull -q --ff-only
+        # The first update at launch re-reads the list (it predates the
+        # shell install); the second, 5 s later, is the one clicked into.
+        run_phase background 4-upgrade-during-update TANKARD_E2E_BACKGROUND=1 <<STEPS
+expect-ready cached
+wait-background-update
+expect installed $f 1.0
+upgrade-during-update $f
+expect installed $f 1.1
+always uninstall formula $f
+expect not-installed $f
+STEPS
+    else
+        record "background/setup: FAIL (tap/trust/install of the probe; see $OUT/background/setup.log)"
+    fi
+    qbrew list --formula "$f" >/dev/null 2>&1 && { echo "    cleanup: removing $f" >&2; qbrew uninstall --force --formula "$f"; }
+    [ -e "$taps_dir/tankard-e2e/homebrew-probe" ] && qbrew untrust --tap "$tap" >/dev/null 2>&1
+    [ -e "$taps_dir/tankard-e2e/homebrew-probe" ] && { echo "    cleanup: untapping $tap" >&2; qbrew untap "$tap"; }
+    grep -q "tankard-e2e" ~/.homebrew/trust.json 2>/dev/null && echo "    note: ~/.homebrew/trust.json still names tankard-e2e" >&2
 }
 
 for sc in "${SCENARIOS[@]}"; do

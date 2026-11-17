@@ -98,3 +98,68 @@ struct WaitingForBrewUpdateTests {
         #expect(await waitUntil { !r.store.isRefreshing })
     }
 }
+
+@MainActor
+struct E2EBackgroundIntervalTests {
+    let base = ParallelLoadTests()
+
+    /// The e2e harness's seconds interval replaces Settings' hours, for the
+    /// decision and for the checker's next look after a run; the count is
+    /// what `expect-background-updates` reads.
+    @Test func aSecondsIntervalMakesItDueAndCountsRuns() async throws {
+        let r = try await base.rig(backgroundUpdates: true, backgroundInterval: 5)
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        let checker = BackgroundChecker(store: r.store, settings: r.settings, notifier: nil, launchedAt: Date().addingTimeInterval(-60))
+        #expect(r.store.backgroundUpdateRuns == 0)
+        let wait = await checker.tick()
+        #expect(r.stream.count("update") == 1)
+        #expect(r.store.backgroundUpdateRuns == 1)
+        #expect(wait == 5)  // not Settings' hours
+        // Inside the 5 s: not due; after it: due again.
+        if case .notDue = r.store.backgroundUpdateDecision(launchedAt: .distantPast, now: Date()) {} else {
+            Issue.record("expected notDue right after the update")
+        }
+        #expect(r.store.backgroundUpdateDecision(launchedAt: .distantPast, now: Date().addingTimeInterval(6)) == .run)
+        // Without the override: hours, as before.
+        let plain = try await base.rig(backgroundUpdates: true)
+        defer { try? FileManager.default.removeItem(at: plain.dir) }
+        await plain.store.start()
+        await plain.store.insights.waitForIdle()
+        let c2 = BackgroundChecker(store: plain.store, settings: plain.settings, notifier: nil, launchedAt: Date().addingTimeInterval(-60))
+        #expect(await c2.tick() >= 3600)
+    }
+}
+
+@MainActor
+struct BackgroundUpdateAfterCachedLaunchTests {
+    let base = ParallelLoadTests()
+
+    /// A relaunch inside the status cache's hour shows the cache and reads
+    /// no status (homebrewState stays .checking): the background update
+    /// must still run. Before, it waited for .ready all session.
+    @Test func aCachedLaunchStillUpdates() async throws {
+        let cacheDir = try tempDir()
+        defer { try? FileManager.default.removeItem(at: cacheDir) }
+        let url = cacheDir.appendingPathComponent("status.json")
+        let first = try await base.rig(backgroundUpdates: true, cacheURL: url)
+        defer { try? FileManager.default.removeItem(at: first.dir) }
+        await first.store.start()
+        await first.store.insights.waitForIdle()
+        #expect(FileManager.default.fileExists(atPath: url.path))
+
+        let r = try await base.rig(backgroundUpdates: true, backgroundInterval: 5, cacheURL: url)
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        #expect(r.store.reportFromCache)
+        #expect(r.store.homebrewState == .checking)
+        #expect(r.store.backgroundUpdateDecision(launchedAt: .distantPast, now: Date()) == .run)
+        let checker = BackgroundChecker(store: r.store, settings: r.settings, notifier: nil, launchedAt: Date().addingTimeInterval(-60))
+        await checker.tick()
+        #expect(r.stream.count("update") == 1)
+        #expect(r.store.homebrewState == .ready)  // the re-read after it
+        #expect(!r.store.reportFromCache)
+    }
+}

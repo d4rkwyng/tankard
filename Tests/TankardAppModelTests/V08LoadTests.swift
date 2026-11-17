@@ -62,7 +62,8 @@ struct ParallelLoadTests {
         var dir: URL
     }
 
-    func rig(info: Data = demoIntelInfo(), backgroundUpdates: Bool = false, now: @escaping @Sendable () -> Date = { Date() },
+    func rig(info: Data = demoIntelInfo(), backgroundUpdates: Bool = false, backgroundInterval: TimeInterval? = nil, cacheURL: URL? = nil,
+             now: @escaping @Sendable () -> Date = { Date() },
              stream: (@Sendable ([String], @escaping @Sendable (Data) -> Void) async throws -> Int32)? = nil) async throws -> Rig {
         let dir = try tempDir()
         let runner = GatedRunner(info: info)
@@ -73,9 +74,10 @@ struct ParallelLoadTests {
         let client = makeClient(runner)
         let log = CallLog()
         let streamRunner = FakeStreamRunner(log: log, behaviour: stream ?? { _, out in out(Data("ok\n".utf8)); return 0 })
-        var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: streamRunner, cache: nil,
+        var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: streamRunner, cache: cacheURL.map(StatusCache.init),
                                          logURL: dir.appendingPathComponent("upgrade.log"), now: now)
         deps.backgroundUpdates = backgroundUpdates
+        deps.backgroundUpdateInterval = backgroundInterval
         let settings = testSettings()
         return Rig(store: AppStore(deps: deps, settings: settings), runner: runner, stream: log, settings: settings, dir: dir)
     }

@@ -63,8 +63,13 @@ extension AppStore {
     private static let log = Logger(subsystem: AppPaths.bundleID, category: "background-update")
 
     /// Anything else using brew, or nothing on screen yet to refresh.
+    /// A list from the status cache counts as on screen: a relaunch inside
+    /// the cache's hour reads no status, so homebrewState stays .checking,
+    /// and waiting for .ready meant no background update that whole session
+    /// (found by e2e.sh's background scenario). Only the welcome screen
+    /// (brew missing or broken) stops it.
     var backgroundUpdateBusy: Bool {
-        isBusy || isRefreshing || backgroundUpdating || report == nil || homebrewState != .ready
+        isBusy || isRefreshing || backgroundUpdating || report == nil || homebrewState.needsWelcome
             || insights.sizesState == .running
     }
 
@@ -80,8 +85,9 @@ extension AppStore {
 
     public func backgroundUpdateDecision(launchedAt: Date, now: Date) -> BackgroundUpdatePolicy.Decision {
         let sources = brewSources
-        let interval = BackgroundUpdatePolicy.interval(hours: settings.checkIntervalHours,
-                                                       autoUpdateSecs: sources?.effective("HOMEBREW_AUTO_UPDATE_SECS")?.value)
+        let interval = deps.backgroundUpdateInterval
+            ?? BackgroundUpdatePolicy.interval(hours: settings.checkIntervalHours,
+                                               autoUpdateSecs: sources?.effective("HOMEBREW_AUTO_UPDATE_SECS")?.value)
         let last = [settings.lastBrewUpdate, brewLastFetch].compactMap { $0 }.max()
         return BackgroundUpdatePolicy.decide(enabled: settings.backgroundUpdate, available: deps.backgroundUpdates,
                                              optOut: BackgroundUpdatePolicy.optOut(sources), interval: interval,
@@ -97,6 +103,7 @@ extension AppStore {
     public func runBackgroundUpdate() async -> Bool {
         guard !backgroundUpdating, !isBusy, let client = try? resolvedClient() else { return false }
         backgroundUpdating = true
+        backgroundUpdateRuns += 1
         defer { backgroundUpdating = false }
         let started = deps.now()
         if let failure = await runUpdate(client) {
