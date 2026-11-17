@@ -7,7 +7,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ## [Unreleased]
 
 ### Fixed
-- **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off, and `HOMEBREW_CASK_OPTS` (such as a custom `--appdir`) was ignored. Privacy and behaviour settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't.
+- **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off. Privacy and behaviour settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=` pass: `--appdir` and the other folder options would move apps out of where Adopt Apps and the App Management check look.
 
 ### Added
 - **Homebrew ▸ Health ▸ Environment** lists every `HOMEBREW_*` setting, where it comes from, and whether Tankard's brew gets it, with the reason when it doesn't.

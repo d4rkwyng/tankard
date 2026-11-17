@@ -547,18 +547,22 @@ Homebrew from the welcome screen, then click **Check Again**.
 Apps started from the Dock don't run your shell profile, so Tankard reads it (single
 `export HOMEBREW_X=value` lines; values that need shell expansion are skipped) and passes
 privacy and behaviour settings on to brew: `HOMEBREW_NO_ANALYTICS`,
-`HOMEBREW_NO_INSECURE_REDIRECT`, `HOMEBREW_CASK_OPTS` (such as `--appdir=~/Applications`),
-`HOMEBREW_CURL_RETRIES`, `HOMEBREW_FORCE_BREWED_CURL`, the `HOMEBREW_FORBIDDEN_*` lists,
-cleanup and download settings and a few more. **Homebrew ▸ Health… ▸ Environment** shows
+`HOMEBREW_NO_INSECURE_REDIRECT`, `HOMEBREW_CURL_RETRIES`, `HOMEBREW_FORCE_BREWED_CURL`,
+`HOMEBREW_TEMP`, the `HOMEBREW_FORBIDDEN_*` lists, cleanup and download settings and a few
+more. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=…` pass: `--appdir`
+and the other `--*dir` options would move where apps go, which Adopt Apps and the App
+Management check rely on, and options like `--force` would act on apps without asking. **Homebrew ▸ Health… ▸ Environment** shows
 each one and what happened to it.
 
 Not passed from a shell profile:
 
-- anything that changes where brew lives or what it trusts: `HOMEBREW_PREFIX`,
-  `HOMEBREW_CACHE`, the `*_GIT_REMOTE`s, `HOMEBREW_DEVELOPER`,
+- anything that changes where brew lives or what it trusts: `HOMEBREW_PREFIX`, the
+  `*_GIT_REMOTE`s, `HOMEBREW_DEVELOPER`,
   `HOMEBREW_NO_INSTALL_FROM_API`, `HOMEBREW_NO_VERIFY_ATTESTATIONS` and the like (Intelbrew
   mode sets its own remotes);
-- mirrors (`*_DOMAIN`), tokens, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
+- `HOMEBREW_CACHE` and `HOMEBREW_LOGS` (download progress and Clean Up assume the default
+  folders);
+- mirrors (`*_DOMAIN`), tokens, proxies, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
 - settings Tankard controls: colour, verbose and debug output, and the greedy-upgrade
   switches (Tankard's self-updating apps setting decides those);
 - any `HOMEBREW_*` name not on Tankard's list.

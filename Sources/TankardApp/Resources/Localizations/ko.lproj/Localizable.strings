@@ -450,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "\"백그라운드에서 새 버전 확인\" 또는 \"새 업그레이드 알림\"이 켜져 있을 때 백그라운드에서 brew update를 실행하는 빈도.";
 "I've done this" = "완료했음";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
+"Ignored: %@ (%@)" = "무시됨: %@ (%@)";
 "Ignored: not on Tankard's list of settings it passes to brew." = "무시됨: Tankard가 brew에 전달하는 설정 목록에 없습니다.";
 "Include self-updating apps" = "자체 업데이트 앱 포함";
 "Install" = "설치";
@@ -578,6 +579,7 @@
 "Not affiliated with or endorsed by the Homebrew project." = "Homebrew 프로젝트와 제휴하거나 승인받지 않았습니다.";
 "Not allowed yet" = "아직 허용되지 않음";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Tankard가 적용하지 않음(셸에서 설정): 미러는 아직 지원되지 않습니다.";
+"Not applied: none of these cask options are safe to pass." = "적용 안 함: 안전하게 전달할 수 있는 cask 옵션이 없습니다.";
 "Not checked by brew vulns." = "brew vulns가 검사하지 않음.";
 "Not checked by brew vulns: no source repository it can match." = "brew vulns가 검사하지 않음: 일치시킬 소스 저장소 없음.";
 "Not checked by brew vulns: untrusted tap." = "brew vulns가 검사하지 않음: 신뢰할 수 없는 tap.";
@@ -588,6 +590,7 @@
 "Not listed: %@." = "목록에 없음: %@.";
 "Not now" = "나중에";
 "Not passed: Tankard reads brew's output." = "전달 안 함: Tankard가 brew 출력을 읽습니다.";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "전달 안 함: Tankard의 다운로드 진행률과 정리는 기본 폴더를 전제로 합니다.";
 "Not passed: Tankard's self-updating apps setting decides this." = "전달 안 함: Tankard의 자체 업데이트 앱 설정이 결정합니다.";
 "Not passed: a credential." = "전달 안 함: 자격 증명입니다.";
 "Not passed: auto-update relies on brew's dependents check." = "전달 안 함: 자동 업데이트는 brew의 종속 항목 검사에 의존합니다.";
@@ -654,6 +657,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "의존성으로 함께 설치된 것이 아니라 직접 설치한 패키지";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "%@ 폴더의 일부이며, cask는 이 폴더 전체를 설치합니다. brew는 모든 파일을 비교하고 다른 부분이 있으면 거부합니다.";
 "Partial scan" = "일부만 검사됨";
+"Partly applied: %@" = "일부 적용: %@";
 "Passed to brew." = "brew에 전달됩니다.";
 "Patch only" = "패치만";
 "Pause automatic updates. Manual upgrades still work." = "자동 업데이트를 일시 중지합니다. 수동 업그레이드는 계속 사용할 수 있습니다.";
@@ -1072,6 +1076,7 @@
 "brew's output" = "brew의 출력";
 "cancelled" = "취소됨";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "앱 설치 위치를 바꿉니다(가져오기와 앱 관리가 이에 의존)";
 "couldn't start %@: %@" = "%@을(를) 시작할 수 없음: %@";
 "couldn't tell whether its app is running" = "앱이 실행 중인지 확인할 수 없음";
 "dep" = "의존";
@@ -1126,6 +1131,7 @@
 "none for this Mac" = "이 Mac용은 없음";
 "not installed" = "설치되지 않음";
 "not loaded" = "로드되지 않음";
+"not on Tankard's list of cask options" = "Tankard의 cask 옵션 목록에 없음";
 "pin changed" = "고정 변경됨";
 "pinned" = "고정됨";
 "reinstalled" = "재설치됨";
@@ -1146,6 +1152,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@을(를) 업그레이드하려면 %@을(를) 소스에서 다시 빌드해야 하므로, 직접 업그레이드하세요";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "업스트림에서 체크섬이 바뀐 소스 파일로 빌드되었음";
+"would overwrite or take over apps without confirmation" = "확인 없이 앱을 덮어쓰거나 가져옵니다";
 "yesterday %@" = "어제 %@";
 "you chose to skip %@" = "%@ 건너뛰기를 선택했습니다";
 "~%@ h" = "~%@시간";

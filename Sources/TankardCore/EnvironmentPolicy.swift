@@ -21,6 +21,11 @@ import Foundation
 /// brew.env files are separate: bin/brew reads them itself and exports them
 /// over the environment Tankard hands it, so a setting there reaches brew
 /// whatever this list says (Tankard just shows it).
+///
+/// Not read in 0.8.3: proxy settings (http_proxy, https_proxy, all_proxy,
+/// no_proxy and their upper-case forms) in shell profiles. bin/brew honours
+/// them from its environment and from brew.env; EnvFileParser.parseShell only
+/// reads HOMEBREW_* lines. Next release: parse and pass them too.
 public enum EnvironmentPolicy {
     /// Passed through from the app's environment and shell profiles.
     public static let allowed: Set<String> = [
@@ -39,8 +44,10 @@ public enum EnvironmentPolicy {
         "HOMEBREW_FORBIDDEN_OWNER",
         "HOMEBREW_FORBIDDEN_OWNER_CONTACT",
         "HOMEBREW_FORBID_PACKAGES_FROM_PATHS",
-        // Behaviour preferences.
+        // Behaviour preferences. HOMEBREW_CASK_OPTS passes filtered
+        // (CaskOptions): only --require-sha and --language=.
         "HOMEBREW_CASK_OPTS",
+        "HOMEBREW_TEMP",
         "HOMEBREW_DISPLAY_INSTALL_TIMES",
         "HOMEBREW_NO_EMOJI",
         "HOMEBREW_INSTALL_BADGE",
@@ -100,12 +107,13 @@ public enum EnvironmentPolicy {
         case credential
         /// Auto-update's safe mode relies on brew's dependents check.
         case dependentsCheck
+        /// Download progress and Clean Up assume brew's default folders.
+        case defaultFolders
     }
 
     static let locationKeys: Set<String> = [
         "HOMEBREW_PREFIX", "HOMEBREW_CELLAR", "HOMEBREW_REPOSITORY", "HOMEBREW_LIBRARY",
-        "HOMEBREW_BREW_FILE", "HOMEBREW_USER_CONFIG_HOME", "HOMEBREW_CACHE", "HOMEBREW_TEMP",
-        "HOMEBREW_LOGS",
+        "HOMEBREW_BREW_FILE", "HOMEBREW_USER_CONFIG_HOME",
     ]
     static let trustKeys: Set<String> = [
         "HOMEBREW_NO_INSTALL_FROM_API", "HOMEBREW_DEVELOPER", "HOMEBREW_NO_VERIFY_ATTESTATIONS",
@@ -118,6 +126,7 @@ public enum EnvironmentPolicy {
 
     public static func denial(_ key: String) -> Denial? {
         if locationKeys.contains(key) { return .location }
+        if key == "HOMEBREW_CACHE" || key == "HOMEBREW_LOGS" { return .defaultFolders }
         if key.hasSuffix("_DOMAIN") || key == "HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK" { return .mirror }
         if key.contains("TOKEN") || key.contains("PASSWORD") || key.contains("SECRET")
             || key == "HOMEBREW_GITHUB_PACKAGES_USER" || key.hasPrefix("HOMEBREW_DOCKER_REGISTRY_") { return .credential }
@@ -129,6 +138,9 @@ public enum EnvironmentPolicy {
     /// What happens to one HOMEBREW_* name.
     public enum Status: Sendable, Equatable {
         case passed
+        /// HOMEBREW_CASK_OPTS: some options passed, the rest dropped
+        /// (the entry's `caskOptions` says which).
+        case partial
         case tankard(Control)
         case denied(Denial)
         case ignored
@@ -166,7 +178,13 @@ public enum EnvironmentPolicy {
     public static func passThrough(_ sources: EnvironmentSources) -> [String: String] {
         var out: [String: String] = [:]
         for key in shellKeys(sources) where status(of: key) == .passed {
-            if let s = shellSetting(key, sources), !s.value.isEmpty { out[key] = s.value }
+            guard let s = shellSetting(key, sources), !s.value.isEmpty else { continue }
+            if key == CaskOptions.key {
+                let kept = CaskOptions.filter(s.value).passed
+                if !kept.isEmpty { out[key] = kept }
+            } else {
+                out[key] = s.value
+            }
         }
         return out
     }
@@ -191,6 +209,8 @@ public enum EnvironmentPolicy {
         public var status: Status
         /// What brew gets from Tankard, when Tankard sets it ("1"), else nil.
         public var tankardValue: String?
+        /// HOMEBREW_CASK_OPTS from the shell: what passed and what didn't.
+        public var caskOptions: CaskOptions?
         public var id: String { key }
     }
 
@@ -224,13 +244,110 @@ public enum EnvironmentPolicy {
                 status = Self.status(of: key)
             }
             if user == nil && tankard == nil { return nil }
-            return Entry(key: key, value: user.map { mask(key, $0.value) }, source: user?.source,
-                         status: status, tankardValue: tankard)
+            var entry = Entry(key: key, value: user.map { mask(key, $0.value) }, source: user?.source,
+                              status: status, tankardValue: tankard)
+            if key == CaskOptions.key, status == .passed, let v = user?.value {
+                let c = CaskOptions.filter(v)
+                if !c.dropped.isEmpty {
+                    entry.status = .partial
+                    entry.caskOptions = c
+                }
+            }
+            return entry
         }
     }
 
     /// Tokens and passwords are never shown.
     public static func mask(_ key: String, _ value: String) -> String {
         denial(key) == .credential && !value.isEmpty ? "••••••" : value
+    }
+}
+
+/// HOMEBREW_CASK_OPTS, filtered (0.8.3). Passed whole, the `--*dir` options
+/// would move where casks install, which Adopt's location verdicts and the
+/// App Management probe (/Applications) rely on, and flags like `--force`
+/// or `--adopt` would apply to every cask without Tankard's confirmation.
+///
+/// brew 7 splits the value with Shellwords (env_config.rb `cask_opts`) and
+/// reads only `--flag=value` options (cask/config.rb `env`), `--require-sha`
+/// and `--binaries`/`--no-binaries`. Kept: `--require-sha` (stricter) and
+/// `--language=codes` (which localized download a cask picks). Considered and
+/// dropped: every `--*dir=` (location), `--no-binaries`/`--binaries` (changes
+/// which command-line links a cask install makes), and `--force`, `--adopt`,
+/// `--no-quarantine` (brew 7 ignores them here, but they are dropped and
+/// named so a user sees they don't apply). Anything else is dropped.
+public struct CaskOptions: Sendable, Equatable {
+    public static let key = "HOMEBREW_CASK_OPTS"
+
+    public enum Reason: String, Sendable, Equatable, Codable {
+        /// A `--*dir` option: changes where apps go.
+        case location
+        /// `--force`, `--adopt`, `--no-quarantine`: acts without confirmation.
+        case confirmation
+        /// Not on Tankard's list.
+        case other
+    }
+
+    /// The value passed to brew: the kept options joined by spaces ("" when none).
+    public var passed: String
+    public var kept: [String]
+    public var dropped: [(option: String, reason: Reason)]
+
+    public static func == (a: CaskOptions, b: CaskOptions) -> Bool {
+        a.passed == b.passed && a.kept == b.kept
+            && a.dropped.map(\.option) == b.dropped.map(\.option)
+            && a.dropped.map(\.reason) == b.dropped.map(\.reason)
+    }
+
+    public static func filter(_ value: String) -> CaskOptions {
+        var kept: [String] = []
+        var dropped: [(String, Reason)] = []
+        for word in shellSplit(value) {
+            if word == "--require-sha" {
+                if !kept.contains(word) { kept.append(word) }
+            } else if word.hasPrefix("--language="),
+                      word.dropFirst("--language=".count).range(of: #"^[A-Za-z0-9_,-]+$"#, options: .regularExpression) != nil {
+                kept.removeAll { $0.hasPrefix("--language=") }   // the last one wins, as in brew
+                kept.append(word)
+            } else {
+                let flag = word.split(separator: "=", maxSplits: 1).first.map(String.init) ?? word
+                let reason: Reason = flag.hasSuffix("dir") ? .location
+                    : ["--force", "--adopt", "--no-quarantine"].contains(flag) ? .confirmation : .other
+                dropped.append((word, reason))
+            }
+        }
+        return CaskOptions(passed: kept.joined(separator: " "), kept: kept, dropped: dropped)
+    }
+
+    /// Ruby's Shellwords.shellsplit, enough for option lists: whitespace
+    /// separates words; single quotes are literal; double quotes and
+    /// backslashes escape. An unterminated quote ends the word.
+    static func shellSplit(_ s: String) -> [String] {
+        var words: [String] = []
+        var cur = ""
+        var inWord = false
+        var it = s.makeIterator()
+        while let c = it.next() {
+            switch c {
+            case " ", "\t", "\n":
+                if inWord { words.append(cur); cur = ""; inWord = false }
+            case "'":
+                inWord = true
+                while let d = it.next(), d != "'" { cur.append(d) }
+            case "\"":
+                inWord = true
+                while let d = it.next(), d != "\"" {
+                    if d == "\\", let e = it.next() { cur.append(e) } else { cur.append(d) }
+                }
+            case "\\":
+                inWord = true
+                if let e = it.next() { cur.append(e) }
+            default:
+                inWord = true
+                cur.append(c)
+            }
+        }
+        if inWord { words.append(cur) }
+        return words
     }
 }

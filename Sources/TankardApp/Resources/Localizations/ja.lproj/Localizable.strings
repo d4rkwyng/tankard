@@ -450,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "「バックグラウンドで新しいバージョンを確認」または「新しいアップグレードを通知」がオンのとき、バックグラウンドで brew update を実行する間隔。";
 "I've done this" = "完了しました";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
+"Ignored: %@ (%@)" = "無視：%@（%@）";
 "Ignored: not on Tankard's list of settings it passes to brew." = "無視：Tankard が brew に渡す設定の一覧にありません。";
 "Include self-updating apps" = "自己更新するアプリを含める";
 "Install" = "インストール";
@@ -578,6 +579,7 @@
 "Not affiliated with or endorsed by the Homebrew project." = "Homebrewプロジェクトとは提携しておらず、承認も受けていません。";
 "Not allowed yet" = "まだ許可されていません";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Tankard では適用されません（シェルで設定）：ミラーはまだサポートされていません。";
+"Not applied: none of these cask options are safe to pass." = "適用しません：安全に渡せる cask オプションがありません。";
 "Not checked by brew vulns." = "brew vulnsでは確認されていません。";
 "Not checked by brew vulns: no source repository it can match." = "brew vulnsでは確認されていません: 照合できるソースリポジトリがありません。";
 "Not checked by brew vulns: untrusted tap." = "brew vulnsでは確認されていません: 信頼されていないtapです。";
@@ -588,6 +590,7 @@
 "Not listed: %@." = "一覧にないもの: %@。";
 "Not now" = "今はしない";
 "Not passed: Tankard reads brew's output." = "渡しません：Tankard は brew の出力を読み取ります。";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "渡しません：Tankard のダウンロード進行状況とクリーンアップは既定のフォルダを前提としています。";
 "Not passed: Tankard's self-updating apps setting decides this." = "渡しません：Tankard の自動アップデートアプリ設定で決まります。";
 "Not passed: a credential." = "渡しません：認証情報です。";
 "Not passed: auto-update relies on brew's dependents check." = "渡しません：自動アップデートは brew の依存元チェックを必要とします。";
@@ -654,6 +657,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "依存関係として入ったものではなく、自分でインストールしたパッケージ";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "%@ フォルダの一部で、cask はこのフォルダ全体をインストールします。brew はすべてのファイルを比較し、違いがあれば拒否します。";
 "Partial scan" = "部分的なスキャン";
+"Partly applied: %@" = "一部適用：%@";
 "Passed to brew." = "brew に渡します。";
 "Patch only" = "パッチのみ";
 "Pause automatic updates. Manual upgrades still work." = "自動アップデートを一時停止します。手動のアップグレードは引き続き使えます。";
@@ -1072,6 +1076,7 @@
 "brew's output" = "brewの出力";
 "cancelled" = "キャンセル済み";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "アプリの保存先が変わります（取り込みと App 管理はこれに依存）";
 "couldn't start %@: %@" = "%@を開始できませんでした: %@";
 "couldn't tell whether its app is running" = "アプリが実行中かどうか確認できませんでした";
 "dep" = "dep";
@@ -1126,6 +1131,7 @@
 "none for this Mac" = "このMac向けはなし";
 "not installed" = "未インストール";
 "not loaded" = "未読み込み";
+"not on Tankard's list of cask options" = "Tankard の cask オプション一覧にありません";
 "pin changed" = "ピン留めを変更しました";
 "pinned" = "ピン留め済み";
 "reinstalled" = "再インストール済み";
@@ -1146,6 +1152,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@のアップグレードには%@をソースから再ビルドする必要があります。手動でアップグレードしてください";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "上流でソースファイルのチェックサムが変更されたソースからビルドされました";
+"would overwrite or take over apps without confirmation" = "確認なしでアプリを上書きまたは取り込みます";
 "yesterday %@" = "昨日 %@";
 "you chose to skip %@" = "%@のスキップを選択しました";
 "~%@ h" = "約%@時間";

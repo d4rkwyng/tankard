@@ -450,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.";
 "I've done this" = "I've done this";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "If a download doesn't match, brew stops for that app and leaves it as it was.";
+"Ignored: %@ (%@)" = "Ignored: %@ (%@)";
 "Ignored: not on Tankard's list of settings it passes to brew." = "Ignored: not on Tankard's list of settings it passes to brew.";
 "Include self-updating apps" = "Include self-updating apps";
 "Install" = "Install";
@@ -578,6 +579,7 @@
 "Not affiliated with or endorsed by the Homebrew project." = "Not affiliated with or endorsed by the Homebrew project.";
 "Not allowed yet" = "Not allowed yet";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Not applied by Tankard (set in shell): download mirrors aren't supported yet.";
+"Not applied: none of these cask options are safe to pass." = "Not applied: none of these cask options are safe to pass.";
 "Not checked by brew vulns." = "Not checked by brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "Not checked by brew vulns: no source repository it can match.";
 "Not checked by brew vulns: untrusted tap." = "Not checked by brew vulns: untrusted tap.";
@@ -588,6 +590,7 @@
 "Not listed: %@." = "Not listed: %@.";
 "Not now" = "Not now";
 "Not passed: Tankard reads brew's output." = "Not passed: Tankard reads brew's output.";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "Not passed: Tankard's download progress and Clean Up assume the default folders.";
 "Not passed: Tankard's self-updating apps setting decides this." = "Not passed: Tankard's self-updating apps setting decides this.";
 "Not passed: a credential." = "Not passed: a credential.";
 "Not passed: auto-update relies on brew's dependents check." = "Not passed: auto-update relies on brew's dependents check.";
@@ -654,6 +657,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "Packages you installed yourself, not ones pulled in as dependencies";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs.";
 "Partial scan" = "Partial scan";
+"Partly applied: %@" = "Partly applied: %@";
 "Passed to brew." = "Passed to brew.";
 "Patch only" = "Patch only";
 "Pause automatic updates. Manual upgrades still work." = "Pause automatic updates. Manual upgrades still work.";
@@ -1072,6 +1076,7 @@
 "brew's output" = "brew's output";
 "cancelled" = "cancelled";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "changes where apps go, which Adopt and App Management rely on";
 "couldn't start %@: %@" = "couldn't start %@: %@";
 "couldn't tell whether its app is running" = "couldn't tell whether its app is running";
 "dep" = "dep";
@@ -1126,6 +1131,7 @@
 "none for this Mac" = "none for this Mac";
 "not installed" = "not installed";
 "not loaded" = "not loaded";
+"not on Tankard's list of cask options" = "not on Tankard's list of cask options";
 "pin changed" = "pin changed";
 "pinned" = "pinned";
 "reinstalled" = "reinstalled";
@@ -1146,6 +1152,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "upgrading %@ would need %@ rebuilt from source; upgrade by hand";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "was built from a source file whose checksum changed upstream";
+"would overwrite or take over apps without confirmation" = "would overwrite or take over apps without confirmation";
 "yesterday %@" = "yesterday %@";
 "you chose to skip %@" = "you chose to skip %@";
 "~%@ h" = "~%@ h";

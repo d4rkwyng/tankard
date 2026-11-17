@@ -241,6 +241,7 @@ struct EnvironmentList: View {
     static func explanation(_ e: EnvironmentPolicy.Entry) -> String {
         switch e.status {
         case .passed: return String(localized: "Passed to brew.")
+        case .partial: return caskOptions(e.caskOptions)
         case .brewEnv: return String(localized: "From brew.env: brew reads it itself.")
         case .ignored: return String(localized: "Ignored: not on Tankard's list of settings it passes to brew.")
         case .tankard(let why):
@@ -259,8 +260,26 @@ struct EnvironmentList: View {
             case .mirror: return String(localized: "Not applied by Tankard (set in shell): download mirrors aren't supported yet.")
             case .credential: return String(localized: "Not passed: a credential.")
             case .dependentsCheck: return String(localized: "Not passed: auto-update relies on brew's dependents check.")
+            case .defaultFolders: return String(localized: "Not passed: Tankard's download progress and Clean Up assume the default folders.")
             }
         }
+    }
+
+    /// HOMEBREW_CASK_OPTS: "Partly applied: --require-sha" and a line per dropped option.
+    static func caskOptions(_ c: CaskOptions?) -> String {
+        guard let c else { return "" }
+        var lines = [c.kept.isEmpty ? String(localized: "Not applied: none of these cask options are safe to pass.")
+                                    : String(localized: "Partly applied: \(c.kept.joined(separator: " "))")]
+        for (option, reason) in c.dropped {
+            let why: String
+            switch reason {
+            case .location: why = String(localized: "changes where apps go, which Adopt and App Management rely on")
+            case .confirmation: why = String(localized: "would overwrite or take over apps without confirmation")
+            case .other: why = String(localized: "not on Tankard's list of cask options")
+            }
+            lines.append(String(localized: "Ignored: \(option) (\(why))"))
+        }
+        return lines.joined(separator: "\n")
     }
 }
 

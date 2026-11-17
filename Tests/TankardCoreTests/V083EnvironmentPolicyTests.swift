@@ -18,7 +18,8 @@ struct EnvironmentPolicyTests {
     @Test(arguments: [
         ("HOMEBREW_NO_ANALYTICS", "1"),
         ("HOMEBREW_NO_INSECURE_REDIRECT", "1"),
-        ("HOMEBREW_CASK_OPTS", "--appdir=/Users/x/Applications"),
+        ("HOMEBREW_CASK_OPTS", "--require-sha"),
+        ("HOMEBREW_TEMP", "/Volumes/Fast/tmp"),
         ("HOMEBREW_CURL_RETRIES", "5"),
         ("HOMEBREW_DISPLAY_INSTALL_TIMES", "1"),
         ("HOMEBREW_FORCE_BREWED_CURL", "1"),
@@ -31,7 +32,7 @@ struct EnvironmentPolicyTests {
     }
 
     @Test(arguments: [
-        "HOMEBREW_PREFIX", "HOMEBREW_CELLAR", "HOMEBREW_REPOSITORY", "HOMEBREW_CACHE",
+        "HOMEBREW_PREFIX", "HOMEBREW_CELLAR", "HOMEBREW_REPOSITORY", "HOMEBREW_CACHE", "HOMEBREW_LOGS",
         "HOMEBREW_CORE_GIT_REMOTE", "HOMEBREW_BREW_GIT_REMOTE", "HOMEBREW_CASK_GIT_REMOTE",
         "HOMEBREW_API_DOMAIN", "HOMEBREW_BOTTLE_DOMAIN", "HOMEBREW_ARTIFACT_DOMAIN",
         "HOMEBREW_DEVELOPER", "HOMEBREW_NO_INSTALL_FROM_API", "HOMEBREW_NO_VERIFY_ATTESTATIONS",
@@ -45,6 +46,9 @@ struct EnvironmentPolicyTests {
 
     @Test func statusCategories() {
         #expect(EnvironmentPolicy.status(of: "HOMEBREW_PREFIX") == .denied(.location))
+        #expect(EnvironmentPolicy.status(of: "HOMEBREW_CACHE") == .denied(.defaultFolders))
+        #expect(EnvironmentPolicy.status(of: "HOMEBREW_LOGS") == .denied(.defaultFolders))
+        #expect(EnvironmentPolicy.status(of: "HOMEBREW_TEMP") == .passed)
         #expect(EnvironmentPolicy.status(of: "HOMEBREW_API_DOMAIN") == .denied(.mirror))
         #expect(EnvironmentPolicy.status(of: "HOMEBREW_ARTIFACT_DOMAIN_NO_FALLBACK") == .denied(.mirror))
         #expect(EnvironmentPolicy.status(of: "HOMEBREW_GITHUB_API_TOKEN") == .denied(.credential))
@@ -99,7 +103,12 @@ struct EnvironmentPolicyTests {
             ("~/.zshenv", ["HOMEBREW_CASK_OPTS": "--appdir=/a"]),
             ("~/.zshrc", ["HOMEBREW_CASK_OPTS": "--appdir=/b"]),
         ])
-        #expect(EnvironmentPolicy.passThrough(sources) == ["HOMEBREW_CASK_OPTS": "--appdir=/b"])
+        #expect(EnvironmentPolicy.passThrough(sources) == [:])   // --appdir never passes
+        let langs = EnvironmentSources(process: [:], shellProfiles: [
+            ("~/.zshenv", ["HOMEBREW_CURL_RETRIES": "1"]),
+            ("~/.zshrc", ["HOMEBREW_CURL_RETRIES": "2"]),
+        ])
+        #expect(EnvironmentPolicy.passThrough(langs) == ["HOMEBREW_CURL_RETRIES": "2"])
     }
 
     @Test func brewEnvIsLeftToBrew() {
@@ -115,6 +124,7 @@ struct EnvironmentPolicyTests {
             shellProfiles: [("~/.zshrc", ["HOMEBREW_NO_ANALYTICS": "1", "HOMEBREW_API_DOMAIN": "https://mirror",
                                           "HOMEBREW_FOO": "1", "HOMEBREW_COLOR": "1"])],
             brewEnvFiles: [("~/.homebrew/brew.env", ["HOMEBREW_CASK_OPTS": "--appdir=/a"])])
+        // (brew.env's CASK_OPTS is brew's own business: shown, not filtered.)
         let rows = Dictionary(uniqueKeysWithValues: EnvironmentPolicy.entries(sources: sources, intelbrew: none, readOnly: true).map { ($0.key, $0) })
         #expect(rows["HOMEBREW_NO_ANALYTICS"]?.status == .passed)
         #expect(rows["HOMEBREW_NO_ANALYTICS"]?.source == "~/.zshrc")
@@ -129,5 +139,71 @@ struct EnvironmentPolicyTests {
         #expect(rows["HOMEBREW_NO_COLOR"]?.tankardValue == "1")
         #expect(rows["HOMEBREW_NO_AUTO_UPDATE"]?.status == .tankard(.autoUpdate))
         #expect(rows["HOME"] == nil)
+    }
+}
+
+/// 0.8.3: HOMEBREW_CASK_OPTS passes only --require-sha and --language=.
+struct CaskOptionsTests {
+    @Test func forceDropped() {
+        let c = CaskOptions.filter("--force")
+        #expect(c.passed == "")
+        #expect(c.dropped.map(\.option) == ["--force"])
+        #expect(c.dropped.map(\.reason) == [.confirmation])
+    }
+
+    @Test func appdirDropped() {
+        let c = CaskOptions.filter("--appdir=/Users/x/Applications")
+        #expect(c.passed == "")
+        #expect(c.dropped.map(\.reason) == [.location])
+    }
+
+    @Test func requireShaKept() {
+        #expect(CaskOptions.filter("--require-sha").passed == "--require-sha")
+    }
+
+    @Test func languageKept() {
+        #expect(CaskOptions.filter("--language=de,en-GB").passed == "--language=de,en-GB")
+        // The space form isn't read by brew from CASK_OPTS; a bad value is dropped.
+        #expect(CaskOptions.filter("--language de").passed == "")
+        #expect(CaskOptions.filter("--language=").passed == "")
+    }
+
+    @Test func mixed() {
+        let c = CaskOptions.filter("--appdir=~/Applications --require-sha --fontdir=/Library/Fonts --no-quarantine --language=fr --adopt --no-binaries")
+        #expect(c.passed == "--require-sha --language=fr")
+        #expect(c.dropped.map(\.option) == ["--appdir=~/Applications", "--fontdir=/Library/Fonts", "--no-quarantine", "--adopt", "--no-binaries"])
+        #expect(c.dropped.map(\.reason) == [.location, .location, .confirmation, .confirmation, .other])
+    }
+
+    @Test func quotingAndWhitespace() {
+        let c = CaskOptions.filter("  \t--require-sha\n  --appdir='/Users/x/My Apps'  \"--language=ja\"  --colorpickerdir=/a\\ b ")
+        #expect(c.passed == "--require-sha --language=ja")
+        #expect(c.dropped.map(\.option) == ["--appdir=/Users/x/My Apps", "--colorpickerdir=/a b"])
+        #expect(CaskOptions.filter("   ").passed == "")
+        #expect(CaskOptions.filter("--require-sha --require-sha").passed == "--require-sha")
+    }
+
+    @Test func throughBrewEnvironment() {
+        let arm = BrewInstallation(brewPath: "/opt/homebrew/bin/brew", prefix: "/opt/homebrew", repository: "/opt/homebrew")
+        let none = IntelbrewDetection(detected: false, reasons: [], env: [:], found: [:])
+        func env(_ v: String) -> [String: String] {
+            BrewEnvironment.build(installation: arm,
+                                  sources: EnvironmentSources(process: [:], shellProfiles: [("~/.zshenv", ["HOMEBREW_CASK_OPTS": v])]),
+                                  intelbrew: none, readOnly: false)
+        }
+        #expect(env("--appdir=/a --force")["HOMEBREW_CASK_OPTS"] == nil)   // nothing survives: not set
+        #expect(env("--appdir=/a --require-sha")["HOMEBREW_CASK_OPTS"] == "--require-sha")
+    }
+
+    @Test func environmentViewShowsPartlyApplied() {
+        let none = IntelbrewDetection(detected: false, reasons: [], env: [:], found: [:])
+        let sources = EnvironmentSources(process: [:], shellProfiles: [("~/.zshenv", ["HOMEBREW_CASK_OPTS": "--require-sha --appdir=/a"])])
+        let row = EnvironmentPolicy.entries(sources: sources, intelbrew: none).first { $0.key == "HOMEBREW_CASK_OPTS" }
+        #expect(row?.status == .partial)
+        #expect(row?.caskOptions?.kept == ["--require-sha"])
+        #expect(row?.caskOptions?.dropped.map(\.option) == ["--appdir=/a"])
+        // All safe: plain "passed".
+        let ok = EnvironmentSources(process: [:], shellProfiles: [("~/.zshenv", ["HOMEBREW_CASK_OPTS": "--require-sha"])])
+        #expect(EnvironmentPolicy.entries(sources: ok, intelbrew: none).first { $0.key == "HOMEBREW_CASK_OPTS" }?.status == .passed)
     }
 }

@@ -23741,6 +23741,58 @@
         }
       }
     },
+    "Ignored: %@ (%@)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignoriert: %@ (%@)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignoré : %@ (%@)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorada: %@ (%@)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無視：%@（%@）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已忽略：%@（%@）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorada: %@ (%@)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorata: %@ (%@)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무시됨: %@ (%@)"
+          }
+        }
+      }
+    },
     "Ignored: not on Tankard's list of settings it passes to brew.": {
       "localizations": {
         "de": {
@@ -30397,6 +30449,58 @@
         }
       }
     },
+    "Not applied: none of these cask options are safe to pass.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht übernommen: keine dieser Cask-Optionen ist sicher."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non appliqué : aucune de ces options de cask n'est sûre à transmettre."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No aplicada: ninguna de estas opciones de cask es segura."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "適用しません：安全に渡せる cask オプションがありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未应用：这些 cask 选项都不能安全传递。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não aplicada: nenhuma dessas opções de cask é segura para passar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non applicata: nessuna di queste opzioni cask è sicura da passare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "적용 안 함: 안전하게 전달할 수 있는 cask 옵션이 없습니다."
+          }
+        }
+      }
+    },
     "Not checked by brew vulns.": {
       "localizations": {
         "de": {
@@ -30913,6 +31017,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "전달 안 함: Tankard가 brew 출력을 읽습니다."
+          }
+        }
+      }
+    },
+    "Not passed: Tankard's download progress and Clean Up assume the default folders.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht weitergegeben: Downloadfortschritt und Aufräumen in Tankard setzen die Standardordner voraus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : la progression des téléchargements et le Nettoyage de Tankard supposent les dossiers par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: el progreso de descargas y la limpieza de Tankard suponen las carpetas predeterminadas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません：Tankard のダウンロード進行状況とクリーンアップは既定のフォルダを前提としています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不传递：Tankard 的下载进度和清理功能假定使用默认文件夹。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não passada: o progresso de downloads e a Limpeza do Tankard assumem as pastas padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passata: l'avanzamento dei download e la Pulizia di Tankard presuppongono le cartelle predefinite."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: Tankard의 다운로드 진행률과 정리는 기본 폴더를 전제로 합니다."
           }
         }
       }
@@ -34345,6 +34501,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "일부만 검사됨"
+          }
+        }
+      }
+    },
+    "Partly applied: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilweise übernommen: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appliqué en partie : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplicada en parte: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一部適用：%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部分应用：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplicada em parte: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applicata in parte: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일부 적용: %@"
           }
         }
       }
@@ -56138,6 +56346,58 @@
         }
       }
     },
+    "changes where apps go, which Adopt and App Management rely on": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ändert, wohin Apps kommen; Übernehmen und App-Verwaltung verlassen sich darauf"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "change l'emplacement des apps, dont dépendent l'adoption et la gestion des apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cambia dónde van las apps, algo de lo que dependen la adopción y la gestión de apps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリの保存先が変わります（取り込みと App 管理はこれに依存）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会改变 App 的安装位置，而接管和 App 管理依赖于此"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "muda para onde vão os apps, algo de que a adoção e o Gerenciamento de Apps dependem"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cambia dove vanno le app, su cui si basano l'adozione e la gestione app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 설치 위치를 바꿉니다(가져오기와 앱 관리가 이에 의존)"
+          }
+        }
+      }
+    },
     "couldn't start %@: %@": {
       "localizations": {
         "de": {
@@ -58946,6 +59206,58 @@
         }
       }
     },
+    "not on Tankard's list of cask options": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nicht auf Tankards Liste der Cask-Optionen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "absente de la liste des options de cask de Tankard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no está en la lista de opciones de cask de Tankard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard の cask オプション一覧にありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不在 Tankard 的 cask 选项列表中"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "não está na lista de opções de cask do Tankard"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "non è nell'elenco delle opzioni cask di Tankard"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard의 cask 옵션 목록에 없음"
+          }
+        }
+      }
+    },
     "pin changed": {
       "localizations": {
         "de": {
@@ -59982,6 +60294,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "업스트림에서 체크섬이 바뀐 소스 파일로 빌드되었음"
+          }
+        }
+      }
+    },
+    "would overwrite or take over apps without confirmation": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "würde Apps ohne Rückfrage überschreiben oder übernehmen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "écraserait ou reprendrait des apps sans confirmation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sobrescribiría o adoptaría apps sin confirmación"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認なしでアプリを上書きまたは取り込みます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会在未确认的情况下覆盖或接管 App"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sobrescreveria ou adotaria apps sem confirmação"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sovrascriverebbe o adotterebbe app senza conferma"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인 없이 앱을 덮어쓰거나 가져옵니다"
           }
         }
       }

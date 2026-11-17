@@ -450,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "Con qué frecuencia se ejecuta brew update en segundo plano, mientras \"Buscar versiones nuevas en segundo plano\" o \"Avisarme de nuevas actualizaciones\" esté activado.";
 "I've done this" = "Ya lo hice";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "Si una descarga no coincide, brew se detiene para esa app y la deja como estaba.";
+"Ignored: %@ (%@)" = "Ignorada: %@ (%@)";
 "Ignored: not on Tankard's list of settings it passes to brew." = "Ignorada: no está en la lista de ajustes que Tankard pasa a brew.";
 "Include self-updating apps" = "Incluir apps que se actualizan solas";
 "Install" = "Instalar";
@@ -578,6 +579,7 @@
 "Not affiliated with or endorsed by the Homebrew project." = "No está afiliado ni respaldado por el proyecto Homebrew.";
 "Not allowed yet" = "Aún no permitido";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "No aplicada por Tankard (definida en la shell): los espejos aún no son compatibles.";
+"Not applied: none of these cask options are safe to pass." = "No aplicada: ninguna de estas opciones de cask es segura.";
 "Not checked by brew vulns." = "No comprobado por brew vulns.";
 "Not checked by brew vulns: no source repository it can match." = "No comprobado por brew vulns: no tiene repositorio de código fuente con el que asociarlo.";
 "Not checked by brew vulns: untrusted tap." = "No comprobado por brew vulns: tap no confiable.";
@@ -588,6 +590,7 @@
 "Not listed: %@." = "No listadas: %@.";
 "Not now" = "Ahora no";
 "Not passed: Tankard reads brew's output." = "No se pasa: Tankard lee la salida de brew.";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "No se pasa: el progreso de descargas y la limpieza de Tankard suponen las carpetas predeterminadas.";
 "Not passed: Tankard's self-updating apps setting decides this." = "No se pasa: lo decide el ajuste de apps que se actualizan solas de Tankard.";
 "Not passed: a credential." = "No se pasa: es una credencial.";
 "Not passed: auto-update relies on brew's dependents check." = "No se pasa: la actualización automática depende de la comprobación de dependientes de brew.";
@@ -654,6 +657,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "Paquetes que instalaste tú, no los que llegaron como dependencias";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "Forma parte de la carpeta %@, que el cask instala completa; brew compararía cada archivo y se negaría si algo difiere.";
 "Partial scan" = "Análisis parcial";
+"Partly applied: %@" = "Aplicada en parte: %@";
 "Passed to brew." = "Se pasa a brew.";
 "Patch only" = "Solo parches";
 "Pause automatic updates. Manual upgrades still work." = "Pausa las actualizaciones automáticas. Las actualizaciones manuales siguen funcionando.";
@@ -1072,6 +1076,7 @@
 "brew's output" = "salida de brew";
 "cancelled" = "cancelado";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "cambia dónde van las apps, algo de lo que dependen la adopción y la gestión de apps";
 "couldn't start %@: %@" = "no se pudo iniciar %@: %@";
 "couldn't tell whether its app is running" = "no se pudo saber si su app está en ejecución";
 "dep" = "dep";
@@ -1126,6 +1131,7 @@
 "none for this Mac" = "ninguno para este Mac";
 "not installed" = "no instalado";
 "not loaded" = "no cargado";
+"not on Tankard's list of cask options" = "no está en la lista de opciones de cask de Tankard";
 "pin changed" = "fijado modificado";
 "pinned" = "fijado";
 "reinstalled" = "reinstalado";
@@ -1146,6 +1152,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "actualizar %@ requeriría recompilar %@ desde el código fuente; actualiza a mano";
 "user/repo" = "usuario/repo";
 "was built from a source file whose checksum changed upstream" = "se compiló desde un archivo fuente cuyo checksum cambió en el original";
+"would overwrite or take over apps without confirmation" = "sobrescribiría o adoptaría apps sin confirmación";
 "yesterday %@" = "ayer %@";
 "you chose to skip %@" = "elegiste omitir %@";
 "~%@ h" = "~%@ h";

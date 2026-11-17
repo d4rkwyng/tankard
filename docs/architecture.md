@@ -207,17 +207,29 @@ directly to `posix_spawn` with no shell in between:
 (`EnvironmentPolicy.allowed`): privacy and network safety (`NO_ANALYTICS`,
 `NO_INSECURE_REDIRECT`, `NO_GITHUB_API`, `CURL_RETRIES`, `FORCE_BREWED_CURL`,
 `VERIFY_ATTESTATIONS`), the user's own restrictions (`FORBIDDEN_*`,
-`FORBID_PACKAGES_FROM_PATHS`) and behaviour preferences (`CASK_OPTS`,
+`FORBID_PACKAGES_FROM_PATHS`) and behaviour preferences (`TEMP`, `CASK_OPTS` filtered,
 `DISPLAY_INSTALL_TIMES`, `NO_EMOJI`, `INSTALL_BADGE`, the cleanup settings,
 `NO_AUTOREMOVE`, `NO_INSTALL_UPGRADE`, `NO_UPGRADE_QUIT_CASKS`, `NO_UPDATE_REPORT_NEW`, the
 auto-update settings, `DOWNLOAD_CONCURRENCY`, `MAKE_JOBS`, `FAIL_LOG_LINES`). Tankard's
 own values (the table above, and what the callers add per command) override them. Denied,
 with the reason shown in Health ▸ Environment: where brew lives (`PREFIX`, `CELLAR`,
-`REPOSITORY`, `LIBRARY`, `CACHE`, `TEMP`, `LOGS`...), where it gets code or what it trusts
+`REPOSITORY`, `LIBRARY`...), `CACHE` and `LOGS` (download progress and Clean Up assume the
+default folders), where it gets code or what it trusts
 (every `*_GIT_REMOTE`, `NO_INSTALL_FROM_API`, `DEVELOPER`, `NO_VERIFY_ATTESTATIONS`,
 `*TRUST*`, tool paths...), mirrors (`*_DOMAIN`), credentials (`*TOKEN*` and the like) and
 `NO_INSTALLED_DEPENDENTS_CHECK` (auto-update's safe mode relies on it). Any other name is
 ignored. Intelbrew mode's remotes win, unchanged.
+
+`HOMEBREW_CASK_OPTS` is filtered (`CaskOptions`). brew 7 shell-splits it and reads only
+`--flag=value` options, `--require-sha` and `--[no-]binaries`. Tankard keeps
+`--require-sha` and `--language=codes`, and drops every `--*dir=` (it would move where apps
+go, which Adopt's location verdicts and the App Management probe rely on), `--[no-]binaries`,
+and `--force`/`--adopt`/`--no-quarantine` (no effect there in brew 7, named so the user sees
+it). If nothing is left, the variable isn't set. Health shows it as partly applied, with
+each dropped option and why.
+
+Proxy variables (`http_proxy` and the rest) in shell profiles aren't read yet; bin/brew
+honours them from brew.env.
 
 **brew.env files** are read by `bin/brew` itself and exported over the top of the
 environment Tankard passes, so anything there applies no matter who starts brew (and can

@@ -450,6 +450,7 @@
 "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on." = "后台 brew update 的运行频率，在“在后台检查新版本”或“有新升级时通知我”开启时生效。";
 "I've done this" = "我已完成";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
+"Ignored: %@ (%@)" = "已忽略：%@（%@）";
 "Ignored: not on Tankard's list of settings it passes to brew." = "已忽略：不在 Tankard 传给 brew 的设置列表中。";
 "Include self-updating apps" = "包含自行更新的 App";
 "Install" = "安装";
@@ -578,6 +579,7 @@
 "Not affiliated with or endorsed by the Homebrew project." = "与 Homebrew 项目无关联，也未获其认可。";
 "Not allowed yet" = "尚未允许";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Tankard 不应用（在 shell 中设置）：暂不支持镜像。";
+"Not applied: none of these cask options are safe to pass." = "未应用：这些 cask 选项都不能安全传递。";
 "Not checked by brew vulns." = "brew vulns 未检查。";
 "Not checked by brew vulns: no source repository it can match." = "brew vulns 未检查：没有可匹配的源码仓库。";
 "Not checked by brew vulns: untrusted tap." = "brew vulns 未检查：不受信任的 tap。";
@@ -588,6 +590,7 @@
 "Not listed: %@." = "未列出：%@。";
 "Not now" = "暂不";
 "Not passed: Tankard reads brew's output." = "不传递：Tankard 需要读取 brew 的输出。";
+"Not passed: Tankard's download progress and Clean Up assume the default folders." = "不传递：Tankard 的下载进度和清理功能假定使用默认文件夹。";
 "Not passed: Tankard's self-updating apps setting decides this." = "不传递：由 Tankard 的自动更新 App 设置决定。";
 "Not passed: a credential." = "不传递：这是凭据。";
 "Not passed: auto-update relies on brew's dependents check." = "不传递：自动更新依赖 brew 的依赖项检查。";
@@ -654,6 +657,7 @@
 "Packages you installed yourself, not ones pulled in as dependencies" = "你自己安装的软件包，而不是作为依赖项装入的";
 "Part of the %@ folder, which the cask installs as a whole; brew would compare every file and refuse if anything differs." = "属于 %@ 文件夹，cask 会整体安装该文件夹；brew 会比较每个文件，有任何不同就会拒绝。";
 "Partial scan" = "部分扫描";
+"Partly applied: %@" = "部分应用：%@";
 "Passed to brew." = "已传给 brew。";
 "Patch only" = "仅补丁";
 "Pause automatic updates. Manual upgrades still work." = "暂停自动更新。手动升级仍然可用。";
@@ -1072,6 +1076,7 @@
 "brew's output" = "brew 的输出";
 "cancelled" = "已取消";
 "cask" = "cask";
+"changes where apps go, which Adopt and App Management rely on" = "会改变 App 的安装位置，而接管和 App 管理依赖于此";
 "couldn't start %@: %@" = "无法启动 %@：%@";
 "couldn't tell whether its app is running" = "无法判断其 App 是否正在运行";
 "dep" = "依赖";
@@ -1126,6 +1131,7 @@
 "none for this Mac" = "没有适用于这台 Mac 的";
 "not installed" = "未安装";
 "not loaded" = "未载入";
+"not on Tankard's list of cask options" = "不在 Tankard 的 cask 选项列表中";
 "pin changed" = "固定状态已更改";
 "pinned" = "已固定";
 "reinstalled" = "已重新安装";
@@ -1146,6 +1152,7 @@
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "升级 %@ 需要从源码重新构建 %@；请手动升级";
 "user/repo" = "user/repo";
 "was built from a source file whose checksum changed upstream" = "由上游已更改校验和的源文件构建";
+"would overwrite or take over apps without confirmation" = "会在未确认的情况下覆盖或接管 App";
 "yesterday %@" = "昨天 %@";
 "you chose to skip %@" = "你选择了跳过 %@";
 "~%@ h" = "约 %@ 小时";
