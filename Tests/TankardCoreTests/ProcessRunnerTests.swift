@@ -62,6 +62,19 @@ struct ProcessRunnerTests {
         try await Task.sleep(for: .milliseconds(100))
         #expect(kill(child, 0) != 0, "grandchild sleep survived cancellation")
     }
+
+    /// 0.6.1: cancelled before the child exists (Stop right after Scan
+    /// now): the child is stopped as soon as it starts, not left running.
+    @Test func cancellationBeforeSpawnStillStopsTheChild() async throws {
+        let runner = ProcessRunner(killGrace: 0.5)
+        let start = ContinuousClock.now
+        let task = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            return try await runner.run("/bin/sleep", ["30"], environment: [:])
+        }
+        await #expect(throws: ProcessRunnerError.self) { try await task.value }
+        #expect(ContinuousClock.now - start < .seconds(5))
+    }
 }
 
 /// The streaming runner used for brew update / upgrade.

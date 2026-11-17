@@ -36,11 +36,12 @@ struct AutoUpdateRulesRows: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Picker("Automatically upgrade:", selection: $rules.bumpRule) {
-                ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
+            ExplainedRow(help: SettingsHelp.bumpRule) {
+                Picker("Automatically upgrade:", selection: $rules.bumpRule) {
+                    ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
+                }
+                .fixedSize()
             }
-            .fixedSize()
-            .help("Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions.")
             AutoUpdateSnoozeControl(rules: rules)
         }
     }

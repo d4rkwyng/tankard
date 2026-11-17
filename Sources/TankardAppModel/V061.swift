@@ -1,0 +1,80 @@
+import Foundation
+import TankardCore
+
+// 0.6.1: the More filter as a standard picker, settings explanations on
+// click (ⓘ), and the vulnerability scan's progress.
+
+/// The explanations behind each setting's ⓘ button (and its tooltip).
+public enum SettingsHelp {
+    // General
+    public static let showMenuBarIcon = "A tankard with the number of upgrades ready. With it on, closing the window keeps Tankard running."
+    public static let notifyNewUpgrades = "Runs brew update and checks for upgrades in the background. A notification appears only when new upgrades show up. Off by default."
+    public static let checkInterval = "How often the background check runs, while \"Notify me about new upgrades\" is on."
+    public static let openAtLogin = "Opens Tankard when you log in, as a macOS login item."
+
+    // Upgrades
+    public static let includeSelfUpdatingApps = "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default."
+    public static let dontQuitApps = "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it."
+    public static let scanOnRefresh = "Runs brew vulns after each refresh. " + InsightSettings.scanPrivacyNote + " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default."
+    public static let notifyNewVulnerabilities = "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask."
+
+    // Upgrades → Automatic updates
+    public static let autoUpgrade = "Runs only while Tankard is running, on AC power, after \(Int(AutoUpdatePolicy.idleThreshold / 60)) minutes without keyboard or mouse input. A run that was missed (the Mac was asleep or Tankard wasn't open) happens once, at the next chance. Off by default."
+    public static var safeMode: String { "Safe mode (always on):\n" + AutoUpdateSafeMode.rules.map { "• " + $0 }.joined(separator: "\n") }
+    public static let bumpRule = "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions."
+
+    /// Every explanation (tests: none is empty).
+    public static var all: [String] {
+        [showMenuBarIcon, notifyNewUpgrades, checkInterval, openAtLogin,
+         includeSelfUpdatingApps, dontQuitApps, scanOnRefresh, notifyNewVulnerabilities,
+         autoUpgrade, safeMode, bumpRule]
+    }
+}
+
+extension AppStore {
+    /// The More picker's selection: the filter when it is one of
+    /// `PackageFilter.more`, else nil ("More"). Only a real change to a
+    /// More filter is written, so a picker writing back its value (or nil)
+    /// invalidates nothing.
+    public var moreFilterSelection: PackageFilter? {
+        get { PackageFilter.more.contains(filter) ? filter : nil }
+        set {
+            guard let f = newValue, PackageFilter.more.contains(f), f != filter else { return }
+            filter = f
+        }
+    }
+
+    /// Installed formulae (what brew vulns checks; casks aren't).
+    public var formulaCount: Int { packages.filter { $0.kind == .formula }.count }
+}
+
+/// How the last vulnerability scan this session ended.
+public enum ScanOutcome: Equatable, Sendable {
+    case done(checked: Int, found: Int, complete: Bool)
+    case stopped
+    case timedOut
+}
+
+/// The scan's progress line.
+public enum ScanProgressText {
+    /// "Scanning 42 formulae…"
+    public static func running(formulae: Int) -> String {
+        formulae > 0 ? "Scanning \(formulae) formula\(formulae == 1 ? "" : "e")…" : "Scanning…"
+    }
+
+    /// "0:07", "1:02".
+    public static func elapsed(_ seconds: TimeInterval) -> String {
+        let s = max(0, Int(seconds))
+        return "\(s / 60):" + String(format: "%02d", s % 60)
+    }
+
+    /// "Scanned 42 · found 2", "… · partial scan", "Scan stopped".
+    public static func outcome(_ o: ScanOutcome) -> String {
+        switch o {
+        case .done(let checked, let found, let complete):
+            return "Scanned \(checked) · found \(found)" + (complete ? "" : " · partial scan")
+        case .stopped: return "Scan stopped"
+        case .timedOut: return "Scan timed out"
+        }
+    }
+}

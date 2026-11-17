@@ -52,14 +52,28 @@ public struct ProcessRunner: CommandRunning {
     }
 
     public func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
-        let pidBox = OSAllocatedUnfairLock<pid_t?>(initialState: nil)
+        // The pid, and whether the task was cancelled before the child
+        // existed: then the child is stopped as soon as it starts (0.6.1:
+        // a Stop pressed right after Scan now left brew vulns running).
+        let box = OSAllocatedUnfairLock<(pid: pid_t?, cancelled: Bool)>(initialState: (nil, false))
         let grace = killGrace
+        let stop: @Sendable (pid_t) -> Void = { pid in
+            kill(-pid, SIGTERM)
+            DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
+                // Still alive (kill 0 succeeds)? Then force it.
+                if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+            }
+        }
         let result: ProcessResult = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         let r = try Self.spawnAndWait(executable, arguments, environment) { pid in
-                            pidBox.withLock { $0 = pid }
+                            let cancelled = box.withLock { s -> Bool in
+                                s.pid = pid
+                                return s.cancelled
+                            }
+                            if cancelled { stop(pid) }
                         }
                         continuation.resume(returning: r)
                     } catch {
@@ -68,12 +82,11 @@ public struct ProcessRunner: CommandRunning {
                 }
             }
         } onCancel: {
-            guard let pid = pidBox.withLock({ $0 }) else { return }
-            kill(-pid, SIGTERM)
-            DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
-                // Still alive (kill 0 succeeds)? Then force it.
-                if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+            let pid = box.withLock { s -> pid_t? in
+                s.cancelled = true
+                return s.pid
             }
+            if let pid { stop(pid) }
         }
         if Task.isCancelled { throw ProcessRunnerError.cancelled }
         return result

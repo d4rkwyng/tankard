@@ -223,7 +223,7 @@ struct TankardApp: App {
 
         Settings {
             SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem,
-                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate,
+                         insightSettings: store.insights.settings, autoUpdater: store.autoUpdate, store: store,
                          rollbackSettings: store.restorePoints.settings)
         }
     }
@@ -279,6 +279,10 @@ struct HomebrewCommands: View {
         BrewfileMenuItems(store: store)
         // 0.7: Restore Points…
         RestorePointsMenuItem(store: store)
+        // 0.6.1: the scan on demand (was in the filter menu).
+        Divider()
+        Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
+            .disabled(store.insights.scanState == .running || store.report == nil)
     }
 }
 

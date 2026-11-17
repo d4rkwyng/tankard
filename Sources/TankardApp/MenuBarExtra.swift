@@ -73,6 +73,19 @@ struct MenuBarContent: View {
                 .padding(.vertical, 8)
             }
 
+            // 0.6.1: a running scan, or how the last one ended.
+            if store.insights.scanState == .running || store.insights.scanOutcome != nil {
+                Divider()
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.shield")
+                        .font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
+                        .accessibilityHidden(true)
+                    ScanProgressView(store: store)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+            }
             VulnerabilityMenuNotice(store: store, openMain: openMain)
             AutoUpdateMenuLine(store: store, openLog: openAutoUpdateLog)
             AutoUpdateSnoozeMenuRow(updater: store.autoUpdate)
