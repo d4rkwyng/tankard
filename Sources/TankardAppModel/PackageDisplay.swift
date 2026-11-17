@@ -257,6 +257,37 @@ public enum SummaryText {
         return parts.joined(separator: " · ")
     }
 
+    /// 0.6.2: `line`, then shorter forms for a narrow strip (a wide More
+    /// picker, a scan in progress, a longer language), least important parts
+    /// dropped first: "no bottle" and "newer", then the bottle split
+    /// becomes one count, then source and casks go, leaving "20 installed".
+    /// The strip shows the first that fits; hovering shows the full line.
+    public static func lines(_ s: StatusSummary, intelbrewMode: Bool) -> [String] {
+        let installed = "\(s.installed) installed"
+        let bottles = "\(s.bottled) bottle\(s.bottled == 1 ? "" : "s")"
+        let casks = s.casks > 0 ? "\(s.casks) cask\(s.casks == 1 ? "" : "s")" : nil
+        var parts = [installed]
+        if intelbrewMode {
+            parts.append("\(s.intelbrewBottled) Intelbrew bottle\(s.intelbrewBottled == 1 ? "" : "s")")
+            let others = s.bottled - s.intelbrewBottled
+            if others > 0 { parts.append("\(others) Homebrew bottle\(others == 1 ? "" : "s")") }
+        } else {
+            parts.append(bottles)
+        }
+        parts.append("\(s.source) from source")
+        if let casks { parts.append(casks) }
+        let candidates = [
+            line(s, intelbrewMode: intelbrewMode),
+            parts.joined(separator: " · "),
+            ([installed, bottles, "\(s.source) from source"] + (casks.map { [$0] } ?? [])).joined(separator: " · "),
+            [installed, bottles].joined(separator: " · "),
+            installed,
+        ]
+        // Drop repeats (a summary with nothing to drop has fewer forms).
+        var seen = Set<String>()
+        return candidates.filter { seen.insert($0).inserted }
+    }
+
     /// ("5 upgrades ready", "(4 with bottles, 1 compiles)"), or nil when none.
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }

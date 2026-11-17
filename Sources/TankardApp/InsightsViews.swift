@@ -192,7 +192,8 @@ struct ExplainedRow<Content: View>: View {
     }
 }
 
-/// The summary strip's size total: "· 4.1 GB on disk".
+/// The summary strip's size total: "· 4.1 GB on disk". Its explanation is
+/// in the strip's tooltip, which also has the full text when the strip is short.
 struct DiskTotalText: View {
     var store: AppStore
 
@@ -201,10 +202,8 @@ struct DiskTotalText: View {
             Text("· \(DiskSizes.format(total)) on disk")
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-                .layoutPriority(-1)
-                .help("brew info --sizes: kegs and Caskroom folders (apps through their links)")
         } else if store.insights.sizesState == .running {
-            Text("· measuring…").foregroundStyle(.tertiary).lineLimit(1).layoutPriority(-1)
+            Text("· measuring…").foregroundStyle(.tertiary).lineLimit(1)
         }
     }
 }

@@ -10,6 +10,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - Long versions no longer lose their important part at the default window size: the Installed and Available columns are wider (the Source column gives up the room it didn't use), long versions are shortened in the middle rather than at the end, and hovering shows the full version.
 - The Pin row in the details now wraps instead of cutting off "Keeps <version>; upgrades skip it".
 - Discover descriptions wrap to two lines, with the full text on hover.
+- The summary above the Installed list no longer cuts off when the More menu shows "2 vulnerable" or a scan is running: it drops its least important parts first ("1 newer", then the Intelbrew/Homebrew bottle split, then the upgrade detail), and hovering shows the full text.
 
 ## [0.6.1]
 

@@ -272,28 +272,25 @@ struct SummaryStrip: View {
         HStack(alignment: .center, spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
                 if let report = store.report {
-                    Text(SummaryText.line(report.summary, intelbrewMode: store.intelbrewMode))
-                        .font(.system(size: 13, weight: .medium))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .truncationMode(.tail)
-                        // One height however far it scales: a narrower strip
-                        // (once Dark's wider native picker) shrank the line and so
-                        // the strip, moving the table 2 points between themes.
-                        .frame(height: Self.summaryLineHeight)
-                    HStack(spacing: 6) {
-                        if let (ready, detail) = SummaryText.upgrades(report.summary) {
-                            Circle().fill(theme.upgrade).frame(width: 7, height: 7)
-                            Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
-                            Text(detail).foregroundStyle(.secondary)
-                        } else {
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                            Text("Everything is up to date").foregroundStyle(.secondary)
+                    // 0.6.2: the first form that fits, least important parts
+                    // dropped first, rather than one line cut off mid-word
+                    // when the More picker says "13 vulnerable", a scan is
+                    // running, or the language is longer. Full text on hover.
+                    ViewThatFits(in: .horizontal) {
+                        ForEach(SummaryText.lines(report.summary, intelbrewMode: store.intelbrewMode), id: \.self) { line in
+                            Text(line).lineLimit(1).truncationMode(.tail)
                         }
-                        DiskTotalText(store: store)
+                    }
+                    .font(.system(size: 13, weight: .medium))
+                    // One height in every theme and form, so the table
+                    // never moves between them.
+                    .frame(height: Self.summaryLineHeight)
+                    ViewThatFits(in: .horizontal) {
+                        upgradesLine(report.summary, detail: true, disk: true)
+                        upgradesLine(report.summary, detail: false, disk: true)
+                        upgradesLine(report.summary, detail: false, disk: false)
                     }
                     .font(.system(size: 12))
-                    .lineLimit(1)
                 } else if store.isRefreshing {
                     Text("Reading installed packages…").font(.system(size: 13, weight: .medium))
                     Text(store.refreshPhase ?? " ").font(.system(size: 12)).foregroundStyle(.secondary)
@@ -303,6 +300,7 @@ struct SummaryStrip: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .help(fullText)
 
             FilterActions(store: store)
 
@@ -314,6 +312,34 @@ struct SummaryStrip: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(theme.strip)
+    }
+
+    /// The second line: "● 5 upgrades ready (4 with bottles, 1 compiles) · 289 MB on disk",
+    /// or "Everything is up to date", with or without its detail and size.
+    @ViewBuilder
+    private func upgradesLine(_ summary: StatusSummary, detail showDetail: Bool, disk: Bool) -> some View {
+        HStack(spacing: 6) {
+            if let (ready, detail) = SummaryText.upgrades(summary) {
+                Circle().fill(theme.upgrade).frame(width: 7, height: 7)
+                Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
+                if showDetail { Text(detail).foregroundStyle(.secondary) }
+            } else {
+                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                Text(showDetail || disk ? "Everything is up to date" : "Up to date").foregroundStyle(.secondary)
+            }
+            if disk { DiskTotalText(store: store) }
+        }
+        .lineLimit(1)
+    }
+
+    /// Everything the strip's left side says, unshortened, for its tooltip.
+    private var fullText: String {
+        guard let report = store.report else { return "" }
+        var second = SummaryText.upgrades(report.summary).map { "\($0.0) \($0.1)" } ?? "Everything is up to date"
+        if let total = store.totalDiskBytes {
+            second += " · \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)"
+        }
+        return SummaryText.line(report.summary, intelbrewMode: store.intelbrewMode) + "\n" + second
     }
 }
 
