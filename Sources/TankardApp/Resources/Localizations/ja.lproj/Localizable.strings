@@ -34,9 +34,6 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のbottleがないため、brewがコンパイルします";
 "%@ has nothing left to upgrade." = "%@ にはアップグレードするものがありません。";
-"%@ installs in the last 30 days" = "過去30日間に%@回インストール";
-"%@ installs in the last 365 days" = "過去365日間に%@回インストール";
-"%@ installs in the last 90 days" = "過去90日間に%@回インストール";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ は利用可能ですが、brewはピン留めされたパッケージをアップグレードしません。「すべてアップグレード」からも除外されます。アップグレードするにはピン留めを解除してください。";
 "%@ is installed" = "%@ はインストール済みです";
 "%@ is pinned" = "%@ はピン留めされています";
@@ -92,6 +89,9 @@
 "%lld installed" = "%lld個がインストール済み";
 "%lld installed from it" = "%lld個がここからインストール済み";
 "%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。インストール済みの間は、brewはuntapを拒否します。";
+"%lld installs in the last 30 days" = "過去30日間に%lld回インストール";
+"%lld installs in the last 365 days" = "過去365日間に%lld回インストール";
+"%lld installs in the last 90 days" = "過去90日間に%lld回インストール";
 "%lld items" = "%lld項目";
 "%lld known vulnerabilities" = "%lld件の既知の脆弱性";
 "%lld known vulnerabilities (brew vulns): %@" = "%lld件の既知の脆弱性(brew vulns): %@";

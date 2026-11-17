@@ -58,13 +58,15 @@ public struct InstallCounts: Sendable, Equatable {
         n.formatted(.number.locale(locale))
     }
 
-    /// "12,345 installs in the last 30 days" (the tooltip and VoiceOver).
-    public static func sentence(_ n: Int, _ p: AnalyticsPeriod, locale: Locale = .current) -> String {
-        let count = number(n, locale: locale)
+    /// "12,345 installs in the last 30 days", "1 install in the last 30
+    /// days" (the tooltip and VoiceOver). Plural forms come from the
+    /// catalog's plural variations (Localizable.stringsdict); the count is
+    /// grouped in `locale` ("12.345" in German).
+    public static func sentence(_ n: Int, _ p: AnalyticsPeriod, locale: Locale = .current, bundle: Bundle = .main) -> String {
         switch p {
-        case .days30: return String(localized: "\(count) installs in the last 30 days", locale: locale)
-        case .days90: return String(localized: "\(count) installs in the last 90 days", locale: locale)
-        case .days365: return String(localized: "\(count) installs in the last 365 days", locale: locale)
+        case .days30: return String(localized: "\(n) installs in the last 30 days", bundle: bundle, locale: locale)
+        case .days90: return String(localized: "\(n) installs in the last 90 days", bundle: bundle, locale: locale)
+        case .days365: return String(localized: "\(n) installs in the last 365 days", bundle: bundle, locale: locale)
         }
     }
 }
@@ -120,12 +122,24 @@ public struct InstallAnalytics: Sendable {
                 }
             }
         }
+        /// One malformed row (a count that isn't a number, a missing
+        /// field) is skipped, not the whole file: every other count stays.
+        struct LossyItem: Decodable {
+            var item: Item?
+            init(from decoder: Decoder) throws { item = try? Item(from: decoder) }
+        }
         var endDate: String?
         var items: [Item]
 
         enum CodingKeys: String, CodingKey {
             case endDate = "end_date"
             case items
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            endDate = try c.decodeIfPresent(String.self, forKey: .endDate)
+            items = try c.decode([LossyItem].self, forKey: .items).compactMap(\.item)
         }
     }
 

@@ -16,12 +16,15 @@ in Bundle.main).
                                      in the source are reported as stale)
   Scripts/l10n.py import LANG FILE   merge a JSON {key: translation} map
   Scripts/l10n.py compile            write the .lproj/Localizable.strings
+                                     (and Localizable.stringsdict for keys
+                                     with plural variations)
   Scripts/l10n.py missing [LANG]     list keys without a translation
   Scripts/l10n.py prune              drop stale keys (marked by extract)
 """
 import glob
 import json
 import os
+import plistlib
 import re
 import shutil
 import subprocess
@@ -126,9 +129,40 @@ def extract():
 
 
 def translations(entry):
-    return {lang: loc["stringUnit"]["value"]
-            for lang, loc in entry.get("localizations", {}).items()
-            if "stringUnit" in loc}
+    """lang -> value. A plural entry gives its "other" form (the .strings
+    fallback; the forms themselves go to Localizable.stringsdict)."""
+    out = {}
+    for lang, loc in entry.get("localizations", {}).items():
+        if "stringUnit" in loc:
+            out[lang] = loc["stringUnit"]["value"]
+        elif "other" in plural_forms(loc):
+            out[lang] = plural_forms(loc)["other"]
+    return out
+
+
+def plural_forms(loc):
+    """{"one": ..., "other": ...} of a localization with plural variations
+    (Xcode's catalog shape: variations.plural.<category>.stringUnit.value)."""
+    return {cat: v["stringUnit"]["value"]
+            for cat, v in loc.get("variations", {}).get("plural", {}).items()
+            if "stringUnit" in v}
+
+
+PLURAL_CATEGORIES = ["zero", "one", "two", "few", "many", "other"]
+
+
+def stringsdict_entry(key, forms):
+    """One key's stringsdict dict: the whole sentence varies by the first
+    number in the key (the plural's argument)."""
+    nums = [m for m in SPEC.findall(key.replace("%%", "")) if m[-1] in "dDiuUxXoO"]
+    if not nums:
+        sys.exit(f"compile: plural key without a number: {key!r}")
+    spec = re.sub(r"^%(?:\d+\$)?", "", nums[0])
+    d = {"NSStringFormatSpecTypeKey": "NSStringPluralRuleType", "NSStringFormatValueTypeKey": spec}
+    for cat in PLURAL_CATEGORIES:
+        if cat in forms:
+            d[cat] = forms[cat]
+    return {"NSStringLocalizedFormatKey": "%#@n@", "n": d}
 
 
 def import_(lang, path):
@@ -160,19 +194,40 @@ def escape(s):
 def compile_():
     cat = load()
     live = {k: e for k, e in cat["strings"].items() if e.get("extractionState") != "stale"}
+    nplural = 0
     for lang in ["en"] + LANGS:
         d = os.path.join(OUT, f"{lang}.lproj")
         os.makedirs(d, exist_ok=True)
         lines = ["/* Generated from Resources/Localizable.xcstrings by Scripts/l10n.py compile. Do not edit. */"]
         for k, e in live.items():
-            v = k if lang == "en" else translations(e).get(lang)
+            v = translations(e).get(lang, k) if lang == "en" else translations(e).get(lang)
             if v is None:
                 continue
             lines.append(f'"{escape(k)}" = "{escape(v)}";')
         with open(os.path.join(d, "Localizable.strings"), "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
         subprocess.run(["plutil", "-lint", "-s", os.path.join(d, "Localizable.strings")], check=True)
-    print(f"compile: {len(live)} keys, {len(LANGS) + 1} languages -> {os.path.relpath(OUT, ROOT)}")
+        # Plural variations: Foundation reads Localizable.stringsdict before
+        # Localizable.strings for the same key.
+        plurals = {}
+        for k, e in live.items():
+            forms = plural_forms(e.get("localizations", {}).get(lang, {}))
+            if forms:
+                if "other" not in forms:
+                    sys.exit(f"compile: {lang} plural of {k!r} has no 'other' form")
+                for v in forms.values():
+                    if specifiers(v) != specifiers(k):
+                        sys.exit(f"compile: {lang} plural of {k!r}: specifier mismatch in {v!r}")
+                plurals[k] = stringsdict_entry(k, {c: positional(k, v) for c, v in forms.items()})
+        sd = os.path.join(d, "Localizable.stringsdict")
+        if plurals:
+            with open(sd, "wb") as f:
+                plistlib.dump(plurals, f, sort_keys=True)
+            subprocess.run(["plutil", "-lint", "-s", sd], check=True)
+            nplural = len(plurals)
+        elif os.path.exists(sd):
+            os.remove(sd)
+    print(f"compile: {len(live)} keys ({nplural} with plural forms), {len(LANGS) + 1} languages -> {os.path.relpath(OUT, ROOT)}")
 
 
 def missing(langs):

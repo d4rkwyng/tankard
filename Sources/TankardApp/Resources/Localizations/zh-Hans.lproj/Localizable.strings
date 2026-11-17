@@ -34,9 +34,6 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译";
 "%@ has nothing left to upgrade." = "%@ 已无可升级内容。";
-"%@ installs in the last 30 days" = "过去 30 天安装 %@ 次";
-"%@ installs in the last 365 days" = "过去 365 天安装 %@ 次";
-"%@ installs in the last 90 days" = "过去 90 天安装 %@ 次";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ 有可用更新，但 brew 不会升级已固定的软件包。“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
 "%@ is pinned" = "%@ 已固定";
@@ -92,6 +89,9 @@
 "%lld installed" = "%lld 个已安装";
 "%lld installed from it" = "%lld 个由其安装";
 "%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们；只要它们仍已安装，brew 就拒绝 untap。";
+"%lld installs in the last 30 days" = "过去 30 天安装 %lld 次";
+"%lld installs in the last 365 days" = "过去 365 天安装 %lld 次";
+"%lld installs in the last 90 days" = "过去 90 天安装 %lld 次";
 "%lld items" = "%lld 项";
 "%lld known vulnerabilities" = "%lld 个已知漏洞";
 "%lld known vulnerabilities (brew vulns): %@" = "%lld 个已知漏洞（brew vulns）：%@";

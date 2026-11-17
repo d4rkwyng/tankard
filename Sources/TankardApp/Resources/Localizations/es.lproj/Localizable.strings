@@ -34,9 +34,6 @@
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ no tiene bottle para este Mac, así que brew lo compila";
 "%@ has nothing left to upgrade." = "%@ no tiene nada más que actualizar.";
-"%@ installs in the last 30 days" = "%@ instalaciones en los últimos 30 días";
-"%@ installs in the last 365 days" = "%@ instalaciones en los últimos 365 días";
-"%@ installs in the last 90 days" = "%@ instalaciones en los últimos 90 días";
 "%@ is available, but brew won't upgrade a pinned package. Upgrade all leaves it out. Unpin to upgrade it." = "%@ está disponible, pero brew no actualiza un paquete fijado. Actualizar todo lo omite. Desfíjalo para actualizarlo.";
 "%@ is installed" = "%@ está instalado";
 "%@ is pinned" = "%@ está fijado";
@@ -92,6 +89,9 @@
 "%lld installed" = "%lld instalados";
 "%lld installed from it" = "%lld instalados desde él";
 "%lld installed packages come from this tap (%@). Uninstall them first; brew refuses to untap while they're installed." = "%lld paquetes instalados provienen de este tap (%@). Desinstálalos primero; brew se niega a quitar el tap mientras estén instalados.";
+"%lld installs in the last 30 days" = "%lld instalaciones en los últimos 30 días";
+"%lld installs in the last 365 days" = "%lld instalaciones en los últimos 365 días";
+"%lld installs in the last 90 days" = "%lld instalaciones en los últimos 90 días";
 "%lld items" = "%lld elementos";
 "%lld known vulnerabilities" = "%lld vulnerabilidades conocidas";
 "%lld known vulnerabilities (brew vulns): %@" = "%lld vulnerabilidades conocidas (brew vulns): %@";

@@ -44,8 +44,53 @@ struct InstallAnalyticsTests {
 
     @Test func badShapeThrows() {
         #expect(throws: (any Error).self) { try InstallAnalytics.decode([(.formula, .days30, Data("[]".utf8))]) }
-        #expect(throws: (any Error).self) {
-            try InstallAnalytics.decode([(.formula, .days30, doc("formula", [("xz", #""lots""#)]))])
+        #expect(throws: (any Error).self) { try InstallAnalytics.decode([(.formula, .days30, Data(#"{"end_date":"x"}"#.utf8))]) }
+    }
+
+    /// One malformed row is skipped; every other count stays.
+    @Test func aMalformedItemSkipsOnlyThatItem() throws {
+        let bad = Data(#"{"end_date":"2026-11-17","items":[{"formula":"xz","count":"lots"},{"formula":"hello","count":"17,697"},{"count":"5"},"junk",{"formula":"git","count":null},{"formula":"wget","count":"1,234"}]}"#.utf8)
+        let a = try InstallAnalytics.decode([(.formula, .days30, bad), (.formula, .days90, doc("formula", [("xz", #""1,001""#)]))])
+        #expect(a["formula:homebrew/core/hello"]?.days30 == 17_697)
+        #expect(a["formula:homebrew/core/wget"]?.days30 == 1234)
+        #expect(a["formula:homebrew/core/xz"] == InstallCounts(days30: 0, days90: 1001, days365: 0))
+        #expect(a["formula:homebrew/core/git"] == nil)
+        #expect(a.endDate == "2026-11-17")
+    }
+
+    /// The app's compiled catalog (Scripts/l10n.py compile), one language.
+    static func lproj(_ lang: String) throws -> Bundle {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let path = root.appendingPathComponent("Sources/TankardApp/Resources/Localizations/\(lang).lproj").path
+        return try #require(Bundle(path: path))
+    }
+
+    /// "1 install", not "1 installs": plural forms in every language.
+    @Test func sentencesUseThePluralForms() throws {
+        let en = try Self.lproj("en"), us = Locale(identifier: "en_US")
+        #expect(InstallCounts.sentence(1, .days30, locale: us, bundle: en) == "1 install in the last 30 days")
+        #expect(InstallCounts.sentence(0, .days90, locale: us, bundle: en) == "0 installs in the last 90 days")
+        #expect(InstallCounts.sentence(12_345, .days365, locale: us, bundle: en) == "12,345 installs in the last 365 days")
+        let de = try Self.lproj("de"), deDE = Locale(identifier: "de_DE")
+        #expect(InstallCounts.sentence(1, .days30, locale: deDE, bundle: de) == "1 Installation in 30 Tagen")
+        #expect(InstallCounts.sentence(12_345, .days30, locale: deDE, bundle: de) == "12.345 Installationen in 30 Tagen")
+        let fr = try Self.lproj("fr"), frFR = Locale(identifier: "fr_FR")
+        #expect(InstallCounts.sentence(1, .days30, locale: frFR, bundle: fr) == "1 installation ces 30 derniers jours")
+        #expect(InstallCounts.sentence(2, .days30, locale: frFR, bundle: fr) == "2 installations ces 30 derniers jours")
+        #expect(InstallCounts.sentence(1, .days30, locale: Locale(identifier: "es_ES"), bundle: try Self.lproj("es")) == "1 instalación en los últimos 30 días")
+        #expect(InstallCounts.sentence(1, .days30, locale: Locale(identifier: "it_IT"), bundle: try Self.lproj("it")) == "1 installazione negli ultimi 30 giorni")
+        #expect(InstallCounts.sentence(1, .days30, locale: Locale(identifier: "pt_BR"), bundle: try Self.lproj("pt-BR")) == "1 instalação nos últimos 30 dias")
+        #expect(InstallCounts.sentence(1, .days30, locale: Locale(identifier: "ja_JP"), bundle: try Self.lproj("ja")) == "過去30日間に1回インストール")
+        #expect(InstallCounts.sentence(1_234, .days30, locale: Locale(identifier: "ko_KR"), bundle: try Self.lproj("ko")) == "최근 30일간 1,234회 설치")
+        #expect(InstallCounts.sentence(5, .days90, locale: Locale(identifier: "zh_Hans"), bundle: try Self.lproj("zh-Hans")) == "过去 90 天安装 5 次")
+        // Every period, every language: a translation (no English key left).
+        for lang in ["de", "fr", "es", "ja", "zh-Hans", "pt-BR", "it", "ko"] {
+            let b = try Self.lproj(lang)
+            for p in [AnalyticsPeriod.days30, .days90, .days365] {
+                let one = InstallCounts.sentence(1, p, locale: Locale(identifier: lang), bundle: b)
+                #expect(!one.contains("installs in the last"), "\(lang) \(p): \(one)")
+                #expect(one.contains("1"), "\(lang) \(p): \(one)")
+            }
         }
     }
 
