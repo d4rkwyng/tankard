@@ -12,7 +12,8 @@ import TankardCore
 ///                                 (default: <script>.out next to the file)
 ///   TANKARD_E2E_STATE=/dir        Tankard's own files for this run: status
 ///                                 cache, insights, History, restore points,
-///                                 logs (default: <out>/state). Keep it across
+///                                 logs, the formulae.brew.sh cache (api/)
+///                                 (default: <out>/state). Keep it across
 ///                                 the phases of one scenario; empty it for a
 ///                                 first launch.
 ///   TANKARD_SCRIPT_STAY=1         keep the app open after the script
@@ -69,6 +70,8 @@ struct ScriptLaunch {
         d.autoUpdateLogURL = s.appendingPathComponent("auto-update-log.json")
         d.historyURL = s.appendingPathComponent("history.json")
         d.restorePointsURL = s.appendingPathComponent("restore-points", isDirectory: true)
+        // Discover's and Adopt Apps' formulae.brew.sh cache.
+        APICache.redirect(to: s.appendingPathComponent("api", isDirectory: true))
         return d
     }
 

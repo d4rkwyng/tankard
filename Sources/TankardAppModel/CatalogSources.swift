@@ -60,8 +60,19 @@ public struct APICache: Sendable {
     }
 
     public static var defaultDirectory: URL {
-        StatusCache.defaultURL.deletingLastPathComponent().appendingPathComponent("api", isDirectory: true)
+        directoryOverride.withLock { $0 }
+            ?? StatusCache.defaultURL.deletingLastPathComponent().appendingPathComponent("api", isDirectory: true)
     }
+
+    /// 0.8: a scripted run (Scripts/e2e.sh) keeps its own copy in its state
+    /// folder, so a "first launch" really starts with no cache and never
+    /// writes the user's. Set once at launch, before Discover or Adopt Apps
+    /// make a fetcher (both use `defaultDirectory`).
+    public static func redirect(to directory: URL?) {
+        directoryOverride.withLock { $0 = directory }
+    }
+
+    private static let directoryOverride = OSAllocatedUnfairLock<URL?>(initialState: nil)
 
     /// "analytics/install/30d.json" is kept as "analytics-install-30d.json".
     func file(_ name: String) -> String { name.replacingOccurrences(of: "/", with: "-") }

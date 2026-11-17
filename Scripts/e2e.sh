@@ -41,8 +41,9 @@
 # Isolation: settings go to a defaults suite of this run's own,
 # `net.mindtricks.tankard.e2e.<pid>` (emptied at the start of each scenario:
 # a first launch; deleted at the end), Tankard's files to
-# OUT/<scenario>/state. Your own settings, cache, History and restore
-# points are not read or written.
+# OUT/<scenario>/state: the status and insights caches, Discover's
+# formulae.brew.sh cache (state/api), History, restore points, logs. Your
+# own settings, caches, History and restore points are not read or written.
 #
 # One run at a time on this Mac: the scenarios share the real brew (and its
 # packages), so a run holds the lock /tmp/net.mindtricks.tankard.e2e.lock
@@ -54,8 +55,11 @@
 # adds/removes its own tap (tankard-e2e/probe). Safety checks first:
 #   - a scenario is skipped if its package is already installed (it would
 #     uninstall yours) or its tap already exists;
-#   - uninstall runs brew's autoremove (Homebrew's default), so it refuses
-#     to start when `brew autoremove --dry-run` already lists something;
+#   - Tankard's uninstall sets HOMEBREW_NO_AUTOREMOVE=1 (only what the
+#     sheet lists goes), but a scenario still refuses to start when
+#     `brew autoremove --dry-run` already lists something: the orphans
+#     cross-check needs a clean baseline, and a stray autoremove (an older
+#     build, a manual brew uninstall meanwhile) would take your packages;
 #   - installs run with "Keep the previous version" on, so brew's periodic
 #     `brew cleanup` (which an install can trigger) doesn't run.
 # Never runs brew upgrade/cleanup/autoremove on anything else. The welcome
@@ -78,7 +82,7 @@ while [ $# -gt 0 ]; do
         --wait) WAIT_LOCK=1 ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,62p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,66p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
