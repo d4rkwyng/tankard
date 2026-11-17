@@ -333,7 +333,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
-        MainActor.assumeIsolated { Self.onLaunch?() }
+        MainActor.assumeIsolated {
+            Self.onLaunch?()
+            MenuDump.scheduleIfRequested()
+        }
     }
 
     /// With the menu-bar icon on, closing the window keeps Tankard running
