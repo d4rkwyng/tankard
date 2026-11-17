@@ -476,6 +476,8 @@ struct AppearanceTests {
             let ratio = TankardPalette.contrast(fg, bg)
             #expect(ratio >= 3, "\(name): \(ratio)")
         }
+        // Light's green carries white text with margin, not just at 4.5.
+        #expect(TankardPalette.contrast(StandardActionGreen.onLight, StandardActionGreen.light) >= 4.8)
         #expect(TankardPalette.all.map(\.name).contains("dracula"))
         #expect(TankardPalette.palette(for: .dracula)?.name == "dracula")
         #expect(TankardPalette.palette(for: .tankard)?.name == TankardPalette.active.name)

@@ -380,7 +380,8 @@ public enum StandardActionGreen {
     public static let darkPill: UInt32 = 0x0a2410
     public static let darkPillText: UInt32 = 0xf2fff5
     public static let darkBar: UInt32 = 0x2c2c2c
-    public static let light: UInt32 = 0x1f883d
+    /// Darker than GitHub's #1f883d (4.5:1 with white, no margin): 5.1:1.
+    public static let light: UInt32 = 0x1a7f37
     public static let onLight: UInt32 = 0xffffff
     public static let lightPill: UInt32 = 0x0f4d22
     public static let lightPillText: UInt32 = 0xffffff
