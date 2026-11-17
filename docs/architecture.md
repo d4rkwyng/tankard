@@ -27,8 +27,12 @@ open dist/Tankard.app
 ```
 
 Command Line Tools only: SwiftPM builds the `TankardApp` executable, and the script wraps it
-in an `.app` (Info.plist, resources, `codesign -s -`). There is no Xcode project, asset
-catalog or string catalog. The app icon is a plain `Resources/AppIcon.icns`
+in an `.app` (Info.plist, resources, `codesign -s -`). There is no Xcode project or asset
+catalog. Strings live in a string catalog, `Resources/Localizable.xcstrings`; the Command
+Line Tools can't compile one, so `Scripts/l10n.py compile` writes
+`<lang>.lproj/Localizable.strings` (and `.stringsdict`) into
+`Sources/TankardApp/Resources/Localizations/`, and `bundle-app.sh` copies them into the
+app. The app icon is a plain `Resources/AppIcon.icns`
 (`CFBundleIconFile`), committed; `Scripts/make-icon.sh` rebuilds it from Tankard's
 pixel-art mark (`Sources/TankardApp/Resources/tankard-mark.png`; nearest-neighbour
 scaling only, on a drawn plate) with ffmpeg, `swiftc` and `iconutil`. In Intelbrew mode
@@ -36,7 +40,7 @@ the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.
 the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
 else the default in `bundle-app.sh`, kept in step with `tankard --version`. `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
-"Version <x.y.z>" (e.g. "Version 0.6.1") with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
+"Version <x.y.z>" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
 
 **Universal builds.** `--universal` first tries one `swift build --arch x86_64 --arch
@@ -118,7 +122,7 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   InsightColors    the vulnerability warning's colours per theme, AA-checked (0.4)
   Demo             fake runners and the bundled fixture copies
   Pins             pin/unpin commands, the one-command queue runner pin and services
-                   share, Upgrade all's pinned note, dependency links (0.4)
+                   share, Upgrade All's pinned note, dependency links (0.4)
   ServicesStore    the Services tab: list and info reads, actions through the queue,
                    root services and brew's sudo advice (0.4)
   HomebrewManagement  the Homebrew menu: typed confirmation, the revert plan (profile
@@ -397,7 +401,7 @@ is brew's rule. `upgradeHasBottle` is whether the current version has a pourable
 4. Finally, the bottle's Cellar must be `:any`, `:any_skip_relocation`, or this
    install's own Cellar. Otherwise brew compiles.
 
-**Replace with bottle** is offered for a formula built from source (`poured_from_bottle:
+**Replace with Bottle** is offered for a formula built from source (`poured_from_bottle:
 false`) whose installed version is the current one, with no upgrade pending, not HEAD, and
 a bottle this Mac can pour. brew fails cleanly if there turns out to be no bottle.
 
@@ -478,7 +482,10 @@ missed during sleep runs at the next wake-up; one that meets a running upgrade o
 retries in 15 minutes. The first check after turning notifications on only records what
 is outdated; after that, only a new package or a newer version of one already waiting
 posts. The baseline is kept in UserDefaults (`notifiedUpgrades`) and not changed by a
-failed check. Under `swift run` (no app bundle) notifications are skipped.
+failed check. Under `swift run` (no app bundle) notifications are skipped. Since 0.8.2 a
+Refresh or Check Now the user asked for (`UserCheckFeedback`) also posts, when the setting
+is on and the window isn't in front; otherwise the status bar shows "N new upgrades" or
+"No new upgrades" for a few seconds. Upgrades reported this way aren't announced again.
 
 **Automatic updates (0.5).** AC power comes from IOKit's power source (a battery or UPS
 waits); idle time from IOKit's `HIDIdleTime`. Never in the first 5 minutes after launch.
@@ -609,8 +616,10 @@ delete the lines that assign `HOMEBREW_NO_INSTALL_FROM_API`, `HOMEBREW_CORE_GIT_
 `HOMEBREW_BREW_GIT_REMOTE` (BSD sed); unset those variables; `git -C <repository> remote
 set-url origin https://github.com/Homebrew/brew`; `brew update`. brew.env files are
 reported, not edited. The optional `brew untap homebrew/core` is mentioned, not run.
-**Uninstall Homebrew** runs, verbatim from the Homebrew/install README,
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"`.
+**Uninstall Homebrew** runs the official uninstaller from the Homebrew/install README,
+pinned to the detected prefix with uninstall.sh's own `--path` option:
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)" uninstall.sh --path='<prefix>'`.
+Without it, a Mac with both /usr/local and /opt/homebrew would lose /opt/homebrew.
 Demo mode opens nothing.
 
 **Welcome screen (no brew).** Shown when no brew is found, or `brew --version` fails (with
@@ -622,15 +631,16 @@ Bringing the window to the front also looks for brew again.
 **Themes.** Saved in UserDefaults (`appearance`), applied app-wide including sheets,
 Settings and the menu-bar menu. Tankard: #1f0d3d to #4a2580, amber #f2a93b. The version
 columns are held at 7:1 (installed) and 5.5:1 (unchanged available) in every theme. The
-primary action green: Dark #30d158 with dark text, Light #1a7f37 with white text (5.1:1),
-Tankard #3fb950, Dracula #50fa7b; every text pair is checked at WCAG AA (4.5:1) and the
+primary action colour: Dark #30d158 with dark text, Light #1a7f37 with white text (5.1:1),
+Tankard its amber #f2a93b, Dracula #50fa7b; every text pair is checked at WCAG AA (4.5:1) and the
 green against the status bar at 3:1.
 
 **Open at login.** `SMAppService.mainApp`. The login item is tied to the code signature,
 so it is reliable with a Developer ID build; an ad-hoc build may be refused or forgotten.
 Not tested end to end.
 
-**Menu-bar icon.** `mug` / `mug.fill`, a template image; at most 8 upgrades listed, "99+"
+**Menu-bar icon.** A 16×16 pixel-art tankard drawn as a template image (`MenuBarIcon`),
+with a foam head only when upgrades are waiting; at most 8 upgrades listed, "99+"
 above 99. It reads the same store, cache and refresh as the window.
 
 ## Demo mode, screenshots and the layout check
@@ -657,7 +667,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_UPDATE_FEED=<file.json>` | Any mode: Check for Tankard Updates… reads GitHub's answer from this file (a missing file acts as offline). `TANKARD_UPDATE_CHECK=1` checks at launch; `TANKARD_UPDATE_BREW=1` (demo only) acts as if the d4rkwyng/tap cask installed the app. |
 | `TANKARD_MENU_DUMP=<file.txt>` | Write the main menu as a text outline (items, shortcuts, "(disabled)", `---` separators) after `TANKARD_SNAPSHOT_DELAY` seconds; `TANKARD_SNAPSHOT_QUIT=1` quits after. Menus can't be captured by the snapshot hook; this is how they are reviewed. 0.8.2: then each pop-up button in the open windows (the More filter), its items with "(disabled)" and "✓" on the selected one. |
 | `TANKARD_FILTER=upgrades\|source\|newer\|bottle` | The Installed filter on launch. |
-| `TANKARD_DEMO_CLEANUP=1` | Demo only: open Cleanup; `TANKARD_DEMO_CLEANUP_RUN=1` then clicks Clean up. |
+| `TANKARD_DEMO_CLEANUP=1` | Demo only: open Cleanup; `TANKARD_DEMO_CLEANUP_RUN=1` then clicks Clean Up. |
 | `TANKARD_DEMO_REPLACE=1` | Demo only: replace the selection with a bottle. |
 | `TANKARD_DISCOVER_ALL=1` | Discover's bottle chip off. |
 | `TANKARD_DEMO_INSTALL_CONFIRM=1` | Demo only: open "Install (compiles)" for the Discover selection. |
@@ -798,7 +808,7 @@ and the arm64 Mac (`*-deps-info.json`, trimmed to the keys read; `*-deps-install
 leaves` / `brew leaves -r` on both; Depends on contains `brew deps --installed` (equal on the
 VM, 19 supersets on the arm64 Mac); the tree equals `brew deps --tree`; services decoding
 (every status symbol, the empty outputs). With fake runners and demo mode: pin and unpin
-through the queue, failures, pinned packages left out of Upgrade all and the menu bar,
+through the queue, failures, pinned packages left out of Upgrade All and the menu bar,
 Requested only, links, services through the queue, root services never reaching brew,
 brew's sudo message, the typed confirmations, the revert plan, and its `cp`/`sed` lines run
 for real on a temp file. The intel demo also lays the fresh receipts over its fixture, so
