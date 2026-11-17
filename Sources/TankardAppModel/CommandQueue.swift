@@ -47,9 +47,14 @@ public final class CommandQueue: Sendable {
     /// 0.6: sees every command's events (History), before its handler.
     public typealias Observer = @Sendable (UUID, QueuedCommand, CommandEvent) -> Void
 
+    /// 0.7: checked right before a command would start; a non-nil result
+    /// is why it must not run (it ends as `.failed` with that message).
+    public typealias Precondition = @Sendable () -> String?
+
     struct Job: Sendable {
         var id: UUID
         var command: QueuedCommand
+        var precondition: Precondition?
         var handler: Handler
     }
 
@@ -84,7 +89,8 @@ public final class CommandQueue: Sendable {
     /// Adds a command at the back of the queue and returns its id. Events
     /// for it arrive on `handler`, from a background thread.
     @discardableResult
-    public func enqueue(_ command: QueuedCommand, id: UUID = UUID(), handler: @escaping Handler) -> UUID {
+    public func enqueue(_ command: QueuedCommand, id: UUID = UUID(), precondition: Precondition? = nil,
+                        handler: @escaping Handler) -> UUID {
         var handler = handler
         if let observer {
             let inner = handler
@@ -97,7 +103,7 @@ public final class CommandQueue: Sendable {
         // the order of enqueue calls even from different threads.
         state.withLockUnchecked { s in
             s.pending.append(id)
-            continuation.yield(Job(id: id, command: command, handler: handler))
+            continuation.yield(Job(id: id, command: command, precondition: precondition, handler: handler))
         }
         return id
     }
@@ -140,11 +146,19 @@ public final class CommandQueue: Sendable {
     private static func execute(_ job: Job, runner: StreamingCommandRunning, state: OSAllocatedUnfairLock<State>) async {
         let handler = job.handler
         let command = job.command
+        // Checked now, when everything before it in the queue has finished
+        // (outside the lock: it may touch the disk).
+        let refusal = job.precondition?()
         // Decide skip-or-start under one lock, so a cancel can't fall
         // between the check and the task being registered as running.
+        var refused = false
         let task: Task<Int32, Error>? = state.withLockUnchecked { s in
             s.pending.removeAll { $0 == job.id }
             if s.cancelled.remove(job.id) != nil { return nil }
+            if refusal != nil {
+                refused = true
+                return nil
+            }
             let t = Task<Int32, Error> {
                 // Sent from inside the task so it always precedes any output.
                 handler(.started)
@@ -156,7 +170,11 @@ public final class CommandQueue: Sendable {
             return t
         }
         guard let task else {
-            handler(.cancelled)
+            if refused, let refusal {
+                handler(.failed(refusal))
+            } else {
+                handler(.cancelled)
+            }
             return
         }
         let result = await task.result

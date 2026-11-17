@@ -230,6 +230,8 @@ private struct UpgradedRow: View {
 struct RestoreConfirmView: View {
     @Bindable var store: AppStore
     var plan: RestorePlan
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -237,6 +239,12 @@ struct RestoreConfirmView: View {
                 .font(.system(size: 16, weight: .bold))
             Text("One at a time through Tankard's queue. Each is recorded in History.")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
+            if let notice = plan.notice {
+                // The plan changed since it was shown (an old keg was cleaned up).
+                Text(notice)
+                    .font(.system(size: 11.5, weight: .medium)).foregroundStyle(theme.warning(scheme).text)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(plan.steps) { s in CommandBox(command: s.display) }
@@ -254,7 +262,7 @@ struct RestoreConfirmView: View {
                 Button("Restore") { store.confirmRestore() }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(store.isBusy)
+                    .disabled(store.isBusy || plan.steps.isEmpty)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

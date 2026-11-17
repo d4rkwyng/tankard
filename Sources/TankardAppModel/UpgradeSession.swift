@@ -121,6 +121,7 @@ public final class UpgradeSession: Identifiable {
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
          chainKey: ((Package) -> String?)? = nil,
+         precondition: ((Package) -> (@Sendable () -> String?)?)? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
         self.intelbrewMode = intelbrewMode
@@ -154,7 +155,7 @@ public final class UpgradeSession: Identifiable {
         for item in items {
             let itemID = item.id
             let rest = chainRest[itemID] ?? []
-            queue.enqueue(item.command, id: itemID) { [queue] event in
+            queue.enqueue(item.command, id: itemID, precondition: precondition?(item.package)) { [queue] event in
                 if !rest.isEmpty {
                     switch event {
                     case .finished(let code) where code != 0: queue.cancel(rest)

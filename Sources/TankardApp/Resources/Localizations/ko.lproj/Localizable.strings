@@ -461,6 +461,7 @@
 "No dependencies" = "종속 항목 없음";
 "No fix listed" = "나열된 수정 없음";
 "No known vulnerabilities (brew vulns)." = "알려진 취약점 없음(brew vulns).";
+"No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "더 이상 Cellar에 없음: %@. 이 목록을 만든 뒤 brew cleanup이 제거했기 때문에 되돌릴 수 없어 복원에서 제외했습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
 "No matches" = "일치 항목 없음";
 "No package matches “%@”." = "“%@”와(과) 일치하는 패키지가 없습니다.";
 "No packages in this group." = "이 그룹에 패키지가 없습니다.";
@@ -822,6 +823,7 @@
 "Waiting for brew…" = "brew를 기다리는 중…";
 "What brew printed" = "brew가 출력한 내용";
 "What installing the missing items would do, before anything runs" = "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다";
+"What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "이 목록을 만든 뒤 설치된 항목이 바뀌었습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew가 formulae와 cask를 가져오는 곳입니다. tap을 클릭하면 그곳에서 설치한 항목을 볼 수 있습니다.";
 "Would free about %@" = "약 %@ 확보 가능";
 "Would remove %lld formulae" = "formulae %lld개를 제거합니다";

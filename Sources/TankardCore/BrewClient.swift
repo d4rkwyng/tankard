@@ -89,6 +89,18 @@ public struct BrewClient: Sendable {
         IntelbrewDetector.detect(coreOrigin: await coreOrigin(), sources: sources)
     }
 
+    /// HOMEBREW_CELLAR, by brew.sh's own rule: the repository's Cellar when
+    /// one exists there, otherwise the prefix's.
+    public var cellar: String {
+        let inRepository = installation.repository + "/Cellar"
+        return fileExists(inRepository) ? inRepository : installation.prefix + "/Cellar"
+    }
+
+    /// The keg directory of `name` at `version` (`<Cellar>/xz/5.8.2`).
+    public func kegPath(_ name: String, _ version: String) -> String {
+        "\(cellar)/\(name)/\(version)"
+    }
+
     /// The environment brew is run with for a given detection.
     public func environment(for detection: IntelbrewDetection, readOnly: Bool = true) -> [String: String] {
         BrewEnvironment.build(installation: installation, sources: sources, intelbrew: detection, readOnly: readOnly)

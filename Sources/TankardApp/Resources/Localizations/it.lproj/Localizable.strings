@@ -461,6 +461,7 @@
 "No dependencies" = "Nessuna dipendenza";
 "No fix listed" = "Nessuna correzione indicata";
 "No known vulnerabilities (brew vulns)." = "Nessuna vulnerabilità nota (brew vulns).";
+"No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "Non più nel Cellar: %@. brew cleanup l’ha rimossa dopo la creazione di questo elenco, quindi non può essere ripristinata ed è stata tolta dal ripristino. Non è stato ancora eseguito nulla. Controlla i comandi e fai di nuovo clic su Ripristina.";
 "No matches" = "Nessuna corrispondenza";
 "No package matches “%@”." = "Nessun pacchetto corrisponde a “%@”.";
 "No packages in this group." = "Nessun pacchetto in questo gruppo.";
@@ -822,6 +823,7 @@
 "Waiting for brew…" = "In attesa di brew…";
 "What brew printed" = "Ciò che brew ha stampato";
 "What installing the missing items would do, before anything runs" = "Cosa farebbe l'installazione degli elementi mancanti, prima che venga eseguito qualcosa";
+"What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "Ciò che è installato è cambiato dalla creazione di questo elenco. Non è stato ancora eseguito nulla. Controlla i comandi e fai di nuovo clic su Ripristina.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Da dove Homebrew prende formulae e cask. Clicca su un tap per vedere cosa hai installato da esso.";
 "Would free about %@" = "Libererebbe circa %@";
 "Would remove %lld formulae" = "Rimuoverebbe %lld formulae";

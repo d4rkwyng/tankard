@@ -622,10 +622,12 @@ public final class AppStore {
 
     /// 0.7: a sheet run whose commands come from the caller (a restore).
     func startCustomSession(_ action: SessionAction, packages rows: [Package], intelbrewMode: Bool,
-                            makeCommand: (Package) -> QueuedCommand, chainKey: ((Package) -> String?)?) {
+                            makeCommand: (Package) -> QueuedCommand, chainKey: ((Package) -> String?)?,
+                            precondition: ((Package) -> (@Sendable () -> String?)?)? = nil) {
         guard !isUpgrading, !autoUpdate.isRunning, !rows.isEmpty else { return }
         upgrade = UpgradeSession(packages: rows, intelbrewMode: intelbrewMode, action: action, queue: queue,
                                  makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
+                                 precondition: precondition,
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
         showUpgradeSheet = true
     }

@@ -124,7 +124,10 @@ public enum Demo {
                                 // show it, never this Mac's).
                                 sources: EnvironmentSources(process: variant == .intelbrew ? ["HOME": "/Users/demo", "USER": "demo"]
                                                                                           : ["HOME": "/Users/you", "USER": "you"]),
-                                fileExists: { path in variant == .intelbrew && path.hasSuffix("homebrew-core/.git") })
+                                // 0.7: the demo's kegs (a restore checks the old one is still there).
+                                fileExists: { path in
+                                    (variant == .intelbrew && path.hasSuffix("homebrew-core/.git")) || path.contains("/Cellar/")
+                                })
         var deps = AppStore.Dependencies(
             makeClient: { client },
             streamRunner: ScriptRunner(variant: variant, state: state, info: fixtureInfo(variant), pace: pace),

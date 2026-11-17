@@ -24025,6 +24025,58 @@
         }
       }
     },
+    "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht mehr im Cellar: %@. brew cleanup hat die Version entfernt, nachdem diese Liste erstellt wurde. Sie kann daher nicht zurückgesetzt werden und wurde aus der Wiederherstellung genommen. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "N’est plus dans le Cellar : %@. brew cleanup l’a supprimée après la création de cette liste : elle ne peut donc pas être restaurée et a été retirée de la restauration. Rien n’a encore été exécuté. Vérifiez les commandes et cliquez à nouveau sur Restaurer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya no está en el Cellar: %@. brew cleanup la eliminó después de crear esta lista, así que no se puede revertir y se quitó de la restauración. Todavía no se ha ejecutado nada. Revisa los comandos y vuelve a hacer clic en Restaurar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cellarにもう存在しません: %@。このリストの作成後にbrew cleanupが削除したため、ロールバックできず、復元から外されました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não está mais no Cellar: %@. O brew cleanup a removeu depois que esta lista foi criada, então ela não pode ser revertida e foi retirada da restauração. Nada foi executado ainda. Confira os comandos e clique em Restaurar novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non più nel Cellar: %@. brew cleanup l’ha rimossa dopo la creazione di questo elenco, quindi non può essere ripristinata ed è stata tolta dal ripristino. Non è stato ancora eseguito nulla. Controlla i comandi e fai di nuovo clic su Ripristina."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 이상 Cellar에 없음: %@. 이 목록을 만든 뒤 brew cleanup이 제거했기 때문에 되돌릴 수 없어 복원에서 제외했습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요."
+          }
+        }
+      }
+    },
     "No matches": {
       "localizations": {
         "de": {
@@ -42793,6 +42845,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "실행하기 전에, 누락된 항목을 설치하면 어떻게 되는지 보여 줍니다"
+          }
+        }
+      }
+    },
+    "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was installiert ist, hat sich seit dem Erstellen dieser Liste geändert. Es wurde noch nichts ausgeführt. Prüfe die Befehle und klicke erneut auf „Wiederherstellen“."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qui est installé a changé depuis la création de cette liste. Rien n’a encore été exécuté. Vérifiez les commandes et cliquez à nouveau sur Restaurer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo instalado cambió desde que se creó esta lista. Todavía no se ha ejecutado nada. Revisa los comandos y vuelve a hacer clic en Restaurar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このリストの作成後に、インストール済みの内容が変わりました。まだ何も実行されていません。コマンドを確認して、もう一度「復元」をクリックしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自此列表生成以来，已安装的内容发生了变化。尚未运行任何命令。请检查命令，然后再次点按“恢复”。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que está instalado mudou desde que esta lista foi criada. Nada foi executado ainda. Confira os comandos e clique em Restaurar novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciò che è installato è cambiato dalla creazione di questo elenco. Non è stato ancora eseguito nulla. Controlla i comandi e fai di nuovo clic su Ripristina."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 목록을 만든 뒤 설치된 항목이 바뀌었습니다. 아직 아무것도 실행되지 않았습니다. 명령을 확인하고 복원을 다시 클릭하세요."
           }
         }
       }

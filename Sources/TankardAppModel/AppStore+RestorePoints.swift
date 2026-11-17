@@ -27,14 +27,27 @@ extension AppStore {
 
     /// Opens the confirmation for restoring `point`.
     public func requestRestore(_ point: RestorePoint, pinAfter: Bool) {
-        let plan = RestorePlan.make(restoreDiff(point), installed: packages, pinAfter: pinAfter)
+        let keep = restorePoints.settings.keepPreviousVersion
+        var plan = RestorePlan.make(restoreDiff(point), installed: packages, pinAfter: pinAfter, keepPrevious: keep)
+        plan.source = RestorePlan.Source(point: point, pinAfter: pinAfter, keepPrevious: keep)
         restorePoints.pendingPlan = plan
     }
 
     /// Runs the confirmed plan through the queue, as one sheet session.
     /// Each step is recorded in History by the queue's observer.
+    ///
+    /// The package list can be older than the last `brew cleanup` (run
+    /// from Terminal, or brew's own periodic one), so the plan is made again
+    /// from what is in the Cellar now. If that changed it, nothing runs:
+    /// the confirmation shows the new plan and why, to confirm again.
     public func confirmRestore() {
-        guard let plan = restorePoints.pendingPlan else { return }
+        guard let shown = restorePoints.pendingPlan else { return }
+        guard let client = try? resolvedClient() else { return }
+        let plan = shown.rechecked(installed: packages) { client.fileExists(client.kegPath($0.name, $0.version)) }
+        if plan.steps != shown.steps {
+            restorePoints.pendingPlan = plan
+            return
+        }
         restorePoints.pendingPlan = nil
         guard !plan.steps.isEmpty else { return }
         restorePoints.isShowing = false
@@ -79,6 +92,20 @@ extension AppStore {
                                }
                                return Self.restoreCommand(s, brew: brew, base: base)
                            },
-                           chainKey: { p in byID[p.id].flatMap { $0.kind == .reinstall ? nil : $0.package } })
+                           chainKey: { p in byID[p.id].flatMap { $0.kind == .reinstall ? nil : $0.package } },
+                           precondition: { p in byID[p.id].flatMap { Self.kegCheck($0, client: client) } })
+    }
+
+    /// For a rollback's uninstall: checked by the queue right before it
+    /// runs. If the old keg has gone (a cleanup after the confirmation),
+    /// the uninstall doesn't run, and neither do the rest of its steps.
+    nonisolated static func kegCheck(_ step: RestoreStep, client: BrewClient) -> (@Sendable () -> String?)? {
+        guard step.kind == .rollbackUninstall, let keg = step.keg else { return nil }
+        let path = client.kegPath(keg.name, keg.version)
+        let exists = client.fileExists
+        return {
+            exists(path) ? nil
+                : "\(keg.name) \(keg.version) is no longer in the Cellar (\(path) is gone; brew cleanup removed it). Skipped the uninstall, so \(keg.name) stays installed as it is."
+        }
     }
 }

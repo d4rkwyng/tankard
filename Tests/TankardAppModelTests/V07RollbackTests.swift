@@ -151,6 +151,11 @@ struct RestorePlanTests {
         #expect(uninstall.display == "HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula homebrew/core/xz")
         #expect(plan.manual.map(\.change.now.name) == ["jq"])
         #expect(plan.manual.map(\.block) == [.cleanedUp])
+        // The uninstall knows the keg it brings back; nothing else needs one.
+        #expect(uninstall.keg == RestoreStep.Keg(name: "xz", version: "5.8.2"))
+        #expect(plan.steps.filter { $0.keg != nil }.count == 1)
+        // brew install's periodic cleanup must not remove that keg first.
+        #expect(plan.steps.filter { $0.kind == .reinstall }.allSatisfy { $0.environment == ["HOMEBREW_NO_INSTALL_CLEANUP": "1"] })
         // Never --force, never --ignore-dependencies, never the dependents-check bypass.
         for s in plan.steps {
             #expect(!s.arguments.contains("--force") && !s.arguments.contains("--ignore-dependencies") && !s.arguments.contains("--overwrite"))
@@ -162,6 +167,50 @@ struct RestorePlanTests {
         let added = RestorePlan.make(RestoreDiff.between(RestorePoint.capture([], at: t0, reason: .manual), now),
                                      installed: now, pinAfter: true)
         #expect(added.steps.isEmpty)
+        // Only reinstalls, setting off: no variable. Setting on: always.
+        let onlyRemoved = RestorePoint.capture([at("xz", "5.8.3"), at("wget", "1.25.0")], at: t0, reason: .upgrade)
+        let reinstallOnly = RestorePlan.make(RestoreDiff.between(onlyRemoved, [at("xz", "5.8.3")]),
+                                             installed: [at("xz", "5.8.3")], pinAfter: true)
+        #expect(reinstallOnly.steps.map(\.environment) == [[:]])
+        let kept = RestorePlan.make(RestoreDiff.between(onlyRemoved, [at("xz", "5.8.3")]),
+                                    installed: [at("xz", "5.8.3")], pinAfter: true, keepPrevious: true)
+        #expect(kept.steps.map(\.environment) == [["HOMEBREW_NO_INSTALL_CLEANUP": "1"]])
+    }
+
+    @Test func recheckDropsARollbackWhoseKegWasCleanedUp() {
+        let xz = at("xz", "5.8.3", kegs: ["5.8.2", "5.8.3"])
+        let git = at("git", "2.50.0_2", kegs: ["2.50.0_1", "2.50.0_2"])
+        let point = RestorePoint.capture([at("xz", "5.8.2"), at("git", "2.50.0_1"), at("wget", "1.25.0")],
+                                         at: t0, reason: .upgrade)
+        var plan = RestorePlan.make(RestoreDiff.between(point, [xz, git]), installed: [xz, git], pinAfter: true)
+        plan.source = RestorePlan.Source(point: point, pinAfter: true, keepPrevious: false)
+        #expect(plan.steps.filter { $0.kind == .rollbackUninstall }.count == 2)
+
+        // Nothing changed on disk: the same plan, no notice.
+        let same = plan.rechecked(installed: [xz, git]) { _ in true }
+        #expect(same.steps == plan.steps)
+        #expect(same.notice == nil)
+
+        // brew cleanup removed xz 5.8.2 after the plan was shown.
+        let again = plan.rechecked(installed: [xz, git]) { $0 != RestoreStep.Keg(name: "xz", version: "5.8.2") }
+        #expect(!again.steps.contains { $0.package == "formula:homebrew/core/xz" })
+        #expect(again.steps.map(\.arguments) == [
+            ["install", "--formula", "homebrew/core/wget"],
+            ["uninstall", "--formula", "homebrew/core/git"],
+            ["link", "--formula", "homebrew/core/git"],
+            ["pin", "--formula", "homebrew/core/git"],
+        ])
+        #expect(again.manual.map(\.change.now.name) == ["xz"])
+        #expect(again.manual.map(\.block) == [.cleanedUp])
+        #expect(again.notice?.contains("xz 5.8.2") == true)
+
+        // A plan without a source (or a stale one) is still checked keg by keg.
+        var bare = plan
+        bare.source = nil
+        let checked = bare.rechecked(installed: []) { $0.name != "git" }
+        #expect(!checked.steps.contains { $0.package == "formula:homebrew/core/git" })
+        #expect(checked.steps.contains { $0.package == "formula:homebrew/core/xz" })
+        #expect(checked.notice?.contains("git 2.50.0_1") == true)
     }
 
     @Test func queuedCommandCarriesNoAutoUpdate() {
@@ -259,6 +308,101 @@ struct RestoreStoreTests {
         #expect(store.history.entries.contains { $0.command == "HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula homebrew/core/bbb" })
     }
 
+    /// A store over the demo's Intel fixture whose Cellar is `kegs`, with
+    /// two leaf formulae upgraded and their old kegs kept, and a restore
+    /// point from before.
+    func rollbackStore(_ kegs: KegSet, runner: FakeStreamRunner) async throws -> (AppStore, RestorePoint, [Package]) {
+        let log = CallLog()
+        let client = BrewClient(installation: intelInstall, platform: intelPlatform, runner: FakeInfoRunner(log: log, info: demoIntelInfo()),
+                                sources: EnvironmentSources(process: ["HOME": "/Users/test", "USER": "test",
+                                                                      "HOMEBREW_CORE_GIT_REMOTE": Intelbrew.coreRemote]),
+                                fileExists: { kegs.contains($0) })
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil))
+        await store.start()
+        var report = try #require(store.report)
+        let pkgs = report.packages
+        let leaves = Array(pkgs.filter { p in
+            p.kind == .formula && !p.pinned && p.kegOnly != true && !p.installedVersion.hasPrefix("HEAD")
+                && Dependents.of(p, among: pkgs).isEmpty
+        }.prefix(2))
+        try #require(leaves.count == 2)
+        for l in leaves {
+            let i = try #require(report.packages.firstIndex { $0.id == l.id })
+            report.packages[i].installedVersions = [Demo.olderVersion(l.installedVersion), l.installedVersion]
+            kegs.insert("/usr/local/Cellar/\(l.name)/\(Demo.olderVersion(l.installedVersion))")
+            kegs.insert("/usr/local/Cellar/\(l.name)/\(l.installedVersion)")
+        }
+        store.report = report
+        var point = RestorePoint.capture(pkgs, at: t0, reason: .upgrade)
+        for l in leaves {
+            let i = try #require(point.packages.firstIndex { $0.id == l.id })
+            point.packages[i].version = Demo.olderVersion(l.installedVersion)
+        }
+        return (store, point, leaves)
+    }
+
+    @Test func confirmRechecksTheCellarAndNeverUninstallsTheLastKeg() async throws {
+        let kegs = KegSet()
+        let log = CallLog()
+        let runner = FakeStreamRunner(log: log, behaviour: { _, _ in 0 })
+        let (store, point, leaves) = try await rollbackStore(kegs, runner: runner)
+        let (gone, kept) = (leaves[0], leaves[1])
+        store.requestRestore(point, pinAfter: false)
+        let shown = try #require(store.restorePoints.pendingPlan)
+        #expect(shown.steps.filter { $0.kind == .rollbackUninstall }.count == 2)
+
+        // `brew cleanup` in Terminal, after the plan was shown.
+        kegs.remove("/usr/local/Cellar/\(gone.name)/\(Demo.olderVersion(gone.installedVersion))")
+        store.confirmRestore()
+        // Nothing ran; the confirmation now shows the smaller plan and why.
+        #expect(store.upgrade == nil)
+        let again = try #require(store.restorePoints.pendingPlan)
+        #expect(again.notice?.contains(gone.name) == true)
+        #expect(!again.steps.contains { $0.package == gone.id })
+        #expect(again.steps.filter { $0.package == kept.id }.map(\.kind) == [.rollbackUninstall, .rollbackLink])
+        #expect(again.manual.contains { $0.change.now.id == gone.id && $0.block == .cleanedUp })
+
+        // Confirming that one runs only the other package's steps.
+        store.confirmRestore()
+        #expect(store.restorePoints.pendingPlan == nil)
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let ran = log.calls.filter { ["uninstall", "link"].contains($0.first) }
+        #expect(ran == [["uninstall", "--formula", kept.qualifiedName], ["link", "--formula", kept.qualifiedName]])
+        #expect(!log.calls.contains { $0.first == "uninstall" && $0.last == gone.qualifiedName })
+    }
+
+    @Test func kegGoneRightBeforeTheUninstallSkipsThatPackageOnly() async throws {
+        let kegs = KegSet()
+        let log = CallLog()
+        let target = LockedBox<String>()
+        // The first package's link: brew's periodic cleanup (as if run by
+        // something else) removes the second package's old keg.
+        let runner = FakeStreamRunner(log: log, behaviour: { args, _ in
+            if args.first == "link", let path = target.value { kegs.remove(path) }
+            return 0
+        })
+        let (store, point, leaves) = try await rollbackStore(kegs, runner: runner)
+        store.requestRestore(point, pinAfter: true)
+        let plan = try #require(store.restorePoints.pendingPlan)
+        let order = plan.steps.filter { $0.kind == .rollbackUninstall }.map(\.package)
+        let first = try #require(leaves.first { $0.id == order.first })
+        let second = try #require(leaves.first { $0.id == order.last })
+        target.value = "/usr/local/Cellar/\(second.name)/\(Demo.olderVersion(second.installedVersion))"
+
+        store.confirmRestore()
+        #expect(store.upgrade?.action == .restore)
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let ran = log.calls.filter { ["uninstall", "link", "pin"].contains($0.first) }
+        #expect(ran == [["uninstall", "--formula", first.qualifiedName], ["link", "--formula", first.qualifiedName],
+                        ["pin", "--formula", first.qualifiedName]])
+        let session = try #require(store.upgrade)
+        let states = session.items.map(\.state)
+        #expect(states == [.done, .done, .done, .failed(-1), .cancelled, .cancelled])
+        let text = session.log.lines.joined(separator: "\n")
+        #expect(text.contains("\(second.name) \(Demo.olderVersion(second.installedVersion)) is no longer in the Cellar"))
+        #expect(text.contains("Skipped the uninstall"))
+    }
+
     @Test func demoSeedsOneOfEachKind() async {
         let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0))
         await store.start()
@@ -271,5 +415,23 @@ struct RestoreStoreTests {
         // (The Intelbrew demo has no casks.)
         #expect(d.removed.map(\.name) == ["wget"])
         #expect(d.added.count == 1)
+    }
+}
+
+/// The fake Cellar: paths that exist.
+final class KegSet: @unchecked Sendable {
+    private let lock = NSLock()
+    private var paths: Set<String> = []
+    func insert(_ p: String) { _ = lock.withLock { paths.insert(p) } }
+    func remove(_ p: String) { _ = lock.withLock { paths.remove(p) } }
+    func contains(_ p: String) -> Bool { lock.withLock { paths.contains(p) } }
+}
+
+final class LockedBox<T: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _value: T?
+    var value: T? {
+        get { lock.withLock { _value } }
+        set { lock.withLock { _value = newValue } }
     }
 }

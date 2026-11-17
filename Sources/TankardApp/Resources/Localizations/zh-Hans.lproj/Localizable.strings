@@ -461,6 +461,7 @@
 "No dependencies" = "无依赖项";
 "No fix listed" = "未列出修复";
 "No known vulnerabilities (brew vulns)." = "没有已知漏洞（brew vulns）。";
+"No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "已不在 Cellar 中：%@。brew cleanup 在此列表生成后将其移除，因此无法回滚，已从恢复中移除。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "No matches" = "无匹配项";
 "No package matches “%@”." = "没有与“%@”匹配的软件包。";
 "No packages in this group." = "此分组中没有软件包。";
@@ -822,6 +823,7 @@
 "Waiting for brew…" = "正在等待 brew…";
 "What brew printed" = "brew 的输出";
 "What installing the missing items would do, before anything runs" = "在运行任何内容之前，显示安装缺失项会执行的操作";
+"What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "自此列表生成以来，已安装的内容发生了变化。尚未运行任何命令。请检查命令，然后再次点按“恢复”。";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew 获取 formula 和 cask 的来源。点按某个 tap 可查看你从中安装了什么。";
 "Would free about %@" = "预计可释放约 %@";
 "Would remove %lld formulae" = "将移除 %lld 个 formula";

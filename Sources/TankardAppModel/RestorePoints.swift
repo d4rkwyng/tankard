@@ -272,48 +272,139 @@ public struct RestoreStep: Sendable, Equatable, Identifiable {
     public var arguments: [String]
     /// Extra environment shown in the command (HOMEBREW_NO_AUTOREMOVE=1).
     public var environment: [String: String]
+    /// A rollback's uninstall: the old keg it brings back. It must still be
+    /// in the Cellar right before the uninstall runs; without it,
+    /// `brew uninstall` would remove the only version left.
+    public var keg: Keg?
     public var id: String { "\(package)|\(kind.rawValue)" }
+
+    public struct Keg: Sendable, Equatable, Hashable {
+        /// The formula's short name: its rack in the Cellar.
+        public var name: String
+        public var version: String
+        public init(name: String, version: String) {
+            self.name = name
+            self.version = version
+        }
+    }
+
+    public init(kind: Kind, package: String, arguments: [String], environment: [String: String], keg: Keg? = nil) {
+        self.kind = kind
+        self.package = package
+        self.arguments = arguments
+        self.environment = environment
+        self.keg = keg
+    }
 
     public var display: String { BrewCommands.display(arguments, environment: environment) }
 }
 
 public struct RestorePlan: Sendable, Equatable {
+    /// What a plan was made from, so it can be made again from what is on
+    /// disk when the user confirms it.
+    public struct Source: Sendable, Equatable {
+        public var point: RestorePoint
+        public var pinAfter: Bool
+        public var keepPrevious: Bool
+    }
+
     public var steps: [RestoreStep] = []
     /// Upgrades that need the manual route.
     public var manual: [(change: RestoreDiff.Change, block: RollbackBlock)] = []
+    public var source: Source?
+    /// Set when the plan changed between showing it and confirming it (an
+    /// old keg was cleaned up meanwhile): why, for the confirmation.
+    public var notice: String?
+
+    public init(steps: [RestoreStep] = [], manual: [(change: RestoreDiff.Change, block: RollbackBlock)] = [],
+                source: Source? = nil, notice: String? = nil) {
+        self.steps = steps
+        self.manual = manual
+        self.source = source
+        self.notice = notice
+    }
 
     public static func == (a: RestorePlan, b: RestorePlan) -> Bool {
         a.steps == b.steps && a.manual.map(\.change) == b.manual.map(\.change) && a.manual.map(\.block) == b.manual.map(\.block)
+            && a.source == b.source && a.notice == b.notice
     }
 
     /// Reinstall what was removed, roll back what can be. `pinAfter`: pin
     /// rolled-back formulae, so the next upgrade (or auto-update) doesn't
     /// undo the rollback.
-    public static func make(_ diff: RestoreDiff, installed: [Package], pinAfter: Bool,
+    ///
+    /// The reinstalls run first, and `brew install` runs brew's periodic
+    /// cleanup, which would remove the very kegs the rollbacks after it
+    /// need. So they run with HOMEBREW_NO_INSTALL_CLEANUP=1 whenever the
+    /// plan rolls something back, or "Keep the previous version" is on.
+    public static func make(_ diff: RestoreDiff, installed: [Package], pinAfter: Bool, keepPrevious: Bool = false,
                             rollback: Set<String>? = nil, reinstall: Set<String>? = nil) -> RestorePlan {
         var plan = RestorePlan()
-        for r in diff.removed where reinstall?.contains(r.key) ?? true {
-            plan.steps.append(RestoreStep(kind: .reinstall, package: r.key,
-                                          arguments: BrewCommands.installArguments(kind: r.kind, qualifiedName: r.qualifiedName),
-                                          environment: [:]))
-        }
+        var rollbacks: [RestoreStep] = []
         for c in diff.upgraded {
             switch RollbackPolicy.eligibility(c, installed: installed) {
             case .automatic:
                 guard rollback?.contains(c.id) ?? true else { continue }
                 let q = c.now.qualifiedName
-                plan.steps.append(RestoreStep(kind: .rollbackUninstall, package: c.id,
-                                              arguments: ["uninstall", "--formula", q],
-                                              environment: [Self.noAutoremoveKey: "1"]))
-                plan.steps.append(RestoreStep(kind: .rollbackLink, package: c.id,
-                                              arguments: ["link", "--formula", q], environment: [:]))
+                rollbacks.append(RestoreStep(kind: .rollbackUninstall, package: c.id,
+                                             arguments: ["uninstall", "--formula", q],
+                                             environment: [Self.noAutoremoveKey: "1"],
+                                             keg: RestoreStep.Keg(name: c.now.name, version: c.then.version)))
+                rollbacks.append(RestoreStep(kind: .rollbackLink, package: c.id,
+                                             arguments: ["link", "--formula", q], environment: [:]))
                 if pinAfter {
-                    plan.steps.append(RestoreStep(kind: .pin, package: c.id,
-                                                  arguments: ["pin", "--formula", q], environment: [:]))
+                    rollbacks.append(RestoreStep(kind: .pin, package: c.id,
+                                                 arguments: ["pin", "--formula", q], environment: [:]))
                 }
             case .manual(let block):
                 plan.manual.append((c, block))
             }
+        }
+        let noCleanup: [String: String] = keepPrevious || !rollbacks.isEmpty ? [RollbackSettings.noInstallCleanupKey: "1"] : [:]
+        for r in diff.removed where reinstall?.contains(r.key) ?? true {
+            plan.steps.append(RestoreStep(kind: .reinstall, package: r.key,
+                                          arguments: BrewCommands.installArguments(kind: r.kind, qualifiedName: r.qualifiedName),
+                                          environment: noCleanup))
+        }
+        plan.steps += rollbacks
+        return plan
+    }
+
+    /// The plan again, from the same restore point, with `kegExists` as the
+    /// truth about which old kegs are still in the Cellar (the package list
+    /// may be older than the last `brew cleanup`). Only steps that were in
+    /// this plan are kept: confirming never runs a command that wasn't
+    /// shown. A rollback whose old keg is gone loses all its steps.
+    public func rechecked(installed: [Package], kegExists: (RestoreStep.Keg) -> Bool) -> RestorePlan {
+        var plan = self
+        plan.notice = nil
+        if let src = source {
+            let onDisk = installed.map { p -> Package in
+                guard p.kind == .formula else { return p }
+                var q = p
+                q.installedVersions = p.installedVersions.filter {
+                    $0 == p.installedVersion || kegExists(RestoreStep.Keg(name: p.name, version: $0))
+                }
+                return q
+            }
+            let again = RestorePlan.make(RestoreDiff.between(src.point, onDisk), installed: onDisk,
+                                         pinAfter: src.pinAfter, keepPrevious: src.keepPrevious)
+            let shown = Set(steps.map(\.id))
+            plan.steps = again.steps.filter { shown.contains($0.id) }
+            plan.manual = again.manual
+        }
+        // Also for a plan without a source: the kegs themselves decide.
+        let gone = Set(plan.steps.compactMap { s in s.keg.flatMap { kegExists($0) ? nil : s.package } })
+        plan.steps.removeAll { gone.contains($0.package) }
+
+        let kept = Set(plan.steps.map(\.package))
+        let lost = steps.filter { $0.kind == .rollbackUninstall && !kept.contains($0.package) }
+            .map { s in s.keg.map { "\($0.name) \($0.version)" } ?? s.package }
+        if !lost.isEmpty {
+            let names = lost.joined(separator: ", ")
+            plan.notice = String(localized: "No longer in the Cellar: \(names). brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.")
+        } else if plan.steps != steps {
+            plan.notice = String(localized: "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again.")
         }
         return plan
     }

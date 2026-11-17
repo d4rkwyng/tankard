@@ -461,6 +461,7 @@
 "No dependencies" = "No dependencies";
 "No fix listed" = "No fix listed";
 "No known vulnerabilities (brew vulns)." = "No known vulnerabilities (brew vulns).";
+"No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again." = "No longer in the Cellar: %@. brew cleanup removed it after this list was made, so it can't be rolled back and was taken out of the restore. Nothing has run yet. Check the commands and click Restore again.";
 "No matches" = "No matches";
 "No package matches “%@”." = "No package matches “%@”.";
 "No packages in this group." = "No packages in this group.";
@@ -822,6 +823,7 @@
 "Waiting for brew…" = "Waiting for brew…";
 "What brew printed" = "What brew printed";
 "What installing the missing items would do, before anything runs" = "What installing the missing items would do, before anything runs";
+"What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again." = "What is installed changed since this list was made. Nothing has run yet. Check the commands and click Restore again.";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.";
 "Would free about %@" = "Would free about %@";
 "Would remove %lld formulae" = "Would remove %lld formulae";
