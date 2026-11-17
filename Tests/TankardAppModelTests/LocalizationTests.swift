@@ -12,7 +12,10 @@ private let shippedLanguages = ["de", "fr", "es", "ja", "zh-Hans", "pt-BR", "it"
 
 private struct CatalogEntry {
     let key: String
+    /// A plural entry's "other" form (what Localizable.strings gets).
     let translations: [String: String]
+    /// 0.8: plural variations, lang -> category -> value (Localizable.stringsdict).
+    var plurals: [String: [String: String]] = [:]
 }
 
 private func loadCatalog() throws -> [CatalogEntry] {
@@ -24,12 +27,17 @@ private func loadCatalog() throws -> [CatalogEntry] {
         if entry["extractionState"] as? String == "stale" { return nil }
         let locs = entry["localizations"] as? [String: [String: Any]] ?? [:]
         var out: [String: String] = [:]
+        var plurals: [String: [String: String]] = [:]
         for (lang, loc) in locs {
             if let unit = loc["stringUnit"] as? [String: Any], let value = unit["value"] as? String {
                 out[lang] = value
+            } else if let plural = (loc["variations"] as? [String: Any])?["plural"] as? [String: [String: Any]] {
+                let forms = plural.compactMapValues { ($0["stringUnit"] as? [String: Any])?["value"] as? String }
+                plurals[lang] = forms
+                if let other = forms["other"] { out[lang] = other }
             }
         }
-        return CatalogEntry(key: key, translations: out)
+        return CatalogEntry(key: key, translations: out, plurals: plurals)
     }
 }
 
@@ -97,6 +105,11 @@ struct LocalizationCatalogTests {
             for (lang, value) in entry.translations where formatSpecifiers(value) != want {
                 bad.append("\(lang): \(entry.key) -> \(value)")
             }
+            for (lang, forms) in entry.plurals {
+                for (cat, value) in forms where formatSpecifiers(value) != want {
+                    bad.append("\(lang) \(cat): \(entry.key) -> \(value)")
+                }
+            }
         }
         #expect(bad.isEmpty, "\(bad.prefix(10))")
     }
@@ -109,10 +122,29 @@ struct LocalizationCatalogTests {
             let dict = try #require(NSDictionary(contentsOf: url) as? [String: String], "unreadable \(lang).lproj")
             #expect(dict.count == catalog.count, "\(lang): \(dict.count) strings, catalog has \(catalog.count); run Scripts/l10n.py compile")
             for entry in catalog {
-                let want = lang == "en" ? entry.key : entry.translations[lang]
+                let want = lang == "en" ? (entry.translations["en"] ?? entry.key) : entry.translations[lang]
                 if dict[entry.key] != want {
                     Issue.record("\(lang): \(entry.key) is stale; run Scripts/l10n.py compile")
                     break
+                }
+            }
+        }
+    }
+
+    /// 0.8: plural variations compile to Localizable.stringsdict, every
+    /// form of every language, with an "other" form.
+    @Test func compiledPluralsMatchTheCatalog() throws {
+        let plural = try loadCatalog().filter { !$0.plurals.isEmpty }
+        #expect(!plural.isEmpty)
+        for lang in ["en"] + shippedLanguages {
+            let url = packageRoot.appendingPathComponent("Sources/TankardApp/Resources/Localizations/\(lang).lproj/Localizable.stringsdict")
+            let dict = try #require(NSDictionary(contentsOf: url) as? [String: Any], "unreadable \(lang) stringsdict; run Scripts/l10n.py compile")
+            for entry in plural {
+                let forms = try #require(entry.plurals[lang], "\(lang): \(entry.key) has no plural forms")
+                #expect(forms["other"] != nil, "\(lang): \(entry.key) has no other form")
+                let rule = (dict[entry.key] as? [String: Any])?["n"] as? [String: String]
+                for (cat, value) in forms {
+                    #expect(rule?[cat] == value, "\(lang) \(cat): \(entry.key) is stale; run Scripts/l10n.py compile")
                 }
             }
         }
