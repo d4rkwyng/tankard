@@ -127,9 +127,7 @@ struct DiscoverTable: View {
             .width(min: 180, ideal: 300)
 
             TableColumn("Version") { (e: CatalogEntry) in
-                Text(e.version ?? (e.detailsLoaded ? "–" : "…"))
-                    .foregroundStyle(.secondary).monospacedDigit()
-                    .lineLimit(1).truncationMode(.middle)
+                VersionText(text: e.version ?? (e.detailsLoaded ? "–" : "…"))
             }
             .width(min: 60, ideal: 90)
 

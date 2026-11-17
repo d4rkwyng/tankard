@@ -468,6 +468,21 @@ struct AppearanceTests {
         #expect(abs(TankardPalette.contrast(0xffffff, 0x000000) - 21) < 0.01)
         #expect(TankardPalette.blend(0xffffff, alpha: 0.5, over: 0x000000) == 0x808080)
     }
+
+    /// The Installed/Available version columns: installed >= 7:1 and an
+    /// unchanged Available >= 5.5:1 on rows and stripes, in Tankard (the
+    /// active palette and the deep and L1 ones) and the Dark and Light
+    /// themes. L2 is held to AA (4.5:1) by the test above only.
+    @Test func versionColumnsContrast() {
+        var pairs = StandardVersionText.pairs
+        for p in [TankardPalette.active, TankardPalette.deep, TankardPalette.lighter] {
+            pairs += TankardPalette.versionColumnPairs(p)
+        }
+        for (name, fg, bg, target) in pairs {
+            let ratio = TankardPalette.contrast(fg, bg)
+            #expect(ratio >= target, "\(name): \(ratio) < \(target)")
+        }
+    }
 }
 
 // MARK: welcome

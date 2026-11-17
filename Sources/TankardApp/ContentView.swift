@@ -274,8 +274,7 @@ struct PackageTable: View {
             .width(min: 150, ideal: 220)
 
             TableColumn("Installed", value: \Package.installedVersion, comparator: .localizedStandard) { p in
-                Text(p.installedVersion).foregroundStyle(.secondary).monospacedDigit()
-                    .lineLimit(1).truncationMode(.middle)
+                VersionText(text: p.installedVersion)
             }
             .width(min: 70, ideal: 110)
 
@@ -321,9 +320,7 @@ struct AvailableCell: View {
             .lineLimit(1)
             .help("Upgrade available")
         } else {
-            // Tankard's selected row: secondary, so it stays AA on the amber blend.
-            Text(v).foregroundStyle(prominence == .increased && theme.isTankard ? HierarchicalShapeStyle.secondary : .tertiary)
-                .monospacedDigit().lineLimit(1).truncationMode(.middle)
+            VersionText(text: v, same: true)
         }
     }
 }

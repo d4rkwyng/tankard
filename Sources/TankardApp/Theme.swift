@@ -90,6 +90,10 @@ struct Theme {
     var window: Color?
     /// The table's background (its rows); nil = the system's.
     var table: Color?
+    /// Version columns: the installed version, and an Available version
+    /// that is the same (see `TankardColors.versionInstalled`).
+    var versionInstalled: Color
+    var versionSame: Color
     var isTankard: Bool { kind == .tankard }
 
     func badge(_ kind: BadgeKind) -> BadgePalette {
@@ -109,7 +113,9 @@ struct Theme {
         accent: .accentColor,
         onAccent: .white,
         window: nil,
-        table: nil)
+        table: nil,
+        versionInstalled: Color(light: NSColor(hex: StandardVersionText.lightInstalled), dark: NSColor(hex: StandardVersionText.darkInstalled)),
+        versionSame: Color(light: NSColor(hex: StandardVersionText.lightSame), dark: NSColor(hex: StandardVersionText.darkSame)))
 
     static let tankard = Theme(
         kind: .tankard,
@@ -124,7 +130,9 @@ struct Theme {
         accent: Color(hex: TankardPalette.amber),
         onAccent: Color(hex: TankardPalette.onAmber),
         window: Color(hex: TankardPalette.window),
-        table: Color(hex: TankardPalette.table))
+        table: Color(hex: TankardPalette.table),
+        versionInstalled: Color(hex: TankardPalette.versionInstalled),
+        versionSame: Color(hex: TankardPalette.versionSame))
 
     static func of(_ t: AppTheme) -> Theme {
         if t == .tankard { return tankard }
@@ -362,5 +370,24 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
             .labelsHidden()
             .fixedSize()
         }
+    }
+}
+
+/// A version number in a table column: the installed version (`same:
+/// false`) or an Available version equal to it (`same: true`). White on
+/// the system's accent selection; Tankard's selection keeps the colours.
+struct VersionText: View {
+    var text: String
+    var same = false
+    @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Text(text)
+            .foregroundStyle(prominence == .increased && !theme.isTankard ? Color.white
+                             : same ? theme.versionSame : theme.versionInstalled)
+            .monospacedDigit()
+            .lineLimit(1)
+            .truncationMode(.middle)
     }
 }

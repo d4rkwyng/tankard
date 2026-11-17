@@ -21,7 +21,7 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
         case .dark: return "Always dark."
         case .light: return "Always light."
         case .system: return "Follows macOS."
-        case .tankard: return "Purple and amber, like the icon. Dark underneath."
+        case .tankard: return "Deep purple and amber, like the icon. Dark underneath."
         }
     }
 
@@ -102,6 +102,12 @@ public struct TankardColors: Sendable {
     public var amber: UInt32
     /// Text on amber.
     public var onAmber: UInt32
+    /// The Installed column, and the Available column when it is the
+    /// same version (the upgrade version stays amber). Explicit colours:
+    /// in table rows `.secondary`/`.tertiary` resolve to the system's
+    /// translucent greys, which came out dim (about 3.5:1 for Available).
+    public var versionInstalled: UInt32
+    public var versionSame: UInt32
 
     /// Table selection: `selectionTint` at `selectionAlpha` over the rows
     /// (`selectionInactiveAlpha` when the window isn't key). On the lighter
@@ -134,6 +140,10 @@ public struct TankardColors: Sendable {
             pairs.append(("muted on \(bgName)", muted, bg))
             pairs.append(("amber on \(bgName)", amber, bg))
         }
+        for (bgName, bg) in [("table", table), ("row", rowAlternate), ("selection", selection), ("inactive selection", selectionInactive)] {
+            pairs.append(("installed version on \(bgName)", versionInstalled, bg))
+            pairs.append(("same available version on \(bgName)", versionSame, bg))
+        }
         // The column header carries only titles (primary/secondary) and the sort arrow.
         pairs.append(("foam on header", foam, header))
         pairs.append(("lavender on header", lavender, header))
@@ -163,14 +173,16 @@ public struct TankardColors: Sendable {
 /// them. The app turns them into SwiftUI colours.
 public enum TankardPalette {
     /// The palette the app draws with. Switching palettes is this one line.
-    public static let active = lighter
+    public static let active = deep
 
-    /// v0.2's original: the icon plate's deep purples (#1f0d3d…#4a2580).
+    /// The icon plate's deep purples (#1f0d3d…#4a2580): v0.2's palette,
+    /// plus row stripes, the header purple and brighter version columns.
     public static let deep = TankardColors(
         name: "deep",
         log: 0x170a2e, window: 0x1f0d3d, pane: 0x28124d, strip: 0x2c1556, bar: 0x331a62, plate: 0x4a2580,
-        table: 0x1f0d3d, rowAlternate: 0x251148, header: 0x2c1556,
+        table: 0x1f0d3d, rowAlternate: 0x27124c, header: 0x2c1556,
         foam: 0xfff6e6, lavender: 0xd6c8f0, muted: 0xab9bd0, amber: 0xf2a93b, onAmber: 0x1f0d3d,
+        versionInstalled: 0xece4f8, versionSame: 0xd6c8f0,
         selectionTint: 0xf2a93b, selectionAlpha: 0.30, selectionInactiveAlpha: 0.18,
         bottle: Badge(text: 0x8fe8a8, dot: 0x4ad97a, tint: 0x30d158, tintAlpha: 0.16),
         source: Badge(text: 0xffc46e, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17),
@@ -179,11 +191,13 @@ public enum TankardPalette {
         cask: Badge(text: 0xf3c2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18))
 
     /// L1, moderately lighter: still a rich purple, a step or two up.
+    /// Tried and not chosen; kept so the comparison can be redone.
     public static let lighter = TankardColors(
         name: "L1",
         log: 0x2e1b54, window: 0x3a2366, pane: 0x4a2d80, strip: 0x4d2f86, bar: 0x52338e, plate: 0x6a42a8,
         table: 0x432873, rowAlternate: 0x4d2e85, header: 0x52338e,
         foam: 0xfff8ec, lavender: 0xe2d8f5, muted: 0xc4b8e2, amber: 0xf6b24a, onAmber: 0x2a1650,
+        versionInstalled: 0xf3ecfa, versionSame: 0xe2d8f5,
         selectionTint: 0xa85d08, selectionAlpha: 0.35, selectionInactiveAlpha: 0.20,
         bottle: Badge(text: 0x9cf0b4, dot: 0x4ad97a, tint: 0x30d158, tintAlpha: 0.16),
         source: Badge(text: 0xffcd85, dot: 0xffa53a, tint: 0xff9f0a, tintAlpha: 0.17),
@@ -191,12 +205,15 @@ public enum TankardPalette {
         noBottle: Badge(text: 0xe0d8ef, dot: 0xb3a5cf, tint: 0xffffff, tintAlpha: 0.09),
         cask: Badge(text: 0xf7d2ff, dot: 0xd98cff, tint: 0xd98cff, tintAlpha: 0.18))
 
-    /// L2, "lavender dusk": a mid purple. Text and badges go paler to stay AA.
+    /// L2, "lavender dusk": a mid purple. Text and badges go paler to stay
+    /// AA. Tried and not chosen. Its version columns reach 6.7:1, short of
+    /// the 7:1 target the others meet (see `versionColumnPairs`).
     public static let lavenderDusk = TankardColors(
         name: "L2",
         log: 0x4c3283, window: 0x5b3d94, pane: 0x6a4aa6, strip: 0x6d4dab, bar: 0x6a4aa6, plate: 0x8462c4,
         table: 0x634499, rowAlternate: 0x6a4ba0, header: 0x6d4dab,
         foam: 0xffffff, lavender: 0xf0eafb, muted: 0xe2d9f4, amber: 0xffd68a, onAmber: 0x2a1650,
+        versionInstalled: 0xffffff, versionSame: 0xf0eafb,
         selectionTint: 0x7a3e08, selectionAlpha: 0.45, selectionInactiveAlpha: 0.25,
         bottle: Badge(text: 0xb4f7c8, dot: 0x5be08a, tint: 0x30d158, tintAlpha: 0.16),
         source: Badge(text: 0xffe8c6, dot: 0xffb04d, tint: 0xff9f0a, tintAlpha: 0.17),
@@ -206,6 +223,16 @@ public enum TankardPalette {
 
     /// The custom segmented picker's track: `plate` at this alpha.
     public static let segmentTrackAlpha = 0.55
+
+    /// The version columns against their targets: installed >= 7:1 and an
+    /// unchanged Available >= 5.5:1 on the rows and stripes (name, text,
+    /// background, target).
+    public static func versionColumnPairs(_ p: TankardColors) -> [(String, UInt32, UInt32, Double)] {
+        [("table", p.table), ("row", p.rowAlternate)].flatMap { bgName, bg in
+            [("\(p.name): installed on \(bgName)", p.versionInstalled, bg, 7.0),
+             ("\(p.name): same available on \(bgName)", p.versionSame, bg, 5.5)]
+        }
+    }
 
     /// Every defined palette (the contrast test checks each).
     public static let all = [deep, lighter, lavenderDusk]
@@ -230,6 +257,8 @@ public enum TankardPalette {
     public static var muted: UInt32 { active.muted }
     public static var amber: UInt32 { active.amber }
     public static var onAmber: UInt32 { active.onAmber }
+    public static var versionInstalled: UInt32 { active.versionInstalled }
+    public static var versionSame: UInt32 { active.versionSame }
     public static var selection: UInt32 { active.selection }
     public static var selectionInactive: UInt32 { active.selectionInactive }
     public static var bottle: Badge { active.bottle }
@@ -271,5 +300,26 @@ public enum TankardPalette {
             return UInt32((t * alpha + b * (1 - alpha)).rounded()) << shift
         }
         return mix(16) | mix(8) | mix(0)
+    }
+}
+
+/// The version columns' text in the system themes (Dark, and Light, which
+/// had the same problem: `.tertiary` text on table rows is under 3:1).
+/// The row colours are the system's, as rendered in the app's snapshots
+/// (lighter than nominal, so the check errs on the safe side).
+public enum StandardVersionText {
+    public static let darkInstalled: UInt32 = 0xd8d8dc
+    public static let darkSame: UInt32 = 0xbcbcc0
+    public static let darkRows: [UInt32] = [0x282828, 0x3c3c3c]
+    public static let lightInstalled: UInt32 = 0x3c3c43
+    public static let lightSame: UInt32 = 0x58585e
+    public static let lightRows: [UInt32] = [0xffffff, 0xf4f5f5]
+
+    /// (name, text, background, target), as `TankardPalette.versionColumnPairs`.
+    public static var pairs: [(String, UInt32, UInt32, Double)] {
+        darkRows.flatMap { [("dark: installed on \(String($0, radix: 16))", darkInstalled, $0, 7.0),
+                            ("dark: same available on \(String($0, radix: 16))", darkSame, $0, 5.5)] }
+            + lightRows.flatMap { [("light: installed on \(String($0, radix: 16))", lightInstalled, $0, 7.0),
+                                   ("light: same available on \(String($0, radix: 16))", lightSame, $0, 5.5)] }
     }
 }

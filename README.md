@@ -126,10 +126,11 @@ A release signed with a Developer ID and notarized (below) doesn't need this.
   nothing is run inside the app. "Check again", or bringing the window to the front,
   looks for brew again.
 - **Themes:** Settings (⌘,) → Appearance: **Dark** (the default), Light, System (follows
-  macOS), and **Tankard**: the icon's purples, lightened (#3a2366 to #6a42a8), amber
-  (#f6b24a) for buttons, progress, the segmented pickers and the table selection,
+  macOS), and **Tankard**: deep purples from the icon plate (#1f0d3d to #4a2580), amber
+  (#f2a93b) for buttons, progress, the segmented pickers and the table selection,
   foam-white text, striped rows, a purple column header, badges re-tinted. Every Tankard
-  text colour pair is checked against WCAG AA (4.5:1) by a test.
+  text colour pair is checked against WCAG AA (4.5:1) by a test, and the version columns
+  against 7:1 (installed) and 5.5:1 (unchanged available) in Tankard, Dark and Light.
   Saved in UserDefaults (`appearance`), applied app-wide including sheets.
 
 ### How it behaves
