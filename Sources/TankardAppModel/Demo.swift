@@ -528,6 +528,24 @@ public enum Demo {
                 state.installed.withLock { _ = $0.removeValue(forKey: name) }
                 return 0
             }
+            // 0.8.3: the prefetch, shaped like brew 7's parallel download
+            // queue on a pipe (one ✔︎ line per finished file).
+            if arguments.first == "fetch" {
+                let names = arguments.dropFirst(2).map { $0.split(separator: "/").last.map(String.init) ?? $0 }
+                let cask = arguments.contains("--cask")
+                if names.count > 1 { try await say("Fetching: \(names.joined(separator: ", "))\n", 300) }
+                for n in names { try await say("==> Fetching \(n) from \(cask ? "homebrew/cask" : "homebrew/core")\n", 60) }
+                let data = state.info(variant, base: info)
+                for n in names {
+                    let current = Demo.entry(named: n, in: data).current
+                    if !cask { try await say("✔︎ Bottle Manifest \(n) (\(current))\n", 150) }
+                }
+                for n in names {
+                    let current = Demo.entry(named: n, in: data).current
+                    try await say("✔︎ \(cask ? "Cask" : "Bottle") \(n) (\(current))\n", 500)
+                }
+                return 0
+            }
             guard arguments.first == "upgrade", let qualified = arguments.last else { return 1 }
             let name = qualified.split(separator: "/").last.map(String.init) ?? qualified
             let data = state.info(variant, base: info)

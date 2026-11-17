@@ -51,7 +51,8 @@ struct UpgradeSheet: View {
             .padding(.top, 12)
             .padding(.bottom, 10)
 
-            if let cmd = session.current?.command.display ?? session.items.last(where: { $0.state.isTerminal })?.command.display {
+            if let cmd = session.current?.command.display ?? session.runningFetch?.display
+                ?? session.items.last(where: { $0.state.isTerminal })?.command.display {
                 CommandBox(command: cmd).padding(.bottom, 8)
             }
 

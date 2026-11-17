@@ -38,6 +38,13 @@
 #              removed first, so brew really downloads it; the sheet must
 #              show "Downloading font-inter… x of y MB (n%)" (captured as
 #              NN-install-mid-download.png); then uninstall
+#   prefetch   0.8.3 parallel downloads: a throwaway local tap (file:// git)
+#              with two casks whose zips come from a local, throttled HTTP
+#              server on 127.0.0.1 (6 MB at ~3 MB/s each); 1.0 installed from
+#              the shell, both upgraded to 1.1 in one session: one
+#              `brew fetch --cask` downloads both at once (combined progress
+#              captured as NN-...-prefetch.png), then the two upgrades pour
+#              from the cache; then uninstall, untrust, untap
 #   background the throttled background `brew update` on the real brew (a
 #              seconds interval in the run's suite; FETCH_HEAD only read):
 #              due -> exactly one update; a relaunch inside the interval
@@ -62,8 +69,9 @@
 # A second run refuses with the holder's pid, or with --wait waits for it.
 #
 # What it changes on this Mac: it installs and removes the scenario's own
-# throwaway packages (hello, luarocks + lua, font-press-start-2p, font-inter, tankard-e2e-probe) and
-# adds/removes its own tap (tankard-e2e/probe). Safety checks first:
+# throwaway packages (hello, luarocks + lua, font-press-start-2p, font-inter, tankard-e2e-probe,
+# tankard-e2e-pfetch-a/-b) and adds/removes its own taps (tankard-e2e/probe,
+# tankard-e2e-pfetch/probe). Safety checks first:
 #   - a scenario is skipped if its package is already installed (it would
 #     uninstall yours) or its tap already exists;
 #   - Tankard's uninstall sets HOMEBREW_NO_AUTOREMOVE=1 (only what the
@@ -84,7 +92,7 @@ OUT=dist/e2e
 BUILD=1
 PHASE_TIMEOUT=${E2E_PHASE_TIMEOUT:-1200}
 SCENARIOS=()
-ALL=(welcome formula pinned orphans cask progress security settings restore adopt background)
+ALL=(welcome formula pinned orphans cask progress security settings restore adopt prefetch background)
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -582,6 +590,116 @@ STEPS
 # The throttled background `brew update` (0.8), on the real brew. The
 # interval is seconds here (the run's suite: e2eBackgroundUpdateInterval),
 # never brew's FETCH_HEAD: the shell only reads its mtime.
+scenario_prefetch() {
+    local tap=tankard-e2e-pfetch/probe taps_dir c
+    taps_dir="$(qbrew --repository)/Library/Taps"
+    if [ -e "$taps_dir/tankard-e2e-pfetch" ]; then record "prefetch: SKIP ($taps_dir/tankard-e2e-pfetch exists)"; return; fi
+    for c in tankard-e2e-pfetch-a tankard-e2e-pfetch-b; do
+        need_absent cask $c || { record "prefetch: SKIP ($c installed)"; return; }
+    done
+    fresh_state prefetch
+    local work="$OUT/prefetch/work" port pid
+    mkdir -p "$work/www" "$work/tap/Casks" "$work/bin" "$work/installed"
+    # A file server that sends ~3 MB/s per download (Content-Length, HEAD,
+    # 404 for anything else), so brew's downloads take a visible while.
+    cat > "$work/bin/serve.py" <<'PY'
+import http.server, os, sys, time
+root, rate = sys.argv[2], float(sys.argv[3])
+class H(http.server.BaseHTTPRequestHandler):
+    def head(self):
+        p = os.path.join(root, os.path.basename(self.path))
+        if not os.path.isfile(p):
+            self.send_error(404); return None
+        self.send_response(200)
+        self.send_header("Content-Length", str(os.path.getsize(p)))
+        self.send_header("Content-Type", "application/zip")
+        self.end_headers()
+        return p
+    def do_HEAD(self): self.head()
+    def do_GET(self):
+        p = self.head()
+        if not p: return
+        with open(p, "rb") as f:
+            while chunk := f.read(65536):
+                self.wfile.write(chunk); time.sleep(len(chunk) / rate)
+    def log_message(self, *a): pass
+s = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+open(sys.argv[1], "w").write(str(s.server_address[1]))
+s.serve_forever()
+PY
+    python3 -I "$work/bin/serve.py" "$work/port" "$work/www" 3000000 >"$work/serve.log" 2>&1 &
+    pid=$!
+    local waited=0
+    while [ ! -s "$work/port" ] && [ $waited -lt 50 ]; do sleep 0.1; waited=$((waited + 1)); done
+    port=$(cat "$work/port" 2>/dev/null)
+    if [ -z "$port" ]; then kill "$pid" 2>/dev/null; record "prefetch/setup: FAIL (no local HTTP server)"; return; fi
+    # Two versions of each cask: a zip of 6 MB of random bytes.
+    cask() { # name version
+        local z="$work/www/$1-$2.zip"
+        if [ ! -f "$z" ]; then
+            head -c 6000000 /dev/urandom > "$work/payload.bin"
+            (cd "$work" && zip -q "$z" payload.bin)
+        fi
+        cat <<RUBY
+cask "$1" do
+  version "$2"
+  sha256 "$(shasum -a 256 "$z" | cut -d' ' -f1)"
+
+  url "http://127.0.0.1:$port/$1-$2.zip"
+  name "$1"
+  desc "Throwaway cask for Tankard's e2e tests"
+  homepage "https://github.com/d4rkwyng/tankard"
+
+  artifact "payload.bin", target: "$work/installed/$1.bin"
+end
+RUBY
+    }
+    for c in tankard-e2e-pfetch-a tankard-e2e-pfetch-b; do cask $c 1.0 > "$work/tap/Casks/$c.rb"; done
+    git -C "$work/tap" init -q -b main && git -C "$work/tap" add -A \
+        && git -C "$work/tap" -c user.name=e2e -c user.email=e2e@localhost commit -qm "probes 1.0"
+    if qbrew tap "$tap" "file://$work/tap" >"$OUT/prefetch/setup.log" 2>&1 \
+        && qbrew trust --tap "$tap" >>"$OUT/prefetch/setup.log" 2>&1 \
+        && qbrew install --cask "$tap/tankard-e2e-pfetch-a" "$tap/tankard-e2e-pfetch-b" >>"$OUT/prefetch/setup.log" 2>&1; then
+        for c in tankard-e2e-pfetch-a tankard-e2e-pfetch-b; do cask $c 1.1 > "$work/tap/Casks/$c.rb"; done
+        git -C "$work/tap" -c user.name=e2e -c user.email=e2e@localhost commit -qam "probes 1.1"
+        git -C "$taps_dir/tankard-e2e-pfetch/homebrew-probe" pull -q --ff-only
+        run_phase prefetch 1-upgrade <<STEPS
+expect-ready
+expect installed tankard-e2e-pfetch-a 1.0
+expect installed tankard-e2e-pfetch-b 1.0
+set keepPreviousVersion on
+watch-downloads on
+upgrade tankard-e2e-pfetch-a tankard-e2e-pfetch-b
+watch-downloads off
+expect installed tankard-e2e-pfetch-a 1.1
+expect installed tankard-e2e-pfetch-b 1.1
+always uninstall cask tankard-e2e-pfetch-a
+always uninstall cask tankard-e2e-pfetch-b
+expect not-installed tankard-e2e-pfetch-a
+expect not-installed tankard-e2e-pfetch-b
+STEPS
+        # The upgrade log: one fetch, then each upgrade found its file in the cache.
+        local ul="$OUT/prefetch/state/upgrade.log"
+        if [ -f "$ul" ] && grep -q '^=== .* \$ brew fetch --cask' "$ul"; then
+            record "prefetch/log: PASS ($(grep -c '^=== .* \$ brew fetch' "$ul") fetch, $(grep -c '^=== .* brew upgrade' "$ul") upgrades in $ul)"
+        else
+            record "prefetch/log: FAIL (no brew fetch in $ul)"
+        fi
+    else
+        record "prefetch/setup: FAIL (tap/trust/install of the probes; see $OUT/prefetch/setup.log)"
+    fi
+    for c in tankard-e2e-pfetch-a tankard-e2e-pfetch-b; do
+        qbrew list --cask "$c" >/dev/null 2>&1 && { echo "    cleanup: removing $c" >&2; qbrew uninstall --cask "$tap/$c"; }
+    done
+    # Only these casks' own downloads ("<sha256>--tankard-e2e-pfetch-a-1.0.zip").
+    local dl
+    dl="$(qbrew --cache)/downloads"
+    find "$dl" -maxdepth 1 -name '*--tankard-e2e-pfetch-[ab]-1.[01].zip*' -delete 2>/dev/null
+    [ -e "$taps_dir/tankard-e2e-pfetch/homebrew-probe" ] && qbrew untrust --tap "$tap" >/dev/null 2>&1
+    [ -e "$taps_dir/tankard-e2e-pfetch/homebrew-probe" ] && { echo "    cleanup: untapping $tap" >&2; qbrew untap "$tap"; }
+    kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
+}
+
 scenario_background() {
     local repo fh tap=tankard-e2e/probe f=tankard-e2e-probe taps_dir
     repo=$(qbrew --repository); fh="$repo/.git/FETCH_HEAD"

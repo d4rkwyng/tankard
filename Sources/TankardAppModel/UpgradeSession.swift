@@ -131,6 +131,12 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var chainKey: ((Package) -> String?)?
     @ObservationIgnored private let downloads: DownloadMonitor?
     @ObservationIgnored private var downloadTask: Task<Void, Never>?
+    /// 0.8.3: the `brew fetch` steps queued before the packages (Prefetch.swift).
+    public let prefetch: [PrefetchStep]
+    @ObservationIgnored private let prefetchIDs: [UUID]
+    /// Per fetch step (by id): its state, and how many of its packages it finished.
+    public private(set) var fetchStates: [UUID: ItemState] = [:]
+    private var fetchFinished: [UUID: Int] = [:]
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -138,8 +144,12 @@ public final class UpgradeSession: Identifiable {
          precondition: ((Package) -> (@Sendable () -> String?)?)? = nil,
          skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil,
          downloads: DownloadMonitor? = nil,
+         prefetch: [PrefetchStep] = [],
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
+        self.prefetch = prefetch
+        let prefetchIDs = prefetch.map { _ in UUID() }
+        self.prefetchIDs = prefetchIDs
         self.downloads = DownloadMonitor.watches(action) ? downloads : nil
         self.intelbrewMode = intelbrewMode
         self.action = action
@@ -150,6 +160,7 @@ public final class UpgradeSession: Identifiable {
         self.items = packages.map { p in
             Item(id: UUID(), package: p, command: makeCommand(p), state: .waiting)
         }
+        for id in prefetchIDs { fetchStates[id] = .waiting }
 
         let (stream, continuation) = AsyncStream.makeStream(of: (UUID, CommandEvent).self, bufferingPolicy: .unbounded)
         consumer = Task { @MainActor [weak self] in
@@ -166,6 +177,14 @@ public final class UpgradeSession: Identifiable {
             for (i, item) in items.enumerated() {
                 guard let k = keys[i] else { continue }
                 chainRest[item.id] = items.indices.filter { $0 > i && keys[$0] == k }.map { items[$0].id }
+            }
+        }
+        // 0.8.3: the downloads first, all at once; then each package's step
+        // pours from the cache. A failed fetch stops nothing: the steps run.
+        for (i, step) in prefetch.enumerated() {
+            let stepID = prefetchIDs[i]
+            queue.enqueue(step.command, id: stepID) { event in
+                continuation.yield((stepID, event))
             }
         }
         // Enqueued in package order; the queue runs them strictly in order.
@@ -196,9 +215,24 @@ public final class UpgradeSession: Identifiable {
     /// The packages whose step macOS blocked.
     public var blockedPackages: [Package] { items.filter { appManagementBlocked.contains($0.id) }.map(\.package) }
 
-    /// 0...1, counting finished packages.
+    /// 0...1, counting finished packages (while prefetching, downloaded ones).
     public var fraction: Double {
-        total == 0 ? 1 : Double(completedCount) / Double(total)
+        if isFetching { return fetchTotal == 0 ? 0 : Double(fetchedCount) / Double(fetchTotal) }
+        return total == 0 ? 1 : Double(completedCount) / Double(total)
+    }
+
+    // MARK: prefetch (0.8.3)
+
+    /// A `brew fetch` step is running.
+    public var isFetching: Bool { fetchStates.values.contains(.running) }
+    /// The packages the fetch steps download, and how many of them are done.
+    public var fetchTotal: Int { prefetch.reduce(0) { $0 + $1.targets.count } }
+    public var fetchedCount: Int {
+        zip(prefetchIDs, prefetch).reduce(0) { $0 + min(fetchFinished[$1.0] ?? 0, $1.1.targets.count) }
+    }
+    /// The running fetch command (the sheet's command box).
+    public var runningFetch: QueuedCommand? {
+        zip(prefetchIDs, prefetch).first { fetchStates[$0.0] == .running }?.1.command
     }
 
     /// "Upgrading 5 packages" / "Installing xz"
@@ -263,7 +297,9 @@ public final class UpgradeSession: Identifiable {
     public var statusLine: String { statusLine(behindBrewUpdate: false) }
 
     /// Nothing has started yet: the queue is still running something else.
-    public var notStarted: Bool { !isFinished && items.allSatisfy { $0.state == .waiting } }
+    public var notStarted: Bool {
+        !isFinished && items.allSatisfy { $0.state == .waiting } && fetchStates.values.allSatisfy { $0 == .waiting }
+    }
 
     /// 0.8: `behindBrewUpdate` (AppStore.sessionWaitsForBrewUpdate): the
     /// first step is queued behind a background `brew update`, which can take
@@ -271,6 +307,11 @@ public final class UpgradeSession: Identifiable {
     public func statusLine(behindBrewUpdate: Bool) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
         if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
+        if isFetching {
+            // 0.8.3: "Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"
+            let head = String(localized: "Downloading \(fetchedCount) of \(fetchTotal)")
+            return download.map { head + " · " + $0.detail } ?? head + "…"
+        }
         if let c = current, let d = download {
             // 0.8: "Downloading font-inter… 12.3 of 33.7 MB (36%)"; a
             // dependency's bottle by its own name.
@@ -300,18 +341,21 @@ public final class UpgradeSession: Identifiable {
     /// Lets the running command finish, then skips the rest.
     public func stopAfterCurrent() {
         stopRequested = true
+        queue.cancel(prefetchIDs.filter { fetchStates[$0] == .waiting })
         queue.cancel(items.filter { $0.state == .waiting }.map(\.id))
     }
 
     /// Stops the running command too (its whole process group).
     public func stopNow() {
         stopRequested = true
+        queue.cancel(prefetchIDs.filter { fetchStates[$0]?.isTerminal == false })
         queue.cancel(items.filter { !$0.state.isTerminal }.map(\.id))
     }
 
     // MARK: events
 
     private func apply(_ event: CommandEvent, to itemID: UUID) {
+        if let s = prefetchIDs.firstIndex(of: itemID) { return applyFetch(event, step: s) }
         guard let i = items.firstIndex(where: { $0.id == itemID }) else { return }
         // The running command ended: its downloads are over too. (A waiting
         // item's cancel must not stop the running one's watcher.)
@@ -370,7 +414,11 @@ public final class UpgradeSession: Identifiable {
             note("Couldn't run brew: \(message)")
             noteChainSkipped(after: i)
         }
-        if !isFinished && items.allSatisfy({ $0.state.isTerminal }) {
+        finishIfDone()
+    }
+
+    private func finishIfDone() {
+        if !isFinished && items.allSatisfy({ $0.state.isTerminal }) && fetchStates.values.allSatisfy(\.isTerminal) {
             isFinished = true
             logFile?.close()
             let done = onFinish
@@ -379,18 +427,67 @@ public final class UpgradeSession: Identifiable {
         }
     }
 
+    /// 0.8.3: a `brew fetch` step's events. Its output goes to the log like
+    /// any step's; it never fails a package (each step downloads again what
+    /// is missing, and fails with brew's own error if it still can't).
+    private func applyFetch(_ event: CommandEvent, step s: Int) {
+        let id = prefetchIDs[s]
+        let n = prefetch[s].targets.count
+        switch event {
+        case .started:
+            fetchStates[id] = .running
+            fetchFinished[id] = 0
+            watchDownloads(of: prefetch[s].targets)
+            commandLines = []
+            let header = "$ \(prefetch[s].command.display)"
+            log.feed(header + "\n")
+            logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: Date())) \(header)"])
+        case .output(let data):
+            let lines = log.feed(data)
+            commandLines += lines
+            logFile?.append(lines)
+            fetchFinished[id] = FetchOutput.finished(commandLines)
+        case .finished(let code):
+            stopWatchingDownloads()
+            flush()
+            fetchStates[id] = code == 0 ? .done : .failed(code)
+            fetchFinished[id] = code == 0 ? n : FetchOutput.finished(commandLines)
+            if code != 0 {
+                note("brew fetch exited with status \(code). Each package's own step downloads what's missing and shows brew's error if it fails again.")
+            }
+        case .cancelled:
+            let wasRunning = fetchStates[id] == .running
+            stopWatchingDownloads()
+            flush()
+            fetchStates[id] = .cancelled
+            if wasRunning { note("Stopped.") }
+        case .skipped(let reason):
+            fetchStates[id] = .skipped
+            note(reason)
+        case .failed(let message):
+            stopWatchingDownloads()
+            flush()
+            fetchStates[id] = .failed(-1)
+            note("Couldn't run brew fetch: \(message). Each package's own step downloads it instead.")
+        }
+        finishIfDone()
+    }
+
     // MARK: download progress (0.8)
 
     /// Polls brew's downloads folder while this command runs. Stopped by
     /// the command's end (any of finished, cancelled, failed).
-    private func watchDownloads(of package: Package) {
+    /// 0.8.3: a fetch step's packages are watched together (their files summed).
+    private func watchDownloads(of package: Package) { watchDownloads(of: [package]) }
+
+    private func watchDownloads(of packages: [Package]) {
         stopWatchingDownloads()
         guard let m = downloads else { return }
         let since = m.now()
         downloadTask = Task { [weak self] in
             guard let dir = await m.directory(), !Task.isCancelled else { return }
             let watcher = DownloadWatcher(directory: dir, reader: m.reader, lengths: m.lengths, since: since)
-            let hints = Task { await watcher.addURLs(await m.urls(package)) }
+            let hints = Task { await watcher.addURLs(await m.urlsFor(packages)) }
             defer { hints.cancel() }
             while !Task.isCancelled {
                 let p = await watcher.poll()

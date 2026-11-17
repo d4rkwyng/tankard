@@ -213,6 +213,7 @@
 "Auto-update failed" = "Auto-Update fehlgeschlagen";
 "Auto-update log" = "Auto-Update-Protokoll";
 "Auto-update: brew update" = "Auto-Update: brew update";
+"Auto-update: downloading %lld packages" = "Auto-Update: %lld Pakete werden geladen";
 "Auto-update: upgrading %@" = "Auto-Update: %@ wird aktualisiert";
 "Automatic updates" = "Automatische Updates";
 "Automatically upgrade:" = "Automatisch aktualisieren:";
@@ -338,6 +339,7 @@
 "Download" = "Laden";
 "Download cache" = "Download-Cache";
 "Downloading %@…" = "Lade %@…";
+"Downloading %lld of %lld" = "Lade %lld von %lld";
 "Downloads" = "Downloads";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Dracula-Farben (draculatheme.com, MIT)";

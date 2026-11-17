@@ -103,6 +103,11 @@ right-click it and choose **Upgrade <name>**.
 The upgrade sheet shows each package, the exact command and brew's live output. Packages
 upgrade one at a time; a failure doesn't stop the rest.
 
+When several packages need downloading, one `brew fetch` downloads them all first, in
+parallel ("Downloading 4 of 9 · 120 of 410 MB"); each upgrade then installs from brew's
+cache. A download that fails there is tried again by that package's own upgrade, and
+`HOMEBREW_DOWNLOAD_CONCURRENCY=1` makes brew download one at a time.
+
 - **Stop After Current** lets the running package finish and skips the rest. It then
   becomes **Stop Now**, which stops brew straight away.
 - **Hide** keeps the run going in the background. A button in the status bar brings it
@@ -463,7 +468,7 @@ or when automatic updates is on. Commands run one at a time, never with sudo.
 | you click | Tankard runs |
 |---|---|
 | Refresh (⌘R) or Check Now | `brew update` |
-| Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package |
+| Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package; with two or more bottles or casks, `brew fetch --formula\|--cask <tap>/<name>...` first |
 | Install | `brew install --formula\|--cask <tap>/<name>` |
 | Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then each dependency you chose to remove |
 | Adopt | `brew install --cask --adopt <tap>/<name>`, one per app |

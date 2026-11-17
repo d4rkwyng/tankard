@@ -158,6 +158,8 @@ public struct BrewfileRestorePlan: Equatable, Sendable {
             p.id = "\(k.rawValue):\(item.entry.name)"
             p.fullName = item.entry.name
             p.status = k == .cask ? .cask : .bottle
+            // 0.8.3: what the prefetch needs (a formula that compiles isn't fetched).
+            p.upgradeHasBottle = k == .formula ? item.compiles != true : nil
             return p
         }
     }
