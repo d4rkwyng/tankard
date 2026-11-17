@@ -133,6 +133,19 @@ own view identity, so a switch replaces the window's content: a new `NSTableView
 the scroll position, column widths and selected row's place lost (the visible jump when
 choosing Tankard before 0.3). `Scripts/layout-check.sh` fails if that comes back.
 
+The same goes below `Themed`: nothing a theme changes may change a size or a control.
+Before 0.4 the segmented pickers were the system control in Dark/Light/System and a
+drawn one in Tankard/Dracula (13 against 12 points, equal against fitted segments, a
+semibold selected label), so a switch moved the toolbar and filter labels; now
+`ThemedSegmentedPicker` is one drawn control with theme colours (`Theme.segment…`).
+The tables keep one configuration (`.inset(alternatesRowBackgrounds: false)`, hidden
+content background) in every theme and `TableSelectionStyler` paints the stripes and,
+for a palette, the selection: changing `alternatesRowBackgrounds`,
+`.scrollContentBackground` or `usesAlternatingRowBackgroundColors` makes AppKit drop the
+visible row views, and the ones it brought back from its reuse pool kept the previous
+theme's stripes (purple rows in Dark). `Scripts/theme-geometry-check.sh` fails if either
+comes back.
+
 ## Intelbrew detection and brew's environment
 
 A GUI app launched from the Dock or Finder doesn't read `~/.zshenv`, so it has no PATH
@@ -353,6 +366,15 @@ the switch and another after), the window must not move or resize, and the table
 be rebuilt. It uses the layout dump, so it works with the screen locked, but needs a
 window server (it isn't part of `swift test`). `REAL=1` runs it on this Mac's Homebrew,
 read-only.
+
+`Scripts/theme-geometry-check.sh [APP]` checks a real launch of any build, the signed
+release included, with this Mac's Homebrew: no `TANKARD_*` hooks. It re-signs a copy ad
+hoc and loads `Scripts/theme-probe.m` into it, which opens Settings and clicks the
+Appearance radio buttons. Every visible text, image, control, toolbar item and cell must
+keep its place and size in all five themes, launched in each and through a chain of
+switches, in every frame drawn after a click as well as once settled; and after each
+switch every visible row's background (at the top, 40 rows down, and back) must match a
+fresh launch in that theme. It backs up and restores the app's defaults.
 
 `Scripts/launch-check.sh [APP]` launches the app for real (no demo, no snapshot, no
 `TANKARD_*` variables, real settings and real brew, read-only) several times and fails

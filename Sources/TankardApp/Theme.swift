@@ -102,6 +102,14 @@ struct Theme {
     /// that is the same (see `TankardColors.versionInstalled`).
     var versionInstalled: Color
     var versionSame: Color
+    /// The segmented pickers (`ThemedSegmentedPicker`): the track, the
+    /// selected segment's fill and the labels.
+    var segmentTrack: Color
+    var segmentSelected: Color
+    var segmentText: Color
+    var segmentSelectedText: Color
+    /// Under the selected segment (Light's white one needs it to stand out).
+    var segmentShadow: Color
     /// The palette for Tankard and Dracula; nil for the system themes. All
     /// themes share the same layout code: a palette only changes colours.
     var palette: TankardColors?
@@ -132,6 +140,13 @@ struct Theme {
         table: nil,
         versionInstalled: Color(light: NSColor(hex: StandardVersionText.lightInstalled), dark: NSColor(hex: StandardVersionText.darkInstalled)),
         versionSame: Color(light: NSColor(hex: StandardVersionText.lightSame), dark: NSColor(hex: StandardVersionText.darkSame)),
+        // The system control's greys: a faint track, a lighter selected
+        // segment (white in Light), labels in the primary text colour.
+        segmentTrack: Color(light: NSColor(white: 0, alpha: 0.06), dark: NSColor(white: 1, alpha: 0.10)),
+        segmentSelected: Color(light: NSColor(white: 1, alpha: 1), dark: NSColor(white: 1, alpha: 0.22)),
+        segmentText: Color(nsColor: .labelColor),
+        segmentSelectedText: Color(nsColor: .labelColor),
+        segmentShadow: Color(light: NSColor(white: 0, alpha: 0.18), dark: NSColor(white: 0, alpha: 0)),
         palette: nil)
 
     /// A palette theme (Tankard, Dracula).
@@ -157,6 +172,11 @@ struct Theme {
             table: Color(hex: p.table),
             versionInstalled: Color(hex: p.versionInstalled),
             versionSame: Color(hex: p.versionSame),
+            segmentTrack: Color(hex: p.plate, alpha: TankardPalette.segmentTrackAlpha),
+            segmentSelected: Color(hex: p.accent),
+            segmentText: Color(hex: p.foam),
+            segmentSelectedText: Color(hex: p.onAccent),
+            segmentShadow: .clear,
             palette: p)
     }
 
@@ -354,11 +374,17 @@ struct CommandBox: View {
     }
 }
 
-/// A segmented picker. The system one (NSSegmentedControl) draws its
-/// selected segment in a fixed grey that ignores `.tint` and
-/// `selectedSegmentBezelColor` under SwiftUI, so the palette themes draw
-/// their own: an accent-filled selected segment (amber in Tankard, purple
-/// in Dracula) on a track. Other themes get the system control.
+/// A segmented picker, drawn by Tankard in every theme. The system one
+/// (NSSegmentedControl) draws its selected segment in a fixed grey that
+/// ignores `.tint` and `selectedSegmentBezelColor`, so the palette themes
+/// need their own (an accent-filled selected segment: amber in Tankard,
+/// purple in Dracula). Until 0.4 the system themes kept the system control,
+/// and the two differed in size: 13 against 12 points, equal against
+/// fitted segments, a semibold selected label. Switching between a palette
+/// theme and a system one moved the toolbar's Installed/Discover labels and
+/// the buttons beside them, and the filter labels by up to 113 points. Now
+/// there is one control, one font and one set of sizes; a theme only picks
+/// its colours (`Theme.segment…`).
 struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
     var title: String
     @Binding var selection: Value
@@ -366,39 +392,36 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
     var label: (Value) -> String
     @Environment(\.theme) private var theme
 
+    /// The system segmented control's label font, for every segment,
+    /// selected or not (a heavier selected label would widen it).
+    static var font: Font { .system(size: 13) }
+
     var body: some View {
-        if let p = theme.palette {
-            HStack(spacing: 2) {
-                ForEach(options) { option in
-                    let selected = option == selection
-                    Button {
-                        selection = option
-                    } label: {
-                        Text(label(option))
-                            .font(.system(size: 12, weight: selected ? .semibold : .regular))
-                            .foregroundStyle(selected ? theme.onAccent : Color(hex: p.foam))
-                            .padding(.horizontal, 10)
-                            .frame(height: 20)
-                            .background(RoundedRectangle(cornerRadius: 5).fill(selected ? theme.accent : .clear))
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(selected ? .isSelected : [])
+        HStack(spacing: 2) {
+            ForEach(options) { option in
+                let selected = option == selection
+                Button {
+                    selection = option
+                } label: {
+                    Text(label(option))
+                        .font(Self.font)
+                        .foregroundStyle(selected ? theme.segmentSelectedText : theme.segmentText)
+                        .lineLimit(1)
+                        .padding(.horizontal, 10)
+                        .frame(height: 20)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(selected ? theme.segmentSelected : .clear)
+                            .shadow(color: selected ? theme.segmentShadow : .clear, radius: 0.5, y: 0.5))
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(selected ? .isSelected : [])
             }
-            .padding(2)
-            .background(RoundedRectangle(cornerRadius: 7).fill(Color(hex: p.plate, alpha: TankardPalette.segmentTrackAlpha)))
-            .fixedSize()
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel(title)
-        } else {
-            Picker(title, selection: $selection) {
-                ForEach(options) { option in Text(label(option)).tag(option) }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
         }
+        .padding(2)
+        .background(RoundedRectangle(cornerRadius: 7).fill(theme.segmentTrack))
+        .fixedSize()
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(title)
     }
 }
 

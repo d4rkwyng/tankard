@@ -164,9 +164,12 @@ struct DiscoverTable: View {
         .contextMenu(forSelectionType: CatalogEntry.ID.self) { ids in
             ContextMenuActions.discover(store: store, discover: discover, ids: ids)
         }
-        .tableStyle(.inset(alternatesRowBackgrounds: !theme.isCustom))
-        .scrollContentBackground(theme.isCustom ? .hidden : .automatic)
-        .background(theme.table ?? .clear)
+        // One configuration in every theme: changing it makes AppKit drop
+        // the visible rows (see TableSelectionStyler). The stripes are
+        // painted by the styler, the background is this view's.
+        .tableStyle(.inset(alternatesRowBackgrounds: false))
+        .scrollContentBackground(.hidden)
+        .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
         .overlay { overlay }
     }
