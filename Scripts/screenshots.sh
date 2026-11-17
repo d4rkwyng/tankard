@@ -4,6 +4,7 @@
 # with the screen locked.
 #
 #   Scripts/screenshots.sh [OUT_DIR] [APP]     (default: dist/screenshots, dist/Tankard.app)
+#   SET=v0.3 Scripts/screenshots.sh [OUT_DIR]  only the v0.3 shots
 #
 # Demo shots use TANKARD_DEMO / TANKARD_DEMO_NOBREW (fixtures, nothing runs,
 # no network: Discover's normal mode reads a bundled formulae.brew.sh slice). The "real" shot
@@ -33,6 +34,36 @@ shot() { # name delay env...
     rm -f "$OUT/.$name.log"
 }
 
+v03() {
+    # v0.3: menu bar, compile warnings, cleanup, replace with bottle, Discover's
+    # bottle chip, App Management, Settings, About
+    shot menubar-dark 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=menubar TANKARD_APPEARANCE=dark
+    shot menubar-tankard 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=menubar TANKARD_APPEARANCE=tankard
+    shot menubar-arm64-light 3 TANKARD_DEMO=arm64 TANKARD_SNAPSHOT_VIEW=menubar TANKARD_APPEARANCE=light
+    shot upgrade-plan-compile-warning-dark 3 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=plan TANKARD_APPEARANCE=dark
+    shot upgrade-plan-compile-warning-tankard 3 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=plan TANKARD_APPEARANCE=tankard
+    shot upgrades-filter-compile-warning-dark 3 TANKARD_DEMO=1 TANKARD_FILTER=upgrades TANKARD_SELECT=ruby TANKARD_APPEARANCE=dark
+    shot cleanup-intelbrew-dark 3.5 TANKARD_DEMO=1 TANKARD_DEMO_CLEANUP=1 TANKARD_APPEARANCE=dark
+    shot cleanup-arm64-light 3.5 TANKARD_DEMO=arm64 TANKARD_DEMO_CLEANUP=1 TANKARD_APPEARANCE=light
+    shot cleanup-running-dark 6 TANKARD_DEMO=1 TANKARD_DEMO_CLEANUP=1 TANKARD_APPEARANCE=dark TANKARD_DEMO_CLEANUP_RUN=1
+    shot replace-bottle-detail-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=vim TANKARD_APPEARANCE=dark
+    shot bottle-available-filter-dark 3 TANKARD_DEMO=1 TANKARD_FILTER=bottle TANKARD_SELECT=vim TANKARD_APPEARANCE=dark
+    shot bottle-available-filter-tankard 3 TANKARD_DEMO=1 TANKARD_FILTER=bottle TANKARD_SELECT=vim TANKARD_APPEARANCE=tankard
+    shot replace-bottle-running-dark 5 TANKARD_DEMO=1 TANKARD_SELECT=vim TANKARD_DEMO_REPLACE=1 TANKARD_APPEARANCE=dark
+    shot discover-intelbrew-chip-dark 5 TANKARD_DEMO=1 TANKARD_DISCOVER=ffmpeg TANKARD_DISCOVER_SELECT=ffmpeg TANKARD_APPEARANCE=dark
+    shot discover-intelbrew-unbottled-dark 5 TANKARD_DEMO=1 TANKARD_DISCOVER=node TANKARD_DISCOVER_ALL=1 TANKARD_DISCOVER_SELECT=node-red TANKARD_APPEARANCE=dark
+    shot discover-intelbrew-unbottled-tankard 5 TANKARD_DEMO=1 TANKARD_DISCOVER=node TANKARD_DISCOVER_ALL=1 TANKARD_DISCOVER_SELECT=node-red TANKARD_APPEARANCE=tankard
+    shot discover-install-compiles-confirm-dark 5 TANKARD_DEMO=1 TANKARD_DISCOVER=node TANKARD_DISCOVER_ALL=1 TANKARD_DISCOVER_SELECT=node-red TANKARD_DEMO_INSTALL_CONFIRM=1 TANKARD_APPEARANCE=dark
+    shot discover-normal-chip-dark 4 TANKARD_DEMO=arm64 TANKARD_DISCOVER=python TANKARD_DISCOVER_SELECT=python@3.14 TANKARD_APPEARANCE=dark
+    shot app-management-dark 3 TANKARD_DEMO=arm64 TANKARD_DEMO_APPMGMT=1 TANKARD_APPEARANCE=dark
+    shot app-management-tankard 3 TANKARD_DEMO=arm64 TANKARD_DEMO_APPMGMT=1 TANKARD_APPEARANCE=tankard
+    shot app-management-blocked-dark 9 TANKARD_DEMO=arm64 TANKARD_DEMO_APPMGMT=fail TANKARD_DEMO_UPGRADE=1 TANKARD_DEMO_PACE=0.15 TANKARD_APPEARANCE=dark
+    shot settings-general-dark 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=settings TANKARD_APPEARANCE=dark
+    shot about-dark 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=dark
+    shot about-light 3 TANKARD_DEMO=1 TANKARD_SNAPSHOT_VIEW=about TANKARD_APPEARANCE=light
+}
+if [ "${SET:-all}" = v0.3 ]; then v03; exit 0; fi
+
 shot intelbrew-demo-light 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=light
 shot intelbrew-demo-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=dark
 shot upgrade-sheet-demo-dark 8.5 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=1 TANKARD_APPEARANCE=dark
@@ -56,6 +87,8 @@ for t in dark tankard; do
     shot "welcome-intel-$t" 3 TANKARD_DEMO_NOBREW=intel TANKARD_APPEARANCE=$t
     shot "welcome-arm64-$t" 3 TANKARD_DEMO_NOBREW=arm64 TANKARD_APPEARANCE=$t
 done
+
+v03
 
 if [ "${SKIP_REAL:-0}" != 1 ]; then
     shot real-brew-light 12 TANKARD_SELECT="${REAL_SELECT:-cmake}" TANKARD_APPEARANCE=light

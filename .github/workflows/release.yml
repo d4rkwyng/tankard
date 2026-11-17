@@ -53,7 +53,21 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
         with:
           ref: ${{ env.TAG }}
-          fetch-depth: 0  # build number = commit count; version = tag
+          fetch-depth: 0  # version = tag; CFBundleVersion = the same string (bundle-app.sh)
+
+      # Fails the release when CHANGELOG.md has no section for the tag, so a
+      # release never ships without its list of changes.
+      - name: Release notes from CHANGELOG.md
+        run: |
+          Scripts/changelog-section.sh --self-test
+          {
+            echo "Tankard ${TAG}: a native Homebrew app for macOS 14 Sonoma and later (universal: Intel and Apple silicon). Signed with Developer ID and notarized."
+            echo
+            Scripts/changelog-section.sh "${TAG#v}"
+            echo
+            echo 'Install or upgrade: `brew install --cask d4rkwyng/tap/tankard` / `brew upgrade --cask tankard`'
+          } > "$RUNNER_TEMP/release-notes.md"
+          cat "$RUNNER_TEMP/release-notes.md"
 
       - name: Import signing certificate
         uses: apple-actions/import-codesign-certs@288b8ec97b82c66b6f2a6baaf7acc8dfbcbe331c  # v7
@@ -78,6 +92,4 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           files: dist/Tankard.zip
-          body: |
-            Tankard ${{ env.TAG }}: a native Homebrew app for macOS 14 Sonoma and later
-            (universal: Intel and Apple silicon). Signed with Developer ID and notarized.
+          body_path: ${{ runner.temp }}/release-notes.md

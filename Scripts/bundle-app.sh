@@ -34,8 +34,10 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-VERSION=${TANKARD_VERSION:-0.2.0}
-BUILD=$(git rev-list --count HEAD 2>/dev/null || echo 1)
+VERSION=${TANKARD_VERSION:-0.3.0}
+# CFBundleVersion is the same string as the short version, so About says
+# "Version 0.3.0" with no "(N)" build number after it.
+BUILD=$VERSION
 
 LIPO_FROM=()
 if [ $UNIVERSAL = 1 ]; then
@@ -116,6 +118,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 plutil -lint "$APP/Contents/Info.plist" >/dev/null
+SHORT=$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")
+LONG=$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")
+[ "$SHORT" = "$LONG" ] || { echo "bundle-app.sh: CFBundleVersion ($LONG) must equal CFBundleShortVersionString ($SHORT)" >&2; exit 1; }
 printf 'APPL????' > "$APP/Contents/PkgInfo"
 
 if [ "$SIGN" = adhoc ]; then
@@ -125,4 +130,4 @@ if [ "$SIGN" = adhoc ]; then
     codesign --verify --deep --strict "$APP"
 fi
 
-echo "==> $APP ($VERSION, build $BUILD): $(lipo -archs "$APP/Contents/MacOS/Tankard"), signing: $SIGN"
+echo "==> $APP ($VERSION): $(lipo -archs "$APP/Contents/MacOS/Tankard"), signing: $SIGN"
