@@ -44,6 +44,13 @@ extension AppStore {
         }
     }
 
+    /// Leaving the Installed tab clears a More filter (Has notes, Pinned…),
+    /// so Installed comes back showing All instead of a filter the owner
+    /// no longer sees in the pop-up's label. The segmented filters stay.
+    public func tabChanged(to tab: MainTab) {
+        if tab != .installed, PackageFilter.more.contains(filter) { filter = .all }
+    }
+
     /// Installed formulae (what brew vulns checks; casks aren't).
     public var formulaCount: Int { packages.filter { $0.kind == .formula }.count }
 }

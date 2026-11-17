@@ -60,6 +60,7 @@ struct ContentView: View {
             if state == .key { store.revalidateIfStale() }
         }
         .onChange(of: store.tab) { _, tab in
+            store.tabChanged(to: tab)
             if tab == .discover { openDiscover() }
             if tab == .services { store.openServices() }
         }

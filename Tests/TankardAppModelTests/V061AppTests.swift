@@ -42,6 +42,21 @@ struct V061MoreFilterTests {
         #expect(!notified.value)
         #expect(store.filter == .pinned)
     }
+
+    /// Leaving Installed clears a More filter; segmented filters and
+    /// staying on Installed keep theirs.
+    @Test func leavingInstalledClearsAMoreFilter() {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        store.moreFilterSelection = .hasNotes
+        store.tabChanged(to: .installed)
+        #expect(store.filter == .hasNotes)
+        store.tabChanged(to: .discover)
+        #expect(store.filter == .all)
+        #expect(store.moreFilterSelection == nil)
+        store.filter = .upgrades
+        store.tabChanged(to: .discover)
+        #expect(store.filter == .upgrades)
+    }
 }
 
 @MainActor
