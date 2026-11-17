@@ -222,6 +222,7 @@ struct TankardApp: App {
         SystemNotifier.install()
         AppDelegate.initialTheme = appearance.theme
         AppDelegate.settings = settings
+        QuitGuard.store = store
         AppDelegate.dock = DockIconController(settings: settings)
         let checker = self.checker
         AppDelegate.onLaunch = { if !options.isDemo && (options.script == nil || options.script?.background == true) { checker.start() } }
@@ -399,6 +400,7 @@ enum Relauncher {
             closeSheets: closeSheets,
             terminate: {
                 log.notice("relaunch: terminate pid \(pid, privacy: .public)")
+                QuitGuard.exempt = true
                 NSApp.terminate(nil)
             },
             after: { delay, work in
@@ -565,6 +567,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// With the menu-bar icon on, closing the window keeps Tankard running
     /// (the icon and background checks stay); otherwise it quits as before.
+    /// 0.8.3: quitting while brew runs asks first (QuitGuardViews.swift).
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        MainActor.assumeIsolated { QuitGuard.shouldTerminate() }
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         MainActor.assumeIsolated { !(Self.settings?.showMenuBarIcon ?? false) }
     }

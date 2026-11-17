@@ -109,6 +109,14 @@ public final class UpgradeSession: Identifiable {
     /// 0.3: this run is the one retry after the App Management sheet.
     public var isRetry = false
     public private(set) var stopRequested = false
+    /// 0.8.3: Stop Now was clicked: brew is being interrupted (it can take
+    /// a few seconds to undo its unfinished step).
+    public private(set) var stoppingNow = false
+    /// 0.8.3: the running step waits for another brew to release brew's
+    /// lock (the holder, "pid command", or "" when not known).
+    public private(set) var lockWait: String?
+    /// 0.8.3: the sheet's "Stop now?" confirmation is up.
+    public var confirmingStop = false
     public private(set) var isFinished = false
     public let intelbrewMode: Bool
     public let action: SessionAction
@@ -145,6 +153,7 @@ public final class UpgradeSession: Identifiable {
          skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil,
          downloads: DownloadMonitor? = nil,
          prefetch: [PrefetchStep] = [],
+         lockWait: BrewLockWait? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
         self.prefetch = prefetch
@@ -192,7 +201,7 @@ public final class UpgradeSession: Identifiable {
             let itemID = item.id
             let rest = chainRest[itemID] ?? []
             queue.enqueue(item.command, id: itemID, precondition: precondition?(item.package),
-                          skipCheck: skipCheck?(item.package)) { [queue] event in
+                          skipCheck: skipCheck?(item.package), lockWait: lockWait) { [queue] event in
                 if !rest.isEmpty {
                     switch event {
                     case .finished(let code) where code != 0: queue.cancel(rest)
@@ -306,6 +315,8 @@ public final class UpgradeSession: Identifiable {
     /// a minute or two; say so instead of a bare "Waiting for brew…".
     public func statusLine(behindBrewUpdate: Bool) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
+        if stoppingNow, let c = current { return String(localized: "Stopping \(c.package.name)…") }
+        if lockWait != nil, current != nil { return String(localized: "Waiting for another Homebrew command to finish…") }
         if action == .cleanup, current != nil { return String(localized: "Running brew cleanup…") }
         if isFetching {
             // 0.8.3: "Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"
@@ -349,6 +360,7 @@ public final class UpgradeSession: Identifiable {
     public func stopNow() {
         stopRequested = true
         queue.cancel(prefetchIDs.filter { fetchStates[$0]?.isTerminal == false })
+        if current != nil { stoppingNow = true }
         queue.cancel(items.filter { !$0.state.isTerminal }.map(\.id))
     }
 
@@ -377,6 +389,7 @@ public final class UpgradeSession: Identifiable {
             logFile?.append(lines)
         case .finished(let code):
             flush()
+            lockWait = nil
             // 0.8: brew refuses a pinned package with exit 0; nothing changed.
             let refused = code == 0 && BrewRefusal.pinned(commandLines)
             items[i].state = code == 0 && !refused ? .done : .failed(code)
@@ -402,12 +415,26 @@ public final class UpgradeSession: Identifiable {
         case .cancelled:
             let wasRunning = items[i].state == .running
             flush()
+            if wasRunning { lockWait = nil }
             items[i].state = .cancelled
             if wasRunning { note("Stopped.") }
         case .skipped(let reason):
             flush()
             items[i].state = .skipped
             note(reason)
+        case .lockWait(let holder):
+            flush()
+            commandLines = []
+            if let holder {
+                lockWait = holder
+                note(holder.isEmpty ? "Another Homebrew command holds brew's lock. Waiting for it to finish, then running this again."
+                     : "Another Homebrew command holds brew's lock (pid \(holder)). Waiting for it to finish, then running this again.")
+            } else {
+                lockWait = nil
+                note("brew's lock is free: running it again.")
+                log.feed("$ \(items[i].command.display)\n")
+                watchDownloads(of: items[i].package)
+            }
         case .failed(let message):
             flush()
             items[i].state = .failed(-1)
@@ -469,6 +496,9 @@ public final class UpgradeSession: Identifiable {
             flush()
             fetchStates[id] = .failed(-1)
             note("Couldn't run brew fetch: \(message). Each package's own step downloads it instead.")
+        case .lockWait:
+            // Fetch steps are enqueued without a lock wait; nothing to show.
+            break
         }
         finishIfDone()
     }

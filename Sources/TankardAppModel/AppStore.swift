@@ -97,6 +97,9 @@ public final class AppStore {
         /// Check for Tankard Updates…: GitHub's latest release, fetched only
         /// when asked. nil: the item is disabled (demo mode, tests).
         public var updateFeed: UpdateFeed?
+        /// 0.8.3: a sheet step that fails on brew's lock waits for it and
+        /// runs again (nil: it fails, as before; `live()` sets `.live`).
+        public var lockWait: BrewLockWait?
         /// The running app, to tell a cask install from a zip download.
         public var bundlePath: String = Bundle.main.bundlePath
         /// Screenshots only: act as if this cask installed the running app.
@@ -149,6 +152,7 @@ public final class AppStore {
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             d.updateFeed = .live()
+            d.lockWait = .live
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -167,6 +171,10 @@ public final class AppStore {
     public internal(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
     public var showUpgradeSheet = false
+    /// 0.8.3: an upgrade run a quit interrupted, offered at the next launch (QuitGuard.swift).
+    public internal(set) var interruptedRun: InterruptedRunOffer?
+    /// 0.8.3: the running session is ending because Tankard quits.
+    var quittingMidRun = false
     /// Tankard ▸ Check for Tankard Updates…: the sheet and where the check stands.
     public var selfUpdate: SelfUpdateCheck?
     public var showSelfUpdate = false
@@ -485,6 +493,9 @@ public final class AppStore {
             // 0.8.1: relaunched for App Management: the operation it was for.
             if settings.appManagementPendingRetry != nil {
                 Task { @MainActor in self.resumeAppManagementRetry() }
+            } else if settings.defaults.data(forKey: RunJournal.key) != nil {
+                // 0.8.3: an upgrade run a quit or crash interrupted.
+                Task { @MainActor in self.offerInterruptedRun() }
             }
         } catch {
             // Keep what's on screen; say what went wrong.
@@ -917,6 +928,7 @@ public final class AppStore {
         }
         // 0.7: a restore point before every upgrade session.
         if action == .upgrade { saveRestorePoint(.upgrade, upgrading: targets) }
+        if action == .upgrade { saveRunJournal(targets) }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
         // where `brew update` runs.
@@ -946,6 +958,7 @@ public final class AppStore {
                 QueuedCommand(executable: brew, arguments: args, environment: env.merging(concurrency) { $1 },
                               display: BrewCommands.display(args, environment: concurrency))
             },
+            lockWait: deps.lockWait,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -971,6 +984,7 @@ public final class AppStore {
                                  makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
                                  precondition: precondition,
                                  downloads: downloadMonitorForCustomSession(),
+                                 lockWait: deps.lockWait,
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
         showUpgradeSheet = true
     }
@@ -984,6 +998,7 @@ public final class AppStore {
 
     private func sessionFinished(_ session: UpgradeSession) {
         if session.action == .adopt { adoptSessionFinished(session) }
+        runJournalSessionFinished(session)
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
         // offer. The new instance reads status, shows notes and prompts.

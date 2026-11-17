@@ -32,6 +32,10 @@ public enum CommandEvent: Sendable, Equatable {
     /// 0.8: not run because its skip check, made right before it would
     /// start, said so (the reason). Not a failure: a chain goes on.
     case skipped(String)
+    /// 0.8.3: the command failed on brew's lock (another brew holds it) and
+    /// waits for it (the holder, "pid command", or "" when not known); nil:
+    /// the lock is free and the command runs again (its output starts over).
+    case lockWait(String?)
 }
 
 /// A strict FIFO queue for brew commands that change things (update,
@@ -63,6 +67,7 @@ public final class CommandQueue: Sendable {
         var command: QueuedCommand
         var precondition: Precondition?
         var skipCheck: SkipCheck?
+        var lockWait: BrewLockWait?
         var handler: Handler
     }
 
@@ -98,7 +103,8 @@ public final class CommandQueue: Sendable {
     /// for it arrive on `handler`, from a background thread.
     @discardableResult
     public func enqueue(_ command: QueuedCommand, id: UUID = UUID(), precondition: Precondition? = nil,
-                        skipCheck: SkipCheck? = nil, handler: @escaping Handler) -> UUID {
+                        skipCheck: SkipCheck? = nil, lockWait: BrewLockWait? = nil,
+                        handler: @escaping Handler) -> UUID {
         var handler = handler
         if let observer {
             let inner = handler
@@ -111,7 +117,8 @@ public final class CommandQueue: Sendable {
         // the order of enqueue calls even from different threads.
         state.withLockUnchecked { s in
             s.pending.append(id)
-            continuation.yield(Job(id: id, command: command, precondition: precondition, skipCheck: skipCheck, handler: handler))
+            continuation.yield(Job(id: id, command: command, precondition: precondition, skipCheck: skipCheck,
+                                   lockWait: lockWait, handler: handler))
         }
         return id
     }
@@ -129,6 +136,7 @@ public final class CommandQueue: Sendable {
                 case .cancelled: cont.resume(throwing: ProcessRunnerError.cancelled)
                 case .failed(let message): cont.resume(throwing: CommandQueueError.failed(message))
                 case .skipped: cont.resume(throwing: ProcessRunnerError.cancelled)
+                case .lockWait: break
                 }
             }
         }
@@ -180,12 +188,16 @@ public final class CommandQueue: Sendable {
                 skipped = true
                 return nil
             }
+            let lockWait = job.lockWait
             let t = Task<Int32, Error> {
                 // Sent from inside the task so it always precedes any output.
                 handler(.started)
-                return try await runner.stream(command.executable, command.arguments, environment: command.environment) { data in
-                    handler(.output(data))
+                guard let lockWait else {
+                    return try await runner.stream(command.executable, command.arguments, environment: command.environment) { data in
+                        handler(.output(data))
+                    }
                 }
+                return try await Self.runWaitingForLock(command, runner: runner, wait: lockWait, handler: handler)
             }
             s.running = (job.id, t)
             return t
@@ -211,6 +223,35 @@ public final class CommandQueue: Sendable {
             } else {
                 handler(.failed(String(describing: error)))
             }
+        }
+    }
+}
+
+extension CommandQueue {
+    /// 0.8.3: runs `command`; while it fails on brew's lock, waits for the
+    /// lock to be free (cancellable: the wait is the running task's) and
+    /// runs it again. The last run's exit code.
+    static func runWaitingForLock(_ command: QueuedCommand, runner: StreamingCommandRunning, wait: BrewLockWait,
+                                  handler: @escaping Handler) async throws -> Int32 {
+        let start = ContinuousClock.now
+        let prefix = BrewLock.prefix(ofBrew: command.executable)
+        var attempts = 0
+        while true {
+            let tail = OutputTail()
+            let code = try await runner.stream(command.executable, command.arguments, environment: command.environment) { data in
+                tail.add(data)
+                handler(.output(data))
+            }
+            guard code != 0, attempts < wait.maxAttempts else { return code }
+            let lines = tail.lines
+            guard BrewFailure.classify(lines) == .locked else { return code }
+            attempts += 1
+            let free = try await wait.waitUntilFree(BrewLock.lockFile(lines, prefix: prefix), since: start) { holder in
+                handler(.lockWait(holder))
+            }
+            guard free else { return code }
+            try Task.checkCancellation()
+            handler(.lockWait(nil))
         }
     }
 }

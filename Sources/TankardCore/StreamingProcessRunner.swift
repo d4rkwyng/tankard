@@ -16,24 +16,34 @@ public protocol StreamingCommandRunning: Sendable {
 
 /// posix_spawn streaming runner. Same rules as `ProcessRunner`: no shell,
 /// no inherited environment, the child leads its own session, stdin is
-/// /dev/null, and cancellation sends SIGTERM to the group, then SIGKILL
-/// after `killGrace` seconds.
+/// /dev/null. 0.8.3: cancellation sends SIGINT to the group (what brew
+/// treats as Ctrl-C: it finishes the step it can't leave half done, under
+/// `Utils::Interrupts.ignore`, rolls back and exits 130), then SIGTERM after
+/// `interruptGrace` seconds if anything is still running, then SIGKILL after
+/// `killGrace` more. Before 0.8.3 it was SIGTERM, then SIGKILL after 2 s,
+/// which can cut brew's own rollback short (Ruby doesn't defer SIGTERM).
 ///
 /// Output goes through one pipe (stdout and stderr both dup'd onto it), so
 /// brew's interleaving of `==>` lines and errors is kept. A pty would make
 /// brew draw its tty-only progress; pipes plus `LineAssembler` are the v1
 /// choice (see the design notes).
 public struct StreamingProcessRunner: StreamingCommandRunning {
+    /// Seconds between SIGTERM and SIGKILL.
     public var killGrace: Double
+    /// 0.8.3: seconds between SIGINT and SIGTERM. A real `brew upgrade`
+    /// interrupted mid-build took 11 s to roll back and exit.
+    public var interruptGrace: Double
 
-    public init(killGrace: Double = 2) {
+    public init(killGrace: Double = 15, interruptGrace: Double? = nil) {
         self.killGrace = killGrace
+        self.interruptGrace = interruptGrace ?? killGrace
     }
 
     public func stream(_ executable: String, _ arguments: [String], environment: [String: String],
                        output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
         let pidBox = OSAllocatedUnfairLock<pid_t?>(initialState: nil)
         let grace = killGrace
+        let interruptGrace = interruptGrace
         let code: Int32 = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 DispatchQueue.global(qos: .userInitiated).async {
@@ -49,9 +59,13 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
             }
         } onCancel: {
             guard let pid = pidBox.withLock({ $0 }) else { return }
-            kill(-pid, SIGTERM)
-            DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
-                if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+            kill(-pid, SIGINT)
+            DispatchQueue.global().asyncAfter(deadline: .now() + interruptGrace) {
+                guard kill(-pid, 0) == 0 else { return }
+                kill(-pid, SIGTERM)
+                DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
+                    if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+                }
             }
         }
         if Task.isCancelled { throw ProcessRunnerError.cancelled }

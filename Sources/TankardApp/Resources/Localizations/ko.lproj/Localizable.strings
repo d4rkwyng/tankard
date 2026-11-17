@@ -151,6 +151,7 @@
 "365 days" = "365일";
 "90 days" = "90일";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 파일에도 Intelbrew 변수가 설정되어 있습니다. Tankard는 brew.env를 편집하지 않습니다. 직접 제거하지 않으면 brew가 계속 포크를 사용합니다.\n";
+"A download didn't match its checksum" = "다운로드가 체크섬과 일치하지 않습니다";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "다운로드에 실패했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 후 다시 시도하세요.";
 "A newer version" = "새 버전";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "패키지에 설치되지 않은 항목이 필요합니다. 누락된 항목을 설치하면 해결됩니다.";
@@ -200,6 +201,7 @@
 "An independent app for Homebrew (brew.sh)." = "Homebrew용 독립 앱(brew.sh).";
 "An older copy of Tankard is still running. Quit it to finish updating." = "이전 Tankard가 아직 실행 중입니다. 업데이트를 마치려면 종료하세요.";
 "Another Homebrew command is running" = "다른 Homebrew 명령이 실행 중입니다";
+"Another Homebrew command kept brew's lock. Retry once it has finished." = "다른 Homebrew 명령이 brew 잠금을 쥐고 있었습니다. 끝난 뒤 다시 시도하세요.";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "다른 설치 프로그램이 Homebrew의 prefix에 파일을 넣었습니다. 소스 빌드에 문제가 생길 수 있습니다.";
 "Another old version is installed" = "다른 이전 버전이 설치되어 있음";
 "App Store apps" = "App Store 앱";
@@ -261,6 +263,7 @@
 "Check every" = "확인 주기";
 "Check for Tankard Updates…" = "Tankard 업데이트 확인…";
 "Check for new versions in the background" = "백그라운드에서 새 버전 확인";
+"Check your internet connection, then retry." = "인터넷 연결을 확인한 뒤 다시 시도하세요.";
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
 "Checking for updates…" = "업데이트 확인 중…";
@@ -394,6 +397,7 @@
 "Formulae that build from source may fail. The App Store updates Xcode." = "소스에서 빌드하는 formula가 실패할 수 있습니다. App Store가 Xcode를 업데이트합니다.";
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "이 Mac용 bottle이 있는 formula(Intelbrew 또는 Homebrew). 나머지는 설치할 때 소스에서 컴파일됩니다.";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "이 Mac용 bottle이 있는 formula. 나머지는 설치할 때 소스에서 컴파일됩니다.";
+"Free up some space (Clean Up helps), then retry." = "공간을 확보한 뒤(정리하기가 도움이 됩니다) 다시 시도하세요.";
 "From brew vulns (OSV.dev)." = "brew vulns(OSV.dev) 기준.";
 "From brew.env: brew reads it itself." = "brew.env에서: brew가 직접 읽습니다.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "formulae.brew.sh에서 가져와 ~/Library/Caches/net.mindtricks.tankard/api에 1시간 동안 캐시됨";
@@ -430,6 +434,11 @@
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew에 이 앱들의 cask가 있고 설치된 버전이 일치합니다(또는 앱이 자체 업데이트하므로 brew가 비교하지 않습니다).";
 "Homebrew has disabled this cask." = "Homebrew가 이 cask를 비활성화했습니다.";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "이 사본은 Homebrew로 설치되었으므로 Homebrew가 대기열을 통해 업그레이드합니다. brew가 앱을 교체하는 동안 Tankard는 계속 실행되며, 완료 후 다시 시작할지 묻습니다.";
+"Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew가 지금 %1$@을(를) 변경하고 있습니다. 중지하면 Homebrew가 끝나지 않은 단계를 되돌리고 %2$@은(는) 그대로 유지됩니다. 어중간하게 남은 것이 있으면 다시 실행하면 대개 해결됩니다.";
+"Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew가 아직 %@을(를) 업그레이드하고 있습니다(%lld/%lld).";
+"Homebrew is still upgrading %@." = "Homebrew가 아직 %@을(를) 업그레이드하고 있습니다.";
+"Homebrew is still working on %@ (%lld of %lld)." = "Homebrew가 아직 %@ 작업 중입니다(%lld/%lld).";
+"Homebrew is still working on %@." = "Homebrew가 아직 %@ 작업 중입니다.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew는 macOS용 패키지 관리자로, 명령줄 도구와 앱을 설치하고 최신 상태로 유지합니다. Tankard는 그 위에 얹은 윈도우이므로 먼저 Homebrew가 필요합니다.";
 "Homebrew isn't installed" = "Homebrew가 설치되어 있지 않음";
 "Homebrew isn't ready yet." = "Homebrew가 아직 준비되지 않았습니다.";
@@ -443,6 +452,7 @@
 "Homebrew still has it, but will disable it later." = "Homebrew에는 아직 있지만 나중에 비활성화할 예정입니다.";
 "Homebrew updates it" = "Homebrew가 업데이트";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew contributors, BSD-2-Clause.";
+"Homebrew ▸ Health shows which folder isn't writable and how to fix it." = "Homebrew ▸ 상태에서 쓸 수 없는 폴더와 해결 방법을 볼 수 있습니다.";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew API(formulae.brew.sh)";
 "Homebrew's anonymous install analytics (formulae.brew.sh)" = "Homebrew 익명 설치 통계(formulae.brew.sh)";
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew 익명 설치 통계(formulae.brew.sh), %@까지";
@@ -494,6 +504,7 @@
 "It took %@; expect longer on an older Mac." = "%@ 걸렸습니다. 오래된 Mac에서는 더 오래 걸립니다.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
 "KB" = "KB";
+"Keep Running" = "계속 실행";
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
 "Keg-only" = "Keg-only";
@@ -580,6 +591,7 @@
 "No vulnerable package has an upgrade yet." = "업그레이드가 있는 취약한 패키지가 아직 없습니다.";
 "None of the installed formulae has a background service." = "설치된 formula 중 백그라운드 서비스가 있는 항목이 없습니다.";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "zsh나 bash 시작 파일 중 어느 것도 이를 설정하지 않으므로 편집되는 것이 없습니다.";
+"Not Now" = "나중에";
 "Not affiliated with or endorsed by the Homebrew project." = "Homebrew 프로젝트와 제휴하거나 승인받지 않았습니다.";
 "Not allowed yet" = "아직 허용되지 않음";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Tankard가 적용하지 않음(셸에서 설정): 미러는 아직 지원되지 않습니다.";
@@ -683,9 +695,14 @@
 "Press Refresh to ask Homebrew." = "새로 고침을 눌러 Homebrew에 물어보세요.";
 "Preview from %@ (changes nothing)." = "%@의 미리보기(변경 사항 없음).";
 "Private" = "비공개";
+"Quit Now" = "지금 종료";
 "Quit Tankard" = "Tankard 종료";
 "Quit Tankard and open it again to use the new version." = "새 버전을 사용하려면 Tankard를 종료한 다음 다시 여세요.";
 "Quit Tankard and open it again, then run it again." = "Tankard를 종료하고 다시 연 다음 다시 실행하세요.";
+"Quit anyway?" = "그래도 종료하시겠습니까?";
+"Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run." = "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌리고 나머지는 실행되지 않습니다.";
+"Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time." = "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌리고 나머지는 실행되지 않습니다. 다음에 Tankard가 남은 업그레이드를 제안합니다.";
+"Quitting now stops it: Homebrew undoes the unfinished step." = "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌립니다.";
 "Read from Homebrew's API; not tapped locally." = "Homebrew의 API에서 읽음. 로컬에 탭되지 않았습니다.";
 "Reading installed packages…" = "설치된 패키지 읽는 중…";
 "Reading package details…" = "패키지 세부 정보 읽는 중…";
@@ -695,6 +712,7 @@
 "Reading your apps and Homebrew's casks…" = "앱과 Homebrew cask를 읽는 중…";
 "Ready to adopt" = "가져오기 가능";
 "Refresh" = "새로 고침";
+"Refresh (it runs brew update), then retry." = "새로 고침(brew update 실행)한 뒤 다시 시도하세요.";
 "Refresh failed" = "새로 고침 실패";
 "Refreshing" = "새로 고치는 중";
 "Reinstall" = "재설치";
@@ -740,6 +758,8 @@
 "Restoring (%lld steps)" = "복원 중 (%lld단계)";
 "Resume" = "재개";
 "Retry" = "다시 시도";
+"Retry %@" = "%@ 다시 시도";
+"Retry Failed (%lld)" = "실패 항목 다시 시도(%lld)";
 "Revert to Standard Homebrew…" = "표준 Homebrew로 되돌리기…";
 "Revert to standard Homebrew?" = "표준 Homebrew로 되돌릴까요?";
 "Run %@ again, through the queue" = "대기열을 통해 %@ 다시 실행";
@@ -751,6 +771,7 @@
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Homebrew ▸ Tap…에서 다시 실행하세요. 먼저 확인합니다.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "메뉴(정리… 또는 사용하지 않는 의존성 제거…)에서 다시 실행하세요. 제거할 항목을 먼저 보여 줍니다.";
 "Run it yourself in Terminal:" = "터미널에서 직접 실행하세요:";
+"Run the failed steps again (the same checks as the Upgrade and Install buttons apply)" = "실패한 단계를 다시 실행합니다(업그레이드 및 설치 버튼과 같은 확인을 거칩니다)";
 "Run this in Terminal:" = "터미널에서 실행하세요:";
 "Running" = "실행 중";
 "Running %@…" = "%@ 실행 중…";
@@ -845,17 +866,21 @@
 "Start" = "시작";
 "Start also registers it to launch at login." = "시작하면 로그인 시 실행되도록 등록도 합니다.";
 "Status" = "상태";
+"Still to upgrade: %@." = "남은 업그레이드: %@.";
 "Stop" = "중지";
 "Stop After Current" = "현재 작업 후 중지";
+"Stop After Current and Quit" = "현재 항목 후 중지하고 종료";
 "Stop Now" = "지금 중지";
 "Stop Trusting" = "신뢰 중단";
 "Stop Trusting…" = "신뢰 중단…";
 "Stop also unregisters it from launching at login." = "중지하면 로그인 시 실행되도록 한 등록도 해제합니다.";
 "Stop brew vulns. The last result, if any, is kept." = "brew vulns를 중지합니다. 마지막 결과가 있으면 유지됩니다.";
+"Stop now?" = "지금 중지하시겠습니까?";
 "Stop the running brew (and everything it started) immediately" = "실행 중인 brew(와 그것이 시작한 모든 것)를 즉시 중지합니다";
 "Stop trusting %@?" = "%@ 신뢰를 중단할까요?";
 "Stopped" = "중지됨";
 "Stopped: auto-update was turned off during the run" = "중지됨: 실행 중에 자동 업데이트가 꺼졌습니다";
+"Stopping %@…" = "%@ 중지 중…";
 "Stops by itself after 60 seconds." = "60초 후 자동으로 중지됩니다.";
 "Sunday" = "일요일";
 "Sure match" = "확실한 일치";
@@ -880,6 +905,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard는 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
 "Tankard on GitHub" = "GitHub의 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard는 사용자 본인의 서비스만 제어하며 sudo를 실행하지 않습니다. 터미널에서 실행하세요:";
+"Tankard quit after %lld of %lld. Still to upgrade: %@." = "Tankard가 %lld/%lld 시점에 종료되었습니다. 남은 업그레이드: %@.";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOS가 앱 관리를 적용하도록 Tankard를 다시 시작했습니다. 다시 실행을 클릭하기 전에는 아무것도 실행되지 않습니다.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 ▸ 일반에서 끌 수 있습니다.";
 "Tankard update available" = "Tankard 업데이트 사용 가능";
@@ -904,10 +930,12 @@
 "The cask installs to %@; brew adopts only an app at that exact place." = "이 cask는 %@에 설치합니다. brew는 정확히 그 위치에 있는 앱만 가져옵니다.";
 "The cask says this app updates itself (auto_updates)." = "cask에 따르면 이 앱은 자체 업데이트합니다(auto_updates).";
 "The disk is full" = "디스크가 가득 찼습니다";
+"The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew가 받은 파일이 예상한 파일이 아닙니다. 대개 중단된 다운로드이거나 마지막 brew update 이후 바뀐 패키지입니다. 새로 고침(brew update 실행)한 뒤 다시 시도하세요.";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "설치 프로그램이 암호를 요청하며 터미널에서 실행됩니다. 끝나면 돌아와서 다시 확인을 클릭하세요.";
 "The last %lld are kept in Application Support." = "최근 %lld개는 Application Support에 보관됩니다.";
 "The last %lld automatic runs. brew's full output is in %@." = "최근 자동 실행 %lld건. brew의 전체 출력은 %@에 있습니다.";
 "The last scan (%@) found none." = "마지막 검사(%@)에서 발견되지 않았습니다.";
+"The last upgrade didn't finish" = "지난 업그레이드가 끝나지 않았습니다";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
@@ -986,6 +1014,8 @@
 "Upgrade only the packages that pour a bottle; skip %@" = "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: " = "업그레이드 준비됨: ";
+"Upgrade the Remaining %lld Packages" = "남은 %lld개 업그레이드";
+"Upgrade the Remaining Package" = "남은 패키지 업그레이드";
 "Upgrade vulnerable packages. " = "취약한 패키지를 업그레이드합니다. ";
 "Upgrade with Homebrew" = "Homebrew로 업그레이드";
 "Upgraded (%lld)" = "업그레이드됨 (%lld)";
@@ -1005,6 +1035,7 @@
 "Vulnerable" = "취약함";
 "Vulnerable: %@" = "취약함: %@";
 "Wait for the running brew to finish" = "실행 중인 brew가 끝날 때까지 대기";
+"Waiting for another Homebrew command to finish…" = "다른 Homebrew 명령이 끝나기를 기다리는 중…";
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";
 "Waiting for brew update to finish…" = "brew update가 끝나기를 기다리는 중…";
 "Waiting for brew…" = "brew를 기다리는 중…";

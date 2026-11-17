@@ -8193,6 +8193,58 @@
         }
       }
     },
+    "A download didn't match its checksum": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download passt nicht zur Prüfsumme"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un téléchargement ne correspond pas à sa somme de contrôle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una descarga no coincide con su suma de verificación"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードがチェックサムと一致しません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载内容与校验和不符"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um download não confere com a soma de verificação"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un download non corrisponde al suo checksum"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드가 체크섬과 일치하지 않습니다"
+          }
+        }
+      }
+    },
     "A download failed. Check the internet connection (or a VPN or proxy), then retry.": {
       "localizations": {
         "de": {
@@ -10737,6 +10789,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "다른 Homebrew 명령이 실행 중입니다"
+          }
+        }
+      }
+    },
+    "Another Homebrew command kept brew's lock. Retry once it has finished.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein anderer Homebrew-Befehl hielt die Sperre. Erneut versuchen, wenn er fertig ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une autre commande Homebrew gardait le verrou de brew. Réessayez une fois qu'elle a terminé."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otro comando de Homebrew mantenía el bloqueo de brew. Reintenta cuando haya terminado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の Homebrew コマンドが brew のロックを保持していました。終了後に再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "另一个 Homebrew 命令占用了 brew 的锁。请在它完成后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro comando do Homebrew manteve o bloqueio do brew. Tente de novo quando ele terminar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un altro comando Homebrew teneva il blocco di brew. Riprova quando ha finito."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 Homebrew 명령이 brew 잠금을 쥐고 있었습니다. 끝난 뒤 다시 시도하세요."
           }
         }
       }
@@ -13909,6 +14013,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "백그라운드에서 새 버전 확인"
+          }
+        }
+      }
+    },
+    "Check your internet connection, then retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Internetverbindung prüfen, dann erneut versuchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez votre connexion Internet, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprueba tu conexión a internet y reintenta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インターネット接続を確認してから再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请检查网络连接,然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifique sua conexão com a internet e tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Controlla la connessione a Internet, poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인터넷 연결을 확인한 뒤 다시 시도하세요."
           }
         }
       }
@@ -20829,6 +20985,58 @@
         }
       }
     },
+    "Free up some space (Clean Up helps), then retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platz freigeben (Aufräumen hilft), dann erneut versuchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libérez de l'espace (Nettoyer aide), puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libera espacio (Limpiar ayuda) y reintenta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "空き容量を増やしてから(クリーンアップが役立ちます)再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请释放一些空间(“清理”会有帮助),然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libere espaço (Limpar ajuda) e tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libera spazio (Pulisci aiuta), poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공간을 확보한 뒤(정리하기가 도움이 됩니다) 다시 시도하세요."
+          }
+        }
+      }
+    },
     "From brew vulns (OSV.dev).": {
       "localizations": {
         "de": {
@@ -22701,6 +22909,266 @@
         }
       }
     },
+    "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ändert gerade %1$@. Beim Stoppen macht Homebrew den offenen Schritt rückgängig, %2$@ bleibt wie es war. Bleibt etwas halb fertig, hilft meist ein erneuter Lauf."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew modifie %1$@ en ce moment. Si vous arrêtez, Homebrew annule l'étape en cours et %2$@ reste tel quel. S'il reste quelque chose à moitié fait, relancer corrige généralement."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew está cambiando %1$@ ahora. Si lo detienes, Homebrew deshace el paso sin terminar y %2$@ queda como estaba. Si algo queda a medias, volver a ejecutarlo suele arreglarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew は今 %1$@ を変更しています。停止すると、Homebrew は途中の手順を元に戻し、%2$@ は元のままです。中途半端に残った場合も、もう一度実行すれば通常は直ります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew está alterando %1$@ agora. Se você parar, o Homebrew desfaz a etapa inacabada e %2$@ fica como estava. Se algo ficar pela metade, executar de novo costuma resolver."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew sta modificando %1$@ ora. Se interrompi, Homebrew annulla il passaggio in corso e %2$@ resta com'era. Se resta qualcosa a metà, rieseguire di solito risolve."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 지금 %1$@을(를) 변경하고 있습니다. 중지하면 Homebrew가 끝나지 않은 단계를 되돌리고 %2$@은(는) 그대로 유지됩니다. 어중간하게 남은 것이 있으면 다시 실행하면 대개 해결됩니다."
+          }
+        }
+      }
+    },
+    "Homebrew is still upgrading %@ (%lld of %lld).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aktualisiert noch %@ (%lld von %lld)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew met encore à jour %@ (%lld sur %lld)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aún está actualizando %@ (%lld de %lld)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はまだ %@ をアップグレード中です(%lld/%lld)。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew ainda está atualizando %@ (%lld de %lld)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew sta ancora aggiornando %@ (%lld di %lld)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 아직 %@을(를) 업그레이드하고 있습니다(%lld/%lld)."
+          }
+        }
+      }
+    },
+    "Homebrew is still upgrading %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aktualisiert noch %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew met encore à jour %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aún está actualizando %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はまだ %@ をアップグレード中です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 仍在升级 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew ainda está atualizando %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew sta ancora aggiornando %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 아직 %@을(를) 업그레이드하고 있습니다."
+          }
+        }
+      }
+    },
+    "Homebrew is still working on %@ (%lld of %lld).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew arbeitet noch an %@ (%lld von %lld)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew travaille encore sur %@ (%lld sur %lld)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aún está trabajando en %@ (%lld de %lld)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はまだ %@ を処理中です(%lld/%lld)。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 仍在处理 %@(第 %lld 个,共 %lld 个)。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew ainda está trabalhando em %@ (%lld de %lld)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew sta ancora lavorando su %@ (%lld di %lld)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 아직 %@ 작업 중입니다(%lld/%lld)."
+          }
+        }
+      }
+    },
+    "Homebrew is still working on %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew arbeitet noch an %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew travaille encore sur %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aún está trabajando en %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はまだ %@ を処理中です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 仍在处理 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew ainda está trabalhando em %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew sta ancora lavorando su %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 아직 %@ 작업 중입니다."
+          }
+        }
+      }
+    },
     "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first.": {
       "localizations": {
         "de": {
@@ -23373,6 +23841,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew © Homebrew contributors, BSD-2-Clause."
+          }
+        }
+      }
+    },
+    "Homebrew ▸ Health shows which folder isn't writable and how to fix it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ Zustand zeigt, welcher Ordner nicht beschreibbar ist und wie man es behebt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ État de santé indique quel dossier n'est pas modifiable et comment corriger."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ Salud muestra qué carpeta no se puede escribir y cómo arreglarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ ヘルスチェックに、書き込めないフォルダと修正方法が表示されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ 健康状况会显示哪个文件夹不可写以及如何修复。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ Integridade mostra qual pasta não pode ser gravada e como corrigir."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ Stato mostra quale cartella non è scrivibile e come risolvere."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ▸ 상태에서 쓸 수 없는 폴더와 해결 방법을 볼 수 있습니다."
           }
         }
       }
@@ -26025,6 +26545,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "KB"
+          }
+        }
+      }
+    },
+    "Keep Running": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiterlaufen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "続行"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续运行"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continua"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계속 실행"
           }
         }
       }
@@ -30497,6 +31069,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "zsh나 bash 시작 파일 중 어느 것도 이를 설정하지 않으므로 편집되는 것이 없습니다."
+          }
+        }
+      }
+    },
+    "Not Now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "後で"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以后再说"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non ora"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
           }
         }
       }
@@ -35857,6 +36481,58 @@
         }
       }
     },
+    "Quit Now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sofort beenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter maintenant"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir ahora"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今すぐ終了"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即退出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar agora"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci ora"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 종료"
+          }
+        }
+      }
+    },
     "Quit Tankard": {
       "localizations": {
         "de": {
@@ -36009,6 +36685,214 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard를 종료하고 다시 연 다음 다시 실행하세요."
+          }
+        }
+      }
+    },
+    "Quit anyway?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trotzdem beenden?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter quand même ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Salir de todos modos?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "それでも終了しますか?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍要退出吗?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar mesmo assim?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscire comunque?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그래도 종료하시겠습니까?"
+          }
+        }
+      }
+    },
+    "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig, der Rest läuft nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter l'arrête : Homebrew annule l'étape en cours, et le reste ne sera pas exécuté."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir lo detiene: Homebrew deshace el paso sin terminar y el resto no se ejecutará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了すると停止します。Homebrew は途中の手順を元に戻し、残りは実行されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出会停止它:Homebrew 撤销未完成的步骤,其余的不会运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar interrompe: o Homebrew desfaz a etapa inacabada e o restante não será executado."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscire lo interrompe: Homebrew annulla il passaggio in corso e il resto non verrà eseguito."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌리고 나머지는 실행되지 않습니다."
+          }
+        }
+      }
+    },
+    "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig, der Rest läuft nicht. Tankard bietet den Rest beim nächsten Start an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter l'arrête : Homebrew annule l'étape en cours, et le reste ne sera pas exécuté. Tankard proposera de mettre à jour le reste la prochaine fois."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir lo detiene: Homebrew deshace el paso sin terminar y el resto no se ejecutará. Tankard ofrecerá actualizar lo que falte la próxima vez."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了すると停止します。Homebrew は途中の手順を元に戻し、残りは実行されません。次回、残りのアップグレードを提案します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出会停止它:Homebrew 撤销未完成的步骤,其余的不会运行。下次 Tankard 会提议升级剩下的。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar interrompe: o Homebrew desfaz a etapa inacabada e o restante não será executado. O Tankard oferece atualizar o que faltou na próxima vez."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscire lo interrompe: Homebrew annulla il passaggio in corso e il resto non verrà eseguito. Tankard proporrà di aggiornare il resto la prossima volta."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌리고 나머지는 실행되지 않습니다. 다음에 Tankard가 남은 업그레이드를 제안합니다."
+          }
+        }
+      }
+    },
+    "Quitting now stops it: Homebrew undoes the unfinished step.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter l'arrête : Homebrew annule l'étape en cours."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir lo detiene: Homebrew deshace el paso sin terminar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了すると停止します。Homebrew は途中の手順を元に戻します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出会停止它:Homebrew 撤销未完成的步骤。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar interrompe: o Homebrew desfaz a etapa inacabada."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscire lo interrompe: Homebrew annulla il passaggio in corso."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌립니다."
           }
         }
       }
@@ -36477,6 +37361,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "새로 고침"
+          }
+        }
+      }
+    },
+    "Refresh (it runs brew update), then retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisieren (führt brew update aus), dann erneut versuchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualisez (cela lance brew update), puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiza la lista (ejecuta brew update) y reintenta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再読み込み(brew update を実行)してから再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请刷新(会运行 brew update),然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualize a lista (executa brew update) e tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna l'elenco (esegue brew update), poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새로 고침(brew update 실행)한 뒤 다시 시도하세요."
           }
         }
       }
@@ -38821,6 +39757,110 @@
         }
       }
     },
+    "Retry %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ erneut versuchen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を再試行"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试 %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar %@ de novo"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riprova %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 다시 시도"
+          }
+        }
+      }
+    },
+    "Retry Failed (%lld)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlgeschlagene wiederholen (%lld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer les échecs (%lld)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar fallidos (%lld)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "失敗分を再試行(%lld)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试失败项(%lld)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar falhas de novo (%lld)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riprova falliti (%lld)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실패 항목 다시 시도(%lld)"
+          }
+        }
+      }
+    },
     "Revert to Standard Homebrew…": {
       "localizations": {
         "de": {
@@ -39389,6 +40429,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "터미널에서 직접 실행하세요:"
+          }
+        }
+      }
+    },
+    "Run the failed steps again (the same checks as the Upgrade and Install buttons apply)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die fehlgeschlagenen Schritte erneut ausführen (mit denselben Prüfungen wie die Tasten Aktualisieren und Installieren)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancer les étapes en échec (avec les mêmes vérifications que les boutons Mettre à jour et Installer)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecutar de nuevo los pasos fallidos (con las mismas comprobaciones que los botones Actualizar e Instalar)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "失敗した手順を再実行します(アップグレード/インストールボタンと同じ確認が行われます)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新运行失败的步骤(与“升级”和“安装”按钮的检查相同)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executar de novo as etapas com falha (com as mesmas verificações dos botões Atualizar e Instalar)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esegui di nuovo i passaggi falliti (con gli stessi controlli dei pulsanti Aggiorna e Installa)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실패한 단계를 다시 실행합니다(업그레이드 및 설치 버튼과 같은 확인을 거칩니다)"
           }
         }
       }
@@ -44334,6 +45426,58 @@
         }
       }
     },
+    "Still to upgrade: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch zu aktualisieren: %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reste à mettre à jour : %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta actualizar: %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残りのアップグレード: %@。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仍需升级:%@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta atualizar: %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da aggiornare ancora: %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 업그레이드: %@."
+          }
+        }
+      }
+    },
     "Stop": {
       "localizations": {
         "de": {
@@ -44434,6 +45578,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "현재 작업 후 중지"
+          }
+        }
+      }
+    },
+    "Stop After Current and Quit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach aktuellem stoppen und beenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter après l'actuel et quitter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detener tras el actual y salir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在の処理後に停止して終了"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成当前项后停止并退出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parar após o atual e encerrar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferma dopo l'attuale ed esci"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 항목 후 중지하고 종료"
           }
         }
       }
@@ -44698,6 +45894,58 @@
         }
       }
     },
+    "Stop now?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt stoppen?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter maintenant ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Detener ahora?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今すぐ停止しますか?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即停止?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parar agora?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermare ora?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 중지하시겠습니까?"
+          }
+        }
+      }
+    },
     "Stop the running brew (and everything it started) immediately": {
       "localizations": {
         "de": {
@@ -44902,6 +46150,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "중지됨: 실행 중에 자동 업데이트가 꺼졌습니다"
+          }
+        }
+      }
+    },
+    "Stopping %@…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ wird gestoppt…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêt de %@…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deteniendo %@…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を停止中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在停止 %@…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parando %@…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arresto di %@…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 중지 중…"
           }
         }
       }
@@ -46154,6 +47454,58 @@
         }
       }
     },
+    "Tankard quit after %lld of %lld. Still to upgrade: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard wurde nach %lld von %lld beendet. Noch zu aktualisieren: %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a quitté après %lld sur %lld. Reste à mettre à jour : %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard se cerró tras %lld de %lld. Falta actualizar: %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard は %lld/%lld の時点で終了しました。残りのアップグレード: %@。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 在第 %lld 个(共 %lld 个)后退出。仍需升级:%@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard encerrou após %lld de %lld. Falta atualizar: %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard è uscito dopo %lld di %lld. Da aggiornare ancora: %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %lld/%lld 시점에 종료되었습니다. 남은 업그레이드: %@."
+          }
+        }
+      }
+    },
     "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again.": {
       "localizations": {
         "de": {
@@ -47402,6 +48754,58 @@
         }
       }
     },
+    "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die geladene Datei ist nicht die erwartete: oft ein abgebrochener Download oder ein Paket, das sich seit dem letzten brew update geändert hat. Aktualisieren (führt brew update aus), dann erneut versuchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier téléchargé par brew n'est pas celui attendu : souvent un téléchargement interrompu, ou un paquet modifié depuis le dernier brew update. Actualisez (cela lance brew update), puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El archivo que descargó brew no es el esperado: a menudo una descarga interrumpida o un paquete que cambió desde el último brew update. Actualiza la lista (ejecuta brew update) y reintenta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew がダウンロードしたファイルが想定と異なります。ダウンロードの中断や、前回の brew update 以降のパッケージ変更が主な原因です。再読み込み(brew update を実行)してから再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 下载的文件不是预期的文件:通常是下载中断,或软件包在上次 brew update 后有变化。请刷新(会运行 brew update),然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O arquivo baixado pelo brew não é o esperado: muitas vezes um download interrompido, ou um pacote que mudou desde o último brew update. Atualize a lista (executa brew update) e tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il file scaricato da brew non è quello atteso: spesso un download interrotto, o un pacchetto cambiato dall'ultimo brew update. Aggiorna l'elenco (esegue brew update), poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 받은 파일이 예상한 파일이 아닙니다. 대개 중단된 다운로드이거나 마지막 brew update 이후 바뀐 패키지입니다. 새로 고침(brew update 실행)한 뒤 다시 시도하세요."
+          }
+        }
+      }
+    },
     "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again.": {
       "localizations": {
         "de": {
@@ -47606,6 +49010,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "마지막 검사(%@)에서 발견되지 않았습니다."
+          }
+        }
+      }
+    },
+    "The last upgrade didn't finish": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die letzte Aktualisierung wurde nicht fertig"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La dernière mise à jour ne s'est pas terminée"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La última actualización no terminó"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前回のアップグレードは完了していません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次升级未完成"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A última atualização não terminou"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'ultimo aggiornamento non è terminato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지난 업그레이드가 끝나지 않았습니다"
           }
         }
       }
@@ -51666,6 +53122,110 @@
         }
       }
     },
+    "Upgrade the Remaining %lld Packages": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restliche %lld aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour les %lld restants"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar los %lld restantes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残りの %lld 件をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级剩余的 %lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar os %lld restantes"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna i %lld rimanenti"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 %lld개 업그레이드"
+          }
+        }
+      }
+    },
+    "Upgrade the Remaining Package": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restliches Paket aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour le paquet restant"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar el paquete restante"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残りのパッケージをアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级剩余的软件包"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar o pacote restante"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna il pacchetto rimanente"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 패키지 업그레이드"
+          }
+        }
+      }
+    },
     "Upgrade vulnerable packages. ": {
       "localizations": {
         "de": {
@@ -52650,6 +54210,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "실행 중인 brew가 끝날 때까지 대기"
+          }
+        }
+      }
+    },
+    "Waiting for another Homebrew command to finish…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warte, bis ein anderer Homebrew-Befehl fertig ist…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de la fin d'une autre commande Homebrew…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando a que termine otro comando de Homebrew…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の Homebrew コマンドの終了を待っています…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在等待另一个 Homebrew 命令完成…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aguardando outro comando do Homebrew terminar…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In attesa che finisca un altro comando Homebrew…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 Homebrew 명령이 끝나기를 기다리는 중…"
           }
         }
       }

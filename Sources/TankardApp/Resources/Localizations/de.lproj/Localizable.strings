@@ -151,6 +151,7 @@
 "365 days" = "365 Tage";
 "90 days" = "90 Tage";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "Eine brew.env-Datei setzt ebenfalls eine Intelbrew-Variable. Tankard bearbeitet brew.env nicht; entferne sie von Hand, sonst nutzt brew weiter den Fork:\n";
+"A download didn't match its checksum" = "Download passt nicht zur Prüfsumme";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "Ein Download ist fehlgeschlagen. Prüfe die Internetverbindung (oder VPN bzw. Proxy) und versuche es erneut.";
 "A newer version" = "Eine neuere Version";
 "A package needs something that isn't installed. Installing the missing ones fixes it." = "Ein Paket braucht etwas, das nicht installiert ist. Das Installieren der fehlenden Pakete behebt das.";
@@ -200,6 +201,7 @@
 "An independent app for Homebrew (brew.sh)." = "Eine unabhängige App für Homebrew (brew.sh).";
 "An older copy of Tankard is still running. Quit it to finish updating." = "Eine ältere Tankard-Kopie läuft noch. Beende sie, um das Update abzuschließen.";
 "Another Homebrew command is running" = "Ein anderer Homebrew-Befehl läuft";
+"Another Homebrew command kept brew's lock. Retry once it has finished." = "Ein anderer Homebrew-Befehl hielt die Sperre. Erneut versuchen, wenn er fertig ist.";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "Ein anderes Installationsprogramm hat Dateien im Präfix von Homebrew abgelegt. Sie können Builds aus Quellcode stören.";
 "Another old version is installed" = "Eine andere alte Version ist installiert";
 "App Store apps" = "App-Store-Apps";
@@ -261,6 +263,7 @@
 "Check every" = "Prüfen alle";
 "Check for Tankard Updates…" = "Nach Tankard-Updates suchen…";
 "Check for new versions in the background" = "Im Hintergrund nach Updates suchen";
+"Check your internet connection, then retry." = "Internetverbindung prüfen, dann erneut versuchen.";
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
 "Checking for updates…" = "Suche Updates…";
@@ -394,6 +397,7 @@
 "Formulae that build from source may fail. The App Store updates Xcode." = "Formulae, die aus Quellcode gebaut werden, können fehlschlagen. Der App Store aktualisiert Xcode.";
 "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed." = "Formulae mit einer Bottle für diesen Mac (von Intelbrew oder Homebrew). Die übrigen werden bei der Installation aus Quellcode kompiliert.";
 "Formulae with a bottle for this Mac. The rest compile from source when installed." = "Formulae mit einer Bottle für diesen Mac. Die übrigen werden bei der Installation aus Quellcode kompiliert.";
+"Free up some space (Clean Up helps), then retry." = "Platz freigeben (Aufräumen hilft), dann erneut versuchen.";
 "From brew vulns (OSV.dev)." = "Aus brew vulns (OSV.dev).";
 "From brew.env: brew reads it itself." = "Aus brew.env: brew liest sie selbst.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "Von formulae.brew.sh, eine Stunde lang gecacht in ~/Library/Caches/net.mindtricks.tankard/api";
@@ -430,6 +434,11 @@
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew hat ein Cask für diese Apps und die installierte Version passt (oder die App aktualisiert sich selbst, dann vergleicht brew nicht).";
 "Homebrew has disabled this cask." = "Homebrew hat dieses Cask deaktiviert.";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an.";
+"Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew ändert gerade %1$@. Beim Stoppen macht Homebrew den offenen Schritt rückgängig, %2$@ bleibt wie es war. Bleibt etwas halb fertig, hilft meist ein erneuter Lauf.";
+"Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew aktualisiert noch %@ (%lld von %lld).";
+"Homebrew is still upgrading %@." = "Homebrew aktualisiert noch %@.";
+"Homebrew is still working on %@ (%lld of %lld)." = "Homebrew arbeitet noch an %@ (%lld von %lld).";
+"Homebrew is still working on %@." = "Homebrew arbeitet noch an %@.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew ist der Paketmanager für macOS: Er installiert Befehlszeilenprogramme und Apps und hält sie aktuell. Tankard ist ein Fenster dazu, daher braucht es zuerst Homebrew.";
 "Homebrew isn't installed" = "Homebrew ist nicht installiert";
 "Homebrew isn't ready yet." = "Homebrew ist noch nicht bereit.";
@@ -443,6 +452,7 @@
 "Homebrew still has it, but will disable it later." = "Homebrew hat es noch, wird es aber später deaktivieren.";
 "Homebrew updates it" = "Homebrew";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew-Mitwirkende, BSD-2-Clause.";
+"Homebrew ▸ Health shows which folder isn't writable and how to fix it." = "Homebrew ▸ Zustand zeigt, welcher Ordner nicht beschreibbar ist und wie man es behebt.";
 "Homebrew's API (formulae.brew.sh)" = "API von Homebrew (formulae.brew.sh)";
 "Homebrew's anonymous install analytics (formulae.brew.sh)" = "Homebrews anonyme Installationsstatistik (formulae.brew.sh)";
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrews anonyme Installationsstatistik (formulae.brew.sh), bis %@";
@@ -494,6 +504,7 @@
 "It took %@; expect longer on an older Mac." = "Das dauerte %@; auf einem älteren Mac länger.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Seine Abhängigkeiten bleiben installiert (brew autoremove entfernt ungenutzte)";
 "KB" = "KB";
+"Keep Running" = "Weiterlaufen";
 "Keep the previous version after upgrades" = "Vorherige Version nach Upgrades behalten";
 "Keeps %@; upgrades skip it" = "Behält %@; Upgrades überspringen es";
 "Keg-only" = "Keg-only";
@@ -580,6 +591,7 @@
 "No vulnerable package has an upgrade yet." = "Für kein Paket mit Schwachstellen gibt es schon ein Upgrade.";
 "None of the installed formulae has a background service." = "Keine der installierten Formulae hat einen Hintergrunddienst.";
 "None of your zsh or bash startup files sets them, so nothing is edited." = "Keine deiner zsh- oder bash-Startdateien setzt sie, daher wird nichts bearbeitet.";
+"Not Now" = "Nicht jetzt";
 "Not affiliated with or endorsed by the Homebrew project." = "Nicht mit dem Homebrew-Projekt verbunden und von ihm nicht empfohlen.";
 "Not allowed yet" = "Noch nicht erlaubt";
 "Not applied by Tankard (set in shell): download mirrors aren't supported yet." = "Von Tankard nicht übernommen (in der Shell gesetzt): Spiegelserver werden noch nicht unterstützt.";
@@ -683,9 +695,14 @@
 "Press Refresh to ask Homebrew." = "Drücke „Aktualisieren“, um Homebrew zu fragen.";
 "Preview from %@ (changes nothing)." = "Vorschau von %@ (ändert nichts).";
 "Private" = "Privat";
+"Quit Now" = "Sofort beenden";
 "Quit Tankard" = "Tankard beenden";
 "Quit Tankard and open it again to use the new version." = "Beende Tankard und öffne es erneut, um die neue Version zu nutzen.";
 "Quit Tankard and open it again, then run it again." = "Beende Tankard, öffne es erneut und führe es dann erneut aus.";
+"Quit anyway?" = "Trotzdem beenden?";
+"Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run." = "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig, der Rest läuft nicht.";
+"Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time." = "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig, der Rest läuft nicht. Tankard bietet den Rest beim nächsten Start an.";
+"Quitting now stops it: Homebrew undoes the unfinished step." = "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig.";
 "Read from Homebrew's API; not tapped locally." = "Aus der Homebrew-API gelesen; nicht lokal getappt.";
 "Reading installed packages…" = "Installierte Pakete werden gelesen…";
 "Reading package details…" = "Paketdetails werden gelesen…";
@@ -695,6 +712,7 @@
 "Reading your apps and Homebrew's casks…" = "Apps und Homebrew-Casks werden gelesen…";
 "Ready to adopt" = "Übernehmbar";
 "Refresh" = "Aktualisieren";
+"Refresh (it runs brew update), then retry." = "Aktualisieren (führt brew update aus), dann erneut versuchen.";
 "Refresh failed" = "Aktualisierung fehlgeschlagen";
 "Refreshing" = "Wird aktualisiert";
 "Reinstall" = "Neu installieren";
@@ -740,6 +758,8 @@
 "Restoring (%lld steps)" = "Wird wiederhergestellt (%lld Schritte)";
 "Resume" = "Fortsetzen";
 "Retry" = "Wiederholen";
+"Retry %@" = "%@ erneut versuchen";
+"Retry Failed (%lld)" = "Fehlgeschlagene wiederholen (%lld)";
 "Revert to Standard Homebrew…" = "Zu Standard-Homebrew zurückkehren…";
 "Revert to standard Homebrew?" = "Zu Standard-Homebrew zurückkehren?";
 "Run %@ again, through the queue" = "%@ erneut ausführen, über die Warteschlange";
@@ -751,6 +771,7 @@
 "Run it again from Homebrew ▸ Taps…; it asks first." = "Führe es erneut über Homebrew ▸ Taps… aus; es fragt vorher nach.";
 "Run it again from the menu (Clean Up… or Remove Unused Dependencies…); it shows what it removes first." = "Führe es erneut über das Menü aus („Bereinigen…“ oder „Nicht benötigte Abhängigkeiten entfernen…“); es zeigt vorher, was entfernt wird.";
 "Run it yourself in Terminal:" = "Führe es selbst im Terminal aus:";
+"Run the failed steps again (the same checks as the Upgrade and Install buttons apply)" = "Die fehlgeschlagenen Schritte erneut ausführen (mit denselben Prüfungen wie die Tasten Aktualisieren und Installieren)";
 "Run this in Terminal:" = "Führe dies im Terminal aus:";
 "Running" = "Läuft";
 "Running %@…" = "%@ läuft…";
@@ -845,17 +866,21 @@
 "Start" = "Starten";
 "Start also registers it to launch at login." = "„Starten“ registriert es auch für den Start bei der Anmeldung.";
 "Status" = "Status";
+"Still to upgrade: %@." = "Noch zu aktualisieren: %@.";
 "Stop" = "Stoppen";
 "Stop After Current" = "Nach aktuellem stoppen";
+"Stop After Current and Quit" = "Nach aktuellem stoppen und beenden";
 "Stop Now" = "Sofort stoppen";
 "Stop Trusting" = "Vertrauen entziehen";
 "Stop Trusting…" = "Vertrauen entziehen…";
 "Stop also unregisters it from launching at login." = "„Stoppen“ hebt auch die Registrierung für den Start bei der Anmeldung auf.";
 "Stop brew vulns. The last result, if any, is kept." = "brew vulns stoppen. Das letzte Ergebnis, falls vorhanden, bleibt erhalten.";
+"Stop now?" = "Jetzt stoppen?";
 "Stop the running brew (and everything it started) immediately" = "Das laufende brew (und alles, was es gestartet hat) sofort stoppen";
 "Stop trusting %@?" = "Vertrauen in %@ entziehen?";
 "Stopped" = "Gestoppt";
 "Stopped: auto-update was turned off during the run" = "Gestoppt: Auto-Update wurde während des Laufs deaktiviert";
+"Stopping %@…" = "%@ wird gestoppt…";
 "Stops by itself after 60 seconds." = "Stoppt von selbst nach 60 Sekunden.";
 "Sunday" = "Sonntag";
 "Sure match" = "Sicher";
@@ -880,6 +905,7 @@
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard führt nie sudo aus. Führe dies im Terminal aus:";
 "Tankard on GitHub" = "Tankard auf GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard steuert nur deine eigenen Dienste und führt nie sudo aus. Führe dies im Terminal aus:";
+"Tankard quit after %lld of %lld. Still to upgrade: %@." = "Tankard wurde nach %lld von %lld beendet. Noch zu aktualisieren: %@.";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard wurde neu gestartet, damit macOS die App-Verwaltung anwendet. Nichts läuft, bevor du „Erneut ausführen“ klickst.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard führt brew update im Hintergrund aus, damit die Zahlen aktuell bleiben. Abschalten unter Einstellungen ▸ Allgemein.";
 "Tankard update available" = "Tankard-Update verfügbar";
@@ -904,10 +930,12 @@
 "The cask installs to %@; brew adopts only an app at that exact place." = "Das Cask installiert nach %@; brew übernimmt nur eine App genau an diesem Ort.";
 "The cask says this app updates itself (auto_updates)." = "Laut Cask aktualisiert sich diese App selbst (auto_updates).";
 "The disk is full" = "Der Datenträger ist voll";
+"The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "Die geladene Datei ist nicht die erwartete: oft ein abgebrochener Download oder ein Paket, das sich seit dem letzten brew update geändert hat. Aktualisieren (führt brew update aus), dann erneut versuchen.";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "Das Installationsprogramm fragt nach deinem Passwort und läuft im Terminal. Komm danach zurück und klicke auf „Erneut prüfen“.";
 "The last %lld are kept in Application Support." = "Die letzten %lld werden in Application Support behalten.";
 "The last %lld automatic runs. brew's full output is in %@." = "Die letzten %lld automatischen Läufe. Die vollständige Ausgabe von brew liegt in %@.";
 "The last scan (%@) found none." = "Der letzte Scan (%@) hat keine gefunden.";
+"The last upgrade didn't finish" = "Die letzte Aktualisierung wurde nicht fertig";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "Das Menüleistensymbol ist aus, daher beendet sich Tankard beim Schließen des Fensters, und nichts läuft dann.";
 "The official installer from brew.sh." = "Das offizielle Installationsprogramm von brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "Die alte Version ist noch installiert. brew uninstall entfernt die neue, dann verknüpft brew link die alte.";
@@ -986,6 +1014,8 @@
 "Upgrade only the packages that pour a bottle; skip %@" = "Nur Pakete upgraden, die eine Bottle gießen; %@ überspringen";
 "Upgrade packages automatically" = "Pakete automatisch upgraden";
 "Upgrade ready: " = "Upgrade bereit: ";
+"Upgrade the Remaining %lld Packages" = "Restliche %lld aktualisieren";
+"Upgrade the Remaining Package" = "Restliches Paket aktualisieren";
 "Upgrade vulnerable packages. " = "Verwundbare Pakete upgraden. ";
 "Upgrade with Homebrew" = "Mit Homebrew upgraden";
 "Upgraded (%lld)" = "Aktualisiert (%lld)";
@@ -1005,6 +1035,7 @@
 "Vulnerable" = "Verwundbar";
 "Vulnerable: %@" = "Verwundbar: %@";
 "Wait for the running brew to finish" = "Auf das Ende des laufenden brew warten";
+"Waiting for another Homebrew command to finish…" = "Warte, bis ein anderer Homebrew-Befehl fertig ist…";
 "Waiting for approval in System Settings → General → Login Items." = "Warten auf Freigabe in Systemeinstellungen → Allgemein → Anmeldeobjekte.";
 "Waiting for brew update to finish…" = "Warten auf brew update…";
 "Waiting for brew…" = "Warten auf brew…";

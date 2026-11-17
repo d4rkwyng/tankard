@@ -14,6 +14,8 @@ struct ActivitySheet: View {
             AppManagementSheet(store: store, prompt: prompt)
         } else if let resume = store.appManagementResume {
             AppManagementResumeSheet(store: store, resume: resume)
+        } else if let offer = store.interruptedRun {
+            InterruptedRunSheet(store: store, offer: offer)
         } else if let plan = store.upgradePlan {
             UpgradePlanView(store: store, plan: plan)
         } else if let session = store.upgrade {

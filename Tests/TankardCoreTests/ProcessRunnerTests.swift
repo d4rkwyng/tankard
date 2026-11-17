@@ -173,3 +173,43 @@ struct SpawnDescriptorTests {
         #expect(fast.allSatisfy { $0 < .milliseconds(2500) })
     }
 }
+
+// 0.8.3: Stop Now interrupts brew like Ctrl-C first (SIGINT, which brew
+// rolls back from), and only then SIGTERM, then SIGKILL.
+struct StreamingStopSignalTests {
+    func run(_ script: String, interruptGrace: Double, marker: URL) async throws -> (Duration, String) {
+        let runner = StreamingProcessRunner(killGrace: 0.5, interruptGrace: interruptGrace)
+        let started = ContinuousClock.now
+        let task = Task {
+            try await runner.stream("/bin/sh", ["-c", script], environment: [:]) { _ in }
+        }
+        // Give the shell time to set its traps.
+        try await Task.sleep(for: .milliseconds(300))
+        task.cancel()
+        _ = try? await task.value
+        let elapsed = ContinuousClock.now - started
+        try await Task.sleep(for: .milliseconds(100))
+        return (elapsed, (try? String(contentsOf: marker, encoding: .utf8)) ?? "")
+    }
+
+    @Test func sigintFirst() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let m = dir.appendingPathComponent("m")
+        let (elapsed, got) = try await run("trap 'echo INT >> \(m.path); exit 130' INT; trap 'echo TERM >> \(m.path); exit 143' TERM; while :; do sleep 0.05; done",
+                                           interruptGrace: 5, marker: m)
+        #expect(got == "INT\n")
+        #expect(elapsed < .seconds(3), "a process that handles SIGINT isn't made to wait for the grace period")
+    }
+
+    @Test func sigtermWhenSigintIsIgnored() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let m = dir.appendingPathComponent("m")
+        let (_, got) = try await run("trap '' INT; trap 'echo TERM >> \(m.path); exit 143' TERM; while :; do sleep 0.05; done",
+                                     interruptGrace: 0.4, marker: m)
+        #expect(got == "TERM\n")
+    }
+}
