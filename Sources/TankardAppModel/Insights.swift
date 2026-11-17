@@ -27,43 +27,75 @@ public final class InsightSettings {
     /// Told after a change (the store re-reads or re-decorates).
     @ObservationIgnored public var onChange: ((Change) -> Void)?
 
+    // Every setting below ignores a write of the value it already has: no
+    // observer notification, no UserDefaults write, no onChange. The same
+    // rule as AppSettings.showMenuBarIcon (0.3.1): a Toggle or binding that
+    // writes back an unchanged value must not invalidate anything, whatever
+    // the compiler's @Observable does with equal writes.
+
     /// `brew outdated --greedy` for casks: also list apps that update
     /// themselves (`auto_updates true`) or are `version :latest`. Default off.
     public var includeSelfUpdatingApps: Bool {
-        didSet {
-            defaults.set(includeSelfUpdatingApps, forKey: Key.includeSelfUpdating)
-            if includeSelfUpdatingApps != oldValue { onChange?(.selfUpdating) }
+        get { access(keyPath: \.includeSelfUpdatingApps); return _includeSelfUpdatingApps }
+        set {
+            guard newValue != _includeSelfUpdatingApps else { return }
+            withMutation(keyPath: \.includeSelfUpdatingApps) { _includeSelfUpdatingApps = newValue }
+            defaults.set(newValue, forKey: Key.includeSelfUpdating)
+            onChange?(.selfUpdating)
         }
     }
+    @ObservationIgnored private var _includeSelfUpdatingApps: Bool
     /// HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades. Default off
     /// (brew's default: it quits a running app, upgrades it and reopens it).
     public var dontQuitAppsDuringUpgrade: Bool {
-        didSet { defaults.set(dontQuitAppsDuringUpgrade, forKey: Key.dontQuitApps) }
+        get { access(keyPath: \.dontQuitAppsDuringUpgrade); return _dontQuitAppsDuringUpgrade }
+        set {
+            guard newValue != _dontQuitAppsDuringUpgrade else { return }
+            withMutation(keyPath: \.dontQuitAppsDuringUpgrade) { _dontQuitAppsDuringUpgrade = newValue }
+            defaults.set(newValue, forKey: Key.dontQuitApps)
+        }
     }
+    @ObservationIgnored private var _dontQuitAppsDuringUpgrade: Bool
     /// Run `brew vulns` after each status read. Default on.
     public var scanVulnerabilitiesOnRefresh: Bool {
-        didSet { defaults.set(scanVulnerabilitiesOnRefresh, forKey: Key.scanOnRefresh) }
+        get { access(keyPath: \.scanVulnerabilitiesOnRefresh); return _scanVulnerabilitiesOnRefresh }
+        set {
+            guard newValue != _scanVulnerabilitiesOnRefresh else { return }
+            withMutation(keyPath: \.scanVulnerabilitiesOnRefresh) { _scanVulnerabilitiesOnRefresh = newValue }
+            defaults.set(newValue, forKey: Key.scanOnRefresh)
+        }
     }
+    @ObservationIgnored private var _scanVulnerabilitiesOnRefresh: Bool
     /// A notice in the menu-bar menu when a scan finds vulnerabilities that
     /// weren't there before. Default off.
     public var notifyNewVulnerabilities: Bool {
-        didSet {
-            defaults.set(notifyNewVulnerabilities, forKey: Key.notifyNewVulnerabilities)
-            if notifyNewVulnerabilities != oldValue { onChange?(.notifyVulnerabilities) }
+        get { access(keyPath: \.notifyNewVulnerabilities); return _notifyNewVulnerabilities }
+        set {
+            guard newValue != _notifyNewVulnerabilities else { return }
+            withMutation(keyPath: \.notifyNewVulnerabilities) { _notifyNewVulnerabilities = newValue }
+            defaults.set(newValue, forKey: Key.notifyNewVulnerabilities)
+            onChange?(.notifyVulnerabilities)
         }
     }
+    @ObservationIgnored private var _notifyNewVulnerabilities: Bool
     /// The vulnerability keys already seen (nil: no baseline yet).
     public var seenVulnerabilities: Set<String>? {
-        didSet { defaults.set(seenVulnerabilities.map { Array($0).sorted() }, forKey: Key.seenVulnerabilities) }
+        get { access(keyPath: \.seenVulnerabilities); return _seenVulnerabilities }
+        set {
+            guard newValue != _seenVulnerabilities else { return }
+            withMutation(keyPath: \.seenVulnerabilities) { _seenVulnerabilities = newValue }
+            defaults.set(newValue.map { Array($0).sorted() }, forKey: Key.seenVulnerabilities)
+        }
     }
+    @ObservationIgnored private var _seenVulnerabilities: Set<String>?
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        includeSelfUpdatingApps = defaults.bool(forKey: Key.includeSelfUpdating)
-        dontQuitAppsDuringUpgrade = defaults.bool(forKey: Key.dontQuitApps)
-        scanVulnerabilitiesOnRefresh = defaults.object(forKey: Key.scanOnRefresh) as? Bool ?? true
-        notifyNewVulnerabilities = defaults.bool(forKey: Key.notifyNewVulnerabilities)
-        seenVulnerabilities = (defaults.array(forKey: Key.seenVulnerabilities) as? [String]).map(Set.init)
+        _includeSelfUpdatingApps = defaults.bool(forKey: Key.includeSelfUpdating)
+        _dontQuitAppsDuringUpgrade = defaults.bool(forKey: Key.dontQuitApps)
+        _scanVulnerabilitiesOnRefresh = defaults.object(forKey: Key.scanOnRefresh) as? Bool ?? true
+        _notifyNewVulnerabilities = defaults.bool(forKey: Key.notifyNewVulnerabilities)
+        _seenVulnerabilities = (defaults.array(forKey: Key.seenVulnerabilities) as? [String]).map(Set.init)
     }
 
     /// The environment brew gets for one step, on top of the usual one:
@@ -142,8 +174,8 @@ public enum VulnerabilityNotice {
 
 /// "Upgrade vulnerable packages".
 public enum VulnerabilityUpgrades {
-    /// Vulnerable packages with an upgrade waiting, minus held ones (pinned
-    /// now; v0.4a's pin store plugs in through `InsightsStore.isHeld`).
+    /// Vulnerable packages with an upgrade waiting, minus held ones
+    /// (`InsightsStore.isHeld`: pinned, the same rule as Upgrade all).
     public static func targets(_ packages: [Package], isHeld: (Package) -> Bool) -> [Package] {
         packages.filter { $0.isVulnerable && $0.upgradeAvailable && !isHeld($0) }
     }
@@ -232,9 +264,10 @@ public final class InsightsStore {
     @ObservationIgnored let now: @Sendable () -> Date
     /// Called when a result arrives (the store re-decorates its report).
     @ObservationIgnored var onUpdate: (() -> Void)?
-    /// Packages "Upgrade vulnerable packages" leaves alone. Pinned for now;
-    /// v0.4a's pin support replaces this with its own check.
-    @ObservationIgnored public var isHeld: (Package) -> Bool = { $0.pinned }
+    /// Packages "Upgrade vulnerable packages" leaves alone: `Package.isHeld`
+    /// (pinned), the rule Upgrade all, the menu-bar count and notifications
+    /// use. A hook so tests can hold others.
+    @ObservationIgnored public var isHeld: (Package) -> Bool = { $0.isHeld }
     @ObservationIgnored private var scanTask: Task<Void, Never>?
     @ObservationIgnored private var sizesTask: Task<Void, Never>?
 

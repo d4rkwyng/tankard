@@ -212,7 +212,7 @@ public final class AppStore {
 
     /// What Upgrade all runs: pinned packages are left out (0.4), as
     /// `brew upgrade` leaves them out.
-    public var upgradable: [Package] { packages.filter { $0.upgradeAvailable && !$0.pinned } }
+    public var upgradable: [Package] { packages.filter(\.isUpgradeTarget) }
     /// Ids of everything installed (Discover's "installed" mark).
     public var installedIDs: Set<String> { Set(packages.map(\.id)) }
     public var hasBrew: Bool { client != nil }
@@ -420,7 +420,7 @@ public final class AppStore {
 
     /// Queues `brew upgrade` for each package, in order, and opens the sheet.
     public func startUpgrade(_ packages: [Package]? = nil) {
-        startSession(.upgrade, packages: (packages ?? upgradable).filter { $0.upgradeAvailable && !$0.pinned })
+        startSession(.upgrade, packages: (packages ?? upgradable).filter(\.isUpgradeTarget))
     }
 
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
@@ -428,7 +428,7 @@ public final class AppStore {
     /// that would compile"; otherwise it starts at once, as before.
     public func requestUpgrade(_ packages: [Package]? = nil) {
         guard !isUpgrading else { return }
-        let targets = (packages ?? upgradable).filter { $0.upgradeAvailable && !$0.pinned }
+        let targets = (packages ?? upgradable).filter(\.isUpgradeTarget)
         guard !targets.isEmpty else { return }
         let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
         if plan.hasCompiling {

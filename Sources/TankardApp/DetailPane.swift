@@ -125,13 +125,14 @@ struct PackageDetail: View {
                 if p.upgradeAvailable {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Upgrade command").font(.system(size: 11)).foregroundStyle(.secondary)
-                        CommandBox(command: insights?.upgradeDisplay(for: p) ?? BrewCommands.upgradeDisplay(for: p))
+                        let command = insights?.upgradeDisplay(for: p) ?? BrewCommands.upgradeDisplay(for: p)
+                        CommandBox(command: command)
                         Button(action: upgrade) {
                             Label("Upgrade \(p.name)", systemImage: "arrow.up")
                         }
                         .buttonStyle(.primaryAction)
-                        .disabled(!canUpgrade || p.pinned)
-                        .help(p.pinned ? "Pinned: unpin it first" : BrewCommands.upgradeDisplay(for: p))
+                        .disabled(!canUpgrade || p.isHeld)
+                        .help(p.isHeld ? "Pinned: unpin it first" : command)
                     }
                 }
 

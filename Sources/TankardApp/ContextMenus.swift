@@ -54,7 +54,8 @@ enum ContextMenuActions {
                 dependencies: Dependents.dependencies(of: p, among: store.packages),
                 compileWarning: store.deps.classifier.upgradeWarning(p),
                 busy: store.isBusy,
-                kegPath: existingKegPath(p, store: store))) { action in
+                kegPath: existingKegPath(p, store: store),
+                upgradeCommand: store.insights.upgradeDisplay(for: p))) { action in
                     perform(action, on: p, store: store)
                 }
         }

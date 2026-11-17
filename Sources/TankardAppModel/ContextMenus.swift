@@ -69,10 +69,15 @@ public enum ContextMenus {
     ///
     /// - busy: a brew run is going (the detail pane disables its buttons too).
     /// - kegPath: the keg or Caskroom folder, only when it exists on disk.
+    /// - upgradeCommand: what Copy Upgrade Command copies, when it isn't the
+    ///   plain command (0.4: `InsightsStore.upgradeDisplay`, which puts
+    ///   `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1` in front of a cask upgrade when
+    ///   "Don't quit running apps" is on).
     public static func installed(_ p: Package, dependents: [Package], dependencies: [Package],
-                                 compileWarning: CompileWarning?, busy: Bool, kegPath: String?) -> [MenuEntry] {
+                                 compileWarning: CompileWarning?, busy: Bool, kegPath: String?,
+                                 upgradeCommand: String? = nil) -> [MenuEntry] {
         var actions: [MenuItemModel] = []
-        if p.upgradeAvailable && p.pinned {
+        if p.upgradeAvailable && p.isHeld {
             // brew won't upgrade a pinned package; unpin first.
             actions.append(MenuItemModel(id: "upgrade", title: "Upgrade \(p.name) (pinned)", systemImage: "pin",
                                          action: .upgrade, isEnabled: false))
@@ -100,7 +105,7 @@ public enum ContextMenus {
         ]
         if p.upgradeAvailable {
             copy.append(MenuItemModel(id: "copy-command", title: "Copy Upgrade Command", systemImage: "terminal",
-                                      action: .copy(BrewCommands.upgradeDisplay(for: p))))
+                                      action: .copy(upgradeCommand ?? BrewCommands.upgradeDisplay(for: p))))
         } else {
             copy.append(MenuItemModel(id: "copy-command", title: "Copy Install Command", systemImage: "terminal",
                                       action: .copy(BrewCommands.display(BrewCommands.installArguments(kind: p.kind, qualifiedName: p.qualifiedName)))))

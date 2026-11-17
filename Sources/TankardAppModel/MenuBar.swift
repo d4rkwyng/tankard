@@ -28,8 +28,9 @@ public struct MenuBarSummary: Equatable, Sendable {
     public var hasData: Bool
 
     public init(packages: [Package]?, classifier: CompileClassifier = CompileClassifier()) {
-        // Pinned packages aren't upgraded (0.4), so they aren't counted.
-        let up = (packages ?? []).filter { $0.upgradeAvailable && !$0.pinned }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        // Pinned packages aren't upgraded (0.4), so they aren't counted;
+        // self-updating casks are, when that setting listed them.
+        let up = (packages ?? []).filter(\.isUpgradeTarget).sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         hasData = packages != nil
         count = up.count
         rows = up.prefix(Self.maxRows).map { p in
@@ -58,7 +59,7 @@ public enum UpgradeNotificationDiff {
     /// One key per upgrade: the package and the version it would go to,
     /// so a newer version of an already-known upgrade counts as new.
     public static func keys(_ packages: [Package]) -> Set<String> {
-        Set(packages.filter { $0.upgradeAvailable && !$0.pinned }.map { "\($0.id)@\($0.currentVersion ?? "")" })
+        Set(packages.filter(\.isUpgradeTarget).map { "\($0.id)@\($0.currentVersion ?? "")" })
     }
 
     public struct Message: Equatable, Sendable {

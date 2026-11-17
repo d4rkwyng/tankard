@@ -31,12 +31,26 @@ public struct QuickResult: Equatable, Sendable {
     }
 }
 
+public extension Package {
+    /// 0.4: held back from upgrades. A pinned package: `brew upgrade` skips
+    /// it, so Tankard does too. The one rule every "upgrade everything"
+    /// path uses (Upgrade all, the menu-bar count, upgrade notifications,
+    /// Upgrade vulnerable packages through `InsightsStore.isHeld`).
+    var isHeld: Bool { pinned }
+
+    /// 0.4: an upgrade that Upgrade all, the menu-bar count and
+    /// notifications include: one is waiting and it isn't held. With
+    /// "Include self-updating apps" on, the casks `brew outdated --greedy`
+    /// adds have `upgradeAvailable` set, so they count too, unless pinned.
+    var isUpgradeTarget: Bool { upgradeAvailable && !isHeld }
+}
+
 public extension AppStore {
     /// A brew run is going: a sheet session, or a pin/service command.
     var isBusy: Bool { isUpgrading || quickAction != nil }
 
     /// Upgrades that Upgrade all leaves out because they are pinned.
-    var pinnedUpgrades: [Package] { packages.filter { $0.upgradeAvailable && $0.pinned } }
+    var pinnedUpgrades: [Package] { packages.filter { $0.upgradeAvailable && $0.isHeld } }
 
     /// "1 pinned upgrade not included (sqlite)", or nil.
     var pinnedUpgradeNote: String? {
