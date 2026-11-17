@@ -35,6 +35,15 @@ struct ContentView: View {
                     .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
                 }
                 ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        store.openCleanup()
+                    } label: {
+                        Label("Clean Up", systemImage: "trash")
+                    }
+                    .help("See what brew cleanup would remove, then clean up")
+                    .disabled(store.isUpgrading || store.report == nil)
+                }
+                ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
                         ProgressView().controlSize(.small).frame(width: 28)
                             .help(store.refreshPhase ?? "Refreshing")
@@ -51,9 +60,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $store.showUpgradeSheet) {
-            if let session = store.upgrade {
-                UpgradeSheet(session: session, store: store).themed(theme)
-            }
+            ActivitySheet(store: store).themed(theme)
         }
         .task {
             await store.start()
@@ -69,7 +76,22 @@ struct ContentView: View {
             AppResources.updateDockIcon(intelbrew: intelbrew)
         }
         .themed(theme)
-        .background(SnapshotHook(request: options.snapshot))
+        .background(SnapshotHook(request: options.snapshot, makeView: { name in
+            switch name {
+            case "menubar":
+                return AnyView(MenuBarContent(store: store, openMain: {})
+                    .themed(theme)
+                    .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
+            case "settings":
+                // The General tab's content (an off-screen TabView draws no tab bar).
+                return AnyView(GeneralSettings(settings: store.settings, notifier: SystemNotifier(), loginItem: LoginItem())
+                    .frame(width: 460)
+                    .themed(theme)
+                    .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
+            default:
+                return nil
+            }
+        }))
     }
 
     @ViewBuilder
@@ -104,6 +126,9 @@ struct ContentView: View {
         .sheet(item: $store.uninstallCandidate) { p in
             UninstallSheet(store: store, package: p).themed(theme)
         }
+        .sheet(isPresented: $store.showCleanupSheet) {
+            if let c = store.cleanup { CleanupSheet(store: store, cleanup: c).themed(theme) }
+        }
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
                     prompt: store.tab == .installed ? "Search installed" : "Search Homebrew")
@@ -126,11 +151,28 @@ struct ContentView: View {
 
     @MainActor
     private func applyLaunchOptions() async {
+        if let f = options.filter { store.filter = f }
         if let name = options.select, let p = store.packages.first(where: { $0.name == name }) {
             store.selection = p.id
         }
         if options.demo != nil && options.demoUpgrade {
             store.startUpgrade()
+        }
+        if options.demo != nil && options.demoPlan {
+            store.requestUpgrade()
+        }
+        if options.demo != nil && options.demoCleanup {
+            store.openCleanup()
+            if options.demoCleanupRun {
+                try? await Task.sleep(for: .seconds(2))
+                store.startCleanup()
+            }
+        }
+        if options.demo != nil && options.demoAppManagement == "1" {
+            store.showAppManagementExplainer()
+        }
+        if options.demo != nil && options.demoReplace, let p = store.selectedPackage {
+            store.startReplaceWithBottle([p])
         }
         if options.demo != nil, let name = options.demoUninstall,
            let p = store.packages.first(where: { $0.name == name }) {
@@ -140,6 +182,7 @@ struct ContentView: View {
         if options.tab == .discover {
             store.tab = .discover
             guard let d = store.openDiscover() else { return }
+            if options.discoverAll { d.bottledOnly = false }
             await d.activate()
             if let q = options.discoverQuery {
                 d.query = q
@@ -150,6 +193,9 @@ struct ContentView: View {
                 await d.waitForDetails()
                 if options.demo != nil && options.demoInstall, let e = d.selectedEntry {
                     store.startInstall(e)
+                }
+                if options.demo != nil && options.demoInstallConfirm {
+                    d.confirmInstall = d.selection
                 }
             }
         }
@@ -191,6 +237,8 @@ struct SummaryStrip: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            FilterActions(store: store)
 
             Picker("Filter", selection: $store.filter) {
                 ForEach(PackageFilter.allCases) { f in
@@ -238,6 +286,40 @@ struct ErrorBanner: View {
     }
 }
 
+/// Buttons that belong to a filter: "Upgrade N with bottles" in Upgrades
+/// when some would compile, "Replace all" in Bottle available.
+struct FilterActions: View {
+    @Bindable var store: AppStore
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        switch store.filter {
+        case .upgrades:
+            let (bottled, compiling) = store.deps.classifier.partitionUpgrades(store.upgradable)
+            if !compiling.isEmpty && !bottled.isEmpty {
+                Button("Skip packages that would compile (\(bottled.count) with bottles)") { store.startUpgradeSkippingCompiles() }
+                    .controlSize(.small)
+                    .disabled(store.isUpgrading || store.isRefreshing)
+                    .help("Upgrade only the packages that pour a bottle; skip \(compiling.map(\.name).joined(separator: ", "))")
+            }
+        case .bottleAvailable:
+            let n = store.bottleReplaceable.count
+            if n > 0 {
+                Button {
+                    store.startReplaceWithBottle()
+                } label: {
+                    Label("Replace all (\(n))", systemImage: "shippingbox.and.arrow.backward")
+                }
+                .controlSize(.small)
+                .disabled(store.isUpgrading || store.isRefreshing)
+                .help("brew reinstall --force-bottle --formula each one, through the queue")
+            }
+        default:
+            EmptyView()
+        }
+    }
+}
+
 // MARK: table
 
 struct PackageTable: View {
@@ -261,6 +343,7 @@ struct PackageTable: View {
 
     var body: some View {
         let intelbrew = store.intelbrewMode
+        let _ = store.buildTimesRevision
         Table(rows, selection: $store.selection, sortOrder: sortState.projectedValue) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 VStack(alignment: .leading, spacing: 0) {
@@ -274,7 +357,26 @@ struct PackageTable: View {
                                 .help("Installed as a dependency")
                         }
                     }
-                    if let sub = p.subtitle {
+                    if let w = store.deps.classifier.upgradeWarning(p) {
+                        // Orange in every list, not only Upgrades: it's what the user is about to wait for.
+                        HStack(spacing: 3) {
+                            Image(systemName: "hammer.fill").font(.system(size: 8.5))
+                            Text(w.label)
+                        }
+                        .font(.system(size: 10.5, weight: .semibold))
+                        .foregroundStyle(theme.badge(.source).dot)
+                        .lineLimit(1)
+                        .help(w.text)
+                        .onAppear { store.compileWarningShown() }
+                    } else if BottleReplacement.isEligible(p) {
+                        HStack(spacing: 3) {
+                            Image(systemName: "shippingbox.fill").font(.system(size: 8.5))
+                            Text(BottleReplacement.badge(p, intelbrewMode: intelbrew))
+                        }
+                        .font(.system(size: 10.5, weight: .medium))
+                        .foregroundStyle(theme.badge(.bottle).dot)
+                        .lineLimit(1)
+                    } else if let sub = p.subtitle {
                         Text(sub).font(.system(size: 10.5)).foregroundStyle(.secondary).lineLimit(1)
                     }
                 }

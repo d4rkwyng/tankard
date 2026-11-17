@@ -24,6 +24,25 @@ struct LaunchOptions {
     var demoUninstall: String?
     /// TANKARD_DEMO_NOBREW=intel|arm64: the welcome screen, as on that Mac.
     var noBrew: MacHardware?
+    /// 0.3, demo only: TANKARD_DEMO_UPGRADE=plan opens the upgrade sheet on
+    /// its plan page (compile warnings); =1 still starts at once.
+    var demoPlan = false
+    /// 0.3: TANKARD_FILTER=upgrades|source|newer|bottle: the Installed filter.
+    var filter: PackageFilter?
+    /// 0.3, demo only: TANKARD_DEMO_CLEANUP=1 opens the Cleanup sheet;
+    /// TANKARD_DEMO_CLEANUP_RUN=1 then clicks Clean up.
+    var demoCleanup = false
+    var demoCleanupRun = false
+    /// 0.3, demo only: TANKARD_DEMO_APPMGMT=1 shows the App Management
+    /// sheet; =fail makes cask upgrades and uninstalls fail once with the block.
+    var demoAppManagement: String?
+    /// 0.3, demo only: TANKARD_DEMO_REPLACE=1 replaces the selection with a bottle.
+    var demoReplace = false
+    /// 0.3: TANKARD_DISCOVER_ALL=1 turns the Discover bottle chip off.
+    var discoverAll = false
+    /// 0.3, demo only: TANKARD_DEMO_INSTALL_CONFIRM=1 opens the "Install
+    /// (compiles)" confirmation for the Discover selection.
+    var demoInstallConfirm = false
 
     var isDemo: Bool { demo != nil || noBrew != nil }
 
@@ -38,7 +57,21 @@ struct LaunchOptions {
             o.demoUpgrade = env["TANKARD_DEMO_UPGRADE"] == "1"
             o.demoInstall = env["TANKARD_DEMO_INSTALL"] == "1"
             o.demoUninstall = env["TANKARD_DEMO_UNINSTALL"].flatMap { $0.isEmpty ? nil : $0 }
+            o.demoPlan = env["TANKARD_DEMO_UPGRADE"] == "plan"
+            o.demoCleanup = env["TANKARD_DEMO_CLEANUP"] == "1"
+            o.demoCleanupRun = env["TANKARD_DEMO_CLEANUP_RUN"] == "1"
+            o.demoAppManagement = env["TANKARD_DEMO_APPMGMT"].flatMap { $0.isEmpty ? nil : $0 }
+            o.demoReplace = env["TANKARD_DEMO_REPLACE"] == "1"
+            o.demoInstallConfirm = env["TANKARD_DEMO_INSTALL_CONFIRM"] == "1"
         }
+        switch env["TANKARD_FILTER"]?.lowercased() {
+        case "upgrades": o.filter = .upgrades
+        case "source": o.filter = .source
+        case "newer": o.filter = .newer
+        case "bottle", "bottleavailable": o.filter = .bottleAvailable
+        default: break
+        }
+        o.discoverAll = env["TANKARD_DISCOVER_ALL"] == "1"
         switch env["TANKARD_DEMO_NOBREW"]?.lowercased() {
         case "intel": o.noBrew = .intel
         case "arm64", "applesilicon": o.noBrew = .appleSilicon
@@ -63,6 +96,10 @@ struct TankardApp: App {
     private let store: AppStore
     private let options: LaunchOptions
     private let appearance: AppearanceSettings
+    private let settings: AppSettings
+    private let notifier: SystemNotifier
+    private let loginItem: LoginItem
+    private let checker: BackgroundChecker
 
     init() {
         let options = LaunchOptions.fromEnvironment()
@@ -71,11 +108,26 @@ struct TankardApp: App {
         if let hw = options.noBrew {
             deps = Demo.noBrewDependencies(hardware: hw)
         } else {
-            deps = options.demo.map { Demo.dependencies($0, pace: options.demoPace) } ?? .live()
+            deps = options.demo.map {
+                Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail")
+            } ?? .live()
         }
-        store = AppStore(deps: deps)
+        // Demo runs never touch the real settings.
+        let settings = options.isDemo || options.snapshot != nil ? AppSettings.ephemeral() : AppSettings()
+        if let v = ProcessInfo.processInfo.environment["TANKARD_MENUBAR"] { settings.showMenuBarIcon = v != "0" }
+        // Demo of the failure path: skip the first-use explainer so the run
+        // reaches the block (and the sheet that follows it).
+        if options.demoAppManagement == "fail" { settings.appManagementExplained = true }
+        self.settings = settings
+        store = AppStore(deps: deps, settings: settings)
         appearance = AppearanceSettings(override: options.appearance)
+        notifier = SystemNotifier()
+        loginItem = LoginItem()
+        checker = BackgroundChecker(store: store, settings: settings, notifier: notifier)
         AppDelegate.initialTheme = appearance.theme
+        AppDelegate.settings = settings
+        let checker = self.checker
+        AppDelegate.onLaunch = { if !options.isDemo { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
     }
 
@@ -87,27 +139,66 @@ struct TankardApp: App {
         .defaultSize(width: 1040, height: 660)
         .windowToolbarStyle(.unified(showsTitle: true))
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Tankard") { AboutPanel.show() }
+            }
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .toolbar) {
                 Button("Refresh") { Task { await store.refresh(manual: true) } }
                     .keyboardShortcut("r", modifiers: .command)
                     .disabled(store.isRefreshing)
+                Button("Clean Up…") { store.openCleanup() }
+                    .disabled(store.isUpgrading || store.report == nil)
                 Divider()
                 Button("Installed") { store.tab = .installed }
                     .keyboardShortcut("1", modifiers: .command)
                 Button("Discover") { store.tab = .discover }
                     .keyboardShortcut("2", modifiers: .command)
             }
+            CommandGroup(replacing: .help) {
+                Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
+                Button("Report an Issue…") { NSWorkspace.shared.open(AboutInfo.newIssue) }
+            }
         }
 
+        MenuBarExtra(isInserted: Binding(get: { settings.showMenuBarIcon }, set: { settings.showMenuBarIcon = $0 })) {
+            MenuBarPanel(store: store, appearance: appearance)
+        } label: {
+            MenuBarLabel(store: store)
+        }
+        .menuBarExtraStyle(.window)
+
         Settings {
-            SettingsView(appearance: appearance)
+            SettingsView(appearance: appearance, settings: settings, notifier: notifier, loginItem: loginItem)
+        }
+    }
+}
+
+/// The menu-bar panel with "Open Tankard" wired to the main window.
+struct MenuBarPanel: View {
+    var store: AppStore
+    var appearance: AppearanceSettings
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        MenuBarContent(store: store, openMain: openMain)
+            .themed(Theme.of(appearance.theme))
+    }
+
+    private func openMain() {
+        NSApp.activate(ignoringOtherApps: true)
+        if let w = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true && $0.isVisible }) {
+            w.makeKeyAndOrderFront(nil)
+        } else {
+            openWindow(id: "main")
         }
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor static var initialTheme: AppTheme = .default
+    @MainActor static var settings: AppSettings?
+    @MainActor static var onLaunch: (() -> Void)?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Under `swift run` there is no bundle to say "regular app".
@@ -117,9 +208,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
+        MainActor.assumeIsolated { Self.onLaunch?() }
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+    /// With the menu-bar icon on, closing the window keeps Tankard running
+    /// (the icon and background checks stay); otherwise it quits as before.
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        MainActor.assumeIsolated { !(Self.settings?.showMenuBarIcon ?? false) }
+    }
 }
 
 /// Images shipped with the app. Inside Tankard.app the SwiftPM resource

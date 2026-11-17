@@ -60,6 +60,19 @@ struct DiscoverStrip: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            if discover.phase == .ready && discover.formulaCount > 0 {
+                Picker("Bottles", selection: $discover.bottledOnly) {
+                    Text("\(discover.bottledChipTitle) (\(discover.bottledCountText))").tag(true)
+                    Text("All").tag(false)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
+                .help(discover.isLocalTaps
+                      ? "Formulae with a bottle for this Mac (Intelbrew's or Homebrew's). The rest compile from source when installed."
+                      : "Formulae with a bottle for this Mac. The rest compile from source when installed.")
+            }
+
             Picker("Kind", selection: $discover.kind) {
                 ForEach(CatalogKindFilter.allCases) { k in Text(k.title).tag(k) }
             }
@@ -216,6 +229,11 @@ struct DiscoverDetail: View {
                 detail(e).padding(16)
             }
             .id(e.id)
+            .sheet(isPresented: Binding(
+                get: { discover.confirmInstall == e.id },
+                set: { if !$0 { discover.confirmInstall = nil } })) {
+                CompileInstallConfirm(store: store, discover: discover, entry: e).themed(theme)
+            }
         } else {
             VStack(spacing: 8) {
                 Image(systemName: "sparkle.magnifyingglass").font(.system(size: 28)).foregroundStyle(.tertiary)
@@ -311,9 +329,11 @@ struct DiscoverDetail: View {
                 Label("Deprecated: it still installs, but won't be updated for long.", systemImage: "exclamationmark.triangle")
                     .font(.system(size: 12)).foregroundStyle(.orange)
             }
-            if e.bottle == .fromSource {
-                Label("No bottle for this Mac: installing compiles from source.", systemImage: "hammer")
-                    .font(.system(size: 12)).foregroundStyle(theme.badge(.source).foreground)
+            let _ = store.buildTimesRevision
+            if let w = store.deps.classifier.installWarning(e) {
+                CompileWarningBox(warning: w, intelbrew: discover.isLocalTaps,
+                                  deps: discover.dependenciesThatCompile(e, installedIDs: store.installedIDs).compiling)
+                    .task { store.compileWarningShown() }
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -332,10 +352,11 @@ struct DiscoverDetail: View {
                     }
                     .font(.system(size: 12))
                 } else {
+                    let compiles = store.deps.classifier.installWarning(e) != nil
                     Button {
-                        store.startInstall(e)
+                        if compiles { discover.confirmInstall = e.id } else { store.startInstall(e) }
                     } label: {
-                        Label("Install \(e.name)", systemImage: "arrow.down.circle")
+                        Label(compiles ? "Install (compiles)" : "Install \(e.name)", systemImage: compiles ? "hammer" : "arrow.down.circle")
                             .fontWeight(.semibold)
                             .modifier(OnAccentLabel(theme: theme))
                     }
@@ -358,5 +379,43 @@ struct DiscoverDetail: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .textSelection(.enabled)
         }
+    }
+}
+
+/// Discover's warning for a formula with no bottle here.
+struct CompileWarningBox: View {
+    var warning: CompileWarning
+    var intelbrew: Bool
+    /// Dependencies that would compile too.
+    var deps: [CatalogEntry]
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .top, spacing: 6) {
+                Image(systemName: "hammer.fill").foregroundStyle(theme.badge(.source).dot)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(intelbrew ? "No Intelbrew bottle yet." : "No bottle for this Mac.")
+                        .fontWeight(.semibold)
+                    Text("Installing compiles from source, which can take a long time on older Macs.")
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let est = warning.estimateText {
+                        Text("It took \(est); expect longer on an older Mac.")
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    if !deps.isEmpty {
+                        Text("+\(deps.count) dependenc\(deps.count == 1 ? "y" : "ies") also compile\(deps.count == 1 ? "s" : ""): \(deps.prefix(5).map(\.name).joined(separator: ", "))\(deps.count > 5 ? "…" : "")")
+                            .fontWeight(.medium)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+        }
+        .font(.system(size: 11.5))
+        .foregroundStyle(theme.badge(.source).foreground)
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(theme.badge(.source).background))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.badge(.source).dot.opacity(0.5), lineWidth: 0.75))
     }
 }

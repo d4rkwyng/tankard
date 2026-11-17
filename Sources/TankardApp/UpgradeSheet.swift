@@ -30,7 +30,7 @@ struct UpgradeSheet: View {
 
             FlowLayout(spacing: 6) {
                 ForEach(session.items) { item in
-                    Chip(item: item)
+                    Chip(item: item, action: session.action)
                 }
             }
             .padding(.top, 12)
@@ -91,10 +91,12 @@ struct UpgradeSheet: View {
 
 struct Chip: View {
     var item: UpgradeSession.Item
+    var action: SessionAction = .upgrade
     @Environment(\.theme) private var theme
 
     var body: some View {
-        let name = item.package.name + (item.package.kind == .formula && item.package.upgradeHasBottle != true ? " · source" : "")
+        let compiles = (action == .upgrade || action == .install) && item.package.kind == .formula && item.package.upgradeHasBottle != true
+        let name = item.package.name + (compiles ? " · source" : "")
         HStack(spacing: 4) {
             switch item.state {
             case .done:

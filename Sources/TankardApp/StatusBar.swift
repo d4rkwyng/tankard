@@ -45,7 +45,7 @@ struct StatusBar: View {
                     } else {
                         HStack(spacing: 6) {
                             ProgressView().controlSize(.mini)
-                            Text("Upgrading \(session.countLine)")
+                            Text("\(session.action.gerund) \(session.countLine)")
                         }
                     }
                 }
@@ -53,7 +53,7 @@ struct StatusBar: View {
             }
             let n = store.upgradable.count
             Button {
-                store.startUpgrade()
+                store.requestUpgrade()
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "arrow.up")

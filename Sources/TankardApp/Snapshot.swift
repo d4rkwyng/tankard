@@ -18,12 +18,17 @@ struct SnapshotRequest {
     var quit: Bool
     var width: CGFloat = 1040
     var height: CGFloat = 620
+    /// 0.3: TANKARD_SNAPSHOT_VIEW=menubar|settings|about: write that view
+    /// (the menu-bar panel, the Settings window's General tab, the About
+    /// panel) instead of the main window.
+    var view: String?
 
     init?(environment env: [String: String]) {
         guard let p = env["TANKARD_SNAPSHOT"], !p.isEmpty else { return nil }
         path = p
         delay = env["TANKARD_SNAPSHOT_DELAY"].flatMap(Double.init) ?? 4
         quit = env["TANKARD_SNAPSHOT_QUIT"] == "1"
+        view = env["TANKARD_SNAPSHOT_VIEW"].flatMap { $0.isEmpty ? nil : $0.lowercased() }
         if let s = env["TANKARD_SNAPSHOT_SIZE"]?.split(separator: "x"), s.count == 2,
            let w = Double(s[0]), let h = Double(s[1]) {
             width = w
@@ -34,6 +39,8 @@ struct SnapshotRequest {
 
 struct SnapshotHook: NSViewRepresentable {
     var request: SnapshotRequest?
+    /// Builds the view named by `request.view` ("menubar", "settings"), if any.
+    var makeView: (String) -> AnyView? = { _ in nil }
 
     func makeNSView(context: Context) -> NSView {
         let v = NSView()
@@ -43,8 +50,26 @@ struct SnapshotHook: NSViewRepresentable {
             DispatchQueue.main.async { [weak v] in
                 v?.window?.setContentSize(NSSize(width: request.width, height: request.height))
             }
+            if request.view == "about" {
+                DispatchQueue.main.asyncAfter(deadline: .now() + max(0.5, request.delay - 1)) { AboutPanel.show() }
+            }
+            let makeView = self.makeView
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in
                 guard let window = v?.window else { return }
+                if let name = request.view {
+                    if name == "about" {
+                        if let panel = NSApp.windows.first(where: { $0 !== window && $0.isVisible && $0.className.contains("Panel") })
+                            ?? NSApp.windows.first(where: { $0 !== window && $0.isVisible && $0.title.isEmpty }) {
+                            Snapshot.write(window: panel, to: request.path)
+                        } else {
+                            FileHandle.standardError.write(Data("snapshot: no About panel found\n".utf8))
+                        }
+                    } else if let content = makeView(name) {
+                        Snapshot.write(view: content, appearance: window.effectiveAppearance, to: request.path)
+                    }
+                    if request.quit { exit(0) }
+                    return
+                }
                 Snapshot.write(window: window, to: request.path)
                 // exit, not terminate: AppKit won't terminate with a sheet up.
                 if request.quit { exit(0) }
@@ -71,6 +96,33 @@ enum Snapshot {
         rep.size = b.size
         view.cacheDisplay(in: b, to: rep)
         return rep
+    }
+
+    /// A SwiftUI view on its own, at its fitting size, in an off-screen window.
+    static func write(view: AnyView, appearance: NSAppearance, to path: String) {
+        let host = NSHostingView(rootView: view)
+        host.appearance = appearance
+        let size = host.fittingSize
+        let w = NSWindow(contentRect: NSRect(origin: NSPoint(x: -20000, y: -20000), size: size),
+                         styleMask: [.borderless], backing: .buffered, defer: false)
+        w.appearance = appearance
+        w.contentView = host
+        w.orderFrontRegardless()
+        host.layoutSubtreeIfNeeded()
+        let rect = host.bounds
+        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(rect.width * 2), pixelsHigh: Int(rect.height * 2),
+                                         bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                         colorSpaceName: .calibratedRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return }
+        rep.size = rect.size
+        host.cacheDisplay(in: rect, to: rep)
+        w.orderOut(nil)
+        guard let png = rep.representation(using: .png, properties: [:]) else { return }
+        do {
+            try png.write(to: URL(fileURLWithPath: path))
+            FileHandle.standardError.write(Data("snapshot: wrote \(path) (\(rep.pixelsWide)x\(rep.pixelsHigh))\n".utf8))
+        } catch {
+            FileHandle.standardError.write(Data("snapshot: \(error)\n".utf8))
+        }
     }
 
     static func write(window: NSWindow, to path: String) {

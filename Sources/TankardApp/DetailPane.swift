@@ -7,11 +7,15 @@ struct DetailPane: View {
 
     var body: some View {
         if let p = store.selectedPackage {
+            let _ = store.buildTimesRevision
             PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.isUpgrading,
                           dependents: store.dependents(of: p),
-                          upgrade: { store.startUpgrade([p]) },
-                          uninstall: { store.requestUninstall(p) })
+                          compileWarning: store.deps.classifier.upgradeWarning(p),
+                          upgrade: { store.requestUpgrade([p]) },
+                          uninstall: { store.requestUninstall(p) },
+                          replaceWithBottle: { store.startReplaceWithBottle([p]) })
             .id(p.id)
+            .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
         } else {
             VStack(spacing: 8) {
                 Image(systemName: "shippingbox").font(.system(size: 28)).foregroundStyle(.tertiary)
@@ -28,8 +32,10 @@ struct PackageDetail: View {
     var canUpgrade: Bool
     /// Installed packages that need this one (uninstall is blocked).
     var dependents: [Package]
+    var compileWarning: CompileWarning?
     var upgrade: () -> Void
     var uninstall: () -> Void
+    var replaceWithBottle: () -> Void
     @Environment(\.theme) private var theme
 
     private static let dateFormat: Date.FormatStyle = .dateTime.month(.abbreviated).day().year()
@@ -63,6 +69,18 @@ struct PackageDetail: View {
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(RoundedRectangle(cornerRadius: 8).fill(theme.accent.opacity(0.12)))
+                    if let w = compileWarning {
+                        CompileBadge(text: w.label)
+                        if let est = w.estimateText {
+                            Text("It took \(est); expect longer on an older Mac.")
+                                .font(.system(size: 11)).foregroundStyle(theme.badge(.source).foreground)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+
+                if BottleReplacement.isEligible(p) {
+                    ReplaceWithBottleBox(package: p, intelbrew: intelbrew, enabled: canUpgrade, action: replaceWithBottle)
                 }
 
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 7) {
@@ -170,6 +188,35 @@ struct PackageDetail: View {
             }
         }
         .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+/// A source build whose version has a bottle here: badge, the exact
+/// command, and the button.
+struct ReplaceWithBottleBox: View {
+    var package: Package
+    var intelbrew: Bool
+    var enabled: Bool
+    var action: () -> Void
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        let label = BottleReplacement.badge(package, intelbrewMode: intelbrew)
+        let command = BrewCommands.display(BrewCommands.replaceWithBottleArguments(for: package))
+        VStack(alignment: .leading, spacing: 7) {
+            SourceBadge(kind: .bottle, label: label)
+            Text("Built from source, but \(package.installedVersion) has a bottle for this Mac\(package.bottleTag.map { " (\($0))" } ?? ""). Replacing it pours the bottle instead; the version stays the same.")
+                .font(.system(size: 11.5))
+                .fixedSize(horizontal: false, vertical: true)
+            CommandBox(command: command)
+            Button("Replace with bottle", action: action)
+                .controlSize(.small)
+                .disabled(!enabled)
+                .help(command)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(theme.badge(.bottle).background.opacity(0.6)))
     }
 }
 
