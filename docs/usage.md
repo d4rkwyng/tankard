@@ -285,7 +285,7 @@ calls.
 ## Services (0.4)
 
 The Services tab (⌘3) runs `brew services list --json` when opened (a read, off the queue),
-and `brew services info --json <name>` for the selected service. **Reload** reads the list
+and `brew services info --json -- <name>` for the selected service. **Reload** reads the list
 again. The toolbar search filters by name.
 
 - The table: name, status (Running, Scheduled, Stopped, Error with its exit code, Not

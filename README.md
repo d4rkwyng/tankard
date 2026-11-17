@@ -96,7 +96,7 @@ brew only changes things when you ask:
 | Clean up | `brew cleanup` |
 | Replace with bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
-| Start / Stop / Restart (Services) | `brew services start\|stop\|restart <name>` |
+| Start / Stop / Restart (Services) | `brew services start\|stop\|restart -- <name>` |
 
 Reads that change nothing also run after each status read (in the background, cached for
 an hour like status): `brew info --sizes`, `brew vulns --json` (only once you turn on

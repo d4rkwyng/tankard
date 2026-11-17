@@ -227,9 +227,9 @@ struct ServicesStoreTests {
         let (store, services, log) = try await rig()
         await services.load()
         let php = try #require(services.services.first { $0.name == "php" })
-        #expect(services.command(.start, php) == "brew services start php")
+        #expect(services.command(.start, php) == "brew services start -- php")
         await services.perform(.start, on: php, store: store)
-        #expect(log.calls.contains(["services", "start", "php"]))
+        #expect(log.calls.contains(["services", "start", "--", "php"]))
         #expect(log.calls.filter { $0 == ["services", "list", "--json"] }.count == 2)
         #expect(services.actionError == nil)
         #expect(store.quickAction == nil)
@@ -241,8 +241,8 @@ struct ServicesStoreTests {
         let unbound = try #require(services.services.first { $0.name == "unbound" })
         #expect(services.needsSudo(unbound))
         await services.perform(.stop, on: unbound, store: store)
-        #expect(!log.calls.contains(["services", "stop", "unbound"]))
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop unbound")
+        #expect(!log.calls.contains(["services", "stop", "--", "unbound"]))
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- unbound")
     }
 
     @Test func brewsSudoMessageBecomesTerminalGuidance() async throws {
@@ -255,7 +255,7 @@ struct ServicesStoreTests {
         let pg = try #require(services.services.first { $0.name == "postgresql@18" })
         #expect(!services.needsSudo(pg)) // the list said "test", brew disagreed
         await services.perform(.stop, on: pg, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop postgresql@18")
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- postgresql@18")
         #expect(services.actionError?.title.contains("needs sudo") == true)
     }
 
@@ -269,7 +269,7 @@ struct ServicesStoreTests {
         await services.perform(.start, on: php, store: store)
         #expect(services.actionError?.title == "Start php failed (exit 1)")
         #expect(services.actionError?.detail.contains("locatable service file") == true)
-        #expect(services.actionError?.terminalCommand == "brew services start php")
+        #expect(services.actionError?.terminalCommand == "brew services start -- php")
     }
 
     @Test func sudoMarkers() {
@@ -295,7 +295,7 @@ struct ServicesStoreTests {
         #expect(services.services.first { $0.name == "redis" }?.status == .started)
         let unbound = try #require(services.services.first { $0.name == "unbound" })
         await services.perform(.restart, on: unbound, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services restart unbound")
+        #expect(services.actionError?.terminalCommand == "sudo brew services restart -- unbound")
     }
 }
 

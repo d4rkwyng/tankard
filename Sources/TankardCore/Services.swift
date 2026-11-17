@@ -124,12 +124,17 @@ public enum ServiceAction: String, Sendable, CaseIterable, Identifiable {
 public enum BrewServices {
     public static let listArguments = ["services", "list", "--json"]
 
+    // `--` ends the options, so a name can never be read as one. brew's
+    // CLI parser (cli/parser.rb, split_non_options) takes everything after
+    // `--` as named arguments; checked with `brew services info --json -- php`
+    // on brew 7.0.14.
+
     public static func infoArguments(_ name: String) -> [String] {
-        ["services", "info", "--json", name]
+        ["services", "info", "--json", "--", name]
     }
 
     public static func arguments(_ action: ServiceAction, _ name: String) -> [String] {
-        ["services", action.rawValue, name]
+        ["services", action.rawValue, "--", name]
     }
 
     /// `brew services list --json` (brew prints `[]` when there are none,

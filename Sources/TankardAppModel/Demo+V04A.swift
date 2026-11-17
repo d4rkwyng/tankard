@@ -135,8 +135,8 @@ extension Demo {
         if arguments == BrewServices.listArguments {
             return ProcessResult(exitCode: 0, stdout: servicesJSON(variant, state: state.v04a, info: false), stderr: Data())
         }
-        if arguments.count == 4, arguments[1] == "info", arguments[2] == "--json" {
-            return ProcessResult(exitCode: 0, stdout: servicesJSON(variant, state: state.v04a, info: true, name: arguments[3]), stderr: Data())
+        if arguments.count == 5, arguments[1] == "info", arguments[2] == "--json", arguments[3] == "--" {
+            return ProcessResult(exitCode: 0, stdout: servicesJSON(variant, state: state.v04a, info: true, name: arguments[4]), stderr: Data())
         }
         return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: unknown demo command\n".utf8))
     }
@@ -153,8 +153,8 @@ extension Demo {
             state.v04a.pinned.withLock { if pin { $0.insert(name) } else { $0.remove(name) } }
             return 0
         case "services":
-            guard arguments.count == 3, let action = ServiceAction(rawValue: arguments[1]) else { return nil }
-            let name = arguments[2]
+            guard arguments.count == 4, let action = ServiceAction(rawValue: arguments[1]), arguments[2] == "--" else { return nil }
+            let name = arguments[3]
             if name == "unbound" {
                 // As brew 7.0.14 says it (services/cli.rb) for a root service.
                 try await say("Error: Service `unbound` is started as `root`. Try:\n  sudo brew services \(action.rawValue) unbound\n", 300)
