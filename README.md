@@ -138,6 +138,9 @@ No telemetry. Tankard's own requests, each in one mode only:
   `formulae.brew.sh/api/analytics/`, about 13 MB together) and keeps them for a day. These are
   the bulk files for every package, so the site never learns which packages you look at.
   Adopt Apps reads the same cached cask list (and downloads it if Discover hasn't).
+- **Any mode, only when you ask:** Tankard ▸ Check for Tankard Updates… sends one request to
+  GitHub's API for Tankard's latest release (`api.github.com/repos/d4rkwyng/tankard/releases/latest`;
+  no account, no identifiers beyond the `Tankard/<version>` User-Agent). Never automatic.
 - **Intelbrew mode:** when a compile warning is shown, Tankard reads Intelbrew's build
   times (`build-times.json` from the intelbrew-core releases on GitHub) and keeps them for
   a day. Discover reads your local taps instead of formulae.brew.sh.

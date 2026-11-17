@@ -256,6 +256,7 @@
 "Check a Brewfile" = "Brewfile 확인";
 "Check again" = "다시 확인";
 "Check every" = "확인 주기";
+"Check for Tankard Updates…" = "Tankard 업데이트 확인…";
 "Check for new versions in the background" = "백그라운드에서 새 버전 확인";
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
@@ -290,9 +291,11 @@
 "Core: not the Intelbrew fork" = "Core: Intelbrew 포크 아님";
 "Could not run brew: %@" = "brew를 실행할 수 없음: %@";
 "Could not run brew: %@\n" = "brew를 실행할 수 없음: %@\n";
+"Couldn't check for updates" = "업데이트를 확인할 수 없음";
 "Couldn't load the catalogue" = "카탈로그를 불러올 수 없음";
 "Couldn't open Terminal. Copy the command instead." = "터미널을 열 수 없습니다. 대신 명령을 복사하세요.";
 "Couldn't open Terminal. Copy the commands instead." = "터미널을 열 수 없습니다. 대신 명령을 복사하세요.";
+"Couldn't reach GitHub. Check the connection and try again." = "GitHub에 연결할 수 없습니다. 연결을 확인하고 다시 시도하세요.";
 "Couldn't read Homebrew's cask list: %@" = "Homebrew의 cask 목록을 읽을 수 없음: %@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "cask의 상세 정보를 읽을 수 없어 관리자 암호 표시가 되지 않습니다.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "formula의 상세 정보를 읽을 수 없어 컴파일 표시가 되지 않습니다.";
@@ -326,6 +329,7 @@
 "Don't Skip %@" = "%@ 건너뛰지 않기";
 "Don't quit running apps during upgrades" = "업그레이드 중 실행 중인 앱을 종료하지 않음";
 "Done" = "완료";
+"Download" = "다운로드";
 "Download cache" = "다운로드 캐시";
 "Downloading %@…" = "%@ 다운로드 중…";
 "Downloads" = "다운로드";
@@ -391,6 +395,9 @@
 "Full scan" = "전체 검사";
 "GB" = "GB";
 "General" = "일반";
+"GitHub answered HTTP %lld." = "GitHub 응답: HTTP %lld.";
+"GitHub lists no release of Tankard." = "GitHub에 Tankard 릴리스가 없습니다.";
+"GitHub's answer couldn't be read." = "GitHub 응답을 읽을 수 없습니다.";
 "HEAD build" = "HEAD 빌드";
 "HEAD builds have no fixed version to go back to." = "HEAD 빌드에는 되돌아갈 고정된 버전이 없습니다.";
 "Has Intel bottle" = "Intel bottle 있음";
@@ -398,6 +405,7 @@
 "Has notes" = "노트 있음";
 "Health…" = "상태…";
 "Hide" = "숨기기";
+"Hide Dock icon when the window is closed" = "윈도우를 닫으면 Dock 아이콘 가리기";
 "Hide Terminal Command" = "터미널 명령 숨기기";
 "High" = "높음";
 "History" = "기록";
@@ -407,9 +415,11 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew가 네트워크에 연결할 수 없음";
 "Homebrew couldn't write to its folders" = "Homebrew가 폴더에 쓸 수 없음";
+"Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew에 아직 Tankard %@이(가) 없습니다. 릴리스 후 tap에 반영되기까지 시간이 걸릴 수 있습니다. 나중에 다시 시도하거나 다운로드하세요.";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew는 고정된 패키지를 제거하지 않습니다. 먼저 %@의 고정을 해제하거나 그대로 두십시오.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew에 이 앱들의 cask가 있고 설치된 버전이 일치합니다(또는 앱이 자체 업데이트하므로 brew가 비교하지 않습니다).";
 "Homebrew has disabled this cask." = "Homebrew가 이 cask를 비활성화했습니다.";
+"Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "이 사본은 Homebrew로 설치되었으므로 Homebrew가 대기열을 통해 업그레이드합니다. brew가 앱을 교체하는 동안 Tankard는 계속 실행되며, 완료 후 다시 시작할지 묻습니다.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew는 macOS용 패키지 관리자로, 명령줄 도구와 앱을 설치하고 최신 상태로 유지합니다. Tankard는 그 위에 얹은 윈도우이므로 먼저 Homebrew가 필요합니다.";
 "Homebrew isn't installed" = "Homebrew가 설치되어 있지 않음";
 "Homebrew isn't ready yet." = "Homebrew가 아직 준비되지 않았습니다.";
@@ -444,6 +454,7 @@
 "Install command" = "설치 명령";
 "Install counts unavailable" = "설치 횟수를 불러올 수 없음";
 "Install standard Homebrew" = "표준 Homebrew 설치";
+"Install with Homebrew to get updates automatically:" = "Homebrew로 설치하면 업데이트를 자동으로 받을 수 있습니다:";
 "Install with Tankard" = "Tankard로 설치";
 "Installed" = "설치됨";
 "Installed %@; the cask installs %@." = "설치된 버전 %1$@, cask가 설치하는 버전 %2$@.";
@@ -481,6 +492,7 @@
 "Label" = "레이블";
 "Last auto-update: %@ · %@" = "마지막 자동 업데이트: %@ · %@";
 "Last refresh failed" = "마지막 새로 고침 실패";
+"Later" = "나중에";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "%@을(를) 모두 업그레이드, 개수, 자동 업데이트에서 제외합니다. 직접 업그레이드는 여전히 가능하며, 새 버전이 나오면 해제됩니다.";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "앱에 맡김: %@은(는) 모두 업그레이드 및 자동 업데이트에 포함되지 않습니다.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "남은 링크가 사라진 파일을 가리킵니다. 대개 무해하며 brew cleanup이 대부분 제거합니다.";
@@ -657,7 +669,10 @@
 "Reinstalling %@ from a bottle" = "bottle에서 %@ 재설치 중";
 "Reinstalling %lld packages from bottles" = "bottle에서 패키지 %lld개 재설치 중";
 "Reinstalling usually fixes this:" = "보통 재설치하면 해결됩니다:";
+"Relaunch" = "다시 시작";
 "Relaunch Tankard" = "Tankard 다시 시작";
+"Relaunch Tankard to use the new version." = "새 버전을 사용하려면 Tankard를 다시 시작하세요.";
+"Release notes" = "릴리스 노트";
 "Reload" = "다시 불러오기";
 "Remove" = "제거";
 "Remove %@?" = "%@ 제거할까요?";
@@ -807,8 +822,11 @@
 "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are." = "이 Mac에서 Intelbrew를 해제합니다. brew가 Homebrew 자체 저장소와 API로 돌아갑니다. 설치된 패키지는 그대로 유지됩니다.";
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ 사용 가능";
+"Tankard %@ is available." = "Tankard %@을(를) 사용할 수 있습니다.";
+"Tankard %@ is the latest version." = "Tankard %@이(가) 최신 버전입니다.";
 "Tankard (demo)" = "Tankard (데모)";
 "Tankard Help" = "Tankard 도움말";
+"Tankard Updates" = "Tankard 업데이트";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard가 아직 이 Mac의 Homebrew 접두사를 읽지 않았습니다. 먼저 새로 고치세요.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다.";
@@ -823,6 +841,7 @@
 "Tankard updates itself through brew" = "Tankard는 brew를 통해 스스로 업데이트합니다";
 "Tankard upgraded %lld package" = "Tankard가 패키지 %lld개를 업그레이드함";
 "Tankard upgraded %lld packages" = "Tankard가 패키지 %lld개를 업그레이드함";
+"Tankard was upgraded" = "Tankard가 업그레이드됨";
 "Tankard: upgrades ready" = "Tankard: 업그레이드 준비됨";
 "Tap" = "Tap";
 "Tap has %@" = "Tap에 %@ 있음";
@@ -922,6 +941,7 @@
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: " = "업그레이드 준비됨: ";
 "Upgrade vulnerable packages. " = "취약한 패키지를 업그레이드합니다. ";
+"Upgrade with Homebrew" = "Homebrew로 업그레이드";
 "Upgraded (%lld)" = "업그레이드됨 (%lld)";
 "Upgrades" = "업그레이드";
 "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "업그레이드는 brew가 목록에 표시할 때 나타나며, \"자체 업데이트 앱 포함\"이 켜져 있으면 모든 새 버전이 나타납니다(설정 ▸ 업그레이드).";
@@ -950,6 +970,7 @@
 "When upgrading" = "업그레이드 시";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Homebrew가 formulae와 cask를 가져오는 곳입니다. tap을 클릭하면 그곳에서 설치한 항목을 볼 수 있습니다.";
 "Who updates %@" = "%@ 업데이트 주체";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬.";
 "With the dependencies nothing else needs" = "더 이상 필요 없는 의존성도 함께";
 "Would free about %@" = "약 %@ 확보 가능";
 "Would remove %lld formulae" = "formulae %lld개를 제거합니다";
@@ -958,6 +979,7 @@
 "Writing Brewfile…" = "Brewfile 작성 중…";
 "Xcode is out of date" = "Xcode가 오래되었습니다";
 "Yes" = "예";
+"You have Tankard %@." = "현재 Tankard %@ 사용 중입니다.";
 "Your PATH finds other tools before Homebrew's" = "PATH에서 Homebrew의 도구보다 다른 도구가 먼저 발견됩니다";
 "a symlink to %@: that file is backed up and edited" = "%@에 대한 심볼릭 링크: 해당 파일이 백업된 후 편집됩니다";
 "adopted" = "가져옴";
@@ -1102,5 +1124,3 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· 디스크 %@ (brew info --sizes: keg와 Caskroom 폴더, 앱은 링크를 통해)";
 "· fetched %@" = "· %@에 가져옴";
 "· measuring…" = "· 측정 중…";
-"Hide Dock icon when the window is closed" = "윈도우를 닫으면 Dock 아이콘 가리기";
-"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬.";

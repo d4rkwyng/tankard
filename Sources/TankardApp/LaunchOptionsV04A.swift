@@ -37,6 +37,7 @@ enum V04ALaunch {
 func applyV04ALaunchOptions(store: AppStore, options: LaunchOptions) async {
     let env = V04ALaunch.env
     if let f = V04ALaunch.filter(env) { store.filter = f }
+    if env["TANKARD_UPDATE_CHECK"] == "1" { store.checkForTankardUpdates() }
     if options.demo != nil, let k = env["TANKARD_DEMO_MANAGE"].flatMap(HomebrewManagement.Kind.init(rawValue:)) {
         store.requestManagement(k)
     }

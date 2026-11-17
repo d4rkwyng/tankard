@@ -93,6 +93,13 @@ public final class AppStore {
         /// session's brew (nil: none, as in demo mode). `live()` sets
         /// `DownloadMonitor.live`.
         public var downloadMonitor: (@Sendable (BrewClient, [String: String]) -> DownloadMonitor?)?
+        /// Check for Tankard Updates…: GitHub's latest release, fetched only
+        /// when asked. nil: the item is disabled (demo mode, tests).
+        public var updateFeed: UpdateFeed?
+        /// The running app, to tell a cask install from a zip download.
+        public var bundlePath: String = Bundle.main.bundlePath
+        /// Screenshots only: act as if this cask installed the running app.
+        public var selfCaskOverride: Package?
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -138,6 +145,7 @@ public final class AppStore {
             d.restorePointsURL = RestorePointStore.defaultDirectory
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
+            d.updateFeed = .live()
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -156,6 +164,11 @@ public final class AppStore {
     public internal(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
     public var showUpgradeSheet = false
+    /// Tankard ▸ Check for Tankard Updates…: the sheet and where the check stands.
+    public var selfUpdate: SelfUpdateCheck?
+    public var showSelfUpdate = false
+    /// The running Tankard was just upgraded through brew: offer to relaunch.
+    public var offerRelaunch = false
     /// Whether brew was found and runs (the welcome screen otherwise).
     public private(set) var homebrewState: HomebrewState = .checking
     /// The package the uninstall confirmation is open for.
@@ -837,6 +850,7 @@ public final class AppStore {
 
     private func sessionFinished(_ session: UpgradeSession) {
         if session.action == .adopt { adoptSessionFinished(session) }
+        selfUpgradeFinished(session)
         // 0.8: an uninstalled cask's self-update choice goes with it.
         if session.action == .uninstall {
             for item in session.items where item.state == .done && item.package.kind == .cask {

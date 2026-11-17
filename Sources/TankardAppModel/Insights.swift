@@ -104,7 +104,11 @@ public final class InsightSettings {
     /// HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for a cask upgrade when "Don't
     /// quit running apps" is on (brew documents it in `man brew`).
     public nonisolated static func extraEnvironment(_ action: SessionAction, _ p: Package, dontQuitApps: Bool) -> [String: String] {
-        guard dontQuitApps, action == .upgrade, p.kind == .cask else { return [:] }
+        guard action == .upgrade, p.kind == .cask else { return [:] }
+        // Tankard's own cask: brew must not quit the app that runs it (the
+        // run would end mid-way); brew replaces the bundle and Tankard
+        // offers to relaunch afterwards (AppStore+SelfUpdate).
+        guard dontQuitApps || SelfInstall.isTankardCask(p) else { return [:] }
         return [noQuitKey: "1"]
     }
 

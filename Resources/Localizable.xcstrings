@@ -13653,6 +13653,58 @@
         }
       }
     },
+    "Check for Tankard Updates…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Tankard-Updates suchen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher des mises à jour de Tankard…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar actualizaciones de Tankard…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardのアップデートを確認…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查 Tankard 更新…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar Atualizações do Tankard…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifica aggiornamenti di Tankard…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 업데이트 확인…"
+          }
+        }
+      }
+    },
     "Check for new versions in the background": {
       "localizations": {
         "de": {
@@ -15421,6 +15473,58 @@
         }
       }
     },
+    "Couldn't check for updates": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche nach Updates fehlgeschlagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de rechercher des mises à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron buscar actualizaciones"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップデートを確認できませんでした"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法检查更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível buscar atualizações"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile verificare gli aggiornamenti"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업데이트를 확인할 수 없음"
+          }
+        }
+      }
+    },
     "Couldn't load the catalogue": {
       "localizations": {
         "de": {
@@ -15573,6 +15677,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "터미널을 열 수 없습니다. 대신 명령을 복사하세요."
+          }
+        }
+      }
+    },
+    "Couldn't reach GitHub. Check the connection and try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub nicht erreichbar. Prüfe die Verbindung und versuche es erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de joindre GitHub. Vérifiez la connexion et réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo conectar con GitHub. Comprueba la conexión e inténtalo de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHubに接続できませんでした。接続を確認して、もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法连接 GitHub。请检查网络连接后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível acessar o GitHub. Verifique a conexão e tente novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile raggiungere GitHub. Controlla la connessione e riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub에 연결할 수 없습니다. 연결을 확인하고 다시 시도하세요."
           }
         }
       }
@@ -17289,6 +17445,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "완료"
+          }
+        }
+      }
+    },
+    "Download": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécharger"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baixar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scarica"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드"
           }
         }
       }
@@ -20673,6 +20881,162 @@
         }
       }
     },
+    "GitHub answered HTTP %lld.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub antwortete mit HTTP %lld."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub a répondu HTTP %lld."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub respondió HTTP %lld."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHubの応答: HTTP %lld。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 返回 HTTP %lld。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O GitHub respondeu HTTP %lld."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub ha risposto HTTP %lld."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 응답: HTTP %lld."
+          }
+        }
+      }
+    },
+    "GitHub lists no release of Tankard.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub führt kein Release von Tankard."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub ne liste aucune version de Tankard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub no muestra ninguna versión de Tankard."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHubにTankardのリリースがありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 上没有 Tankard 的发行版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O GitHub não lista nenhuma versão do Tankard."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub non elenca alcuna versione di Tankard."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub에 Tankard 릴리스가 없습니다."
+          }
+        }
+      }
+    },
+    "GitHub's answer couldn't be read.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Antwort von GitHub war nicht lesbar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La réponse de GitHub est illisible."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo leer la respuesta de GitHub."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHubの応答を読み取れませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取 GitHub 的响应。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler a resposta do GitHub."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile leggere la risposta di GitHub."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 응답을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
     "HEAD build": {
       "localizations": {
         "de": {
@@ -21033,6 +21397,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "숨기기"
+          }
+        }
+      }
+    },
+    "Hide Dock icon when the window is closed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock-Symbol ohne Fenster ausblenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer l’icône du Dock quand la fenêtre est fermée"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar el icono del Dock al cerrar la ventana"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウインドウを閉じたらDockアイコンを隠す"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭窗口时隐藏程序坞图标"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar o ícone do Dock ao fechar a janela"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nascondi l’icona nel Dock quando la finestra è chiusa"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "윈도우를 닫으면 Dock 아이콘 가리기"
           }
         }
       }
@@ -21505,6 +21921,58 @@
         }
       }
     },
+    "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew führt Tankard %@ noch nicht: Der Tap braucht nach einem Release etwas Zeit. Versuche es später erneut oder lade es herunter."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne liste pas encore Tankard %@ : le tap peut mettre un peu de temps après une version. Réessayez plus tard, ou téléchargez-le."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew aún no muestra Tankard %@: el tap puede tardar un poco tras una versión. Inténtalo más tarde o descárgalo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HomebrewにはまだTankard %@ がありません。リリース後、tapへの反映には少し時間がかかることがあります。後でもう一度試すか、ダウンロードしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew ainda não lista o Tankard %@: o tap pode levar um tempo após uma versão. Tente mais tarde ou baixe-o."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non elenca ancora Tankard %@: il tap può richiedere un po’ di tempo dopo una versione. Riprova più tardi o scaricalo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew에 아직 Tankard %@이(가) 없습니다. 릴리스 후 tap에 반영되기까지 시간이 걸릴 수 있습니다. 나중에 다시 시도하거나 다운로드하세요."
+          }
+        }
+      }
+    },
     "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it.": {
       "localizations": {
         "de": {
@@ -21657,6 +22125,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew가 이 cask를 비활성화했습니다."
+          }
+        }
+      }
+    },
+    "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew a installé cette copie, c’est donc Homebrew qui la met à jour, via la file d’attente. Tankard continue de tourner pendant que brew remplace l’app, puis propose de la relancer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew instaló esta copia, así que Homebrew la actualiza, a través de la cola. Tankard sigue en marcha mientras brew reemplaza la app y luego ofrece reiniciarla."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このコピーはHomebrewでインストールされたため、Homebrewがキューを通じてアップグレードします。brewがアプリを置き換える間もTankardは動作し続け、完了後に再起動を提案します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew instalou esta cópia, então o Homebrew a atualiza, pela fila. O Tankard continua aberto enquanto o brew substitui o app e depois oferece reabri-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa copia è stata installata da Homebrew, quindi è Homebrew ad aggiornarla, tramite la coda. Tankard resta aperto mentre brew sostituisce l’app, poi propone di riavviarla."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 사본은 Homebrew로 설치되었으므로 Homebrew가 대기열을 통해 업그레이드합니다. brew가 앱을 교체하는 동안 Tankard는 계속 실행되며, 완료 후 다시 시작할지 묻습니다."
           }
         }
       }
@@ -23425,6 +23945,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "표준 Homebrew 설치"
+          }
+        }
+      }
+    },
+    "Install with Homebrew to get updates automatically:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Homebrew installieren, um Updates automatisch zu erhalten:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installez avec Homebrew pour recevoir les mises à jour automatiquement :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instala con Homebrew para recibir las actualizaciones automáticamente:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewでインストールすると、アップデートを自動で受け取れます:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 Homebrew 安装即可自动获取更新："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instale com o Homebrew para receber atualizações automaticamente:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installa con Homebrew per ricevere gli aggiornamenti automaticamente:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew로 설치하면 업데이트를 자동으로 받을 수 있습니다:"
           }
         }
       }
@@ -25349,6 +25921,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "마지막 새로 고침 실패"
+          }
+        }
+      }
+    },
+    "Later": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más tarde"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "後で"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais Tarde"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più tardi"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
           }
         }
       }
@@ -34505,6 +35129,58 @@
         }
       }
     },
+    "Relaunch": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neu starten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再起動"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新启动"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reabrir"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riavvia"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작"
+          }
+        }
+      }
+    },
     "Relaunch Tankard": {
       "localizations": {
         "de": {
@@ -34553,6 +35229,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard 다시 시작"
+          }
+        }
+      }
+    },
+    "Relaunch Tankard to use the new version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte Tankard neu, um die neue Version zu verwenden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relancez Tankard pour utiliser la nouvelle version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reinicia Tankard para usar la nueva versión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョンを使うにはTankardを再起動してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新启动 Tankard 以使用新版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reabra o Tankard para usar a nova versão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riavvia Tankard per usare la nuova versione."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전을 사용하려면 Tankard를 다시 시작하세요."
+          }
+        }
+      }
+    },
+    "Release notes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versionshinweise"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes de version"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas de la versión"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リリースノート"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发行说明"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas da versão"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note di rilascio"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "릴리스 노트"
           }
         }
       }
@@ -42358,6 +43138,110 @@
         }
       }
     },
+    "Tankard %@ is available.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ ist verfügbar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ est disponible."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ está disponible."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ が利用可能です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ 已推出。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard %@ está disponível."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ è disponibile."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@을(를) 사용할 수 있습니다."
+          }
+        }
+      }
+    },
+    "Tankard %@ is the latest version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ ist die neueste Version."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ est la dernière version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ es la versión más reciente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ が最新バージョンです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ 是最新版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard %@ é a versão mais recente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@ è la versione più recente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard %@이(가) 최신 버전입니다."
+          }
+        }
+      }
+    },
     "Tankard (demo)": {
       "localizations": {
         "de": {
@@ -42458,6 +43342,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard 도움말"
+          }
+        }
+      }
+    },
+    "Tankard Updates": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard-Updates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mises à jour de Tankard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizaciones de Tankard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardのアップデート"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 更新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizações do Tankard"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiornamenti di Tankard"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 업데이트"
           }
         }
       }
@@ -43186,6 +44122,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 패키지 %lld개를 업그레이드함"
+          }
+        }
+      }
+    },
+    "Tankard was upgraded": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard wurde aktualisiert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a été mis à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard se ha actualizado"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardがアップグレードされました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 已升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard foi atualizado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard è stato aggiornato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 업그레이드됨"
           }
         }
       }
@@ -48338,6 +49326,58 @@
         }
       }
     },
+    "Upgrade with Homebrew": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Homebrew upgraden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour avec Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar con Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewでアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 Homebrew 升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar com o Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna con Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew로 업그레이드"
+          }
+        }
+      }
+    },
     "Upgraded (%lld)": {
       "localizations": {
         "de": {
@@ -49794,6 +50834,58 @@
         }
       }
     },
+    "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sind alle Tankard-Fenster geschlossen, verschwinden Dock-Symbol und App-Menü, Tankard bleibt in der Menüleiste; ein Fenster öffnen holt beide zurück. Erfordert „Tankard in der Menüleiste anzeigen“. Standardmäßig an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand toutes les fenêtres de Tankard sont fermées, l’icône du Dock et le menu de l’app disparaissent et Tankard reste dans la barre des menus ; ouvrir une fenêtre les fait revenir. Nécessite « Afficher Tankard dans la barre des menus ». Activé par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con todas las ventanas de Tankard cerradas, el icono del Dock y el menú de la app desaparecen y Tankard sigue en la barra de menús; al abrir una ventana vuelven. Requiere «Mostrar Tankard en la barra de menús». Activado por omisión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardのウインドウをすべて閉じると、Dockアイコンとアプリメニューが消え、Tankardはメニューバーに残ります。ウインドウを開くと元に戻ります。「メニューバーにTankardを表示」が必要です。デフォルトでオン。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭所有 Tankard 窗口后，程序坞图标和应用菜单会消失，Tankard 保留在菜单栏中；打开窗口即可恢复。需要开启“在菜单栏中显示 Tankard”。默认开启。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com todas as janelas do Tankard fechadas, o ícone do Dock e o menu do app somem e o Tankard fica na barra de menus; abrir uma janela os traz de volta. Requer “Mostrar o Tankard na barra de menus”. Ativado por padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con tutte le finestre di Tankard chiuse, l’icona nel Dock e il menu dell’app spariscono e Tankard resta nella barra dei menu; aprire una finestra li riporta. Richiede «Mostra Tankard nella barra dei menu». Attivo per impostazione predefinita."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬."
+          }
+        }
+      }
+    },
     "With the dependencies nothing else needs": {
       "localizations": {
         "de": {
@@ -50206,6 +51298,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "예"
+          }
+        }
+      }
+    },
+    "You have Tankard %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast Tankard %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous avez Tankard %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tienes Tankard %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お使いのTankardは %@ です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你当前使用 Tankard %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você tem o Tankard %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hai Tankard %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 Tankard %@ 사용 중입니다."
           }
         }
       }
@@ -57694,110 +58838,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "· 측정 중…"
-          }
-        }
-      }
-    },
-    "Hide Dock icon when the window is closed": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dock-Symbol ohne Fenster ausblenden"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Masquer l’icône du Dock quand la fenêtre est fermée"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar el icono del Dock al cerrar la ventana"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ウインドウを閉じたらDockアイコンを隠す"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭窗口时隐藏程序坞图标"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar o ícone do Dock ao fechar a janela"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nascondi l’icona nel Dock quando la finestra è chiusa"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "윈도우를 닫으면 Dock 아이콘 가리기"
-          }
-        }
-      }
-    },
-    "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sind alle Tankard-Fenster geschlossen, verschwinden Dock-Symbol und App-Menü, Tankard bleibt in der Menüleiste; ein Fenster öffnen holt beide zurück. Erfordert „Tankard in der Menüleiste anzeigen“. Standardmäßig an."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quand toutes les fenêtres de Tankard sont fermées, l’icône du Dock et le menu de l’app disparaissent et Tankard reste dans la barre des menus ; ouvrir une fenêtre les fait revenir. Nécessite « Afficher Tankard dans la barre des menus ». Activé par défaut."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con todas las ventanas de Tankard cerradas, el icono del Dock y el menú de la app desaparecen y Tankard sigue en la barra de menús; al abrir una ventana vuelven. Requiere «Mostrar Tankard en la barra de menús». Activado por omisión."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankardのウインドウをすべて閉じると、Dockアイコンとアプリメニューが消え、Tankardはメニューバーに残ります。ウインドウを開くと元に戻ります。「メニューバーにTankardを表示」が必要です。デフォルトでオン。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭所有 Tankard 窗口后，程序坞图标和应用菜单会消失，Tankard 保留在菜单栏中；打开窗口即可恢复。需要开启“在菜单栏中显示 Tankard”。默认开启。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com todas as janelas do Tankard fechadas, o ícone do Dock e o menu do app somem e o Tankard fica na barra de menus; abrir uma janela os traz de volta. Requer “Mostrar o Tankard na barra de menus”. Ativado por padrão."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con tutte le finestre di Tankard chiuse, l’icona nel Dock e il menu dell’app spariscono e Tankard resta nella barra dei menu; aprire una finestra li riporta. Richiede «Mostra Tankard nella barra dei menu». Attivo per impostazione predefinita."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard 윈도우를 모두 닫으면 Dock 아이콘과 앱 메뉴가 사라지고 Tankard는 메뉴 막대에 남습니다. 윈도우를 열면 다시 나타납니다. '메뉴 막대에 Tankard 표시'가 켜져 있어야 합니다. 기본값은 켬."
           }
         }
       }

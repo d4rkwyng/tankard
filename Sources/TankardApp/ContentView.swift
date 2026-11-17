@@ -168,6 +168,7 @@ struct ContentView: View {
         .sheet(item: Bindable(store.insights).postInstallNotes) { n in
             PostInstallNotesSheet(notes: n) { store.insights.postInstallNotes = nil }.themed(theme)
         }
+        .selfUpdateSheets(store: store, theme: theme)
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
                     prompt: store.tab == .installed ? String(localized: "Search installed") : store.tab == .services ? String(localized: "Search services") : String(localized: "Search Homebrew"))

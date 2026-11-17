@@ -343,6 +343,7 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_DEMO_UNINSTALL=<name>` | Demo only: open the uninstall confirmation for an installed package. |
 | `TANKARD_DEMO_NOBREW=intel\|arm64` | The welcome screen as on an Intel Mac or Apple silicon (nothing is opened). |
 | `TANKARD_SNAPSHOT=<file.png>` | Write a 2x PNG of the window (and an open sheet) after `TANKARD_SNAPSHOT_DELAY` seconds (default 4); `TANKARD_SNAPSHOT_QUIT=1` quits after; `TANKARD_SNAPSHOT_SIZE=1040x620` sets the content size. The window draws itself, so this works without Screen Recording permission and while the screen is locked. |
+| `TANKARD_UPDATE_FEED=<file.json>` | Any mode: Check for Tankard Updates… reads GitHub's answer from this file (a missing file acts as offline). `TANKARD_UPDATE_CHECK=1` checks at launch; `TANKARD_UPDATE_BREW=1` (demo only) acts as if the d4rkwyng/tap cask installed the app. |
 | `TANKARD_MENU_DUMP=<file.txt>` | Write the main menu as a text outline (items, shortcuts, "(disabled)", `---` separators) after `TANKARD_SNAPSHOT_DELAY` seconds; `TANKARD_SNAPSHOT_QUIT=1` quits after. Menus can't be captured by the snapshot hook; this is how they are reviewed. |
 | `TANKARD_FILTER=upgrades\|source\|newer\|bottle` | The Installed filter on launch. |
 | `TANKARD_DEMO_CLEANUP=1` | Demo only: open Cleanup; `TANKARD_DEMO_CLEANUP_RUN=1` then clicks Clean up. |

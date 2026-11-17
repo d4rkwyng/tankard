@@ -256,6 +256,7 @@
 "Check a Brewfile" = "Check a Brewfile";
 "Check again" = "Check again";
 "Check every" = "Check every";
+"Check for Tankard Updates…" = "Check for Tankard Updates…";
 "Check for new versions in the background" = "Check for new versions in the background";
 "Checked %@" = "Checked %@";
 "Checking Brewfile…" = "Checking Brewfile…";
@@ -290,9 +291,11 @@
 "Core: not the Intelbrew fork" = "Core: not the Intelbrew fork";
 "Could not run brew: %@" = "Could not run brew: %@";
 "Could not run brew: %@\n" = "Could not run brew: %@\n";
+"Couldn't check for updates" = "Couldn't check for updates";
 "Couldn't load the catalogue" = "Couldn't load the catalogue";
 "Couldn't open Terminal. Copy the command instead." = "Couldn't open Terminal. Copy the command instead.";
 "Couldn't open Terminal. Copy the commands instead." = "Couldn't open Terminal. Copy the commands instead.";
+"Couldn't reach GitHub. Check the connection and try again." = "Couldn't reach GitHub. Check the connection and try again.";
 "Couldn't read Homebrew's cask list: %@" = "Couldn't read Homebrew's cask list: %@";
 "Couldn't read the casks' details, so admin passwords aren't marked." = "Couldn't read the casks' details, so admin passwords aren't marked.";
 "Couldn't read the formulae's details, so compiles aren't marked." = "Couldn't read the formulae's details, so compiles aren't marked.";
@@ -326,6 +329,7 @@
 "Don't Skip %@" = "Don't Skip %@";
 "Don't quit running apps during upgrades" = "Don't quit running apps during upgrades";
 "Done" = "Done";
+"Download" = "Download";
 "Download cache" = "Download cache";
 "Downloading %@…" = "Downloading %@…";
 "Downloads" = "Downloads";
@@ -391,6 +395,9 @@
 "Full scan" = "Full scan";
 "GB" = "GB";
 "General" = "General";
+"GitHub answered HTTP %lld." = "GitHub answered HTTP %lld.";
+"GitHub lists no release of Tankard." = "GitHub lists no release of Tankard.";
+"GitHub's answer couldn't be read." = "GitHub's answer couldn't be read.";
 "HEAD build" = "HEAD build";
 "HEAD builds have no fixed version to go back to." = "HEAD builds have no fixed version to go back to.";
 "Has Intel bottle" = "Has Intel bottle";
@@ -398,6 +405,7 @@
 "Has notes" = "Has notes";
 "Health…" = "Health…";
 "Hide" = "Hide";
+"Hide Dock icon when the window is closed" = "Hide Dock icon when the window is closed";
 "Hide Terminal Command" = "Hide Terminal Command";
 "High" = "High";
 "History" = "History";
@@ -407,9 +415,11 @@
 "Homebrew bottle" = "Homebrew bottle";
 "Homebrew couldn't reach the network" = "Homebrew couldn't reach the network";
 "Homebrew couldn't write to its folders" = "Homebrew couldn't write to its folders";
+"Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it.";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).";
 "Homebrew has disabled this cask." = "Homebrew has disabled this cask.";
+"Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch.";
 "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first." = "Homebrew is the package manager for macOS: it installs command-line tools and apps and keeps them up to date. Tankard is a window onto it, so it needs Homebrew first.";
 "Homebrew isn't installed" = "Homebrew isn't installed";
 "Homebrew isn't ready yet." = "Homebrew isn't ready yet.";
@@ -444,6 +454,7 @@
 "Install command" = "Install command";
 "Install counts unavailable" = "Install counts unavailable";
 "Install standard Homebrew" = "Install standard Homebrew";
+"Install with Homebrew to get updates automatically:" = "Install with Homebrew to get updates automatically:";
 "Install with Tankard" = "Install with Tankard";
 "Installed" = "Installed";
 "Installed %@; the cask installs %@." = "Installed %@; the cask installs %@.";
@@ -481,6 +492,7 @@
 "Label" = "Label";
 "Last auto-update: %@ · %@" = "Last auto-update: %@ · %@";
 "Last refresh failed" = "Last refresh failed";
+"Later" = "Later";
 "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this." = "Leave %@ out of Upgrade all, the counts and auto-update. Upgrade still works by hand; a newer version clears this.";
 "Left to the app: %@ isn't in Upgrade all or auto-update." = "Left to the app: %@ isn't in Upgrade all or auto-update.";
 "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them." = "Leftover links point at files that are gone. Usually harmless; brew cleanup removes most of them.";
@@ -657,7 +669,10 @@
 "Reinstalling %@ from a bottle" = "Reinstalling %@ from a bottle";
 "Reinstalling %lld packages from bottles" = "Reinstalling %lld packages from bottles";
 "Reinstalling usually fixes this:" = "Reinstalling usually fixes this:";
+"Relaunch" = "Relaunch";
 "Relaunch Tankard" = "Relaunch Tankard";
+"Relaunch Tankard to use the new version." = "Relaunch Tankard to use the new version.";
+"Release notes" = "Release notes";
 "Reload" = "Reload";
 "Remove" = "Remove";
 "Remove %@?" = "Remove %@?";
@@ -807,8 +822,11 @@
 "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are." = "Takes this Mac off Intelbrew: brew goes back to Homebrew's own repository and its API. Your installed packages stay as they are.";
 "Tankard" = "Tankard";
 "Tankard %@ available" = "Tankard %@ available";
+"Tankard %@ is available." = "Tankard %@ is available.";
+"Tankard %@ is the latest version." = "Tankard %@ is the latest version.";
 "Tankard (demo)" = "Tankard (demo)";
 "Tankard Help" = "Tankard Help";
+"Tankard Updates" = "Tankard Updates";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard leaves this app's upgrades out of Upgrade all, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it.";
@@ -823,6 +841,7 @@
 "Tankard updates itself through brew" = "Tankard updates itself through brew";
 "Tankard upgraded %lld package" = "Tankard upgraded %lld package";
 "Tankard upgraded %lld packages" = "Tankard upgraded %lld packages";
+"Tankard was upgraded" = "Tankard was upgraded";
 "Tankard: upgrades ready" = "Tankard: upgrades ready";
 "Tap" = "Tap";
 "Tap has %@" = "Tap has %@";
@@ -922,6 +941,7 @@
 "Upgrade packages automatically" = "Upgrade packages automatically";
 "Upgrade ready: " = "Upgrade ready: ";
 "Upgrade vulnerable packages. " = "Upgrade vulnerable packages. ";
+"Upgrade with Homebrew" = "Upgrade with Homebrew";
 "Upgraded (%lld)" = "Upgraded (%lld)";
 "Upgrades" = "Upgrades";
 "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades)." = "Upgrades show when brew lists them, and every newer version when \"Include self-updating apps\" is on (Settings ▸ Upgrades).";
@@ -950,6 +970,7 @@
 "When upgrading" = "When upgrading";
 "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it." = "Where Homebrew gets formulae and casks. Click a tap to see what you installed from it.";
 "Who updates %@" = "Who updates %@";
+"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.";
 "With the dependencies nothing else needs" = "With the dependencies nothing else needs";
 "Would free about %@" = "Would free about %@";
 "Would remove %lld formulae" = "Would remove %lld formulae";
@@ -958,6 +979,7 @@
 "Writing Brewfile…" = "Writing Brewfile…";
 "Xcode is out of date" = "Xcode is out of date";
 "Yes" = "Yes";
+"You have Tankard %@." = "You have Tankard %@.";
 "Your PATH finds other tools before Homebrew's" = "Your PATH finds other tools before Homebrew's";
 "a symlink to %@: that file is backed up and edited" = "a symlink to %@: that file is backed up and edited";
 "adopted" = "adopted";
@@ -1102,5 +1124,3 @@
 "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)" = "· %@ on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)";
 "· fetched %@" = "· fetched %@";
 "· measuring…" = "· measuring…";
-"Hide Dock icon when the window is closed" = "Hide Dock icon when the window is closed";
-"With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default." = "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.";
