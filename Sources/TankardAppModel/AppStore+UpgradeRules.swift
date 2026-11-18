@@ -10,12 +10,13 @@ extension AppStore {
 
     func wireUpgradeRules() {
         let rules = autoUpdate.rules
-        insights.extraDecoration = { [weak rules] r in
+        insights.extraDecoration = { [weak rules, weak self] r in
             guard let rules else { return r }
             // A newer version (or an upgrade) clears a skip. Silent: this
             // runs inside a decoration, which is already re-laying the report.
             rules.prune(r.packages, notify: false)
-            return rules.decorate(r)
+            // 0.8.6 (M5): "Include self-updating apps" off leaves them all to the app.
+            return rules.decorate(r, includeSelfUpdating: self?.insights.settings.includeSelfUpdatingApps ?? true)
         }
         rules.onSkipsChange = { [weak self] in self?.applyInsights() }
         // 0.8: per-app self-update choices.

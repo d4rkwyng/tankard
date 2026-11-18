@@ -289,14 +289,23 @@ public final class UpgradeRulesSettings {
         onSkipsChange = hook
     }
 
-    /// Marks the report's packages whose offered version is skipped.
-    public func decorate(_ report: StatusReport) -> StatusReport {
+    /// Marks the report's packages whose offered version is skipped, and
+    /// the casks left to their own updater. 0.8.6 (M5): with "Include
+    /// self-updating apps" off (`includeSelfUpdating` false), that is every
+    /// self-updating cask on the default choice, not only those set to "App
+    /// updates itself": brew 7 lists them by itself whenever the app bundle
+    /// is older than the cask, which the setting said it left out.
+    public func decorate(_ report: StatusReport, includeSelfUpdating: Bool = true) -> StatusReport {
         var r = report
         let leftToApp = appUpdatedTokens
+        let keptByHomebrew = homebrewUpdatedTokens
         for i in r.packages.indices {
             let skipped = isSkippedRaw(r.packages[i])
             if r.packages[i].versionSkipped != skipped { r.packages[i].versionSkipped = skipped }
-            let held: Bool? = SelfUpdateRule.leftToApp(r.packages[i], appTokens: leftToApp) ? true : nil
+            let p = r.packages[i]
+            let byDefault = !includeSelfUpdating && p.kind == .cask && p.autoUpdates == true
+                && !SelfUpdateRule.keptByHomebrew(p, homebrewTokens: keptByHomebrew)
+            let held: Bool? = SelfUpdateRule.leftToApp(p, appTokens: leftToApp) || byDefault ? true : nil
             if r.packages[i].selfUpdateHeld != held { r.packages[i].selfUpdateHeld = held }
         }
         return r

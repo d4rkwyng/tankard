@@ -212,8 +212,8 @@
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "已有从网上下载的 App？Homebrew 运行后，可通过 Homebrew ▸ 接管 App… 让 brew 为其保持最新。";
 "Already installed" = "已安装";
 "Also" = "另外";
-"Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default." = "同时列出自带更新程序的 App，例如 Chrome。这些 App 通常会自行保持最新，因此默认关闭。";
 "Also remove these" = "同时移除这些";
+"Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "在“全部升级”和自动更新中也升级自带更新程序的 App（如 Chrome）。关闭时，即使 Homebrew 有更新的版本，Tankard 也交给 App 自己的更新程序：它们带 ⟳ 显示，但不计入数量、也不会升级，除非你自己升级某一个。";
 "Always dark." = "始终为深色。";
 "Always light." = "始终为浅色。";
 "An independent app for Homebrew (brew.sh)." = "一款独立的 Homebrew App（brew.sh）。";

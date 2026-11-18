@@ -11365,58 +11365,6 @@
         }
       }
     },
-    "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listet auch Apps mit eigenem Updater, wie Chrome. Sie halten sich meist selbst aktuell, daher ist das standardmäßig aus."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Liste aussi les apps qui ont leur propre outil de mise à jour, comme Chrome. Elles restent généralement à jour seules, donc c’est désactivé par défaut."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "También muestra las apps que tienen su propio actualizador, como Chrome. Normalmente se mantienen al día solas, así que está desactivado por defecto."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elenca anche le app che hanno un proprio sistema di aggiornamento, come Chrome. Di solito si tengono aggiornate da sole, quindi è disattivato per impostazione predefinita."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chromeのように独自のアップデート機能を持つアプリも一覧に含めます。これらは通常自分で最新を保つため、デフォルトではオフです。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chrome처럼 자체 업데이트 기능이 있는 앱도 나열합니다. 이런 앱은 대개 스스로 최신 상태를 유지하므로 기본적으로 꺼져 있습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同时列出自带更新程序的 App，例如 Chrome。这些 App 通常会自行保持最新，因此默认关闭。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Também lista apps que têm seu próprio atualizador, como o Chrome. Eles geralmente se mantêm atualizados, por isso fica desativado por padrão."
-          }
-        }
-      }
-    },
     "Also remove these": {
       "localizations": {
         "de": {
@@ -11465,6 +11413,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이것들도 제거"
+          }
+        }
+      }
+    },
+    "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert auch Apps mit eigenem Updater, etwa Chrome, bei „Alle aktualisieren“ und automatischen Updates. Aus: Tankard überlässt sie ihrem eigenen Updater, auch wenn Homebrew eine neuere Version hat. Sie erscheinen mit ⟳, werden aber nicht mitgezählt oder aktualisiert, außer du aktualisierst eine selbst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met aussi à jour les apps qui ont leur propre outil de mise à jour, comme Chrome, dans « Tout mettre à jour » et les mises à jour automatiques. Désactivé, Tankard les laisse à leur propre outil même quand Homebrew a une version plus récente : elles apparaissent avec ⟳ mais ne sont ni comptées ni mises à jour, sauf si vous en mettez une à jour vous-même."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "También actualiza las apps que tienen su propio actualizador, como Chrome, en Actualizar todo y en las actualizaciones automáticas. Desactivado, Tankard las deja a su propio actualizador aunque Homebrew tenga una versión más nueva: aparecen con ⟳, pero no se cuentan ni se actualizan salvo que actualices una tú mismo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chrome のように独自のアップデータを持つアプリも、「すべてアップグレード」と自動アップデートでアップグレードします。オフにすると、Homebrew に新しいバージョンがあっても Tankard はアプリ自身のアップデータに任せます。⟳ 付きで表示されますが、自分でアップグレードしない限り数に含めず、アップグレードもしません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“全部升级”和自动更新中也升级自带更新程序的 App（如 Chrome）。关闭时，即使 Homebrew 有更新的版本，Tankard 也交给 App 自己的更新程序：它们带 ⟳ 显示，但不计入数量、也不会升级，除非你自己升级某一个。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Também atualiza apps que têm o próprio atualizador, como o Chrome, em Atualizar tudo e nas atualizações automáticas. Desligado, o Tankard os deixa para o próprio atualizador mesmo quando o Homebrew tem uma versão mais nova: eles aparecem com ⟳, mas não são contados nem atualizados, a menos que você atualize um deles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna anche le app con un proprio sistema di aggiornamento, come Chrome, in Aggiorna tutto e negli aggiornamenti automatici. Disattivato, Tankard le lascia al loro sistema di aggiornamento anche quando Homebrew ha una versione più recente: compaiono con ⟳ ma non vengono contate né aggiornate, a meno che tu non ne aggiorni una."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chrome처럼 자체 업데이트 기능이 있는 앱도 ‘모두 업그레이드’와 자동 업데이트에서 업그레이드합니다. 끄면 Homebrew에 새 버전이 있어도 Tankard는 앱 자체 업데이트에 맡깁니다. ⟳ 표시와 함께 보이지만 직접 업그레이드하지 않는 한 개수에 포함되거나 업그레이드되지 않습니다."
           }
         }
       }

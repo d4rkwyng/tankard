@@ -212,8 +212,8 @@
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Schon Apps aus dem Web? Sobald Homebrew läuft, kann brew sie über Homebrew ▸ Apps übernehmen… aktuell halten.";
 "Already installed" = "Bereits installiert";
 "Also" = "Auch";
-"Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default." = "Listet auch Apps mit eigenem Updater, wie Chrome. Sie halten sich meist selbst aktuell, daher ist das standardmäßig aus.";
 "Also remove these" = "Auch diese entfernen";
+"Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Aktualisiert auch Apps mit eigenem Updater, etwa Chrome, bei „Alle aktualisieren“ und automatischen Updates. Aus: Tankard überlässt sie ihrem eigenen Updater, auch wenn Homebrew eine neuere Version hat. Sie erscheinen mit ⟳, werden aber nicht mitgezählt oder aktualisiert, außer du aktualisierst eine selbst.";
 "Always dark." = "Immer dunkel.";
 "Always light." = "Immer hell.";
 "An independent app for Homebrew (brew.sh)." = "Eine unabhängige App für Homebrew (brew.sh).";

@@ -212,8 +212,8 @@
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Web から入手したアプリがありますか？ Homebrew が動作したら、Homebrew ▸ アプリを引き継ぐ… で brew に最新の状態を保たせることができます。";
 "Already installed" = "インストール済み";
 "Also" = "その他";
-"Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default." = "Chromeのように独自のアップデート機能を持つアプリも一覧に含めます。これらは通常自分で最新を保つため、デフォルトではオフです。";
 "Also remove these" = "これらも削除";
+"Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Chrome のように独自のアップデータを持つアプリも、「すべてアップグレード」と自動アップデートでアップグレードします。オフにすると、Homebrew に新しいバージョンがあっても Tankard はアプリ自身のアップデータに任せます。⟳ 付きで表示されますが、自分でアップグレードしない限り数に含めず、アップグレードもしません。";
 "Always dark." = "常にダーク。";
 "Always light." = "常にライト。";
 "An independent app for Homebrew (brew.sh)." = "Homebrew(brew.sh)の独立したアプリ。";

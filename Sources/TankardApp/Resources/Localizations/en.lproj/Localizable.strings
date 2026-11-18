@@ -212,8 +212,8 @@
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date.";
 "Already installed" = "Already installed";
 "Also" = "Also";
-"Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default." = "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.";
 "Also remove these" = "Also remove these";
+"Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself.";
 "Always dark." = "Always dark.";
 "Always light." = "Always light.";
 "An independent app for Homebrew (brew.sh)." = "An independent app for Homebrew (brew.sh).";

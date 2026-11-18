@@ -12,7 +12,9 @@ struct V085RunningAppsTests {
         var deps = Demo.dependencies(.arm64, pace: 0)
         deps.appManagementGate = false
         deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
-        let store = AppStore(deps: deps, settings: testSettings())
+        let settings = testSettings()
+        InsightSettings(defaults: settings.defaults).includeSelfUpdatingApps = true // 0.8.6 (M5): Chrome (auto_updates) in Upgrade All
+        let store = AppStore(deps: deps, settings: settings)
         store.autoUpdate.conditions = FixedConditions(ac: nil, idle: nil, apps: running)
         await store.start()
         return store

@@ -345,12 +345,16 @@ Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online
 
 ## Apps that update themselves
 
-Many apps (casks) update themselves. By default brew doesn't list their upgrades, and
-neither does Tankard. They show ⟳ at the end of their row, before the lock and the ⓘ when
-those show too.
+Many apps (casks) update themselves. They show ⟳ at the end of their row, before the lock
+and the ⓘ when those show too. Homebrew 7 lists one as outdated by itself whenever the app
+on disk is older than the cask (its own updater fell behind), so `brew upgrade` in Terminal
+replaces it. Tankard, by default, leaves them to their own updater: they still show their
+newer version, but Upgrade All, the counts, notifications and automatic updates leave them
+out. Select one and click **Upgrade** to upgrade it anyway.
 
-- **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to list
-  them as upgrades too.
+- **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to count
+  and upgrade them like any other package (and also list the ones only
+  `brew outdated --greedy` reports).
 - **For one app:** select it and use the **Updates** menu in the detail pane:
   - **Default**: follows the setting above. The menu says which way it goes now.
   - **App updates itself**: Tankard leaves its upgrades out. `brew upgrade` in Terminal
@@ -563,7 +567,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 
 | setting | default | what it does |
 |---|---|---|
-| Include self-updating apps | off | Lists upgrades for apps that update themselves. |
+| Include self-updating apps | off | Counts and upgrades apps that update themselves. Off, Tankard leaves them to their own updater. |
 | Don't quit running apps during upgrades | off | brew upgrades a running app without quitting it. |
 | Keep the previous version after upgrades | off | Needed for rollback. Uses disk space. |
 | Upgrade packages automatically | off | Schedule, version rule and Snooze. See [Automatic updates](#automatic-updates). |
@@ -579,7 +583,9 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 - **Notify me about new upgrades** uses the same background `brew update`. Refresh and Check Now post a
   notification only when the Tankard window isn't in front.
 - **Include self-updating apps** lists casks with `auto_updates` or `version :latest`, as
-  `brew outdated --greedy` does.
+  `brew outdated --greedy` does. Off, the `auto_updates` casks brew lists by itself (its
+  default `HOMEBREW_UPGRADE_AUTO_UPDATES_CASKS`, when the app bundle is older than the cask)
+  stay visible but out of Upgrade All, the counts and automatic updates.
 - **Don't quit running apps during upgrades** sets `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1` for cask upgrades (it shows
   in the command under **Details**). Without it, brew quits a running app before upgrading its cask and opens it
   again afterwards, and Tankard's upgrade plan names the open apps before it starts.

@@ -321,9 +321,13 @@ struct SelfUpdatingAndNoQuitTests {
         let ts = try #require(store.packages.first { $0.name == "tailscale-app" })
         #expect(ts.upgradeAvailable && ts.selfUpdatingUpgrade == true)
         #expect(ts.currentVersion == "1.104.7")
+        // 0.8.6 (M5): off leaves every self-updating cask to its app, not
+        // only the greedy one (tailscale-app).
+        let selfUpdating = store.upgradable.filter { $0.kind == .cask && ($0.autoUpdates == true || $0.selfUpdatingUpgrade == true) }.count
+        #expect(selfUpdating > 1)
         store.insights.settings.includeSelfUpdatingApps = false
-        #expect(store.upgradable.count == before - 1)
-        #expect(store.report?.summary.upgrades == before - 1)
+        #expect(store.upgradable.count == before - selfUpdating)
+        #expect(store.report?.summary.upgrades == before - 1) // brew's own list: only the greedy one goes
         store.insights.settings.includeSelfUpdatingApps = true // re-reads with --greedy
         #expect(await waitUntil { store.upgradable.count == before && !store.isRefreshing })
     }
@@ -339,7 +343,8 @@ struct SelfUpdatingAndNoQuitTests {
     }
 
     @Test func dontQuitAppliesToCaskUpgradesOnly() async throws {
-        let store = await armStore { $0.dontQuitAppsDuringUpgrade = true }
+        // 0.8.6 (M5): Chrome (auto_updates) in Upgrade All.
+        let store = await armStore { $0.dontQuitAppsDuringUpgrade = true; $0.includeSelfUpdatingApps = true }
         let cask = try #require(store.upgradable.first { $0.kind == .cask })
         let formula = try #require(store.upgradable.first { $0.kind == .formula })
         store.startUpgrade([cask, formula])

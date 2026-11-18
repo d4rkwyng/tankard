@@ -65,6 +65,7 @@ struct V04HeldUpgradeTests {
         let settings = testSettings()
         settings.appManagementExplained = true
         InsightSettings(defaults: settings.defaults).dontQuitAppsDuringUpgrade = true
+        InsightSettings(defaults: settings.defaults).includeSelfUpdatingApps = true // 0.8.6 (M5): Chrome (auto_updates) in Upgrade All
         let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0), settings: settings)
         await store.start()
         let cask = try #require(store.upgradable.first { $0.kind == .cask })

@@ -19,7 +19,7 @@ public enum SettingsHelp {
     public static let openAtLogin = String(localized: "Opens Tankard when you log in, as a macOS login item.")
 
     // Upgrades
-    public static let includeSelfUpdatingApps = String(localized: "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.")
+    public static let includeSelfUpdatingApps = String(localized: "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself.")
     public static let dontQuitApps = String(localized: "Normally an open app is closed while it upgrades and opened again afterwards. With this on, it keeps running and the new version starts the next time you open it.")
     public static let scanOnRefresh = String(localized: "Checks your command-line tools for known security problems after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default.")
     /// 0.7: Keep the previous version after upgrades.
