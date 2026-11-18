@@ -56993,7 +56993,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "パスワードが違います。もう一度入力してください。"
+            "value": "パスワードが正しくありません"
           }
         },
         "zh-Hans": {

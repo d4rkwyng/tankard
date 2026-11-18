@@ -603,8 +603,10 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
 
 - *Helper.* `Sources/tankard-askpass` (AppKit, links only `AskpassSupport`), shipped as
   `Tankard.app/Contents/MacOS/tankard-askpass`. Living in Contents/MacOS makes Tankard.app
-  its main bundle, so the dialog gets Tankard's icon and Localizable.strings. It is an
-  `NSAlert` with an `NSSecureTextField` (no echo, no copy, secure keyboard entry while
+  its main bundle, so the dialog gets Tankard's icon and Localizable.strings. It is a small
+  `NSPanel` laid out like a modern alert (0.8.4: centered icon, title and text; NSAlert
+  left-aligns everything once it has an accessory view), run with `runModal(for:)`, with an
+  `NSSecureTextField` (no echo, no copy, secure keyboard entry while
   focused). OK writes the password plus a newline to stdout once and wipes that byte
   buffer; Cancel, a 5-minute timeout, or the calling sudo going away exit 1. Stop Now's
   signals to brew's process group (SIGINT, then SIGTERM) reach sudo and the helper too (brew starts sudo without
