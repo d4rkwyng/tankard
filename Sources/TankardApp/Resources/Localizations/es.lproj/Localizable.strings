@@ -615,6 +615,7 @@
 "Not passed: Tankard's self-updating apps setting decides this." = "No se pasa: lo decide el ajuste de apps que se actualizan solas de Tankard.";
 "Not passed: a credential." = "No se pasa: es una credencial.";
 "Not passed: auto-update relies on brew's dependents check." = "No se pasa: la actualización automática depende de la comprobación de dependientes de brew.";
+"Not passed: brew ignores the upper-case form; use the lower-case one." = "No se pasa: brew ignora la forma en mayúsculas; usa la de minúsculas.";
 "Not passed: changes where brew gets code from, or what it trusts." = "No se pasa: cambia de dónde obtiene brew el código o en qué confía.";
 "Not passed: changes where brew lives or keeps its files." = "No se pasa: cambia dónde está brew o dónde guarda sus archivos.";
 "Not running" = "No en ejecución";
@@ -681,6 +682,7 @@
 "Partial scan" = "Análisis parcial";
 "Partly applied: %@" = "Aplicada en parte: %@";
 "Passed to brew." = "Se pasa a brew.";
+"Passed to brew: it picks the brew.env file brew reads." = "Se pasa a brew: elige el archivo brew.env que lee brew.";
 "Password:" = "Contraseña:";
 "Patch only" = "Solo parches";
 "Pause automatic updates. Manual upgrades still work." = "Pausa las actualizaciones automáticas. Las actualizaciones manuales siguen funcionando.";
@@ -828,7 +830,17 @@
 "Set by Intelbrew mode." = "Definida por el modo Intelbrew.";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Definida por Tankard para comprobaciones y actualizaciones: Tankard decide cuándo se ejecuta brew update.";
 "Set by Tankard: it reads brew's output." = "Definida por Tankard: lee la salida de brew.";
+"Set in brew.env, so Uninstall may also remove other unused dependencies." = "Definido en brew.env: Desinstalar puede eliminar también otras dependencias sin usar.";
+"Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "Definido en brew.env: brew usa este espejo; Descubrir y el índice de taps no.";
+"Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "Definido en brew.env, así que se aplica al brew de Tankard: cambia de dónde obtiene código brew o en qué confía.";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "Definida en brew.env, así que también se aplica a las instalaciones de Tankard; las comprobaciones de ubicación de Adoptar apps suponen /Applications.";
+"Set in brew.env, so it overrides Intelbrew mode's value." = "Definido en brew.env: reemplaza el valor del modo Intelbrew.";
+"Set in brew.env, so it overrides Tankard's self-updating apps setting." = "Definido en brew.env: reemplaza el ajuste de Tankard para apps que se actualizan solas.";
+"Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "Definido en brew.env, así que llega al brew de Tankard: las actualizaciones automáticas se pausan mientras esté definido.";
+"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "Definido en brew.env: las solicitudes de contraseña van a este asistente, no al diálogo de Tankard.";
+"Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "Definido en brew.env: el progreso de descarga y Limpiar de Tankard asumen las carpetas predeterminadas.";
+"Set in brew.env: it changes brew's output, which Tankard reads." = "Definido en brew.env: cambia la salida de brew, que Tankard lee.";
+"Set in brew.env: it moves brew's files from where Tankard looks." = "Definido en brew.env: mueve los archivos de brew de donde Tankard los busca.";
 "Several casks install an app with this name. Pick the one you have." = "Varios casks instalan una app con este nombre. Elige la que tienes.";
 "Show" = "Mostrar";
 "Show %@ in Tankard" = "Mostrar %@ en Tankard";
@@ -921,6 +933,7 @@
 "Tankard upgraded %lld package" = "Tankard actualizó %lld paquete";
 "Tankard upgraded %lld packages" = "Tankard actualizó %lld paquetes";
 "Tankard was upgraded" = "Tankard se ha actualizado";
+"Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Las descargas propias de Tankard (Descubrir, número de instalaciones, comprobación de actualizaciones) usan el proxy de Ajustes del Sistema, no estos.";
 "Tankard: upgrades ready" = "Tankard: actualizaciones listas";
 "Tap" = "Tap";
 "Tap has %@" = "El tap tiene %@";
@@ -1069,7 +1082,7 @@
 "Xcode is out of date" = "Xcode está desactualizado";
 "Yes" = "Sí";
 "You have Tankard %@." = "Tienes Tankard %@.";
-"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "Tus ajustes HOMEBREW_* y lo que Tankard hace con cada uno al ejecutar brew.";
+"Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "Tus ajustes HOMEBREW_*, de proxy y XDG_CONFIG_HOME, y qué hace Tankard con cada uno al ejecutar brew.";
 "Your PATH finds other tools before Homebrew's" = "Tu PATH encuentra otras herramientas antes que las de Homebrew";
 "a symlink to %@: that file is backed up and edited" = "un enlace simbólico a %@: se hace copia de seguridad de ese archivo y se edita";
 "adopted" = "adoptadas";

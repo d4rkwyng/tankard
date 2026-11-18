@@ -615,6 +615,7 @@
 "Not passed: Tankard's self-updating apps setting decides this." = "渡しません：Tankard の自動アップデートアプリ設定で決まります。";
 "Not passed: a credential." = "渡しません：認証情報です。";
 "Not passed: auto-update relies on brew's dependents check." = "渡しません：自動アップデートは brew の依存元チェックを必要とします。";
+"Not passed: brew ignores the upper-case form; use the lower-case one." = "渡しません: brew は大文字の形式を無視します。小文字の形式を使ってください。";
 "Not passed: changes where brew gets code from, or what it trusts." = "渡しません：brew のコードの取得元や信頼対象が変わります。";
 "Not passed: changes where brew lives or keeps its files." = "渡しません：brew の場所やファイルの保存先が変わります。";
 "Not running" = "実行中ではありません";
@@ -681,6 +682,7 @@
 "Partial scan" = "部分的なスキャン";
 "Partly applied: %@" = "一部適用：%@";
 "Passed to brew." = "brew に渡します。";
+"Passed to brew: it picks the brew.env file brew reads." = "brew に渡します: brew が読む brew.env ファイルを決めます。";
 "Password:" = "パスワード:";
 "Patch only" = "パッチのみ";
 "Pause automatic updates. Manual upgrades still work." = "自動アップデートを一時停止します。手動のアップグレードは引き続き使えます。";
@@ -828,7 +830,17 @@
 "Set by Intelbrew mode." = "Intelbrew モードで設定。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "チェックとアップグレード用に Tankard が設定：brew update の実行時期は Tankard が決めます。";
 "Set by Tankard: it reads brew's output." = "Tankard が設定：brew の出力を読み取るためです。";
+"Set in brew.env, so Uninstall may also remove other unused dependencies." = "brew.env で設定: アンインストールで他の未使用の依存関係も削除される場合があります。";
+"Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "brew.env で設定: brew はこのミラーを使いますが、「見つける」とタップインデックスは使いません。";
+"Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "brew.env で設定されているため Tankard の brew にも適用されます: brew のコードの取得元や信頼する対象を変えます。";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "brew.env で設定されているため、Tankard からのインストールにも適用されます。「アプリを引き継ぐ」の場所チェックは /Applications を前提としています。";
+"Set in brew.env, so it overrides Intelbrew mode's value." = "brew.env で設定: Intelbrew モードの値を上書きします。";
+"Set in brew.env, so it overrides Tankard's self-updating apps setting." = "brew.env で設定: Tankard の自動更新アプリの設定を上書きします。";
+"Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "brew.env で設定されているため Tankard の brew に届きます: 設定中は自動アップデートが一時停止します。";
+"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "brew.env で設定: パスワードの入力はこのヘルパーに送られ、Tankard のダイアログは使われません。";
+"Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "brew.env で設定: Tankard のダウンロード進行状況とクリーンアップは標準のフォルダを前提にしています。";
+"Set in brew.env: it changes brew's output, which Tankard reads." = "brew.env で設定: Tankard が読み取る brew の出力を変えます。";
+"Set in brew.env: it moves brew's files from where Tankard looks." = "brew.env で設定: brew のファイルを Tankard が探す場所から移動します。";
 "Several casks install an app with this name. Pick the one you have." = "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。";
 "Show" = "表示";
 "Show %@ in Tankard" = "%@をTankardで表示";
@@ -921,6 +933,7 @@
 "Tankard upgraded %lld package" = "Tankardが%lld個のパッケージをアップグレードしました";
 "Tankard upgraded %lld packages" = "Tankardが%lld個のパッケージをアップグレードしました";
 "Tankard was upgraded" = "Tankardがアップグレードされました";
+"Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard 自身のダウンロード（見つける、インストール数、アップデート確認）は、これらではなくシステム設定のプロキシを使います。";
 "Tankard: upgrades ready" = "Tankard: アップグレードの準備完了";
 "Tap" = "Tap";
 "Tap has %@" = "tapに%@があります";
@@ -1069,7 +1082,7 @@
 "Xcode is out of date" = "Xcodeが古くなっています";
 "Yes" = "はい";
 "You have Tankard %@." = "お使いのTankardは %@ です。";
-"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "HOMEBREW_* 設定と、Tankard が brew を実行するときの各設定の扱い。";
+"Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "HOMEBREW_*、プロキシ、XDG_CONFIG_HOME の設定と、Tankard が brew を実行するときのそれぞれの扱い。";
 "Your PATH finds other tools before Homebrew's" = "PATHでHomebrewより先に他のツールが見つかります";
 "a symlink to %@: that file is backed up and edited" = "%@へのシンボリックリンク: そのファイルがバックアップされ、編集されます";
 "adopted" = "引き継ぎ済み";
