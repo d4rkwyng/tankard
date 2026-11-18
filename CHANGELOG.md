@@ -13,7 +13,7 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Changed
 - **The password dialog is centered and shorter**, like a modern macOS alert: "Tankard needs your password", one line for what it's for ("To upgrade windows-app."), and the brew command under **Details**. A long list names two packages and the rest as a count ("To upgrade xz, wget and 7 more.").
-- **A brew.env `SUDO_ASKPASS` that points to another program wins over Tankard's dialog**, so Tankard no longer offers its own: a step that needs your password says to run it in Terminal, with the command. Automatic updates skip such cask steps.
+- **A brew.env `SUDO_ASKPASS` that points to another program wins over Tankard's dialog**, so Tankard no longer offers its own: a step that needs your password says to run it in Terminal, with the command. Automatic updates skip cask steps that could ask for a password when brew.env sets another helper or clears `HOMEBREW_NO_SUDO`.
 - **Tankard reads the brew.env brew reads**, including the one under `XDG_CONFIG_HOME` (or `HOMEBREW_XDG_CONFIG_HOME`), and passes those settings to brew.
 - **Help ▸ Tankard Help opens the guide for your version** of Tankard, not the latest one.
 - **The Discover header shows the search term**: '2 results for "wget"', not for the whole pasted `brew install wget`.
