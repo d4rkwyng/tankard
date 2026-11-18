@@ -706,7 +706,9 @@ Health ▸ Environment warns about every brew.env setting that undoes one of Tan
   with `HOMEBREW_NO_SUDO=1` (brew stops before sudo, so that program never runs), and a
   step known to need the password (a `.pkg` installer), or every cask step if brew.env also
   sets `HOMEBREW_NO_SUDO=` empty, isn't run at all. The plan and the sheet say "brew.env
-  sets its own password helper (path); run this step in Terminal" and show the command;
+  sets its own password helper (path); run this step in Terminal" and show the command.
+  Automatic updates skip cask upgrades while brew.env sets such a helper or clears
+  `HOMEBREW_NO_SUDO`, and the Auto-update log says why;
 - `HOMEBREW_CELLAR`, `HOMEBREW_CACHE`, `HOMEBREW_LOGS`, mirrors, and settings that change
   where brew gets code from or what it trusts.
 

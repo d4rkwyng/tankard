@@ -216,6 +216,12 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     /// 0.8.4: Tankard quit (through the quit guard) before this step ran or
     /// finished. The interrupted slot runs again at the next launch.
     case quit
+    /// 0.8.4: brew.env sets a password helper that isn't Tankard's (the
+    /// path), or clears HOMEBREW_NO_SUDO (nil: no foreign helper). Either
+    /// one alone is enough: a sudo-capable cask step is skipped, never run
+    /// unattended. Checked right before each such step; formulae are
+    /// unaffected.
+    case foreignAskpass(String?)
 
     public var text: String {
         switch self {
@@ -232,6 +238,8 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .needsPassword: return String(localized: "needs your administrator password; upgrade it by hand")
         case .homebrewBusy: return String(localized: "Homebrew was busy")
         case .quit: return String(localized: "Tankard quit; the next automatic run upgrades it")
+        case .foreignAskpass(let helper?): return String(localized: "brew.env sets its own password helper (\(helper)); upgrade it in Terminal")
+        case .foreignAskpass(nil): return String(localized: "brew.env clears HOMEBREW_NO_SUDO, so brew could ask for a password; upgrade it in Terminal")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
                 return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")
@@ -772,6 +780,21 @@ public final class AutoUpdater {
         return s
     }
 
+    /// 0.8.4: the skip for a sudo-capable cask step when brew.env sets a
+    /// password helper that isn't Tankard's, or clears HOMEBREW_NO_SUDO
+    /// (either alone; read now, with `brewEnvFiles`); nil when it may run.
+    func foreignAskpassSkip(store: AppStore) -> AutoUpdateSkip? {
+        guard let client = try? store.resolvedClient() else { return nil }
+        let files = brewEnvFiles(client)
+        if let f = ForeignAskpass.detect(brewEnvFiles: files, own: store.deps.askpassHelper) {
+            return .foreignAskpass(f.helper)
+        }
+        if EnvironmentSources.brewEnvSetting(Askpass.noSudoKey, files: files)?.value.isEmpty == true {
+            return .foreignAskpass(nil)
+        }
+        return nil
+    }
+
     public nonisolated static let dependentsCheckKey = "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK"
     public static var pausedText: String {
         String(localized: "brew.env turns off brew's dependents check; automatic updates paused.")
@@ -859,6 +882,14 @@ public final class AutoUpdater {
                 break
             }
             guard !quitRequested else { break }
+            // 0.8.4: brew.env read again right before each sudo-capable cask
+            // step: a foreign password helper, or HOMEBREW_NO_SUDO cleared
+            // there, means the step is skipped, never run unattended.
+            if AdminPassword.mayNeedSudo(BrewCommands.upgradeArguments(for: p)), let skip = foreignAskpassSkip(store: store) {
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: skip.text))
+                logFile?.append(["tankard: skipped \(p.name): \(skip.text)"])
+                continue
+            }
             var item = AutoUpdateRun.Item(name: p.name, isCask: p.kind == .cask, detail: Self.versions(p))
             activity = String(localized: "Auto-update: upgrading \(p.name)")
             step = AutoUpdateStep(name: p.name, index: n + 1, total: plan.run.count)

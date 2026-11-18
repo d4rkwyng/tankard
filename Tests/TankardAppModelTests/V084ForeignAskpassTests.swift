@@ -306,3 +306,75 @@ struct ProxyCredentialLoggingTests {
         #expect(entry.outputTail.joined().contains("•••@proxy.corp"))
     }
 }
+
+/// 0.8.4: an automatic run skips sudo-capable cask steps when brew.env sets a
+/// foreign password helper or clears HOMEBREW_NO_SUDO (either alone),
+/// re-read right before each step. Formulae are unaffected.
+extension AutoUpdateRunTests {
+    static let foreignHelper = "/Users/me/.local/bin/not-tankard-askpass"
+
+    func casksRig(_ files: @escaping @MainActor () -> [(String, [String: String])]) async -> (AppStore, EnvLog, FakeNotifier) {
+        // The arm64 demo has outdated casks (the Intelbrew one has none).
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let envs = EnvLog()
+        deps.streamRunner = RecordingRunner(inner: deps.streamRunner, log: envs)
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.autoUpdate.calendar = utc
+        store.insights.settings.dontQuitAppsDuringUpgrade = true
+        store.autoUpdate.brewEnvFiles = { _ in files() }
+        store.autoUpdate.settings.enabled = true
+        return (store, envs, FakeNotifier())
+    }
+
+    @Test func baselineRunsCasks() async throws {
+        let (store, envs, notifier) = await casksRig { [] }
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(run.upgraded.contains { $0.isCask })
+        #expect(envs.calls.contains { $0.0.first == "upgrade" && $0.0.contains("--cask") })
+    }
+
+    @Test(arguments: [
+        (["SUDO_ASKPASS": "/Users/me/.local/bin/not-tankard-askpass"], AutoUpdateSkip.foreignAskpass("/Users/me/.local/bin/not-tankard-askpass")),
+        (["HOMEBREW_NO_SUDO": ""], AutoUpdateSkip.foreignAskpass(nil)),
+        (["SUDO_ASKPASS": "/Users/me/.local/bin/not-tankard-askpass", "HOMEBREW_NO_SUDO": ""], AutoUpdateSkip.foreignAskpass("/Users/me/.local/bin/not-tankard-askpass")),
+    ])
+    func foreignHelperOrClearedNoSudoSkipsCaskSteps(vars: [String: String], skip: AutoUpdateSkip) async throws {
+        let (store, envs, notifier) = await casksRig { [("~/.homebrew/brew.env", vars)] }
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(!envs.calls.contains { $0.0.first == "upgrade" && $0.0.contains("--cask") })
+        let skipped = run.skipped.filter { $0.isCask && $0.detail == skip.text }
+        #expect(!skipped.isEmpty)
+        #expect(!run.failed.contains { $0.isCask })
+        // Formulae still upgrade.
+        #expect(run.upgraded.contains { !$0.isCask })
+        #expect(!run.upgraded.contains { $0.isCask })
+    }
+
+    @Test func ownHelperOrNoSudoSetStillRunsCasks() async throws {
+        let (store, _, notifier) = await casksRig { [("~/.homebrew/brew.env", ["HOMEBREW_NO_SUDO": "1"])] }
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(run.upgraded.contains { $0.isCask })
+        #expect(store.autoUpdate.foreignAskpassSkip(store: store) == nil)
+    }
+
+    @Test func brewEnvIsReadAgainBeforeEachCaskStep() async throws {
+        // Clean at the run's start (the pause check is the first read); the
+        // helper is there by the time a cask step's own read happens.
+        var reads = 0
+        let (store, envs, notifier) = await casksRig {
+            reads += 1
+            return reads == 1 ? [] : [("~/.homebrew/brew.env", ["SUDO_ASKPASS": Self.foreignHelper])]
+        }
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(reads >= 2)
+        #expect(store.autoUpdate.pausedReason == nil)
+        #expect(!envs.calls.contains { $0.0.first == "upgrade" && $0.0.contains("--cask") })
+        #expect(run.skipped.contains { $0.isCask && $0.detail == AutoUpdateSkip.foreignAskpass(Self.foreignHelper).text })
+    }
+
+    @Test func skipTexts() {
+        #expect(AutoUpdateSkip.foreignAskpass("/x").text.contains("brew.env sets its own password helper (/x)"))
+        #expect(AutoUpdateSkip.foreignAskpass(nil).text.contains("HOMEBREW_NO_SUDO"))
+    }
+}

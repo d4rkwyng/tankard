@@ -60506,6 +60506,58 @@
         }
       }
     },
+    "brew.env clears HOMEBREW_NO_SUDO, so brew could ask for a password; upgrade it in Terminal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env leert HOMEBREW_NO_SUDO, brew könnte also nach einem Passwort fragen; im Terminal aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env vide HOMEBREW_NO_SUDO, donc brew pourrait demander un mot de passe ; mettez-le à jour dans Terminal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env vacía HOMEBREW_NO_SUDO, así que brew podría pedir una contraseña; actualízalo en Terminal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env が HOMEBREW_NO_SUDO を空にしているため、brew がパスワードを求める可能性があります。ターミナルでアップグレードしてください"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env 清空了 HOMEBREW_NO_SUDO，brew 可能会要求输入密码；请在“终端”中升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew.env limpa HOMEBREW_NO_SUDO, então o brew poderia pedir uma senha; atualize no Terminal"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env svuota HOMEBREW_NO_SUDO, quindi brew potrebbe chiedere una password; aggiornalo nel Terminale"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env가 HOMEBREW_NO_SUDO를 비워 brew가 암호를 요청할 수 있습니다. 터미널에서 업그레이드하세요"
+          }
+        }
+      }
+    },
     "brew.env sets its own password helper (%@); run this step in Terminal:": {
       "localizations": {
         "de": {
@@ -60554,6 +60606,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew.env가 자체 암호 도우미(%@)를 설정했습니다. 이 단계는 터미널에서 실행하세요:"
+          }
+        }
+      }
+    },
+    "brew.env sets its own password helper (%@); upgrade it in Terminal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env setzt ein eigenes Passwortprogramm (%@); im Terminal aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env définit son propre assistant de mot de passe (%@) ; mettez-le à jour dans Terminal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env define su propio asistente de contraseña (%@); actualízalo en Terminal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env が独自のパスワードヘルパー（%@）を設定しています。ターミナルでアップグレードしてください"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env 设置了自己的密码辅助程序（%@）；请在“终端”中升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew.env define seu próprio auxiliar de senha (%@); atualize no Terminal"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env imposta un proprio helper per la password (%@); aggiornalo nel Terminale"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env가 자체 암호 도우미(%@)를 설정했습니다. 터미널에서 업그레이드하세요"
           }
         }
       }
