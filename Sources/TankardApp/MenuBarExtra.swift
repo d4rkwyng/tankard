@@ -264,11 +264,13 @@ struct MenuBarLabel: View {
 
     var body: some View {
         let summary = MenuBarSummary(packages: store.report?.packages)
+        // 0.8.6: the count only while Settings shows it.
+        let label = summary.label(showCount: store.settings.showMenuBarCount)
         HStack(spacing: 2) {
             // A pixel tankard (handle on the left, like the logo); foam only
             // when upgrades are waiting.
-            Image(nsImage: summary.count > 0 ? MenuBarIcon.full : MenuBarIcon.empty)
-            if let badge = summary.badge { Text(badge) }
+            Image(nsImage: label.full ? MenuBarIcon.full : MenuBarIcon.empty)
+            if let badge = label.badge { Text(badge) }
             // 0.4: the optional notice for new vulnerabilities.
             if !store.insights.newVulnerableFormulae.isEmpty { Image(systemName: "exclamationmark.triangle") }
         }

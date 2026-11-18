@@ -81,6 +81,11 @@ struct GeneralSettings: View {
             ExplainedRow(help: SettingsHelp.showMenuBarIcon) {
                 Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
             }
+            // 0.8.6: the count next to the icon.
+            ExplainedRow(help: SettingsHelp.showMenuBarCount) {
+                Toggle("Show the number of upgrades in the menu bar", isOn: $settings.showMenuBarCount)
+                    .disabled(!settings.showMenuBarIcon)
+            }
             // 0.8.1: only with the menu-bar icon (else Tankard would be unreachable).
             ExplainedRow(help: SettingsHelp.hideDockIcon) {
                 Toggle("Hide Dock icon when the window is closed", isOn: $settings.hideDockIconWhenClosed)

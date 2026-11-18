@@ -719,6 +719,7 @@
 "Off" = "オフ";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "デフォルトではオフです。スキャンで新たな脆弱性が見つかったとき、メニューバーのメニューに通知を表示します。ここの「今すぐスキャン」または Homebrew ▸ 脆弱性をスキャン を選ぶと、そのたびに1回スキャンを実行します。";
 "Off for Tankard in System Settings → Notifications" = "システム設定 → 通知 でTankardがオフになっています";
+"Off: the menu bar shows only the tankard, full when upgrades are ready. The number stays in its tooltip and in the menu. On by default." = "オフにすると、メニューバーにはTankardアイコンだけが表示され、アップグレードがあるときは満杯の表示になります。数はツールチップとメニューに表示されます。初期設定はオンです。";
 "Off: your Homebrew settings turn this off (in %@)." = "オフ: Homebrewの設定でオフになっています(%@ 内)。";
 "Official" = "公式";
 "Old version removed by cleanup" = "クリーンアップで古いバージョンが削除されました";
@@ -958,6 +959,7 @@
 "Show in Tankard" = "Tankard で表示";
 "Show new vulnerabilities in the menu bar" = "新しい脆弱性をメニューバーに表示";
 "Show the Auto-update log" = "自動アップデートのログを表示";
+"Show the number of upgrades in the menu bar" = "メニューバーにアップグレードの数を表示";
 "Show vulnerable packages in Tankard" = "脆弱性のあるパッケージをTankardで表示";
 "Showing the last data Tankard read." = "Tankardが最後に読み込んだデータを表示しています。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。";

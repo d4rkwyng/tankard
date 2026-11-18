@@ -719,6 +719,7 @@
 "Off" = "Desactivado";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "Desactivado por defecto. Muestra un aviso en el menú de la barra de menús cuando un análisis encuentra vulnerabilidades que antes no estaban. Analizar ahora (aquí) o Homebrew ▸ Buscar vulnerabilidades ejecuta un análisis cada vez que lo pidas.";
 "Off for Tankard in System Settings → Notifications" = "Desactivado para Tankard en Ajustes del Sistema → Notificaciones";
+"Off: the menu bar shows only the tankard, full when upgrades are ready. The number stays in its tooltip and in the menu. On by default." = "Desactivado: la barra de menús muestra solo la jarra, llena cuando hay actualizaciones listas. El número sigue en el texto de ayuda y en el menú. Activado por omisión.";
 "Off: your Homebrew settings turn this off (in %@)." = "Desactivado: tus ajustes de Homebrew lo desactivan (en %@).";
 "Official" = "Oficial";
 "Old version removed by cleanup" = "Versión antigua eliminada por la limpieza";
@@ -958,6 +959,7 @@
 "Show in Tankard" = "Mostrar en Tankard";
 "Show new vulnerabilities in the menu bar" = "Mostrar nuevas vulnerabilidades en la barra de menús";
 "Show the Auto-update log" = "Mostrar el registro de actualización automática";
+"Show the number of upgrades in the menu bar" = "Mostrar el número de actualizaciones en la barra de menús";
 "Show vulnerable packages in Tankard" = "Mostrar paquetes vulnerables en Tankard";
 "Showing the last data Tankard read." = "Se muestran los últimos datos que leyó Tankard.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Muestra una jarra con el número de actualizaciones listas. Mientras está activado, al cerrar la ventana Tankard sigue abierto.";

@@ -541,6 +541,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 | setting | default | what it does |
 |---|---|---|
 | Show Tankard in the menu bar | on | The mug icon. With it on, closing the window keeps Tankard running. |
+| Show the number of upgrades in the menu bar | on | Off: only the mug (full when upgrades are ready); the number stays in its tooltip and the menu. |
 | Hide Dock icon when the window is closed | on | Only with the menu-bar icon on. |
 | Check for new versions in the background | on | Runs `brew update` at most once per check interval. Grayed out when `HOMEBREW_NO_AUTO_UPDATE` is set; Settings says where. |
 | Notify me about new upgrades | off | A notification when new upgrades appear. See [Notifications](#notifications). |

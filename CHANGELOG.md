@@ -6,6 +6,9 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.6] (unreleased)
 
+### Added
+- **Settings ▸ General ▸ Show the number of upgrades in the menu bar** (on by default). Off, the menu bar shows only the tankard, full when upgrades are ready; the number stays in its tooltip and in the menu.
+
 ### Changed
 - **The marks at the end of a row sit together.** The ⟳ for apps that update themselves moved from after the name to the end of the row, next to the password lock and the Electron ⓘ: always in that order, evenly spaced, the same size.
 - **Package names no longer collapse to "…" next to their badges.** The name keeps at least its first 12 characters (all of it when it fits); "dep", "pinned", "Deprecated" and "Vulnerable · 4" shrink to their icons in a narrow column, and leave when even those don't fit. The name's tooltip lists them.

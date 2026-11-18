@@ -92,6 +92,18 @@ public struct MenuBarSummary: Equatable, Sendable {
         return count > Self.maxBadge ? "\(Self.maxBadge)+" : "\(count)"
     }
 
+    /// 0.8.6: what the menu-bar item shows: the full or empty tankard, and
+    /// the count unless Settings turned it off (it stays in the tooltip,
+    /// `title`, and the panel).
+    public struct Label: Equatable, Sendable {
+        public var full: Bool
+        public var badge: String?
+    }
+
+    public func label(showCount: Bool) -> Label {
+        Label(full: count > 0, badge: showCount ? badge : nil)
+    }
+
     /// "and 3 more…" under the rows; nil when every upgrade is listed.
     public var moreText: String? { moreCount > 0 ? String(localized: "and \(moreCount) more…") : nil }
 
@@ -207,6 +219,7 @@ public final class AppSettings {
         static let hideDockIconWhenClosed = "hideDockIconWhenClosed"
         static let notifyHintShown = "notifyHintShown"
         static let casksBannerHidden = "casksBannerHidden"
+        static let showMenuBarCount = "showMenuBarCount"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -284,8 +297,14 @@ public final class AppSettings {
         didSet { if casksBannerHidden != oldValue { defaults.set(casksBannerHidden, forKey: Key.casksBannerHidden) } }
     }
 
+    /// 0.8.6: the number of upgrades next to the menu-bar icon. Default on.
+    public var showMenuBarCount: Bool {
+        didSet { if showMenuBarCount != oldValue { defaults.set(showMenuBarCount, forKey: Key.showMenuBarCount) } }
+    }
+
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        showMenuBarCount = defaults.object(forKey: Key.showMenuBarCount) as? Bool ?? true
         _showMenuBarIcon = defaults.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
         notifyNewUpgrades = defaults.bool(forKey: Key.notifyNewUpgrades)
         let h = defaults.integer(forKey: Key.checkIntervalHours)

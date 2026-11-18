@@ -37729,6 +37729,58 @@
         }
       }
     },
+    "Off: the menu bar shows only the tankard, full when upgrades are ready. The number stays in its tooltip and in the menu. On by default.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus: In der Menüleiste steht nur der Humpen, gefüllt, wenn Upgrades bereitstehen. Die Zahl bleibt im Tooltip und im Menü. Standardmäßig an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé : la barre des menus n’affiche que la chope, pleine quand des mises à niveau sont prêtes. Le nombre reste dans l’infobulle et dans le menu. Activé par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado: la barra de menús muestra solo la jarra, llena cuando hay actualizaciones listas. El número sigue en el texto de ayuda y en el menú. Activado por omisión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフにすると、メニューバーにはTankardアイコンだけが表示され、アップグレードがあるときは満杯の表示になります。数はツールチップとメニューに表示されます。初期設定はオンです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭后,菜单栏只显示酒杯,有可用升级时显示为满杯。数量仍会显示在提示和菜单中。默认开启。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desligado: a barra de menus mostra só a caneca, cheia quando há atualizações prontas. O número continua na dica e no menu. Ligado por padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disattivato: la barra dei menu mostra solo il boccale, pieno quando ci sono aggiornamenti pronti. Il numero resta nel suggerimento e nel menu. Attivo per impostazione predefinita."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끄면 메뉴 막대에는 tankard 아이콘만 표시되며, 업그레이드가 있으면 가득 찬 아이콘으로 보입니다. 개수는 도움말과 메뉴에 계속 표시됩니다. 기본값은 켬입니다."
+          }
+        }
+      }
+    },
     "Off: your Homebrew settings turn this off (in %@).": {
       "localizations": {
         "de": {
@@ -50153,6 +50205,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "자동 업데이트 로그 보기"
+          }
+        }
+      }
+    },
+    "Show the number of upgrades in the menu bar": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzahl der Upgrades in der Menüleiste zeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le nombre de mises à niveau dans la barre des menus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar el número de actualizaciones en la barra de menús"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバーにアップグレードの数を表示"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在菜单栏显示可用升级的数量"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar o número de atualizações na barra de menus"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra il numero di aggiornamenti nella barra dei menu"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대에 업그레이드 개수 표시"
           }
         }
       }

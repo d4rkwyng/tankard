@@ -719,6 +719,7 @@
 "Off" = "关";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "默认关闭。当扫描发现以前没有的漏洞时，在菜单栏菜单中显示通知。随时可在此处点按“立即扫描”，或使用 Homebrew ▸ 扫描漏洞 来执行一次扫描。";
 "Off for Tankard in System Settings → Notifications" = "在“系统设置 → 通知”中，Tankard 的通知已关闭";
+"Off: the menu bar shows only the tankard, full when upgrades are ready. The number stays in its tooltip and in the menu. On by default." = "关闭后,菜单栏只显示酒杯,有可用升级时显示为满杯。数量仍会显示在提示和菜单中。默认开启。";
 "Off: your Homebrew settings turn this off (in %@)." = "关闭：你的 Homebrew 设置关闭了此项（在 %@ 中）。";
 "Official" = "官方";
 "Old version removed by cleanup" = "旧版本已被清理删除";
@@ -958,6 +959,7 @@
 "Show in Tankard" = "在 Tankard 中显示";
 "Show new vulnerabilities in the menu bar" = "在菜单栏中显示新漏洞";
 "Show the Auto-update log" = "显示自动更新日志";
+"Show the number of upgrades in the menu bar" = "在菜单栏显示可用升级的数量";
 "Show vulnerable packages in Tankard" = "在 Tankard 中显示有漏洞的软件包";
 "Showing the last data Tankard read." = "显示 Tankard 上次读取的数据。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
