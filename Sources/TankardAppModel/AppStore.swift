@@ -287,6 +287,8 @@ public final class AppStore {
     @ObservationIgnored var scheduledUpdateCommand: UUID?
     /// 0.8.5: History entries to mark quiet once they arrive from the queue.
     @ObservationIgnored var pendingQuiet: [UUID: ScheduledQuietReason] = [:]
+    /// 0.8.5: History entries to mark as builds from source once they arrive.
+    @ObservationIgnored var pendingBuilt: Set<UUID> = []
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
     @ObservationIgnored public internal(set) var lastScheduledUpdate: ScheduledUpdateResult?
 
@@ -1125,6 +1127,11 @@ public final class AppStore {
         upgrade?.isRetry = isRetry
         upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
+        // 0.8.5: time so far and an estimate for builds from source.
+        if let u = upgrade {
+            u.now = deps.now
+            configureBuildProgress(u)
+        }
         showUpgradeSheet = true
     }
 
@@ -1194,6 +1201,7 @@ public final class AppStore {
             Task { await d.reload() }
         }
         runJournalSessionFinished(session)
+        recordBuilds(session)
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
         // offer. The new instance reads status, shows notes and prompts.

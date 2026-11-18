@@ -44,6 +44,9 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     /// when the first of them was (nil: one).
     public var quietCount: Int?
     public var quietSince: Date?
+    /// 0.8.5: this step built the formula from source (the plan said so
+    /// and brew poured no bottle). The next build's estimate reads it.
+    public var builtFromSource: Bool?
 
     public init(id: UUID = UUID(), startedAt: Date, duration: TimeInterval, command: String, arguments: [String],
                 outcome: Outcome, exitCode: Int32? = nil, origin: Origin = .user, failure: String? = nil,
@@ -345,6 +348,7 @@ public extension AppStore {
         // 0.8.5: a scheduled check that ended "try later" (it may finish
         // before this entry arrives from the queue's thread).
         if let reason = pendingQuiet.removeValue(forKey: e.id) { history.markQuiet(e.id, reason: reason) }
+        if pendingBuilt.remove(e.id) != nil { history.markBuiltFromSource(e.id) }
     }
 
     /// Runs a failed entry's brew arguments again through the queue (a

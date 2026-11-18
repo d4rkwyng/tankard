@@ -30,6 +30,22 @@ struct UpgradeSheet: View {
             }
             .font(.system(size: 12))
             .padding(.bottom, 6)
+            // 0.8.5: a build from source: time so far, and an estimate from
+            // this Mac's earlier builds when there is one.
+            if !session.compilingItems.isEmpty, !session.isFinished {
+                TimelineView(.periodic(from: .now, by: 15)) { context in
+                    if let line = session.buildLine(at: context.date) {
+                        Text(line)
+                            .font(.system(size: 11.5))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .help(line)
+                            .padding(.bottom, 6)
+                    }
+                }
+            }
             // 0.8: while brew downloads, the bar is the download's (no total:
             // an indeterminate bar); the count stays on the right.
             Group {
