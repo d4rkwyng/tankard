@@ -14,7 +14,9 @@
 # script builds each architecture on its own and joins them with lipo.
 #
 # Version: TANKARD_VERSION (the release workflow sets it from the tag), else
-# the one below; keep that in step with `tankard --version` (Sources/tankard/main.swift).
+# TankardVersion.source (Sources/TankardCore/Version.swift). The app reports
+# its Info.plist version (TankardVersion.string), so a build with another
+# TANKARD_VERSION (the self-update e2e's) is that version throughout.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -28,13 +30,15 @@ while [ $# -gt 0 ]; do
         --arch) ARCH_ARGS+=(--arch "$2"); shift ;;
         --out) OUT=$2; shift ;;
         --no-sign) SIGN=none ;;
-        -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
         *) echo "bundle-app.sh: unknown option $1" >&2; exit 2 ;;
     esac
     shift
 done
 
-VERSION=${TANKARD_VERSION:-0.8.4}
+SOURCE_VERSION=$(sed -n 's/.*static let source = "\([^"]*\)".*/\1/p' Sources/TankardCore/Version.swift)
+[ -n "$SOURCE_VERSION" ] || { echo "bundle-app.sh: no TankardVersion.source in Sources/TankardCore/Version.swift" >&2; exit 1; }
+VERSION=${TANKARD_VERSION:-$SOURCE_VERSION}
 # CFBundleVersion is the same string as the short version, so About says
 # "Version 0.3.0" with no "(N)" build number after it.
 BUILD=$VERSION

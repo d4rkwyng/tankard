@@ -38,7 +38,12 @@ pixel-art mark (`Sources/TankardApp/Resources/tankard-mark.png`; nearest-neighbo
 scaling only, on a drawn plate) with ffmpeg, `swiftc` and `iconutil`. In Intelbrew mode
 the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.png`) on
 the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
-else the default in `bundle-app.sh`, kept in step with `tankard --version`. `CFBundleVersion`
+else `TankardVersion.source` (`Sources/TankardCore/Version.swift`, what `tankard --version`
+prints). Inside Tankard.app, `TankardVersion.string` (About's fallback, the API User-Agent,
+the update check) is the Info.plist's version (0.8.4), so a build made with another
+`TANKARD_VERSION`, like the self-update e2e's `0.8.4-e2e.0`, is that version throughout;
+`release.sh` refuses a `TANKARD_VERSION` that differs from the source's, so a release
+says one version everywhere. `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
 "Version <x.y.z>" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
@@ -1159,6 +1164,12 @@ Its script runs set `TANKARD_E2E_SELFUPDATE=1` (the single-instance guard and th
 relaunch treat the run as the real app) and `TANKARD_E2E_SELF_TAP` (the tap), with the
 steps `check-updates`, `upgrade-self`, `expect-quiet`, `open-sheet` and `relaunch`.
 `--phases` (0.8.4) runs a subset (`A`, `BC`, ...); without A, B installs NEW first.
+`--appdir DIR` (0.8.4) has brew put the app in DIR instead of `/Applications` (every
+install and upgrade passes `--appdir`). B and C start the installed app as the real
+identity, so AppKit can write into the real `net.mindtricks.tankard` (the window frame):
+the run backs that domain up to `OUT/real-defaults-backup.plist` first and, if its md5
+changed, restores it (`defaults delete`, then `defaults import`, since import alone
+merges) and fails with `isolation/real-defaults: FAIL`.
 
 **Opt-in real-brew checks (0.8.3)**, off unless the variable is set:
 `TANKARD_REAL_CANCEL_CASK=font-inter Scripts/test.sh --filter V083QueueRobustRealTests`
@@ -1248,7 +1259,8 @@ unzips each with `ditto`, and checks both: `codesign --verify --deep --strict`,
 timestamp, one Team ID, each version matching its tag (the rc's without the suffix, as
 the release workflow builds it) and the rc newer. `--verify-only` stops there; then it
 runs `Scripts/e2e-selfupdate.sh` (needs an unlocked GUI session; nothing else may answer
-a Gatekeeper prompt). Output in `--out DIR` (default: a new folder in `$TMPDIR`).
+a Gatekeeper prompt). Output in `--out DIR` (default: a new folder in `$TMPDIR`);
+`--appdir DIR` is passed on, so the e2e can run outside `/Applications`.
 
 Release builds honour the script hooks (`TANKARD_E2E*` are read at runtime, not compiled
 out), and every release from 0.8.3 on has the self-update steps. But a build before

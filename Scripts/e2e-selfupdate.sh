@@ -2,7 +2,7 @@
 # 0.8.3: the self-upgrade end to end, on this Mac's real brew and
 # /Applications, with two builds of this tree:
 #
-#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR [--phases ABC]
+#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR [--phases ABC] [--appdir DIR]
 #
 # OLD and NEW: release builds (Scripts/bundle-app.sh) whose TankardVersion
 # and CFBundleShortVersionString differ, NEW the newer (semver: 0.8.3 and
@@ -26,31 +26,39 @@
 # (quarantine removed, as install_old does). Scripts/rc-selfupdate-signed.sh
 # uses it when OLD is a release whose relaunch passes the script
 # environment on (before 0.8.4), which phase A can't judge.
+# --appdir DIR: brew installs the cask's app there (brew --appdir) instead
+# of /Applications, e.g. a scratch folder, so nothing in /Applications is
+# touched while a Gatekeeper prompt might be pending. The checks below then
+# mean DIR/Tankard.app.
 #
 # Each phase: a 0.25 s process timeline, `log stream` of Tankard's
 # subsystem, the app's stderr, and no new Tankard .ips in
-# ~/Library/Logs/DiagnosticReports. Refuses to start if Tankard runs, if
-# /Applications/Tankard.app exists, or if the tap or a tankard cask exists.
-# Cleans up the cask, the tap, /Applications/Tankard.app and its processes.
+# ~/Library/Logs/DiagnosticReports. The real settings domain
+# (net.mindtricks.tankard) is backed up first and must be byte-identical at
+# the end; if not, it is restored from the backup and the run FAILS
+# (isolation/real-defaults). Refuses to start if Tankard runs, if
+# /Applications/Tankard.app (or --appdir's) exists, or if the tap or a
+# tankard cask exists. Cleans up the cask, the tap, the app and its processes.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 # step_result, step_logged, relaunch_logged, ran_tankard_code, no_instance_yield
 # (0.8.4; `Scripts/e2e-selfupdate-checks.sh --self-test` checks them).
 source Scripts/e2e-selfupdate-checks.sh
 
-OLD= NEW= OUT= PHASES=ABC
+OLD= NEW= OUT= PHASES=ABC APPDIR=/Applications
 while [ $# -gt 0 ]; do
     case "$1" in
         --old) OLD=${2%/}; shift ;;
         --new) NEW=${2%/}; shift ;;
         --out) OUT=$2; shift ;;
         --phases) PHASES=$2; shift ;;
-        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
+        --appdir) APPDIR=${2%/}; shift ;;
+        -h|--help) sed -n '2,41p' "$0"; exit 0 ;;
         *) echo "e2e-selfupdate.sh: unknown option $1" >&2; exit 2 ;;
     esac
     shift
 done
-[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR [--phases ABC]" >&2; exit 2; }
+[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR [--phases ABC] [--appdir DIR]" >&2; exit 2; }
 [[ $PHASES =~ ^[ABC]+$ ]] || { echo "e2e-selfupdate.sh: --phases takes letters from ABC, got '$PHASES'" >&2; exit 2; }
 want() { [[ $PHASES == *$1* ]]; }
 mkdir -p "$OUT"; OUT=$(cd "$OUT" && pwd)
@@ -59,22 +67,31 @@ VOLD=$(plutil -extract CFBundleShortVersionString raw "$OLD/Contents/Info.plist"
 VNEW=$(plutil -extract CFBundleShortVersionString raw "$NEW/Contents/Info.plist")
 TAP=tankard-e2e-self/tap
 CASK=$TAP/tankard
-APP=/Applications/Tankard.app
+mkdir -p "$APPDIR" && APPDIR=$(cd "$APPDIR" && pwd) || { echo "e2e-selfupdate.sh: can't use --appdir $APPDIR" >&2; exit 2; }
+APP=$APPDIR/Tankard.app
+# Every install and upgrade of the cask goes to APPDIR (brew remembers it
+# for the uninstall, and for the old app's own upgrade in phase A).
+CASKARGS=(--appdir="$APPDIR")
+APP_RE=$(printf '%s' "$APP" | sed 's/[][\.*^$+?(){}|]/\\&/g')
 BREW=$(command -v brew)
 qbrew() { HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTOREMOVE=1 HOMEBREW_NO_ENV_HINTS=1 "$BREW" "$@"; }
+# No `brew ... | grep -q` under pipefail: grep quits at the first match,
+# brew can get SIGPIPE, and the pipeline then fails (141) on a match.
+has_tap() { grep -qx "$TAP" <<<"$(qbrew tap 2>/dev/null)"; }
+has_cask() { grep -qx tankard <<<"$(qbrew list --cask 2>/dev/null)"; }
 SUITE=net.mindtricks.tankard.e2e.$$
 RESULTS=()
 record() { RESULTS+=("$1"); echo "==> $1" | tee -a "$OUT/summary.txt"; }
 now() { date +%H:%M:%S; }
 # Only the installed app's processes: other worktrees' builds (dist/, demo
 # and e2e runs of parallel work) are never counted or touched.
-pids() { pgrep -f '^/Applications/Tankard.app/Contents/MacOS/Tankard' | tr '\n' ' ' | sed 's/ $//'; }
+pids() { pgrep -f "^$APP_RE/Contents/MacOS/Tankard" | tr '\n' ' ' | sed 's/ $//'; }
 
 # MARK: preconditions (never touch what isn't ours)
 [ -z "$(pids)" ] || { echo "e2e-selfupdate.sh: Tankard is running (pids $(pids)); quit it first" >&2; exit 3; }
 [ ! -e "$APP" ] || { echo "e2e-selfupdate.sh: $APP exists; this run installs its own and would remove it" >&2; exit 3; }
-qbrew tap | grep -qx "$TAP" && { echo "e2e-selfupdate.sh: tap $TAP already exists" >&2; exit 3; }
-qbrew list --cask 2>/dev/null | grep -qx tankard && { echo "e2e-selfupdate.sh: a tankard cask is installed" >&2; exit 3; }
+has_tap && { echo "e2e-selfupdate.sh: tap $TAP already exists" >&2; exit 3; }
+has_cask && { echo "e2e-selfupdate.sh: a tankard cask is installed" >&2; exit 3; }
 # The machine-wide e2e lock (Scripts/e2e.sh's): one run using brew and the app at a time.
 LOCK=/tmp/net.mindtricks.tankard.e2e.lock
 until mkdir "$LOCK" 2>/dev/null; do
@@ -86,16 +103,77 @@ echo $$ > "$LOCK/pid"; echo "$(pwd) selfupdate" > "$LOCK/where"
 MARK="$OUT/.start"; touch "$MARK"
 : > "$OUT/summary.txt"
 
-STARTED=()
-cleanup() {
-    echo "==> cleanup"
+# 0.8.4: the real settings. Phases B and C start the installed app with no
+# script (the real identity), and AppKit writes keys (NSWindow Frame ...)
+# into net.mindtricks.tankard that no TANKARD_E2E_SUITE catches; a
+# notarized build can't be re-signed with its own identifier the way
+# e2e.sh isolates it. So the domain is fingerprinted (md5, as e2e.sh) and
+# exported now; at the end it is restored from that copy if it changed, and
+# the run fails (isolation/real-defaults).
+REAL_DOMAIN=net.mindtricks.tankard
+REAL_PLIST=~/Library/Preferences/$REAL_DOMAIN.plist
+REAL_BACKUP="$OUT/real-defaults-backup.plist"
+real_fingerprint() { if [ -f "$REAL_PLIST" ]; then /sbin/md5 -q "$REAL_PLIST"; else echo absent; fi; }
+real_keys() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert json -o - - 2>/dev/null \
+    | /usr/bin/python3 -c 'import json,sys; print("\n".join(sorted(json.load(sys.stdin))))' 2>/dev/null; }
+real_xml() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null; }
+REAL_MD5=$(real_fingerprint)
+REAL_KEYS=$(real_keys)
+rm -f "$REAL_BACKUP"
+if [ "$REAL_MD5" != absent ]; then
+    defaults export "$REAL_DOMAIN" "$REAL_BACKUP" && [ -s "$REAL_BACKUP" ] \
+        || { echo "e2e-selfupdate.sh: couldn't back up $REAL_DOMAIN; not starting" >&2; rm -rf "$LOCK"; exit 1; }
+fi
+echo "real settings: $REAL_DOMAIN md5 $REAL_MD5$([ -f "$REAL_BACKUP" ] && echo ", backup $REAL_BACKUP")" | tee -a "$OUT/summary.txt"
+# Another Tankard (not this run's) may write the domain meanwhile; noted.
+others() { pgrep -f 'Tankard.app/Contents/MacOS/Tankard' | grep -vxF -f <(pids | tr ' ' '\n'; echo x) | tr '\n' ' ' | sed 's/ $//'; }
+OTHER_TANKARD=$(others)
+REAL_CHECKED=0
+# real_check: once, after this run's apps are gone. Restores and fails
+# when the domain changed.
+real_check() {
+    [ $REAL_CHECKED = 1 ] && return 0
+    REAL_CHECKED=1
+    sleep 2   # cfprefsd flushes a quitting app's writes shortly after
+    local after restored
+    after=$(real_fingerprint)
+    if [ "$after" = "$REAL_MD5" ]; then
+        record "isolation/real-defaults: PASS ($REAL_DOMAIN unchanged, md5 $REAL_MD5)"
+        return 0
+    fi
+    local keys; keys=$(diff <(echo "$REAL_KEYS") <(real_keys) | sed 's/^/      keys /')
+    # `defaults import` merges, so delete first: the domain is then exactly the copy.
+    defaults delete "$REAL_DOMAIN" >/dev/null 2>&1
+    if [ "$REAL_MD5" = absent ]; then
+        rm -f "$REAL_PLIST"
+        [ "$(real_fingerprint)" = absent ] && restored="removed again (it didn't exist before)" || restored="NOT removed"
+    elif defaults import "$REAL_DOMAIN" "$REAL_BACKUP" \
+        && cmp -s <(plutil -convert xml1 -o - "$REAL_BACKUP") <(real_xml); then
+        restored="restored from $REAL_BACKUP (content equal)"
+    else
+        restored="RESTORE FAILED: defaults import $REAL_DOMAIN $REAL_BACKUP by hand"
+    fi
+    local o; o=${OTHER_TANKARD:-$(others)}
+    record "isolation/real-defaults: FAIL ($REAL_DOMAIN changed: md5 $REAL_MD5 -> $after; $restored${o:+; another Tankard ran: pids $o})"
+    if [ -n "$keys" ]; then echo "$keys" | tee -a "$OUT/summary.txt"
+    else echo "      (same keys: a value changed)" | tee -a "$OUT/summary.txt"; fi
+    return 1
+}
+stop_apps() {
     for p in $(pids); do kill "$p" 2>/dev/null; done
     sleep 1
     for p in $(pids); do kill -9 "$p" 2>/dev/null; done
+}
+
+STARTED=()
+cleanup() {
+    local rc=$?
+    echo "==> cleanup"
+    stop_apps
     [ -n "${SAMPLER:-}" ] && kill "$SAMPLER" 2>/dev/null
     [ -n "${LOGSTREAM:-}" ] && kill "$LOGSTREAM" 2>/dev/null
-    qbrew list --cask 2>/dev/null | grep -qx tankard && qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
-    qbrew tap | grep -qx "$TAP" && qbrew untap "$TAP" >> "$OUT/brew.log" 2>&1
+    has_cask && qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
+    has_tap && qbrew untap "$TAP" >> "$OUT/brew.log" 2>&1
     [ -e "$APP" ] && echo "cleanup: $APP still present" >&2
     defaults delete "$SUITE" >/dev/null 2>&1; rm -f ~/Library/Preferences/"$SUITE".plist
     # The relaunched copies' script folders (AppManagement.relaunchEnvironment):
@@ -103,6 +181,8 @@ cleanup() {
     rm -rf "$OUT"/[ABC]/relaunched
     rm -rf "$LOCK"
     echo "after cleanup: pids=[$(pids)] app=$([ -e "$APP" ] && echo present || echo absent) tap=$(qbrew tap | grep -cx "$TAP")" | tee -a "$OUT/summary.txt"
+    # An interrupted run: the real settings are still checked and restored.
+    if [ $REAL_CHECKED = 0 ] && ! real_check; then [ $rc = 0 ] && exit 1; fi
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM
@@ -135,7 +215,7 @@ printf '{"tag_name":"v%s","body":"e2e build","html_url":"https://github.com/d4rk
 
 install_old() {
     write_cask old
-    qbrew install --cask "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
+    qbrew install --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
     # An ad-hoc signed test build: no quarantine, as a notarized release wouldn't need.
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VOLD" ]
@@ -143,7 +223,7 @@ install_old() {
 # --phases without A: B needs NEW installed (A would have left it there).
 install_new() {
     write_cask new
-    qbrew install --cask "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
+    qbrew install --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VNEW" ]
 }
@@ -173,7 +253,7 @@ one_new_running() {
         && [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VNEW" ]
 }
 # Crash reports since the start for the installed app (not other builds).
-ips_new() { find ~/Library/Logs/DiagnosticReports -name 'Tankard*.ips' -newer "$MARK" -exec grep -l 'Applications/Tankard.app' {} + 2>/dev/null | wc -l | tr -d ' '; }
+ips_new() { find ~/Library/Logs/DiagnosticReports -name 'Tankard*.ips' -newer "$MARK" -exec grep -lF "$APP" {} + 2>/dev/null | wc -l | tr -d ' '; }
 quit_all() { for p in $(pids); do kill "$p" 2>/dev/null; done; wait_for 10 test -z "$(pids)" >/dev/null; }
 
 script_env() { # dir
@@ -268,7 +348,7 @@ fi
 D=$OUT/C
 if ! want C; then
     echo "$(now) C: skipped (--phases $PHASES)"
-elif mkdir -p "$D" && { ! qbrew list --cask 2>/dev/null | grep -qx tankard || qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1; } \
+elif mkdir -p "$D" && { ! has_cask || qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1; } \
     && echo "$(now) C: install $VOLD" | tee "$D/events.txt" && install_old; then
     cat > "$D/steps.txt" <<STEPS
 expect-ready
@@ -283,7 +363,15 @@ STEPS
     # 0.8.4: wait for step 2's result line (the screenshot alone was taken
     # as "sheet up", and the wait timing out went on regardless: rc2's C
     # said "has its sheet up" with no results.jsonl at all).
-    sheet_done() { [ "$(step_result "$D/results.jsonl" 2 "open-sheet history")" != missing ] || ! kill -0 $OLDPID 2>/dev/null; }
+    # Still waiting while step 2 is "missing" or "missing (no FILE)" (before
+    # results.jsonl exists; rc2 matrix: comparing with exactly "missing"
+    # ended the 180 s wait at once) and the old pid runs.
+    sheet_done() {
+        case "$(step_result "$D/results.jsonl" 2 "open-sheet history")" in
+            missing*) ! kill -0 $OLDPID 2>/dev/null ;;
+            *) true ;;
+        esac
+    }
     wait_for 180 sheet_done >/dev/null
     SHEET=$(step_result "$D/results.jsonl" 2 "open-sheet history")
     if [ "$SHEET" != ok ] || ! kill -0 $OLDPID 2>/dev/null; then
@@ -294,7 +382,7 @@ STEPS
     else
     echo "$(now) C: old pid $OLDPID has its sheet up (step 2: ok); brew upgrade to $VNEW (no quit), then open -n" | tee -a "$D/events.txt"
     write_cask new
-    HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 qbrew upgrade --cask "$CASK" >> "$OUT/brew.log" 2>&1
+    HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 qbrew upgrade --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     open -n "$APP"
     echo "$(now) C: opened new; pids=[$(pids)]" | tee -a "$D/events.txt"
@@ -314,7 +402,9 @@ else
     record "C: FAIL (install of $VOLD)"
 fi
 
+stop_apps
+real_check
 echo
 printf '%s\n' "${RESULTS[@]}"
-printf '%s\n' "${RESULTS[@]}" | grep -q FAIL && exit 1
+grep -q FAIL <<<"$(printf '%s\n' "${RESULTS[@]}")" && exit 1
 exit 0

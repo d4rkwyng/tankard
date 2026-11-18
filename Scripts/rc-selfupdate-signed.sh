@@ -3,7 +3,7 @@
 # notarized rc against the notarized release before it, as users get them:
 #
 #   Scripts/rc-selfupdate-signed.sh RC_TAG [--prev TAG] [--new-zip ZIP]
-#       [--old-zip ZIP] [--out DIR] [--verify-only]
+#       [--old-zip ZIP] [--out DIR] [--appdir DIR] [--verify-only]
 #
 #   RC_TAG        the rc's tag, e.g. v0.8.4-rc1 (its Tankard.zip, from the
 #                 draft release the release workflow made)
@@ -12,6 +12,8 @@
 #   --new-zip ZIP / --old-zip ZIP
 #                 use this Tankard.zip instead of downloading it
 #   --out DIR     where everything goes (default: a new folder in $TMPDIR)
+#   --appdir DIR  passed to e2e-selfupdate.sh: the cask's app goes to DIR
+#                 instead of /Applications (e.g. a scratch folder)
 #   --verify-only download and verify both, then stop before the e2e run
 #
 # 1. Downloads both Tankard.zip files with `gh release download` from
@@ -42,29 +44,32 @@
 #    the two notarized builds.
 #
 # Installs nothing itself; e2e-selfupdate.sh installs and removes its own
-# throwaway tap, cask and /Applications/Tankard.app (and refuses to start if
-# any of them, or a running Tankard, is already there).
+# throwaway tap, cask and Tankard.app (in /Applications or --appdir), backs
+# up the real settings domain (restored, and the run FAILS, if it changed),
+# and refuses to start if any of them, or a running Tankard, is there.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 REPO_DIR=$(pwd)
 GH_REPO=d4rkwyng/tankard
 
-RC= PREV= NEW_ZIP= OLD_ZIP= OUT= VERIFY_ONLY=0
+RC= PREV= NEW_ZIP= OLD_ZIP= OUT= VERIFY_ONLY=0 APPDIR_ARGS=()
 while [ $# -gt 0 ]; do
     case "$1" in
         --prev) PREV=${2:-}; shift ;;
         --new-zip) NEW_ZIP=${2:-}; shift ;;
         --old-zip) OLD_ZIP=${2:-}; shift ;;
         --out) OUT=${2:-}; shift ;;
+        --appdir) [ -n "${2:-}" ] || { echo "rc-selfupdate-signed.sh: --appdir needs a folder" >&2; exit 2; }
+                  APPDIR_ARGS=(--appdir "$2"); shift ;;
         --verify-only) VERIFY_ONLY=1 ;;
-        -h|--help) sed -n '2,45p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,49p' "$0"; exit 0 ;;
         -*) echo "rc-selfupdate-signed.sh: unknown option $1" >&2; exit 2 ;;
         *) [ -z "$RC" ] || { echo "rc-selfupdate-signed.sh: one RC_TAG only (got $RC and $1)" >&2; exit 2; }
            RC=$1 ;;
     esac
     shift
 done
-[ -n "$RC" ] || { echo "usage: $0 RC_TAG [--prev TAG] [--new-zip ZIP] [--old-zip ZIP] [--out DIR] [--verify-only]" >&2; exit 2; }
+[ -n "$RC" ] || { echo "usage: $0 RC_TAG [--prev TAG] [--new-zip ZIP] [--old-zip ZIP] [--out DIR] [--appdir DIR] [--verify-only]" >&2; exit 2; }
 for z in "$NEW_ZIP" "$OLD_ZIP"; do
     [ -z "$z" ] || [ -f "$z" ] || { echo "rc-selfupdate-signed.sh: no such zip: $z" >&2; exit 2; }
 done
@@ -170,7 +175,9 @@ check "rc $VNEW newer than $VOLD" newer "$VOLD" "$VNEW"
 # whole environment (AppManagement.relaunchEnvironment); its log text is
 # the marker.
 MARKER='relaunch: e2e identity dropped'
-has_marker() { strings -a "$1/Contents/MacOS/Tankard" | grep -qF "$MARKER"; }
+# grep -a on the binary itself: `strings | grep -q` under pipefail fails
+# with SIGPIPE (141) exactly when grep finds the marker early.
+has_marker() { grep -aqF "$MARKER" "$1/Contents/MacOS/Tankard"; }
 OLD_RELAUNCH=no; has_marker "$OLDAPP" && OLD_RELAUNCH=yes
 NEW_RELAUNCH=no; has_marker "$NEWAPP" && NEW_RELAUNCH=yes
 echo "==> 0.8.4 relaunch identity: old $OLD_RELAUNCH, new $NEW_RELAUNCH"
@@ -196,15 +203,15 @@ fi
 [ $NEW_RELAUNCH = yes ] || fail "not running the e2e: $RC lacks 0.8.4's relaunch identity"
 # 0.8.3's self-update script hooks (TANKARD_E2E_SELF_TAP, upgrade-self):
 # phases A and C drive OLD with them.
-strings -a "$OLDAPP/Contents/MacOS/Tankard" | grep -qF TANKARD_E2E_SELF_TAP \
+grep -aqF TANKARD_E2E_SELF_TAP "$OLDAPP/Contents/MacOS/Tankard" \
     || fail "not running the e2e: $PREV has no self-update e2e hooks (before 0.8.3)"
 
 # MARK: 3. the e2e run
 RESULT=0
 if [ $OLD_RELAUNCH = yes ]; then
-    Scripts/e2e-selfupdate.sh --old "$OLDAPP" --new "$NEWAPP" --out "$OUT/e2e" || RESULT=1
+    Scripts/e2e-selfupdate.sh --old "$OLDAPP" --new "$NEWAPP" --out "$OUT/e2e" ${APPDIR_ARGS[@]+"${APPDIR_ARGS[@]}"} || RESULT=1
 else
-    Scripts/e2e-selfupdate.sh --old "$OLDAPP" --new "$NEWAPP" --out "$OUT/e2e-BC" --phases BC || RESULT=1
+    Scripts/e2e-selfupdate.sh --old "$OLDAPP" --new "$NEWAPP" --out "$OUT/e2e-BC" --phases BC ${APPDIR_ARGS[@]+"${APPDIR_ARGS[@]}"} || RESULT=1
     # OLD for A: the rc's tree at its tag, one pre-release lower.
     SRC="$OUT/old-a/src"; rm -rf "$OUT/old-a"; mkdir -p "$SRC"
     git -C "$REPO_DIR" rev-parse -q --verify "refs/tags/$RC" >/dev/null \
@@ -212,16 +219,25 @@ else
         || fail "tag $RC isn't here and couldn't be fetched"
     echo "+ git archive $RC | tar -x -C $SRC"
     git -C "$REPO_DIR" archive "$RC" | tar -x -C "$SRC" || fail "git archive $RC failed"
+    # The compiled version too (a throwaway tree): before 0.8.4's
+    # TankardVersion.source/Info.plist rule the update check used the
+    # literal, so a re-versioned build of an older tag would still call
+    # itself the rc's version and see no update.
+    sed -i '' -E "s/(static let (string|source)) = \"[^\"]*\"/\1 = \"$VNEW-e2e.0\"/" "$SRC/Sources/TankardCore/Version.swift" \
+        && grep -qF "\"$VNEW-e2e.0\"" "$SRC/Sources/TankardCore/Version.swift" \
+        || fail "couldn't set the version in $SRC/Sources/TankardCore/Version.swift"
     echo "+ TANKARD_VERSION=$VNEW-e2e.0 Scripts/bundle-app.sh --out $OUT/old-a"
     ( cd "$SRC" && TANKARD_VERSION="$VNEW-e2e.0" Scripts/bundle-app.sh --out "$OUT/old-a" ) > "$OUT/old-a/build.log" 2>&1 \
         || fail "building $RC as $VNEW-e2e.0 failed (see $OUT/old-a/build.log)"
+    [ "$(version "$OUT/old-a/Tankard.app")" = "$VNEW-e2e.0" ] && grep -aqF "$VNEW-e2e.0" "$OUT/old-a/Tankard.app/Contents/MacOS/Tankard" \
+        || fail "the rebuilt OLD isn't $VNEW-e2e.0 in both Info.plist and binary"
     if [ -n "${TANKARD_SIGN_ID:-}" ]; then
         # As release.sh: the helper first (its own identifier), then the app.
         SIGN=(codesign --force --options runtime --timestamp -s "$TANKARD_SIGN_ID")
         "${SIGN[@]}" --identifier net.mindtricks.tankard.askpass "$OUT/old-a/Tankard.app/Contents/MacOS/tankard-askpass" \
             && "${SIGN[@]}" "$OUT/old-a/Tankard.app" || fail "signing $OUT/old-a/Tankard.app with $TANKARD_SIGN_ID"
     fi
-    Scripts/e2e-selfupdate.sh --old "$OUT/old-a/Tankard.app" --new "$NEWAPP" --out "$OUT/e2e-A" --phases A || RESULT=1
+    Scripts/e2e-selfupdate.sh --old "$OUT/old-a/Tankard.app" --new "$NEWAPP" --out "$OUT/e2e-A" --phases A ${APPDIR_ARGS[@]+"${APPDIR_ARGS[@]}"} || RESULT=1
 fi
 echo "e2e plan: $PLAN"
 for f in "$OUT"/e2e*/summary.txt; do [ -f "$f" ] && { echo "--- $f"; cat "$f"; }; done
