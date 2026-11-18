@@ -11,6 +11,11 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Fixed
 - **Adopt Apps no longer matches a different app with the same name.** A "Copilot.app" that wasn't the one the copilot-money cask installs was offered for adopting as copilot-money. A cask that names app IDs (in what it quits, unloads or deletes, such as `~/Library/Containers/com.copilot.production`) now matches only an app with one of those IDs; any other app with the same name is listed under **No cask** as "possibly a different app, not offered", with both IDs. Each match says what matched: **Matched by app ID**, **Matched by name and website** or **Matched by name only — check before adopting** (never ticked for you).
+- **Adopt Apps picks the right release line and ticks less.** From a check of every Homebrew cask: Firefox ESR, Thunderbird ESR, Parallels Desktop 18, Beyond Compare 4, Little Snitch 5, Godot 3, LibreOffice (still), Blender LTS and beta builds were matched to the main cask, ticked, and would have moved to another version line (sometimes a paid upgrade) on the next brew upgrade. Tankard now picks the cask whose version fits the app, and an app that several casks install is never ticked for you: the row says which one fits, and the confirmation names the others. The copyable `brew install --cask --force` shows only when one cask fits.
+- **Apps that update themselves are adopted only on an app-ID match.** brew adopts them without comparing anything, so a name or developer match now shows under **Can't adopt** with the reason.
+- **Shared ID prefixes no longer count as the same developer** (com.electron, com.todesktop, uk.co, jp.co and others), and a renamed app found by its ID is no longer matched through another cask's cleanup list (Microsoft Word to Bookends).
+- **Hand-installed apps are no longer hidden as "already from Homebrew"** because another installed cask quits their ID (ChatGPT's cask quits Codex; Wondershare UniConverter's quits Chrome). A quit ID now counts only for an app with that cask's name.
+- "Needs update first" on a name-only match says it may be a different app, not an older version.
 
 ## [0.8.5]
 

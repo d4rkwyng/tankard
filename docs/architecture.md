@@ -886,18 +886,26 @@ brew's variable for its `--no-quit` switch. The per-app choice is kept per cask 
 included) and forgotten when the cask is uninstalled through Tankard.
 
 **Adopt Apps (0.8).** Scans /Applications (and one folder below it) and ~/Applications,
-and matches against formulae.brew.sh's `cask.json` (Discover's cached copy). 0.8.6: a
-cask found by name, target path or suite folder that names app IDs (bundle-id-looking
-strings in `uninstall`/`zap`: quit, signal, launchctl, pkgutil, and path parts such as
-Containers/<id>, Group Containers/group.<id>, Preferences/<id>.plist) is a match only
-when one of them is the app's CFBundleIdentifier, or (for IDs of three labels or more)
-that ID with a prefix or suffix label (group.<id>, <TEAMID>.<id>, <id>.helper);
-otherwise it is left out (`AdoptRow.rejected`, shown under No cask). A same-vendor
-prefix no longer counts (copilot-money's Copilot.app is com.copilot.production; another
-Copilot.app is not it). "Matched by app ID" (high): the cask names the app's ID. "By
-name and website" (medium): the cask names no IDs and a label of the app's ID is the
-vendor of its homepage or URL. "By name only" (low): nothing else; never ticked by
-default. For a cask whose app updates itself, only an app-ID match is ticked. For Needs update first with a sure match, the
+and matches against formulae.brew.sh's `cask.json` (Discover's cached copy). 0.8.6 (owner report plus the 0.8.5 matching sweep
+over all 7,838 casks): a cask's app IDs are the bundle-id-looking strings in its
+`uninstall`/`zap` (quit, signal, launchctl, pkgutil, login_item, and path parts such as
+Containers/<id>, Group Containers/group.<id>, Preferences/<id>.plist). `idEvidence`:
+*match* when one is the app's CFBundleIdentifier, or (three labels or more) that ID with
+a prefix or suffix label (group.<id>, <TEAMID>.<id>, <id>.helper); *vendor* when one
+shares the app ID's developer prefix (two labels; three under shared namespaces:
+io.github, com.electron, com.todesktop, com.yourcompany, uk.co, jp.co, co.jp, ...,
+`AdoptVendor.vendorLabelCount`), after dropping a group. or Team ID label; *mismatch*
+otherwise (the candidate is dropped into `AdoptRow.rejected`, listed under No cask);
+*none* when the cask names no IDs (name only, or name plus the website vendor). A
+self-updating cask is adoptable only on *match* (`AdoptBlock.unverifiedSelfUpdating`):
+brew does no check then (moved.rb:102). Candidates are ordered by: backed by an ID,
+version fit (`versionFit`: same version, same with a suffix, same major), evidence,
+plain over @variant, token in natural order. A row with several candidates is never
+ticked by default and gets no copyable `--force`; only *match* rows are ticked. An app
+found by ID only uses `uninstall`'s ids (`ownBundleIDs`), not zap's, and with several
+such casks keeps those whose name has a word of the ID. `ManagedApps`: an installed
+cask's quit id hides an app only when the app has the cask's or its app's name (or that
+name plus more words); pkg casks' quit ids still count alone. For Needs update first with a sure match, the
 `brew install --cask --force` command is shown to copy; Tankard never runs it. brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not
 available with `HOMEBREW_NO_INSTALL_FROM_API` set.

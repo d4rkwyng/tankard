@@ -2601,6 +2601,58 @@
         }
       }
     },
+    "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ wird als %@ übernommen. Auch andere Casks installieren eine App mit diesem Namen (%@): brew upgrade folgt dem Cask, den du übernimmst, prüfe also, ob es der richtige ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sera adoptée comme %@. D’autres casks installent une app de ce nom (%@) : brew upgrade suit le cask adopté, vérifiez donc que c’est le bon."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ se adoptará como %@. Otros casks instalan una app con este nombre (%@): brew upgrade sigue el cask que adoptes, así que comprueba que sea el correcto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ は %@ として引き継がれます。同じ名前のアプリを入れる cask がほかにもあります(%@)。brew upgrade は引き継いだ cask に従うので、正しいものか確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 将作为 %@ 接管。还有其他 cask 安装同名应用(%@):brew upgrade 会跟随你接管的 cask,请确认它是正确的那个。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ será adotado como %@. Outros casks instalam um app com este nome (%@): o brew upgrade segue o cask que você adotar, então confira se é o certo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sarà adottata come %@. Altri cask installano un’app con questo nome (%@): brew upgrade segue il cask che adotti, quindi verifica che sia quello giusto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) %@(으)로 가져옵니다. 이 이름의 앱을 설치하는 다른 cask도 있습니다(%@). brew upgrade는 가져온 cask를 따르므로 맞는 것인지 확인하세요."
+          }
+        }
+      }
+    },
     "%@ would be installed too": {
       "localizations": {
         "de": {
@@ -31905,6 +31957,58 @@
         }
       }
     },
+    "Matched by name and developer": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über Name und Entwickler erkannt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouvée par nom et développeur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coincide por nombre y desarrollador"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前と開発元で一致"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按名称和开发者匹配"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrado pelo nome e desenvolvedor"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trovata per nome e sviluppatore"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름과 개발자로 일치"
+          }
+        }
+      }
+    },
     "Matched by name and website": {
       "localizations": {
         "de": {
@@ -38141,6 +38245,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Só se você realmente precisar desta versão. Isso baixa todo o histórico de pacotes do Homebrew, e a partir daí você mesmo cuida da versão antiga."
+          }
+        }
+      }
+    },
+    "Only the name matches, so this may be a different app rather than an older version of it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur der Name stimmt, daher kann es eine andere App sein statt einer älteren Version davon."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seul le nom correspond : ce peut être une autre app plutôt qu’une version plus ancienne."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo coincide el nombre, así que puede ser otra app y no una versión anterior."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前だけが一致しているため、古いバージョンではなく別のアプリかもしれません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有名称一致,因此这可能是另一个应用,而不是它的旧版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só o nome confere, então pode ser outro app, e não uma versão mais antiga dele."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrisponde solo il nome, quindi potrebbe essere un’altra app e non una sua versione precedente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름만 같으므로 이전 버전이 아니라 다른 앱일 수 있습니다."
           }
         }
       }
@@ -48909,6 +49065,58 @@
         }
       }
     },
+    "Several casks install an app with this name; %@ fits its version best. Check that it's the one you have before ticking it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehrere Casks installieren eine App mit diesem Namen; %@ passt am besten zu ihrer Version. Prüfe vor dem Ankreuzen, ob es der ist, den du hast."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plusieurs casks installent une app de ce nom ; %@ correspond le mieux à sa version. Vérifiez que c’est le vôtre avant de le cocher."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varios casks instalan una app con este nombre; %@ es el que mejor encaja con su versión. Comprueba que sea el tuyo antes de marcarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この名前のアプリを入れる cask が複数あります。バージョンに最も合うのは %@ です。チェックを入れる前に、お使いのものか確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有多个 cask 安装同名应用;%@ 与其版本最相符。勾选前请确认这是你安装的那个。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vários casks instalam um app com este nome; %@ é o que mais combina com a versão. Confira se é o seu antes de marcar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più cask installano un’app con questo nome; %@ è quello più adatto alla sua versione. Verifica che sia il tuo prima di selezionarlo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 이름의 앱을 설치하는 cask가 여러 개 있습니다. 버전에 가장 맞는 것은 %@입니다. 선택하기 전에 사용 중인 것인지 확인하세요."
+          }
+        }
+      }
+    },
     "Show": {
       "localizations": {
         "de": {
@@ -55409,6 +55617,58 @@
         }
       }
     },
+    "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Cask nennt eine App-ID desselben Entwicklers, aber nicht genau die ID dieser App: vor dem Übernehmen prüfen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask nomme un ID d’app du même développeur, mais pas l’ID exact de cette app : vérifiez avant d’adopter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask nombra un ID de app del mismo desarrollador, pero no el ID exacto de esta app: compruébalo antes de adoptar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask には同じ開発元のアプリIDがありますが、このアプリのIDそのものではありません。引き継ぐ前に確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask 列出了同一开发者的应用 ID,但不是此应用的确切 ID:接管前请核对。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask cita um ID de app do mesmo desenvolvedor, mas não o ID exato deste app: confira antes de adotar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask indica un ID app dello stesso sviluppatore, ma non l’ID esatto di questa app: controlla prima di adottare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask에 같은 개발자의 앱 ID가 있지만 이 앱의 ID와 정확히 같지는 않습니다. 가져오기 전에 확인하세요."
+          }
+        }
+      }
+    },
     "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting.": {
       "localizations": {
         "de": {
@@ -57277,6 +57537,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다."
+          }
+        }
+      }
+    },
+    "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die App dieses Casks aktualisiert sich selbst, daher würde brew sie übernehmen, ohne sie mit dem Download zu vergleichen. Tankard bietet das nur an, wenn die ID der App eine ist, die der Cask nennt, und das ist hier nicht so."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’app de ce cask se met à jour seule : brew l’adopterait sans la comparer au téléchargement. Tankard ne le propose que si l’ID de l’app est l’un de ceux que le cask nomme, ce qui n’est pas le cas ici."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La app de este cask se actualiza sola, así que brew la adoptaría sin compararla con la descarga. Tankard solo lo ofrece si el ID de la app es uno de los que nombra el cask, y aquí no lo es."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この cask のアプリは自動でアップデートされるため、brew はダウンロードと比べずに引き継ぎます。Tankard はアプリのIDが cask に記載されている場合だけ提案しますが、このアプリは該当しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 cask 的应用会自行更新,因此 brew 接管时不会与下载内容比较。只有当应用的 ID 是 cask 列出的 ID 之一时,Tankard 才会提供接管,而此应用不是。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O app deste cask se atualiza sozinho, então o brew o adotaria sem compará-lo com o download. O Tankard só oferece isso quando o ID do app é um dos que o cask cita, e este não é."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’app di questo cask si aggiorna da sola, quindi brew la adotterebbe senza confrontarla con il download. Tankard lo propone solo se l’ID dell’app è uno di quelli indicati dal cask, e qui non lo è."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 cask의 앱은 스스로 업데이트하므로 brew가 다운로드와 비교하지 않고 가져옵니다. Tankard는 앱 ID가 cask에 적힌 ID일 때만 제안하며, 이 앱은 그렇지 않습니다."
           }
         }
       }

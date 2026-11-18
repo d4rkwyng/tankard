@@ -133,13 +133,17 @@ public struct AdoptCask: Sendable, Equatable {
     public var pkg: Bool
     /// Bundle-id-like strings from `uninstall` and `zap`, lower-cased.
     public var bundleIDs: Set<String>
+    /// 0.8.6: those from `uninstall`'s quit, launchctl, signal, pkgutil and
+    /// login_item only (the cask's own app), for finding a renamed app by
+    /// its ID. Defaults to `bundleIDs`.
+    public var ownBundleIDs: Set<String>
     public var deprecated: Bool
     public var disabled: Bool
 
     public init(token: String, fullToken: String? = nil, tap: String? = "homebrew/cask", version: String,
                 autoUpdates: Bool = false, names: [String] = [], web: String = "",
                 apps: [BrewInfoJSON.Cask.AdoptArtifacts.App] = [], suites: [String] = [], pkg: Bool = false,
-                bundleIDs: Set<String> = [], deprecated: Bool = false, disabled: Bool = false) {
+                bundleIDs: Set<String> = [], ownBundleIDs: Set<String>? = nil, deprecated: Bool = false, disabled: Bool = false) {
         self.token = token
         self.fullToken = fullToken ?? token
         self.tap = tap
@@ -151,6 +155,7 @@ public struct AdoptCask: Sendable, Equatable {
         self.suites = suites
         self.pkg = pkg
         self.bundleIDs = bundleIDs
+        self.ownBundleIDs = ownBundleIDs ?? bundleIDs
         self.deprecated = deprecated
         self.disabled = disabled
     }
@@ -160,7 +165,7 @@ public struct AdoptCask: Sendable, Equatable {
         self.init(token: c.token, fullToken: c.fullToken, tap: c.tap, version: c.version, autoUpdates: c.autoUpdates ?? false,
                   names: c.name ?? [], web: [c.homepage ?? "", c.url ?? ""].joined(separator: " "),
                   apps: a.apps, suites: a.suites, pkg: a.pkg, bundleIDs: AdoptIndex.bundleIDHints(a.idStrings),
-                  deprecated: c.deprecated ?? false, disabled: c.disabled ?? false)
+                  ownBundleIDs: AdoptIndex.bundleIDHints(a.ownIDStrings), deprecated: c.deprecated ?? false, disabled: c.disabled ?? false)
     }
 
     /// "homebrew/cask/firefox": what install is given (as Discover does).
@@ -192,7 +197,9 @@ public struct AdoptIndex: Sendable {
             for s in c.suites {
                 suiteByDir[(s as NSString).lastPathComponent.lowercased(), default: []].insert(c.token)
             }
-            for b in c.bundleIDs { byBundleID[b, default: []].insert(c.token) }
+            // 0.8.6: only the cask's own app's ids (a zap's cleanup list
+            // names other apps: bookends' names Microsoft Word's).
+            for b in c.ownBundleIDs { byBundleID[b, default: []].insert(c.token) }
         }
     }
 
@@ -282,6 +289,9 @@ public enum AdoptBlock: Sendable, Equatable, Codable {
     /// (what a later upgrade or uninstall does to the link's target is
     /// not something it has checked).
     case symlink
+    /// 0.8.6: the cask's app updates itself, so brew adopts without
+    /// comparing anything, and the app's ID isn't one the cask names.
+    case unverifiedSelfUpdating
 }
 
 /// What adopting would do.
@@ -337,6 +347,8 @@ public struct AdoptRow: Sendable, Equatable, Identifiable {
     /// name, so not offered (copilot-money's Copilot.app vs another
     /// Copilot). Shown under "No cask" with the reason.
     public var rejected: [String]
+    /// 0.8.6: per candidate, what its app IDs say about this app.
+    public var evidence: [String: AdoptMatcher.IDEvidence]
 
     public var id: String { app.id }
     public var bestToken: String? { candidates.first }
@@ -344,13 +356,14 @@ public struct AdoptRow: Sendable, Equatable, Identifiable {
 
     public init(app: InstalledApp, candidates: [String] = [], how: AdoptMatchKind? = nil,
                 confidence: [String: AdoptConfidence] = [:], verdicts: [String: AdoptVerdict] = [:],
-                rejected: [String] = []) {
+                rejected: [String] = [], evidence: [String: AdoptMatcher.IDEvidence] = [:]) {
         self.app = app
         self.candidates = candidates
         self.how = how
         self.confidence = confidence
         self.verdicts = verdicts
         self.rejected = rejected
+        self.evidence = evidence
     }
 }
 
@@ -487,7 +500,7 @@ public struct ManagedApps: Sendable {
 
     /// From the installed casks Tankard already read (`brew info`): their
     /// app paths, and the bundle ids their `uninstall` quits (the apps
-    /// themselves). Not the ids in `zap` or the rest of `uninstall` on
+    /// themselves; 0.8.6: only for an app with the cask's or its app's name). Not the ids in `zap` or the rest of `uninstall` on
     /// their own: those name other apps too (choosy's zap lists Opera's,
     /// tidgi's VS Code's, microsoft-office's OneDrive's in cask.json,
     /// 2026-11-17), and an app installed by hand would be hidden as
@@ -501,13 +514,27 @@ public struct ManagedApps: Sendable {
     public init(packages: [Package], index: AdoptIndex?) {
         let casks = packages.filter { $0.kind == .cask }
         let own = casks.compactMap(\.caskOwnership)
-        let ids = Set(casks.flatMap { $0.quitBundleIDs ?? [] }).union(own.flatMap(\.plainReceiptIDs))
+        // Casks without an app stanza (pkg installers): their quit ids are
+        // what the installer put on disk (microsoft-word quits Microsoft
+        // AutoUpdate, which its pkg installs), as in 0.8.5.
+        let pkgQuit = casks.filter { ($0.appPaths ?? []).isEmpty }.flatMap { $0.quitBundleIDs ?? [] }
+        let ids = Set(own.flatMap(\.plainReceiptIDs)).union(pkgQuit)
         let paths = Set(casks.flatMap { $0.appPaths ?? [] }).union(own.flatMap(\.appPaths))
         self.init(paths: paths, bundleIDs: ids, tokens: Set(casks.map(\.name)))
         receiptIDs = Set(own.flatMap(\.plainReceiptIDs))
-        for c in casks where (c.appPaths ?? []).isEmpty {
-            guard let o = c.caskOwnership, !o.bundleIDHints.isEmpty else { continue }
-            namedHints.append(NamedHint(names: Set(o.names + [c.name]), bundleIDs: Set(o.bundleIDHints)))
+        for c in casks {
+            // 0.8.6: a quit id counts only with the cask's name or its
+            // app's name: chatgpt's uninstall quits com.openai.codex, and
+            // wondershare-uniconverter's quits com.google.Chrome, which
+            // hid a hand-installed Codex or Chrome as "already from Homebrew".
+            let appNames = (c.appPaths ?? []).map { (($0 as NSString).lastPathComponent as NSString).deletingPathExtension }
+            let names = Set((c.caskOwnership?.names ?? []) + appNames + [c.name])
+            if !(c.appPaths ?? []).isEmpty, let quit = c.quitBundleIDs, !quit.isEmpty {
+                namedHints.append(NamedHint(names: names, bundleIDs: Set(quit)))
+            }
+            if (c.appPaths ?? []).isEmpty, let o = c.caskOwnership, !o.bundleIDHints.isEmpty {
+                namedHints.append(NamedHint(names: names, bundleIDs: Set(o.bundleIDHints)))
+            }
         }
     }
 
@@ -529,7 +556,13 @@ public struct ManagedApps: Sendable {
         guard let b = app.bundleID?.lowercased() else { return false }
         if bundleIDs.contains(b) { return true }
         let names: Set<String> = [app.displayName.lowercased(), (app.fileName as NSString).deletingPathExtension.lowercased()]
-        return namedHints.contains { $0.bundleIDs.contains(b) && !$0.names.isDisjoint(with: names) }
+        // 0.8.6: the name, or the name and more words ("Choosy Moved").
+        func fits(_ n: String) -> Bool {
+            names.contains { a in
+                a == n || (a.hasPrefix(n + " ") && !n.isEmpty)
+            }
+        }
+        return namedHints.contains { $0.bundleIDs.contains(b) && $0.names.contains(where: fits) }
     }
 }
 
@@ -572,14 +605,18 @@ public enum AdoptMatcher {
             how = .bundleID; cands = t
         }
         guard let how else { return AdoptRow(app: a) }
-        let all = cands.compactMap { index.byToken[$0] }
-        // 0.8.6: a cask that names app IDs must name this app's. The same
-        // file name is not enough (copilot-money installs a "Copilot.app"
-        // whose ID is com.copilot.production; Microsoft's Copilot.app is
-        // not it), and adopting a wrong match hands someone else's app to
-        // brew upgrade and uninstall.
-        let rejected = all.filter { idEvidence(app: a, cask: $0) == .mismatch }.map(\.token).sorted()
-        let ordered = all.filter { idEvidence(app: a, cask: $0) != .mismatch }.sorted { rankKey($0, bid) > rankKey($1, bid) }
+        var all = cands.compactMap { index.byToken[$0] }
+        if how == .bundleID { all = renamedAppCandidates(bid, all) }
+        // 0.8.6: a cask that names app IDs must name this app's (or its
+        // developer's prefix). The same file name is not enough
+        // (copilot-money installs a "Copilot.app" whose ID is
+        // com.copilot.production; Microsoft's Copilot.app is not it), and
+        // adopting a wrong match hands someone else's app to brew upgrade
+        // and uninstall.
+        var ev: [String: IDEvidence] = [:]
+        for c in all { ev[c.token] = idEvidence(app: a, cask: c) }
+        let rejected = all.filter { ev[$0.token] == .mismatch }.map(\.token).sorted()
+        let ordered = all.filter { ev[$0.token] != .mismatch }.sorted { better($0, than: $1, app: a, evidence: ev) }
         guard !ordered.isEmpty else { return AdoptRow(app: a, rejected: rejected) }
         var conf: [String: AdoptConfidence] = [:]
         var verdicts: [String: AdoptVerdict] = [:]
@@ -588,15 +625,36 @@ public enum AdoptMatcher {
             verdicts[c.token] = verdict(app: a, cask: c, how: how)
         }
         return AdoptRow(app: a, candidates: ordered.map(\.token), how: how, confidence: conf, verdicts: verdicts,
-                        rejected: rejected)
+                        rejected: rejected, evidence: ev.filter { e in ordered.contains { $0.token == e.key } })
+    }
+
+    /// 0.8.6: an app found by its ID alone (renamed: Chrome.app). Several
+    /// casks can quit that ID (wondershare-uniconverter quits Google
+    /// Chrome's); keep those whose token or app name has a word of the ID
+    /// below its developer prefix ("chrome" in google-chrome), when any does.
+    static func renamedAppCandidates(_ bid: String, _ casks: [AdoptCask]) -> [AdoptCask] {
+        guard casks.count > 1 else { return casks }
+        let labels = bid.split(separator: ".").map(String.init)
+        let words = labels.dropFirst(AdoptVendor.vendorLabelCount(labels)).filter { $0.count >= 3 }
+        guard !words.isEmpty else { return casks }
+        let kept = casks.filter { c in
+            let names = ([c.token] + c.names + c.apps.map { ($0.target as NSString).lastPathComponent })
+                .joined(separator: " ").lowercased()
+                .split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init).filter { $0.count >= 3 }
+            return words.contains { w in names.contains { n in w.contains(n) || n.contains(w) } }
+        }
+        return kept.isEmpty ? casks : kept
     }
 
     /// What the cask's app IDs say about this app.
-    public enum IDEvidence: Sendable, Equatable {
+    public enum IDEvidence: String, Sendable, Equatable, Codable {
         /// The cask names this app's ID.
         case match
-        /// The cask names app IDs, none of them this app's (or the app has
-        /// no ID to compare).
+        /// The cask names an ID with this app's developer prefix
+        /// (org.scummvm.app vs org.scummvm.scummvm), not this app's.
+        case vendor
+        /// The cask names app IDs, none of them this app's or its
+        /// developer's (or the app has no ID to compare).
         case mismatch
         /// The cask names no app IDs: only the name can be compared.
         case none
@@ -606,15 +664,18 @@ public enum AdoptMatcher {
     /// `uninstall` and `zap` (quit, signal, launchctl, pkgutil, login items,
     /// and path parts: Containers/<id>, Group Containers/group.<id>,
     /// Application Scripts/<id>, Preferences/<id>.plist, Caches/<id>, ...;
-    /// `AdoptIndex.bundleIDHints`). The app's CFBundleIdentifier matches
-    /// one when it is equal, or (for an ID of three labels or more) when
-    /// the named one is the app's ID with a prefix or suffix label:
-    /// group.<id>, <TEAMID>.<id>, <id>.helper, <id>.ShipIt. Case is ignored.
+    /// `AdoptIndex.bundleIDHints`). `.match`: the app's CFBundleIdentifier
+    /// is one of them, or (for an ID of three labels or more) one is the
+    /// app's ID with a prefix or suffix label: group.<id>, <TEAMID>.<id>,
+    /// <id>.helper. `.vendor`: one shares the app ID's developer prefix
+    /// (`AdoptVendor.vendorLabelCount`: two labels, three under a shared
+    /// namespace such as com.electron or uk.co). Case is ignored.
     public static func idEvidence(app: InstalledApp, cask c: AdoptCask) -> IDEvidence {
         guard !c.bundleIDs.isEmpty else { return .none }
         let bid = app.bundleID?.lowercased() ?? ""
         guard !bid.isEmpty else { return .mismatch }
-        return names(bid, c.bundleIDs) ? .match : .mismatch
+        if names(bid, c.bundleIDs) { return .match }
+        return sameVendor(bid, c.bundleIDs) ? .vendor : .mismatch
     }
 
     /// Whether `ids` (lower-cased) name the app ID `bid` (lower-cased).
@@ -624,23 +685,75 @@ public enum AdoptMatcher {
         return ids.contains { $0.hasPrefix(bid + ".") || $0.hasSuffix("." + bid) }
     }
 
-    /// Best first: bundle id corroborated, then the plain cask (not
-    /// "@beta"), not disabled, shorter token, then by name.
-    static func rankKey(_ c: AdoptCask, _ bid: String) -> (Int, Int, Int, Int, String) {
-        (bid.isEmpty || !names(bid, c.bundleIDs) ? 0 : 1, c.isVariant ? 0 : 1, c.disabled ? 0 : 1, -c.token.count,
-         String(c.token.reversed()))
+    /// Whether one of `ids` has the developer prefix of `bid` (both
+    /// lower-cased), after dropping a leading "group." or Team ID label.
+    static func sameVendor(_ bid: String, _ ids: Set<String>) -> Bool {
+        let labels = bid.split(separator: ".").map(String.init)
+        let n = AdoptVendor.vendorLabelCount(labels)
+        guard labels.count > n else { return false }
+        let prefix = Array(labels.prefix(n))
+        return ids.contains { id in
+            var l = id.split(separator: ".").map(String.init)
+            if l.first == "group" || l.first.map(isTeamID) == true { l.removeFirst() }
+            return l.count > n && Array(l.prefix(n)) == prefix
+        }
     }
 
-    /// 0.8.6, the evidence (`row(for:)` has already left out casks whose
-    /// IDs don't match). high: the cask names the app's ID ("Matched by
-    /// app ID"). medium: the cask names no IDs, and a label of the app's ID
-    /// is the vendor of the cask's homepage or download URL ("Matched by
-    /// name and website"). low: the name and nothing else ("Matched by
-    /// name only"); never ticked by default. A cask that names other IDs
-    /// gets low here too, but `row(for:)` never offers it.
+    /// "2bua8c4s2c": ten letters and digits, with a digit.
+    static func isTeamID(_ s: String) -> Bool {
+        s.count == 10 && s.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) } && s.contains(where: \.isNumber)
+    }
+
+    /// 0.8.6: how well the app's version fits the cask's, for picking among
+    /// release lines (firefox, firefox@esr, parallels@18): 3 the same
+    /// version, 2 the same with a suffix ("8.12.48" and "8.12.48-24.BETA",
+    /// "153.7.0esr"), 1 the same major version, 0 otherwise.
+    public static func versionFit(app a: InstalledApp, cask c: AdoptCask) -> Int {
+        let head = AdoptVersion.split(c.version).head.lowercased()
+        guard head != "latest" else { return 0 }
+        let short = a.shortVersion?.lowercased() ?? "", build = a.bundleVersion?.lowercased() ?? ""
+        if (!short.isEmpty && head == short) || (!build.isEmpty && head == build) { return 3 }
+        func extends(_ long: String, _ base: String) -> Bool {
+            guard !base.isEmpty, long.count > base.count, long.hasPrefix(base) else { return false }
+            return !long[long.index(long.startIndex, offsetBy: base.count)].isNumber
+        }
+        if extends(head, short) || extends(short, head) { return 2 }
+        func major(_ v: String) -> String { String(v.prefix { $0.isNumber }) }
+        if !major(head).isEmpty, major(head) == major(short) { return 1 }
+        return 0
+    }
+
+    /// Best first: backed by the app's ID, then the version that fits the
+    /// app (0.8.6: firefox@esr for Firefox 153 ESR, parallels@18 for
+    /// Parallels 18), then the plain cask (not "@beta"), not disabled, the
+    /// shorter token, then by token in natural order (parallels@18 before
+    /// parallels@19).
+    static func better(_ x: AdoptCask, than y: AdoptCask, app: InstalledApp, evidence ev: [String: IDEvidence]) -> Bool {
+        func strength(_ c: AdoptCask) -> Int {
+            switch ev[c.token] ?? .none { case .match: return 3; case .vendor: return 2; case .none: return 1; case .mismatch: return 0 }
+        }
+        // Among casks the app's ID backs (match or developer), the version
+        // decides first: little-snitch@5 for Little Snitch 5.8 although
+        // only little-snitch names its exact ID.
+        func backed(_ c: AdoptCask) -> Int { strength(c) >= 2 ? 1 : 0 }
+        let kx = (backed(x), versionFit(app: app, cask: x), strength(x), x.isVariant ? 0 : 1, x.disabled ? 0 : 1, -x.token.count)
+        let ky = (backed(y), versionFit(app: app, cask: y), strength(y), y.isVariant ? 0 : 1, y.disabled ? 0 : 1, -y.token.count)
+        if kx != ky { return kx > ky }
+        return x.token.localizedStandardCompare(y.token) == .orderedAscending
+    }
+
+    /// 0.8.6, from the evidence (`row(for:)` has already left out casks
+    /// whose IDs don't fit). high: the cask names the app's ID ("Matched by
+    /// app ID"). medium: an ID with the app's developer prefix ("Matched by
+    /// name and developer"), or the cask names no IDs and a label of the
+    /// app's ID is the vendor of the cask's homepage or download URL
+    /// ("Matched by name and website"). low: the name and nothing else
+    /// ("Matched by name only"). Only high is ticked by default, and only
+    /// high can adopt a cask whose app updates itself.
     public static func confidence(app: InstalledApp, cask c: AdoptCask, ambiguous: Bool) -> AdoptConfidence {
         switch idEvidence(app: app, cask: c) {
         case .match: return .high
+        case .vendor: return .medium
         case .mismatch: return .low
         case .none: return vendorInWeb(app.bundleID?.lowercased() ?? "", c.web) ? .medium : .low
         }
@@ -677,6 +790,9 @@ public enum AdoptMatcher {
             return .blocked(.location(expected: expected))
         }
         if c.pkg { return .blocked(.pkg) }
+        // 0.8.6: brew adopts a self-updating cask's app without comparing
+        // it with the download (moved.rb:102): the app's ID is the only check.
+        if c.autoUpdates && idEvidence(app: a, cask: c) != .match { return .blocked(.unverifiedSelfUpdating) }
         return AdoptVersion.verdict(app: a, caskVersion: c.version, autoUpdates: c.autoUpdates)
     }
 }
@@ -685,7 +801,8 @@ public enum AdoptMatcher {
 public enum AdoptVendor {
     /// Bundle-id labels that say nothing about the vendor: TLDs, generic
     /// words, and code hosts (everyone hosted there shares them).
-    static let skip: Set<String> = Set(["com", "org", "net", "io", "app", "www", "apps", "mac", "macos", "osx"])
+    static let skip: Set<String> = Set(["com", "org", "net", "io", "app", "www", "apps", "mac", "macos", "osx",
+                                        "electron", "todesktop", "yourcompany", "example", "group", "application"])
         .union(hostLabels)
 
     /// Code hosts' names as bundle-id labels (io.github.alice).
@@ -707,6 +824,29 @@ public enum AdoptVendor {
     /// first two labels name a code host, not a vendor.
     static func isHostNamespace(_ labels: [String]) -> Bool {
         labels.count >= 2 && hostLabels.contains(labels[1])
+    }
+
+    /// 0.8.6: two-label prefixes many unrelated developers share: app
+    /// frameworks' and templates' defaults (com.electron.<app> from
+    /// electron-builder, com.todesktop.<id>, com.yourcompany), crash
+    /// reporters a zap names, and placeholders.
+    static let sharedPrefixes: Set<String> = [
+        "com.electron", "com.todesktop", "com.yourcompany", "com.example", "org.example", "com.mycompany",
+        "org.qt-project", "com.plausiblelabs", "com.crashlytics", "io.fabric", "com.install4j", "com.squirrel",
+        "com.trolltech", "org.pythonmac", "com.tauri", "org.tauri",
+    ]
+
+    /// 0.8.6: how many leading labels name the developer: 2 (org.scummvm),
+    /// or 3 where the first two are shared by many (io.github.alice,
+    /// com.electron.foo, uk.co.vendor, jp.co.vendor, co.jp.vendor).
+    static func vendorLabelCount(_ labels: [String]) -> Int {
+        guard labels.count >= 2 else { return labels.count }
+        let first = labels[0], second = labels[1]
+        if isHostNamespace(labels) || sharedPrefixes.contains(first + "." + second) { return 3 }
+        // A country's second level: uk.co, jp.co, au.com, nz.org; co.jp, com.au.
+        if first.count == 2 && secondLevel.contains(second) { return 3 }
+        if secondLevel.contains(first) && second.count == 2 { return 3 }
+        return 2
     }
 
     /// Two-letter country codes whose sites sit one level lower

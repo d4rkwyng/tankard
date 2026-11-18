@@ -85,24 +85,39 @@ public extension AdoptBlock {
             return String(localized: "The app has no version brew can compare.")
         case .symlink:
             return String(localized: "This is a symbolic link, not the app itself. Tankard doesn't adopt links.")
+        case .unverifiedSelfUpdating:
+            return String(localized: "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't.")
         }
     }
 }
 
-public extension AdoptConfidence {
-    var title: String {
-        switch self {
-        case .high: return String(localized: "Matched by app ID")
-        case .medium: return String(localized: "Matched by name and website")
-        case .low: return String(localized: "Matched by name only — check before adopting")
+/// 0.8.6: what a match rests on, in the row's words.
+public enum AdoptMatchEvidence: String, Sendable, CaseIterable {
+    case appID, developer, website, nameOnly
+
+    public init(_ id: AdoptMatcher.IDEvidence?, confidence: AdoptConfidence) {
+        switch id {
+        case .match?: self = .appID
+        case .vendor?: self = .developer
+        default: self = confidence == .low ? .nameOnly : .website
         }
     }
 
-    var help: String {
+    public var title: String {
         switch self {
-        case .high: return String(localized: "The app's ID (its bundle identifier) is one the cask names.")
-        case .medium: return String(localized: "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website.")
-        case .low: return String(localized: "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting.")
+        case .appID: return String(localized: "Matched by app ID")
+        case .developer: return String(localized: "Matched by name and developer")
+        case .website: return String(localized: "Matched by name and website")
+        case .nameOnly: return String(localized: "Matched by name only — check before adopting")
+        }
+    }
+
+    public var help: String {
+        switch self {
+        case .appID: return String(localized: "The app's ID (its bundle identifier) is one the cask names.")
+        case .developer: return String(localized: "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting.")
+        case .website: return String(localized: "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website.")
+        case .nameOnly: return String(localized: "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting.")
         }
     }
 }
@@ -119,6 +134,9 @@ public struct AdoptPlanItem: Sendable, Equatable, Identifiable {
     public var policy: SelfUpdatePolicy
     /// How sure the match is (a name-only one the user ticked gets a warning).
     public var confidence: AdoptConfidence = .high
+    /// 0.8.6: the other casks that install an app of this name (the user
+    /// picked this one, or kept Tankard's pick).
+    public var alternatives: [String] = []
     public var id: String { token }
 
     public var arguments: [String] { AdoptCommands.arguments(qualifiedName: qualifiedName) }
@@ -211,6 +229,24 @@ public final class AdoptStore {
     public func confidence(_ row: AdoptRow) -> AdoptConfidence? { token(row).flatMap { row.confidence[$0] } }
     public func group(_ row: AdoptRow) -> AdoptGroup { AdoptGroup.of(verdict(row)) }
     public func policy(_ row: AdoptRow) -> SelfUpdatePolicy { policies[row.id] ?? .automatic }
+    /// 0.8.6: what the chosen cask's match rests on.
+    public func evidence(_ row: AdoptRow) -> AdoptMatchEvidence? {
+        guard let t = token(row), let c = row.confidence[t] else { return nil }
+        return AdoptMatchEvidence(row.evidence[t], confidence: c)
+    }
+
+    /// 0.8.6: the row's extra line. Several casks: which one Tankard
+    /// picked and that the user should check. "Needs update first" on a
+    /// weaker match: it may be a different app, not an older one.
+    public func matchNote(_ row: AdoptRow) -> String? {
+        if group(row) == .needsUpdate, confidence(row) != .high {
+            return String(localized: "Only the name matches, so this may be a different app rather than an older version of it.")
+        }
+        if row.isAmbiguous, let t = token(row), group(row) != .noCask {
+            return String(localized: "Several casks install an app with this name; \(t) fits its version best. Check that it's the one you have before ticking it.")
+        }
+        return nil
+    }
 
     /// 0.8.6: an app with the name of a cask whose app IDs aren't this
     /// app's ("No cask" lists it with this line): "Copilot: possibly a
@@ -224,22 +260,22 @@ public final class AdoptStore {
         return String(localized: "\(row.app.displayName): possibly a different app, not offered. The cask \(token) is for the app ID \(caskID); this app's ID is \(own).")
     }
 
-    /// Ticked by default: ready and not name-only. For a cask that updates
-    /// itself only a sure match (the bundle id): brew adopts those without
-    /// comparing versions or files (moved.rb:102), so a wrong match would
-    /// succeed, and a later upgrade or uninstall would replace or delete
-    /// someone else's app.
+    /// Ticked by default: ready, matched by app ID, and only one cask for
+    /// the app (0.8.6: Firefox ESR, Parallels 18 and Godot 3 share their
+    /// app and ID with firefox, parallels and godot, so the user picks).
+    /// brew adopts a self-updating cask's app without comparing versions or
+    /// files (moved.rb:102), so a wrong match would succeed, and a later
+    /// upgrade or uninstall would replace or delete someone else's app.
     public func defaultTicked(_ row: AdoptRow) -> Bool {
-        guard verdict(row) == .ready, let c = confidence(row) else { return false }
-        if cask(row)?.autoUpdates == true { return c == .high }
-        return c != .low
+        guard verdict(row) == .ready, confidence(row) == .high else { return false }
+        return !row.isAmbiguous
     }
 
     /// "Needs update first": the copyable `brew install --cask --force`,
     /// only for a sure match (on a weaker one it could overwrite a
     /// different app with the same name).
     public func offersReplace(_ row: AdoptRow) -> Bool {
-        group(row) == .needsUpdate && confidence(row) == .high
+        group(row) == .needsUpdate && confidence(row) == .high && !row.isAmbiguous
     }
 
     public func rows(_ g: AdoptGroup) -> [AdoptRow] {
@@ -278,7 +314,8 @@ public final class AdoptStore {
             let item = AdoptPlanItem(token: c.token, qualifiedName: c.qualifiedName, appPath: row.app.path,
                                      appVersion: row.app.shortVersion, caskVersion: c.version, autoUpdates: c.autoUpdates,
                                      policy: c.autoUpdates ? policy(row) : .automatic,
-                                     confidence: confidence(row) ?? .low)
+                                     confidence: confidence(row) ?? .low,
+                                     alternatives: row.candidates.filter { $0 != c.token })
             if let i = out.firstIndex(where: { $0.qualifiedName == item.qualifiedName }) {
                 out[i].confidence = min(out[i].confidence, item.confidence)
                 if out[i].policy == .automatic { out[i].policy = item.policy }
@@ -317,6 +354,10 @@ public final class AdoptStore {
         let nameOnly = items.filter { $0.confidence == .low }
         if !nameOnly.isEmpty {
             lines.append(String(localized: "Name only: \(names(nameOnly)). Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it."))
+        }
+        // 0.8.6: a pick among release lines (firefox or firefox@esr).
+        for i in items where !i.alternatives.isEmpty {
+            lines.append(String(localized: "\(names([i])) will be adopted as \(i.token). Other casks install an app with this name (\(i.alternatives.formatted(.list(type: .and)))): brew upgrade follows the cask you adopt, so make sure it's the right one."))
         }
         if unchecked.isEmpty {
             lines.append(String(localized: "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is."))

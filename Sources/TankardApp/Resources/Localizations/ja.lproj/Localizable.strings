@@ -49,6 +49,7 @@
 "%@ runs as %@: %@ needs sudo" = "%@ は %@ として実行されます: %@ にはsudoが必要です";
 "%@ s" = "%@ 秒";
 "%@ stopped" = "%@ は停止しました";
+"%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ は %@ として引き継がれます。同じ名前のアプリを入れる cask がほかにもあります(%@)。brew upgrade は引き継いだ cask に従うので、正しいものか確認してください。";
 "%@ would be installed too" = "%@ もインストールされます";
 "%@ · %lld" = "%@ · %lld";
 "%@ → %@: %@ version; upgrade by hand" = "%@ → %@: %@バージョン。手動でアップグレードしてください";
@@ -607,6 +608,7 @@
 "Made by d4rkwyng" = "作者: d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "caskのpkgアーティファクトから判定しています。他のcaskもパスワードを要求する場合があります。";
 "Matched by app ID" = "アプリIDで一致";
+"Matched by name and developer" = "名前と開発元で一致";
 "Matched by name and website" = "名前とWebサイトで一致";
 "Matched by name only — check before adopting" = "名前のみで一致 — 引き継ぐ前に確認してください";
 "Medium" = "中";
@@ -727,6 +729,7 @@
 "Online" = "オンライン";
 "Only available in Tankard.app." = "Tankard.appでのみ利用できます。";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "このバージョンがどうしても必要な場合のみ。Homebrewのパッケージ履歴をすべてダウンロードし、以後は古いバージョンを自分で管理することになります。";
+"Only the name matches, so this may be a different app rather than an older version of it." = "名前だけが一致しているため、古いバージョンではなく別のアプリかもしれません。";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "%@ が必要としていたものだけです。すでに使われていなかった依存関係はインストールされたままです。";
 "Open Homepage" = "ホームページを開く";
 "Open Notification Settings" = "通知設定を開く";
@@ -934,6 +937,7 @@
 "Set in brew.env: it changes brew's output, which Tankard reads." = "brew.env で設定: Tankard が読み取る brew の出力を変えます。";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "brew.env で設定: brew のファイルを Tankard が探す場所から移動します。";
 "Several casks install an app with this name. Pick the one you have." = "この名前のアプリをインストールする cask が複数あります。お使いのものを選んでください。";
+"Several casks install an app with this name; %@ fits its version best. Check that it's the one you have before ticking it." = "この名前のアプリを入れる cask が複数あります。バージョンに最も合うのは %@ です。チェックを入れる前に、お使いのものか確認してください。";
 "Show" = "表示";
 "Show %@ in Tankard" = "%@をTankardで表示";
 "Show Auto-update Log…" = "自動アップデートのログを表示…";
@@ -1059,6 +1063,7 @@
 "The app's ID (its bundle identifier) is one the cask names." = "アプリのID(バンドル識別子)が cask に記載されたものと同じです。";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "この cask は常に最新バージョンをダウンロードするため、brew はダウンロード後に比較します。違いがあればアプリには手を付けません。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "この cask は %@ にインストールします。brew はその場所にあるアプリだけを引き継ぎます。";
+"The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "cask には同じ開発元のアプリIDがありますが、このアプリのIDそのものではありません。引き継ぐ前に確認してください。";
 "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "cask にアプリIDの記載がないため、アプリの名前しか比べられませんでした。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。";
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask にアプリIDの記載はありません。アプリの名前が一致し、そのIDが cask のWebサイトの開発元を示しています。";
 "The cask says this app updates itself (auto_updates)." = "cask によると、このアプリは自己更新します（auto_updates）。";
@@ -1095,6 +1100,7 @@
 "This app will be closed during the upgrade and opened again afterwards: %@. Save your work in it first." = "このアプリはアップグレード中に閉じられ、その後また開かれます: %@。先に作業内容を保存してください。";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "このbrewには `brew vulns` がありません（Homebrew 7で追加）。`brew update` で入手してください。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "この cask はインストーラパッケージを実行し、--adopt を無視します。brew はパスワードを使ってインストーラを再実行することになります。";
+"This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "この cask のアプリは自動でアップデートされるため、brew はダウンロードと比べずに引き継ぎます。Tankard はアプリのIDが cask に記載されている場合だけ提案しますが、このアプリは該当しません。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "これはアプリ本体ではなくシンボリックリンクです。Tankard はリンクを引き継ぎません。";
 "This macOS version isn't supported by Homebrew" = "このバージョンのmacOSはHomebrewでサポートされていません";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "この復元ポイントのtap、formula、caskをBrewfileとして（バージョンなし: Brewfileにはバージョンがありません）";

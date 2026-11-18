@@ -200,8 +200,10 @@ struct V08AdoptCoreTests {
         p.quitBundleIDs = ["com.microsoft.VSCode"]
         let m = ManagedApps(packages: [p], index: nil)
         #expect(m.owns(Self.app("Visual Studio Code.app", "com.microsoft.VSCode", "1.0")))
-        // Moved or renamed, still the same bundle id: brew owns it.
-        #expect(m.owns(Self.app("VSCode.app", "com.microsoft.vscode", "1.0")))
+        // Moved or renamed, still the same bundle id: brew owns it only with
+        // its name (0.8.6: another cask's quit id hid unrelated apps).
+        #expect(m.owns(Self.app("Visual Studio Code Old.app", "com.microsoft.vscode", "1.0")))
+        #expect(!m.owns(Self.app("VSCode.app", "com.microsoft.vscode", "1.0")))
         #expect(!m.owns(Self.app("Other.app", "com.other", "1.0")))
     }
 
@@ -236,7 +238,8 @@ struct V08AdoptCoreTests {
         #expect(AdoptMatcher.confidence(app: alice, cask: bobs, ambiguous: false) == .low)
         // auto_updates: brew wouldn't compare versions, so it is "ready"...
         let row = AdoptMatcher.row(for: alice, index: AdoptIndex(casks: [bobs]))
-        #expect(row.verdicts["foo"] == .ready && row.confidence["foo"] == .low)
+        // 0.8.6: not even "ready": brew wouldn't check, and nothing but the name matches.
+        #expect(row.verdicts["foo"] == .blocked(.unverifiedSelfUpdating) && row.confidence["foo"] == .low)
         // ...but Alice's own cask is the same vendor.
         var alices = bobs
         alices.web = "https://github.com/alice/foo"
@@ -246,12 +249,12 @@ struct V08AdoptCoreTests {
         var named = bobs
         named.bundleIDs = ["io.github.bob.foo"]
         #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .low)
-        // 0.8.6: a same-vendor id that isn't the app's no longer counts
-        // (com.microsoft.copilot-mac vs another com.microsoft.* app).
+        // A same-developer id that isn't the app's: medium ("by name and developer").
         named.bundleIDs = ["io.github.alice.foohelper"]
-        #expect(AdoptMatcher.idEvidence(app: alice, cask: named) == .mismatch)
+        #expect(AdoptMatcher.idEvidence(app: alice, cask: named) == .vendor)
         let scumm = AdoptCask(token: "scummvm", version: "1", bundleIDs: ["org.scummvm.scummvm"])
-        #expect(AdoptMatcher.idEvidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm) == .mismatch)
+        #expect(AdoptMatcher.idEvidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm) == .vendor)
+        #expect(AdoptMatcher.confidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm, ambiguous: false) == .medium)
         // The app's own id with a suffix label does (io.github.alice.foo.helper).
         named.bundleIDs = ["io.github.alice.foo.helper"]
         #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .high)

@@ -49,6 +49,7 @@
 "%@ runs as %@: %@ needs sudo" = "%@ läuft als %@: %@ braucht sudo";
 "%@ s" = "%@ s";
 "%@ stopped" = "%@ angehalten";
+"%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ wird als %@ übernommen. Auch andere Casks installieren eine App mit diesem Namen (%@): brew upgrade folgt dem Cask, den du übernimmst, prüfe also, ob es der richtige ist.";
 "%@ would be installed too" = "%@ würde ebenfalls installiert";
 "%@ · %lld" = "%@ · %lld";
 "%@ → %@: %@ version; upgrade by hand" = "%@ → %@: %@-Version; manuell aktualisieren";
@@ -607,6 +608,7 @@
 "Made by d4rkwyng" = "Von d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Aus dem pkg-Artefakt des Casks markiert. Andere Casks können dennoch nach einem Passwort fragen.";
 "Matched by app ID" = "Über App-ID erkannt";
+"Matched by name and developer" = "Über Name und Entwickler erkannt";
 "Matched by name and website" = "Über Name und Website erkannt";
 "Matched by name only — check before adopting" = "Nur über den Namen erkannt – vor dem Übernehmen prüfen";
 "Medium" = "Mittel";
@@ -727,6 +729,7 @@
 "Online" = "Online";
 "Only available in Tankard.app." = "Nur in Tankard.app verfügbar.";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "Nur, wenn du diese Version wirklich brauchst. Dabei wird der vollständige Paketverlauf von Homebrew geladen, und um die alte Version kümmerst du dich ab dann selbst.";
+"Only the name matches, so this may be a different app rather than an older version of it." = "Nur der Name stimmt, daher kann es eine andere App sein statt einer älteren Version davon.";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "Nur was %@ brauchte. Bereits ungenutzte Abhängigkeiten bleiben installiert.";
 "Open Homepage" = "Homepage öffnen";
 "Open Notification Settings" = "Mitteilungen öffnen";
@@ -934,6 +937,7 @@
 "Set in brew.env: it changes brew's output, which Tankard reads." = "In brew.env gesetzt: ändert brews Ausgabe, die Tankard liest.";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "In brew.env gesetzt: verschiebt brews Dateien weg von dort, wo Tankard sucht.";
 "Several casks install an app with this name. Pick the one you have." = "Mehrere Casks installieren eine App mit diesem Namen. Wähle deine aus.";
+"Several casks install an app with this name; %@ fits its version best. Check that it's the one you have before ticking it." = "Mehrere Casks installieren eine App mit diesem Namen; %@ passt am besten zu ihrer Version. Prüfe vor dem Ankreuzen, ob es der ist, den du hast.";
 "Show" = "Anzeigen";
 "Show %@ in Tankard" = "%@ in Tankard anzeigen";
 "Show Auto-update Log…" = "Auto-Update-Protokoll anzeigen…";
@@ -1059,6 +1063,7 @@
 "The app's ID (its bundle identifier) is one the cask names." = "Die ID der App (ihr Bundle-Identifier) ist eine, die der Cask nennt.";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "Das Cask lädt immer die neueste Version, also vergleicht brew nach dem Download; bei Abweichung bleibt die App unangetastet.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "Das Cask installiert nach %@; brew übernimmt nur eine App genau an diesem Ort.";
+"The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "Der Cask nennt eine App-ID desselben Entwicklers, aber nicht genau die ID dieser App: vor dem Übernehmen prüfen.";
 "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "Der Cask nennt keine App-ID, daher konnte nur der Name der App verglichen werden. Es kann eine andere App mit demselben Namen sein: vor dem Übernehmen prüfen.";
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "Der Cask nennt keine App-ID. Der Name der App stimmt, und ihre ID nennt den Entwickler der Website des Casks.";
 "The cask says this app updates itself (auto_updates)." = "Laut Cask aktualisiert sich diese App selbst (auto_updates).";
@@ -1095,6 +1100,7 @@
 "This app will be closed during the upgrade and opened again afterwards: %@. Save your work in it first." = "Diese App wird während des Upgrades geschlossen und danach wieder geöffnet: %@. Sichere vorher deine Arbeit darin.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Dieses brew hat kein `brew vulns` (neu in Homebrew 7). Führe `brew update` aus, um es zu erhalten.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Dieses Cask führt ein Installationspaket aus, das --adopt ignoriert: brew würde das Installationsprogramm erneut ausführen, mit deinem Passwort.";
+"This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "Die App dieses Casks aktualisiert sich selbst, daher würde brew sie übernehmen, ohne sie mit dem Download zu vergleichen. Tankard bietet das nur an, wenn die ID der App eine ist, die der Cask nennt, und das ist hier nicht so.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Ein symbolischer Link, nicht die App selbst. Tankard übernimmt keine Links.";
 "This macOS version isn't supported by Homebrew" = "Diese macOS-Version wird von Homebrew nicht unterstützt";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Taps, Formulae und Casks dieses Wiederherstellungspunkts als Brewfile (ohne Versionen: Brewfiles haben keine)";

@@ -1,0 +1,5726 @@
+[
+ {
+  "token": "1password",
+  "full_token": "1password",
+  "tap": "homebrew/cask",
+  "name": [
+   "1Password"
+  ],
+  "homepage": "https://1password.com/",
+  "url": "https://downloads.1password.com/mac/1Password-8.12.46-aarch64.zip",
+  "version": "8.12.46",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "2BUA8C4S2C.com.1password.browser-helper",
+       "com.1password.1password-launcher"
+      ],
+      "quit": "com.1password.1password"
+     }
+    ]
+   },
+   {
+    "app": [
+     "1Password.app"
+    ],
+    "target": "/Applications/1Password.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/2BUA8C4S2C.com.1password*",
+       "~/Library/Application Scripts/2BUA8C4S2C.com.agilebits",
+       "~/Library/Application Scripts/com.1password.1password-launcher",
+       "~/Library/Application Scripts/com.1password.browser-support",
+       "~/Library/Application Support/1Password",
+       "~/Library/Application Support/Arc/User Data/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.1password.1password.sfl*",
+       "~/Library/Application Support/CrashReporter/1Password*",
+       "~/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Beta/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Canary/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Dev/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Mozilla/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Vivaldi/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Containers/2BUA8C4S2C.com.1password.browser-helper",
+       "~/Library/Containers/com.1password.1password*",
+       "~/Library/Containers/com.1password.browser-support",
+       "~/Library/Group Containers/2BUA8C4S2C.com.1password",
+       "~/Library/Group Containers/2BUA8C4S2C.com.agilebits",
+       "~/Library/Logs/1Password",
+       "~/Library/Preferences/com.1password.1password.plist",
+       "~/Library/Preferences/group.com.1password.plist",
+       "~/Library/Saved Application State/com.1password.1password.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "1password@7",
+  "full_token": "1password@7",
+  "tap": "homebrew/cask",
+  "name": [
+   "1Password"
+  ],
+  "homepage": "https://1password.com/",
+  "url": "https://c.1password.com/dist/1P/mac7/1Password-7.10.4.zip",
+  "version": "7.10.4",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "1Password 7.app"
+    ],
+    "target": "/Applications/1Password 7.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/*.agilebits.onepassword*",
+       "~/Library/Containers/*.agilebits.onepassword*",
+       "~/Library/Group Containers/2BUA8C4S2C.com.agilebits",
+       "~/Library/Logs/1Password",
+       "~/Library/Preferences/com.agilebits.onepassword*"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "1password@beta",
+  "full_token": "1password@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "1Password"
+  ],
+  "homepage": "https://1password.com/",
+  "url": "https://downloads.1password.com/mac/1Password-8.12.48-24.BETA-aarch64.zip",
+  "version": "8.12.48-24.BETA",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "2BUA8C4S2C.com.1password.browser-helper",
+       "com.1password.1password-launcher"
+      ],
+      "quit": "com.1password.1password"
+     }
+    ]
+   },
+   {
+    "app": [
+     "1Password.app"
+    ],
+    "target": "/Applications/1Password.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/2BUA8C4S2C.com.1password*",
+       "~/Library/Application Scripts/2BUA8C4S2C.com.agilebits",
+       "~/Library/Application Scripts/com.1password.1password-launcher",
+       "~/Library/Application Scripts/com.1password.browser-support",
+       "~/Library/Application Support/1Password",
+       "~/Library/Application Support/Arc/User Data/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.1password.1password.sfl*",
+       "~/Library/Application Support/CrashReporter/1Password*",
+       "~/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Beta/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Canary/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge Dev/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Mozilla/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Application Support/Vivaldi/NativeMessagingHosts/com.1password.1password.json",
+       "~/Library/Containers/2BUA8C4S2C.com.1password.browser-helper",
+       "~/Library/Containers/com.1password.1password*",
+       "~/Library/Containers/com.1password.browser-support",
+       "~/Library/Group Containers/2BUA8C4S2C.com.1password",
+       "~/Library/Group Containers/2BUA8C4S2C.com.agilebits",
+       "~/Library/Logs/1Password",
+       "~/Library/Preferences/com.1password.1password.plist",
+       "~/Library/Preferences/group.com.1password.plist",
+       "~/Library/Saved Application State/com.1password.1password.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "1password@nightly",
+  "full_token": "1password@nightly",
+  "tap": "homebrew/cask",
+  "name": [
+   "1Password Nightly"
+  ],
+  "homepage": "https://1password.com/",
+  "url": "https://c.1password.com/dist/1P/mac8/1Password-latest.NIGHTLY-aarch64.zip",
+  "version": "latest",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "1Password.app"
+    ],
+    "target": "/Applications/1Password.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/2BUA8C4S2C.com.1password",
+       "~/Library/Application Scripts/2BUA8C4S2C.com.1password.browser-helper",
+       "~/Library/Application Scripts/com.1password.1password-launcher",
+       "~/Library/Application Scripts/com.1password.browser-support",
+       "~/Library/Application Support/1Password",
+       "~/Library/Application Support/CrashReporter/1Password*.plist",
+       "~/Library/Containers/2BUA8C4S2C.com.1password.browser-helper",
+       "~/Library/Containers/com.1password.1password-launcher",
+       "~/Library/Containers/com.1password.browser-support",
+       "~/Library/Group Containers/*.com.1password",
+       "~/Library/Group Containers/*.com.agilebits",
+       "~/Library/Logs/DiagnosticReports/1Password*",
+       "~/Library/Preferences/*1password.plist",
+       "~/Library/Saved Application State/com.1password.1password.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "amethyst",
+  "full_token": "amethyst",
+  "tap": "homebrew/cask",
+  "name": [
+   "Amethyst"
+  ],
+  "homepage": "https://ianyh.com/amethyst/",
+  "url": "https://github.com/ianyh/Amethyst/releases/download/v0.25.0/Amethyst.zip",
+  "version": "0.25.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Amethyst.app"
+    ],
+    "target": "/Applications/Amethyst.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Amethyst",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.amethyst.amethyst.sfl*",
+       "~/Library/Caches/com.amethyst.Amethyst",
+       "~/Library/Cookies/com.amethyst.Amethyst.binarycookies",
+       "~/Library/HTTPStorages/com.amethyst.Amethyst",
+       "~/Library/Preferences/com.amethyst.Amethyst.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "amethyst-nostr",
+  "full_token": "amethyst-nostr",
+  "tap": "homebrew/cask",
+  "name": [
+   "Amethyst"
+  ],
+  "homepage": "https://github.com/vitorpamplona/amethyst",
+  "url": "https://github.com/vitorpamplona/amethyst/releases/download/v1.21.0/amethyst-desktop-1.21.0-macos-arm64.dmg",
+  "version": "1.21.0",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Amethyst.app"
+    ],
+    "target": "/Applications/Amethyst.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/.amethyst",
+       "~/Library/Application Support/Amethyst",
+       "~/Library/Caches/AmethystDesktop",
+       "~/Library/Preferences/com.vitorpamplona.amethyst.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "arc",
+  "full_token": "arc",
+  "tap": "homebrew/cask",
+  "name": [
+   "Arc"
+  ],
+  "homepage": "https://arc.net/",
+  "url": "https://releases.arc.net/release/Arc-1.173.1-90936.zip",
+  "version": "1.173.1,90936",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "company.thebrowser.Browser"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Arc.app"
+    ],
+    "target": "/Applications/Arc.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Arc",
+       "~/Library/Caches/Arc",
+       "~/Library/Caches/CloudKit/company.thebrowser.Browser",
+       "~/Library/Caches/company.thebrowser.Browser",
+       "~/Library/HTTPStorages/company.thebrowser.Browser",
+       "~/Library/HTTPStorages/company.thebrowser.Browser.binarycookies",
+       "~/Library/Preferences/company.thebrowser.Browser.plist",
+       "~/Library/Saved Application State/company.thebrowser.Browser.savedState",
+       "~/Library/WebKit/company.thebrowser.Browser"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": true,
+  "disabled": false
+ },
+ {
+  "token": "base",
+  "full_token": "base",
+  "tap": "homebrew/cask",
+  "name": [
+   "Menial Base"
+  ],
+  "homepage": "https://menial.co.uk/base/",
+  "url": "https://files.menial.co.uk/base/Base-3.3.0.zip",
+  "version": "3.3.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Base.app"
+    ],
+    "target": "/Applications/Base.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/uk.co.menial.Base*",
+       "~/Library/Application Support/Base",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/uk.co.menial.base.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/uk.co.menial.base.help*",
+       "~/Library/Caches/com.apple.helpd/SDMHelpData/Other/English/HelpSDMIndexFile/uk.co.menial.base.help*",
+       "~/Library/Caches/uk.co.menial.Base",
+       "~/Library/Containers/uk.co.menial.Base*",
+       "~/Library/Preferences/uk.co.menial.Base.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "beyond-compare",
+  "full_token": "beyond-compare",
+  "tap": "homebrew/cask",
+  "name": [
+   "Beyond Compare"
+  ],
+  "homepage": "https://www.scootersoftware.com/",
+  "url": "https://www.scootersoftware.com/files/BCompareOSX-5.2.8.33052.zip",
+  "version": "5.2.8.33052",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Beyond Compare.app"
+    ],
+    "target": "/Applications/Beyond Compare.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Beyond Compare.app/Contents/MacOS/bcomp"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/bcomp"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.ScooterSoftware.BeyondCompare.BCFinder",
+       "~/Library/Application Support/Beyond Compare*",
+       "~/Library/Caches/com.apple.helpd/Generated/Beyond Compare Help*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.ScooterSoftware.BeyondCompare.help*",
+       "~/Library/Caches/com.ScooterSoftware.BeyondCompare",
+       "~/Library/Containers/com.ScooterSoftware.BeyondCompare.BCFinder",
+       "~/Library/HTTPStorages/com.ScooterSoftware.BeyondCompare",
+       "~/Library/Preferences/com.ScooterSoftware.BeyondCompare.plist",
+       "~/Library/Saved Application State/com.ScooterSoftware.BeyondCompare.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "beyond-compare@4",
+  "full_token": "beyond-compare@4",
+  "tap": "homebrew/cask",
+  "name": [
+   "Beyond Compare"
+  ],
+  "homepage": "https://www.scootersoftware.com/",
+  "url": "https://www.scootersoftware.com/BCompareOSX-4.4.7.28397.zip",
+  "version": "4.4.7.28397",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Beyond Compare.app"
+    ],
+    "target": "/Applications/Beyond Compare.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Beyond Compare.app/Contents/MacOS/bcomp"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/bcomp"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Beyond Compare*",
+       "~/Library/Caches/com.apple.helpd/Generated/Beyond Compare Help*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.ScooterSoftware.BeyondCompare.help*",
+       "~/Library/Caches/com.ScooterSoftware.BeyondCompare",
+       "~/Library/Containers/com.ScooterSoftware.BeyondCompare.BCFinder",
+       "~/Library/Preferences/com.ScooterSoftware.BeyondCompare.plist",
+       "~/Library/Saved Application State/com.ScooterSoftware.BeyondCompare.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "blender",
+  "full_token": "blender",
+  "tap": "homebrew/cask",
+  "name": [
+   "Blender"
+  ],
+  "homepage": "https://www.blender.org/",
+  "url": "https://download.blender.org/release/Blender5.3/blender-5.3.0-macos-arm64.dmg",
+  "version": "5.3.0",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "staged_path",
+          "path": "*.app/**/__pycache__"
+         }
+        ],
+        "permissions": "u+w",
+        "non_recursive": true,
+        "type": "set_permissions"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Blender.app"
+    ],
+    "target": "/Applications/Blender.app"
+   },
+   {
+    "command_wrapper": [
+     "blender",
+     {
+      "executable": "$APPDIR/Blender.app/Contents/MacOS/Blender"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/blender"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Blender",
+       "~/Library/Caches/Blender",
+       "~/Library/Saved Application State/org.blenderfoundation.blender.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "blender@lts",
+  "full_token": "blender@lts",
+  "tap": "homebrew/cask",
+  "name": [
+   "Blender LTS"
+  ],
+  "homepage": "https://www.blender.org/",
+  "url": "https://download.blender.org/release/Blender5.2/blender-5.2.4-macos-arm64.dmg",
+  "version": "5.2.4",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "staged_path",
+          "path": "*.app/**/__pycache__"
+         }
+        ],
+        "permissions": "u+w",
+        "non_recursive": true,
+        "type": "set_permissions"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Blender.app"
+    ],
+    "target": "/Applications/Blender.app"
+   },
+   {
+    "command_wrapper": [
+     "blender",
+     {
+      "executable": "$APPDIR/Blender.app/Contents/MacOS/Blender"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/blender"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Blender",
+       "~/Library/Caches/Blender",
+       "~/Library/Saved Application State/org.blenderfoundation.blender.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "block-goose",
+  "full_token": "block-goose",
+  "tap": "homebrew/cask",
+  "name": [
+   "Goose"
+  ],
+  "homepage": "https://block.github.io/goose/",
+  "url": "https://github.com/block/goose/releases/download/v1.60.1/Goose.zip",
+  "version": "1.60.1",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Goose.app"
+    ],
+    "target": "/Applications/Goose.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.electron.goose.sfl*",
+       "~/Library/Application Support/Goose",
+       "~/Library/Preferences/com.electron.goose.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "bookends",
+  "full_token": "bookends",
+  "tap": "homebrew/cask",
+  "name": [
+   "Bookends"
+  ],
+  "homepage": "https://www.sonnysoftware.com/bookends-for-mac",
+  "url": "https://www.sonnysoftware.com/bookends-for-mac/downloads/Bookends.dmg",
+  "version": "16.0.2",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Bookends.app"
+    ],
+    "target": "/Applications/Bookends.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.microsoft.Word/Bookends.scpt",
+       "~/Library/Application Support/Bookends",
+       "~/Library/Caches/com.sonnysoftware.bookends2",
+       "~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Startup.localized/Word/Bookends.dotm",
+       "~/Library/HTTPStorages/com.sonnysoftware.bookends2",
+       "~/Library/PDF Services/Save PDF to Bookends",
+       "~/Library/Saved Application State/com.sonnysoftware.bookends2.savedState"
+      ],
+      "rmdir": "~/Documents/Bookends"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "caffeine",
+  "full_token": "caffeine",
+  "tap": "homebrew/cask",
+  "name": [
+   "Caffeine"
+  ],
+  "homepage": "https://intelliscapesolutions.com/apps/caffeine",
+  "url": "https://github.com/IntelliScape/caffeine/releases/download/1.1.4/Caffeine.dmg",
+  "version": "1.1.4",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.intelliscapesolutions.caffeine"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Caffeine.app"
+    ],
+    "target": "/Applications/Caffeine.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.intelliscapesolutions.caffeine",
+       "~/Library/Caches/com.intelliscapesolutions.caffeine",
+       "~/Library/HTTPStorages/com.intelliscapesolutions.caffeine.binarycookies",
+       "~/Library/Preferences/com.intelliscapesolutions.caffeine.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "chatgpt",
+  "full_token": "chatgpt",
+  "tap": "homebrew/cask",
+  "name": [
+   "ChatGPT"
+  ],
+  "homepage": "https://chatgpt.com/",
+  "url": "https://persistent.oaistatic.com/codex-app-prod/ChatGPT-darwin-arm64-26.1111.71025.zip",
+  "version": "26.1111.71025",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.openai.codex"
+     }
+    ]
+   },
+   {
+    "app": [
+     "ChatGPT.app"
+    ],
+    "target": "/Applications/ChatGPT.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Application Support/CodexComputerUseAuthorizationPlugin",
+       "~/Library/Application Scripts/*.com.openai.sky.CUAService",
+       "~/Library/Application Support/Codex",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.openai.codex.sfl*",
+       "~/Library/Application Support/com.openai.codex",
+       "~/Library/Application Support/OpenAI/Codex",
+       "~/Library/Caches/Codex",
+       "~/Library/Caches/com.openai.codex",
+       "~/Library/Caches/com.openai.sky.CUAService",
+       "~/Library/Group Containers/*.com.openai.sky.CUAService",
+       "~/Library/HTTPStorages/com.openai.codex",
+       "~/Library/HTTPStorages/com.openai.codex.binarycookies",
+       "~/Library/HTTPStorages/com.openai.sky.CUAService",
+       "~/Library/HTTPStorages/com.openai.sky.CUAService.binarycookies",
+       "~/Library/Logs/com.openai.codex",
+       "~/Library/Preferences/com.openai.codex.plist",
+       "~/Library/Preferences/com.openai.sky.CUAService.cli.plist",
+       "~/Library/Preferences/com.openai.sky.CUAService.plist",
+       "~/Library/Saved Application State/com.openai.codex.savedState"
+      ],
+      "rmdir": "~/.codex"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "chatgpt-classic",
+  "full_token": "chatgpt-classic",
+  "tap": "homebrew/cask",
+  "name": [
+   "ChatGPT Classic"
+  ],
+  "homepage": "https://chatgpt.com/",
+  "url": "https://persistent.oaistatic.com/classic/public/ChatGPT_Classic.dmg",
+  "version": "1.2026.184,1784145287",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "com.openai.chat-helper",
+      "quit": "com.openai.chat"
+     }
+    ]
+   },
+   {
+    "app": [
+     "ChatGPT Classic.app"
+    ],
+    "target": "/Applications/ChatGPT Classic.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.openai.chat.Widgets",
+       "~/Library/Application Scripts/group.com.openai.chat",
+       "~/Library/Application Support/ChatGPT",
+       "~/Library/Application Support/com.openai.chat",
+       "~/Library/Caches/ChatGPTHelper",
+       "~/Library/Caches/com.openai.chat",
+       "~/Library/Containers/com.openai.chat.Widgets",
+       "~/Library/Group Containers/group.com.openai.chat",
+       "~/Library/HTTPStorages/ChatGPTHelper.binarycookies",
+       "~/Library/HTTPStorages/com.openai.chat",
+       "~/Library/HTTPStorages/com.openai.chat.binarycookies",
+       "~/Library/Preferences/ChatGPTHelper.plist",
+       "~/Library/Preferences/com.openai.chat.*.plist",
+       "~/Library/Preferences/com.openai.chat.plist",
+       "~/Library/Saved Application State/com.openai.chat.savedState",
+       "~/Library/WebKit/com.openai.chat"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "choosy",
+  "full_token": "choosy",
+  "tap": "homebrew/cask",
+  "name": [
+   "Choosy"
+  ],
+  "homepage": "https://choosy.app/",
+  "url": "https://downloads.choosy.app/choosy_2.5.2.zip",
+  "version": "2.5.2",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.choosyosx.Choosy",
+      "pkgutil": "com.choosyosx.Choosy"
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Choosy.pkg"
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/*.com.choosyosx.Choosy",
+       "~/Library/Application Scripts/com.choosyosx.Choosy.Safari",
+       "~/Library/Application Scripts/com.choosyosx.Choosy.Share",
+       "~/Library/Application Support/BraveSoftware/Brave-Browser-Beta/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/BraveSoftware/Brave-Browser-Nightly/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/BraveSoftware/Brave-Browser/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Choosy",
+       "~/Library/Application Support/com.operasoftware.Opera/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/com.operasoftware.OperaDeveloper/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/com.operasoftware.OperaNext/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Microsoft Edge Beta/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Microsoft Edge Canary/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Microsoft Edge Dev/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Mozilla/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Vivaldi Snapshot/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Application Support/Vivaldi/NativeMessagingHosts/com.choosyosx.choosy.nativemessaging.json",
+       "~/Library/Caches/com.apple.helpd/Generated/com.choosyosx.Choosy.help*",
+       "~/Library/Caches/com.choosyosx.Choosy",
+       "~/Library/Containers/com.choosyosx.Choosy.Safari",
+       "~/Library/Containers/com.choosyosx.Choosy.Share",
+       "~/Library/Group Containers/*.com.choosyosx.Choosy",
+       "~/Library/HTTPStorages/com.choosyosx.Choosy",
+       "~/Library/Preferences/com.choosyosx.ChoosyPrefPane.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "chrome-remote-desktop-host",
+  "full_token": "chrome-remote-desktop-host",
+  "tap": "homebrew/cask",
+  "name": [
+   "Chrome Remote Desktop"
+  ],
+  "homepage": "https://chrome.google.com/webstore/detail/chrome-remote-desktop/inomeogfingihgjfjlpeplalcfajhgai",
+  "url": "https://dl.google.com/chrome-remote-desktop/chromeremotedesktop.dmg",
+  "version": "157.0.8103.38",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "org.chromium.chromoting",
+      "script": {
+       "executable": "/Applications/Chrome Remote Desktop Host Uninstaller.app/Contents/MacOS/remoting_host_uninstaller",
+       "args": [
+        "--no-ui"
+       ],
+       "sudo": true
+      },
+      "pkgutil": [
+       "com.google.pkg.ChromeRemoteDesktopHost",
+       "com.google.pkg.ChromeRemoteDesktopHostService",
+       "com.google.pkg.ChromeRemoteDesktopHostUninstaller"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Chrome Remote Desktop Host.pkg"
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": "~/Library/Saved Application State/com.google.chromeremotedesktop.me2me-host-uninstaller.savedState"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "chromium",
+  "full_token": "chromium",
+  "tap": "homebrew/cask",
+  "name": [
+   "Chromium"
+  ],
+  "homepage": "https://www.chromium.org/Home",
+  "url": "https://download-chromium.appspot.com/dl/Mac_Arm?type=snapshots",
+  "version": "latest",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "chrome-mac/Chromium.app"
+    ],
+    "target": "/Applications/Chromium.app"
+   },
+   {
+    "command_wrapper": [
+     "chromium",
+     {
+      "executable": "$APPDIR/Chromium.app/Contents/MacOS/Chromium"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/chromium"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Chromium",
+       "~/Library/Application Support/CrashReporter/Chromium_*.plist",
+       "~/Library/Caches/Chromium",
+       "~/Library/Logs/DiagnosticReports/Chromium-*.ips",
+       "~/Library/Preferences/org.chromium.Chromium.plist",
+       "~/Library/Saved Application State/org.chromium.Chromium.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": true
+ },
+ {
+  "token": "codex",
+  "full_token": "codex",
+  "tap": "homebrew/cask",
+  "name": [
+   "Codex"
+  ],
+  "homepage": "https://github.com/openai/codex",
+  "url": "https://github.com/openai/codex/releases/download/rust-v0.170.0/codex-package-aarch64-apple-darwin.tar.gz",
+  "version": "0.170.0",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "binary": [
+     "bin/codex"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/codex"
+   },
+   {
+    "generate_completions_from_executable": [
+     "bin/codex",
+     "completion",
+     {
+      "base_name": null,
+      "shell_parameter_format": null,
+      "shells": [
+       "bash",
+       "zsh",
+       "fish"
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "rmdir": "~/.codex"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "copilot-for-xcode",
+  "full_token": "copilot-for-xcode",
+  "tap": "homebrew/cask",
+  "name": [
+   "Copilot for Xcode"
+  ],
+  "homepage": "https://github.com/intitni/CopilotForXcode",
+  "url": "https://github.com/intitni/CopilotForXcode/releases/download/0.38.0/Copilot.for.Xcode.app.zip",
+  "version": "0.38.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Copilot for Xcode.app"
+    ],
+    "target": "/Applications/Copilot for Xcode.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/*com.intii.CopilotForXcode*",
+       "~/Library/Application Support/com.intii.CopilotForXcode",
+       "~/Library/Containers/com.intii.CopilotForXcode.EditorExtension",
+       "~/Library/Group Containers/*group.com.intii.CopilotForXcode*",
+       "~/Library/LaunchAgents/com.intii.CopilotForXcode.XPCService.plist",
+       "~/Library/Preferences/5YKZ4Y3DAW.group.com.intii.CopilotForXcode.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "copilot-money",
+  "full_token": "copilot-money",
+  "tap": "homebrew/cask",
+  "name": [
+   "Copilot"
+  ],
+  "homepage": "https://copilot.money/",
+  "url": "https://storage.googleapis.com/copilot-mac-releases/images/Copilot-6.8.2-340-69efc0f9.dmg",
+  "version": "6.8.2,340-69efc0f9",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Copilot.app"
+    ],
+    "target": "/Applications/Copilot.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.copilot.production*",
+       "~/Library/Application Scripts/group.com.copilot.production",
+       "~/Library/Containers/com.copilot.production",
+       "~/Library/Group Containers/group.com.copilot.production"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "couchbase-server-community",
+  "full_token": "couchbase-server-community",
+  "tap": "homebrew/cask",
+  "name": [
+   "Couchbase Server"
+  ],
+  "homepage": "https://www.couchbase.com/",
+  "url": "https://packages.couchbase.com/releases/8.0.2/couchbase-server-community_8.0.2-macos_arm64.dmg",
+  "version": "8.0.2",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Couchbase Server.app"
+    ],
+    "target": "/Applications/Couchbase Server.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Couchbase",
+       "~/Library/Caches/com.couchbase.couchbase-server",
+       "~/Library/Logs/Couchbase.log",
+       "~/Library/Logs/CouchbaseServer.log",
+       "~/Library/Preferences/com.couchbase.couchbase-server.plist",
+       "~/Library/Preferences/couchbase-server.ini"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "couchbase-server-enterprise",
+  "full_token": "couchbase-server-enterprise",
+  "tap": "homebrew/cask",
+  "name": [
+   "Couchbase Server"
+  ],
+  "homepage": "https://www.couchbase.com/",
+  "url": "https://packages.couchbase.com/releases/8.0.3/couchbase-server-enterprise_8.0.3-macos_arm64.dmg",
+  "version": "8.0.3",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Couchbase Server.app"
+    ],
+    "target": "/Applications/Couchbase Server.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Couchbase",
+       "~/Library/Caches/com.couchbase.couchbase-server",
+       "~/Library/Logs/Couchbase.log",
+       "~/Library/Logs/CouchbaseServer.log",
+       "~/Library/Preferences/com.couchbase.couchbase-server.plist",
+       "~/Library/Preferences/couchbase-server.ini"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "discord@ptb",
+  "full_token": "discord@ptb",
+  "tap": "homebrew/cask",
+  "name": [
+   "Discord PTB"
+  ],
+  "homepage": "https://discord.com/",
+  "url": "https://ptb.dl2.discordapp.net/distro/app/ptb/osx/universal/0.0.272/DiscordPTB.dmg",
+  "version": "0.0.272",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Discord PTB.app"
+    ],
+    "target": "/Applications/Discord PTB.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.hnc.discordptb.sfl*",
+       "~/Library/Application Support/com.hnc.DiscordPTB.ShipIt",
+       "~/Library/Application Support/discordptb",
+       "~/Library/Caches/com.hnc.DiscordPTB",
+       "~/Library/Preferences/com.hnc.DiscordPTB.plist",
+       "~/Library/Saved Application State/com.hnc.DiscordPTB.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "docker-desktop",
+  "full_token": "docker-desktop",
+  "tap": "homebrew/cask",
+  "name": [
+   "Docker Desktop",
+   "Docker Community Edition",
+   "Docker CE"
+  ],
+  "homepage": "https://www.docker.com/products/docker-desktop",
+  "url": "https://desktop.docker.com/mac/main/arm64/245822/Docker.dmg",
+  "version": "4.99.0,245822",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.docker.helper",
+       "com.docker.socket",
+       "com.docker.vmnetd"
+      ],
+      "quit": [
+       "com.docker.docker",
+       "com.electron.dockerdesktop"
+      ],
+      "delete": [
+       "/Library/PrivilegedHelperTools/com.docker.socket",
+       "/Library/PrivilegedHelperTools/com.docker.vmnetd"
+      ],
+      "rmdir": "~/.docker/bin"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Docker.app"
+    ],
+    "target": "/Applications/Docker.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Docker.app/Contents/Resources/bin/docker-credential-desktop",
+     {
+      "target": "/usr/local/bin/docker-credential-desktop"
+     }
+    ],
+    "target": "/usr/local/bin/docker-credential-desktop"
+   },
+   {
+    "binary": [
+     "$APPDIR/Docker.app/Contents/Resources/bin/docker-credential-osxkeychain",
+     {
+      "target": "/usr/local/bin/docker-credential-osxkeychain"
+     }
+    ],
+    "target": "/usr/local/bin/docker-credential-osxkeychain"
+   },
+   {
+    "binary": [
+     "$APPDIR/Docker.app/Contents/Resources/bin/kubectl",
+     {
+      "target": "/usr/local/bin/kubectl.docker"
+     }
+    ],
+    "target": "/usr/local/bin/kubectl.docker"
+   },
+   {
+    "binary": [
+     "$APPDIR/Docker.app/Contents/Resources/cli-plugins/docker-compose",
+     {
+      "target": "/usr/local/cli-plugins/docker-compose"
+     }
+    ],
+    "target": "/usr/local/cli-plugins/docker-compose"
+   },
+   {
+    "binary": [
+     "$APPDIR/Docker.app/Contents/Resources/bin/docker",
+     {
+      "target": "/usr/local/bin/docker"
+     }
+    ],
+    "target": "/usr/local/bin/docker"
+   },
+   {
+    "bash_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker.bash-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/etc/bash_completion.d/docker"
+   },
+   {
+    "bash_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker-compose.bash-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/etc/bash_completion.d/docker-compose"
+   },
+   {
+    "zsh_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker-compose.zsh-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/share/zsh/site-functions/_docker-compose"
+   },
+   {
+    "zsh_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker.zsh-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/share/zsh/site-functions/_docker"
+   },
+   {
+    "fish_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker-compose.fish-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/share/fish/vendor_completions.d/docker-compose.fish"
+   },
+   {
+    "fish_completion": [
+     "$APPDIR/Docker.app/Contents/Resources/etc/docker.fish-completion"
+    ],
+    "target": "$HOMEBREW_PREFIX/share/fish/vendor_completions.d/docker.fish"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "source": {
+         "path": "{{appdir}}/Docker.app/Contents/Resources/bin/kubectl"
+        },
+        "target": {
+         "path": "/usr/local/bin/kubectl"
+        },
+        "force": true,
+        "uninstall": true,
+        "sudo": "if_needed",
+        "guards": [
+         {
+          "path": "/usr/local/bin/kubectl",
+          "condition": "unless_exists",
+          "id": "1"
+         }
+        ],
+        "type": "symlink"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/usr/local/bin/docker-compose.backup",
+       "/usr/local/bin/docker.backup",
+       "~/.docker",
+       "~/Library/Application Scripts/com.docker.helper",
+       "~/Library/Application Scripts/group.com.docker",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.docker.helper.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.electron.dockerdesktop.sfl*",
+       "~/Library/Application Support/com.bugsnag.Bugsnag/com.docker.docker",
+       "~/Library/Application Support/Docker Desktop",
+       "~/Library/Application Support/docker-secrets-engine",
+       "~/Library/Caches/com.docker.docker",
+       "~/Library/Caches/com.plausiblelabs.crashreporter.data/com.docker.docker",
+       "~/Library/Caches/Docker Desktop",
+       "~/Library/Caches/docker-secrets-engine",
+       "~/Library/Caches/KSCrashReports/Docker",
+       "~/Library/Containers/com.docker.docker",
+       "~/Library/Containers/com.docker.helper",
+       "~/Library/Group Containers/group.com.docker",
+       "~/Library/HTTPStorages/com.docker.docker",
+       "~/Library/HTTPStorages/com.docker.docker.binarycookies",
+       "~/Library/Logs/Docker Desktop",
+       "~/Library/Preferences/com.docker.docker.plist",
+       "~/Library/Preferences/com.electron.docker-frontend.plist",
+       "~/Library/Preferences/com.electron.dockerdesktop.plist",
+       "~/Library/Saved Application State/com.electron.docker-frontend.savedState",
+       "~/Library/Saved Application State/com.electron.dockerdesktop.savedState"
+      ],
+      "rmdir": [
+       "~/Library/Caches/com.plausiblelabs.crashreporter.data",
+       "~/Library/Caches/KSCrashReports"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "domzilla-caffeine",
+  "full_token": "domzilla-caffeine",
+  "tap": "homebrew/cask",
+  "name": [
+   "Caffeine"
+  ],
+  "homepage": "https://www.caffeine-app.net/",
+  "url": "https://dr-caffeine-mac.s3.amazonaws.com/Caffeine_1.6.4.zip",
+  "version": "1.6.4",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "net.domzilla.caffeine"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Caffeine.app"
+    ],
+    "target": "/Applications/Caffeine.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/net.domzilla.caffeine",
+       "~/Library/Containers/net.domzilla.caffeine"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "figma",
+  "full_token": "figma",
+  "tap": "homebrew/cask",
+  "name": [
+   "Figma"
+  ],
+  "homepage": "https://www.figma.com/",
+  "url": "https://desktop.figma.com/mac-arm/Figma-126.11.9.zip",
+  "version": "126.11.9",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "com.figma.Desktop.ShipIt",
+      "quit": "com.figma.agent"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Figma.app"
+    ],
+    "target": "/Applications/Figma.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.figma.desktop.sfl*",
+       "~/Library/Application Support/Figma",
+       "~/Library/Application Support/figma-desktop",
+       "~/Library/Caches/com.figma.agent",
+       "~/Library/Caches/com.figma.Desktop",
+       "~/Library/HTTPStorages/com.figma.agent",
+       "~/Library/HTTPStorages/com.figma.Desktop",
+       "~/Library/Preferences/ByHost/com.figma.Desktop.ShipIt.*.plist",
+       "~/Library/Preferences/com.figma.Desktop.plist",
+       "~/Library/Saved Application State/com.figma.Desktop.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "firefox",
+  "full_token": "firefox",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Firefox"
+  ],
+  "homepage": "https://www.mozilla.org/firefox/",
+  "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/160.0.1/mac/en-US/Firefox%20160.0.1.dmg",
+  "version": "160.0.1",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.firefox"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Firefox.app"
+    ],
+    "target": "/Applications/Firefox.app"
+   },
+   {
+    "command_wrapper": [
+     "firefox",
+     {
+      "executable": "$APPDIR/Firefox.app/Contents/MacOS/firefox"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/firefox"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/firefox_*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.crashreporter",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.crashreporter.plist",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "firefox@beta",
+  "full_token": "firefox@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Firefox Beta"
+  ],
+  "homepage": "https://www.mozilla.org/firefox/channel/desktop/#beta",
+  "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/161.0b5/mac/en-US/Firefox%20161.0b5.dmg",
+  "version": "161.0b5",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Firefox.app"
+    ],
+    "target": "/Applications/Firefox.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/firefox_*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.crashreporter",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.crashreporter.plist",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "firefox@cn",
+  "full_token": "firefox@cn",
+  "tap": "homebrew/cask",
+  "name": [
+   "firefox-cn"
+  ],
+  "homepage": "https://www.firefox.com.cn/",
+  "url": "https://download-ssl.firefox.com.cn/releases/firefox/116.0/zh-CN/Firefox-latest.dmg",
+  "version": "116.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.firefox"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Firefox.app"
+    ],
+    "target": "/Applications/Firefox.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/firefox_*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.crashreporter",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.crashreporter.plist",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": true
+ },
+ {
+  "token": "firefox@developer-edition",
+  "full_token": "firefox@developer-edition",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Firefox Developer Edition"
+  ],
+  "homepage": "https://www.mozilla.org/firefox/developer/",
+  "url": "https://download-installer.cdn.mozilla.net/pub/devedition/releases/161.0b5/mac/en-US/Firefox%20161.0b5.dmg",
+  "version": "161.0b5",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Firefox Developer Edition.app"
+    ],
+    "target": "/Applications/Firefox Developer Edition.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/firefox_*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Preferences/org.mozilla.firefoxdeveloperedition.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "firefox@esr",
+  "full_token": "firefox@esr",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Firefox ESR",
+   "Mozilla Firefox Extended Support Release"
+  ],
+  "homepage": "https://www.mozilla.org/en-US/firefox/all/#product-desktop-esr",
+  "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/153.7.0esr/mac/en-US/Firefox%20153.7.0esr.dmg",
+  "version": "153.7.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.firefox",
+      "delete": "/Library/Logs/DiagnosticReports/firefox_*"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Firefox.app"
+    ],
+    "target": "/Applications/Firefox.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.crashreporter",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.crashreporter.plist",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "firefox@nightly",
+  "full_token": "firefox@nightly",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Firefox Nightly"
+  ],
+  "homepage": "https://www.mozilla.org/firefox/channel/desktop/#nightly",
+  "url": "https://ftp.mozilla.org/pub/firefox/nightly/2026/11/2026-11-18-09-36-14-mozilla-central/firefox-162.0a1.en-US.mac.dmg",
+  "version": "162.0a1,2026-11-18-09-36-14",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Firefox Nightly.app"
+    ],
+    "target": "/Applications/Firefox Nightly.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/firefox_*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.firefox.sfl*",
+       "~/Library/Application Support/CrashReporter/firefox_*",
+       "~/Library/Application Support/Firefox",
+       "~/Library/Caches/Firefox",
+       "~/Library/Caches/Mozilla/updates/Applications/Firefox",
+       "~/Library/Caches/org.mozilla.firefox",
+       "~/Library/Preferences/org.mozilla.firefox.plist",
+       "~/Library/Preferences/org.mozilla.nightly.plist",
+       "~/Library/Saved Application State/org.mozilla.firefox.savedState",
+       "~/Library/WebKit/org.mozilla.firefox"
+      ],
+      "rmdir": [
+       "~/Library/Application Support/Mozilla",
+       "~/Library/Caches/Mozilla",
+       "~/Library/Caches/Mozilla/updates",
+       "~/Library/Caches/Mozilla/updates/Applications"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "getoutline",
+  "full_token": "getoutline",
+  "tap": "homebrew/cask",
+  "name": [
+   "Outline"
+  ],
+  "homepage": "https://getoutline.com/",
+  "url": "https://download.todesktop.com/2211128hgkdcltv/Outline%201.11.0%20-%20Build%20261022knge4t6rc-arm64.dmg",
+  "version": "1.11.0,261022knge4t6rc",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Outline.app"
+    ],
+    "target": "/Applications/Outline.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.generaloutline.outline.sfl*",
+       "~/Library/Application Support/Outline",
+       "~/Library/Logs/Outline",
+       "~/Library/Preferences/com.generaloutline.outline.plist",
+       "~/Library/Saved Application State/com.generaloutline.outline.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "gitkraken",
+  "full_token": "gitkraken",
+  "tap": "homebrew/cask",
+  "name": [
+   "GitKraken"
+  ],
+  "homepage": "https://www.gitkraken.com/",
+  "url": "https://api.gitkraken.dev/releases/production/darwin/arm64/12.7.0/GitKraken-v12.7.0.zip",
+  "version": "12.7.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.axosoft.gitkraken"
+     }
+    ]
+   },
+   {
+    "app": [
+     "GitKraken.app"
+    ],
+    "target": "/Applications/GitKraken.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/.gitkraken",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.axosoft.gitkraken.sfl*",
+       "~/Library/Application Support/com.axosoft.gitkraken.ShipIt",
+       "~/Library/Application Support/GitKraken",
+       "~/Library/Caches/com.axosoft.gitkraken",
+       "~/Library/Caches/com.axosoft.gitkraken.ShipIt",
+       "~/Library/Caches/GitKraken",
+       "~/Library/Cookies/com.axosoft.gitkraken.binarycookies",
+       "~/Library/HTTPStorages/com.axosoft.gitkraken",
+       "~/Library/Preferences/com.axosoft.gitkraken.helper.plist",
+       "~/Library/Preferences/com.axosoft.gitkraken.plist",
+       "~/Library/Saved Application State/com.axosoft.gitkraken.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "gitkraken-on-premise-serverless",
+  "full_token": "gitkraken-on-premise-serverless",
+  "tap": "homebrew/cask",
+  "name": [
+   "GitKraken Serverless"
+  ],
+  "homepage": "https://www.gitkraken.com/git-client/on-premise",
+  "url": "https://api.gitkraken.dev/releases/standalone/production/darwin/arm64/12.6.2/GitKraken-v12.6.2.zip",
+  "version": "12.6.2",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.axosoft.gitkraken"
+     }
+    ]
+   },
+   {
+    "app": [
+     "GitKraken.app"
+    ],
+    "target": "/Applications/GitKraken.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/.gitkraken",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.axosoft.gitkraken.sfl*",
+       "~/Library/Application Support/com.axosoft.gitkraken.ShipIt",
+       "~/Library/Application Support/GitKraken",
+       "~/Library/Caches/com.axosoft.gitkraken",
+       "~/Library/Caches/com.axosoft.gitkraken.ShipIt",
+       "~/Library/Caches/GitKraken",
+       "~/Library/Cookies/com.axosoft.gitkraken.binarycookies",
+       "~/Library/HTTPStorages/com.axosoft.gitkraken",
+       "~/Library/Preferences/com.axosoft.gitkraken.helper.plist",
+       "~/Library/Preferences/com.axosoft.gitkraken.plist",
+       "~/Library/Saved Application State/com.axosoft.gitkraken.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "godot",
+  "full_token": "godot",
+  "tap": "homebrew/cask",
+  "name": [
+   "Godot Engine"
+  ],
+  "homepage": "https://godotengine.org/",
+  "url": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_macos.universal.zip",
+  "version": "4.7.2",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.godotengine.godot"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Godot.app"
+    ],
+    "target": "/Applications/Godot.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Godot.app/Contents/MacOS/Godot",
+     {
+      "target": "godot"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/godot"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Godot",
+       "~/Library/Caches/Godot",
+       "~/Library/Saved Application State/org.godotengine.godot.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "godot-mono",
+  "full_token": "godot-mono",
+  "tap": "homebrew/cask",
+  "name": [
+   "Godot Engine"
+  ],
+  "homepage": "https://godotengine.org/",
+  "url": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_mono_macos.universal.zip",
+  "version": "4.7.2",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.godotengine.godot"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Godot_mono.app"
+    ],
+    "target": "/Applications/Godot_mono.app"
+   },
+   {
+    "command_wrapper": [
+     "godot-mono",
+     {
+      "executable": "$APPDIR/Godot_mono.app/Contents/MacOS/Godot"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/godot-mono"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Godot",
+       "~/Library/Caches/Godot",
+       "~/Library/Saved Application State/org.godotengine.godot.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "godot@3",
+  "full_token": "godot@3",
+  "tap": "homebrew/cask",
+  "name": [
+   "Godot Engine"
+  ],
+  "homepage": "https://godotengine.org/",
+  "url": "https://github.com/godotengine/godot/releases/download/3.6.3-stable/Godot_v3.6.3-stable_osx.universal.zip",
+  "version": "3.6.3",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.godotengine.godot"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Godot.app"
+    ],
+    "target": "/Applications/Godot.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Godot.app/Contents/MacOS/Godot",
+     {
+      "target": "godot"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/godot"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Godot",
+       "~/Library/Caches/Godot",
+       "~/Library/Saved Application State/org.godotengine.godot.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "google-chrome",
+  "full_token": "google-chrome",
+  "tap": "homebrew/cask",
+  "name": [
+   "Google Chrome"
+  ],
+  "homepage": "https://www.google.com/chrome/",
+  "url": "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg",
+  "version": "158.0.8127.37",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.google.Chrome"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Google Chrome.app"
+    ],
+    "target": "/Applications/Google Chrome.app"
+   },
+   {
+    "zap": [
+     {
+      "launchctl": [
+       "com.google.keystone.agent",
+       "com.google.keystone.daemon"
+      ],
+      "trash": [
+       "/Library/Caches/com.google.SoftwareUpdate.*",
+       "/Library/Google/Google Chrome Brand.plist",
+       "/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.app.*.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.sfl*",
+       "~/Library/Application Support/Google/Chrome",
+       "~/Library/Caches/com.google.Chrome",
+       "~/Library/Caches/com.google.Chrome.helper.*",
+       "~/Library/Caches/com.google.Keystone",
+       "~/Library/Caches/com.google.Keystone.Agent",
+       "~/Library/Caches/com.google.SoftwareUpdate",
+       "~/Library/Caches/Google/Chrome",
+       "~/Library/Google/Google Chrome Brand.plist",
+       "~/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/LaunchAgents/com.google.keystone.agent.plist",
+       "~/Library/LaunchAgents/com.google.keystone.xpcservice.plist",
+       "~/Library/Logs/GoogleSoftwareUpdateAgent.log",
+       "~/Library/Preferences/com.google.Chrome.plist",
+       "~/Library/Preferences/com.google.Keystone.Agent.plist",
+       "~/Library/Saved Application State/com.google.Chrome.app.*.savedState",
+       "~/Library/Saved Application State/com.google.Chrome.savedState",
+       "~/Library/WebKit/com.google.Chrome"
+      ],
+      "rmdir": [
+       "/Library/Google",
+       "~/Library/Application Support/Google",
+       "~/Library/Caches/Google",
+       "~/Library/Google"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "google-chrome@beta",
+  "full_token": "google-chrome@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Google Chrome Beta"
+  ],
+  "homepage": "https://www.google.com/chrome/beta/",
+  "url": "https://dl.google.com/chrome/mac/universal/beta/googlechromebeta.dmg",
+  "version": "159.0.8154.13",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Google Chrome Beta.app"
+    ],
+    "target": "/Applications/Google Chrome Beta.app"
+   },
+   {
+    "zap": [
+     {
+      "launchctl": [
+       "com.google.keystone.agent",
+       "com.google.keystone.daemon"
+      ],
+      "trash": [
+       "/Library/Caches/com.google.SoftwareUpdate.*",
+       "/Library/Google/Google Chrome Brand.plist",
+       "/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.app.*.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.sfl*",
+       "~/Library/Application Support/Google/Chrome Beta",
+       "~/Library/Caches/com.google.Chrome",
+       "~/Library/Caches/com.google.Chrome.helper.*",
+       "~/Library/Caches/com.google.Keystone",
+       "~/Library/Caches/com.google.Keystone.Agent",
+       "~/Library/Caches/com.google.SoftwareUpdate",
+       "~/Library/Caches/Google/Chrome Beta",
+       "~/Library/Google/Google Chrome Brand.plist",
+       "~/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/LaunchAgents/com.google.keystone.agent.plist",
+       "~/Library/LaunchAgents/com.google.keystone.xpcservice.plist",
+       "~/Library/Logs/GoogleSoftwareUpdateAgent.log",
+       "~/Library/Preferences/com.google.Chrome.beta.plist",
+       "~/Library/Preferences/com.google.Chrome.plist",
+       "~/Library/Preferences/com.google.Keystone.Agent.plist",
+       "~/Library/Saved Application State/com.google.Chrome.app.*.savedState",
+       "~/Library/Saved Application State/com.google.Chrome.savedState",
+       "~/Library/WebKit/com.google.Chrome"
+      ],
+      "rmdir": [
+       "/Library/Google",
+       "~/Library/Application Support/Google",
+       "~/Library/Caches/Google",
+       "~/Library/Google"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "google-chrome@canary",
+  "full_token": "google-chrome@canary",
+  "tap": "homebrew/cask",
+  "name": [
+   "Google Chrome Canary"
+  ],
+  "homepage": "https://www.google.com/chrome/canary/",
+  "url": "https://dl.google.com/chrome/mac/universal/canary/googlechromecanary.dmg",
+  "version": "160.0.8169.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Google Chrome Canary.app"
+    ],
+    "target": "/Applications/Google Chrome Canary.app"
+   },
+   {
+    "zap": [
+     {
+      "launchctl": [
+       "com.google.keystone.agent",
+       "com.google.keystone.daemon"
+      ],
+      "trash": [
+       "/Library/Caches/com.google.SoftwareUpdate.*",
+       "/Library/Google/Google Chrome Brand.plist",
+       "/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.app.*.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.sfl*",
+       "~/Library/Application Support/Google/Chrome Canary",
+       "~/Library/Caches/com.google.Chrome",
+       "~/Library/Caches/com.google.Chrome.helper.*",
+       "~/Library/Caches/com.google.Keystone",
+       "~/Library/Caches/com.google.Keystone.Agent",
+       "~/Library/Caches/com.google.SoftwareUpdate",
+       "~/Library/Caches/Google/Chrome Canary",
+       "~/Library/Google/Google Chrome Brand.plist",
+       "~/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/LaunchAgents/com.google.keystone.agent.plist",
+       "~/Library/LaunchAgents/com.google.keystone.xpcservice.plist",
+       "~/Library/Logs/GoogleSoftwareUpdateAgent.log",
+       "~/Library/Preferences/com.google.Chrome.canary.plist",
+       "~/Library/Preferences/com.google.Chrome.plist",
+       "~/Library/Preferences/com.google.Keystone.Agent.plist",
+       "~/Library/Saved Application State/com.google.Chrome.app.*.savedState",
+       "~/Library/Saved Application State/com.google.Chrome.savedState",
+       "~/Library/WebKit/com.google.Chrome"
+      ],
+      "rmdir": [
+       "/Library/Google",
+       "~/Library/Application Support/Google",
+       "~/Library/Caches/Google",
+       "~/Library/Google"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "google-chrome@dev",
+  "full_token": "google-chrome@dev",
+  "tap": "homebrew/cask",
+  "name": [
+   "Google Chrome Dev"
+  ],
+  "homepage": "https://www.google.com/chrome/dev/",
+  "url": "https://dl.google.com/chrome/mac/universal/dev/googlechromedev.dmg",
+  "version": "160.0.8157.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Google Chrome Dev.app"
+    ],
+    "target": "/Applications/Google Chrome Dev.app"
+   },
+   {
+    "zap": [
+     {
+      "launchctl": [
+       "com.google.keystone.agent",
+       "com.google.keystone.daemon"
+      ],
+      "trash": [
+       "/Library/Caches/com.google.SoftwareUpdate.*",
+       "/Library/Google/Google Chrome Brand.plist",
+       "/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.app.*.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.google.chrome.sfl*",
+       "~/Library/Application Support/Google/Chrome Dev",
+       "~/Library/Caches/com.google.Chrome",
+       "~/Library/Caches/com.google.Chrome.helper.*",
+       "~/Library/Caches/com.google.Keystone",
+       "~/Library/Caches/com.google.Keystone.Agent",
+       "~/Library/Caches/com.google.SoftwareUpdate",
+       "~/Library/Caches/Google/Chrome Dev",
+       "~/Library/Google/Google Chrome Brand.plist",
+       "~/Library/Google/GoogleSoftwareUpdate",
+       "~/Library/LaunchAgents/com.google.keystone.agent.plist",
+       "~/Library/LaunchAgents/com.google.keystone.xpcservice.plist",
+       "~/Library/Logs/GoogleSoftwareUpdateAgent.log",
+       "~/Library/Preferences/com.google.Chrome.dev.plist",
+       "~/Library/Preferences/com.google.Chrome.plist",
+       "~/Library/Preferences/com.google.Keystone.Agent.plist",
+       "~/Library/Saved Application State/com.google.Chrome.app.*.savedState",
+       "~/Library/Saved Application State/com.google.Chrome.savedState",
+       "~/Library/WebKit/com.google.Chrome"
+      ],
+      "rmdir": [
+       "/Library/Google",
+       "~/Library/Application Support/Google",
+       "~/Library/Caches/Google",
+       "~/Library/Google"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "helium",
+  "full_token": "helium",
+  "tap": "homebrew/cask",
+  "name": [
+   "Helium"
+  ],
+  "homepage": "https://github.com/koush/support-wiki/wiki/Helium-Desktop-Installer-and-Android-App",
+  "url": "https://github.com/koush/CarbonResources/releases/download/v1.0.0/carbon-mac.zip",
+  "version": "1.0.0",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.koushikdutta.Helium"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Helium.app"
+    ],
+    "target": "/Applications/Helium.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": "~/Library/Saved Application State/com.koushikdutta.Helium.savedState"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": true
+ },
+ {
+  "token": "helium-browser",
+  "full_token": "helium-browser",
+  "tap": "homebrew/cask",
+  "name": [
+   "Helium"
+  ],
+  "homepage": "https://helium.computer/",
+  "url": "https://github.com/imputnet/helium-macos/releases/download/0.22.1.1/helium_0.22.1.1_arm64-macos.dmg",
+  "version": "0.22.1.1",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Helium.app"
+    ],
+    "target": "/Applications/Helium.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/net.imput.helium",
+       "~/Library/Caches/net.imput.helium",
+       "~/Library/HTTPStorages/net.imput.helium",
+       "~/Library/Preferences/net.imput.helium.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "impactor",
+  "full_token": "impactor",
+  "tap": "homebrew/cask",
+  "name": [
+   "Impactor"
+  ],
+  "homepage": "https://github.com/khcrysalis/Impactor/",
+  "url": "https://github.com/khcrysalis/Impactor/releases/download/v2.7.3/Impactor-macos-universal.dmg",
+  "version": "2.7.3",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Impactor.app"
+    ],
+    "target": "/Applications/Impactor.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": "~/.config/PlumeImpactor"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "irbis-zen",
+  "full_token": "irbis-zen",
+  "tap": "homebrew/cask",
+  "name": [
+   "Zen"
+  ],
+  "homepage": "https://irbis.sh/zen/",
+  "url": "https://github.com/irbis-sh/zen-desktop/releases/download/v0.29.0/Zen_darwin_arm64_noselfupdate.tar.gz",
+  "version": "0.29.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "script": {
+       "executable": "/Applications/Zen.app/Contents/MacOS/Zen",
+       "args": [
+        "--uninstall-ca"
+       ],
+       "must_succeed": false
+      }
+     }
+    ]
+   },
+   {
+    "app": [
+     "Zen.app"
+    ],
+    "target": "/Applications/Zen.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Zen",
+       "~/Library/Caches/net.zenprivacy.zen",
+       "~/Library/Caches/Zen",
+       "~/Library/LaunchAgents/net.zenprivacy.zen.plist",
+       "~/Library/Logs/Zen",
+       "~/Library/Preferences/net.zenprivacy.zen.plist",
+       "~/Library/Saved Application State/net.zenprivacy.zen.savedState",
+       "~/Library/WebKit/net.zenprivacy.zen"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "libreoffice",
+  "full_token": "libreoffice",
+  "tap": "homebrew/cask",
+  "name": [
+   "LibreOffice"
+  ],
+  "homepage": "https://www.libreoffice.org/",
+  "url": "https://download.documentfoundation.org/libreoffice/stable/26.8.3/mac/aarch64/LibreOffice_26.8.3_MacOS_aarch64.dmg",
+  "version": "26.8.3",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "LibreOffice.app"
+    ],
+    "target": "/Applications/LibreOffice.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/gengal"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/gengal"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/regview"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/regview"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/senddoc"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/senddoc"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/uno"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/uno"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/unopkg"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/unopkg"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/uri-encode"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/uri-encode"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/xpdfimport"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/xpdfimport"
+   },
+   {
+    "command_wrapper": [
+     "soffice",
+     {
+      "executable": "$APPDIR/LibreOffice.app/Contents/MacOS/soffice"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/soffice"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/unoinfo"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/unoinfo"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.libreoffice.script.sfl*",
+       "~/Library/Application Support/LibreOffice",
+       "~/Library/Preferences/org.libreoffice.script.plist",
+       "~/Library/Saved Application State/org.libreoffice.script.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "libreoffice-still",
+  "full_token": "libreoffice-still",
+  "tap": "homebrew/cask",
+  "name": [
+   "LibreOffice Still"
+  ],
+  "homepage": "https://www.libreoffice.org/",
+  "url": "https://download.documentfoundation.org/libreoffice/stable/26.2.7/mac/aarch64/LibreOffice_26.2.7_MacOS_aarch64.dmg",
+  "version": "26.2.7",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "LibreOffice.app"
+    ],
+    "target": "/Applications/LibreOffice.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/gengal"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/gengal"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/regview"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/regview"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/senddoc"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/senddoc"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/uno"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/uno"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/unopkg"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/unopkg"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/uri-encode"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/uri-encode"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/xpdfimport"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/xpdfimport"
+   },
+   {
+    "command_wrapper": [
+     "soffice",
+     {
+      "executable": "$APPDIR/LibreOffice.app/Contents/MacOS/soffice"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/soffice"
+   },
+   {
+    "binary": [
+     "$APPDIR/LibreOffice.app/Contents/MacOS/unoinfo"
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/unoinfo"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.libreoffice.script.sfl*",
+       "~/Library/Application Support/LibreOffice",
+       "~/Library/Preferences/org.libreoffice.script.plist",
+       "~/Library/Saved Application State/org.libreoffice.script.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "little-snitch",
+  "full_token": "little-snitch",
+  "tap": "homebrew/cask",
+  "name": [
+   "Little Snitch"
+  ],
+  "homepage": "https://www.obdev.at/products/littlesnitch/index.html",
+  "url": "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-6.5.dmg",
+  "version": "6.5",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "at.obdev.littlesnitch"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Little Snitch.app"
+    ],
+    "target": "/Applications/Little Snitch.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Application Support/Objective Development/Little Snitch",
+       "/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "/Library/Extensions/LittleSnitch.kext",
+       "/Library/Little Snitch",
+       "/Library/Logs/LittleSnitchDaemon.log",
+       "/Library/StagedExtensions/Library/Extensions/LittleSnitch.kext",
+       "~/Library/Application Support/Little Snitch",
+       "~/Library/Caches/at.obdev.LittleSnitchAgent",
+       "~/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "~/Library/Caches/at.obdev.LittleSnitchHelper",
+       "~/Library/Caches/at.obdev.LittleSnitchSoftwareUpdate",
+       "~/Library/Caches/com.apple.helpd/Generated/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Caches/com.apple.helpd/SDMHelpData/Other/English/HelpSDMIndexFile/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Logs/Little Snitch Agent.log",
+       "~/Library/Logs/Little Snitch Helper.log",
+       "~/Library/Logs/Little Snitch Installer.log",
+       "~/Library/Logs/Little Snitch Network Monitor.log",
+       "~/Library/Preferences/at.obdev.LittleSnitchAgent.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchConfiguration.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchInstaller.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchNetworkMonitor.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchSoftwareUpdate.plist",
+       "~/Library/Saved Application State/at.obdev.LittleSnitchInstaller.savedState",
+       "~/Library/WebKit/at.obdev.LittleSnitchConfiguration"
+      ],
+      "rmdir": "/Library/Application Support/Objective Development"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "little-snitch@4",
+  "full_token": "little-snitch@4",
+  "tap": "homebrew/cask",
+  "name": [
+   "Little Snitch"
+  ],
+  "homepage": "https://www.obdev.at/products/littlesnitch/index.html",
+  "url": "https://www.obdev.at/downloads/littlesnitch/legacy/LittleSnitch-4.6.1.dmg",
+  "version": "4.6.1",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "at.obdev.littlesnitchd",
+       "at.obdev.LittleSnitchHelper",
+       "at.obdev.LittleSnitchUIAgent"
+      ]
+     }
+    ]
+   },
+   {
+    "installer": [
+     {
+      "manual": "LittleSnitch-4.6.1.dmg"
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Application Support/Objective Development/Little Snitch",
+       "/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "/Library/Extensions/LittleSnitch.kext",
+       "/Library/Little Snitch",
+       "/Library/Logs/LittleSnitchDaemon.log",
+       "/Library/StagedExtensions/Library/Extensions/LittleSnitch.kext",
+       "~/Library/Application Support/Little Snitch",
+       "~/Library/Caches/at.obdev.LittleSnitchAgent",
+       "~/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "~/Library/Caches/at.obdev.LittleSnitchHelper",
+       "~/Library/Caches/at.obdev.LittleSnitchSoftwareUpdate",
+       "~/Library/Caches/com.apple.helpd/Generated/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Caches/com.apple.helpd/SDMHelpData/Other/English/HelpSDMIndexFile/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Logs/Little Snitch Agent.log",
+       "~/Library/Logs/Little Snitch Helper.log",
+       "~/Library/Logs/Little Snitch Installer.log",
+       "~/Library/Logs/Little Snitch Network Monitor.log",
+       "~/Library/Preferences/at.obdev.LittleSnitchAgent.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchConfiguration.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchInstaller.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchNetworkMonitor.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchSoftwareUpdate.plist",
+       "~/Library/Saved Application State/at.obdev.LittleSnitchInstaller.savedState",
+       "~/Library/WebKit/at.obdev.LittleSnitchConfiguration"
+      ],
+      "rmdir": "/Library/Application Support/Objective Development"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "little-snitch@5",
+  "full_token": "little-snitch@5",
+  "tap": "homebrew/cask",
+  "name": [
+   "Little Snitch"
+  ],
+  "homepage": "https://www.obdev.at/products/littlesnitch/index.html",
+  "url": "https://www.obdev.at/downloads/littlesnitch/legacy/LittleSnitch-5.8.dmg",
+  "version": "5.8",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Little Snitch.app"
+    ],
+    "target": "/Applications/Little Snitch.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Application Support/Objective Development/Little Snitch",
+       "/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "/Library/Extensions/LittleSnitch.kext",
+       "/Library/Little Snitch",
+       "/Library/Logs/LittleSnitchDaemon.log",
+       "/Library/StagedExtensions/Library/Extensions/LittleSnitch.kext",
+       "~/Library/Application Support/Little Snitch",
+       "~/Library/Caches/at.obdev.LittleSnitchAgent",
+       "~/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "~/Library/Caches/at.obdev.LittleSnitchHelper",
+       "~/Library/Caches/at.obdev.LittleSnitchSoftwareUpdate",
+       "~/Library/Caches/com.apple.helpd/Generated/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Caches/com.apple.helpd/SDMHelpData/Other/English/HelpSDMIndexFile/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Logs/Little Snitch Agent.log",
+       "~/Library/Logs/Little Snitch Helper.log",
+       "~/Library/Logs/Little Snitch Installer.log",
+       "~/Library/Logs/Little Snitch Network Monitor.log",
+       "~/Library/Preferences/at.obdev.LittleSnitchAgent.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchConfiguration.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchInstaller.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchNetworkMonitor.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchSoftwareUpdate.plist",
+       "~/Library/Saved Application State/at.obdev.LittleSnitchInstaller.savedState",
+       "~/Library/WebKit/at.obdev.LittleSnitchConfiguration"
+      ],
+      "rmdir": "/Library/Application Support/Objective Development"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "little-snitch@nightly",
+  "full_token": "little-snitch@nightly",
+  "tap": "homebrew/cask",
+  "name": [
+   "Little Snitch"
+  ],
+  "homepage": "https://www.obdev.at/products/littlesnitch/download-nightly.html",
+  "url": "https://www.obdev.at/downloads/littlesnitch/nightly/LittleSnitch-6.5.1-nightly-(7309).dmg",
+  "version": "6.5.1,7309",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "at.obdev.littlesnitch"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Little Snitch.app"
+    ],
+    "target": "/Applications/Little Snitch.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Application Support/Objective Development/Little Snitch",
+       "/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "/Library/Extensions/LittleSnitch.kext",
+       "/Library/Little Snitch",
+       "/Library/Logs/LittleSnitchDaemon.log",
+       "/Library/StagedExtensions/Library/Extensions/LittleSnitch.kext",
+       "~/Library/Application Support/Little Snitch",
+       "~/Library/Caches/at.obdev.LittleSnitchAgent",
+       "~/Library/Caches/at.obdev.LittleSnitchConfiguration",
+       "~/Library/Caches/at.obdev.LittleSnitchHelper",
+       "~/Library/Caches/at.obdev.LittleSnitchSoftwareUpdate",
+       "~/Library/Caches/com.apple.helpd/Generated/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Caches/com.apple.helpd/SDMHelpData/Other/English/HelpSDMIndexFile/at.obdev.LittleSnitchConfiguration.help*",
+       "~/Library/Logs/Little Snitch Agent.log",
+       "~/Library/Logs/Little Snitch Helper.log",
+       "~/Library/Logs/Little Snitch Installer.log",
+       "~/Library/Logs/Little Snitch Network Monitor.log",
+       "~/Library/Preferences/at.obdev.LittleSnitchAgent.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchConfiguration.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchInstaller.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchNetworkMonitor.plist",
+       "~/Library/Preferences/at.obdev.LittleSnitchSoftwareUpdate.plist",
+       "~/Library/Saved Application State/at.obdev.LittleSnitchInstaller.savedState",
+       "~/Library/WebKit/at.obdev.LittleSnitchConfiguration"
+      ],
+      "rmdir": "/Library/Application Support/Objective Development"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "logi-options+",
+  "full_token": "logi-options+",
+  "tap": "homebrew/cask",
+  "name": [
+   "Logitech Options+"
+  ],
+  "homepage": "https://www.logitech.com/en-us/software/logi-options-plus.html",
+  "url": "https://download01.logi.com/web/ftp/pub/techsupport/optionsplus/logioptionsplus_installer.zip",
+  "version": "2.9.1013853",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.logi.cp-dev-mgr",
+       "com.logi.optionsplus",
+       "com.logi.optionsplus.updater",
+       "com.logitech.LogiRightSight",
+       "com.logitech.LogiRightSight.Agent"
+      ],
+      "quit": [
+       "com.logi.cp-dev-mgr",
+       "com.logi.optionsplus",
+       "com.logi.optionsplus.driverhost",
+       "com.logi.optionsplus.updater",
+       "com.logitech.FirmwareUpdateTool",
+       "com.logitech.logiaipromptbuilder"
+      ],
+      "pkgutil": "com.logitech.LogiRightSightForWebcams.pkg",
+      "delete": [
+       "/Applications/logioptionsplus.app",
+       "/Applications/Utilities/Logi Options+ Driver Installer.bundle",
+       "/Library/Application Support/Logi",
+       "/Library/Application Support/Logitech.localized/LogiOptionsPlus"
+      ],
+      "rmdir": "/Library/Application Support/Logitech.localized"
+     }
+    ]
+   },
+   {
+    "installer": [
+     {
+      "script": {
+       "executable": "logioptionsplus_installer.app/Contents/MacOS/logioptionsplus_installer",
+       "args": [
+        "--quiet"
+       ],
+       "sudo": true
+      }
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Users/Shared/logi",
+       "/Users/Shared/LogiOptionsPlus",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.logi.*.sfl*",
+       "~/Library/Application Support/Logi",
+       "~/Library/Application Support/LogiOptionsPlus",
+       "~/Library/HTTPStorages/LogiPluginServiceNative",
+       "~/Library/Logs/xlog_logitech",
+       "~/Library/Preferences/com.logi.cp-dev-mgr.plist",
+       "~/Library/Preferences/com.logi.lps.settings.plist",
+       "~/Library/Preferences/com.logi.optionsplus.driverhost.plist",
+       "~/Library/Preferences/com.logi.optionsplus.plist",
+       "~/Library/Preferences/com.logi.pluginservice.plist",
+       "~/Library/Saved Application State/com.logi.optionsplus.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "loop",
+  "full_token": "loop",
+  "tap": "homebrew/cask",
+  "name": [
+   "Loop"
+  ],
+  "homepage": "https://github.com/MrKai77/Loop",
+  "url": "https://github.com/MrKai77/Loop/releases/download/1.4.2/Loop.zip",
+  "version": "1.4.2",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.MrKai77.Loop"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Loop.app"
+    ],
+    "target": "/Applications/Loop.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.MrKai77.Loop",
+       "~/Library/Application Support/Loop",
+       "~/Library/Caches/com.MrKai77.Loop",
+       "~/Library/HTTPStorages/com.MrKai77.Loop",
+       "~/Library/Preferences/com.MrKai77.Loop.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "loop-messenger",
+  "full_token": "loop-messenger",
+  "tap": "homebrew/cask",
+  "name": [
+   "Loop"
+  ],
+  "homepage": "https://loop.ru/",
+  "url": "https://artifacts.wilix.dev/repository/loop-files/loop-6.0.4/loop-desktop-6.0.4-mac-arm64.dmg",
+  "version": "6.0.4",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "LOOP.app"
+    ],
+    "target": "/Applications/LOOP.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/loop.desktop.sfl*",
+       "~/Library/Application Support/LOOP",
+       "~/Library/Logs/LOOP",
+       "~/Library/Preferences/Loop.Desktop.plist",
+       "~/Library/Preferences/ru.loop.app.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "microsoft-office",
+  "full_token": "microsoft-office",
+  "tap": "homebrew/cask",
+  "name": [
+   "Microsoft Office"
+  ],
+  "homepage": "https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac/",
+  "url": "https://res.public.onecdn.static.microsoft/mro1cdnstorage/C1297A47-86C4-4C1F-97FA-950631F94777/MacAutoupdate/Microsoft_365_and_Office_16.115.26110837_Installer.pkg",
+  "version": "16.115.26110837",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.microsoft.office.licensing.helper",
+       "com.microsoft.office.licensingV2.helper",
+       "com.microsoft.office.licensingV3.helper",
+       "com.microsoft.OneDriveStandaloneUpdater",
+       "com.microsoft.OneDriveStandaloneUpdaterDaemon",
+       "com.microsoft.OneDriveUpdaterDaemon",
+       "com.microsoft.SyncReporter"
+      ],
+      "quit": "com.microsoft.autoupdate2",
+      "pkgutil": [
+       "com.microsoft.OneDrive",
+       "com.microsoft.package.DFonts",
+       "com.microsoft.package.Frameworks",
+       "com.microsoft.package.Microsoft_Excel.app",
+       "com.microsoft.package.Microsoft_OneNote.app",
+       "com.microsoft.package.Microsoft_Outlook.app",
+       "com.microsoft.package.Microsoft_PowerPoint.app",
+       "com.microsoft.package.Microsoft_Word.app",
+       "com.microsoft.package.Proofing_Tools",
+       "com.microsoft.pkg.licensing",
+       "com.microsoft.pkg.licensing.v3",
+       "com.microsoft.wdav",
+       "com.microsoft.wdav.shim"
+      ],
+      "delete": [
+       "/Applications/Microsoft Defender Shim.app",
+       "/Applications/Microsoft Defender.app",
+       "/Applications/Microsoft Excel.app",
+       "/Applications/Microsoft OneNote.app",
+       "/Applications/Microsoft Outlook.app",
+       "/Applications/Microsoft PowerPoint.app",
+       "/Applications/Microsoft Word.app",
+       "/Applications/OneDrive.app"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Microsoft_365_and_Office_16.115.26110837_Installer.pkg",
+     {
+      "choices": [
+       {
+        "choiceIdentifier": "com.microsoft.autoupdate",
+        "choiceAttribute": "selected",
+        "attributeSetting": 0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.microsoft.errorreporting",
+       "~/Library/Application Scripts/com.microsoft.Excel",
+       "~/Library/Application Scripts/com.microsoft.Office365ServiceV2",
+       "~/Library/Application Scripts/com.microsoft.OneDrive.FileProvider",
+       "~/Library/Application Scripts/com.microsoft.OneDrive.FinderSync",
+       "~/Library/Application Scripts/com.microsoft.OneDriveLauncher",
+       "~/Library/Application Scripts/com.microsoft.onenote.mac",
+       "~/Library/Application Scripts/com.microsoft.onenote.mac.shareextension",
+       "~/Library/Application Scripts/com.microsoft.openxml.excel.app",
+       "~/Library/Application Scripts/com.microsoft.Outlook",
+       "~/Library/Application Scripts/com.microsoft.outlook.profilemanager",
+       "~/Library/Application Scripts/com.microsoft.Powerpoint",
+       "~/Library/Application Scripts/com.microsoft.Word",
+       "~/Library/Application Scripts/UBF8T346G9.OneDriveStandaloneSuite",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.excel.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.powerpoint.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.word.sfl*",
+       "~/Library/Application Support/CrashReporter/Microsoft Error Reporting_*.plist",
+       "~/Library/Application Support/Microsoft Update Assistant",
+       "~/Library/Caches/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/Caches/com.plausiblelabs.crashreporter.data/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/Containers/com.microsoft.com.microsoft.RMS-XPCService",
+       "~/Library/Containers/com.microsoft.errorreporting",
+       "~/Library/Containers/com.microsoft.Excel",
+       "~/Library/Containers/com.microsoft.netlib.shipassertprocess",
+       "~/Library/Containers/com.microsoft.Office365ServiceV2",
+       "~/Library/Containers/com.microsoft.OneDrive.FileProvider",
+       "~/Library/Containers/com.microsoft.OneDrive.FinderSync",
+       "~/Library/Containers/com.microsoft.onenote.mac",
+       "~/Library/Containers/com.microsoft.onenote.mac.shareextension",
+       "~/Library/Containers/com.microsoft.openxml.excel.app",
+       "~/Library/Containers/com.microsoft.Outlook",
+       "~/Library/Containers/com.microsoft.outlook.profilemanager",
+       "~/Library/Containers/com.microsoft.Powerpoint",
+       "~/Library/Containers/com.microsoft.Word",
+       "~/Library/Group Containers/UBF8T346G9.ms",
+       "~/Library/Group Containers/UBF8T346G9.Office",
+       "~/Library/Group Containers/UBF8T346G9.OfficeOneDriveSyncIntegration",
+       "~/Library/Group Containers/UBF8T346G9.OfficeOsfWebHost",
+       "~/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite",
+       "~/Library/HTTPStorages/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/HTTPStorages/com.microsoft.OneDriveStandaloneUpdater.binarycookies",
+       "~/Library/Logs/OneDrive",
+       "~/Library/Preferences/com.microsoft.Excel.plist",
+       "~/Library/Preferences/com.microsoft.OneDriveStandaloneUpdater.plist",
+       "~/Library/Preferences/com.microsoft.OneDriveUpdater.plist",
+       "~/Library/Preferences/com.microsoft.Outlook.plist",
+       "~/Library/Preferences/com.microsoft.Powerpoint.plist",
+       "~/Library/Preferences/com.microsoft.Word.plist",
+       "~/Library/Saved Application State/com.microsoft.office.setupassistant.savedState",
+       "~/Library/Saved Application State/com.microsoft.Word.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "microsoft-office-businesspro",
+  "full_token": "microsoft-office-businesspro",
+  "tap": "homebrew/cask",
+  "name": [
+   "Microsoft Office BusinessPro"
+  ],
+  "homepage": "https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac/",
+  "url": "https://res.public.onecdn.static.microsoft/mro1cdnstorage/C1297A47-86C4-4C1F-97FA-950631F94777/MacAutoupdate/Microsoft_365_and_Office_16.115.26110837_BusinessPro_Installer.pkg",
+  "version": "16.115.26110837",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.microsoft.office.licensing.helper",
+       "com.microsoft.office.licensingV2.helper",
+       "com.microsoft.office.licensingV3.helper",
+       "com.microsoft.OneDriveStandaloneUpdater",
+       "com.microsoft.OneDriveStandaloneUpdaterDaemon",
+       "com.microsoft.OneDriveUpdaterDaemon",
+       "com.microsoft.SyncReporter",
+       "com.microsoft.teams.TeamsUpdaterDaemon"
+      ],
+      "quit": "com.microsoft.autoupdate2",
+      "pkgutil": [
+       "com.microsoft.m365copilot.shim",
+       "com.microsoft.MSTeamsAudioDevice",
+       "com.microsoft.OneDrive",
+       "com.microsoft.package.DFonts",
+       "com.microsoft.package.Frameworks",
+       "com.microsoft.package.Microsoft_Excel.app",
+       "com.microsoft.package.Microsoft_OneNote.app",
+       "com.microsoft.package.Microsoft_Outlook.app",
+       "com.microsoft.package.Microsoft_PowerPoint.app",
+       "com.microsoft.package.Microsoft_Word.app",
+       "com.microsoft.package.Proofing_Tools",
+       "com.microsoft.pkg.licensing",
+       "com.microsoft.pkg.licensing.v3",
+       "com.microsoft.teams",
+       "com.microsoft.teams2",
+       "com.microsoft.wdav",
+       "com.microsoft.wdav.shim"
+      ],
+      "delete": [
+       "/Applications/Microsoft 365 Copilot Shim.app",
+       "/Applications/Microsoft Defender Shim.app",
+       "/Applications/Microsoft Defender.app",
+       "/Applications/Microsoft Excel.app",
+       "/Applications/Microsoft OneNote.app",
+       "/Applications/Microsoft Outlook.app",
+       "/Applications/Microsoft PowerPoint.app",
+       "/Applications/Microsoft Teams.app",
+       "/Applications/Microsoft Word.app",
+       "/Applications/OneDrive.app"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Microsoft_365_and_Office_16.115.26110837_BusinessPro_Installer.pkg",
+     {
+      "choices": [
+       {
+        "choiceIdentifier": "com.microsoft.autoupdate",
+        "choiceAttribute": "selected",
+        "attributeSetting": 0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.microsoft.errorreporting",
+       "~/Library/Application Scripts/com.microsoft.Excel",
+       "~/Library/Application Scripts/com.microsoft.Office365ServiceV2",
+       "~/Library/Application Scripts/com.microsoft.OneDrive.FileProvider",
+       "~/Library/Application Scripts/com.microsoft.OneDrive.FinderSync",
+       "~/Library/Application Scripts/com.microsoft.OneDriveLauncher",
+       "~/Library/Application Scripts/com.microsoft.onenote.mac",
+       "~/Library/Application Scripts/com.microsoft.onenote.mac.shareextension",
+       "~/Library/Application Scripts/com.microsoft.openxml.excel.app",
+       "~/Library/Application Scripts/com.microsoft.Outlook",
+       "~/Library/Application Scripts/com.microsoft.outlook.profilemanager",
+       "~/Library/Application Scripts/com.microsoft.Powerpoint",
+       "~/Library/Application Scripts/com.microsoft.teams2*",
+       "~/Library/Application Scripts/com.microsoft.Word",
+       "~/Library/Application Scripts/UBF8T346G9.OneDriveStandaloneSuite",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.excel.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.powerpoint.sfl*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.word.sfl*",
+       "~/Library/Application Support/com.microsoft.teams",
+       "~/Library/Application Support/CrashReporter/Microsoft Error Reporting_*.plist",
+       "~/Library/Application Support/Microsoft Update Assistant",
+       "~/Library/Application Support/Microsoft/Teams",
+       "~/Library/Application Support/Teams",
+       "~/Library/Caches/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/Caches/com.microsoft.teams",
+       "~/Library/Caches/com.plausiblelabs.crashreporter.data/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/Containers/com.microsoft.com.microsoft.RMS-XPCService",
+       "~/Library/Containers/com.microsoft.errorreporting",
+       "~/Library/Containers/com.microsoft.Excel",
+       "~/Library/Containers/com.microsoft.netlib.shipassertprocess",
+       "~/Library/Containers/com.microsoft.Office365ServiceV2",
+       "~/Library/Containers/com.microsoft.OneDrive.FileProvider",
+       "~/Library/Containers/com.microsoft.OneDrive.FinderSync",
+       "~/Library/Containers/com.microsoft.onenote.mac",
+       "~/Library/Containers/com.microsoft.onenote.mac.shareextension",
+       "~/Library/Containers/com.microsoft.openxml.excel.app",
+       "~/Library/Containers/com.microsoft.Outlook",
+       "~/Library/Containers/com.microsoft.outlook.profilemanager",
+       "~/Library/Containers/com.microsoft.Powerpoint",
+       "~/Library/Containers/com.microsoft.teams2*",
+       "~/Library/Containers/com.microsoft.Word",
+       "~/Library/Cookies/com.microsoft.teams.binarycookies",
+       "~/Library/Group Containers/UBF8T346G9.ms",
+       "~/Library/Group Containers/UBF8T346G9.Office",
+       "~/Library/Group Containers/UBF8T346G9.OfficeOneDriveSyncIntegration",
+       "~/Library/Group Containers/UBF8T346G9.OfficeOsfWebHost",
+       "~/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite",
+       "~/Library/HTTPStorages/com.microsoft.OneDriveStandaloneUpdater",
+       "~/Library/HTTPStorages/com.microsoft.OneDriveStandaloneUpdater.binarycookies",
+       "~/Library/Logs/Microsoft Teams",
+       "~/Library/Logs/OneDrive",
+       "~/Library/Preferences/com.microsoft.Excel.plist",
+       "~/Library/Preferences/com.microsoft.OneDriveStandaloneUpdater.plist",
+       "~/Library/Preferences/com.microsoft.OneDriveUpdater.plist",
+       "~/Library/Preferences/com.microsoft.Outlook.plist",
+       "~/Library/Preferences/com.microsoft.Powerpoint.plist",
+       "~/Library/Preferences/com.microsoft.teams.plist",
+       "~/Library/Preferences/com.microsoft.Word.plist",
+       "~/Library/Saved Application State/com.microsoft.office.setupassistant.savedState",
+       "~/Library/Saved Application State/com.microsoft.teams.savedState",
+       "~/Library/Saved Application State/com.microsoft.Word.savedState",
+       "~/Library/WebKit/com.microsoft.teams"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "microsoft-teams",
+  "full_token": "microsoft-teams",
+  "tap": "homebrew/cask",
+  "name": [
+   "Microsoft Teams"
+  ],
+  "homepage": "https://www.microsoft.com/en/microsoft-teams/group-chat-software/",
+  "url": "https://statics.teams.cdn.office.net/production-osx/26289.204.5281.6363/MicrosoftTeams.pkg",
+  "version": "26289.204.5281.6363",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "com.microsoft.teams.TeamsUpdaterDaemon",
+      "quit": "com.microsoft.autoupdate2",
+      "pkgutil": [
+       "com.microsoft.MSTeamsAudioDevice",
+       "com.microsoft.teams2"
+      ],
+      "delete": [
+       "/Applications/Microsoft Teams.app",
+       "/Library/Application Support/Microsoft/TeamsUpdaterDaemon",
+       "/Library/Logs/Microsoft/MSTeams",
+       "/Library/Logs/Microsoft/Teams",
+       "/Library/Preferences/com.microsoft.teams.plist"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "MicrosoftTeams.pkg",
+     {
+      "choices": [
+       {
+        "choiceIdentifier": "com.microsoft.autoupdate",
+        "choiceAttribute": "selected",
+        "attributeSetting": 0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/*.com.microsoft.teams",
+       "~/Library/Application Scripts/com.microsoft.teams*",
+       "~/Library/Application Support/com.microsoft.teams",
+       "~/Library/Application Support/Microsoft/Teams",
+       "~/Library/Application Support/Teams",
+       "~/Library/Caches/com.microsoft.teams",
+       "~/Library/Containers/com.microsoft.teams*",
+       "~/Library/Cookies/com.microsoft.teams.binarycookies",
+       "~/Library/Group Containers/*.com.microsoft.teams",
+       "~/Library/HTTPStorages/com.microsoft.teams",
+       "~/Library/HTTPStorages/com.microsoft.teams.binarycookies",
+       "~/Library/Logs/Microsoft Teams Helper (Renderer)",
+       "~/Library/Logs/Microsoft Teams",
+       "~/Library/Preferences/com.microsoft.teams*.plist",
+       "~/Library/Saved Application State/com.microsoft.teams*.savedState",
+       "~/Library/WebKit/com.microsoft.teams"
+      ],
+      "rmdir": "~/Library/Application Support/Microsoft"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "microsoft-word",
+  "full_token": "microsoft-word",
+  "tap": "homebrew/cask",
+  "name": [
+   "Microsoft Word"
+  ],
+  "homepage": "https://www.microsoft.com/en-US/microsoft-365/word",
+  "url": "https://res.public.onecdn.static.microsoft/mro1cdnstorage/C1297A47-86C4-4C1F-97FA-950631F94777/MacAutoupdate/Microsoft_Word_16.115.26111533_Installer.pkg",
+  "version": "16.115.26111533",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.microsoft.office.licensingV2.helper",
+       "com.microsoft.office.licensingV3.helper"
+      ],
+      "quit": "com.microsoft.autoupdate2",
+      "pkgutil": [
+       "com.microsoft.package.Microsoft_Word.app",
+       "com.microsoft.pkg.licensing",
+       "com.microsoft.pkg.licensing.v3"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Microsoft_Word_16.115.26111533_Installer.pkg",
+     {
+      "choices": [
+       {
+        "choiceIdentifier": "com.microsoft.autoupdate",
+        "choiceAttribute": "selected",
+        "attributeSetting": 0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.microsoft.Word*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.word.sfl*",
+       "~/Library/Application Support/CrashReporter/Microsoft Word_*.plist",
+       "~/Library/Application Support/Microsoft",
+       "~/Library/Containers/com.microsoft.Word*",
+       "~/Library/Group Containers/UBF8T346G9.ms/Microsoft Word.MERP.params.txt",
+       "~/Library/Preferences/com.microsoft.Word.plist",
+       "~/Library/Saved Application State/com.microsoft.Word.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "naver-whale",
+  "full_token": "naver-whale",
+  "tap": "homebrew/cask",
+  "name": [
+   "NAVER Whale"
+  ],
+  "homepage": "https://whale.naver.com/",
+  "url": "https://installer-whale.pstatic.net/downloads/installers/NaverWhale.dmg",
+  "version": "5.41.429.7",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Whale.app"
+    ],
+    "target": "/Applications/Whale.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Caches/com.naver.Whale",
+       "~/Library/HTTPStorages/com.naver.Whale",
+       "~/Library/Preferences/com.naver.Whale.plist",
+       "~/Library/Saved Application State/com.naver.Whale.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "notion",
+  "full_token": "notion",
+  "tap": "homebrew/cask",
+  "name": [
+   "Notion"
+  ],
+  "homepage": "https://www.notion.com/",
+  "url": "https://desktop-release.notion-static.com/Notion-7.44.0-arm64.dmg",
+  "version": "7.44.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "notion.id"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Notion.app"
+    ],
+    "target": "/Applications/Notion.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Caches/notion-updater",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/notion.id.sfl*",
+       "~/Library/Application Support/Notion",
+       "~/Library/Caches/notion.id*",
+       "~/Library/Logs/Notion",
+       "~/Library/Preferences/ByHost/notion.id.*",
+       "~/Library/Preferences/notion.id.*",
+       "~/Library/Saved Application State/notion.id.savedState",
+       "~/Library/WebKit/notion.id"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "obsidian",
+  "full_token": "obsidian",
+  "tap": "homebrew/cask",
+  "name": [
+   "Obsidian"
+  ],
+  "homepage": "https://obsidian.md/",
+  "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.15.1/Obsidian-1.15.1.dmg",
+  "version": "1.15.1",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Obsidian.app"
+    ],
+    "target": "/Applications/Obsidian.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Obsidian.app/Contents/MacOS/obsidian-cli",
+     {
+      "target": "obsidian"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/obsidian"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/md.obsidian.sfl*",
+       "~/Library/Application Support/obsidian",
+       "~/Library/Preferences/md.obsidian.plist",
+       "~/Library/Saved Application State/md.obsidian.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "opera",
+  "full_token": "opera",
+  "tap": "homebrew/cask",
+  "name": [
+   "Opera"
+  ],
+  "homepage": "https://www.opera.com/",
+  "url": "https://get.geo.opera.com/pub/opera/desktop/140.0.6074.36/mac/Opera_140.0.6074.36_Setup.dmg",
+  "version": "140.0.6074.36",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.operasoftware.Opera"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Opera.app"
+    ],
+    "target": "/Applications/Opera.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.operasoftware.Opera",
+       "~/Library/Caches/com.operasoftware.Installer.Opera",
+       "~/Library/Caches/com.operasoftware.Opera",
+       "~/Library/Cookies/com.operasoftware.Opera.binarycookies",
+       "~/Library/HTTPStorages/com.operasoftware.Installer.Opera",
+       "~/Library/Preferences/com.operasoftware.Opera.plist",
+       "~/Library/Saved Application State/com.operasoftware.Opera.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "opera-air",
+  "full_token": "opera-air",
+  "tap": "homebrew/cask",
+  "name": [
+   "Opera Air"
+  ],
+  "homepage": "https://www.opera.com/air",
+  "url": "https://get.geo.opera.com/pub/opera_air/139.0.6053.62/mac/Opera_Air_139.0.6053.62_Setup.dmg",
+  "version": "139.0.6053.62",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Opera Air.app"
+    ],
+    "target": "/Applications/Opera Air.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.operasoftware.OperaAir",
+       "~/Library/Caches/com.operasoftware.Installer.OperaAir",
+       "~/Library/Caches/com.operasoftware.OperaAir",
+       "~/Library/Cookies/com.operasoftware.OperaAir.binarycookies",
+       "~/Library/HTTPStorages/com.operasoftware.Installer.OperaAir",
+       "~/Library/Preferences/com.operasoftware.OperaAir.plist",
+       "~/Library/Saved Application State/com.operasoftware.OperaAir.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "opera-gx",
+  "full_token": "opera-gx",
+  "tap": "homebrew/cask",
+  "name": [
+   "Opera GX"
+  ],
+  "homepage": "https://www.opera.com/gx",
+  "url": "https://get.geo.opera.com/pub/opera_gx/139.0.6053.63/mac/Opera_GX_139.0.6053.63_Setup.dmg",
+  "version": "139.0.6053.63",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Opera GX.app"
+    ],
+    "target": "/Applications/Opera GX.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.operasoftware.OperaGX",
+       "~/Library/Caches/com.operasoftware.Installer.OperaGX",
+       "~/Library/Caches/com.operasoftware.OperaGX",
+       "~/Library/Cookies/com.operasoftware.OperaGX.binarycookies",
+       "~/Library/HTTPStorages/com.operasoftware.Installer.OperaGX",
+       "~/Library/Preferences/com.operasoftware.OperaGX.plist",
+       "~/Library/Saved Application State/com.operasoftware.OperaGX.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "opera@beta",
+  "full_token": "opera@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Opera Beta"
+  ],
+  "homepage": "https://www.opera.com/computer/beta",
+  "url": "https://get.geo.opera.com/pub/opera-beta/126.0.5750.30/mac/Opera_beta_126.0.5750.30_Setup.dmg",
+  "version": "126.0.5750.30",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Opera Beta.app"
+    ],
+    "target": "/Applications/Opera Beta.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.operasoftware.OperaNext",
+       "~/Library/Caches/com.operasoftware.Installer.OperaNext",
+       "~/Library/Caches/com.operasoftware.OperaNext",
+       "~/Library/Cookies/com.operasoftware.OperaNext.binarycookies",
+       "~/Library/HTTPStorages/com.operasoftware.Installer.OperaNext",
+       "~/Library/Preferences/com.operasoftware.OperaNext.plist",
+       "~/Library/Saved Application State/com.operasoftware.OperaNext.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": true,
+  "disabled": false
+ },
+ {
+  "token": "opera@developer",
+  "full_token": "opera@developer",
+  "tap": "homebrew/cask",
+  "name": [
+   "Opera Developer"
+  ],
+  "homepage": "https://www.opera.com/browsers/opera/developer",
+  "url": "https://get.geo.opera.com/pub/opera-developer/141.0.6087.0/mac/Opera_Developer_141.0.6087.0_Setup.dmg",
+  "version": "141.0.6087.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Opera Developer.app"
+    ],
+    "target": "/Applications/Opera Developer.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.operasoftware.OperaDeveloper",
+       "~/Library/Caches/com.operasoftware.Installer.OperaDeveloper",
+       "~/Library/Caches/com.operasoftware.OperaDeveloper",
+       "~/Library/Cookies/com.operasoftware.OperaDeveloper.binarycookies",
+       "~/Library/HTTPStorages/com.operasoftware.Installer.OperaDeveloper",
+       "~/Library/Preferences/com.operasoftware.OperaDeveloper.plist",
+       "~/Library/Saved Application State/com.operasoftware.OperaDeveloper.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "outline",
+  "full_token": "outline",
+  "tap": "homebrew/cask",
+  "name": [
+   "Outline"
+  ],
+  "homepage": "https://www.outline.app/",
+  "url": "https://static.outline.app/direct/main/Outline_6.2609.3.zip",
+  "version": "6.2609.3",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.gorillized.outlinemac.standalone"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Outline.app"
+    ],
+    "target": "/Applications/Outline.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/6WN928JT76.com.gorillized",
+       "~/Library/Application Scripts/com.gorillized.outlinemac.standalone.extension",
+       "~/Library/Application Scripts/com.gorillized.outlinemac.standalone.widget",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.gorillized.outlinemac.standalone.sfl*",
+       "~/Library/Application Support/com.gorillized.outlinemac.standalone",
+       "~/Library/Application Support/Outline",
+       "~/Library/Caches/com.gorillized.outlinemac.standalone",
+       "~/Library/Containers/com.gorillized.outlinemac.standalone.extension",
+       "~/Library/Containers/com.gorillized.outlinemac.standalone.widget",
+       "~/Library/Group Containers/6WN928JT76.com.gorillized",
+       "~/Library/HTTPStorages/com.gorillized.outlinemac.standalone",
+       "~/Library/Outline",
+       "~/Library/Preferences/com.gorillized.outlinemac.standalone.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "paper-design",
+  "full_token": "paper-design",
+  "tap": "homebrew/cask",
+  "name": [
+   "Paper"
+  ],
+  "homepage": "https://paper.design/",
+  "url": "https://download.todesktop.com/2601167vjw8xe/Paper%200.5.19%20-%20Build%20261113wtgdq1unn-arm64.dmg",
+  "version": "0.5.19,261113wtgdq1unn",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.todesktop.2601167vjw8xe"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Paper.app"
+    ],
+    "target": "/Applications/Paper.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.todesktop.2601167vjw8xe.sfl*",
+       "~/Library/Application Support/Paper",
+       "~/Library/Preferences/com.todesktop.2601167vjw8xe.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "parallels",
+  "full_token": "parallels",
+  "tap": "homebrew/cask",
+  "name": [
+   "Parallels Desktop"
+  ],
+  "homepage": "https://www.parallels.com/products/desktop/",
+  "url": "https://download.parallels.com/desktop/v27/27.1.0-58756/ParallelsDesktop-27.1.0-58756.dmg",
+  "version": "27.1.0-58756",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "path": "chflags"
+        },
+        "type": "run",
+        "args": [
+         "nohidden",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       },
+       {
+        "command": {
+         "path": "xattr"
+        },
+        "type": "run",
+        "args": [
+         "-d",
+         "com.apple.FinderInfo",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall_preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "appdir",
+          "path": "Parallels Desktop.app"
+         }
+        ],
+        "type": "set_ownership"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "signal": [
+       "TERM",
+       "com.parallels.desktop.console"
+      ],
+      "script": {
+       "executable": "/usr/bin/pkill",
+       "args": [
+        "-TERM",
+        "prl_client_app"
+       ],
+       "must_succeed": false
+      },
+      "delete": [
+       "/usr/local/bin/prl_convert",
+       "/usr/local/bin/prl_disk_tool",
+       "/usr/local/bin/prl_perf_ctl",
+       "/usr/local/bin/prlcopy",
+       "/usr/local/bin/prlcore2dmp",
+       "/usr/local/bin/prlctl",
+       "/usr/local/bin/prlexec",
+       "/usr/local/bin/prlsrvctl"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Parallels Desktop.app"
+    ],
+    "target": "/Applications/Parallels Desktop.app"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "base": "appdir",
+         "path": "Parallels Desktop.app/Contents/MacOS/inittool"
+        },
+        "sudo": true,
+        "type": "run",
+        "args": [
+         "init"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Preferences/Parallels",
+      "trash": [
+       "~/.parallels_settings",
+       "~/Applications (Parallels)",
+       "~/Library/Application Scripts/*.com.parallels.Desktop",
+       "~/Library/Application Scripts/com.parallels.desktop*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.parallels.desktop.console.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.parallels.desktop.console.help*",
+       "~/Library/Caches/com.parallels.desktop.console",
+       "~/Library/Caches/Parallels Software/Parallels Desktop",
+       "~/Library/Containers/com.parallels.desktop*",
+       "~/Library/Group Containers/*.com.parallels.Desktop",
+       "~/Library/Logs/parallels.log",
+       "~/Library/Parallels/Applications Menus",
+       "~/Library/Parallels/Downloads",
+       "~/Library/Parallels/Parallels Desktop",
+       "~/Library/Preferences/com.parallels.desktop.console.LSSharedFileList.plist",
+       "~/Library/Preferences/com.parallels.desktop.console.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Events.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Statistics.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop.plist",
+       "~/Library/Preferences/com.parallels.Parallels.plist",
+       "~/Library/Preferences/com.parallels.PDInfo.plist",
+       "~/Library/Preferences/Parallels",
+       "~/Library/Saved Application State/com.parallels.desktop.console.savedState"
+      ],
+      "rmdir": [
+       "/Users/Shared/Parallels",
+       "~/Library/Caches/Parallels Software",
+       "~/Library/Parallels",
+       "~/Parallels"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "parallels@18",
+  "full_token": "parallels@18",
+  "tap": "homebrew/cask",
+  "name": [
+   "Parallels Desktop"
+  ],
+  "homepage": "https://www.parallels.com/products/desktop/",
+  "url": "https://download.parallels.com/desktop/v18/18.3.4-53630/ParallelsDesktop-18.3.4-53630.dmg",
+  "version": "18.3.4-53630",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "path": "chflags"
+        },
+        "type": "run",
+        "args": [
+         "nohidden",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       },
+       {
+        "command": {
+         "path": "xattr"
+        },
+        "type": "run",
+        "args": [
+         "-d",
+         "com.apple.FinderInfo",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall_preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "appdir",
+          "path": "Parallels Desktop.app"
+         }
+        ],
+        "type": "set_ownership"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "signal": [
+       "TERM",
+       "com.parallels.desktop.console"
+      ],
+      "delete": [
+       "/usr/local/bin/prl_convert",
+       "/usr/local/bin/prl_disk_tool",
+       "/usr/local/bin/prl_perf_ctl",
+       "/usr/local/bin/prlcore2dmp",
+       "/usr/local/bin/prlctl",
+       "/usr/local/bin/prlexec",
+       "/usr/local/bin/prlsrvctl"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Parallels Desktop.app"
+    ],
+    "target": "/Applications/Parallels Desktop.app"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "base": "appdir",
+         "path": "Parallels Desktop.app/Contents/MacOS/inittool"
+        },
+        "sudo": true,
+        "type": "run",
+        "args": [
+         "init"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Preferences/Parallels",
+      "trash": [
+       "~/.parallels_settings",
+       "~/Applications (Parallels)",
+       "~/Library/Application Scripts/*.com.parallels.Desktop",
+       "~/Library/Application Scripts/com.parallels.desktop*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.parallels.desktop.console.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.parallels.desktop.console.help*",
+       "~/Library/Caches/com.parallels.desktop.console",
+       "~/Library/Caches/Parallels Software/Parallels Desktop",
+       "~/Library/Containers/com.parallels.desktop*",
+       "~/Library/Group Containers/*.com.parallels.Desktop",
+       "~/Library/Logs/parallels.log",
+       "~/Library/Parallels/Applications Menus",
+       "~/Library/Parallels/Parallels Desktop",
+       "~/Library/Preferences/com.parallels.desktop.console.LSSharedFileList.plist",
+       "~/Library/Preferences/com.parallels.desktop.console.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Events.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Statistics.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop.plist",
+       "~/Library/Preferences/com.parallels.Parallels.plist",
+       "~/Library/Preferences/com.parallels.PDInfo.plist",
+       "~/Library/Preferences/Parallels",
+       "~/Library/Saved Application State/com.parallels.desktop.console.savedState"
+      ],
+      "rmdir": [
+       "/Users/Shared/Parallels",
+       "~/Library/Caches/Parallels Software",
+       "~/Library/Parallels",
+       "~/Parallels"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": true,
+  "disabled": false
+ },
+ {
+  "token": "parallels@19",
+  "full_token": "parallels@19",
+  "tap": "homebrew/cask",
+  "name": [
+   "Parallels Desktop"
+  ],
+  "homepage": "https://www.parallels.com/products/desktop/",
+  "url": "https://download.parallels.com/desktop/v19/19.4.3-54993/ParallelsDesktop-19.4.3-54993.dmg",
+  "version": "19.4.3-54993",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "path": "chflags"
+        },
+        "type": "run",
+        "args": [
+         "nohidden",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       },
+       {
+        "command": {
+         "path": "xattr"
+        },
+        "type": "run",
+        "args": [
+         "-d",
+         "com.apple.FinderInfo",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall_preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "appdir",
+          "path": "Parallels Desktop.app"
+         }
+        ],
+        "type": "set_ownership"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "signal": [
+       "TERM",
+       "com.parallels.desktop.console"
+      ],
+      "delete": [
+       "/usr/local/bin/prl_convert",
+       "/usr/local/bin/prl_disk_tool",
+       "/usr/local/bin/prl_perf_ctl",
+       "/usr/local/bin/prlcore2dmp",
+       "/usr/local/bin/prlctl",
+       "/usr/local/bin/prlexec",
+       "/usr/local/bin/prlsrvctl"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Parallels Desktop.app"
+    ],
+    "target": "/Applications/Parallels Desktop.app"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "base": "appdir",
+         "path": "Parallels Desktop.app/Contents/MacOS/inittool"
+        },
+        "sudo": true,
+        "type": "run",
+        "args": [
+         "init"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Preferences/Parallels",
+      "trash": [
+       "~/.parallels_settings",
+       "~/Applications (Parallels)",
+       "~/Library/Application Scripts/*.com.parallels.Desktop",
+       "~/Library/Application Scripts/com.parallels.desktop*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.parallels.desktop.console.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.parallels.desktop.console.help*",
+       "~/Library/Caches/com.parallels.desktop.console",
+       "~/Library/Caches/Parallels Software/Parallels Desktop",
+       "~/Library/Containers/com.parallels.desktop*",
+       "~/Library/Group Containers/*.com.parallels.Desktop",
+       "~/Library/Logs/parallels.log",
+       "~/Library/Parallels/Applications Menus",
+       "~/Library/Parallels/Parallels Desktop",
+       "~/Library/Preferences/com.parallels.desktop.console.LSSharedFileList.plist",
+       "~/Library/Preferences/com.parallels.desktop.console.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Events.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Statistics.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop.plist",
+       "~/Library/Preferences/com.parallels.Parallels.plist",
+       "~/Library/Preferences/com.parallels.PDInfo.plist",
+       "~/Library/Preferences/Parallels",
+       "~/Library/Saved Application State/com.parallels.desktop.console.savedState"
+      ],
+      "rmdir": [
+       "/Users/Shared/Parallels",
+       "~/Library/Caches/Parallels Software",
+       "~/Library/Parallels",
+       "~/Parallels"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": true,
+  "disabled": false
+ },
+ {
+  "token": "parallels@20",
+  "full_token": "parallels@20",
+  "tap": "homebrew/cask",
+  "name": [
+   "Parallels Desktop"
+  ],
+  "homepage": "https://www.parallels.com/products/desktop/",
+  "url": "https://download.parallels.com/desktop/v20/20.4.2-55999/ParallelsDesktop-20.4.2-55999.dmg",
+  "version": "20.4.2-55999",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "path": "chflags"
+        },
+        "type": "run",
+        "args": [
+         "nohidden",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       },
+       {
+        "command": {
+         "path": "xattr"
+        },
+        "type": "run",
+        "args": [
+         "-d",
+         "com.apple.FinderInfo",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall_preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "appdir",
+          "path": "Parallels Desktop.app"
+         }
+        ],
+        "type": "set_ownership"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "signal": [
+       "TERM",
+       "com.parallels.desktop.console"
+      ],
+      "script": {
+       "executable": "/usr/bin/pkill",
+       "args": [
+        "-TERM",
+        "prl_client_app"
+       ],
+       "must_succeed": false
+      },
+      "delete": [
+       "/usr/local/bin/prl_convert",
+       "/usr/local/bin/prl_disk_tool",
+       "/usr/local/bin/prl_perf_ctl",
+       "/usr/local/bin/prlcore2dmp",
+       "/usr/local/bin/prlctl",
+       "/usr/local/bin/prlexec",
+       "/usr/local/bin/prlsrvctl"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Parallels Desktop.app"
+    ],
+    "target": "/Applications/Parallels Desktop.app"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "base": "appdir",
+         "path": "Parallels Desktop.app/Contents/MacOS/inittool"
+        },
+        "sudo": true,
+        "type": "run",
+        "args": [
+         "init"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Preferences/Parallels",
+      "trash": [
+       "~/.parallels_settings",
+       "~/Applications (Parallels)",
+       "~/Library/Application Scripts/*.com.parallels.Desktop",
+       "~/Library/Application Scripts/com.parallels.desktop*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.parallels.desktop.console.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.parallels.desktop.console.help*",
+       "~/Library/Caches/com.parallels.desktop.console",
+       "~/Library/Caches/Parallels Software/Parallels Desktop",
+       "~/Library/Containers/com.parallels.desktop*",
+       "~/Library/Group Containers/*.com.parallels.Desktop",
+       "~/Library/Logs/parallels.log",
+       "~/Library/Parallels/Applications Menus",
+       "~/Library/Parallels/Downloads",
+       "~/Library/Parallels/Parallels Desktop",
+       "~/Library/Preferences/com.parallels.desktop.console.LSSharedFileList.plist",
+       "~/Library/Preferences/com.parallels.desktop.console.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Events.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Statistics.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop.plist",
+       "~/Library/Preferences/com.parallels.Parallels.plist",
+       "~/Library/Preferences/com.parallels.PDInfo.plist",
+       "~/Library/Preferences/Parallels",
+       "~/Library/Saved Application State/com.parallels.desktop.console.savedState"
+      ],
+      "rmdir": [
+       "/Users/Shared/Parallels",
+       "~/Library/Caches/Parallels Software",
+       "~/Library/Parallels",
+       "~/Parallels"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "parallels@26",
+  "full_token": "parallels@26",
+  "tap": "homebrew/cask",
+  "name": [
+   "Parallels Desktop"
+  ],
+  "homepage": "https://www.parallels.com/products/desktop/",
+  "url": "https://download.parallels.com/desktop/v26/26.5.0-57613/ParallelsDesktop-26.5.0-57613.dmg",
+  "version": "26.5.0-57613",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "path": "chflags"
+        },
+        "type": "run",
+        "args": [
+         "nohidden",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       },
+       {
+        "command": {
+         "path": "xattr"
+        },
+        "type": "run",
+        "args": [
+         "-d",
+         "com.apple.FinderInfo",
+         "{{staged_path}}/Parallels Desktop.app"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall_preflight_steps": [
+     {
+      "steps": [
+       {
+        "paths": [
+         {
+          "base": "appdir",
+          "path": "Parallels Desktop.app"
+         }
+        ],
+        "type": "set_ownership"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "signal": [
+       "TERM",
+       "com.parallels.desktop.console"
+      ],
+      "script": {
+       "executable": "/usr/bin/pkill",
+       "args": [
+        "-TERM",
+        "prl_client_app"
+       ],
+       "must_succeed": false
+      },
+      "delete": [
+       "/usr/local/bin/prl_convert",
+       "/usr/local/bin/prl_disk_tool",
+       "/usr/local/bin/prl_perf_ctl",
+       "/usr/local/bin/prlcopy",
+       "/usr/local/bin/prlcore2dmp",
+       "/usr/local/bin/prlctl",
+       "/usr/local/bin/prlexec",
+       "/usr/local/bin/prlsrvctl"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Parallels Desktop.app"
+    ],
+    "target": "/Applications/Parallels Desktop.app"
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "command": {
+         "base": "appdir",
+         "path": "Parallels Desktop.app/Contents/MacOS/inittool"
+        },
+        "sudo": true,
+        "type": "run",
+        "args": [
+         "init"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Preferences/Parallels",
+      "trash": [
+       "~/.parallels_settings",
+       "~/Applications (Parallels)",
+       "~/Library/Application Scripts/*.com.parallels.Desktop",
+       "~/Library/Application Scripts/com.parallels.desktop*",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.parallels.desktop.console.sfl*",
+       "~/Library/Caches/com.apple.helpd/Generated/com.parallels.desktop.console.help*",
+       "~/Library/Caches/com.parallels.desktop.console",
+       "~/Library/Caches/Parallels Software/Parallels Desktop",
+       "~/Library/Containers/com.parallels.desktop*",
+       "~/Library/Group Containers/*.com.parallels.Desktop",
+       "~/Library/Logs/parallels.log",
+       "~/Library/Parallels/Applications Menus",
+       "~/Library/Parallels/Downloads",
+       "~/Library/Parallels/Parallels Desktop",
+       "~/Library/Preferences/com.parallels.desktop.console.LSSharedFileList.plist",
+       "~/Library/Preferences/com.parallels.desktop.console.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Events.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop Statistics.plist",
+       "~/Library/Preferences/com.parallels.Parallels Desktop.plist",
+       "~/Library/Preferences/com.parallels.Parallels.plist",
+       "~/Library/Preferences/com.parallels.PDInfo.plist",
+       "~/Library/Preferences/Parallels",
+       "~/Library/Saved Application State/com.parallels.desktop.console.savedState"
+      ],
+      "rmdir": [
+       "/Users/Shared/Parallels",
+       "~/Library/Caches/Parallels Software",
+       "~/Library/Parallels",
+       "~/Parallels"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "signal",
+  "full_token": "signal",
+  "tap": "homebrew/cask",
+  "name": [
+   "Signal"
+  ],
+  "homepage": "https://signal.org/",
+  "url": "https://updates.signal.org/desktop/signal-desktop-mac-arm64-8.35.0.zip",
+  "version": "8.35.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Signal.app"
+    ],
+    "target": "/Applications/Signal.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.whispersystems.signal-desktop.sfl*",
+       "~/Library/Application Support/Signal",
+       "~/Library/Preferences/org.whispersystems.signal-desktop.helper.plist",
+       "~/Library/Preferences/org.whispersystems.signal-desktop.plist",
+       "~/Library/Saved Application State/org.whispersystems.signal-desktop.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "signal@beta",
+  "full_token": "signal@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Signal Beta"
+  ],
+  "homepage": "https://signal.org/",
+  "url": "https://updates.signal.org/desktop/signal-desktop-beta-mac-arm64-8.36.0-beta.1.zip",
+  "version": "8.36.0-beta.1",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Signal Beta.app"
+    ],
+    "target": "/Applications/Signal Beta.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.whispersystems.signal-desktop-beta.sfl*",
+       "~/Library/Application Support/Signal Beta",
+       "~/Library/Application Support/Signal",
+       "~/Library/Preferences/org.whispersystems.signal-desktop-beta.plist",
+       "~/Library/Preferences/org.whispersystems.signal-desktop.helper.plist",
+       "~/Library/Preferences/org.whispersystems.signal-desktop.plist",
+       "~/Library/Saved Application State/org.whispersystems.signal-desktop.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "slack",
+  "full_token": "slack",
+  "tap": "homebrew/cask",
+  "name": [
+   "Slack"
+  ],
+  "homepage": "https://slack.com/",
+  "url": "https://downloads.slack-edge.com/desktop-releases/mac/arm64/4.53.292/Slack-4.53.292-macOS.dmg",
+  "version": "4.53.292",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.tinyspeck.slackmacgap"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Slack.app"
+    ],
+    "target": "/Applications/Slack.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Logs/DiagnosticReports/Slack_*",
+       "~/Library/Application Scripts/com.tinyspeck.slackmacgap",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.tinyspeck.slackmacgap.sfl*",
+       "~/Library/Application Support/Slack",
+       "~/Library/Caches/com.tinyspeck.slackmacgap*",
+       "~/Library/Containers/com.tinyspeck.slackmacgap*",
+       "~/Library/Cookies/com.tinyspeck.slackmacgap.binarycookies",
+       "~/Library/Group Containers/*.com.tinyspeck.slackmacgap",
+       "~/Library/Group Containers/*.slack",
+       "~/Library/HTTPStorages/com.tinyspeck.slackmacgap*",
+       "~/Library/Logs/Slack",
+       "~/Library/Preferences/ByHost/com.tinyspeck.slackmacgap.ShipIt.*.plist",
+       "~/Library/Preferences/com.tinyspeck.slackmacgap*",
+       "~/Library/Saved Application State/com.tinyspeck.slackmacgap.savedState",
+       "~/Library/WebKit/com.tinyspeck.slackmacgap"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "slack@beta",
+  "full_token": "slack@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Slack"
+  ],
+  "homepage": "https://slack.com/beta/osx",
+  "url": "https://downloads.slack-edge.com/desktop-releases/mac/arm64/4.53.292/Slack-4.53.292-macOS.dmg",
+  "version": "4.53.292",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "com.tinyspeck.slackmacgap"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Slack.app"
+    ],
+    "target": "/Applications/Slack.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.tinyspeck.slackmacgap",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.tinyspeck.slackmacgap.sfl*",
+       "~/Library/Application Support/Slack",
+       "~/Library/Caches/com.tinyspeck.slackmacgap",
+       "~/Library/Caches/com.tinyspeck.slackmacgap.ShipIt",
+       "~/Library/Containers/com.tinyspeck.slackmacgap",
+       "~/Library/Containers/com.tinyspeck.slackmacgap.SlackCallsService",
+       "~/Library/Cookies/com.tinyspeck.slackmacgap.binarycookies",
+       "~/Library/Group Containers/*.com.tinyspeck.slackmacgap",
+       "~/Library/Group Containers/*.slack",
+       "~/Library/Logs/Slack",
+       "~/Library/Preferences/ByHost/com.tinyspeck.slackmacgap.ShipIt.*.plist",
+       "~/Library/Preferences/com.tinyspeck.slackmacgap.helper.plist",
+       "~/Library/Preferences/com.tinyspeck.slackmacgap.plist",
+       "~/Library/Saved Application State/com.tinyspeck.slackmacgap.savedState",
+       "~/Library/WebKit/com.tinyspeck.slackmacgap"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "spotify",
+  "full_token": "spotify",
+  "tap": "homebrew/cask",
+  "name": [
+   "Spotify"
+  ],
+  "homepage": "https://www.spotify.com/",
+  "url": "https://download.scdn.co/SpotifyARM64.dmg",
+  "version": "1.3.9.2055",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "*.spotify.client.*",
+       "com.spotify.client.startuphelper",
+       "com.spotify.webhelper"
+      ],
+      "quit": "com.spotify.client"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Spotify.app"
+    ],
+    "target": "/Applications/Spotify.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.spotify.client.startuphelper.sfl*",
+       "~/Library/Application Support/Spotify",
+       "~/Library/Caches/com.spotify.client",
+       "~/Library/Caches/com.spotify.client.helper",
+       "~/Library/Cookies/com.spotify.client.binarycookies",
+       "~/Library/HTTPStorages/com.spotify.client",
+       "~/Library/HTTPStorages/com.spotify.client.helper",
+       "~/Library/Logs/Spotify",
+       "~/Library/Preferences/com.spotify.client.helper.plist",
+       "~/Library/Preferences/com.spotify.client.plist",
+       "~/Library/Saved Application State/com.spotify.client.savedState",
+       "~/Library/WebKit/com.spotify.client"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "steam",
+  "full_token": "steam",
+  "tap": "homebrew/cask",
+  "name": [
+   "Steam"
+  ],
+  "homepage": "https://store.steampowered.com/about/",
+  "url": "https://client-update.steamstatic.com/appdmg_osx.zip.984652b88a9737e3f4e77c656d9ffa67d5042c2c",
+  "version": "6.1,1791918634,984652b88a9737e3f4e77c656d9ffa67d5042c2c",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "com.valvesoftware.steam.ipctool",
+       "com.valvesoftware.steamclean"
+      ],
+      "quit": [
+       "com.valvesoftware.steam",
+       "com.valvesoftware.steam.helper",
+       "com.valvesoftware.steam.helper.EH"
+      ],
+      "delete": "~/Library/Application Support/Steam/Steam.AppBundle"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Steam.app"
+    ],
+    "target": "/Applications/Steam.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Steam",
+       "~/Library/LaunchAgents/com.valvesoftware.steamclean.plist",
+       "~/Library/Preferences/com.valvesoftware.steam.helper.plist",
+       "~/Library/Saved Application State/com.valvesoftware.steam.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "steamcmd",
+  "full_token": "steamcmd",
+  "tap": "homebrew/cask",
+  "name": [
+   "SteamCMD"
+  ],
+  "homepage": "https://developer.valvesoftware.com/wiki/SteamCMD",
+  "url": "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz",
+  "version": "1794537082",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "preflight_steps": [
+     {
+      "steps": [
+       {
+        "source": {
+         "base": "staged_path",
+         "path": "."
+        },
+        "target": {
+         "base": "staged_path",
+         "path": "MacOS"
+        },
+        "type": "move_contents"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "uninstall": [
+     {
+      "launchctl": "com.valvesoftware.steamclean"
+     }
+    ]
+   },
+   {
+    "command_wrapper": [
+     "steamcmd",
+     {
+      "executable": "$HOMEBREW_PREFIX/Caskroom/steamcmd/1794537082/MacOS/steamcmd.sh"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/steamcmd"
+   },
+   {
+    "zap": [
+     {
+      "trash": "~/Library/Application Support/Steam/logs/stderr.txt",
+      "rmdir": [
+       "~/Library/Application Support/Steam",
+       "~/Library/Application Support/Steam/logs"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "thunderbird",
+  "full_token": "thunderbird",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Thunderbird"
+  ],
+  "homepage": "https://www.thunderbird.net/en-US/",
+  "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/160.0/mac/en-US/Thunderbird%20160.0.dmg",
+  "version": "160.0",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.thunderbird"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Thunderbird.app"
+    ],
+    "target": "/Applications/Thunderbird.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.thunderbird*.sfl*",
+       "~/Library/Application Support/Thunderbird",
+       "~/Library/Caches/Mozilla/updates/Applications/Thunderbird*",
+       "~/Library/Caches/Thunderbird",
+       "~/Library/Preferences/org.mozilla.thunderbird*.plist",
+       "~/Library/Saved Application State/org.mozilla.thunderbird*.savedState",
+       "~/Library/Thunderbird"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "thunderbird@beta",
+  "full_token": "thunderbird@beta",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Thunderbird Beta"
+  ],
+  "homepage": "https://www.thunderbird.net/en-US/download/beta/",
+  "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/161.0b3/mac/en-US/Thunderbird%20161.0b3.dmg",
+  "version": "161.0b3",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.thunderbirdbeta"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Thunderbird Beta.app"
+    ],
+    "target": "/Applications/Thunderbird Beta.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.thunderbird*.sfl*",
+       "~/Library/Caches/Mozilla/updates/Applications/Thunderbird*",
+       "~/Library/Caches/Thunderbird",
+       "~/Library/Preferences/org.mozilla.thunderbird*.plist",
+       "~/Library/Saved Application State/org.mozilla.thunderbird*.savedState",
+       "~/Library/Thunderbird"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "thunderbird@daily",
+  "full_token": "thunderbird@daily",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Thunderbird Daily"
+  ],
+  "homepage": "https://www.thunderbird.net/en-US/download/daily/",
+  "url": "https://ftp.mozilla.org/pub/thunderbird/nightly/2026/11/2026-11-18-10-09-49-comm-central/thunderbird-162.0a1.en-US.mac.dmg",
+  "version": "162.0a1,2026-11-18-10-09-49",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.thunderbird-daily"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Thunderbird Daily.app"
+    ],
+    "target": "/Applications/Thunderbird Daily.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.thunderbird*.sfl*",
+       "~/Library/Caches/Mozilla/updates/Applications/Thunderbird*",
+       "~/Library/Caches/Thunderbird",
+       "~/Library/Preferences/org.mozilla.thunderbird*.plist",
+       "~/Library/Saved Application State/org.mozilla.thunderbird*.savedState",
+       "~/Library/Thunderbird"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "thunderbird@esr",
+  "full_token": "thunderbird@esr",
+  "tap": "homebrew/cask",
+  "name": [
+   "Mozilla Thunderbird ESR",
+   "Mozilla Thunderbird Extended Support Release"
+  ],
+  "homepage": "https://www.thunderbird.net/en-US/download/esr/",
+  "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/153.7.0esr/mac/en-US/Thunderbird%20153.7.0esr.dmg",
+  "version": "153.7.0esr",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "org.mozilla.thunderbird"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Thunderbird.app"
+    ],
+    "target": "/Applications/Thunderbird.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.mozilla.thunderbird*.sfl*",
+       "~/Library/Application Support/Thunderbird",
+       "~/Library/Caches/Mozilla/updates/Applications/Thunderbird*",
+       "~/Library/Caches/Thunderbird",
+       "~/Library/Preferences/org.mozilla.thunderbird*.plist",
+       "~/Library/Saved Application State/org.mozilla.thunderbird*.savedState",
+       "~/Library/Thunderbird"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "ungoogled-chromium",
+  "full_token": "ungoogled-chromium",
+  "tap": "homebrew/cask",
+  "name": [
+   "Ungoogled Chromium"
+  ],
+  "homepage": "https://ungoogled-software.github.io/",
+  "url": "https://github.com/ungoogled-software/ungoogled-chromium-macos/releases/download/157.0.8103.78-1.1/ungoogled-chromium_157.0.8103.78-1.1_arm64-macos.dmg",
+  "version": "157.0.8103.78-1.1",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "io.ungoogled-software.ungoogled-chromium"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Chromium.app"
+    ],
+    "target": "/Applications/Chromium.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Chromium",
+       "~/Library/Caches/Chromium",
+       "~/Library/Preferences/io.ungoogled-software.ungoogled-chromium.plist",
+       "~/Library/Preferences/org.chromium.Chromium.plist",
+       "~/Library/Saved Application State/org.chromium.Chromium.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "vienna",
+  "full_token": "vienna",
+  "tap": "homebrew/cask",
+  "name": [
+   "Vienna"
+  ],
+  "homepage": "https://www.vienna-rss.com/",
+  "url": "https://downloads.sourceforge.net/vienna-rss/v_3.10.8/Vienna3.10.8.dmg",
+  "version": "3.10.8",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "app": [
+     "Vienna.app"
+    ],
+    "target": "/Applications/Vienna.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/uk.co.opencommunity.vienna2",
+       "~/Library/Application Support/Vienna",
+       "~/Library/Caches/uk.co.opencommunity.vienna2",
+       "~/Library/Cookies/uk.co.opencommunity.vienna2.binarycookies",
+       "~/Library/HTTPStorages/uk.co.opencommunity.vienna2.binarycookies",
+       "~/Library/Preferences/uk.co.opencommunity.vienna2.plist",
+       "~/Library/Saved Application State/uk.co.opencommunity.vienna2.savedState",
+       "~/Library/Scripts/Vienna"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "vincelwt-chatgpt",
+  "full_token": "vincelwt-chatgpt",
+  "tap": "homebrew/cask",
+  "name": [
+   "ChatGPT for Mac"
+  ],
+  "homepage": "https://github.com/vincelwt/chatgpt-mac",
+  "url": "https://github.com/vincelwt/chatgpt-mac/releases/download/v0.0.5/Chatgpt-0.0.5-arm64.dmg",
+  "version": "0.0.5",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Chatgpt.app"
+    ],
+    "target": "/Applications/Chatgpt.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/chatgpt-mac",
+       "~/Library/Caches/com.vincelwt.chatgptmac",
+       "~/Library/Caches/com.vincelwt.chatgptmac.ShipIt",
+       "~/Library/Preferences/com.vincelwt.chatgptmac.plist"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": true,
+  "disabled": true
+ },
+ {
+  "token": "visual-studio-code@insiders",
+  "full_token": "visual-studio-code@insiders",
+  "tap": "homebrew/cask",
+  "name": [
+   "Microsoft Visual Studio Code Insiders",
+   "VS Code Insiders"
+  ],
+  "homepage": "https://code.visualstudio.com/insiders/",
+  "url": "https://vscode.download.prss.microsoft.com/dbazure/download/insider/ca70cf1a8b44ca31e91bc57595aa6054cbfcfa15/VSCode-darwin-arm64.zip",
+  "version": "1.148.0-insider,1794935075242,ca70cf1a8b44ca31e91bc57595aa6054cbfcfa15",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "com.microsoft.VSCodeInsiders.ShipIt",
+      "quit": "com.microsoft.VSCodeInsiders"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Visual Studio Code - Insiders.app"
+    ],
+    "target": "/Applications/Visual Studio Code - Insiders.app"
+   },
+   {
+    "binary": [
+     "$APPDIR/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code",
+     {
+      "target": "code-insiders"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/code-insiders"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/.vscode-insiders",
+       "~/Library/Application Support/Code - Insiders",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.vscodeinsiders.sfl*",
+       "~/Library/Caches/com.microsoft.VSCodeInsiders",
+       "~/Library/Caches/com.microsoft.VSCodeInsiders.ShipIt",
+       "~/Library/HTTPStorages/com.microsoft.VSCodeInsiders",
+       "~/Library/Preferences/ByHost/com.microsoft.VSCodeInsiders.ShipIt.*.plist",
+       "~/Library/Preferences/com.microsoft.VSCodeInsiders.helper.plist",
+       "~/Library/Preferences/com.microsoft.VSCodeInsiders.plist",
+       "~/Library/Saved Application State/com.microsoft.VSCodeInsiders.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "whale",
+  "full_token": "whale",
+  "tap": "homebrew/cask",
+  "name": [
+   "Whale"
+  ],
+  "homepage": "https://github.com/1000ch/whale",
+  "url": "https://github.com/1000ch/whale/releases/download/v3.0.0/Whale-3.0.0-arm64.dmg",
+  "version": "3.0.0",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "app": [
+     "Whale.app"
+    ],
+    "target": "/Applications/Whale.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Whale",
+       "~/Library/Caches/net.1000ch.whale",
+       "~/Library/Caches/net.1000ch.whale.ShipIt",
+       "~/Library/Preferences/net.1000ch.whale.helper.plist",
+       "~/Library/Preferences/net.1000ch.whale.plist",
+       "~/Library/Saved Application State/net.1000ch.whale.savedState"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": true
+ },
+ {
+  "token": "windows-app",
+  "full_token": "windows-app",
+  "tap": "homebrew/cask",
+  "name": [
+   "Windows App"
+  ],
+  "homepage": "https://aka.ms/WindowsApp",
+  "url": "https://res.public.onecdn.static.microsoft/mro1cdnstorage/C1297A47-86C4-4C1F-97FA-950631F94777/MacAutoupdate/Windows_App_11.4.5_installer.pkg",
+  "version": "11.4.5",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "pkgutil": "com.microsoft.rdc.macos"
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "Windows_App_11.4.5_installer.pkg",
+     {
+      "choices": [
+       {
+        "choiceIdentifier": "com.microsoft.autoupdate",
+        "choiceAttribute": "selected",
+        "attributeSetting": 0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Scripts/com.microsoft.rdc.macos",
+       "~/Library/Containers/com.microsoft.rdc.macos",
+       "~/Library/Group Containers/UBF8T346G9.com.microsoft.rdc"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "wondershare-uniconverter",
+  "full_token": "wondershare-uniconverter",
+  "tap": "homebrew/cask",
+  "name": [
+   "UniConverter"
+  ],
+  "homepage": "https://videoconverter.wondershare.com/",
+  "url": "https://download.wondershare.com/cbs_down/uniconverter-mac_arm_18.0.5_full14207.zip",
+  "version": "18.0.5",
+  "auto_updates": null,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": [
+       "com.google.Chrome",
+       "com.Wondershare.UniConverter18"
+      ]
+     }
+    ]
+   },
+   {
+    "app": [
+     "Wondershare UniConverter 18.app"
+    ],
+    "target": "/Applications/Wondershare UniConverter 18.app"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Users/Shared/.Wondershare*.dat",
+       "~/Library/Application Support/com.Wondershare.UniConverter18",
+       "~/Library/Application Support/Wondershare UniConverter 18",
+       "~/Library/Application Support/wondershare",
+       "~/Library/Caches/com.Wondershare.UniConverter18",
+       "~/Library/HTTPStorages/com.Wondershare.UniConverter18",
+       "~/Library/Logs/com.Wondershare.UniConverter18",
+       "~/Library/Logs/Wondershare",
+       "~/Library/Preferences/com.wondershare.helper_compact.plist",
+       "~/Library/Preferences/com.Wondershare.UniConverter18.plist",
+       "~/Library/Saved Application State/com.Wondershare.UniConverter18.savedState",
+       "~/Library/WebKit/com.Wondershare.UniConverter18",
+       "~/Movies/Wondershare UniConverter18",
+       "~/Pictures/Wondershare UniConverter18"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "zen",
+  "full_token": "zen",
+  "tap": "homebrew/cask",
+  "name": [
+   "Zen Browser"
+  ],
+  "homepage": "https://zen-browser.app/",
+  "url": "https://github.com/zen-browser/desktop/releases/download/1.24.2b/zen.macos-universal.dmg",
+  "version": "1.24.2b",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "app.zen-browser.zen"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Zen.app"
+    ],
+    "target": "/Applications/Zen.app"
+   },
+   {
+    "command_wrapper": [
+     "zen",
+     {
+      "executable": "$APPDIR/Zen.app/Contents/MacOS/zen"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/zen"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Zen",
+       "~/Library/Caches/Mozilla/updates/Applications/Zen Browser",
+       "~/Library/Caches/Mozilla/updates/Applications/Zen",
+       "~/Library/Caches/Zen",
+       "~/Library/Preferences/app.zen-browser.zen.plist",
+       "~/Library/Preferences/org.mozilla.com.zen.browser.plist",
+       "~/Library/Saved Application State/app.zen-browser.zen.savedState",
+       "~/Library/Saved Application State/org.mozilla.com.zen.browser.savedState"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "zen@twilight",
+  "full_token": "zen@twilight",
+  "tap": "homebrew/cask",
+  "name": [
+   "Zen Twilight"
+  ],
+  "homepage": "https://zen-browser.app/",
+  "url": "https://github.com/zen-browser/desktop/releases/download/twilight-1/zen.macos-universal.dmg",
+  "version": "1.25t,20261117100349",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "quit": "app.zen-browser.zen"
+     }
+    ]
+   },
+   {
+    "app": [
+     "Twilight.app"
+    ],
+    "target": "/Applications/Twilight.app"
+   },
+   {
+    "command_wrapper": [
+     "zen-twilight",
+     {
+      "executable": "$APPDIR/Twilight.app/Contents/MacOS/zen"
+     }
+    ],
+    "target": "$HOMEBREW_PREFIX/bin/zen-twilight"
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "~/Library/Application Support/Zen",
+       "~/Library/Caches/Mozilla/updates/Applications/Twilight",
+       "~/Library/Caches/Mozilla/updates/Applications/Zen Twilight",
+       "~/Library/Caches/Zen",
+       "~/Library/Preferences/app.zen-browser.zen.plist",
+       "~/Library/Preferences/org.mozilla.com.zen.browser.plist",
+       "~/Library/Saved Application State/app.zen-browser.zen.savedState",
+       "~/Library/Saved Application State/org.mozilla.com.zen.browser.savedState"
+      ],
+      "rmdir": "~/Library/Caches/Mozilla"
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "zoom",
+  "full_token": "zoom",
+  "tap": "homebrew/cask",
+  "name": [
+   "Zoom"
+  ],
+  "homepage": "https://www.zoom.us/",
+  "url": "https://cdn.zoom.us/prod/7.2.5.90525/arm64/zoomusInstallerFull.pkg",
+  "version": "7.2.5.90525",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": [
+       "us.zoom.updater",
+       "us.zoom.updater.login.check",
+       "us.zoom.ZoomDaemon"
+      ],
+      "signal": [
+       "KILL",
+       "us.zoom.xos"
+      ],
+      "pkgutil": "us.zoom.pkg.videomeeting",
+      "delete": [
+       "/Applications/zoom.us.app",
+       "/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+       "/Library/Logs/DiagnosticReports/zoom.us*",
+       "/Library/PrivilegedHelperTools/us.zoom.ZoomDaemon"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "zoomusInstallerFull.pkg"
+    ]
+   },
+   {
+    "postflight_steps": [
+     {
+      "steps": [
+       {
+        "name": "/Applications/zoom.us.app",
+        "match": "full",
+        "attempts": 3,
+        "notices": [
+         "The Zoom package postinstall script launches the Zoom app",
+         "Attempting to close zoom.us.app to avoid unwanted user intervention"
+        ],
+        "failure_message": "Unable to forcibly close zoom.us.app",
+        "type": "terminate_process"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "zap": [
+     {
+      "delete": "/Library/Logs/zoomusinstall.log",
+      "trash": [
+       "~/.zoomus",
+       "~/Desktop/Zoom",
+       "~/Documents/Zoom",
+       "~/Library/Application Scripts/*.ZoomClient3rd",
+       "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings",
+       "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings.plist",
+       "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/us.zoom*.sfl*",
+       "~/Library/Application Support/CrashReporter/zoom.us*",
+       "~/Library/Application Support/zoom.us",
+       "~/Library/Application Support/ZoomUpdater",
+       "~/Library/Caches/us.zoom.xos",
+       "~/Library/Cookies/us.zoom.xos.binarycookies",
+       "~/Library/Group Containers/*.ZoomClient3rd",
+       "~/Library/HTTPStorages/us.zoom.xos",
+       "~/Library/HTTPStorages/us.zoom.xos.binarycookies",
+       "~/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+       "~/Library/Logs/zoom.us",
+       "~/Library/Logs/zoominstall.log",
+       "~/Library/Logs/ZoomPhone",
+       "~/Library/Preferences/us.zoom.*.plist",
+       "~/Library/Preferences/ZoomChat.plist",
+       "~/Library/Saved Application State/us.zoom.xos.savedState",
+       "~/Library/WebKit/us.zoom.xos"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ },
+ {
+  "token": "zoom-for-it-admins",
+  "full_token": "zoom-for-it-admins",
+  "tap": "homebrew/cask",
+  "name": [
+   "Zoom for IT Admins"
+  ],
+  "homepage": "https://www.zoom.us/",
+  "url": "https://cdn.zoom.us/prod/7.2.5.90525/ZoomInstallerIT.pkg",
+  "version": "7.2.5.90525",
+  "auto_updates": true,
+  "artifacts": [
+   {
+    "uninstall": [
+     {
+      "launchctl": "us.zoom.ZoomDaemon",
+      "signal": [
+       "KILL",
+       "us.zoom.xos"
+      ],
+      "pkgutil": "us.zoom.pkg.videomeeting",
+      "delete": [
+       "/Applications/zoom.us.app",
+       "/Library/Audio/Plug-Ins/HAL/ZoomAudioDevice.driver",
+       "/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+       "/Library/Logs/DiagnosticReports/zoom.us*",
+       "/Library/PrivilegedHelperTools/us.zoom.ZoomDaemon"
+      ]
+     }
+    ]
+   },
+   {
+    "pkg": [
+     "ZoomInstallerIT.pkg"
+    ]
+   },
+   {
+    "zap": [
+     {
+      "trash": [
+       "/Library/Preferences/us.zoom.config.plist",
+       "~/.zoomus",
+       "~/Desktop/Zoom",
+       "~/Documents/Zoom",
+       "~/Library/Application Scripts/*.ZoomClient3rd",
+       "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings",
+       "~/Library/Application Support/CloudDocs/session/containers/iCloud.us.zoom.videomeetings.plist",
+       "~/Library/Application Support/CrashReporter/zoom.us*",
+       "~/Library/Application Support/zoom.us",
+       "~/Library/Caches/us.zoom.xos",
+       "~/Library/Cookies/us.zoom.xos.binarycookies",
+       "~/Library/Group Containers/*.ZoomClient3rd",
+       "~/Library/HTTPStorages/us.zoom.xos",
+       "~/Library/HTTPStorages/us.zoom.xos.binarycookies",
+       "~/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin",
+       "~/Library/Logs/zoom.us",
+       "~/Library/Logs/zoominstall.log",
+       "~/Library/Logs/ZoomPhone",
+       "~/Library/Mobile Documents/iCloud~us~zoom~videomeetings",
+       "~/Library/Preferences/us.zoom.airhost.plist",
+       "~/Library/Preferences/us.zoom.caphost.plist",
+       "~/Library/Preferences/us.zoom.Transcode.plist",
+       "~/Library/Preferences/us.zoom.xos.Hotkey.plist",
+       "~/Library/Preferences/us.zoom.xos.plist",
+       "~/Library/Preferences/us.zoom.ZoomAutoUpdater.plist",
+       "~/Library/Preferences/ZoomChat.plist",
+       "~/Library/Safari/PerSiteZoomPreferences.plist",
+       "~/Library/SafariTechnologyPreview/PerSiteZoomPreferences.plist",
+       "~/Library/Saved Application State/us.zoom.xos.savedState",
+       "~/Library/WebKit/us.zoom.xos"
+      ]
+     }
+    ]
+   }
+  ],
+  "deprecated": false,
+  "disabled": false
+ }
+]

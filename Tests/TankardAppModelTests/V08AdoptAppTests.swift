@@ -35,8 +35,8 @@ struct V08AdoptAppTests {
         #expect(a.scan.skipped.appStore.map(\.displayName) == ["Things"])
         #expect(a.scan.skipped.apple.map(\.displayName) == ["Safari"])
         #expect(a.skippedLine.contains("1 already from Homebrew"))
-        // Default ticks: ready and not name-only.
-        #expect(Set(a.plan.map(\.token)) == ["firefox", "hiddenbar", "libreoffice", "obsidian"])
+        // Default ticks: ready, matched by app ID, one cask (0.8.6: Firefox has two, so the user picks).
+        #expect(Set(a.plan.map(\.token)) == ["hiddenbar", "libreoffice", "obsidian"])
         let im = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "Impactor" })
         #expect(a.confidence(im) == .low)
         // Can't tick what isn't ready.
@@ -50,11 +50,17 @@ struct V08AdoptAppTests {
         let ff = try #require(a.rows(.ready).first { $0.app.displayName == "Firefox" })
         #expect(ff.candidates == ["firefox", "firefox@beta"])
         #expect(a.token(ff) == "firefox")
+        // 0.8.6: several casks: never ticked for you; the row says which fits.
+        #expect(!a.isTicked(ff))
+        #expect(a.matchNote(ff)?.contains("firefox fits its version best") == true)
         a.choose("firefox@beta", for: ff)
         #expect(a.token(ff) == "firefox@beta")
-        // auto_updates: any version adopts, so still ready and ticked.
-        #expect(a.group(ff) == .ready && a.isTicked(ff))
-        #expect(a.plan.first { $0.appPath == ff.app.path }?.qualifiedName == "homebrew/cask/firefox@beta")
+        // auto_updates: any version adopts, so still ready; the user ticks it.
+        #expect(a.group(ff) == .ready && !a.isTicked(ff))
+        a.setTicked(ff, true)
+        let item = try #require(a.plan.first { $0.appPath == ff.app.path })
+        #expect(item.qualifiedName == "homebrew/cask/firefox@beta" && item.alternatives == ["firefox"])
+        #expect(AdoptStore.confirmationText([item]).contains("Firefox will be adopted as firefox@beta. Other casks install an app with this name (firefox)"))
         a.choose("not-a-candidate", for: ff)
         #expect(a.token(ff) == "firefox@beta")
     }
@@ -223,7 +229,8 @@ struct V08AdoptAppTests {
         let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
         var a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         var row = try #require(a.scan.rows.first)
-        #expect(a.group(row) == .ready && a.confidence(row) == .low)
+        // 0.8.6: brew wouldn't check a self-updating cask, so only an app-ID match is adoptable.
+        #expect(a.group(row) == .cantAdopt && a.confidence(row) == .low)
         #expect(!a.isTicked(row) && a.plan.isEmpty)
         // Same vendor (owner alice) but not the exact bundle id: still not ticked for a self-updating cask.
         var alices = bobs
@@ -231,19 +238,22 @@ struct V08AdoptAppTests {
         a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         row = try #require(a.scan.rows.first)
         #expect(a.confidence(row) == .medium && !a.isTicked(row))
-        // The user can still tick it by hand.
+        // 0.8.6: and can't be ticked by hand either.
         a.setTicked(row, true)
-        #expect(a.plan.map(\.token) == ["foo"])
+        #expect(a.group(row) == .cantAdopt && a.plan.isEmpty)
         // The bundle id named by the cask: ticked.
         alices.bundleIDs = ["io.github.alice.foo"]
         a = adoptStore([alices], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         row = try #require(a.scan.rows.first)
         #expect(a.confidence(row) == .high && a.isTicked(row))
-        // Not self-updating: a likely match at the same version is ticked (brew compares the download).
+        // Not self-updating: a likely match at the same version is ready (brew
+        // compares the download) but, 0.8.6, only an app-ID match is ticked for you.
         var plain = AdoptCask(token: "foo", version: "1.0", web: "https://github.com/alice/foo", apps: target)
         a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         row = try #require(a.scan.rows.first)
-        #expect(a.confidence(row) == .medium && a.isTicked(row))
+        #expect(a.group(row) == .ready && a.confidence(row) == .medium && !a.isTicked(row))
+        a.setTicked(row, true)
+        #expect(a.plan.map(\.token) == ["foo"])
         plain.web = "https://github.com/bob/foo"
         a = adoptStore([plain], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         row = try #require(a.scan.rows.first)
@@ -281,7 +291,8 @@ struct V08AdoptAppTests {
 
     @Test func confirmationCarriesTheRowsConfidence() throws {
         let target = [BrewInfoJSON.Cask.AdoptArtifacts.App(source: "Foo.app", target: "/Applications/Foo.app")]
-        let bobs = AdoptCask(token: "foo", version: "2.0", autoUpdates: true, web: "https://github.com/bob/foo", apps: target)
+        // 0.8.6: not self-updating (a self-updating one can't be ticked on a name only).
+        let bobs = AdoptCask(token: "foo", version: "1.0", web: "https://github.com/bob/foo", apps: target)
         let a = adoptStore([bobs], [Self.app("Foo.app", "io.github.alice.Foo", "1.0")])
         let row = try #require(a.scan.rows.first)
         a.setTicked(row, true)

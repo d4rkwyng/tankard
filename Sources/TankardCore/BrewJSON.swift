@@ -258,12 +258,19 @@ public struct BrewInfoJSON: Decodable, Sendable {
             public var suites: [String]
             public var pkg: Bool
             public var idStrings: [String]
+            /// 0.8.6: the strings of `uninstall`'s quit, launchctl, signal,
+            /// pkgutil and login_item only: what the cask's own app runs
+            /// as, not the files a cleanup deletes (bookends' zap names
+            /// Word's Application Scripts folder).
+            public var ownIDStrings: [String]
 
-            public init(apps: [App] = [], suites: [String] = [], pkg: Bool = false, idStrings: [String] = []) {
+            public init(apps: [App] = [], suites: [String] = [], pkg: Bool = false, idStrings: [String] = [],
+                        ownIDStrings: [String] = []) {
                 self.apps = apps
                 self.suites = suites
                 self.pkg = pkg
                 self.idStrings = idStrings
+                self.ownIDStrings = ownIDStrings
             }
         }
 
@@ -328,7 +335,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
                                              deletePaths: list.flatMap(\.delete),
                                              idStrings: list.flatMap(\.idStrings))
                 adoptArtifacts = AdoptArtifacts(apps: list.flatMap(\.apps), suites: list.flatMap(\.suites),
-                                                pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings))
+                                                pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings),
+                                                ownIDStrings: list.flatMap(\.ownIDStrings))
             }
             url = try? c.decodeIfPresent(String.self, forKey: .url)
         }
@@ -351,6 +359,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
             var apps: [AdoptArtifacts.App] = []
             var suites: [String] = []
             var idStrings: [String] = []
+            /// 0.8.6: `uninstall`'s quit, launchctl, signal, pkgutil, login_item strings.
+            var ownIDStrings: [String] = []
             /// 0.8.4: every stanza key in this entry.
             var keys: [String] = []
 
@@ -394,8 +404,12 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 var quit: [String] = []
                 var pkgutil: [String] = []
                 var delete: [String] = []
+                var ownIDs: [String] = []
                 init(from decoder: Decoder) throws {
                     guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                    for k in ["quit", "launchctl", "signal", "pkgutil", "login_item"] {
+                        if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) { ownIDs += all.strings }
+                    }
                     func list(_ name: String) -> [String] {
                         let k = Key(stringValue: name)
                         if let a = try? c.decodeIfPresent([String].self, forKey: k) { return a }
@@ -443,6 +457,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
                     quit = u.flatMap(\.quit)
                     pkgutil = u.flatMap(\.pkgutil)
                     delete = u.flatMap(\.delete)
+                    ownIDStrings = u.flatMap(\.ownIDs)
                 }
                 for k in ["uninstall", "zap"] {
                     if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) {

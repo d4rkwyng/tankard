@@ -309,10 +309,14 @@ date.
 1. Choose **Homebrew ▸ Adopt Apps…**. Tankard scans Applications and ~/Applications. The
    scan changes nothing.
 2. Tick the apps to adopt. Each match says what matched: **Matched by app ID**, **Matched
-   by name and website** or **Matched by name only — check before adopting**. Name-only
-   matches are never ticked for you. When a cask names an app ID and your app's ID is
-   different, the app isn't offered: it is listed under **No cask** as "possibly a
-   different app", with both IDs.
+   by name and developer**, **Matched by name and website** or **Matched by name only —
+   check before adopting**. Only app-ID matches with a single cask are ticked for you.
+   When a cask names app IDs and none is your app's (or its developer's), the app isn't
+   offered: it is listed under **No cask** as "possibly a different app", with both IDs.
+   An app that updates itself can be adopted only on an app-ID match, because brew then
+   adopts it without checking. When several casks install the app (Firefox and Firefox
+   ESR, Parallels and Parallels 18), Tankard picks the one whose version fits your app
+   and says so; check it before ticking.
 3. For an app that updates itself, choose who updates it (see
    [Apps that update themselves](#apps-that-update-themselves)).
 4. Click **Adopt** and confirm.

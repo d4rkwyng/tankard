@@ -37,15 +37,20 @@ struct V086AdoptIDMatchAppTests {
         let a = adoptStore([Self.money], [Self.app("Copilot.app", "com.copilot.production", "6.8.2")])
         let row = try #require(a.scan.rows.first)
         #expect(a.group(row) == .ready && a.isTicked(row))
-        #expect(a.confidence(row)?.title == "Matched by app ID")
+        #expect(a.evidence(row) == .appID && a.evidence(row)?.title == "Matched by app ID")
         #expect(a.differentAppNote(row) == nil)
         #expect(a.plan.map(\.token) == ["copilot-money"])
     }
 
     @Test func evidenceTitlesInPlainWords() {
-        #expect(AdoptConfidence.high.title == "Matched by app ID")
-        #expect(AdoptConfidence.medium.title == "Matched by name and website")
-        #expect(AdoptConfidence.low.title == "Matched by name only — check before adopting")
+        #expect(AdoptMatchEvidence.appID.title == "Matched by app ID")
+        #expect(AdoptMatchEvidence.developer.title == "Matched by name and developer")
+        #expect(AdoptMatchEvidence.website.title == "Matched by name and website")
+        #expect(AdoptMatchEvidence.nameOnly.title == "Matched by name only — check before adopting")
+        #expect(AdoptMatchEvidence(.match, confidence: .high) == .appID)
+        #expect(AdoptMatchEvidence(.vendor, confidence: .medium) == .developer)
+        #expect(AdoptMatchEvidence(AdoptMatcher.IDEvidence.none, confidence: .medium) == .website)
+        #expect(AdoptMatchEvidence(AdoptMatcher.IDEvidence.none, confidence: .low) == .nameOnly)
     }
 
     @Test func demoShowsTheDifferentCopilot() async throws {

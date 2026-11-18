@@ -49,6 +49,7 @@
 "%@ runs as %@: %@ needs sudo" = "%@ 以 %@ 身份运行：%@ 需要 sudo";
 "%@ s" = "%@ 秒";
 "%@ stopped" = "%@ 已停止";
+"%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ 将作为 %@ 接管。还有其他 cask 安装同名应用(%@):brew upgrade 会跟随你接管的 cask,请确认它是正确的那个。";
 "%@ would be installed too" = "也会安装 %@";
 "%@ · %lld" = "%@ · %lld";
 "%@ → %@: %@ version; upgrade by hand" = "%@ → %@：%@ 版本；请手动升级";
@@ -607,6 +608,7 @@
 "Made by d4rkwyng" = "由 d4rkwyng 制作";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "根据 cask 的 pkg 项标记。其他 cask 仍可能要求输入密码。";
 "Matched by app ID" = "按应用 ID 匹配";
+"Matched by name and developer" = "按名称和开发者匹配";
 "Matched by name and website" = "按名称和网站匹配";
 "Matched by name only — check before adopting" = "仅按名称匹配 — 接管前请核对";
 "Medium" = "中";
@@ -727,6 +729,7 @@
 "Online" = "在线";
 "Only available in Tankard.app." = "仅在 Tankard.app 中可用。";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "仅在你确实需要这个版本时使用。它会下载 Homebrew 的完整软件包历史，此后旧版本需要你自行维护。";
+"Only the name matches, so this may be a different app rather than an older version of it." = "只有名称一致,因此这可能是另一个应用,而不是它的旧版本。";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "仅限 %@ 所需的项。原本就未使用的依赖项仍保持安装。";
 "Open Homepage" = "打开主页";
 "Open Notification Settings" = "打开通知设置";
@@ -934,6 +937,7 @@
 "Set in brew.env: it changes brew's output, which Tankard reads." = "在 brew.env 中设置：会改变 Tankard 所读取的 brew 输出。";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "在 brew.env 中设置：会把 brew 的文件移出 Tankard 查找的位置。";
 "Several casks install an app with this name. Pick the one you have." = "有多个 cask 会安装同名 App。请选择你所用的那个。";
+"Several casks install an app with this name; %@ fits its version best. Check that it's the one you have before ticking it." = "有多个 cask 安装同名应用;%@ 与其版本最相符。勾选前请确认这是你安装的那个。";
 "Show" = "显示";
 "Show %@ in Tankard" = "在 Tankard 中显示 %@";
 "Show Auto-update Log…" = "显示自动更新日志…";
@@ -1059,6 +1063,7 @@
 "The app's ID (its bundle identifier) is one the cask names." = "应用的 ID(其 Bundle 标识符)是 cask 列出的 ID 之一。";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "此 cask 总是下载最新版本，因此 brew 会在下载后比较；如果不同，就不会改动该 App。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "此 cask 安装到 %@；brew 只接管正好位于该位置的 App。";
+"The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "cask 列出了同一开发者的应用 ID,但不是此应用的确切 ID:接管前请核对。";
 "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "cask 未列出应用 ID,因此只能比较应用名称。它可能是同名的另一个应用:接管前请核对。";
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask 未列出应用 ID。应用名称一致,且其 ID 指向 cask 网站的开发者。";
 "The cask says this app updates itself (auto_updates)." = "此 cask 声明该 App 会自行更新（auto_updates）。";
@@ -1095,6 +1100,7 @@
 "This app will be closed during the upgrade and opened again afterwards: %@. Save your work in it first." = "此 App 会在升级期间关闭，并在之后重新打开：%@。请先存储其中的工作。";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
+"This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "此 cask 的应用会自行更新,因此 brew 接管时不会与下载内容比较。只有当应用的 ID 是 cask 列出的 ID 之一时,Tankard 才会提供接管,而此应用不是。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。";
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";

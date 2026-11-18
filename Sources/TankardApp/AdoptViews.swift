@@ -156,8 +156,8 @@ struct AdoptSheet: View {
                 HStack(spacing: 6) {
                     Text(r.app.displayName).font(.system(size: 12.5, weight: .semibold))
                     Text(r.app.shortVersion ?? "?").font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
-                    if let c = adopt.confidence(r) {
-                        chip(c.title, c == .low ? theme.warning(scheme).text : (c == .high ? theme.accent : .secondary), help: c.help)
+                    if let e = adopt.evidence(r) {
+                        chip(e.title, e == .nameOnly ? theme.warning(scheme).text : (e == .appID ? theme.accent : .secondary), help: e.help)
                     }
                     if cask?.autoUpdates == true {
                         chip(String(localized: "Updates itself"), .secondary,
@@ -170,6 +170,11 @@ struct AdoptSheet: View {
                     .lineLimit(1).truncationMode(.middle)
                 if let note = note(r, verdict, cask) {
                     Text(note).font(.system(size: 11)).foregroundStyle(g == .ready ? Color.secondary : theme.warning(scheme).text)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                // 0.8.6: several casks, or a name-only "needs update".
+                if let m = adopt.matchNote(r) {
+                    Text(m).font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 if g == .ready, cask?.autoUpdates == true {
