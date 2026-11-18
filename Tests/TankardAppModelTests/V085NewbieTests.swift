@@ -119,3 +119,29 @@ struct V085AutoremoveKeepTests {
         #expect(!AutoremovePlan.oftenUsedDirectly("libyaml"))
     }
 }
+
+/// H5: harmless doctor notes are information, not alarms; Clean Up and
+/// Software Update are buttons, not commands.
+struct V085DoctorTests {
+    @Test func harmlessNotesAndActions() {
+        let text = """
+        Warning: Unbrewed dylibs were found in /usr/local/lib.
+          /usr/local/lib/libfoo.dylib
+
+        Warning: Broken symlinks were found. Remove them with `brew cleanup`:
+          /opt/homebrew/bin/x
+
+        Warning: A newer Command Line Tools release is available.
+        Update them from Software Update in System Settings.
+
+        Warning: Something brand new that Tankard has never seen
+        """
+        let r = DoctorReport.parse(text)
+        #expect(r.warnings.count == 4)
+        #expect(r.warnings.map(\.isHarmless) == [true, true, true, false])  // unknown: not "harmless", shown yellow
+        #expect(r.warnings[1].action == .cleanUp)
+        #expect(r.warnings[2].action == .softwareUpdate)
+        #expect(r.warnings[0].action == nil && r.warnings[3].action == nil)
+        #expect(DoctorWarningKind.notWritable.isHarmless == false)
+    }
+}

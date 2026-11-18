@@ -88,10 +88,19 @@ public final class HealthStore {
     public var summary: String {
         guard let d = doctor else { return "" }
         if d.warnings.isEmpty { return d.ready ? String(localized: "brew doctor found nothing to fix.") : String(localized: "brew doctor printed no warnings.") }
+        // 0.8.5 (newbie review H5): no alarm for notes that rarely matter.
+        if d.warnings.allSatisfy(\.isHarmless) {
+            return d.warnings.count == 1
+                ? String(localized: "Homebrew's check-up has 1 note")
+                : String(localized: "Homebrew's check-up has \(d.warnings.count) notes")
+        }
         return d.warnings.count == 1
-            ? String(localized: "brew doctor: \(d.warnings.count) warning")
-            : String(localized: "brew doctor: \(d.warnings.count) warnings")
+            ? String(localized: "Homebrew's check-up found 1 thing to look at")
+            : String(localized: "Homebrew's check-up found \(d.warnings.count) things to look at")
     }
+
+    /// 0.8.5: every warning is a known, harmless one.
+    public var onlyHarmless: Bool { doctor?.warnings.allSatisfy(\.isHarmless) ?? true }
 }
 
 /// `brew autoremove --dry-run`, then (on confirm) `brew autoremove`.
@@ -246,6 +255,16 @@ public extension AppStore {
         autoremove = a
         toolSheet = .autoremove
         Task { await a.load() }
+    }
+
+    /// 0.8.5: Health's Clean Up… button: closes Health, then opens Clean Up
+    /// (one sheet at a time).
+    func openCleanupFromHealth() {
+        closeToolSheet()
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(350))
+            openCleanup()
+        }
     }
 
     /// The confirmed `brew autoremove`, through the queue and the live log.

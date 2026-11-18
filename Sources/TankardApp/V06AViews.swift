@@ -131,12 +131,12 @@ struct HealthSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             SheetHeader(icon: "stethoscope.circle.fill", title: String(localized: "Homebrew Health"),
-                        subtitle: String(localized: "brew doctor, brew config and brew missing. Read-only: Tankard changes nothing here."))
+                        subtitle: String(localized: "Homebrew's own check-up. Looking changes nothing."))
             switch health.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text("Running brew doctor…").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Running Homebrew's check-up…").font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, minHeight: 200)
             case .failed(let m):
@@ -149,7 +149,7 @@ struct HealthSheet: View {
             }
             Spacer(minLength: 0)
             HStack {
-                Text("Fix commands are shown, never run. Copy one into Terminal if you want it.")
+                Text("Where Tankard can fix something itself, there's a button. Terminal commands are under Details.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
                 Button("Check Again") { Task { await health.load() } }
@@ -169,12 +169,14 @@ struct HealthSheet: View {
     private var results: some View {
         if let d = health.doctor {
             Text(health.summary).font(.system(size: 16, weight: .bold))
-                .foregroundStyle(d.warnings.isEmpty ? theme.accent : theme.warning(scheme).text)
-            if d.maintainersNote {
-                Text("brew says these warnings are for Homebrew maintainers: if everything works, you can ignore them.")
+                .foregroundStyle(d.warnings.isEmpty ? theme.accent : health.onlyHarmless ? Color.primary : Color.orange)
+            // 0.8.5 (newbie review H5): lead with the reassurance.
+            if !d.warnings.isEmpty {
+                Text("Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew.")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            ForEach(d.warnings) { w in DoctorWarningCard(warning: w) }
+            ForEach(d.warnings) { w in DoctorWarningCard(warning: w, store: store) }
         }
         if !health.missing.isEmpty {
             Text("Missing dependencies").font(.system(size: 12, weight: .semibold))
@@ -345,20 +347,31 @@ struct EnvironmentList: View {
 
 struct DoctorWarningCard: View {
     var warning: DoctorWarning
+    var store: AppStore
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var scheme
     private let expanded = State(initialValue: false)
 
     var body: some View {
+        // 0.8.5 (newbie review H5): known harmless notes are neutral
+        // information; the rest (and unknown ones) yellow, never red.
+        let harmless = warning.isHarmless
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(theme.warning(scheme).text)
+                Image(systemName: harmless ? "info.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundStyle(harmless ? Color.secondary : Color.yellow)
                 Text(warning.title).font(.system(size: 12.5, weight: .semibold)).fixedSize(horizontal: false, vertical: true)
+                if harmless {
+                    Text("Usually harmless").font(.system(size: 10.5)).foregroundStyle(.secondary)
+                }
             }
             if let e = warning.explanation {
                 Text(e).font(.system(size: 11.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
-            if let cmd = warning.fixCommand {
+            if let action = warning.action {
+                actionButton(action)
+                if let cmd = warning.fixCommand { CommandDetails(commands: [cmd]) }
+            } else if let cmd = warning.fixCommand {
                 CommandBox(command: cmd)
             }
             DisclosureGroup("What brew printed", isExpanded: expanded.projectedValue) {
@@ -369,7 +382,26 @@ struct DoctorWarningCard: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 8).fill(theme.warning(scheme).tag))
+        .background(RoundedRectangle(cornerRadius: 8).fill(harmless ? theme.chip : Color.yellow.opacity(scheme == .dark ? 0.16 : 0.14)))
+    }
+
+    @ViewBuilder
+    private func actionButton(_ action: DoctorFixAction) -> some View {
+        switch action {
+        case .cleanUp:
+            Button("Clean Up…") { store.openCleanupFromHealth() }
+                .controlSize(.small)
+                .disabled(store.isBusy)
+                .help(String(localized: "Removes old versions and leftover downloads, after showing what goes"))
+        case .softwareUpdate:
+            Button("Open Software Update") {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.Software-Update-Settings.extension") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            .controlSize(.small)
+            .help(String(localized: "Opens System Settings, where macOS offers the Command Line Tools update"))
+        }
     }
 }
 
