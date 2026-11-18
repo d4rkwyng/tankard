@@ -372,7 +372,9 @@ struct CommandBox: View {
             .buttonStyle(.borderless)
             .help("Copy command")
             // 0.8.5: VoiceOver read the symbol's name, not what it does.
-            .accessibilityLabel(Text(copied ? "Copied" : "Copy command"))
+            // 0.8.6 (UI L6): two literals (a ternary of literals is a
+            // String, which Text doesn't localize).
+            .accessibilityLabel(copied ? Text("Copied") : Text("Copy command"))
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)

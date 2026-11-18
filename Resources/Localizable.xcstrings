@@ -29305,54 +29305,54 @@
         }
       }
     },
-    "Installed packages, or search everything Homebrew has (⌘1, ⌘2)": {
+    "Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Installierte Pakete oder alles durchsuchen, was Homebrew hat (⌘1, ⌘2)"
+            "value": "Installierte Pakete, alles, was Homebrew hat, oder deine Dienste (⌘1, ⌘2, ⌘3)"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paquets installés, ou recherche dans tout Homebrew (⌘1, ⌘2)"
+            "value": "Paquets installés, tout ce que propose Homebrew, ou vos services (⌘1, ⌘2, ⌘3)"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paquetes instalados, o busca todo lo que tiene Homebrew (⌘1, ⌘2)"
+            "value": "Paquetes instalados, todo lo que tiene Homebrew o tus servicios (⌘1, ⌘2, ⌘3)"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "インストール済みパッケージ、またはHomebrewのすべてを検索(⌘1、⌘2)"
+            "value": "インストール済みパッケージ、Homebrew のすべて、またはサービス（⌘1、⌘2、⌘3）"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已安装的软件包，或搜索 Homebrew 的全部内容（⌘1、⌘2）"
+            "value": "已安装的软件包、Homebrew 的全部内容或你的服务（⌘1、⌘2、⌘3）"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pacotes instalados, ou pesquise tudo o que o Homebrew tem (⌘1, ⌘2)"
+            "value": "Pacotes instalados, tudo o que o Homebrew tem ou seus serviços (⌘1, ⌘2, ⌘3)"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pacchetti installati, o cerca tra tutto ciò che ha Homebrew (⌘1, ⌘2)"
+            "value": "Pacchetti installati, tutto ciò che ha Homebrew o i tuoi servizi (⌘1, ⌘2, ⌘3)"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 패키지 또는 Homebrew의 모든 항목 검색(⌘1, ⌘2)"
+            "value": "설치된 패키지, Homebrew의 모든 항목 또는 서비스(⌘1, ⌘2, ⌘3)"
           }
         }
       }
@@ -62273,6 +62273,58 @@
         }
       }
     },
+    "Upgrade Selected": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour la sélection"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar selección"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択項目をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级所选项"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar seleção"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna selezionato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택 항목 업그레이드"
+          }
+        }
+      }
+    },
     "Upgrade Tankard now. Automatic updates never upgrade Tankard itself.": {
       "localizations": {
         "de": {
@@ -64089,58 +64141,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "취약함"
-          }
-        }
-      }
-    },
-    "Vulnerable: %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwundbar: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnérable : %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerable: %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "脆弱性あり: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "存在漏洞：%@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerável: %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerabile: %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취약함: %@"
           }
         }
       }

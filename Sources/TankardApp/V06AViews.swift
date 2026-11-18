@@ -571,6 +571,7 @@ struct HistoryRow: View {
                               : String(localized: "Run \(e.command) again, through the queue"))
                 } else if let hint = e.rerunHint {
                     Image(systemName: "info.circle").foregroundStyle(.secondary).help(hint)
+                        .accessibilityLabel(Text(hint)) // 0.8.6 (UI L6): was "info"
                 }
             }
             HStack(spacing: 8) {

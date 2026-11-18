@@ -610,7 +610,8 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 - **File:** **Check Brewfile…**, **Export Brewfile…**, Close (⌘W), Close All.
 - **View:** **Installed** (⌘1), **Discover** (⌘2), **Services** (⌘3).
 - **Homebrew:**
-  - **Refresh** (⌘R), **Scan for Vulnerabilities**
+  - **Refresh** (⌘R), **Upgrade All…** (⇧⌘U, shows the plan first), **Upgrade <name>** (⌘U,
+    the package selected in Installed), **Scan for Vulnerabilities**
   - **Health…**, **History…**
   - **Clean Up…**, **Remove Unused Dependencies…**
   - **Taps…**, **Adopt Apps…**, **Restore Points…**

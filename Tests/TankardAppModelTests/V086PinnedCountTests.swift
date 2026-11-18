@@ -61,3 +61,23 @@ struct V086DetailWidthTests {
         #expect(left >= columns)
     }
 }
+
+// 0.8.6 (UI details L10): Homebrew ▸ Upgrade All… (⇧⌘U), Upgrade <name> (⌘U).
+@MainActor
+struct V086UpgradeMenuTests {
+    @Test func upgradeSelectedNeedsAnUpgradableSelection() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        #expect(store.selectedUpgradeTarget == nil)
+        #expect(UpgradeMenu.selectedTitle(nil) == "Upgrade Selected")
+        let p = try #require(store.upgradable.first)
+        store.selection = p.id
+        #expect(store.selectedUpgradeTarget?.id == p.id)
+        #expect(UpgradeMenu.selectedTitle(store.selectedUpgradeTarget) == "Upgrade \(p.name)")
+        let current = try #require(store.packages.first { !$0.upgradeAvailable })
+        store.selection = current.id
+        #expect(store.selectedUpgradeTarget == nil)
+        store.requestUpgradeAllPlan()
+        #expect(store.upgradePlan != nil)
+    }
+}

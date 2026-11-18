@@ -31,7 +31,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .principal) {
                     ThemedSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases, label: \.title)
                         .environment(\.theme, Theme.of(appearance.theme))
-                        .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
+                        .help("Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
@@ -755,6 +755,7 @@ struct NameBadges: View {
                     .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
                     .fixedSize()
                     .help("Installed as a dependency")
+                    .accessibilityLabel(Text("Installed as a dependency")) // 0.8.6 (UI L6): was "dep"
             }
             if p.pinned { PinnedBadge(compact: compact) }
             RetiredBadge(package: p, compact: compact)

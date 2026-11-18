@@ -557,7 +557,7 @@
 "Installed by you" = "직접 설치함";
 "Installed from %@." = "%@에서 설치됨.";
 "Installed on" = "설치 날짜";
-"Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "설치된 패키지 또는 Homebrew의 모든 항목 검색(⌘1, ⌘2)";
+"Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)" = "설치된 패키지, Homebrew의 모든 항목 또는 서비스(⌘1, ⌘2, ⌘3)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "설치된 버전이 tap의 %@보다 최신입니다. brew는 다운그레이드하지 않습니다.";
 "Installing" = "설치 중";
 "Installing compiles from source, which can take a long time on older Macs." = "설치하면 소스에서 컴파일되며 오래된 Mac에서는 오래 걸릴 수 있습니다.";
@@ -1191,6 +1191,7 @@
 "Upgrade All…" = "모두 업그레이드…";
 "Upgrade Now" = "지금 업그레이드";
 "Upgrade Plan" = "업그레이드 계획";
+"Upgrade Selected" = "선택 항목 업그레이드";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "지금 Tankard를 업그레이드합니다. 자동 업데이트는 Tankard 자체를 업그레이드하지 않습니다.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";
@@ -1226,7 +1227,6 @@
 "View" = "보기";
 "Vulnerability scan" = "취약점 검사";
 "Vulnerable" = "취약함";
-"Vulnerable: %@" = "취약함: %@";
 "Wait for the running task to finish" = "실행 중인 작업이 끝날 때까지 기다리세요";
 "Waiting for another Homebrew command to finish…" = "다른 Homebrew 명령이 끝나기를 기다리는 중…";
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";

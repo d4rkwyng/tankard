@@ -557,7 +557,7 @@
 "Installed by you" = "Instalados por ti";
 "Installed from %@." = "Instalado desde %@.";
 "Installed on" = "Instalado el";
-"Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "Paquetes instalados, o busca todo lo que tiene Homebrew (⌘1, ⌘2)";
+"Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)" = "Paquetes instalados, todo lo que tiene Homebrew o tus servicios (⌘1, ⌘2, ⌘3)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "La versión instalada es más reciente que la %@ del tap. brew no la degradará.";
 "Installing" = "Instalando";
 "Installing compiles from source, which can take a long time on older Macs." = "Instalar compila desde el código fuente, lo que puede tardar mucho en Macs más antiguos.";
@@ -1191,6 +1191,7 @@
 "Upgrade All…" = "Actualizar todo…";
 "Upgrade Now" = "Actualizar ahora";
 "Upgrade Plan" = "Plan de actualización";
+"Upgrade Selected" = "Actualizar selección";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "Actualiza Tankard ahora. Las actualizaciones automáticas nunca actualizan el propio Tankard.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Actualiza de nuevo de la forma habitual: siguen aplicando las advertencias de compilación, los fijados y las versiones omitidas";
 "Upgrade available: %@" = "Actualización disponible: %@";
@@ -1226,7 +1227,6 @@
 "View" = "Visualización";
 "Vulnerability scan" = "Análisis de vulnerabilidades";
 "Vulnerable" = "Vulnerable";
-"Vulnerable: %@" = "Vulnerable: %@";
 "Wait for the running task to finish" = "Espera a que termine la tarea en curso";
 "Waiting for another Homebrew command to finish…" = "Esperando a que termine otro comando de Homebrew…";
 "Waiting for approval in System Settings → General → Login Items." = "Esperando aprobación en Ajustes del Sistema → General → Ítems de inicio de sesión.";

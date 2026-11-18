@@ -19,7 +19,8 @@ struct UninstallSheet: View {
         let command = AppStore.uninstallDisplay(package)
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
-                Image(systemName: pinned ? "pin.fill" : dependents.isEmpty ? "trash" : "lock.fill")
+                // 0.8.6 (UI L7): not the lock, which means "needs your password" elsewhere.
+                Image(systemName: pinned ? "pin.fill" : dependents.isEmpty ? "trash" : "link.badge.plus")
                     .font(.system(size: 26))
                     .foregroundStyle(dependents.isEmpty && !pinned ? Color.red : Color.orange)
                     .frame(width: 40)

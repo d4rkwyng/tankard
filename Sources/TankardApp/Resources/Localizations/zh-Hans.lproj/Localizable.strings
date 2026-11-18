@@ -557,7 +557,7 @@
 "Installed by you" = "你安装的";
 "Installed from %@." = "安装自 %@。";
 "Installed on" = "安装于";
-"Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "已安装的软件包，或搜索 Homebrew 的全部内容（⌘1、⌘2）";
+"Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)" = "已安装的软件包、Homebrew 的全部内容或你的服务（⌘1、⌘2、⌘3）";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "已安装的版本比 tap 的 %@ 更新。brew 不会降级它。";
 "Installing" = "正在安装";
 "Installing compiles from source, which can take a long time on older Macs." = "安装时会从源码编译，这在较旧的 Mac 上可能需要很长时间。";
@@ -1191,6 +1191,7 @@
 "Upgrade All…" = "全部升级…";
 "Upgrade Now" = "立即升级";
 "Upgrade Plan" = "升级计划";
+"Upgrade Selected" = "升级所选项";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "立即升级 Tankard。自动更新从不会升级 Tankard 本身。";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
 "Upgrade available: %@" = "有可用升级：%@";
@@ -1226,7 +1227,6 @@
 "View" = "显示";
 "Vulnerability scan" = "漏洞扫描";
 "Vulnerable" = "存在漏洞";
-"Vulnerable: %@" = "存在漏洞：%@";
 "Wait for the running task to finish" = "等待正在运行的任务完成";
 "Waiting for another Homebrew command to finish…" = "正在等待另一个 Homebrew 命令完成…";
 "Waiting for approval in System Settings → General → Login Items." = "正在等待在“系统设置 → 通用 → 登录项”中批准。";

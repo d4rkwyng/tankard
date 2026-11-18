@@ -38,7 +38,9 @@ struct VulnerabilityTag: View {
             .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : w.tag))
             .fixedSize()
             .help(VulnerabilityText.help(package))
-            .accessibilityLabel("Vulnerable: \(label)")
+            // 0.8.6 (UI L6): read "Vulnerable: Vulnerable · 2" before.
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(VulnerabilityText.spoken(package)))
         }
     }
 }
@@ -49,6 +51,12 @@ enum VulnerabilityText {
         let list = p.vulnerabilities ?? []
         let ids = list.prefix(4).map(\.id).joined(separator: ", ") + (list.count > 4 ? ", …" : "")
         return list.count == 1 ? String(localized: "1 known vulnerability (brew vulns): \(ids)") : String(localized: "\(list.count) known vulnerabilities (brew vulns): \(ids)")
+    }
+
+    /// 0.8.6 (UI L6): VoiceOver's words for the tag.
+    static func spoken(_ p: Package) -> String {
+        let n = p.vulnerabilities?.count ?? 0
+        return n == 1 ? String(localized: "1 known vulnerability") : String(localized: "\(n) known vulnerabilities")
     }
 
     /// "Scanned 5 min ago · partial scan".
