@@ -1,10 +1,13 @@
 import AppKit
+import os
 import SwiftUI
 import TankardAppModel
 
 // 0.8.3: ⌘Q, Quit Tankard in the menu-bar panel, or a logout while brew
 // runs asks first (QuitGuard.swift in TankardAppModel says why quitting
 // can't leave brew finishing in the background).
+
+private let quitLog = Logger(subsystem: "net.mindtricks.tankard", category: "quit")
 
 @MainActor
 enum QuitGuard {
@@ -20,8 +23,18 @@ enum QuitGuard {
     /// about), the sheets are closed first; with brew running, quitting
     /// goes to the guard as before.
     static func quitFromMenu() {
-        if exempt || store?.quitPrompt == nil { Relauncher.closeSheets() }
-        NSApp.terminate(nil)
+        guard exempt || store?.quitPrompt == nil else {
+            NSApp.terminate(nil)
+            return
+        }
+        quitLog.notice("quit from menu: closing sheets first")
+        // SwiftUI presents the sheets from the store's state: clear it, so
+        // a sheet ended by AppKit isn't put back, then end what is attached.
+        store?.closeToolSheet()
+        Relauncher.closeSheets()
+        // Terminate once the sheet is gone (SwiftUI removes it on the next
+        // turns of the run loop).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { NSApp.terminate(nil) }
     }
 
     static func shouldTerminate() -> NSApplication.TerminateReply {
