@@ -62,11 +62,14 @@ struct MenuBarContent: View {
                                         .help(CompileWarning(context: .upgrade).label)
                                 }
                                 Spacer(minLength: 8)
+                                // 0.8.4: shortened versions, cut in the middle if still
+                                // too long (from the front hid both versions).
                                 Text(row.versions).font(.system(size: 11)).monospacedDigit()
-                                    .foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
+                                    .foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+                                    .help(row.fullVersions)
                             }
                         }
-                        .accessibilityValue(Text(row.versions))
+                        .accessibilityValue(Text(row.fullVersions))
                         .contextMenu { menuBarRowMenu(row) }
                     }
                     if let more = summary.moreText {

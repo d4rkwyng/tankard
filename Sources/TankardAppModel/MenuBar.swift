@@ -12,8 +12,10 @@ public struct MenuBarSummary: Equatable, Sendable {
     public struct Row: Equatable, Sendable, Identifiable {
         public var id: String
         public var name: String
-        /// "3.15.1 → 3.15.2"
+        /// "3.15.1 → 3.15.2"; 0.8.4: shortened (`MenuBarSummary.versionPair`).
         public var versions: String
+        /// 0.8.4: both versions in full, for the tooltip.
+        public var fullVersions: String = ""
         public var compiles: Bool
         public var isCask: Bool
     }
@@ -37,10 +39,38 @@ public struct MenuBarSummary: Equatable, Sendable {
         hasData = packages != nil
         count = up.count
         rows = up.prefix(Self.maxRows).map { p in
-            Row(id: p.id, name: p.name, versions: "\(p.installedVersion) → \(p.currentVersion ?? "?")",
+            Row(id: p.id, name: p.name, versions: Self.versionPair(p.installedVersion, p.currentVersion),
+                fullVersions: "\(p.installedVersion) → \(p.currentVersion ?? "?")",
                 compiles: classifier.upgradeMethod(p).compiles, isCask: p.kind == .cask)
         }
         moreCount = max(0, up.count - Self.maxRows)
+    }
+
+    /// 0.8.4: "3.29.15 → 3.30.14" for cursor's "3.29.15,86776fcb…" →
+    /// "3.30.14,5f54c817…": a cask version's ",<build or hash>" suffix is
+    /// dropped (the panel cut the line from the front and showed only the
+    /// hash's tail), unless the versions differ only there; a bare commit
+    /// hash is shortened to 7 characters, as git does.
+    public static func versionPair(_ installed: String, _ current: String?) -> String {
+        let a = split(installed), b = split(current ?? "?")
+        if a.main == b.main && a.build != b.build {
+            func full(_ v: (main: String, build: String?)) -> String { v.build.map { "\(v.main) (\($0))" } ?? v.main }
+            return "\(full(a)) → \(full(b))"
+        }
+        return "\(a.main) → \(b.main)"
+    }
+
+    /// "3.30.14,5f54c8173e55…" → ("3.30.14", "5f54c81"); hashes shortened.
+    static func split(_ v: String) -> (main: String, build: String?) {
+        let parts = v.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
+        let main = shortHash(parts[0])
+        guard parts.count > 1, !main.isEmpty else { return (main.isEmpty ? v : main, nil) }
+        return (main, shortHash(parts[1]))
+    }
+
+    /// A commit hash (12+ hex digits) as its first 7; anything else as is.
+    static func shortHash(_ s: String) -> String {
+        s.count >= 12 && s.allSatisfy(\.isHexDigit) ? String(s.prefix(7)) : s
     }
 
     /// "5 upgrades ready", "1 upgrade ready", "Everything is up to date",
