@@ -9,6 +9,12 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - **Upgrade All in the menu-bar panel no longer opens the whole Tankard window.** The menu closes and the upgrade shows in a small window of its own, in the middle of the screen: the same list, progress, log, compile plan and Stop buttons as the sheet, plus **Show in Tankard** to move the run (the same one, nothing restarts) into the main window. A run that finishes cleanly closes it after a moment, with a "Tankard upgraded N packages" notification when notifications are on; a failure or a stop keeps it open with **Close**. The same goes for a row's Upgrade. With the Tankard window already in front, the sheet opens on it as before. Closing the small window while brew runs only hides it; **Show Upgrade Progress** in the menu-bar panel brings it back.
 
+### Added
+- **A lock marks casks that need your password.** Casks whose installer asks for the administrator password show a small lock next to the name in Installed and Upgrades, in the upgrade plan and in the running upgrade (tooltip "Needs your password to upgrade").
+- **Upgrade All runs password casks last**, so the password dialogs come at the end instead of in the middle of the run. A cask that depends on one of them moves with it; nothing else changes order.
+- **Upgrade Now in the Auto-update log** for casks an automatic run skipped because they need your password: it starts a normal upgrade of those casks (the plan, then the password dialog).
+- **Restore Points says when rollback can't work.** While "Keep the previous version after upgrades" is off, a banner at the top says rolling back needs the old version and Tankard isn't keeping them, with **Keep Old Versions** to turn the setting on. An upgrade whose old version is gone says "Old version removed by cleanup", and so does the confirmation's list of what it leaves out.
+
 ### Fixed
 - **Adopt Apps no longer lists apps Homebrew already installed with an installer package** (Microsoft Word, Excel, Outlook, PowerPoint, Teams, Windows App). These casks name no app, so Tankard didn't see that the app was theirs and listed it under "Can't adopt". Now an app counts as Homebrew's when an installed cask's installer receipt put it there, its uninstall removes it, or its uninstall/zap names the app's bundle id and the app has the cask's name.
 

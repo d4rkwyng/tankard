@@ -223,6 +223,7 @@
 "Auto-update: downloading %lld packages" = "Auto-Update: %lld Pakete werden geladen";
 "Auto-update: upgrading %@" = "Auto-Update: %@ wird aktualisiert";
 "Automatic updates" = "Automatische Updates";
+"Automatic updates never ask for your password." = "Automatische Updates fragen nie nach deinem Passwort.";
 "Automatically upgrade:" = "Automatisch aktualisieren:";
 "Available" = "Verfügbar";
 "BSD-2-Clause license" = "BSD-2-Clause-Lizenz";
@@ -520,6 +521,7 @@
 "It took %@; expect longer on an older Mac." = "Das dauerte %@; auf einem älteren Mac länger.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Seine Abhängigkeiten bleiben installiert (brew autoremove entfernt ungenutzte)";
 "KB" = "KB";
+"Keep Old Versions" = "Alte Versionen behalten";
 "Keep Running" = "Weiterlaufen";
 "Keep the previous version after upgrades" = "Vorherige Version nach Upgrades behalten";
 "Keeps %@; upgrades skip it" = "Behält %@; Upgrades überspringen es";
@@ -565,7 +567,7 @@
 "Name only" = "Nur Name";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Nur Name: %@. Nur der Name passt, es kann eine andere App sein; dann ersetzt brew upgrade sie und Deinstallieren löscht sie.";
 "Needs update first" = "Erst updaten";
-"Needs your administrator password" = "Braucht dein Admin-Passwort";
+"Needs your password to upgrade" = "Braucht dein Passwort für das Upgrade";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Beendet nie eine App: Ein Cask, dessen App läuft, wird übersprungen, außer „Laufende Apps nicht beenden“ ist aktiv (dann wird er aktualisiert und die neue Version öffnet sich beim nächsten Mal).";
 "New vulnerabilities" = "Neue Schwachstellen";
 "New: %@" = "Neu: %@";
@@ -618,7 +620,7 @@
 "Not checked by brew vulns: untrusted tap." = "Von brew vulns nicht geprüft: nicht vertrauenswürdiger Tap.";
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "Nicht bearbeitet: Das Entfernen von Zeile %@ würde einen leeren if-, Schleifen- oder { }-Block hinterlassen, den bash ablehnt. Entferne die Zeilen nach dem Zurücksetzen von Hand (oder setze : in den Block).";
 "Not in Intelbrew mode: nothing to revert." = "Nicht im Intelbrew-Modus: nichts zurückzusetzen.";
-"Not included: %@ (can't roll back automatically)" = "Nicht enthalten: %@ (Rollback nicht automatisch möglich)";
+"Not included, can't roll back automatically: %@" = "Nicht enthalten, kein automatisches Zurücksetzen möglich: %@";
 "Not installed" = "Nicht installiert";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Nicht gelinkt: Seine Befehle sind nicht in bin von Homebrew. `brew link %@` linkt es.";
 "Not listed: %@." = "Nicht aufgeführt: %@.";
@@ -661,7 +663,7 @@
 "Off for Tankard in System Settings → Notifications" = "Für Tankard in Systemeinstellungen → Mitteilungen deaktiviert";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "Aus: HOMEBREW_NO_AUTO_UPDATE ist gesetzt (%@).";
 "Official" = "Offiziell";
-"Old version was cleaned up" = "Alte Version wurde bereinigt";
+"Old version removed by cleanup" = "Alte Version beim Aufräumen entfernt";
 "Old versions" = "Alte Versionen";
 "Old versions, stale downloads and old logs. Nothing you use is removed." = "Alte Versionen, veraltete Downloads und alte Protokolle. Nichts, was du verwendest, wird entfernt.";
 "Older now (%lld)" = "Jetzt älter (%lld)";
@@ -786,6 +788,7 @@
 "Retry Failed (%lld)" = "Fehlgeschlagene wiederholen (%lld)";
 "Revert to Standard Homebrew…" = "Zu Standard-Homebrew zurückkehren…";
 "Revert to standard Homebrew?" = "Zu Standard-Homebrew zurückkehren?";
+"Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades." = "Zum Zurücksetzen braucht es die alte Version, und Tankard behält nach Upgrades keine alten Versionen.";
 "Run %@ again, through the queue" = "%@ erneut ausführen, über die Warteschlange";
 "Run %lld brew commands?" = "%lld brew-Befehle ausführen?";
 "Run 1 brew command?" = "1 brew-Befehl ausführen?";
@@ -982,6 +985,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "Das Menüleistensymbol ist aus, daher beendet sich Tankard beim Schließen des Fensters, und nichts läuft dann.";
 "The official installer from brew.sh." = "Das offizielle Installationsprogramm von brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "Die alte Version ist noch installiert. brew uninstall entfernt die neue, dann verknüpft brew link die alte.";
+"The old versions were removed by cleanup, so nothing here can be rolled back." = "Die alten Versionen wurden beim Aufräumen entfernt, daher lässt sich hier nichts zurücksetzen.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Die übrigen Apps werden geprüft: Passt ein Download nicht, bricht brew für die App ab und lässt sie unverändert.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "Passwortdialog abgebrochen, der Schritt lief nicht. Selbst ausführen im Terminal:";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Die Variablen werden zuerst zurückgesetzt, damit dieses brew update den Fork nicht zurückbringt.";
@@ -1016,6 +1020,7 @@
 "Turn automatic updates back on now" = "Automatische Updates jetzt wieder einschalten";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Schalte Tankard ein. Falls es nicht aufgeführt ist, klicke auf + und wähle Tankard im Ordner „Programme“.";
 "Turn on notifications in Settings ▸ General" = "Mitteilungen: Einstellungen ▸ Allgemein";
+"Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back." = "Schaltet „Vorherige Version nach Upgrades behalten“ ein (Einstellungen ▸ Upgrades). Upgrades ab jetzt lassen sich zurücksetzen.";
 "Type" = "Typ";
 "Type " = "Tippe ";
 "Type a name or a word from a description." = "Tippe einen Namen oder ein Wort aus der Beschreibung.";
@@ -1058,6 +1063,7 @@
 "Upgrade 1 package?" = "1 Paket upgraden?";
 "Upgrade All" = "Alle upgraden";
 "Upgrade All…" = "Alle upgraden…";
+"Upgrade Now" = "Jetzt upgraden";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankard mit brew upgrade --cask tankard upgraden (Auto-Update überlässt Tankard brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Auf dem üblichen Weg erneut upgraden: Compile-Warnungen, Fixierungen und übersprungene Versionen gelten weiterhin";
 "Upgrade available: %@" = "Upgrade verfügbar: %@";
@@ -1068,6 +1074,7 @@
 "Upgrade ready: " = "Upgrade bereit: ";
 "Upgrade the Remaining %lld Packages" = "Restliche %lld aktualisieren";
 "Upgrade the Remaining Package" = "Restliches Paket aktualisieren";
+"Upgrade the casks skipped for your password now. Tankard asks for your password." = "Die wegen des Passworts übersprungenen Casks jetzt upgraden. Tankard fragt nach deinem Passwort.";
 "Upgrade vulnerable packages. " = "Verwundbare Pakete upgraden. ";
 "Upgrade with Homebrew" = "Mit Homebrew upgraden";
 "Upgraded (%lld)" = "Aktualisiert (%lld)";
@@ -1132,6 +1139,7 @@
 "brew checked every installed formula." = "brew hat jede installierte Formula geprüft.";
 "brew cleanup -n exited %d." = "brew cleanup -n beendet mit %d.";
 "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "brew cleanup hat nach dem Upgrade das alte Keg entfernt. Aktiviere „Vorherige Version nach Upgrades behalten“, um es beim nächsten Mal zu behalten.";
+"brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard)." = "brew cleanup hat die alte Version entfernt (Aufräumen oder ein brew-Befehl außerhalb von Tankard).";
 "brew clones %@ and reads its formulae and casks." = "brew klont %@ und liest dessen Formulae und Casks.";
 "brew doctor (raw output)" = "brew doctor (Rohausgabe)";
 "brew doctor found nothing to fix." = "brew doctor hat nichts zu beheben gefunden.";
