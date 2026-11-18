@@ -293,7 +293,10 @@ public final class UpgradeSession: Identifiable {
         }
         if action == .uninstall && packages.count == 1 { return String(localized: "\(action.gerund) \(items[0].package.name)") }
         if action != .upgrade && total == 1 { return String(localized: "\(action.gerund) \(items[0].package.name)") }
-        return total == 1 ? String(localized: "\(action.gerund) \(total) package") : String(localized: "\(action.gerund) \(total) packages")
+        // An uninstall counts packages, not its one-per-version steps: a
+        // formula with two kegs and one dependency is 2 packages, not 3.
+        let n = action == .uninstall ? packages.count : total
+        return n == 1 ? String(localized: "\(action.gerund) \(n) package") : String(localized: "\(action.gerund) \(n) packages")
     }
 
     /// "4 bottles from Intelbrew · 1 build from source (rust)"
