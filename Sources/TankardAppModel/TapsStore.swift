@@ -210,11 +210,11 @@ public extension AppStore {
     func confirmRemoveTap() {
         guard let tap = taps.takeRemove() else { return }
         if case .inUse = TapRemoval.check(tap, packages: packages) { return }
-        let p = Self.tapPlaceholder(name: tap.name, url: nil)
+        let steps = Self.removeTapPlaceholders(tap)
         closeToolSheet()
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(450))
-            self.startSession(.untap, packages: [p])
+            self.startSession(.untap, packages: steps)
         }
     }
 
@@ -230,6 +230,20 @@ public extension AppStore {
                 error = Self.quickError(verb: trusted ? String(localized: "Trust") : String(localized: "Untrust"), name: tap.name, args: args, result: r)
             }
         }
+    }
+
+    /// 0.8.5 (L8): Remove's rows: `brew untrust --tap` first for a
+    /// third-party tap (TapCommands.remove), then `brew untap`.
+    nonisolated static func removeTapPlaceholders(_ tap: TapInfo) -> [Package] {
+        var rows: [Package] = []
+        if !tap.official {
+            var u = tapPlaceholder(name: tap.name, url: nil)
+            u.id = "untrust:\(tap.name.lowercased())"
+            u.name = "untrust --tap " + tap.name
+            rows.append(u)
+        }
+        rows.append(tapPlaceholder(name: tap.name, url: nil))
+        return rows
     }
 
     /// The session row for a tap command. The URL rides in `desc` (the

@@ -404,7 +404,8 @@ struct V085TestPassTests {
                                makeCommand: { p in QueuedCommand(executable: "/bin/true", arguments: [p.name], environment: [:], display: p.name) },
                                logURL: nil, onFinish: { _ in })
         #expect(s.total == 4 && s.packages.count == 2 && s.countsVersions)
-        #expect(s.items.map(s.chipName) == ["probe (1 of 2)", "probe (2 of 2)", "probe-dep (1 of 2)", "probe-dep (2 of 2)"])
+        // Before brew's line: the version each step expects (L9).
+        #expect(s.items.map(s.chipName) == ["probe 1.1", "probe 1.0", "probe-dep 2.1", "probe-dep 2.0"])
         hold.release()
         #expect(await waitUntil { s.isFinished })
         #expect(s.items.map(s.chipName) == ["probe 1.1", "probe 1.0", "probe-dep 2.1", "probe-dep 2.0"])

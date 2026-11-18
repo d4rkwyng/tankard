@@ -16,6 +16,7 @@ extension AppStore {
         let runner = client.runner
         brewfile.run = { [env] args in try await runner.run(brew, args, environment: env) }
         brewfile.platform = client.platform
+        brewfile.readFile = deps.readBrewfile
         return true
     }
 
@@ -33,10 +34,12 @@ extension AppStore {
     }
 
     /// Option (a): the missing formulae and casks, one `brew install` each,
-    /// through the queue and the activity sheet. Taps are not added here
-    /// (the plan shows their `brew tap` commands). The Brewfile sheet
+    /// through the queue and the activity sheet. Taps are not added here:
+    /// each has Add Tap… (with the Brewfile's URL), and this waits for them. The Brewfile sheet
     /// closes first; the activity sheet opens once it has gone.
     public func installBrewfilePlan(_ plan: BrewfileRestorePlan) {
+        // 0.8.5 (M3): not while a tap it needs is missing (the button is off too).
+        guard plan.missingTaps.isEmpty else { return }
         let packages = plan.packages().filter { !installedIDs.contains($0.id) }
         brewfile.dismiss()
         guard !packages.isEmpty else { return }

@@ -54,9 +54,9 @@ public enum BrewfileCommands {
         "brew bundle install --file=" + ShellQuote.quote(path) + " --no-upgrade"
     }
 
-    /// `brew tap <name>`, shown for a missing tap (Tankard has no tap support).
-    public static func tapDisplay(_ name: String) -> String {
-        "brew tap " + ShellQuote.quote(name)
+    /// `brew tap <name> [<url>]`, shown for a missing tap.
+    public static func tapDisplay(_ name: String, url: String? = nil) -> String {
+        "brew tap " + ShellQuote.quote(name) + (url.map { " " + ShellQuote.quote($0) } ?? "")
     }
 }
 
@@ -116,6 +116,77 @@ public enum BrewfileParser {
     }
 }
 
+/// 0.8.5 (bug hunt M3): where a Brewfile's tap comes from. `brew bundle
+/// check` names a missing tap but not its URL, and `brew bundle list` prints
+/// names only, so a `tap "user/repo", "https://…"` line's URL used to be
+/// lost: Add Tap… then cloned github.com/user/homebrew-repo, which may be
+/// someone else's repo. The URL is read from the Brewfile's text, and only
+/// from a plain line: `tap "user/repo"` or `tap "user/repo", "<url>"`
+/// (single or double quotes, optional parentheses, keyword options after).
+/// Anything else (a variable, string interpolation, a line Tankard can't
+/// read) is `.unreadable`, and that tap is left to `brew bundle` in Terminal.
+public enum BrewfileTapSource: Equatable, Sendable {
+    /// No URL: brew's default remote (GitHub).
+    case standard
+    case url(String)
+    case unreadable
+}
+
+public enum BrewfileTapScanner {
+    /// Tap name (as brew bundle names it: lower case, no "homebrew-") → source.
+    /// A tap named on more than one line, differently, is `.unreadable`.
+    public static func scan(_ text: String) -> [String: BrewfileTapSource] {
+        var out: [String: BrewfileTapSource] = [:]
+        for raw in text.split(whereSeparator: \.isNewline) {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            guard line.hasPrefix("tap"), let (name, source) = parse(line) else { continue }
+            let key = sanitize(name)
+            if let old = out[key], old != source { out[key] = .unreadable } else { out[key] = source }
+        }
+        return out
+    }
+
+    /// brew bundle's `Dsl.sanitize_tap_name`.
+    public static func sanitize(_ name: String) -> String {
+        let n = name.lowercased()
+        let parts = n.split(separator: "/", omittingEmptySubsequences: false)
+        guard parts.count == 2, parts[1].hasPrefix("homebrew-") else { return n }
+        return parts[0] + "/" + parts[1].dropFirst("homebrew-".count)
+    }
+
+    static func parse(_ line: String) -> (String, BrewfileTapSource)? {
+        var rest = Substring(line.dropFirst(3))
+        guard let first = rest.first, first == " " || first == "(" || first == "\t" else { return nil }
+        rest = rest.drop { $0 == " " || $0 == "\t" || $0 == "(" }
+        guard let (name, afterName) = literal(rest) else { return nil }
+        var tail = afterName.drop { $0 == " " || $0 == "\t" }
+        if tail.isEmpty || tail.hasPrefix("#") || tail.hasPrefix(")") { return (name, .standard) }
+        guard tail.hasPrefix(",") else { return (name, .unreadable) }
+        tail = tail.dropFirst().drop { $0 == " " || $0 == "\t" }
+        if let (url, after) = literal(tail) {
+            let end = after.drop { $0 == " " || $0 == "\t" }
+            guard end.isEmpty || end.hasPrefix(",") || end.hasPrefix(")") || end.hasPrefix("#") else { return (name, .unreadable) }
+            return (name, .url(url))
+        }
+        // `tap "a/b", force_auto_update: true`: keyword options, no URL.
+        if let colon = tail.firstIndex(of: ":"), tail[..<colon].allSatisfy({ $0.isLetter || $0.isNumber || $0 == "_" }),
+           !tail[..<colon].isEmpty {
+            return (name, .standard)
+        }
+        return (name, .unreadable)
+    }
+
+    /// A '…' or "…" literal with no escapes or interpolation, and what follows it.
+    static func literal(_ s: Substring) -> (String, Substring)? {
+        guard let q = s.first, q == "\"" || q == "'" else { return nil }
+        let body = s.dropFirst()
+        guard let end = body.firstIndex(of: q) else { return nil }
+        let value = body[..<end]
+        if value.contains("\\") || (q == "\"" && value.contains("#{")) || value.isEmpty { return nil }
+        return (String(value), body[body.index(after: end)...])
+    }
+}
+
 /// What restoring a checked Brewfile would do.
 public struct BrewfileRestorePlan: Equatable, Sendable {
     public struct Item: Equatable, Sendable, Identifiable {
@@ -128,19 +199,39 @@ public struct BrewfileRestorePlan: Equatable, Sendable {
         /// Formulae and casks go through Tankard's queue; taps are added by
         /// brew when a qualified name installs; the rest needs Terminal.
         public var throughQueue: Bool
+        /// 0.8.5 (M3): a tap's source in the Brewfile (nil: not a tap).
+        public var tapSource: BrewfileTapSource?
+
+        /// A tap's URL from the Brewfile, for Add Tap….
+        public var tapURL: String? {
+            if case .url(let u)? = tapSource { return u }
+            return nil
+        }
+
+        /// Add Tap… can add it as the Brewfile says.
+        public var canAddTap: Bool { entry.kind == .tap && tapSource != .unreadable }
     }
 
     public var items: [Item]
     public var path: String
 
-    public init(missing: [BrewfileEntry], path: String, compiles: [String: Bool] = [:], needsAdmin: Set<String> = []) {
+    public init(missing: [BrewfileEntry], path: String, compiles: [String: Bool] = [:], needsAdmin: Set<String> = [],
+                tapSources: [String: BrewfileTapSource]? = nil) {
         self.path = path
         items = missing.map { e in
             Item(entry: e, compiles: e.kind == .formula ? compiles[e.name] : nil,
                  needsAdmin: e.kind == .cask && needsAdmin.contains(e.name),
-                 throughQueue: e.kind == .formula || e.kind == .cask)
+                 throughQueue: e.kind == .formula || e.kind == .cask,
+                 tapSource: e.kind == .tap
+                    ? (tapSources.map { $0[BrewfileTapScanner.sanitize(e.name)] ?? .unreadable } ?? .unreadable) : nil)
         }
     }
+
+    /// 0.8.5 (M3): taps the Brewfile needs that aren't added yet. Install
+    /// with Tankard waits for them: a formula from a missing tap would
+    /// otherwise make brew tap it from GitHub, not from the Brewfile's URL.
+    public var missingTaps: [Item] { items.filter { $0.entry.kind == .tap } }
+    public var canInstallWithTankard: Bool { !queued.isEmpty && missingTaps.isEmpty }
 
     public var queued: [Item] { items.filter(\.throughQueue) }
     public var terminalOnly: [Item] { items.filter { !$0.throughQueue } }

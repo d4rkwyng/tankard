@@ -21,7 +21,7 @@ public enum SettingsHelp {
     public static let dontQuitApps = String(localized: "Normally an open app is closed while it upgrades and opened again afterwards. With this on, it keeps running and the new version starts the next time you open it.")
     public static let scanOnRefresh = String(localized: "Checks your command-line tools for known security problems after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default.")
     /// 0.7: Keep the previous version after upgrades.
-    public static let keepPreviousVersion = String(localized: "Keeps the old version on disk after an upgrade, so Restore Points can switch back to it. Uses extra space until Clean Up removes it. Apps (casks) always replace the old version. Off by default.")
+    public static let keepPreviousVersion = String(localized: "Keeps the old version on disk after an upgrade, so Restore Points can switch back to it. Uses extra space. Clean Up leaves these old versions alone while this is on; turn it off first to remove them. Apps (casks) always replace the old version. Off by default.")
     public static let notifyNewVulnerabilities = String(localized: "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.")
 
     // Upgrades → Automatic updates

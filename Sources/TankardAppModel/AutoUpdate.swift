@@ -680,8 +680,8 @@ public final class AutoUpdateLog {
     }
 
     nonisolated static func load(_ url: URL) -> [AutoUpdateRun]? {
-        guard let data = try? Data(contentsOf: url) else { return nil }
-        return (try? StatusReport.jsonDecoder().decode([AutoUpdateRun].self, from: data)).map { Array($0.prefix(maxRuns)) }
+        // 0.8.5 (M2): run by run; a file it can't read is set aside first.
+        SafeJSONList.load(AutoUpdateRun.self, from: url).map { Array($0.prefix(maxRuns)) }
     }
 
     private func save() {

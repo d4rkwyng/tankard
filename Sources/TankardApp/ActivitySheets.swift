@@ -425,7 +425,7 @@ struct CleanupSheet: View {
                 Image(systemName: "trash.circle.fill").font(.system(size: 28)).foregroundStyle(theme.accent)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Clean up Homebrew").font(.system(size: 14, weight: .bold))
-                    Text("Old versions, stale downloads and old logs. Nothing you use is removed.")
+                    Text("Old versions, stale downloads and old logs. The versions you use now stay installed.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
             }
@@ -470,14 +470,25 @@ struct CleanupSheet: View {
                 Spacer()
                 Button("Cancel") { store.showCleanupSheet = false }
                     .keyboardShortcut(.cancelAction)
-                Button {
-                    store.startCleanup()
-                } label: {
-                    Text("Clean Up")
+                // 0.8.5 (M1): not the Return default while it would remove
+                // versions Restore Points could roll back to.
+                if cleanup.cleanUpIsDefault {
+                    Button {
+                        store.startCleanup()
+                    } label: {
+                        Text("Clean Up")
+                    }
+                    .buttonStyle(.primaryAction)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
+                } else {
+                    Button {
+                        store.startCleanup()
+                    } label: {
+                        Text("Clean Up")
+                    }
+                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
                 }
-                .buttonStyle(.primaryAction)
-                .keyboardShortcut(.defaultAction)
-                .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
             }
         }
         .padding(.horizontal, 20)
@@ -520,8 +531,28 @@ struct CleanupSheet: View {
                 }
                 .padding(10)
             }
-            .frame(height: 150)
+            .frame(height: cleanup.removesRollbackVersions.isEmpty && cleanup.keptNote == nil ? 150 : 110)
             .background(RoundedRectangle(cornerRadius: 8).fill(theme.logBackground))
+        }
+        // 0.8.5 (M1): what Restore Points loses, said before it happens.
+        let atRisk = cleanup.removesRollbackVersions
+        if !atRisk.isEmpty {
+            HStack(alignment: .top, spacing: 6) {
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Removes old versions you could roll back to").font(.system(size: 12, weight: .semibold))
+                    Text(verbatim: atRisk.prefix(6).joined(separator: ", ")
+                         + (atRisk.count > 6 ? String(localized: " and \(atRisk.count - 6) more") : ""))
+                        .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.tail)
+                    Text(cleanup.keepPrevious ? String(localized: "Restore Points can't roll back to these after Clean Up.")
+                         : String(localized: "Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points."))
+                        .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        if let note = cleanup.keptNote {
+            Label(note, systemImage: "clock.arrow.circlepath")
+                .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
         }
         if let problem = cleanup.problem {
             HStack(alignment: .top, spacing: 6) {

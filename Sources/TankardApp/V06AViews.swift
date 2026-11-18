@@ -532,6 +532,7 @@ struct HistoryRow: View {
         case .succeeded: return "checkmark.circle.fill"
         case .failed, .notStarted: return "xmark.octagon.fill"
         case .cancelled: return "stop.circle"
+        case .unknown: return "questionmark.circle"
         }
     }
 }

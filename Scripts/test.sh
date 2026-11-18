@@ -26,6 +26,22 @@ cleanup_defaults() {
     done < "$DEFAULTS_LIST"
     rm -f "$DEFAULTS_LIST"
     [[ $n -gt 0 ]] && echo "test.sh: removed $n test defaults suites"
+    # 0.8.5 (bug hunt L10): leftovers from earlier runs that never listed
+    # them (before 0.8.4, AppStore(deps:) in a test made its own
+    # net.mindtricks.tankard.ephemeral.<UUID>; ~400 had piled up). Only
+    # that exact shape, with a full UUID, and only files untouched for an
+    # hour, so a run going on at the same time keeps its suites. Never the
+    # app's own domain, never the demo's plain net.mindtricks.tankard.ephemeral.
+    local f base m=0
+    local uuid='[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'
+    for f in ~/Library/Preferences/net.mindtricks.tankard.ephemeral.*.plist(N.mm+60); do
+        base=${f:t:r}
+        [[ $base =~ "^net\.mindtricks\.tankard\.ephemeral\.${uuid}\$" ]] || continue
+        defaults delete "$base" >/dev/null 2>&1 || true
+        rm -f "$f"
+        m=$((m + 1))
+    done
+    [[ $m -gt 0 ]] && echo "test.sh: removed $m leftover test defaults suites from earlier runs"
     return 0
 }
 trap cleanup_defaults EXIT

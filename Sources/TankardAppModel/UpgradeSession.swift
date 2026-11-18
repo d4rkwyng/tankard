@@ -278,15 +278,19 @@ public final class UpgradeSession: Identifiable {
     public private(set) var removedVersions: [UUID: String] = [:]
 
     /// 0.8.5 (test pass L3): a step's chip. A formula uninstalled version
-    /// by version: "xz 5.8.3" once brew has said which one it removed,
-    /// "xz (1 of 2)" before (brew picks the linked version, else the
-    /// newest, so Tankard doesn't guess).
+    /// by version: "xz 5.8.3" once brew has said which one it removed;
+    /// before that, the version the step expects (the linked one first,
+    /// then newest first, as brew picks them), else "xz (1 of 2)".
     public func chipName(_ item: Item) -> String {
         let name = item.package.name
         guard action == .uninstall else { return name }
         let steps = items.filter { $0.package.id == item.package.id }
         guard steps.count > 1 else { return name }
         if let v = removedVersions[item.id] { return "\(name) \(v)" }
+        // Until brew says which: the version the step expects to remove
+        // (AppStore.uninstallSteps, bug hunt L9), when each step has its own.
+        let expected = item.package.installedVersion
+        if !expected.isEmpty, Set(steps.map(\.package.installedVersion)).count == steps.count { return "\(name) \(expected)" }
         let k = (steps.firstIndex { $0.id == item.id } ?? 0) + 1
         return String(localized: "\(name) (\(k) of \(steps.count))")
     }

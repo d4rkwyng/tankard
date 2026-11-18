@@ -162,7 +162,9 @@ extension ScriptRunner {
             guard !p.pinned else { throw ScriptFailure("uninstall is blocked: \(name) is pinned (the sheet offers Unpin and Uninstall)") }
             let session = try await c.runSession("uninstall \(name)") { c.store.startUninstall(p) }
             c.check("\(name) gone", c.package(name, kind: kind) == nil)
-            let ran = session.items.map(\.package.name)
+            // 0.8.4 runs one step per installed version: each name once.
+            var seen = Set<String>()
+            let ran = session.items.map(\.package.name).filter { seen.insert($0).inserted }
             c.check("ran \(removeDeps ? "with" : "without") its \(orphans.count) unneeded dependencies",
                     ran == [p.name] + (removeDeps ? orphans.map(\.name) : []), ran.joined(separator: ", "))
             for o in orphans {

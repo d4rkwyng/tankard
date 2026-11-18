@@ -242,7 +242,8 @@ public enum BrewCommands {
         case .cleanup: return cleanupArguments
         case .autoremove: return p.autoremoveKeptNames.map(AutoremovePlan.keepArguments) ?? AutoremovePlan.runArguments
         case .tap: return TapCommands.tap(p.fullName, url: p.desc)
-        case .untap: return TapCommands.untap(p.fullName)
+        // 0.8.5 (L8): Remove's first step for a third-party tap.
+        case .untap: return p.id.hasPrefix("untrust:") ? TapCommands.trust(p.fullName, false) : TapCommands.untap(p.fullName)
         // A restore's commands come from its plan (RestorePoints.swift).
         case .restore: return []
         case .adopt: return AdoptCommands.arguments(qualifiedName: p.qualifiedName)

@@ -125,6 +125,8 @@ public final class AppStore {
         /// 0.8.5: the Mac Pro 6,1 Electron check (ElectronGPU.swift). Off
         /// (reads nothing) unless set: `live()`, or the demo's hook.
         public var electronGPU: ElectronGPUProbe = .disabled
+        /// 0.8.5 (M3): a Brewfile's text, for its taps' URLs (demo: a fixed one).
+        public var readBrewfile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -804,9 +806,22 @@ public final class AppStore {
     /// lock, dependents), unlike `--force`, which skips the pin check and
     /// the keg lock (uninstall.rb). After the run the installed packages
     /// are read again (`checkUninstalled`).
+    ///
+    /// 0.8.5 (bug hunt L9): each step's `installedVersion` is the version it
+    /// is expected to remove, so the sheet's chips read "bh-a 1.2", "bh-a
+    /// 1.0", not "bh-a" twice: the one in use first (brew removes the
+    /// linked keg first), then the rest, newest first (else the newest).
     public nonisolated static func uninstallSteps(_ packages: [Package]) -> [Package] {
-        packages.flatMap { p in
-            Array(repeating: p, count: p.kind == .formula ? max(1, Set(p.installedVersions).count) : 1)
+        packages.flatMap { p -> [Package] in
+            let versions = Set(p.installedVersions)
+            guard p.kind == .formula, versions.count > 1 else { return [p] }
+            let rest = versions.subtracting([p.installedVersion]).sorted { PkgVersion(parsing: $0) > PkgVersion(parsing: $1) }
+            let order = (versions.contains(p.installedVersion) ? [p.installedVersion] : []) + rest
+            return order.map { v in
+                var step = p
+                step.installedVersion = v
+                return step
+            }
         }
     }
 
@@ -955,7 +970,10 @@ public final class AppStore {
     /// Opens the Cleanup sheet and runs the dry run.
     public func openCleanup() {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        let c = CleanupStore(client: client, env: client.environment(for: detection))
+        // 0.8.5 (M1): the old versions kept for Restore Points stay.
+        let keep = restorePoints.settings.keepPreviousVersion
+        let c = CleanupStore(client: client, env: client.environment(for: detection),
+                             kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep)
         cleanup = c
         showCleanupSheet = true
         Task { await c.load() }
@@ -1168,7 +1186,8 @@ public final class AppStore {
             packages: ordered, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
-                            askpass = deps.askpassHelper, foreign] p in
+                            askpass = deps.askpassHelper, foreign,
+                            cleanupKeep = action == .cleanup ? (cleanup?.extraEnvironment ?? [:]) : [:]] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
@@ -1176,6 +1195,7 @@ public final class AppStore {
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
                     .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
                     .merging(Self.uninstallEnvironment(action)) { $1 }
+                    .merging(cleanupKeep) { $1 }
                 let display = BrewCommands.display(args, environment: extra)
                 // 0.8.3: a cask change may run sudo: Tankard's password dialog
                 // (not in the command shown or copied).

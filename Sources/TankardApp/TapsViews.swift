@@ -212,8 +212,11 @@ struct TapsAlerts: ViewModifier {
             Button("Cancel", role: .cancel) { taps.cancelPending() }
             Button("Remove", role: .destructive) { store.confirmRemoveTap() }
         } message: { t in
-            Text("Nothing installed comes from it. brew deletes its local copy; you can add it again later.\n\nTankard runs: "
-                 + BrewCommands.display(TapCommands.untap(t.name)))
+            // 0.8.5 (L8): a third-party tap's trust goes with it.
+            Text((t.official ? String(localized: "Nothing installed comes from it. brew deletes its local copy; you can add it again later.")
+                  : String(localized: "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again."))
+                 + "\n\n" + String(localized: "Tankard runs:") + " "
+                 + TapCommands.remove(t.name, official: t.official).map(BrewCommands.display).joined(separator: "\n"))
         }
             .alert(taps.pendingTrust.map { $0.trusted == true ? String(localized: "Stop trusting \($0.name)?") : String(localized: "Trust \($0.name)?") } ?? String(localized: "Trust?"),
                isPresented: pendingBinding({ taps.pendingTrust != nil }, { taps.cancelPending() }),

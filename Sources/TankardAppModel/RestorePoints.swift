@@ -344,11 +344,6 @@ public struct RestorePlan: Sendable, Equatable {
         }
     }
 
-    /// "Restore 2 packages?"
-    public var confirmTitle: String {
-        let n = summaryLines.count
-        return n == 1 ? String(localized: "Restore 1 package?") : String(localized: "Restore \(n) packages?")
-    }
 
     static func shortName(_ key: String) -> String {
         let base = key.split(separator: "|").first.map(String.init) ?? key
@@ -376,6 +371,24 @@ public struct RestorePlan: Sendable, Equatable {
         }
         return String(localized: "Nothing here can be restored automatically")
     }
+    /// 0.8.5 (bug hunt L6): the confirmation's title. With nothing left to
+    /// run it said "Run 0 brew commands?"; now it says why.
+    /// With something to run (newbie review H4), in words: "Restore 2
+    /// packages?"
+    public var confirmTitle: String {
+        guard !steps.isEmpty else { return String(localized: "Nothing to restore") }
+        let n = summaryLines.count
+        return n == 1 ? String(localized: "Restore 1 package?") : String(localized: "Restore \(n) packages?")
+    }
+
+    /// Under the title: how the commands run, or, with none, why not and
+    /// each package's reason.
+    public var confirmSubtitle: String {
+        guard steps.isEmpty else { return String(localized: "Tankard does these one at a time. Each is recorded in History.") }
+        let reasons = manual.map { "\($0.change.now.name): \($0.block.title)" }
+        return ([nothingToRestoreReason] + reasons).joined(separator: "\n")
+    }
+
     /// Set when the plan changed between showing it and confirming it (an
     /// old keg was cleaned up meanwhile): why, for the confirmation.
     public var notice: String?

@@ -9441,6 +9441,58 @@
         }
       }
     },
+    "Add the taps first (Add Tap…), then check the Brewfile again to install the rest.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe die Brewfile dann erneut, um den Rest zu installieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez d’abord les taps (Ajouter un tap…), puis vérifiez à nouveau le Brewfile pour installer le reste."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade primero los taps (Añadir tap…) y vuelve a comprobar el Brewfile para instalar el resto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まずtapを追加し（「tapを追加…」）、それからBrewfileをもう一度確認して残りをインストールしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先添加这些 Tap（添加 Tap…），然后再次检查 Brewfile 以安装其余项目。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicione primeiro os taps (Adicionar Tap…) e depois verifique o Brewfile de novo para instalar o resto."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi prima i tap (Aggiungi tap…), poi controlla di nuovo il Brewfile per installare il resto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 tap을 추가한 다음(tap 추가…), Brewfile을 다시 확인해 나머지를 설치하세요."
+          }
+        }
+      }
+    },
     "Add, Remove and Trust go through Tankard's queue and History.": {
       "localizations": {
         "de": {
@@ -29981,54 +30033,106 @@
         }
       }
     },
-    "Keeps the old version on disk after an upgrade, so Restore Points can switch back to it. Uses extra space until Clean Up removes it. Apps (casks) always replace the old version. Off by default.": {
+    "Keeps the old version on disk after an upgrade, so Restore Points can switch back to it. Uses extra space. Clean Up leaves these old versions alone while this is on; turn it off first to remove them. Apps (casks) always replace the old version. Off by default.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Behält die alte Version nach einem Upgrade auf dem Datenträger, damit Wiederherstellungspunkte zu ihr zurückwechseln können. Belegt zusätzlichen Platz, bis „Aufräumen“ sie entfernt. Apps (Casks) ersetzen die alte Version immer. Standardmäßig aus."
+            "value": "Behält die alte Version nach einem Upgrade auf dem Datenträger, damit Wiederherstellungspunkte zu ihr zurückwechseln können. Belegt zusätzlichen Platz. „Aufräumen“ lässt diese alten Versionen in Ruhe, solange dies an ist; schalte es zuerst aus, um sie zu entfernen. Apps (Casks) ersetzen die alte Version immer. Standardmäßig aus."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conserve l’ancienne version sur le disque après une mise à niveau, pour que les points de restauration puissent y revenir. Occupe de l’espace en plus jusqu’à ce que « Nettoyer » la supprime. Les apps (casks) remplacent toujours l’ancienne version. Désactivé par défaut."
+            "value": "Conserve l’ancienne version sur le disque après une mise à niveau, pour que les points de restauration puissent y revenir. Occupe de l’espace en plus. « Nettoyer » laisse ces anciennes versions tant que ce réglage est activé ; désactivez-le d’abord pour les supprimer. Les apps (casks) remplacent toujours l’ancienne version. Désactivé par défaut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conserva la versión anterior en el disco tras una actualización, para que los Puntos de restauración puedan volver a ella. Ocupa espacio extra hasta que Limpiar la elimina. Las apps (casks) siempre reemplazan la versión anterior. Desactivado por defecto."
+            "value": "Conserva la versión anterior en el disco tras una actualización, para que los Puntos de restauración puedan volver a ella. Ocupa espacio extra. Limpiar no toca estas versiones anteriores mientras esto está activado; desactívalo primero para eliminarlas. Las apps (casks) siempre reemplazan la versión anterior. Desactivado por defecto."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conserva la vecchia versione su disco dopo un aggiornamento, così i punti di ripristino possono tornare a essa. Occupa spazio extra finché Pulisci non la rimuove. Le app (cask) sostituiscono sempre la vecchia versione. Disattivato per impostazione predefinita."
+            "value": "Conserva la vecchia versione su disco dopo un aggiornamento, così i punti di ripristino possono tornare a essa. Occupa spazio extra. Pulisci lascia stare queste vecchie versioni finché questa opzione è attiva; disattivala prima per rimuoverle. Le app (cask) sostituiscono sempre la vecchia versione. Disattivato per impostazione predefinita."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップグレード後も古いバージョンをディスクに残し、復元ポイントでそのバージョンに戻せるようにします。クリーンアップで削除するまで追加の容量を使用します。App(cask)は常に古いバージョンを置き換えます。デフォルトではオフです。"
+            "value": "アップグレード後も古いバージョンをディスクに残し、復元ポイントでそのバージョンに戻せるようにします。追加の容量を使用します。この設定がオンの間、クリーンアップはこれらの古いバージョンを削除しません。削除するには先にこの設定をオフにしてください。App(cask)は常に古いバージョンを置き換えます。デフォルトではオフです。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "업그레이드 후에도 이전 버전을 디스크에 남겨 복원 지점에서 그 버전으로 되돌릴 수 있게 합니다. 정리로 제거할 때까지 추가 공간을 차지합니다. 앱(cask)은 항상 이전 버전을 교체합니다. 기본적으로 꺼져 있습니다."
+            "value": "업그레이드 후에도 이전 버전을 디스크에 남겨 복원 지점에서 그 버전으로 되돌릴 수 있게 합니다. 추가 공간을 차지합니다. 이 설정이 켜져 있는 동안 정리는 이 이전 버전들을 건드리지 않습니다. 제거하려면 먼저 이 설정을 끄세요. 앱(cask)은 항상 이전 버전을 교체합니다. 기본적으로 꺼져 있습니다."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级后在磁盘上保留旧版本，以便“恢复点”可以切换回去。在“清理”移除它之前会占用额外空间。App（cask）总是会替换旧版本。默认关闭。"
+            "value": "升级后在磁盘上保留旧版本，以便“恢复点”可以切换回去。会占用额外空间。此项开启时，“清理”不会动这些旧版本；要移除它们，请先关闭此项。App（cask）总是会替换旧版本。默认关闭。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mantém a versão antiga no disco após uma atualização, para que os Pontos de Restauração possam voltar a ela. Usa espaço extra até que Limpar a remova. Apps (casks) sempre substituem a versão antiga. Desativado por padrão."
+            "value": "Mantém a versão antiga no disco após uma atualização, para que os Pontos de Restauração possam voltar a ela. Usa espaço extra. Limpar não mexe nessas versões antigas enquanto isto estiver ativado; desative primeiro para removê-las. Apps (casks) sempre substituem a versão antiga. Desativado por padrão."
+          }
+        }
+      }
+    },
+    "Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behält die alten Versionen von %@ für die Wiederherstellungspunkte, weil „Vorherige Version nach Upgrades behalten“ an ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conserve les anciennes versions de %@ pour les points de restauration, car « Conserver la version précédente après les mises à niveau » est activé."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conserva las versiones anteriores de %@ para los Puntos de restauración, porque «Conservar la versión anterior tras las actualizaciones» está activado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「アップグレード後も以前のバージョンを残す」がオンなので、復元ポイントのために %@ の古いバージョンを残します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由于“升级后保留上一个版本”已开启，将为恢复点保留 %@ 的旧版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantém as versões antigas de %@ para os Pontos de Restauração, porque \"Manter a versão anterior após as atualizações\" está ativado."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conserva le vecchie versioni di %@ per i punti di ripristino, perché «Conserva la versione precedente dopo gli aggiornamenti» è attivo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"업그레이드 후 이전 버전 유지\"가 켜져 있으므로 복원 지점을 위해 %@의 이전 버전을 남겨 둡니다."
           }
         }
       }
@@ -36325,6 +36429,110 @@
         }
       }
     },
+    "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie und vertraut dem Tap nicht mehr; fügst du ihn später wieder hinzu, fragt Tankard erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien d’installé n’en provient. brew supprime sa copie locale et cesse de lui faire confiance ; si vous l’ajoutez à nouveau plus tard, Tankard vous le redemandera."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada de lo instalado viene de él. brew borra su copia local y deja de confiar en él; si lo vuelves a añadir más adelante, Tankard volverá a preguntar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除し、このtapの信頼も解除します。後でもう一度追加すると、Tankardは再び確認します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有已安装的内容来自它。brew 会删除其本地副本并不再信任它；以后再次添加时，Tankard 会再次询问。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada instalado vem dele. O brew apaga a cópia local e deixa de confiar nele; se você adicioná-lo de novo depois, o Tankard pergunta outra vez."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nulla di installato proviene da qui. brew elimina la copia locale e smette di considerarlo attendibile; se lo aggiungi di nuovo in seguito, Tankard lo chiede di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제하고 이 tap을 더 이상 신뢰하지 않습니다. 나중에 다시 추가하면 Tankard가 다시 묻습니다."
+          }
+        }
+      }
+    },
+    "Nothing installed comes from it. brew deletes its local copy; you can add it again later.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie; du kannst den Tap später wieder hinzufügen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien d’installé n’en provient. brew supprime sa copie locale ; vous pourrez l’ajouter à nouveau plus tard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada de lo instalado viene de él. brew borra su copia local; puedes volver a añadirlo más adelante."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除します。後でもう一度追加できます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有已安装的内容来自它。brew 会删除其本地副本；你以后可以再次添加。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada instalado vem dele. O brew apaga a cópia local; você pode adicioná-lo de novo depois."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nulla di installato proviene da qui. brew elimina la copia locale; potrai aggiungerlo di nuovo in seguito."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제합니다. 나중에 다시 추가할 수 있습니다."
+          }
+        }
+      }
+    },
     "Nothing matches": {
       "localizations": {
         "de": {
@@ -36581,6 +36789,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "제거할 항목 없음"
+          }
+        }
+      }
+    },
+    "Nothing to restore": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts wiederherzustellen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien à restaurer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada que restaurar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復元するものはありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可恢复的内容"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada a restaurar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niente da ripristinare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "복원할 항목 없음"
           }
         }
       }
@@ -37365,54 +37625,54 @@
         }
       }
     },
-    "Old versions, stale downloads and old logs. Nothing you use is removed.": {
+    "Old versions, stale downloads and old logs. The versions you use now stay installed.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alte Versionen, veraltete Downloads und alte Protokolle. Nichts, was du verwendest, wird entfernt."
+            "value": "Alte Versionen, veraltete Downloads und alte Protokolle. Die Versionen, die du jetzt verwendest, bleiben installiert."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Anciennes versions, téléchargements obsolètes et anciens journaux. Rien de ce que vous utilisez n’est supprimé."
+            "value": "Anciennes versions, téléchargements obsolètes et anciens journaux. Les versions que vous utilisez restent installées."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versiones antiguas, descargas obsoletas y registros antiguos. No se elimina nada que uses."
+            "value": "Versiones antiguas, descargas obsoletas y registros antiguos. Las versiones que usas ahora siguen instaladas."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "古いバージョン、不要なダウンロード、古いログ。使用中のものは削除されません。"
+            "value": "古いバージョン、不要なダウンロード、古いログ。いま使っているバージョンはインストールされたままです。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "旧版本、过期的下载和旧日志。不会移除你正在使用的任何内容。"
+            "value": "旧版本、过期的下载和旧日志。你现在使用的版本会保持安装。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versões antigas, downloads obsoletos e logs antigos. Nada que você usa é removido."
+            "value": "Versões antigas, downloads obsoletos e logs antigos. As versões que você usa agora continuam instaladas."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vecchie versioni, download obsoleti e vecchi log. Nulla di ciò che usi viene rimosso."
+            "value": "Vecchie versioni, download obsoleti e vecchi log. Le versioni che usi ora restano installate."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이전 버전, 오래된 다운로드, 오래된 로그입니다. 사용 중인 것은 제거되지 않습니다."
+            "value": "이전 버전, 오래된 다운로드, 오래된 로그입니다. 지금 사용 중인 버전은 설치된 채로 남습니다."
           }
         }
       }
@@ -42981,6 +43241,58 @@
         }
       }
     },
+    "Removes old versions you could roll back to": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt alte Versionen, zu denen du zurückkehren könntest"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprime d’anciennes versions vers lesquelles vous pourriez revenir"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elimina versiones antiguas a las que podrías volver"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ロールバック先にできる古いバージョンを削除します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会移除你可以回滚到的旧版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove versões antigas para as quais você poderia voltar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuove vecchie versioni a cui potresti tornare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌릴 수 있는 이전 버전을 제거합니다"
+          }
+        }
+      }
+    },
     "Removes old versions, stale downloads and old logs": {
       "localizations": {
         "de": {
@@ -43757,6 +44069,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "복원 지점"
+          }
+        }
+      }
+    },
+    "Restore Points can't roll back to these after Clean Up.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederherstellungspunkte können nach dem Aufräumen nicht mehr zu diesen zurückkehren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les points de restauration ne pourront plus revenir à ces versions après le nettoyage."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los Puntos de restauración no podrán volver a estas versiones después de Limpiar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリーンアップ後は、復元ポイントでこれらのバージョンに戻せなくなります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清理之后，恢复点将无法回滚到这些版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os Pontos de Restauração não poderão voltar para estas versões depois da Limpeza."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo Pulisci, i punti di ripristino non potranno tornare a queste versioni."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정리 후에는 복원 지점으로 이 버전들로 되돌릴 수 없습니다."
+          }
+        }
+      }
+    },
+    "Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederherstellungspunkte können nach dem Aufräumen nicht mehr zu diesen zurückkehren. Um alte Versionen zu behalten, schalte „Vorherige Version nach Upgrades behalten“ in den Wiederherstellungspunkten ein."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les points de restauration ne pourront plus revenir à ces versions après le nettoyage. Pour conserver les anciennes versions, activez « Conserver la version précédente après les mises à niveau » dans les points de restauration."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los Puntos de restauración no podrán volver a estas versiones después de Limpiar. Para conservar versiones antiguas, activa «Conservar la versión anterior tras las actualizaciones» en Puntos de restauración."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリーンアップ後は、復元ポイントでこれらのバージョンに戻せなくなります。古いバージョンを残すには、復元ポイントで「アップグレード後も以前のバージョンを残す」をオンにしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清理之后，恢复点将无法回滚到这些版本。要保留旧版本，请在恢复点中开启“升级后保留上一个版本”。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os Pontos de Restauração não poderão voltar para estas versões depois da Limpeza. Para manter versões antigas, ative \"Manter a versão anterior após as atualizações\" em Pontos de Restauração."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo Pulisci, i punti di ripristino non potranno tornare a queste versioni. Per conservare le vecchie versioni, attiva «Conserva la versione precedente dopo gli aggiornamenti» nei punti di ripristino."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정리 후에는 복원 지점으로 이 버전들로 되돌릴 수 없습니다. 이전 버전을 남기려면 복원 지점에서 \"업그레이드 후 이전 버전 유지\"를 켜세요."
           }
         }
       }
@@ -52445,6 +52861,214 @@
         }
       }
     },
+    "Tankard couldn't load Homebrew's list of packages. Try again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu charger la liste des paquets de Homebrew. Réessayez dans un instant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu carregar a lista de pacotes do Homebrew. Tente novamente daqui a pouco."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a caricare l’elenco dei pacchetti di Homebrew. Riprova tra un momento."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte das Netzwerk nicht erreichen, um die Paketliste von Homebrew zu laden. Prüfe die Internetverbindung (oder ein VPN oder einen Proxy) und versuche es dann erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu joindre le réseau pour télécharger la liste des paquets de Homebrew. Vérifiez la connexion Internet (ou un VPN ou un proxy), puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo acceder a la red para descargar la lista de paquetes de Homebrew. Comprueba la conexión a Internet (o una VPN o un proxy) y vuelve a intentarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu acessar a rede para baixar a lista de pacotes do Homebrew. Verifique a conexão com a internet (ou uma VPN ou proxy) e tente novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a raggiungere la rete per scaricare l’elenco dei pacchetti di Homebrew. Controlla la connessione a Internet (o una VPN o un proxy), poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 Homebrew의 패키지 목록을 내려받기 위해 네트워크에 연결하지 못했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 다음 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "Tankard couldn't read the packages in your taps. Try again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte die Pakete in deinen Taps nicht lesen. Versuche es gleich noch einmal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu lire les paquets de vos taps. Réessayez dans un instant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo leer los paquetes de tus taps. Inténtalo de nuevo en un momento."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardはtap内のパッケージを読み取れませんでした。少し待ってからもう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法读取你的 Tap 中的软件包。请稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu ler os pacotes dos seus taps. Tente novamente daqui a pouco."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a leggere i pacchetti dei tuoi tap. Riprova tra un momento."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 tap의 패키지를 읽지 못했습니다. 잠시 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte in der Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu lire dans le Brewfile d’où vient ce tap. Utilisez la commande Terminal ci-dessous."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo leer en el Brewfile de dónde viene este tap. Usa el comando de Terminal de abajo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardはBrewfileからこのtapの取得元を読み取れませんでした。下のターミナルコマンドを使ってください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法从 Brewfile 中读出此 Tap 的来源。请使用下方的终端命令。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu ler no Brewfile de onde vem este tap. Use o comando do Terminal abaixo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a leggere nel Brewfile da dove viene questo tap. Usa il comando per il Terminale qui sotto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 Brewfile에서 이 tap의 출처를 읽지 못했습니다. 아래의 터미널 명령을 사용하세요."
+          }
+        }
+      }
+    },
     "Tankard does these one at a time. Each is recorded in History.": {
       "localizations": {
         "de": {
@@ -53377,6 +54001,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 ▸ 일반에서 끌 수 있습니다."
+          }
+        }
+      }
+    },
+    "Tankard runs:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard führt aus:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard exécute :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ejecuta:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardが実行するコマンド:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 会运行："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard executa:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard esegue:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 실행하는 명령:"
           }
         }
       }
@@ -60921,54 +61597,54 @@
         }
       }
     },
-    "Uses disk space until Clean Up removes old versions.": {
+    "Uses disk space. Clean Up leaves these old versions alone while this is on.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Belegt Speicherplatz, bis „Bereinigen“ alte Versionen entfernt."
+            "value": "Belegt Speicherplatz. „Aufräumen“ lässt diese alten Versionen in Ruhe, solange dies an ist."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Occupe de l’espace disque jusqu’à ce que Nettoyer supprime les anciennes versions."
+            "value": "Occupe de l’espace disque. « Nettoyer » laisse ces anciennes versions tant que ce réglage est activé."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ocupa espacio en disco hasta que Limpiar quite las versiones antiguas."
+            "value": "Ocupa espacio en disco. Limpiar no toca estas versiones anteriores mientras esto está activado."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "クリーンアップで古いバージョンを削除するまでディスク容量を使用します。"
+            "value": "ディスク容量を使用します。この設定がオンの間、クリーンアップはこれらの古いバージョンを削除しません。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在“清理”移除旧版本之前会占用磁盘空间。"
+            "value": "会占用磁盘空间。此项开启时，“清理”不会动这些旧版本。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Usa espaço em disco até a Limpeza remover as versões antigas."
+            "value": "Usa espaço em disco. Limpar não mexe nessas versões antigas enquanto isto estiver ativado."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Occupa spazio su disco finché Pulisci non rimuove le vecchie versioni."
+            "value": "Occupa spazio su disco. Pulisci lascia stare queste vecchie versioni finché questa opzione è attiva."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "정리로 이전 버전을 제거할 때까지 디스크 공간을 차지합니다."
+            "value": "디스크 공간을 차지합니다. 이 설정이 켜져 있는 동안 정리는 이 이전 버전들을 건드리지 않습니다."
           }
         }
       }
@@ -68769,6 +69445,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "재설치됨"
+          }
+        }
+      }
+    },
+    "result unknown": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ergebnis unbekannt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "résultat inconnu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "resultado desconocido"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結果不明"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结果未知"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "resultado desconhecido"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "risultato sconosciuto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "결과 알 수 없음"
           }
         }
       }

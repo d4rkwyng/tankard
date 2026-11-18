@@ -73,7 +73,8 @@ struct V07TapsAppTests {
         store.confirmRemoveTap()
         #expect(await waitUntil { store.upgrade != nil })
         #expect(store.upgrade?.action == .untap)
-        #expect(store.upgrade?.items.first?.command.arguments == ["untap", "d4rkwyng/tap"])
+        // 0.8.5 (L8): a third-party tap's trust is removed first.
+        #expect(store.upgrade?.items.map(\.command.arguments) == [["untrust", "--tap", "d4rkwyng/tap"], ["untap", "d4rkwyng/tap"]])
         #expect(await waitUntil { store.upgrade?.isFinished == true })
         await store.taps.load()
         #expect(!store.taps.taps.contains { $0.name == "d4rkwyng/tap" })

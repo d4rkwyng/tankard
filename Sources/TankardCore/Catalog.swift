@@ -242,15 +242,22 @@ public enum CatalogSearch {
     /// `popularity` (0.8, id → 30-day installs): within the same tier (and
     /// bottle rank), more installs first, before the name-length tie-break.
     /// Packages without a count rank as 0.
+    /// 0.8.5 (L5): the longest query searched; the rest is ignored.
+    public static let maxQueryLength = 256
+
     public static func search(_ query: String, in entries: [CatalogEntry], kind: CatalogKindFilter = .all,
                               limit: Int = 200, preferBottled: Bool = false, bottledOnly: Bool = false,
                               popularity: [String: Int] = [:]) -> [CatalogEntry] {
         // 0.8.3: a pasted "brew install x" searches for x.
-        let q = PastedCommand.searchTerm(query).lowercased()
+        // 0.8.5 (bug hunt L5): no package name or description is anywhere
+        // near this long; a 100,000-character paste took 30 s per search.
+        let q = String(PastedCommand.searchTerm(String(query.prefix(maxQueryLength * 2))).lowercased().prefix(maxQueryLength))
         guard !q.isEmpty else { return [] }
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
         var hits: [(Int, CatalogEntry)] = []
-        for e in entries where kind.includes(e.kind) && !(bottledOnly && e.bottle == .fromSource) {
+        for (i, e) in entries.enumerated() where kind.includes(e.kind) && !(bottledOnly && e.bottle == .fromSource) {
+            // 0.8.5 (L5): a newer search replaces this one; stop early.
+            if i % 512 == 0, Task.isCancelled { return [] }
             if let s = score(e, query: q, words: words) { hits.append((s, e)) }
         }
         hits.sort { a, b in
