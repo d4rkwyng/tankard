@@ -228,6 +228,14 @@ struct TankardApp: App {
             // 0.8.5: no scheduled checks asleep or offline.
             Self.sleepWatch = SleepAndNetworkWatch(store.system)
         }
+        // 0.8.5: TANKARD_DEMO_RUNNING_APPS=1: Google Chrome and Visual Studio
+        // Code count as open, so Upgrade shows the "will be closed" plan.
+        if options.demo != nil && ProcessInfo.processInfo.environment["TANKARD_DEMO_RUNNING_APPS"] == "1" {
+            store.autoUpdate.conditions = FixedConditions(ac: nil, idle: nil, apps: [
+                RunningApp(path: "/Applications/Google Chrome.app", bundleID: "com.google.Chrome"),
+                RunningApp(path: "/Applications/Visual Studio Code.app", bundleID: "com.microsoft.VSCode"),
+            ])
+        }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.
         // TANKARD_DEMO_SCAN=off: no scan at all, to show "not scanned yet".

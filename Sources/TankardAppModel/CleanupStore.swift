@@ -60,6 +60,17 @@ public final class CleanupStore {
     }
 }
 
+/// 0.8.5: a cask in an upgrade whose app is open now.
+public struct RunningCaskApp: Equatable, Sendable {
+    public var packageID: String
+    /// The app's name as Finder shows it ("Google Chrome").
+    public var name: String
+    public init(packageID: String, name: String) {
+        self.packageID = packageID
+        self.name = name
+    }
+}
+
 /// The upgrade sheet's first page when something would compile: every
 /// package with its bottle-or-compile mark, and "Skip packages that would
 /// compile".
@@ -78,6 +89,11 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     public var id = UUID()
     public var rows: [Row]
     public var skipCompiling = false
+    /// 0.8.5 (newbie review H2): the apps of casks in this plan that are
+    /// open now ("Google Chrome"). brew closes a running app to upgrade its
+    /// cask, so the plan page says so before starting. Empty when nothing is
+    /// open or "Don't quit running apps during upgrades" is on.
+    public var runningApps: [RunningCaskApp] = []
 
     public init(packages: [Package], classifier: CompileClassifier) {
         // 0.8.5: in the order the run takes (password casks last).
@@ -90,7 +106,25 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     /// ask for the administrator password.
     public var needingPassword: [Package] { rows.map(\.package).filter(AdminPassword.required) }
     /// Whether the plan page is shown before starting (else it starts at once).
-    public var needsConfirmation: Bool { hasCompiling || !needingPassword.isEmpty }
+    public var needsConfirmation: Bool { hasCompiling || !needingPassword.isEmpty || !runningAppsToRun.isEmpty }
+
+    /// The open apps among what Start runs (a skipped package's app isn't
+    /// touched).
+    public var runningAppsToRun: [String] {
+        let run = Set(toRun.map(\.id))
+        return runningApps.filter { run.contains($0.packageID) }.map(\.name)
+    }
+
+    /// "These apps will be closed during the upgrade: Google Chrome, Visual
+    /// Studio Code." nil when none is open.
+    public var runningAppsNote: String? {
+        let names = runningAppsToRun
+        guard !names.isEmpty else { return nil }
+        let list = ListFormatter.localizedString(byJoining: names)
+        return names.count == 1
+            ? String(localized: "This app will be closed during the upgrade and opened again afterwards: \(list). Save your work in it first.")
+            : String(localized: "These apps will be closed during the upgrade and opened again afterwards: \(list). Save your work in them first.")
+    }
 
     /// What Start runs.
     public var toRun: [Package] {

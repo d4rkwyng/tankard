@@ -828,13 +828,32 @@ public final class AppStore {
         guard !isUpgrading else { return }
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
-        let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        // 0.8.5: and when brew would close an app that is open now.
+        plan.runningApps = runningCaskApps(targets)
         // 0.8.3: also when a cask's installer will ask for the password.
         if plan.needsConfirmation {
             upgradePlan = plan
             showUpgradeSheet = true
         } else {
             startUpgrade(targets)
+        }
+    }
+
+    /// 0.8.5 (newbie review H2): the casks among `targets` whose app is
+    /// running now, by installed path or the bundle id brew quits (the same
+    /// check automatic updates' safe mode uses). None when "Don't quit
+    /// running apps during upgrades" is on: brew then leaves them running.
+    func runningCaskApps(_ targets: [Package]) -> [RunningCaskApp] {
+        guard !insights.settings.dontQuitAppsDuringUpgrade else { return [] }
+        let casks = targets.filter { $0.kind == .cask }
+        guard !casks.isEmpty else { return [] }
+        let running = autoUpdate.conditions.runningApps()
+        guard !running.isEmpty else { return [] }
+        return casks.compactMap { p in
+            AutoUpdateSafeMode.runningApp(p, running: running).map {
+                RunningCaskApp(packageID: p.id, name: $0.hasSuffix(".app") ? String($0.dropLast(4)) : p.name)
+            }
         }
     }
 

@@ -76,6 +76,16 @@ struct UpgradePlanView: View {
                 .font(.system(size: 12))
                 .padding(.top, 12)
             }
+            // 0.8.5: say before starting that brew closes open apps.
+            if let note = plan.runningAppsNote {
+                Label {
+                    Text(note).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                }
+                .font(.system(size: 12))
+                .padding(.top, 12)
+            }
             // 0.8.3: say before starting that brew's sudo will ask.
             let password = plan.needingPassword
             if !password.isEmpty {
