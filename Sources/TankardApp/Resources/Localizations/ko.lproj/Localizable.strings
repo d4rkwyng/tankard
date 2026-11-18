@@ -22,6 +22,8 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ 패키지 %lld개";
 "%@ %lld packages" = "%@ 패키지 %lld개";
+"%@ and %lld more" = "%@ 외 %lld개";
+"%@ and more" = "%@ 등";
 "%@ can't be uninstalled" = "%@을(를) 제거할 수 없음";
 "%@ complete" = "%@ 완료";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ 시작되지 않음: %@이(가) 아직 실행 중입니다. 끝난 후 다시 시도하세요.";

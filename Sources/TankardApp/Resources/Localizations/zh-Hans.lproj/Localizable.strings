@@ -22,6 +22,8 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld 个软件包";
 "%@ %lld packages" = "%@ %lld 个软件包";
+"%@ and %lld more" = "%@ 及另外 %lld 个";
+"%@ and more" = "%@ 等";
 "%@ can't be uninstalled" = "无法卸载 %@";
 "%@ complete" = "%@ 已完成";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ 未启动：%@ 仍在运行。请在其完成后重试。";

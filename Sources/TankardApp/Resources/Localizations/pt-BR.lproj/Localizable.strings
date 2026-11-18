@@ -22,6 +22,8 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld pacote";
 "%@ %lld packages" = "%@ %lld pacotes";
+"%@ and %lld more" = "%@ e mais %lld";
+"%@ and more" = "%@ e outros";
 "%@ can't be uninstalled" = "%@ não pode ser desinstalado";
 "%@ complete" = "%@ concluído";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ não iniciou: %@ ainda está em execução. Tente novamente quando terminar.";

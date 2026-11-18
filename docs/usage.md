@@ -200,7 +200,9 @@ default.
   quietly, as manual upgrades do (up to 15 minutes; logged), and is skipped as "Homebrew
   was busy" if it is still busy. Quitting Tankard during a step asks first; nothing is
   offered at the next launch: the interrupted run starts again after it, under the same
-  conditions.
+  conditions. Quitting during the run's `brew update` or download doesn't ask, and that
+  run counts as done. That's harmless, since nothing has changed yet: the next scheduled
+  run does the work.
 - **Automatically upgrade:** **All versions**, **Minor and patch only** or **Patch only**.
   Versions that can't be compared (dates, letters) upgrade only under All versions.
 - **Snooze** pauses automatic updates for 1 day, 1 week, or until you turn them back on.

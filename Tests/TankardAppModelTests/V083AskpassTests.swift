@@ -89,6 +89,57 @@ struct AskpassSupportTests {
                 == Askpass.Step(action: .upgrade, names: ["windows-app"]))
     }
 
+    /// 0.8.4: a long command is cut on a word boundary (never mid-name),
+    /// on the way in and on the way out, and ends in " …".
+    @Test func aLongContextIsCutBetweenWords() throws {
+        let names = (1...60).map { "some-long-cask-name-\($0)" }
+        let command = "brew upgrade --cask " + names.joined(separator: " ")
+        #expect(command.count > Askpass.maxContextLength)
+        let env = Askpass.environment(helper: "/h", context: command)
+        let set = try #require(env[Askpass.contextKey])
+        #expect(set.count <= Askpass.maxContextLength)
+        #expect(set.hasSuffix(" …"))
+        let words = set.split(separator: " ").dropFirst(3).dropLast().map(String.init)
+        #expect(!words.isEmpty)
+        #expect(words.allSatisfy(names.contains), "\(words)")
+        // Read back unchanged: the helper's own cut is a no-op on Tankard's.
+        let r = Askpass.request(arguments: ["a", "Password:"], environment: env)
+        #expect(r.context == set)
+        #expect(AskpassText.command(r) == set)
+        // A longer text set some other way is cut the same on read.
+        let raw = Askpass.request(arguments: ["a"], environment: [Askpass.contextKey: command])
+        #expect(raw.context == set)
+        // One word longer than the limit: cut inside it, still "…".
+        let one = Askpass.sanitize("brew " + String(repeating: "y", count: 600), limit: 50)
+        #expect(one == "brew …")
+        let solo = Askpass.sanitize(String(repeating: "y", count: 600), limit: 50)
+        #expect(solo.count == 50 && solo.hasSuffix("…"))
+        // Short text: untouched.
+        #expect(Askpass.sanitize("brew upgrade --cask a", limit: 21) == "brew upgrade --cask a")
+        #expect(Askpass.sanitize("brew upgrade --cask ab", limit: 21) == "brew upgrade --cask …")
+    }
+
+    @Test func manyNamesShowTwoAndACount() {
+        func purpose(_ c: String?) -> String { AskpassText.purpose(Askpass.Request(prompt: "Password:", context: c, isRetry: false)) }
+        #expect(purpose("brew upgrade --cask xz wget curl") == "To upgrade xz, wget, curl.")
+        #expect(purpose("brew upgrade --cask xz wget curl git") == "To upgrade xz, wget and 2 more.")
+        let nine = "HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 brew upgrade --cask "
+            + "homebrew/cask/xz wget a b c d e f g"
+        #expect(purpose(nine) == "To upgrade xz, wget and 7 more.")
+        #expect(purpose("brew uninstall --cask --zap a b c d e") == "To uninstall a, b and 3 more.")
+        // A cut command: the count isn't known, the half name isn't shown.
+        #expect(Askpass.step(command: "brew upgrade --cask xz wget curl …")
+                == Askpass.Step(action: .upgrade, names: ["xz", "wget", "curl"], isCut: true))
+        #expect(purpose("brew upgrade --cask xz wget curl …") == "To upgrade xz, wget and more.")
+        #expect(purpose("brew upgrade --cask xz …") == "To upgrade xz and more.")
+        #expect(purpose("brew upgrade --cask xz wge…") == "To upgrade xz and more.")
+        #expect(purpose("brew upgrade --cask …") == "For a brew step that needs administrator rights.")
+        // End to end, from a command far over the limit: the line never ends in a cut name.
+        let long = "brew upgrade --cask " + (1...80).map { "cask-\($0)" }.joined(separator: " ")
+        let r = Askpass.request(arguments: ["a"], environment: Askpass.environment(helper: "/h", context: long))
+        #expect(AskpassText.purpose(r) == "To upgrade cask-1, cask-2 and more.")
+    }
+
     @Test func helperPathOnlyInsideAnAppAndExecutable() throws {
         let dir = try tempDir()
         let app = dir.appendingPathComponent("Tankard.app")
