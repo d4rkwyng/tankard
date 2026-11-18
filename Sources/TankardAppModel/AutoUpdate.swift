@@ -698,18 +698,21 @@ public enum AutoUpdateText {
         return String(localized: "Last auto-update: \(when(run.startedAt, now: now, calendar: calendar)) · \(run.summary)")
     }
 
+    /// "today 3:04 AM", "yesterday 15:04", "16. Nov., 06:04". 0.8.6 (UI
+    /// details L2): in the locale's style (the calendar's locale, else the
+    /// user's), as History writes times; it was always en_US_POSIX "d MMM
+    /// HH:mm" (an English month in German, 24-hour beside History's 12).
     public static func when(_ date: Date, now: Date, calendar: Calendar = .current) -> String {
-        let f = DateFormatter()
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "HH:mm"
-        let time = f.string(from: date)
+        let locale = calendar.locale ?? .current
+        var timeStyle = Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, calendar: calendar)
+        timeStyle.timeZone = calendar.timeZone
+        let time = date.formatted(timeStyle)
         if calendar.isDate(date, inSameDayAs: now) { return String(localized: "today \(time)") }
         if let t = calendar.date(byAdding: .day, value: 1, to: now), calendar.isDate(date, inSameDayAs: t) { return String(localized: "tomorrow \(time)") }
         if let y = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: y) { return String(localized: "yesterday \(time)") }
-        f.dateFormat = "d MMM HH:mm"
-        return f.string(from: date)
+        var full = Date.FormatStyle(locale: locale, calendar: calendar).day().month(.abbreviated).hour().minute()
+        full.timeZone = calendar.timeZone
+        return date.formatted(full)
     }
 
     /// The Settings line under the schedule.

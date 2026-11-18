@@ -3,12 +3,10 @@
 " (default)" = " (default)";
 " (from cache)" = " (from cache)";
 " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default." = " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default.";
-" It took %@." = " It took %@.";
 " No upgrade yet for %@." = " No upgrade yet for %@.";
 " Partial scan: %@." = " Partial scan: %@.";
 " and %lld more" = " and %lld more";
 " from Intelbrew" = " from Intelbrew";
-" release" = " release";
 " to confirm" = " to confirm";
 " · partial scan" = " · partial scan";
 " · source" = " · source";
@@ -34,8 +32,12 @@
 "%@ exited %lld" = "%@ exited %lld";
 "%@ exited %lld:\n%@" = "%@ exited %lld:\n%@";
 "%@ finished with problems" = "%@ finished with problems";
-"%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ has no Intelbrew bottle for this Mac, so brew compiles it";
-"%@ has no bottle for this Mac, so brew compiles it" = "%@ has no bottle for this Mac, so brew compiles it";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.";
+"%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.";
+"%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.";
+"%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.";
 "%@ has nothing left to upgrade." = "%@ has nothing left to upgrade.";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade.";
 "%@ is installed" = "%@ is installed";
@@ -147,9 +149,7 @@
 "+%lld more" = "+%lld more";
 "+1 dependency also compiles: %@" = "+1 dependency also compiles: %@";
 ", after you confirm" = ", after you confirm";
-", and %lld %@ (%@)" = ", and %lld %@ (%@)";
 ". From brew vulns (OSV.dev)." = ". From brew vulns (OSV.dev).";
-". That can take a long time on older Macs." = ". That can take a long time on older Macs.";
 ". brew printed these; they are also in each package's details." = ". brew printed these; they are also in each package's details.";
 "1 cask" = "1 cask";
 "1 formula" = "1 formula";
@@ -579,6 +579,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first.";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password.";
 "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.";
+"It took %@." = "It took %@.";
 "It took %@; expect longer on an older Mac." = "It took %@; expect longer on an older Mac.";
 "It was built from the latest source, so there is no fixed version to go back to." = "It was built from the latest source, so there is no fixed version to go back to.";
 "It was stopped." = "It was stopped.";
@@ -797,9 +798,9 @@
 "Pinned: upgrades leave it at this version" = "Pinned: upgrades leave it at this version";
 "Plist" = "Plist";
 "Post-install notes" = "Post-install notes";
-"Poured from " = "Poured from ";
 "Poured from a Homebrew bottle (ghcr.io)" = "Poured from a Homebrew bottle (ghcr.io)";
 "Poured from a bottle" = "Poured from a bottle";
+"Poured from the %@ release" = "Poured from the %@ release";
 "Press Refresh to ask Homebrew." = "Press Refresh to ask Homebrew.";
 "Preview from %@ (changes nothing)." = "Preview from %@ (changes nothing).";
 "Private" = "Private";
@@ -1081,6 +1082,7 @@
 "Taps and pins" = "Taps and pins";
 "Taps…" = "Taps…";
 "Terminal only" = "Terminal only";
+"That's the latest version." = "That's the latest version.";
 "The Command Line Tools are out of date" = "The Command Line Tools are out of date";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.";
 "The Installed list, filtered to this tap (tap:%@)" = "The Installed list, filtered to this tap (tap:%@)";
@@ -1317,7 +1319,6 @@
 "couldn't start %@: %@" = "couldn't start %@: %@";
 "couldn't tell whether its app is running" = "couldn't tell whether its app is running";
 "dep" = "dep";
-"dependencies" = "dependencies";
 "dependency" = "dependency";
 "deprecated" = "deprecated";
 "didn't start" = "didn't start";

@@ -3,12 +3,10 @@
 " (default)" = " （默认）";
 " (from cache)" = " （来自缓存）";
 " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default." = " 不检查 App。“立即扫描”会在你需要时检查一次。默认关闭。";
-" It took %@." = " 耗时 %@。";
 " No upgrade yet for %@." = " %@ 尚无可用升级。";
 " Partial scan: %@." = " 部分扫描：%@。";
 " and %lld more" = " 以及另外 %lld 个";
 " from Intelbrew" = " 来自 Intelbrew";
-" release" = " 版本";
 " to confirm" = " 以确认";
 " · partial scan" = " · 部分扫描";
 " · source" = " · 源码";
@@ -34,8 +32,12 @@
 "%@ exited %lld" = "%@ 已退出，退出码 %lld";
 "%@ exited %lld:\n%@" = "%@ 已退出，退出码 %lld：\n%@";
 "%@ finished with problems" = "%@已完成，但有问题";
-"%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译";
-"%@ has no bottle for this Mac, so brew compiles it" = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。";
+"%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
+"%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
+"%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。";
 "%@ has nothing left to upgrade." = "%@ 已无可升级内容。";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ 已可用，但此软件包已固定：brew upgrade 和“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
@@ -147,9 +149,7 @@
 "+%lld more" = "另有 +%lld 个";
 "+1 dependency also compiles: %@" = "另有 +1 个依赖项也会编译：%@";
 ", after you confirm" = "，在你确认后";
-", and %lld %@ (%@)" = "，以及 %lld %@（%@）";
 ". From brew vulns (OSV.dev)." = "。来自 brew vulns（OSV.dev）。";
-". That can take a long time on older Macs." = "。在较旧的 Mac 上这可能需要很长时间。";
 ". brew printed these; they are also in each package's details." = "。以下是 brew 的输出；它们也在每个软件包的详细信息中。";
 "1 cask" = "1 个 cask";
 "1 formula" = "1 个 formula";
@@ -579,6 +579,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrew 的相关行仍保留在你的 shell 配置文件（%@）中；请事后手动移除，或先使用“还原为标准 Homebrew”。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "它会删除 %@ 的 Homebrew 文件以及所有已安装的 formula 和 cask，包括作为 cask 安装在 /Applications 中的 App。这台 Mac 上的其他 Homebrew（位于不同前缀）不受影响。它可能会要求输入密码。";
 "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "它仍处于安装状态（brew list 会列出它）。信任它的 Tap，或以新名称重新安装，Homebrew 就能读取它。";
+"It took %@." = "耗时 %@。";
 "It took %@; expect longer on an older Mac." = "耗时 %@；在较旧的 Mac 上会更久。";
 "It was built from the latest source, so there is no fixed version to go back to." = "它是从最新源码构建的，因此没有可以退回的固定版本。";
 "It was stopped." = "已被停止。";
@@ -797,9 +798,9 @@
 "Pinned: upgrades leave it at this version" = "已固定：升级时保持此版本";
 "Plist" = "Plist";
 "Post-install notes" = "安装后说明";
-"Poured from " = "安装来源： ";
 "Poured from a Homebrew bottle (ghcr.io)" = "从 Homebrew bottle (ghcr.io) 安装";
 "Poured from a bottle" = "从 bottle 安装";
+"Poured from the %@ release" = "安装自 %@ 的发布版本";
 "Press Refresh to ask Homebrew." = "点按“刷新”以询问 Homebrew。";
 "Preview from %@ (changes nothing)." = "来自 %@ 的预览（不会更改任何内容）。";
 "Private" = "私有";
@@ -1081,6 +1082,7 @@
 "Taps and pins" = "Tap 和固定项";
 "Taps…" = "Tap…";
 "Terminal only" = "仅限终端";
+"That's the latest version." = "这是最新版本。";
 "The Command Line Tools are out of date" = "命令行工具已过期";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "此用户无法写入 Homebrew 文件夹。`brew doctor`（Homebrew ▸ 健康状况）通常会指出是哪些，以及修复命令。";
 "The Installed list, filtered to this tap (tap:%@)" = "“已安装”列表，已按此 tap 过滤 (tap:%@)";
@@ -1317,7 +1319,6 @@
 "couldn't start %@: %@" = "无法启动 %@：%@";
 "couldn't tell whether its app is running" = "无法判断其 App 是否正在运行";
 "dep" = "依赖";
-"dependencies" = "依赖项";
 "dependency" = "依赖项";
 "deprecated" = "已弃用";
 "didn't start" = "未启动";

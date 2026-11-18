@@ -40,3 +40,29 @@ struct V086WordingTests {
         #expect(try Self.strings("ko")["Installed as"] == "설치 방식")
     }
 }
+
+// 0.8.6 (UI details L1, L2): whole sentences; dates in the locale's style.
+struct V086SentenceTests {
+    @Test func installCompileMessageIsWhole() {
+        #expect(InstallCompileText.message(name: "ffmpeg", intelbrew: false, deps: [], estimate: nil)
+                == "ffmpeg has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.")
+        #expect(InstallCompileText.message(name: "ffmpeg", intelbrew: true, deps: ["node"], estimate: "about 15 min")
+                == "ffmpeg has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (node). That can take a long time on older Macs. It took about 15 min.")
+        #expect(InstallCompileText.message(name: "x", intelbrew: false, deps: ["a", "b"], estimate: nil).contains("and 2 dependencies (a, b)."))
+    }
+
+    @Test func autoUpdateTimesFollowTheLocale() {
+        func cal(_ id: String) -> Calendar {
+            var c = Calendar(identifier: .gregorian)
+            c.timeZone = TimeZone(identifier: "UTC")!
+            c.locale = Locale(identifier: id)
+            return c
+        }
+        let now = cal("en_US").date(from: DateComponents(year: 2026, month: 11, day: 18, hour: 10))!
+        let then = cal("en_US").date(from: DateComponents(year: 2026, month: 11, day: 16, hour: 6, minute: 4))!
+        let de = AutoUpdateText.when(then, now: now, calendar: cal("de_DE"))
+        #expect(de.contains("Nov.") && de.contains("06:04"))
+        let us = AutoUpdateText.when(then, now: now, calendar: cal("en_US"))
+        #expect(us.contains("Nov") && us.contains("6:04") && us.contains("AM"))
+    }
+}

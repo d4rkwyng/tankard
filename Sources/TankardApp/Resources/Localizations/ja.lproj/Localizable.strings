@@ -3,12 +3,10 @@
 " (default)" = " (デフォルト)";
 " (from cache)" = " (キャッシュから)";
 " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default." = " アプリは検査されません。「今すぐスキャン」は、指示したときに1回検査します。デフォルトではオフです。";
-" It took %@." = " %@かかりました。";
 " No upgrade yet for %@." = " %@のアップグレードはまだありません。";
 " Partial scan: %@." = " 部分スキャン: %@。";
 " and %lld more" = " ほか%lld件";
 " from Intelbrew" = " (Intelbrew提供)";
-" release" = " リリース";
 " to confirm" = " 確認のため";
 " · partial scan" = " · 部分スキャン";
 " · source" = " · ソース";
@@ -34,8 +32,12 @@
 "%@ exited %lld" = "%@ が終了コード %lld で終了しました";
 "%@ exited %lld:\n%@" = "%@ が終了コード %lld で終了しました:\n%@";
 "%@ finished with problems" = "%@ 完了 (問題あり)";
-"%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします";
-"%@ has no bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のbottleがないため、brewがコンパイルします";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。";
+"%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
+"%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
+"%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ にはこの Mac 用の bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。";
 "%@ has nothing left to upgrade." = "%@ にはアップグレードするものがありません。";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ は利用可能ですが、このパッケージはピン留めされているため、brew upgradeと「すべてアップグレード」ではスキップされます。アップグレードするにはピン留めを解除してください。";
 "%@ is installed" = "%@ はインストール済みです";
@@ -147,9 +149,7 @@
 "+%lld more" = "+%lld個";
 "+1 dependency also compiles: %@" = "+1個の依存関係もコンパイルされます: %@";
 ", after you confirm" = "。確認後に実行";
-", and %lld %@ (%@)" = "、および%lld個の%@(%@)";
 ". From brew vulns (OSV.dev)." = "。brew vulns(OSV.dev)より。";
-". That can take a long time on older Macs." = "。古いMacでは時間がかかる場合があります。";
 ". brew printed these; they are also in each package's details." = "。brewが出力した内容です。各パッケージの詳細にも表示されます。";
 "1 cask" = "1個のcask";
 "1 formula" = "1個のformula";
@@ -579,6 +579,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrewの行はシェルプロファイル(%@)に残ります。後で手動で削除するか、先に「標準のHomebrewに戻す」を使ってください。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "%@ のHomebrewファイルと、/Applications にcaskとしてインストールされたアプリを含め、インストール済みのすべてのformulaとcaskを削除します。このMac上の別のHomebrew(別のプレフィックス)には手を触れません。パスワードを求められる場合があります。";
 "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "インストールされたままです（brew list に表示されます）。Tap を信頼するか、新しい名前で再インストールすると Homebrew が読み込めるようになります。";
+"It took %@." = "%@かかりました。";
 "It took %@; expect longer on an older Mac." = "%@かかりました。古いMacではもっとかかります。";
 "It was built from the latest source, so there is no fixed version to go back to." = "最新のソースからビルドされたため、戻る先の固定バージョンがありません。";
 "It was stopped." = "停止されました。";
@@ -797,9 +798,9 @@
 "Pinned: upgrades leave it at this version" = "ピン留め: アップグレードしてもこのバージョンのままです";
 "Plist" = "Plist";
 "Post-install notes" = "インストール後のメモ";
-"Poured from " = "取得元: ";
 "Poured from a Homebrew bottle (ghcr.io)" = "Homebrewのbottle（ghcr.io）から展開";
 "Poured from a bottle" = "bottleから展開";
+"Poured from the %@ release" = "%@ のリリースから取得";
 "Press Refresh to ask Homebrew." = "「更新」を押してHomebrewに問い合わせます。";
 "Preview from %@ (changes nothing)." = "%@からのプレビュー（何も変更されません）。";
 "Private" = "非公開";
@@ -1081,6 +1082,7 @@
 "Taps and pins" = "tapとピン留め";
 "Taps…" = "Tap…";
 "Terminal only" = "ターミナルのみ";
+"That's the latest version." = "これが最新バージョンです。";
 "The Command Line Tools are out of date" = "コマンドラインツールが古くなっています";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "このユーザーはHomebrewのフォルダに書き込めません。通常は `brew doctor`（Homebrew ▸ ヘルス）で原因と修正コマンドが分かります。";
 "The Installed list, filtered to this tap (tap:%@)" = "このtapで絞り込んだインストール済みリスト (tap:%@)";
@@ -1179,7 +1181,7 @@
 "Untrust" = "信頼を解除";
 "Up to date" = "最新です";
 "Update" = "アップデート";
-"Updated %@" = "%@を更新しました";
+"Updated %@" = "更新: %@";
 "Updates" = "アップデート";
 "Updates itself" = "自己アップデート";
 "Updates itself (auto_updates).\nUpdates: %@" = "自己アップデート (auto_updates)。\nアップデート: %@";
@@ -1317,7 +1319,6 @@
 "couldn't start %@: %@" = "%@を開始できませんでした: %@";
 "couldn't tell whether its app is running" = "アプリが実行中かどうか確認できませんでした";
 "dep" = "dep";
-"dependencies" = "依存関係";
 "dependency" = "依存関係";
 "deprecated" = "非推奨";
 "didn't start" = "開始しませんでした";

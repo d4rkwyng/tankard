@@ -209,58 +209,6 @@
         }
       }
     },
-    " It took %@.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Das dauerte %@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Cela a pris %@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Tardó %@."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " %@かかりました。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 耗时 %@。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Levou %@."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Ha richiesto %@."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " %@ 걸렸습니다."
-          }
-        }
-      }
-    },
     " No upgrade yet for %@.": {
       "localizations": {
         "de": {
@@ -465,58 +413,6 @@
           "stringUnit": {
             "state": "translated",
             "value": " Intelbrew에서 제공"
-          }
-        }
-      }
-    },
-    " release": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Release"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " version"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " versión"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " リリース"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 版本"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " versão"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " release"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 릴리스"
           }
         }
       }
@@ -1821,106 +1717,314 @@
         }
       }
     },
-    "%@ has no Intelbrew bottle for this Mac, so brew compiles it": {
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es"
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und %lld Abhängigkeiten (%@). Das kann auf älteren Macs lange dauern."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile"
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila"
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con %lld dependencias (%@). Puede tardar mucho en Macs más antiguos."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします"
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译"
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew compila"
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila junto com %lld dependências (%@). Isso pode demorar muito em Macs mais antigos."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila"
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a %lld dipendenze (%@). Può richiedere molto tempo sui Mac meno recenti."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다"
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
     },
-    "%@ has no bottle for this Mac, so brew compiles it": {
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es"
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und 1 Abhängigkeit (%@). Das kann auf älteren Macs lange dauern."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n’a pas de bottle pour ce Mac, donc brew le compile"
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ no tiene bottle para este Mac, así que brew lo compila"
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con 1 dependencia (%@). Puede tardar mucho en Macs más antiguos."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ にはこのMac用のbottleがないため、brewがコンパイルします"
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译"
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ não tem bottle para este Mac, então o brew compila"
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila junto com 1 dependência (%@). Isso pode demorar muito em Macs mais antigos."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila"
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a 1 dipendenza (%@). Può richiedere molto tempo sui Mac meno recenti."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다"
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es. Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila. Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila. Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila. Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es und %lld Abhängigkeiten (%@). Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila junto con %lld dependencias (%@). Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila junto com %lld dependências (%@). Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila insieme a %lld dipendenze (%@). Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es und 1 Abhängigkeit (%@). Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila junto con 1 dependencia (%@). Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila junto com 1 dependência (%@). Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila insieme a 1 dipendenza (%@). Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es. Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila. Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila. Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila. Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -7985,58 +8089,6 @@
         }
       }
     },
-    ", and %lld %@ (%@)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", und %lld %@ (%@)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", et %lld %@ (%@)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", y %lld %@ (%@)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "、および%lld個の%@(%@)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "，以及 %lld %@（%@）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", e %lld %@ (%@)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", e %lld %@ (%@)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", 그리고 %lld %@(%@)"
-          }
-        }
-      }
-    },
     ". From brew vulns (OSV.dev).": {
       "localizations": {
         "de": {
@@ -8085,58 +8137,6 @@
           "stringUnit": {
             "state": "translated",
             "value": ". brew vulns(OSV.dev) 기준."
-          }
-        }
-      }
-    },
-    ". That can take a long time on older Macs.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Das kann auf älteren Macs lange dauern."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Cela peut prendre beaucoup de temps sur les Mac plus anciens."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Puede tardar mucho en Macs más antiguos."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "。古いMacでは時間がかかる場合があります。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "。在较旧的 Mac 上这可能需要很长时间。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Isso pode demorar muito em Macs mais antigos."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Può richiedere molto tempo sui Mac meno recenti."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -30449,6 +30449,58 @@
         }
       }
     },
+    "It took %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das dauerte %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela a pris %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tardó %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@かかりました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "耗时 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Levou %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ha richiesto %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 걸렸습니다."
+          }
+        }
+      }
+    },
     "It took %@; expect longer on an older Mac.": {
       "localizations": {
         "de": {
@@ -41785,58 +41837,6 @@
         }
       }
     },
-    "Poured from ": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gegossen aus "
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installé depuis "
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instalado desde "
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取得元: "
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安装来源： "
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instalado de "
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installato da "
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다음에서 부음: "
-          }
-        }
-      }
-    },
     "Poured from a Homebrew bottle (ghcr.io)": {
       "localizations": {
         "de": {
@@ -41937,6 +41937,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "bottle에서 부음"
+          }
+        }
+      }
+    },
+    "Poured from the %@ release": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottle aus dem Release von %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installé depuis la version publiée par %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado desde la versión publicada de %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ のリリースから取得"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装自 %@ 的发布版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado da versão publicada de %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installato dalla release di %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 릴리스에서 설치됨"
           }
         }
       }
@@ -56553,6 +56605,58 @@
         }
       }
     },
+    "That's the latest version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist die neueste Version."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est la dernière version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es la versión más reciente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これが最新バージョンです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是最新版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta é a versão mais recente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È la versione più recente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최신 버전입니다."
+          }
+        }
+      }
+    },
     "The Command Line Tools are out of date": {
       "localizations": {
         "de": {
@@ -61672,7 +61776,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@を更新しました"
+            "value": "更新: %@"
           }
         },
         "zh-Hans": {
@@ -68821,58 +68925,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "의존"
-          }
-        }
-      }
-    },
-    "dependencies": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abhängigkeiten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dépendances"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dependencias"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "依存関係"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "依赖项"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dependências"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dipendenze"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "의존성"
           }
         }
       }

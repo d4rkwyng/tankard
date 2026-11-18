@@ -431,6 +431,26 @@ public enum DetailPaneWidth {
     }
 }
 
+/// 0.8.6 (UI details L1): Discover's "Install … from source?" text, one
+/// whole sentence per case for the translations.
+public enum InstallCompileText {
+    public static func message(name: String, intelbrew: Bool, deps: [String], estimate: String?) -> String {
+        let names = deps.prefix(4).joined(separator: ", ")
+        let n = deps.count
+        var m: String
+        switch (intelbrew, n) {
+        case (true, 0): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.")
+        case (false, 0): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.")
+        case (true, 1): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (\(names)). That can take a long time on older Macs.")
+        case (false, 1): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it and 1 dependency (\(names)). That can take a long time on older Macs.")
+        case (true, _): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it and \(n) dependencies (\(names)). That can take a long time on older Macs.")
+        case (false, _): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it and \(n) dependencies (\(names)). That can take a long time on older Macs.")
+        }
+        if let estimate { m += " " + String(localized: "It took \(estimate).") }
+        return m
+    }
+}
+
 /// The Intelbrew fork line in the status bar.
 public struct ForkSummary: Equatable, Sendable {
     public enum Level: Sendable { case ok, warning, problem }

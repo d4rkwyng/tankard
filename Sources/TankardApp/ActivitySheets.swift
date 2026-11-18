@@ -610,16 +610,10 @@ struct CleanupSheet: View {
 /// "Install node-red from source?" before an install with no bottle here.
 struct CompileInstallConfirm: View {
     /// Built in steps: one long concatenation is too much for Swift 6.0's type checker.
+    /// 0.8.6 (UI details L1): whole sentences per case (four glued
+    /// fragments read "…brewがコンパイルします、および1個の依存関係" in Japanese).
     static func message(_ e: CatalogEntry, intelbrew: Bool, deps: [CatalogEntry], estimate: String?) -> String {
-        var m = intelbrew ? String(localized: "\(e.name) has no Intelbrew bottle for this Mac, so brew compiles it") : String(localized: "\(e.name) has no bottle for this Mac, so brew compiles it")
-        if !deps.isEmpty {
-            let names = deps.prefix(4).map(\.name).joined(separator: ", ")
-            let noun = deps.count == 1 ? String(localized: "dependency") : String(localized: "dependencies")
-            m += String(localized: ", and \(deps.count) \(noun) (\(names))")
-        }
-        m += String(localized: ". That can take a long time on older Macs.")
-        if let estimate { m += String(localized: " It took \(estimate).") }
-        return m
+        InstallCompileText.message(name: e.name, intelbrew: intelbrew, deps: deps.map(\.name), estimate: estimate)
     }
 
     @Bindable var store: AppStore

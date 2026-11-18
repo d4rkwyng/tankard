@@ -247,7 +247,8 @@ struct PackageDetail: View {
             case .bottle:
                 Image(systemName: "checkmark.circle").foregroundStyle(theme.badge(.bottle).dot)
                 if let repo = p.bottleRepository {
-                    (Text("Poured from ") + Text(repo).font(.system(size: 11, design: .monospaced)) + Text(" release"))
+                    // 0.8.6 (UI L1): one sentence for the translations.
+                    Text("Poured from the \(repo) release")
                 } else if p.bottleOrigin == .homebrew {
                     Text("Poured from a Homebrew bottle (ghcr.io)")
                 } else {

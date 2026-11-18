@@ -3,12 +3,10 @@
 " (default)" = " (par défaut)";
 " (from cache)" = " (depuis le cache)";
 " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default." = " Les apps ne sont pas vérifiées. « Analyser maintenant » lance une vérification à la demande. Désactivé par défaut.";
-" It took %@." = " Cela a pris %@.";
 " No upgrade yet for %@." = " Pas encore de mise à niveau pour %@.";
 " Partial scan: %@." = " Analyse partielle : %@.";
 " and %lld more" = " et %lld de plus";
 " from Intelbrew" = " depuis Intelbrew";
-" release" = " version";
 " to confirm" = " pour confirmer";
 " · partial scan" = " · analyse partielle";
 " · source" = " · source";
@@ -34,8 +32,12 @@
 "%@ exited %lld" = "%@ a quitté avec le code %lld";
 "%@ exited %lld:\n%@" = "%@ a quitté avec le code %lld :\n%@";
 "%@ finished with problems" = "%@ terminé avec des problèmes";
-"%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile";
-"%@ has no bottle for this Mac, so brew compiles it" = "%@ n’a pas de bottle pour ce Mac, donc brew le compile";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
+"%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
+"%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
+"%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
+"%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ n’a pas de bottle pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
 "%@ has nothing left to upgrade." = "%@ n’a plus rien à mettre à niveau.";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ est disponible, mais ce paquet est épinglé : brew upgrade et « Tout mettre à niveau » l’ignorent. Désépinglez-le pour le mettre à niveau.";
 "%@ is installed" = "%@ est installé";
@@ -147,9 +149,7 @@
 "+%lld more" = "+%lld de plus";
 "+1 dependency also compiles: %@" = "+1 dépendance est aussi compilée : %@";
 ", after you confirm" = ", après votre confirmation";
-", and %lld %@ (%@)" = ", et %lld %@ (%@)";
 ". From brew vulns (OSV.dev)." = ". Depuis brew vulns (OSV.dev).";
-". That can take a long time on older Macs." = ". Cela peut prendre beaucoup de temps sur les Mac plus anciens.";
 ". brew printed these; they are also in each package's details." = ". brew a affiché ceci ; c’est aussi dans les détails de chaque paquet.";
 "1 cask" = "1 cask";
 "1 formula" = "1 formule";
@@ -579,6 +579,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Les lignes d’Intelbrew restent dans votre profil shell (%@) ; supprimez-les ensuite manuellement, ou utilisez d’abord « Revenir à Homebrew standard ».";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "Cela supprime les fichiers Homebrew de %@ et toutes les formules et casks installés, y compris les apps installées comme casks dans /Applications. Un autre Homebrew sur ce Mac (dans un autre préfixe) n’est pas touché. Votre mot de passe peut être demandé.";
 "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "Il est toujours installé (brew list l’affiche). Faire confiance à son tap, ou le réinstaller sous son nouveau nom, permet à Homebrew de le lire.";
+"It took %@." = "Cela a pris %@.";
 "It took %@; expect longer on an older Mac." = "Cela a pris %@ ; comptez plus longtemps sur un Mac plus ancien.";
 "It was built from the latest source, so there is no fixed version to go back to." = "Il a été compilé depuis les sources les plus récentes, il n’y a donc pas de version fixe à laquelle revenir.";
 "It was stopped." = "Elle a été arrêtée.";
@@ -797,9 +798,9 @@
 "Pinned: upgrades leave it at this version" = "Épinglé : les mises à niveau le laissent à cette version";
 "Plist" = "Plist";
 "Post-install notes" = "Notes de post-installation";
-"Poured from " = "Installé depuis ";
 "Poured from a Homebrew bottle (ghcr.io)" = "Installé depuis une bottle Homebrew (ghcr.io)";
 "Poured from a bottle" = "Installé depuis une bottle";
+"Poured from the %@ release" = "Installé depuis la version publiée par %@";
 "Press Refresh to ask Homebrew." = "Appuyez sur Actualiser pour interroger Homebrew.";
 "Preview from %@ (changes nothing)." = "Aperçu de %@ (ne modifie rien).";
 "Private" = "Privé";
@@ -1081,6 +1082,7 @@
 "Taps and pins" = "Taps et épingles";
 "Taps…" = "Taps…";
 "Terminal only" = "Terminal uniquement";
+"That's the latest version." = "C’est la dernière version.";
 "The Command Line Tools are out of date" = "Les outils en ligne de commande sont obsolètes";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "Les dossiers de Homebrew ne sont pas accessibles en écriture pour cet utilisateur. `brew doctor` (Homebrew ▸ Santé) indique généralement lesquels, ainsi que la commande de correction.";
 "The Installed list, filtered to this tap (tap:%@)" = "La liste des installés, filtrée sur ce tap (tap:%@)";
@@ -1317,7 +1319,6 @@
 "couldn't start %@: %@" = "impossible de démarrer %@ : %@";
 "couldn't tell whether its app is running" = "impossible de savoir si son app est en cours d’exécution";
 "dep" = "dép.";
-"dependencies" = "dépendances";
 "dependency" = "dépendance";
 "deprecated" = "obsolète";
 "didn't start" = "n’a pas démarré";
