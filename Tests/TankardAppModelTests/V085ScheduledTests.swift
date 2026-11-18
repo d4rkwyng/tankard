@@ -309,7 +309,6 @@ struct ScheduledStepSleepTests {
         #expect(first.detail == AutoUpdateSkip.slept.text)
     }
 }
-// END ITEM 3
 
 // HK-47 review (0.8.5), item 5: a scheduled refresh that can't even find
 // brew doesn't leave the last scheduled check's quiet result behind (auto-
@@ -327,7 +326,6 @@ struct ScheduledRefreshResultTests {
         #expect(store.error?.title == "Homebrew not found")
     }
 }
-// END ITEM 5
 
 // HK-47 review (0.8.5), item 6: a willSleep whose didWake never came
 // doesn't hold scheduled checks off for good.
@@ -344,4 +342,3 @@ struct ScheduleConditionsMissedWakeTests {
         #expect(c.gate(now: t.addingTimeInterval(12 * 60 + 5)) == .settling(until: t.addingTimeInterval(12 * 60 + ScheduleConditions.settleDelay)))
     }
 }
-// END ITEM 6
