@@ -151,6 +151,10 @@ How it's put together, the `tankard status` command-line tool, demo mode, screen
 signing and releases: [docs/architecture.md](docs/architecture.md). What changed in each version:
 [CHANGELOG.md](CHANGELOG.md).
 
+## Built with Claude
+
+Tankard is built with Claude. Claude Code agents wrote the code under Derek's direction: he decides what to build and tests it on his Macs, and every change goes through review, automated tests and a real signed-app launch check before release. More in [the write-up](https://mindtricks.io/blog/20261117-intelbrew-tankard).
+
 ## License
 
 BSD-2-Clause, the same license as Homebrew and Intelbrew. See [LICENSE](LICENSE). The
