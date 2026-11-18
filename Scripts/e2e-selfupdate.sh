@@ -2,7 +2,7 @@
 # 0.8.3: the self-upgrade end to end, on this Mac's real brew and
 # /Applications, with two builds of this tree:
 #
-#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR
+#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR [--phases ABC]
 #
 # OLD and NEW: release builds (Scripts/bundle-app.sh) whose TankardVersion
 # and CFBundleShortVersionString differ, NEW the newer (semver: 0.8.3 and
@@ -22,6 +22,11 @@
 #      alerts if the sheet refuses it); once the old one is gone, exactly
 #      one Tankard, running NEW.
 #
+# --phases: run only these (default ABC). Without A, B installs NEW first
+# (quarantine removed, as install_old does). Scripts/rc-selfupdate-signed.sh
+# uses it when OLD is a release whose relaunch passes the script
+# environment on (before 0.8.4), which phase A can't judge.
+#
 # Each phase: a 0.25 s process timeline, `log stream` of Tankard's
 # subsystem, the app's stderr, and no new Tankard .ips in
 # ~/Library/Logs/DiagnosticReports. Refuses to start if Tankard runs, if
@@ -33,18 +38,21 @@ cd "$(dirname "$0")/.."
 # (0.8.4; `Scripts/e2e-selfupdate-checks.sh --self-test` checks them).
 source Scripts/e2e-selfupdate-checks.sh
 
-OLD= NEW= OUT=
+OLD= NEW= OUT= PHASES=ABC
 while [ $# -gt 0 ]; do
     case "$1" in
         --old) OLD=${2%/}; shift ;;
         --new) NEW=${2%/}; shift ;;
         --out) OUT=$2; shift ;;
-        -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+        --phases) PHASES=$2; shift ;;
+        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
         *) echo "e2e-selfupdate.sh: unknown option $1" >&2; exit 2 ;;
     esac
     shift
 done
-[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR" >&2; exit 2; }
+[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR [--phases ABC]" >&2; exit 2; }
+[[ $PHASES =~ ^[ABC]+$ ]] || { echo "e2e-selfupdate.sh: --phases takes letters from ABC, got '$PHASES'" >&2; exit 2; }
+want() { [[ $PHASES == *$1* ]]; }
 mkdir -p "$OUT"; OUT=$(cd "$OUT" && pwd)
 OLD=$(cd "$OLD" && pwd); NEW=$(cd "$NEW" && pwd)
 VOLD=$(plutil -extract CFBundleShortVersionString raw "$OLD/Contents/Info.plist")
@@ -132,6 +140,13 @@ install_old() {
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VOLD" ]
 }
+# --phases without A: B needs NEW installed (A would have left it there).
+install_new() {
+    write_cask new
+    qbrew install --cask "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
+    xattr -dr com.apple.quarantine "$APP" 2>/dev/null
+    [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VNEW" ]
+}
 
 start_watch() { # dir
     ( while true; do
@@ -167,9 +182,10 @@ script_env() { # dir
 }
 
 # MARK: A  fixed build -> newer, sheet open at Relaunch
-D=$OUT/A; mkdir -p "$D"
-echo "$(now) A: install $VOLD" | tee "$D/events.txt"
-if install_old; then
+D=$OUT/A
+if ! want A; then
+    echo "$(now) A: skipped (--phases $PHASES)"
+elif mkdir -p "$D" && echo "$(now) A: install $VOLD" | tee "$D/events.txt" && install_old; then
     write_cask new   # the tap now offers the newer build
     cat > "$D/steps.txt" <<STEPS
 expect-ready
@@ -225,7 +241,13 @@ else
 fi
 
 # MARK: B  same-build double launch
-D=$OUT/B; mkdir -p "$D"
+D=$OUT/B
+if ! want B; then
+    echo "$(now) B: skipped (--phases $PHASES)"
+elif ! want A && ! install_new; then
+    record "B: FAIL (install of $VNEW)"
+else
+mkdir -p "$D"
 quit_all
 start_watch "$D"
 open "$APP"; wait_for 15 test -n "$(pids)"
@@ -240,12 +262,14 @@ else
     record "B same-build double launch: FAIL (pids=[$(pids)], first $FIRST; see $D)"
 fi
 quit_all
+fi
 
 # MARK: C  stale copy with a sheet open, 0.8.2-style open-first
-D=$OUT/C; mkdir -p "$D"
-qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
-echo "$(now) C: install $VOLD" | tee "$D/events.txt"
-if install_old; then
+D=$OUT/C
+if ! want C; then
+    echo "$(now) C: skipped (--phases $PHASES)"
+elif mkdir -p "$D" && { ! qbrew list --cask 2>/dev/null | grep -qx tankard || qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1; } \
+    && echo "$(now) C: install $VOLD" | tee "$D/events.txt" && install_old; then
     cat > "$D/steps.txt" <<STEPS
 expect-ready
 open-sheet history
