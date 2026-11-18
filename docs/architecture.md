@@ -855,7 +855,21 @@ name. "Needed by" comes from the receipts' runtime dependencies or a cask's `dep
 Each listed dependency is checked again (`brew info`) right before it goes and kept if it
 has since been installed on request, pinned, or needed by something else. brew refuses a
 pinned package but still reports success, so a run whose output has brew's refusal is
-shown as failed.
+shown as failed. 0.8.4: plain `brew uninstall` removes one keg (the linked one, else the
+newest), prints "x 1.0 is still installed." and exits 0, so a formula with several kegs
+gets one chained step per version (`AppStore.uninstallSteps`; no `--force`, which skips
+the pin check and the keg lock). After the run `checkUninstalled` reads
+`brew info --json=v2 --installed` again; anything left, or brew's "still installed" line on
+a package's last step (`BrewRefusal.stillInstalled`), makes the sheet say "Uninstall
+incomplete". The session's title and counts are per package (`UpgradeSession.packages`),
+its rows per step.
+
+**Menu gate (0.8.4).** `AppStore.menuActionsBlocked` (`isBusy || isSheetPresented`, in
+Pins.swift) disables the Homebrew and File menu items that start brew or open a sheet.
+`isSheetPresented` lists every main-window sheet's state; `dismissPresentations` (the
+self-upgrade relaunch) clears the same set (checked by
+`relaunchClosesEverySheetTheMenuGateCounts`). A new `.sheet` needs adding to both.
+The toolbar needs no sheet gate: AppKit disables it under a sheet.
 
 **Self-updating casks.** brew's `outdated` skips casks with `auto_updates true` and
 `version :latest`. "Include self-updating apps" adds `brew outdated --greedy --cask

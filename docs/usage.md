@@ -148,9 +148,9 @@ The Bottle available filter has **Replace all**.
 Microsoft Office, drivers), and brew runs that installer with `sudo`. Before such an
 upgrade starts, the sheet says "<name> needs your administrator password" and waits for you
 to click **Upgrade**; the uninstall confirmation says the same. When brew's sudo asks,
-Tankard shows a password dialog that names the cask and the command ("To run the installer
-for windows-app: brew upgrade --cask windows-app"). Type your Mac's login password and
-click **OK**:
+Tankard shows a password dialog, "Tankard needs your password", with one line for what it
+is for ("To upgrade windows-app.") and the brew command under **Details**. Type your Mac's
+login password and click **OK**:
 
 - The password goes from the dialog straight to sudo. Tankard doesn't keep it, log it or
   save it anywhere.
@@ -158,7 +158,7 @@ click **OK**:
 - While the dialog is up, the sheet says "Waiting for your password in the Tankard dialog"
   and shows the Terminal command. If you don't see the dialog, cancel it (or click
   **Stop Now**) and use Terminal.
-- A wrong password brings the dialog back ("The password was incorrect"); after three
+- A wrong password brings the dialog back ("Wrong password, try again."); after three
   wrong tries sudo gives up and the sheet shows the Terminal command.
 - Each brew command asks at most once: brew clears sudo's remembered password before its
   first sudo, and later sudo steps of the same command don't ask again. Upgrading two such
@@ -241,6 +241,10 @@ font-inter… 25.4 of 33.7 MB (75%)".
 - **Needed by other packages:** uninstall is blocked, and the sheet lists what needs it.
 - **Pinned:** the sheet offers **Unpin and Uninstall**.
 - **Apps:** uninstalling a cask deletes its app.
+- **Several versions of a formula** (after an upgrade with **Keep the previous version**, or
+  a rollback): the confirmation says "Removes all installed versions of x (1.0, 1.1)", and
+  Tankard runs `brew uninstall` once per version. Afterwards it checks what is still
+  installed; anything left shows as "Uninstall incomplete" with the versions.
 
 ## Pin a package or skip a version
 
@@ -476,7 +480,9 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
   - **Revert to Standard Homebrew…** (Intelbrew mode only), **Uninstall Homebrew…**
 - **Help:** **Tankard Help** (this page), **Tankard on GitHub**, **Report an Issue…**
 
-Items that run brew gray out while brew is busy.
+Items that run brew or open a sheet gray out while brew is busy (a run shown or hidden)
+and while a sheet is open. **History…** and **Check for Tankard Updates…** stay available
+during a hidden run.
 
 **Tankard ▸ Check for Tankard Updates…** asks GitHub for the latest release, only when you
 choose it. If Homebrew installed Tankard, **Upgrade with Homebrew** upgrades it and offers
@@ -550,7 +556,7 @@ it straight to sudo (or you can run the command in Terminal). See below.
 | Refresh (⌘R) or Check Now | `brew update` |
 | Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package; first, for two or more bottled formulae or two or more casks, one `brew fetch --formula\|--cask <tap>/<name>...` per kind |
 | Install | `brew install --formula\|--cask <tap>/<name>`; installing a Brewfile's missing packages fetches first, as Upgrade does |
-| Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then each dependency you chose to remove |
+| Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>` (once per installed version of a formula), then each dependency you chose to remove |
 | Adopt | `brew install --cask --adopt <tap>/<name>`, one per app |
 | Replace with Bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
