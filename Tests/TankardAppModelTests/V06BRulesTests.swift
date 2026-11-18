@@ -7,10 +7,7 @@ import TankardCore
 // v0.6 (part B): skip this version, snooze, bump rules.
 
 func freshDefaults(_ tag: String = #function) -> UserDefaults {
-    let name = "tankard-test-v06b-\(tag)-\(UUID().uuidString)"
-    let d = UserDefaults(suiteName: name)!
-    d.removePersistentDomain(forName: name)
-    return d
+    TestDefaults.fresh("tankard-test-v06b-\(tag)-\(UUID().uuidString)")
 }
 
 struct VersionBumpTests {

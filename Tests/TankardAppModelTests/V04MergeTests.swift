@@ -87,9 +87,7 @@ struct V04SettingsLaunchRuleTests {
     /// The 0.3.1 rule for every new setting: writing the value it already
     /// has notifies no observer and calls no onChange; a real change does.
     @Test func unchangedInsightSettingWritesNotifyNothing() {
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: name)!
-        defer { d.removePersistentDomain(forName: name) }
+        let d = TestDefaults.fresh()
         let s = InsightSettings(defaults: d)
         var changes: [InsightSettings.Change] = []
         s.onChange = { changes.append($0) }

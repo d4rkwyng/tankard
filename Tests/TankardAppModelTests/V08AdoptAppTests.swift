@@ -140,7 +140,7 @@ struct V08AdoptAppTests {
     }
 
     @Test func policyIsPersistedAndDecorates() throws {
-        let defaults = try #require(UserDefaults(suiteName: "tankard-test-\(UUID().uuidString)"))
+        let defaults = TestDefaults.fresh("tankard-test-\(UUID().uuidString)")
         let rules = UpgradeRulesSettings(defaults: defaults)
         var changes = 0
         rules.onPolicyChange = { changes += 1 }

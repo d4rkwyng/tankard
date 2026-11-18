@@ -40,7 +40,7 @@ struct V081DockIconTests {
     }
 
     @Test func settingDefaultsOnPersistsAndFeedsThePolicy() {
-        let s = AppSettings.ephemeral("net.mindtricks.tankard.test.dock")
+        let s = testSettings()
         #expect(s.hideDockIconWhenClosed)
         #expect(s.dockIconPolicy(windowOpen: false) == .accessory)
         s.hideDockIconWhenClosed = false

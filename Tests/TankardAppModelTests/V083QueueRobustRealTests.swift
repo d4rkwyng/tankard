@@ -25,7 +25,7 @@ struct V083QueueRobustRealTests {
                                          streamRunner: StreamingProcessRunner(), cache: nil, logURL: nil)
         deps.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
         deps.lockWait = .live
-        return AppStore(deps: deps, settings: .ephemeral("net.mindtricks.tankard.test.real083"))
+        return AppStore(deps: deps, settings: testSettings())
     }
 
     nonisolated static func brew(_ args: [String]) -> (Int32, String) {
