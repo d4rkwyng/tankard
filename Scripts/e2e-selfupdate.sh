@@ -29,7 +29,10 @@
 #
 # Each phase: a 0.25 s process timeline, `log stream` of Tankard's
 # subsystem, the app's stderr, and no new Tankard .ips in
-# ~/Library/Logs/DiagnosticReports. Refuses to start if Tankard runs, if
+# ~/Library/Logs/DiagnosticReports. The real settings domain
+# (net.mindtricks.tankard) is backed up first and must be byte-identical at
+# the end; if not, it is restored from the backup and the run FAILS
+# (isolation/real-defaults). Refuses to start if Tankard runs, if
 # /Applications/Tankard.app exists, or if the tap or a tankard cask exists.
 # Cleans up the cask, the tap, /Applications/Tankard.app and its processes.
 set -uo pipefail
@@ -45,7 +48,7 @@ while [ $# -gt 0 ]; do
         --new) NEW=${2%/}; shift ;;
         --out) OUT=$2; shift ;;
         --phases) PHASES=$2; shift ;;
-        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,37p' "$0"; exit 0 ;;
         *) echo "e2e-selfupdate.sh: unknown option $1" >&2; exit 2 ;;
     esac
     shift
@@ -90,12 +93,73 @@ echo $$ > "$LOCK/pid"; echo "$(pwd) selfupdate" > "$LOCK/where"
 MARK="$OUT/.start"; touch "$MARK"
 : > "$OUT/summary.txt"
 
-STARTED=()
-cleanup() {
-    echo "==> cleanup"
+# 0.8.4: the real settings. Phases B and C start the installed app with no
+# script (the real identity), and AppKit writes keys (NSWindow Frame ...)
+# into net.mindtricks.tankard that no TANKARD_E2E_SUITE catches; a
+# notarized build can't be re-signed with its own identifier the way
+# e2e.sh isolates it. So the domain is fingerprinted (md5, as e2e.sh) and
+# exported now; at the end it is restored from that copy if it changed, and
+# the run fails (isolation/real-defaults).
+REAL_DOMAIN=net.mindtricks.tankard
+REAL_PLIST=~/Library/Preferences/$REAL_DOMAIN.plist
+REAL_BACKUP="$OUT/real-defaults-backup.plist"
+real_fingerprint() { if [ -f "$REAL_PLIST" ]; then /sbin/md5 -q "$REAL_PLIST"; else echo absent; fi; }
+real_keys() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert json -o - - 2>/dev/null \
+    | /usr/bin/python3 -c 'import json,sys; print("\n".join(sorted(json.load(sys.stdin))))' 2>/dev/null; }
+real_xml() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null; }
+REAL_MD5=$(real_fingerprint)
+REAL_KEYS=$(real_keys)
+rm -f "$REAL_BACKUP"
+if [ "$REAL_MD5" != absent ]; then
+    defaults export "$REAL_DOMAIN" "$REAL_BACKUP" && [ -s "$REAL_BACKUP" ] \
+        || { echo "e2e-selfupdate.sh: couldn't back up $REAL_DOMAIN; not starting" >&2; rm -rf "$LOCK"; exit 1; }
+fi
+echo "real settings: $REAL_DOMAIN md5 $REAL_MD5$([ -f "$REAL_BACKUP" ] && echo ", backup $REAL_BACKUP")" | tee -a "$OUT/summary.txt"
+# Another Tankard (not this run's) may write the domain meanwhile; noted.
+others() { pgrep -f 'Tankard.app/Contents/MacOS/Tankard' | grep -vxF -f <(pids | tr ' ' '\n'; echo x) | tr '\n' ' ' | sed 's/ $//'; }
+OTHER_TANKARD=$(others)
+REAL_CHECKED=0
+# real_check: once, after this run's apps are gone. Restores and fails
+# when the domain changed.
+real_check() {
+    [ $REAL_CHECKED = 1 ] && return 0
+    REAL_CHECKED=1
+    sleep 2   # cfprefsd flushes a quitting app's writes shortly after
+    local after restored
+    after=$(real_fingerprint)
+    if [ "$after" = "$REAL_MD5" ]; then
+        record "isolation/real-defaults: PASS ($REAL_DOMAIN unchanged, md5 $REAL_MD5)"
+        return 0
+    fi
+    local keys; keys=$(diff <(echo "$REAL_KEYS") <(real_keys) | sed 's/^/      keys /')
+    # `defaults import` merges, so delete first: the domain is then exactly the copy.
+    defaults delete "$REAL_DOMAIN" >/dev/null 2>&1
+    if [ "$REAL_MD5" = absent ]; then
+        rm -f "$REAL_PLIST"
+        [ "$(real_fingerprint)" = absent ] && restored="removed again (it didn't exist before)" || restored="NOT removed"
+    elif defaults import "$REAL_DOMAIN" "$REAL_BACKUP" \
+        && cmp -s <(plutil -convert xml1 -o - "$REAL_BACKUP") <(real_xml); then
+        restored="restored from $REAL_BACKUP (content equal)"
+    else
+        restored="RESTORE FAILED: defaults import $REAL_DOMAIN $REAL_BACKUP by hand"
+    fi
+    local o; o=${OTHER_TANKARD:-$(others)}
+    record "isolation/real-defaults: FAIL ($REAL_DOMAIN changed: md5 $REAL_MD5 -> $after; $restored${o:+; another Tankard ran: pids $o})"
+    if [ -n "$keys" ]; then echo "$keys" | tee -a "$OUT/summary.txt"
+    else echo "      (same keys: a value changed)" | tee -a "$OUT/summary.txt"; fi
+    return 1
+}
+stop_apps() {
     for p in $(pids); do kill "$p" 2>/dev/null; done
     sleep 1
     for p in $(pids); do kill -9 "$p" 2>/dev/null; done
+}
+
+STARTED=()
+cleanup() {
+    local rc=$?
+    echo "==> cleanup"
+    stop_apps
     [ -n "${SAMPLER:-}" ] && kill "$SAMPLER" 2>/dev/null
     [ -n "${LOGSTREAM:-}" ] && kill "$LOGSTREAM" 2>/dev/null
     has_cask && qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
@@ -107,6 +171,8 @@ cleanup() {
     rm -rf "$OUT"/[ABC]/relaunched
     rm -rf "$LOCK"
     echo "after cleanup: pids=[$(pids)] app=$([ -e "$APP" ] && echo present || echo absent) tap=$(qbrew tap | grep -cx "$TAP")" | tee -a "$OUT/summary.txt"
+    # An interrupted run: the real settings are still checked and restored.
+    if [ $REAL_CHECKED = 0 ] && ! real_check; then [ $rc = 0 ] && exit 1; fi
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM
@@ -326,6 +392,8 @@ else
     record "C: FAIL (install of $VOLD)"
 fi
 
+stop_apps
+real_check
 echo
 printf '%s\n' "${RESULTS[@]}"
 grep -q FAIL <<<"$(printf '%s\n' "${RESULTS[@]}")" && exit 1
