@@ -122,6 +122,8 @@ public final class AppStore {
         public var brewEnvFiles: @Sendable (BrewClient) -> [(String, [String: String])] = { $0.sources.brewEnvFiles }
         /// 0.8.3: whether brew's Caskroom has a tankard cask (path given).
         public var selfCaskroomExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
+        /// 0.8.5 (M3): a Brewfile's text, for its taps' URLs (demo: a fixed one).
+        public var readBrewfile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,

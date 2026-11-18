@@ -6,7 +6,9 @@ import TankardCore
 // then counts the file with `brew bundle list`; Check runs `brew bundle
 // check`; the restore plan reads the missing formulae and casks with one
 // `brew info --json=v2` call each. All of it is read-only apart from the
-// file dump writes. Nothing here runs a shell or reads the Brewfile itself.
+// file dump writes. Nothing here runs a shell. The one look at the
+// Brewfile's own text is for missing taps' URLs (0.8.5, BrewfileTapScanner),
+// which no brew bundle subcommand prints.
 
 /// What an exported Brewfile holds, from `brew bundle list` per kind.
 public struct BrewfileSummary: Equatable, Sendable {
@@ -128,6 +130,8 @@ public final class BrewfileStore {
     /// and read-only environment). Arguments after `brew`.
     @ObservationIgnored public var run: (@Sendable ([String]) async throws -> ProcessResult)?
     @ObservationIgnored public var platform: BottlePlatform?
+    /// 0.8.5 (M3): reads the Brewfile's text (taps' URLs).
+    @ObservationIgnored public var readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
     @ObservationIgnored public var timeout: Duration = .seconds(60)
     @ObservationIgnored private var task: Task<Void, Never>?
 
@@ -206,9 +210,10 @@ public final class BrewfileStore {
     public func planRestore(_ result: BrewfileCheckResult) {
         let timeout = self.timeout
         let platform = self.platform
+        let readFile = self.readFile
         start(String(localized: "Reading package details…")) { run in
             let p = try await withBrewfileTimeout(timeout) {
-                await Self.buildPlan(result, platform: platform, run: run)
+                await Self.buildPlan(result, platform: platform, run: run, readFile: readFile)
             }
             return .plan(p.0, note: p.1)
         }
@@ -218,7 +223,9 @@ public final class BrewfileStore {
     /// the whole call when any name is unknown). Never throws: without
     /// details the marks are just left off.
     nonisolated static func buildPlan(_ result: BrewfileCheckResult, platform: BottlePlatform?,
-                                      run: @Sendable ([String]) async throws -> ProcessResult) async -> (BrewfileRestorePlan, String?) {
+                                      run: @Sendable ([String]) async throws -> ProcessResult,
+                                      readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) })
+        async -> (BrewfileRestorePlan, String?) {
         var compiles: [String: Bool] = [:]
         var admin: Set<String> = []
         var notes: [String] = []
@@ -241,7 +248,10 @@ public final class BrewfileStore {
                 notes.append(String(localized: "Couldn't read the casks' details, so admin passwords aren't marked."))
             }
         }
-        let plan = BrewfileRestorePlan(missing: result.missing, path: result.path, compiles: compiles, needsAdmin: admin)
+        // 0.8.5 (M3): the missing taps' URLs, read from the file's text.
+        let tapSources = result.names(.tap).isEmpty ? [:] : readFile(result.path).map(BrewfileTapScanner.scan)
+        let plan = BrewfileRestorePlan(missing: result.missing, path: result.path, compiles: compiles, needsAdmin: admin,
+                                       tapSources: tapSources)
         return (plan, notes.isEmpty ? nil : notes.joined(separator: " "))
     }
 

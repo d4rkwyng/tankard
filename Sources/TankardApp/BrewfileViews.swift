@@ -231,6 +231,12 @@ struct BrewfileSheet: View {
             if let note {
                 Text(note).font(.system(size: 11)).foregroundStyle(.orange)
             }
+            if !p.missingTaps.isEmpty && !p.queued.isEmpty {
+                Label("Add the taps first (Add Tap…), then check the Brewfile again to install the rest.", systemImage: "point.3.connected.trianglepath.dotted")
+                    .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                    .lineLimit(2...3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if showTerminal {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Run it yourself in Terminal:").font(.system(size: 11.5))
@@ -244,7 +250,7 @@ struct BrewfileSheet: View {
                     .help("brew bundle install with --no-upgrade, to copy. Tankard doesn't run it.")
                 Button("Install with Tankard") { store.installBrewfilePlan(p) }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(p.queued.isEmpty || store.isBusy)
+                    .disabled(!p.canInstallWithTankard || store.isBusy)
                     .help("One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap….")
             }
         }
@@ -266,10 +272,21 @@ struct BrewfileSheet: View {
             if e.kind == .tap {
                 // 0.7: Add Tap… asks first (the third-party warning), then
                 // runs brew tap through the queue and the live log.
-                Button("Add Tap…") { store.taps.requestAdd(name: e.name, source: .brewfile) }
-                    .controlSize(.small)
-                    .disabled(store.isBusy || TapInput.problem(name: e.name) != nil)
-                    .help(BrewfileCommands.tapDisplay(e.name) + String(localized: ", after you confirm"))
+                // 0.8.5 (M3): with the Brewfile's URL, shown here and in the
+                // confirmation. A tap line Tankard can't read is Terminal only.
+                if item.canAddTap {
+                    if let url = item.tapURL {
+                        Text(verbatim: url).font(.system(size: 10.5, design: .monospaced)).foregroundStyle(.secondary)
+                            .lineLimit(1).truncationMode(.middle)
+                    }
+                    Button("Add Tap…") { store.taps.requestAdd(name: e.name, url: item.tapURL ?? "", source: .brewfile) }
+                        .controlSize(.small)
+                        .disabled(store.isBusy || TapInput.problem(name: e.name, url: item.tapURL ?? "") != nil)
+                        .help(BrewfileCommands.tapDisplay(e.name, url: item.tapURL) + String(localized: ", after you confirm"))
+                } else {
+                    Text("Terminal only").font(.system(size: 10.5)).foregroundStyle(.secondary)
+                        .help("Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below.")
+                }
             } else if !item.throughQueue {
                 Text("Terminal only").font(.system(size: 10.5)).foregroundStyle(.secondary)
             }
