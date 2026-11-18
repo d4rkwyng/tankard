@@ -107,7 +107,7 @@ The upgrade sheet shows each package, the exact command and brew's live output. 
 upgrade one at a time; a failure doesn't stop the rest.
 
 When several packages need downloading, one `brew fetch` downloads them all first, in
-parallel ("Downloading 4 of 9 · 120 of 410 MB"); each upgrade then installs from brew's
+parallel ("Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"); each upgrade then installs from brew's
 cache. A download that fails there is tried again by that package's own upgrade, and
 `HOMEBREW_DOWNLOAD_CONCURRENCY=1` makes brew download one at a time.
 
