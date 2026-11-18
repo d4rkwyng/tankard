@@ -327,6 +327,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "셸의 명령이 Homebrew가 아닌 시스템의 사본을 실행할 수 있습니다. 셸 프로파일만 이를 바꿉니다.";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "brew와 같은 방식으로 버전을 비교합니다. 조건에 맞지 않는 패키지는 건너뛰고 기록하며, 직접 업그레이드해야 합니다. 비교할 수 없는 버전(날짜, 문자)은 모든 버전에서만 자동으로 업그레이드됩니다.";
 "Compiles" = "컴파일";
+"Continue Without It" = "허용 없이 계속";
 "Continue without relaunching" = "다시 시작하지 않고 계속";
 "Copied" = "복사됨";
 "Copy All" = "모두 복사";
@@ -689,7 +690,6 @@
 "Not linked into Terminal" = "터미널에 링크되지 않음";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "링크되지 않음: 명령이 Homebrew의 bin에 없습니다. `brew link %@`로 링크하세요.";
 "Not listed: %@." = "목록에 없음: %@.";
-"Not now" = "나중에";
 "Not passed: Tankard reads brew's output." = "전달 안 함: Tankard가 brew 출력을 읽습니다.";
 "Not passed: Tankard's download progress and Clean Up assume the default folders." = "전달 안 함: Tankard의 다운로드 진행률과 정리는 기본 폴더를 전제로 합니다.";
 "Not passed: Tankard's self-updating apps setting decides this." = "전달 안 함: Tankard의 자체 업데이트 앱 설정이 결정합니다.";
@@ -976,6 +976,8 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "업그레이드 준비된 개수를 tankard 아이콘으로 보여줍니다. 켜져 있는 동안에는 윈도우를 닫아도 Tankard가 계속 실행됩니다.";
 "Shows what will change first" = "무엇이 바뀌는지 먼저 보여 줍니다";
 "Size" = "크기";
+"Skip Apps, Upgrade %lld Others" = "앱은 건너뛰고 나머지 %lld개 업그레이드";
+"Skip Apps, Upgrade 1 Other" = "앱은 건너뛰고 나머지 1개 업그레이드";
 "Skip Version %@" = "버전 %@ 건너뛰기";
 "Skip packages that would compile (%@)" = "컴파일이 필요한 패키지 건너뛰기 (%@)";
 "Skipped: would compile" = "건너뜀: 컴파일 필요";
@@ -995,6 +997,7 @@
 "Space used by Homebrew's downloaded files" = "Homebrew가 다운로드한 파일이 차지하는 공간";
 "Start" = "시작";
 "Start also registers it to launch at login." = "시작하면 로그인 시 실행되도록 등록도 합니다.";
+"Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so." = "권한 없이 지금 시작합니다. macOS가 앱을 변경하는 단계를 막을 수 있으며, 그러면 Tankard가 알려 줍니다.";
 "Status" = "상태";
 "Still to upgrade: %@." = "남은 업그레이드: %@.";
 "Stop" = "중지";
@@ -1200,6 +1203,7 @@
 "Upgrade with Homebrew" = "Homebrew로 업그레이드";
 "Upgraded (%lld)" = "업그레이드됨 (%lld)";
 "Upgrades" = "업그레이드";
+"Upgrades the packages that don't change apps; the apps wait until next time" = "앱을 변경하지 않는 패키지를 업그레이드합니다. 앱은 다음에 업그레이드합니다";
 "Upgrading" = "업그레이드 중";
 "Used by" = "사용처";
 "User" = "사용자";

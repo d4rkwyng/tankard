@@ -327,6 +327,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "シェルのコマンドが、Homebrewのものではなくシステムのコピーを実行する場合があります。変更できるのはシェルプロファイルだけです。";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "バージョンをbrewと同じ方法で比較します。条件を満たさないパッケージはスキップされてログに記録されるので、手動でアップグレードしてください。比較できないバージョン(日付、文字)は「すべてのバージョン」の場合にのみ自動でアップグレードされます。";
 "Compiles" = "コンパイル";
+"Continue Without It" = "許可せずに続ける";
 "Continue without relaunching" = "再起動せずに続ける";
 "Copied" = "コピーしました";
 "Copy All" = "すべてコピー";
@@ -689,7 +690,6 @@
 "Not linked into Terminal" = "ターミナルにリンクされていません";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "リンクされていません: コマンドがHomebrewのbinにありません。`brew link %@` でリンクします。";
 "Not listed: %@." = "一覧にないもの: %@。";
-"Not now" = "今はしない";
 "Not passed: Tankard reads brew's output." = "渡しません：Tankard は brew の出力を読み取ります。";
 "Not passed: Tankard's download progress and Clean Up assume the default folders." = "渡しません：Tankard のダウンロード進行状況とクリーンアップは既定のフォルダを前提としています。";
 "Not passed: Tankard's self-updating apps setting decides this." = "渡しません：Tankard の自動アップデートアプリ設定で決まります。";
@@ -976,6 +976,8 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。";
 "Shows what will change first" = "変更内容を先に表示します";
 "Size" = "サイズ";
+"Skip Apps, Upgrade %lld Others" = "アプリを除き、ほか %lld 個をアップグレード";
+"Skip Apps, Upgrade 1 Other" = "アプリを除き、ほか 1 個をアップグレード";
 "Skip Version %@" = "バージョン%@をスキップ";
 "Skip packages that would compile (%@)" = "コンパイルが必要なパッケージをスキップ (%@)";
 "Skipped: would compile" = "スキップ: コンパイルが必要です";
@@ -995,6 +997,7 @@
 "Space used by Homebrew's downloaded files" = "Homebrewがダウンロードしたファイルの使用容量";
 "Start" = "開始";
 "Start also registers it to launch at login." = "開始すると、ログイン時の起動にも登録されます。";
+"Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so." = "許可なしで今すぐ開始します。アプリを変更する手順は macOS に止められることがあり、その場合は Tankard が知らせます。";
 "Status" = "状況";
 "Still to upgrade: %@." = "残りのアップグレード: %@。";
 "Stop" = "停止";
@@ -1200,6 +1203,7 @@
 "Upgrade with Homebrew" = "Homebrewでアップグレード";
 "Upgraded (%lld)" = "アップグレード済み (%lld)";
 "Upgrades" = "アップグレード";
+"Upgrades the packages that don't change apps; the apps wait until next time" = "アプリを変更しないパッケージをアップグレードします。アプリは次回まで待ちます";
 "Upgrading" = "アップグレード中";
 "Used by" = "使用元";
 "User" = "ユーザ";

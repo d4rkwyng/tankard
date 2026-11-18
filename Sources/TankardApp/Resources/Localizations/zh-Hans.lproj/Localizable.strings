@@ -327,6 +327,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "你 shell 中的命令可能运行系统自带的副本，而不是 Homebrew 的。只有你的 shell 配置文件能改变这一点。";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "按 brew 的方式比较版本。不符合条件的软件包会被跳过并记入日志，需手动升级。无法比较的版本（日期、字母）只有在“所有版本”下才会自动升级。";
 "Compiles" = "编译";
+"Continue Without It" = "不授权继续";
 "Continue without relaunching" = "不重新启动，继续";
 "Copied" = "已拷贝";
 "Copy All" = "全部拷贝";
@@ -689,7 +690,6 @@
 "Not linked into Terminal" = "未链接到终端";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "未链接：它的命令不在 Homebrew 的 bin 中。`brew link %@` 可链接它。";
 "Not listed: %@." = "未列出：%@。";
-"Not now" = "暂不";
 "Not passed: Tankard reads brew's output." = "不传递：Tankard 需要读取 brew 的输出。";
 "Not passed: Tankard's download progress and Clean Up assume the default folders." = "不传递：Tankard 的下载进度和清理功能假定使用默认文件夹。";
 "Not passed: Tankard's self-updating apps setting decides this." = "不传递：由 Tankard 的自动更新 App 设置决定。";
@@ -976,6 +976,8 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
 "Shows what will change first" = "先显示将要更改的内容";
 "Size" = "大小";
+"Skip Apps, Upgrade %lld Others" = "跳过 App，升级其他 %lld 个";
+"Skip Apps, Upgrade 1 Other" = "跳过 App，升级其他 1 个";
 "Skip Version %@" = "跳过版本 %@";
 "Skip packages that would compile (%@)" = "跳过需要编译的软件包 (%@)";
 "Skipped: would compile" = "已跳过：需要编译";
@@ -995,6 +997,7 @@
 "Space used by Homebrew's downloaded files" = "Homebrew 下载的文件所占用的空间";
 "Start" = "启动";
 "Start also registers it to launch at login." = "启动时也会将其注册为登录时启动。";
+"Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so." = "立即开始，不授予该权限。macOS 可能会阻止更改 App 的步骤；届时 Tankard 会告诉你。";
 "Status" = "状态";
 "Still to upgrade: %@." = "仍需升级:%@。";
 "Stop" = "停止";
@@ -1200,6 +1203,7 @@
 "Upgrade with Homebrew" = "使用 Homebrew 升级";
 "Upgraded (%lld)" = "已升级 (%lld)";
 "Upgrades" = "升级";
+"Upgrades the packages that don't change apps; the apps wait until next time" = "升级不更改 App 的软件包；App 留到下次";
 "Upgrading" = "正在升级";
 "Used by" = "被以下项使用";
 "User" = "用户";

@@ -1094,12 +1094,24 @@ public final class AppStore {
         }
     }
 
-    /// 0.8.1: Esc on the relaunch page: close, run nothing.
+    /// 0.8.1: Esc on the relaunch page: close, run nothing. 0.8.6 (M2):
+    /// also Cancel on the explainer, which then shows again next time.
     public func appManagementCancel() {
-        guard appManagementPrompt != nil else { return }
-        settings.appManagementExplained = true
+        guard let p = appManagementPrompt else { return }
+        if p.stage == .relaunch || p.reason == .blocked { settings.appManagementExplained = true }
         appManagementPrompt = nil
         if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
+    }
+
+    /// 0.8.6 (M2): "Skip Apps": run only the targets that don't change
+    /// apps (formulae, fonts…); with none, the same as Cancel. The
+    /// explainer shows again before the next app change.
+    public func appManagementSkipApps() {
+        guard let p = appManagementPrompt, p.reason == .firstUse, p.canRetry else { return appManagementCancel() }
+        let rest = p.others
+        guard !rest.isEmpty else { return appManagementCancel() }
+        appManagementPrompt = nil
+        startSession(p.action, packages: rest, skipGate: true, fromActivity: true)
     }
 
     /// Whether "Relaunch Tankard" can be offered now.
@@ -1173,8 +1185,9 @@ public final class AppStore {
         if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
     }
 
-    /// "Not now": first use still runs what the user asked for (it may
-    /// already be allowed); after a block, just closes.
+    /// "Continue Without It" (0.8.5: "Not now"): first use still runs what
+    /// the user asked for (it may already be allowed); after a block
+    /// ("Close"), just closes.
     public func appManagementNotNow() {
         guard let p = appManagementPrompt else { return }
         settings.appManagementExplained = true

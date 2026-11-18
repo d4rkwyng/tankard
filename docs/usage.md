@@ -734,8 +734,10 @@ Bottle don't need it.
 3. After the relaunch, Tankard offers **Run Again** for what you were doing. Nothing runs
    until you click it.
 
-**Continue without relaunching** tries straight away instead. **Not now** carries on
-without the permission.
+**Continue without relaunching** tries straight away instead. On the first sheet,
+**Cancel** runs nothing, **Skip Apps, Upgrade N Others** runs only the packages that don't
+change apps, and **Continue Without It** runs everything without the permission (macOS may
+then stop the app steps).
 
 When macOS blocks a change, the step fails with **"macOS blocked changing an app"**, and
 Tankard offers the relaunch again. For automatic updates, you get a notification instead.

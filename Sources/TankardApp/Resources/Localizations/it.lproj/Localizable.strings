@@ -327,6 +327,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "I comandi nella tua shell potrebbero eseguire la copia del sistema invece di quella di Homebrew. Solo il profilo della shell cambia questo comportamento.";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "Confronta le versioni come fa brew. I pacchetti non idonei vengono saltati e registrati, da aggiornare manualmente. Le versioni non confrontabili (date, lettere) si aggiornano automaticamente solo con Tutte le versioni.";
 "Compiles" = "Compilazioni";
+"Continue Without It" = "Continua senza";
 "Continue without relaunching" = "Continua senza riavviare";
 "Copied" = "Copiato";
 "Copy All" = "Copia tutto";
@@ -689,7 +690,6 @@
 "Not linked into Terminal" = "Non collegato al Terminale";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Non collegato: i suoi comandi non sono nella bin di Homebrew. `brew link %@` lo collega.";
 "Not listed: %@." = "Non elencate: %@.";
-"Not now" = "Non ora";
 "Not passed: Tankard reads brew's output." = "Non passata: Tankard legge l'output di brew.";
 "Not passed: Tankard's download progress and Clean Up assume the default folders." = "Non passata: l'avanzamento dei download e la Pulizia di Tankard presuppongono le cartelle predefinite.";
 "Not passed: Tankard's self-updating apps setting decides this." = "Non passata: decide l'impostazione di Tankard per le app che si aggiornano da sole.";
@@ -976,6 +976,8 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Mostra un tankard con il numero di aggiornamenti pronti. Finché è attivo, chiudere la finestra lascia Tankard in esecuzione.";
 "Shows what will change first" = "Mostra prima cosa cambierà";
 "Size" = "Dimensione";
+"Skip Apps, Upgrade %lld Others" = "Salta le app, aggiorna gli altri %lld";
+"Skip Apps, Upgrade 1 Other" = "Salta le app, aggiorna l’altro";
 "Skip Version %@" = "Salta la versione %@";
 "Skip packages that would compile (%@)" = "Salta i pacchetti che verrebbero compilati (%@)";
 "Skipped: would compile" = "Saltato: verrebbe compilato";
@@ -995,6 +997,7 @@
 "Space used by Homebrew's downloaded files" = "Spazio occupato dai file scaricati da Homebrew";
 "Start" = "Avvia";
 "Start also registers it to launch at login." = "Avvia lo registra anche per l'apertura al login.";
+"Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so." = "Avvia ora senza il permesso. macOS potrebbe bloccare i passaggi che modificano le app; in quel caso Tankard lo segnala.";
 "Status" = "Stato";
 "Still to upgrade: %@." = "Da aggiornare ancora: %@.";
 "Stop" = "Arresta";
@@ -1200,6 +1203,7 @@
 "Upgrade with Homebrew" = "Aggiorna con Homebrew";
 "Upgraded (%lld)" = "Aggiornati (%lld)";
 "Upgrades" = "Aggiornamenti";
+"Upgrades the packages that don't change apps; the apps wait until next time" = "Aggiorna i pacchetti che non modificano app; le app aspettano la prossima volta";
 "Upgrading" = "Aggiornamento in corso";
 "Used by" = "Usato da";
 "User" = "Utente";

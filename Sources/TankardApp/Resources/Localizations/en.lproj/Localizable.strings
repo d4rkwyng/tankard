@@ -327,6 +327,7 @@
 "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this." = "Commands in your shell may run the system's copy instead of Homebrew's. Only your shell profile changes this.";
 "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions." = "Compares versions as brew does. Packages that don't qualify are skipped and logged, to upgrade by hand. Versions that can't be compared (dates, letters) upgrade automatically only under All versions.";
 "Compiles" = "Compiles";
+"Continue Without It" = "Continue Without It";
 "Continue without relaunching" = "Continue without relaunching";
 "Copied" = "Copied";
 "Copy All" = "Copy All";
@@ -689,7 +690,6 @@
 "Not linked into Terminal" = "Not linked into Terminal";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it.";
 "Not listed: %@." = "Not listed: %@.";
-"Not now" = "Not now";
 "Not passed: Tankard reads brew's output." = "Not passed: Tankard reads brew's output.";
 "Not passed: Tankard's download progress and Clean Up assume the default folders." = "Not passed: Tankard's download progress and Clean Up assume the default folders.";
 "Not passed: Tankard's self-updating apps setting decides this." = "Not passed: Tankard's self-updating apps setting decides this.";
@@ -976,6 +976,8 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.";
 "Shows what will change first" = "Shows what will change first";
 "Size" = "Size";
+"Skip Apps, Upgrade %lld Others" = "Skip Apps, Upgrade %lld Others";
+"Skip Apps, Upgrade 1 Other" = "Skip Apps, Upgrade 1 Other";
 "Skip Version %@" = "Skip Version %@";
 "Skip packages that would compile (%@)" = "Skip packages that would compile (%@)";
 "Skipped: would compile" = "Skipped: would compile";
@@ -995,6 +997,7 @@
 "Space used by Homebrew's downloaded files" = "Space used by Homebrew's downloaded files";
 "Start" = "Start";
 "Start also registers it to launch at login." = "Start also registers it to launch at login.";
+"Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so." = "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so.";
 "Status" = "Status";
 "Still to upgrade: %@." = "Still to upgrade: %@.";
 "Stop" = "Stop";
@@ -1200,6 +1203,7 @@
 "Upgrade with Homebrew" = "Upgrade with Homebrew";
 "Upgraded (%lld)" = "Upgraded (%lld)";
 "Upgrades" = "Upgrades";
+"Upgrades the packages that don't change apps; the apps wait until next time" = "Upgrades the packages that don't change apps; the apps wait until next time";
 "Upgrading" = "Upgrading";
 "Used by" = "Used by";
 "User" = "User";

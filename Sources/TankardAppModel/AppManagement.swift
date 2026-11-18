@@ -348,6 +348,18 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
 
     /// 0.8.1: whether Tankard can run it again itself (a restore can't).
     public var canRetry: Bool { AppManagement.retryable(action) && !packages.isEmpty }
+
+    /// 0.8.6 (M2): the targets that change apps, and the rest (which run
+    /// with "Skip Apps").
+    public var appChanging: [Package] { packages.filter { AppManagement.modifiesApps(action, $0) } }
+    public var others: [Package] { packages.filter { !AppManagement.modifiesApps(action, $0) } }
+
+    /// 0.8.6 (M2): the buttons' words (they used to say "Not now", which
+    /// started the run).
+    public static var continueTitle: String { String(localized: "Continue Without It") }
+    public static func skipAppsTitle(_ n: Int) -> String {
+        n == 1 ? String(localized: "Skip Apps, Upgrade 1 Other") : String(localized: "Skip Apps, Upgrade \(n) Others")
+    }
 }
 
 /// The About panel and Help menu.

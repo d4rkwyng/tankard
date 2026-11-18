@@ -17345,6 +17345,58 @@
         }
       }
     },
+    "Continue Without It": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne fortfahren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer sans"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sin ello"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "許可せずに続ける"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不授权继续"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sem isso"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continua senza"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "허용 없이 계속"
+          }
+        }
+      }
+    },
     "Continue without relaunching": {
       "localizations": {
         "de": {
@@ -36169,58 +36221,6 @@
         }
       }
     },
-    "Not now": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jetzt nicht"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pas maintenant"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ahora no"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "今はしない"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂不"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agora não"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Non ora"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "나중에"
-          }
-        }
-      }
-    },
     "Not passed: Tankard reads brew's output.": {
       "localizations": {
         "de": {
@@ -51093,6 +51093,110 @@
         }
       }
     },
+    "Skip Apps, Upgrade %lld Others": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps auslassen, %lld andere aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les apps, mettre à jour les %lld autres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir apps, actualizar los otros %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを除き、ほか %lld 個をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过 App，升级其他 %lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular apps, atualizar os outros %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salta le app, aggiorna gli altri %lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱은 건너뛰고 나머지 %lld개 업그레이드"
+          }
+        }
+      }
+    },
+    "Skip Apps, Upgrade 1 Other": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps auslassen, 1 anderes aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les apps, mettre à jour l’autre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir apps, actualizar el otro"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを除き、ほか 1 個をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过 App，升级其他 1 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular apps, atualizar o outro"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salta le app, aggiorna l’altro"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱은 건너뛰고 나머지 1개 업그레이드"
+          }
+        }
+      }
+    },
     "Skip Version %@": {
       "localizations": {
         "de": {
@@ -52077,6 +52181,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "시작하면 로그인 시 실행되도록 등록도 합니다."
+          }
+        }
+      }
+    },
+    "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet jetzt ohne die Berechtigung. macOS kann die Schritte stoppen, die Apps ändern; Tankard sagt dann Bescheid."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarre maintenant sans l’autorisation. macOS peut bloquer les étapes qui modifient des apps ; Tankard le signale alors."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empieza ahora sin el permiso. macOS puede detener los pasos que cambian apps; Tankard lo indica entonces."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "許可なしで今すぐ開始します。アプリを変更する手順は macOS に止められることがあり、その場合は Tankard が知らせます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即开始，不授予该权限。macOS 可能会阻止更改 App 的步骤；届时 Tankard 会告诉你。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Começa agora sem a permissão. O macOS pode bloquear as etapas que alteram apps; o Tankard avisa quando isso acontecer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia ora senza il permesso. macOS potrebbe bloccare i passaggi che modificano le app; in quel caso Tankard lo segnala."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한 없이 지금 시작합니다. macOS가 앱을 변경하는 단계를 막을 수 있으며, 그러면 Tankard가 알려 줍니다."
           }
         }
       }
@@ -62737,6 +62893,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드"
+          }
+        }
+      }
+    },
+    "Upgrades the packages that don't change apps; the apps wait until next time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert die Pakete, die keine Apps ändern; die Apps warten bis zum nächsten Mal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met à jour les paquets qui ne modifient pas d’apps ; les apps attendront la prochaine fois"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiza los paquetes que no cambian apps; las apps esperan a la próxima vez"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを変更しないパッケージをアップグレードします。アプリは次回まで待ちます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级不更改 App 的软件包；App 留到下次"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualiza os pacotes que não alteram apps; os apps ficam para a próxima vez"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna i pacchetti che non modificano app; le app aspettano la prossima volta"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱을 변경하지 않는 패키지를 업그레이드합니다. 앱은 다음에 업그레이드합니다"
           }
         }
       }

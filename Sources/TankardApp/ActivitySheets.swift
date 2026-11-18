@@ -293,8 +293,12 @@ struct AppManagementSheet: View {
             AppManagementSteps()
 
             HStack {
-                Button("Not now") { store.appManagementNotNow() }
-                    .keyboardShortcut(.cancelAction)
+                // 0.8.6 (M2): Cancel runs nothing ("Not now" used to start
+                // the run); Close after a block.
+                Button(prompt.reason == .blocked ? String(localized: "Close") : String(localized: "Cancel")) {
+                    store.appManagementCancel()
+                }
+                .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Open System Settings") { AppManagementSteps.openSettings() }
                 Button {
@@ -304,6 +308,20 @@ struct AppManagementSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+            }
+            if prompt.reason == .firstUse, prompt.canRetry {
+                // Without the permission: the rest only, or everything
+                // (macOS may stop the app steps; Tankard then says so).
+                HStack {
+                    Spacer()
+                    if prompt.action == .upgrade, !prompt.others.isEmpty {
+                        Button(AppManagementPrompt.skipAppsTitle(prompt.others.count)) { store.appManagementSkipApps() }
+                            .help(String(localized: "Upgrades the packages that don't change apps; the apps wait until next time"))
+                    }
+                    Button(AppManagementPrompt.continueTitle) { store.appManagementNotNow() }
+                        .help(String(localized: "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so."))
+                }
+                .controlSize(.small)
             }
         }
     }
