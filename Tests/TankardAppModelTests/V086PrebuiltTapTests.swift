@@ -100,4 +100,34 @@ struct V086PrebuiltTapTests {
         #expect(!s.subtitle.contains("from source"))
         #expect(s.subtitle == "1 ready-made program")
     }
+
+    @Test func untrustedTapInstallSaysItTrustsTheTap() {
+        var e = CatalogEntry(kind: .formula, name: "sonoscli", fullName: "steipete/tap/sonoscli", tap: "steipete/tap", desc: nil, bottle: .prebuilt)
+        #expect(DiscoverTrust.note(e, untrustedTaps: ["steipete/tap"]) == "Installing this trusts the tap steipete/tap for this formula.")
+        #expect(DiscoverTrust.note(e, untrustedTaps: ["Steipete/Tap"]) != nil)
+        #expect(DiscoverTrust.note(e, untrustedTaps: []) == nil)
+        e.untrustedTap = true
+        #expect(DiscoverTrust.note(e, untrustedTaps: []) != nil)
+        // A cask from a tap: the same.
+        let core = CatalogEntry(kind: .formula, name: "xz", fullName: "xz", tap: "homebrew/core", desc: nil, bottle: .forThisMac)
+        #expect(DiscoverTrust.note(core, untrustedTaps: ["homebrew/core"]) == nil)
+    }
+
+    @Test func brewsRefusalNamesTheUntrustedTap() {
+        let stderr = """
+        Error: Refusing to load formula steipete/tap/sonoscli from untrusted tap steipete/tap.
+        Run `brew trust --formula steipete/tap/sonoscli` or `brew trust steipete/tap` to trust it.
+        """
+        #expect(DiscoverTrust.untrustedTaps(in: stderr) == ["steipete/tap"])
+        #expect(DiscoverTrust.untrustedTaps(in: "Error: No available formula with the name \"x\"") == [])
+    }
+
+    @Test func unreadablePackagesNameUntrustedTaps() {
+        var p = Package.command("gifgrep")
+        p.unreadable = "Refusing to load formula steipete/tap/gifgrep from untrusted tap steipete/tap."
+        #expect(DiscoverTrust.untrustedTaps(packages: [p], taps: []) == ["steipete/tap"])
+        let t = TapInfo(name: "other/tap", trusted: false)
+        #expect(DiscoverTrust.untrustedTaps(packages: [], taps: [t]) == ["other/tap"])
+        #expect(DiscoverTrust.untrustedTaps(packages: [], taps: [TapInfo(name: "x/y", trusted: true)]) == [])
+    }
 }

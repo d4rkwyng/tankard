@@ -308,26 +308,39 @@ public final class TapCatalog: CatalogProviding {
     /// loaded with no details, so it isn't asked for again.
     func fill(_ batch: [CatalogEntry], kind: PackageKind) async -> [CatalogEntry] {
         var names = batch.map(\.qualifiedName)
-        for attempt in 0..<2 {
+        // 0.8.6 (VM test L4): taps brew refused as untrusted (their names
+        // are dropped and the rest asked again; the rows say so).
+        var untrusted: Set<String> = []
+        func mark(_ e: CatalogEntry) -> CatalogEntry {
+            var e = e
+            if let tap = e.tap?.lowercased(), untrusted.contains(tap) { e.untrustedTap = true }
+            return e
+        }
+        for attempt in 0..<3 {
             do {
                 let info = try await client.info(names, kind: kind, env: env)
                 let built = (kind == .formula ? info.formulae.map(builder.entry) : info.casks.map(builder.entry))
                 let byID = Dictionary(built.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
                 return batch.map { e in
                     if let d = byID[e.id] { return e.merging(d) }
-                    var none = e
+                    var none = mark(e)
                     none.detailsLoaded = true
                     return none
                 }
             } catch {
-                guard attempt == 0, case BrewClientError.commandFailed(_, _, let stderr) = error else { break }
+                guard attempt < 2, case BrewClientError.commandFailed(_, _, let stderr) = error else { break }
+                let refused = Set(DiscoverTrust.untrustedTaps(in: stderr).map { $0.lowercased() })
+                untrusted.formUnion(refused)
                 let bad = Self.unavailableNames(stderr)
-                let kept = names.filter { n in !bad.contains { $0 == n || n.hasSuffix("/" + $0) } }
+                let kept = names.filter { n in
+                    !bad.contains { $0 == n || n.hasSuffix("/" + $0) }
+                        && !refused.contains { n.lowercased().hasPrefix($0 + "/") }
+                }
                 if kept.isEmpty || kept.count == names.count { break }
                 names = kept
             }
         }
-        return batch.map { var e = $0; e.detailsLoaded = true; return e }
+        return batch.map { var e = mark($0); e.detailsLoaded = true; return e }
     }
 
     /// Names in brew's `No available formula with the name "x"` lines.

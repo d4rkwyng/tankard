@@ -29773,6 +29773,58 @@
         }
       }
     },
+    "Installing this trusts the tap %@ for this formula.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei der Installation vertraut Homebrew dem Tap %@ für diese Formel."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’installation fait confiance au tap %@ pour cette formule."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al instalarla, Homebrew confiará en el tap %@ para esta fórmula."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールすると、このformulaについてtap %@ が信頼されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装时，Homebrew 会为此 formula 信任 tap %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ao instalar, o Homebrew passa a confiar no tap %@ para esta fórmula."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installandola, Homebrew considera attendibile il tap %@ per questa formula."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치하면 이 포뮬러에 대해 탭 %@을(를) 신뢰하게 됩니다."
+          }
+        }
+      }
+    },
     "Installs": {
       "localizations": {
         "de": {

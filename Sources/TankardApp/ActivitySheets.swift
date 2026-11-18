@@ -638,6 +638,11 @@ struct CompileInstallConfirm: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
                 CommandBox(command: entry.installDisplay)
+                if let trust = store.discoverTrustNote(entry) {
+                    Label(trust, systemImage: "checkmark.shield")
+                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             HStack {
                 Spacer()

@@ -425,6 +425,12 @@ struct DiscoverDetail: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Install command").font(.system(size: 11)).foregroundStyle(.secondary)
                 CommandBox(command: e.installDisplay)
+                // 0.8.6 (VM test L4): brew trusts the formula as it installs it.
+                if !installed, let trust = store.discoverTrustNote(e) {
+                    Label(trust, systemImage: "checkmark.shield")
+                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 if installed {
                     HStack {
                         Label("Installed", systemImage: "checkmark.circle.fill")

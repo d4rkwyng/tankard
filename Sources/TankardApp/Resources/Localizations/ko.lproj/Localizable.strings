@@ -566,6 +566,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "설치된 버전이 tap의 %@보다 최신입니다. brew는 다운그레이드하지 않습니다.";
 "Installing" = "설치 중";
 "Installing compiles from source, which can take a long time on older Macs." = "설치하면 소스에서 컴파일되며 오래된 Mac에서는 오래 걸릴 수 있습니다.";
+"Installing this trusts the tap %@ for this formula." = "설치하면 이 포뮬러에 대해 탭 %@을(를) 신뢰하게 됩니다.";
 "Installs" = "설치 횟수";
 "Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap…." = "없는 패키지를 하나씩 설치합니다. 추가 카탈로그(tap)가 있다면 먼저 tap 추가…로 추가하세요.";
 "Installs, upgrades, pins and more appear here." = "설치, 업그레이드, 고정 등이 여기에 표시됩니다.";

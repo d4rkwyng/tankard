@@ -566,6 +566,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "已安装的版本比 tap 的 %@ 更新。brew 不会降级它。";
 "Installing" = "正在安装";
 "Installing compiles from source, which can take a long time on older Macs." = "安装时会从源码编译，这在较旧的 Mac 上可能需要很长时间。";
+"Installing this trusts the tap %@ for this formula." = "安装时，Homebrew 会为此 formula 信任 tap %@。";
 "Installs" = "安装次数";
 "Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap…." = "逐个安装缺少的软件包。请先通过“添加 Tap…”添加所需的额外目录（tap）。";
 "Installs, upgrades, pins and more appear here." = "安装、升级、固定等操作会显示在这里。";

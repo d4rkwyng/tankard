@@ -566,6 +566,7 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "Installed version is newer than the tap's %@. brew won't downgrade it.";
 "Installing" = "Installing";
 "Installing compiles from source, which can take a long time on older Macs." = "Installing compiles from source, which can take a long time on older Macs.";
+"Installing this trusts the tap %@ for this formula." = "Installing this trusts the tap %@ for this formula.";
 "Installs" = "Installs";
 "Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap…." = "Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap….";
 "Installs, upgrades, pins and more appear here." = "Installs, upgrades, pins and more appear here.";

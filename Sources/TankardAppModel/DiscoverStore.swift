@@ -396,3 +396,44 @@ public final class DiscoverStore {
         }
     }
 }
+
+/// 0.8.6 (VM test L4): installing a formula from an untrusted tap by its
+/// full name makes brew trust that formula ("==> Trusted formula
+/// steipete/tap/sonoscli"); Discover says so before the click.
+public enum DiscoverTrust {
+    /// "Installing this trusts the tap steipete/tap for this formula.", or
+    /// nil when its tap isn't known to be untrusted (or is Homebrew's own).
+    public static func note(_ e: CatalogEntry, untrustedTaps: Set<String>) -> String? {
+        guard let tap = e.tap, !TapIndexer.isHomebrewTap(tap) else { return nil }
+        guard e.untrustedTap || untrustedTaps.contains(where: { $0.lowercased() == tap.lowercased() }) else { return nil }
+        return String(localized: "Installing this trusts the tap \(tap) for this formula.")
+    }
+
+    /// The taps in brew's "Refusing to load formula x from untrusted tap
+    /// user/tap." lines (trust.rb, brew 7).
+    public static func untrustedTaps(in text: String) -> Set<String> {
+        var out: Set<String> = []
+        for line in text.split(separator: "\n") {
+            guard let r = line.range(of: " from untrusted tap ") else { continue }
+            var tap = line[r.upperBound...].trimmingCharacters(in: .whitespaces)
+            if tap.hasSuffix(".") { tap.removeLast() }
+            if tap.split(separator: "/").count == 2 { out.insert(tap) }
+        }
+        return out
+    }
+
+    /// What Tankard already knows without asking brew: installed packages
+    /// brew refused to read, and the Taps sheet's list.
+    public static func untrustedTaps(packages: [Package], taps: [TapInfo]) -> Set<String> {
+        var out = Set(taps.filter { $0.trusted == false }.map(\.name))
+        for p in packages { if let why = p.unreadable { out.formUnion(untrustedTaps(in: why)) } }
+        return out
+    }
+}
+
+public extension AppStore {
+    /// 0.8.6 (VM test L4): Discover's "Installing this trusts the tap…".
+    func discoverTrustNote(_ e: CatalogEntry) -> String? {
+        DiscoverTrust.note(e, untrustedTaps: DiscoverTrust.untrustedTaps(packages: packages, taps: taps.taps))
+    }
+}
