@@ -451,3 +451,19 @@ final class LockedBox<T: Sendable>: @unchecked Sendable {
         set { lock.withLock { _value = newValue } }
     }
 }
+
+/// 0.8.5 (newbie review H4): the confirmation says what happens in words.
+@MainActor
+struct RestorePlanWordsTests {
+    @Test func confirmationInPlainWords() {
+        let xz = at("xz", "5.8.3", kegs: ["5.8.2", "5.8.3"])
+        let point = RestorePoint.capture([at("xz", "5.8.2"), at("wget", "1.25.0")], at: t0, reason: .upgrade)
+        let plan = RestorePlan.make(RestoreDiff.between(point, [xz]), installed: [xz], pinAfter: true)
+        #expect(plan.summaryLines == ["Put wget back", "Return xz to 5.8.2 and pin it there"])
+        #expect(plan.confirmTitle == "Restore 2 packages?")
+        let noPin = RestorePlan.make(RestoreDiff.between(point, [xz]), installed: [xz], pinAfter: false)
+        #expect(noPin.summaryLines.last == "Return xz to 5.8.2")
+        // No line names a brew command or a HOMEBREW_ variable.
+        #expect(!plan.summaryLines.joined().contains("brew"))
+    }
+}

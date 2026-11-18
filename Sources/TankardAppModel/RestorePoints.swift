@@ -187,11 +187,11 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
         switch self {
         case .cask: return String(localized: "Cask: no older version")
         case .cleanedUp: return String(localized: "Old version removed by cleanup")
-        case .kegOnly: return String(localized: "Keg-only")
+        case .kegOnly: return String(localized: "Not linked into Terminal")
         case .pinned: return String(localized: "Pinned")
         case .hasDependents: return String(localized: "Other packages need it")
         case .otherKegWouldLink: return String(localized: "Another old version is installed")
-        case .headVersion: return String(localized: "HEAD build")
+        case .headVersion: return String(localized: "Built from the latest source")
         }
     }
 
@@ -199,7 +199,7 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
     /// Tankard isn't keeping them.
     public func explanation(keepPrevious: Bool) -> String {
         if self == .cleanedUp && keepPrevious {
-            return String(localized: "brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard).")
+            return String(localized: "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard).")
         }
         return explanation
     }
@@ -210,17 +210,17 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
         case .cask:
             return String(localized: "Homebrew keeps only the current cask definition, so it can't install an older version of an app.")
         case .cleanedUp:
-            return String(localized: "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time.")
+            return String(localized: "The older version was removed after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time.")
         case .kegOnly:
-            return String(localized: "brew link would need --force for a keg-only formula, which links it where it wasn't before.")
+            return String(localized: "Switching back would change which version other programs see, so Tankard leaves it to you.")
         case .pinned:
-            return String(localized: "brew won't uninstall a pinned formula. Unpin it first.")
+            return String(localized: "It's pinned. Unpin it first.")
         case .hasDependents:
-            return String(localized: "brew refuses to uninstall a formula other installed packages need, and Homebrew doesn't support mixing versions under them.")
+            return String(localized: "Other installed packages need the current version, and Homebrew can't give them an older one.")
         case .otherKegWouldLink:
-            return String(localized: "brew link always links the newest version left, which isn't the one in this restore point.")
+            return String(localized: "Another older version is also on this Mac, and Homebrew would switch to that one instead.")
         case .headVersion:
-            return String(localized: "HEAD builds have no fixed version to go back to.")
+            return String(localized: "It was built from the latest source, so there is no fixed version to go back to.")
         }
     }
 }
@@ -318,6 +318,43 @@ public struct RestorePlan: Sendable, Equatable {
     }
 
     public var steps: [RestoreStep] = []
+
+    /// 0.8.5 (newbie review H4): the confirmation in words, one line per
+    /// package ("Put wget back", "Return curl to 8.1.0 and pin it"); the
+    /// brew commands go under Details.
+    public var summaryLines: [String] {
+        var order: [String] = []
+        var byPackage: [String: [RestoreStep]] = [:]
+        for s in steps {
+            if byPackage[s.package] == nil { order.append(s.package) }
+            byPackage[s.package, default: []].append(s)
+        }
+        return order.compactMap { key in
+            let group = byPackage[key] ?? []
+            let name = Self.shortName(key)
+            let pinned = group.contains { $0.kind == .pin }
+            if group.contains(where: { $0.kind == .reinstall }) {
+                return String(localized: "Put \(name) back")
+            }
+            if let keg = group.first(where: { $0.kind == .rollbackUninstall })?.keg {
+                return pinned ? String(localized: "Return \(keg.name) to \(keg.version) and pin it there")
+                              : String(localized: "Return \(keg.name) to \(keg.version)")
+            }
+            return pinned ? String(localized: "Pin \(name)") : nil
+        }
+    }
+
+    /// "Restore 2 packages?"
+    public var confirmTitle: String {
+        let n = summaryLines.count
+        return n == 1 ? String(localized: "Restore 1 package?") : String(localized: "Restore \(n) packages?")
+    }
+
+    static func shortName(_ key: String) -> String {
+        let base = key.split(separator: "|").first.map(String.init) ?? key
+        return base.split(separator: "/").last.map(String.init) ?? base
+    }
+
     /// Upgrades that need the manual route.
     public var manual: [(change: RestoreDiff.Change, block: RollbackBlock)] = []
     public var source: Source?
