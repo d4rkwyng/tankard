@@ -242,7 +242,7 @@ struct V083QuitGuardTests {
     }
 
     @Test func promptOnlyWhileARunIsGoing() async throws {
-        let settings = AppSettings.ephemeral("net.mindtricks.tankard.test.quit1")
+        let settings = testSettings()
         let gate = Latch()
         let store = store(settings: settings, gate: gate)
         await store.start()
@@ -261,8 +261,7 @@ struct V083QuitGuardTests {
     }
 
     @Test func quitNowKeepsTheRestForNextLaunch() async throws {
-        let name = "net.mindtricks.tankard.test.quit2"
-        let settings = AppSettings.ephemeral(name)
+        let settings = testSettings()
         let store = store(settings: settings, gate: nil, untilCancelled: true)
         await store.start()
         let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).prefix(3))
@@ -289,7 +288,7 @@ struct V083QuitGuardTests {
     }
 
     @Test func stopAfterCurrentKeepsOnlyTheRest() async throws {
-        let settings = AppSettings.ephemeral("net.mindtricks.tankard.test.quit3")
+        let settings = testSettings()
         let gate = Latch()
         let calls = CallLog()
         let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))

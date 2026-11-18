@@ -483,10 +483,7 @@ struct InstallUninstallTests {
 @MainActor
 struct AppearanceTests {
     func defaults() -> UserDefaults {
-        let name = "tankard-test-\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: name)!
-        d.removePersistentDomain(forName: name)
-        return d
+        TestDefaults.fresh("tankard-test-\(UUID().uuidString)")
     }
 
     @Test func defaultIsSystemAndChoicePersists() {

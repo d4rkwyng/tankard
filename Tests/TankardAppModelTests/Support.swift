@@ -112,6 +112,74 @@ func makeClient(_ runner: CommandRunning, intelbrew: Bool = true) -> BrewClient 
                       sources: EnvironmentSources(process: process), fileExists: { _ in false })
 }
 
+/// The UserDefaults suites tests create, and their removal. Swift Testing
+/// has no tearDown, so every helper that makes a suite registers its name
+/// here (`track`, `fresh`). Two things then remove them:
+/// - Scripts/test.sh, after the test process has exited: it sets
+///   TANKARD_TEST_DEFAULTS_LIST to a file, `track` appends each name to it,
+///   and the script runs `defaults delete` and removes the plist for each
+///   name listed. That is the reliable one: nothing in the tests can still
+///   write by then.
+/// - An `atexit` hook here, for a bare `swift test`. It can miss some: at
+///   exit, async work left over from tests (stores, background checks) may
+///   still write a suite after it was removed.
+/// Before 0.8.4 nothing removed them and a busy Mac collected over 10,000
+/// plists in ~/Library/Preferences. Names are per-process (a UUID each), so
+/// neither ever touches another, concurrent test run's suites.
+enum TestDefaults {
+    private final class Registry: @unchecked Sendable {
+        private let lock = NSLock()
+        private var names: Set<String> = []
+        private let list: FileHandle? = ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"]
+            .flatMap { FileHandle(forWritingAtPath: $0) }
+        func add(_ name: String) {
+            lock.withLock {
+                guard names.insert(name).inserted, let list else { return }
+                list.seekToEndOfFile()
+                list.write(Data((name + "\n").utf8))
+            }
+        }
+        func drain() -> [String] {
+            lock.withLock {
+                defer { names.removeAll() }
+                return Array(names)
+            }
+        }
+    }
+    private static let registry = Registry()
+    private static let exitHook: Void = { atexit { TestDefaults.removeAll() } }()
+
+    /// Registers `name` for removal; returns it.
+    @discardableResult static func track(_ name: String) -> String {
+        _ = exitHook
+        registry.add(name)
+        return name
+    }
+
+    /// A new, empty suite named `name`, registered for removal.
+    static func fresh(_ name: String = "net.mindtricks.tankard.tests.\(UUID().uuidString)") -> UserDefaults {
+        track(name)
+        let d = UserDefaults(suiteName: name)!
+        d.removePersistentDomain(forName: name)
+        return d
+    }
+
+    /// Removes one suite now: its contents, then its plist (cfprefsd leaves
+    /// an emptied domain behind as a `{}` file).
+    static func remove(_ name: String) {
+        UserDefaults(suiteName: name)?.removePersistentDomain(forName: name)
+        CFPreferencesAppSynchronize(name as CFString)
+        try? FileManager.default.removeItem(at: plistURL(name))
+    }
+
+    static func plistURL(_ name: String) -> URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Preferences/\(name).plist")
+    }
+
+    static func removeAll() { registry.drain().forEach(remove) }
+}
+
 func tempDir() throws -> URL {
     let dir = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-test-\(UUID().uuidString)")
     try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

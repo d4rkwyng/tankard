@@ -45,7 +45,7 @@ final class Flag: @unchecked Sendable {
 }
 
 @MainActor func testSettings(_ name: String = "net.mindtricks.tankard.tests.\(UUID().uuidString)") -> AppSettings {
-    AppSettings.ephemeral(name)
+    AppSettings.ephemeral(TestDefaults.track(name))
 }
 
 /// Test settings with "Scan for vulnerabilities when refreshing" on (0.4:
@@ -221,7 +221,6 @@ struct NotificationDiffTests {
         #expect(b.checkIntervalHours == 48)
         #expect(b.notifiedUpgrades == ["y@2"])
         #expect(b.appManagementExplained)
-        UserDefaults(suiteName: name)!.removePersistentDomain(forName: name)
     }
 
     /// 0.3.0's launch crash: SwiftUI writes `MenuBarExtra(isInserted:)` back
@@ -231,7 +230,6 @@ struct NotificationDiffTests {
     @Test func unchangedMenuBarWriteNotifiesNothing() {
         let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
         let s = testSettings(name)
-        defer { UserDefaults(suiteName: name)!.removePersistentDomain(forName: name) }
         for value in [true, false] {
             if s.showMenuBarIcon != value { s.showMenuBarIcon = value }
             let notified = Flag()
@@ -250,9 +248,7 @@ struct NotificationDiffTests {
     /// The same for the theme: an unchanged write neither notifies nor
     /// re-applies NSApp.appearance (onChange).
     @Test func unchangedThemeWriteNotifiesNothing() {
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: name)!
-        defer { d.removePersistentDomain(forName: name) }
+        let d = TestDefaults.fresh()
         let a = AppearanceSettings(defaults: d)
         var applied: [AppTheme] = []
         a.onChange = { applied.append($0) }

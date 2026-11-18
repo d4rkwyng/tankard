@@ -276,9 +276,7 @@ struct AutoUpdateSafeModeTests {
 @MainActor
 struct AutoUpdateSettingsTests {
     func fresh(now: Date = at(10)) -> (AutoUpdateSettings, UserDefaults) {
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: name)!
-        d.removePersistentDomain(forName: name)
+        let d = TestDefaults.fresh()
         return (AutoUpdateSettings(defaults: d, now: { now }), d)
     }
 
@@ -350,9 +348,7 @@ struct AutoUpdateSettingsTests {
 
     @Test func turningOnOrRescheduleSetsSince() {
         var clock = at(10)
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let d = UserDefaults(suiteName: name)!
-        d.removePersistentDomain(forName: name)
+        let d = TestDefaults.fresh()
         let box = DateBox(clock)
         let s = AutoUpdateSettings(defaults: d, now: { box.value })
         s.hour = 4 // off: no since
