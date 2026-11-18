@@ -194,7 +194,10 @@ struct Chip: View {
 
     var body: some View {
         let compiles = (action == .upgrade || action == .install) && item.package.kind == .formula && item.package.upgradeHasBottle != true
-        let name = item.package.name + (compiles ? String(localized: " · source") : "")
+        // 0.8.5 (L9): one chip per installed version, labelled with it.
+        let perVersion = action == .uninstall && item.package.kind == .formula && Set(item.package.installedVersions).count > 1
+        let name = item.package.name + (perVersion ? " " + item.package.installedVersion : "")
+            + (compiles ? String(localized: " · source") : "")
         HStack(spacing: 4) {
             switch item.state {
             case .done:

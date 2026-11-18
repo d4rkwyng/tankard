@@ -761,9 +761,22 @@ public final class AppStore {
     /// lock, dependents), unlike `--force`, which skips the pin check and
     /// the keg lock (uninstall.rb). After the run the installed packages
     /// are read again (`checkUninstalled`).
+    ///
+    /// 0.8.5 (bug hunt L9): each step's `installedVersion` is the version it
+    /// is expected to remove, so the sheet's chips read "bh-a 1.2", "bh-a
+    /// 1.0", not "bh-a" twice: the one in use first (brew removes the
+    /// linked keg first), then the rest, newest first (else the newest).
     public nonisolated static func uninstallSteps(_ packages: [Package]) -> [Package] {
-        packages.flatMap { p in
-            Array(repeating: p, count: p.kind == .formula ? max(1, Set(p.installedVersions).count) : 1)
+        packages.flatMap { p -> [Package] in
+            let versions = Set(p.installedVersions)
+            guard p.kind == .formula, versions.count > 1 else { return [p] }
+            let rest = versions.subtracting([p.installedVersion]).sorted { PkgVersion(parsing: $0) > PkgVersion(parsing: $1) }
+            let order = (versions.contains(p.installedVersion) ? [p.installedVersion] : []) + rest
+            return order.map { v in
+                var step = p
+                step.installedVersion = v
+                return step
+            }
         }
     }
 
