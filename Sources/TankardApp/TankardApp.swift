@@ -302,6 +302,9 @@ struct TankardApp: App {
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard Help") { NSWorkspace.shared.open(AboutInfo.help) }
+                Button("Homebrew Words Explained") {
+                    NSWorkspace.shared.open(AboutInfo.glossary(version: TankardVersion.string))
+                }
                 Divider()
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
                 Button("Report an Issue…") { NSWorkspace.shared.open(AboutInfo.newIssue) }

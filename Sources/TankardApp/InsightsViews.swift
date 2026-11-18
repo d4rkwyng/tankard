@@ -144,7 +144,7 @@ struct ScanProgressView: View {
                 }
                 Button("Stop") { insights.stopScan() }
                     .controlSize(.small)
-                    .help("Stop brew vulns. The last result, if any, is kept.")
+                    .help("Stop the security check. The last result is kept.")
             }
             .font(.system(size: 11))
             .foregroundStyle(.secondary)
@@ -156,7 +156,7 @@ struct ScanProgressView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .fixedSize()
-                .help(insights.vulnerabilityScan?.partialReason.map { String(localized: "brew says the scan is incomplete: \($0).") } ?? String(localized: "From brew vulns (OSV.dev)."))
+                .help(insights.vulnerabilityScan?.partialReason.map { String(localized: "Some packages couldn't be checked: \($0).") } ?? String(localized: "From Homebrew's security check (OSV.dev)."))
         }
     }
 }
@@ -276,11 +276,11 @@ struct ScanStateLabel: View {
                 Image(systemName: "exclamationmark.circle").foregroundStyle(.orange)
                 Text(s == InsightsStore.scanTimedOutMessage ? String(localized: "Scan timed out") : String(localized: "Scan failed")).help(s)
             case .unsupported(let s):
-                Text("No brew vulns").help(s)
+                Text("Security check not available").help(s)
             case .idle:
                 if let scan = insights.vulnerabilityScan {
                     Text(scan.complete ? String(localized: "Full scan") : String(localized: "Partial scan"))
-                        .help(scan.partialReason.map { String(localized: "brew says the scan is incomplete: \($0).") } ?? String(localized: "brew checked every installed formula."))
+                        .help(scan.partialReason.map { String(localized: "Some packages couldn't be checked: \($0).") } ?? String(localized: "Every installed command-line tool was checked."))
                 } else {
                     Text("Not scanned yet")
                         .help("Scan Now is in Settings → Upgrades and the Homebrew menu. " + InsightSettings.scanPrivacyNote)
@@ -495,7 +495,7 @@ struct UpgradeSettings: View {
                         Button("Scan Now") { store.scanVulnerabilitiesNow() }
                             .controlSize(.small)
                             .disabled(store.report == nil)
-                            .help("Runs brew vulns once now. " + InsightSettings.scanPrivacyNote)
+                            .help(String(localized: "Checks for known security problems once now.") + " " + InsightSettings.scanPrivacyNote)
                     }
                     ScanProgressView(store: store)
                     if store.insights.scanState != .running, store.insights.scanOutcome == nil,

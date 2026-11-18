@@ -346,7 +346,7 @@ struct AutoUpdateMenuLine: View {
                         Image(systemName: "arrow.down.circle").font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
                         Text(selfUpdate).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                     }
-                    .help("Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)")
+                    .help("Upgrade Tankard now. Automatic updates never upgrade Tankard itself.")
                 }
             }
             .padding(.horizontal, 12)

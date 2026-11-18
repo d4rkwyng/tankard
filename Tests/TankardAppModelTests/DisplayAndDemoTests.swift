@@ -106,11 +106,11 @@ struct DisplayAndDemoTests {
         var f = ForkStatus(coreTapPath: "/x", coreOrigin: Intelbrew.coreRemote, coreIsFork: true, brewRepository: "/r",
                            brewOrigin: Intelbrew.brewRemote, brewIsFork: true, brewVersion: "7.0.14", brewTag: "7.0.14",
                            brewNewestTag: "7.0.14", brewNewestTagSource: "local", brewAtNewestTag: true)
-        #expect(ForkSummary(f).text == "Fork: current (Homebrew 7.0.14)")
+        #expect(ForkSummary(f).text == "Intelbrew is up to date (Homebrew 7.0.14)")
         #expect(ForkSummary(f).level == .ok)
         f.brewAtNewestTag = false
         f.brewNewestTag = "7.0.15"
-        #expect(ForkSummary(f).text == "Fork: behind (Homebrew 7.0.14; 7.0.15 available)")
+        #expect(ForkSummary(f).text == "Intelbrew update available (Homebrew 7.0.14; 7.0.15 is out)")
         f.brewIsFork = false
         #expect(ForkSummary(f).level == .warning)
         f.coreIsFork = false
@@ -146,7 +146,7 @@ struct DisplayAndDemoTests {
         await store.start()
         #expect(store.intelbrewMode)
         #expect(store.upgradable.count == 5)
-        #expect(ForkSummary(try #require(store.report).fork).text == "Fork: current (Homebrew 7.0.14)")
+        #expect(ForkSummary(try #require(store.report).fork).text == "Intelbrew is up to date (Homebrew 7.0.14)")
         store.startUpgrade()
         let session = try #require(store.upgrade)
         #expect(await waitUntil { session.isFinished })

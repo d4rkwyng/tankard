@@ -39,14 +39,10 @@ struct UninstallSheet: View {
             }
             if dependents.isEmpty {
                 if !orphans.isEmpty { orphanSection(orphans) }
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
-                    if pinned { CommandBox(command: PinCommands.display(pin: false, for: package)) }
-                    CommandBox(command: command)
-                    if store.uninstallRemovesOrphans, !orphans.isEmpty {
-                        CommandBox(command: orphans.map { AppStore.uninstallDisplay($0) }.joined(separator: "\n"))
-                    }
-                }
+                // 0.8.5 (newbie review M3): the exact commands under Details.
+                CommandDetails(commands: (pinned ? [PinCommands.display(pin: false, for: package)] : []) + [command]
+                               + (store.uninstallRemovesOrphans && !orphans.isEmpty
+                                  ? [orphans.map { AppStore.uninstallDisplay($0) }.joined(separator: "\n")] : []))
                 // 0.8.3: a pkg cask's uninstall runs sudo (pkgutil, its files).
                 if AdminPassword.required(package) {
                     AdminPasswordNote(names: [package.name], helper: store.deps.askpassHelper != nil, uninstall: true,
@@ -78,6 +74,8 @@ struct UninstallSheet: View {
                             .disabled(store.isBusy)
                     } else {
                         Button("Uninstall", role: .destructive) { store.startUninstall(package) }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.red)
                             .disabled(store.isUpgrading)
                     }
                 } else {

@@ -144,7 +144,7 @@ public struct ForeignAskpass: Equatable, Sendable {
 
     /// The sheet's and the plan's sentence, above the Terminal command.
     public var message: String {
-        String(localized: "brew.env sets its own password helper (\(helper)); run this step in Terminal:")
+        String(localized: "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:")
     }
 
     /// The brew.env SUDO_ASKPASS brew will use (bin/brew's precedence), when
@@ -195,7 +195,7 @@ public enum SudoOutcome: Equatable, Sendable {
     public var message: String {
         switch self {
         case .cancelled: return String(localized: "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:")
-        case .wrongPassword: return String(localized: "sudo didn't accept the password. To try again, run the step again, or run this in Terminal:")
+        case .wrongPassword: return String(localized: "macOS didn't accept the password. To try again, run the step again, or run this in Terminal:")
         case .sudoDisabled, .noPrompt: return String(localized: "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:")
         case .foreignHelper(let helper):
             return ForeignAskpass(helper: helper, source: "", unstoppable: false).message

@@ -416,7 +416,7 @@ struct DiscoverDetail: View {
                     }
                     .buttonStyle(.primaryAction)
                     .disabled(store.isUpgrading || e.disabled)
-                    .help(store.isUpgrading ? String(localized: "Wait for the running brew to finish") : e.installDisplay)
+                    .help(store.isUpgrading ? String(localized: "Wait for the running task to finish") : String(localized: "Install \(e.name)"))
                 }
             }
         }

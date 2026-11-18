@@ -453,7 +453,7 @@ struct CleanupSheet: View {
                 }
             }
             .font(.system(size: 12))
-            .help("brew --cache, measured with du -sk")
+            .help("Space used by Homebrew's downloaded files")
 
             VStack(alignment: .leading, spacing: 5) {
                 Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)

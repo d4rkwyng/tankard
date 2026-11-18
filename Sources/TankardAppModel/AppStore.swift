@@ -715,6 +715,16 @@ public final class AppStore {
     /// installed versions, "Removes all installed versions of xz (5.6.3,
     /// 5.8.1)." `dependenciesStay`: adds "Its dependencies stay installed."
     public nonisolated static func uninstallSummary(_ p: Package, dependenciesStay: Bool) -> String {
+        // 0.8.5 (newbie review M4): an app says what happens to the app
+        // and to its settings; casks have no dependencies to mention.
+        if p.kind == .cask {
+            let apps = (p.appPaths ?? []).map { (($0 as NSString).lastPathComponent as NSString).deletingPathExtension }
+            if apps.isEmpty {
+                return String(localized: "Removes \(p.name) \(p.installedVersion). Your settings and data for it stay on this Mac.")
+            }
+            let list = ListFormatter.localizedString(byJoining: apps)
+            return String(localized: "Deletes \(list) from Applications. Your settings and data for it stay on this Mac.")
+        }
         let versions = Set(p.installedVersions).sorted { PkgVersion(parsing: $0) < PkgVersion(parsing: $1) }
         if p.kind == .formula && versions.count > 1 {
             let list = versions.joined(separator: ", ")

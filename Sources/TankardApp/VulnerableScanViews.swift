@@ -78,7 +78,7 @@ struct ScanNowButton: View {
         Button("Scan Now") { store.scanVulnerabilitiesNow() }
             .controlSize(.small)
             .disabled(!store.canScanVulnerabilities)
-            .help(String(localized: "Runs brew vulns once now.") + " " + InsightSettings.scanPrivacyNote)
+            .help(String(localized: "Checks for known security problems once now.") + " " + InsightSettings.scanPrivacyNote)
             .fixedSize()
     }
 }
@@ -105,7 +105,7 @@ struct VulnerableEmptyState: View {
             if status != .running {
                 Button("Scan Now") { store.scanVulnerabilitiesNow() }
                     .disabled(!store.canScanVulnerabilities)
-                    .help(String(localized: "Runs brew vulns once now.") + " " + InsightSettings.scanPrivacyNote)
+                    .help(String(localized: "Checks for known security problems once now.") + " " + InsightSettings.scanPrivacyNote)
             }
         }
     }

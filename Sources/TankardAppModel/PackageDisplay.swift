@@ -377,13 +377,13 @@ public struct ForkSummary: Equatable, Sendable {
             text = String(localized: "Core: Intelbrew fork · brew: upstream (\(version))")
         } else if fork.brewAtNewestTag == false, let newest = fork.brewNewestTag {
             level = .warning
-            text = String(localized: "Fork: behind (\(version); \(newest) available)")
+            text = String(localized: "Intelbrew update available (\(version); \(newest) is out)")
         } else if fork.brewTag == nil {
             level = .warning
             text = String(localized: "Fork: not on a release tag (\(version))")
         } else {
             level = .ok
-            text = String(localized: "Fork: current (\(version))")
+            text = String(localized: "Intelbrew is up to date (\(version))")
         }
     }
 }

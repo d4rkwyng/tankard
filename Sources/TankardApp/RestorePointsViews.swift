@@ -131,7 +131,7 @@ struct RestoreDiffView: View {
                         DiffSection(title: String(localized: "Removed (\(diff.removed.count))")) {
                             ForEach(diff.removed, id: \.id) { r in
                                 PlainDiffRow(name: r.name, detail: r.version, note: String(localized: "Reinstall"))
-                                    .help("brew install gets the version Homebrew has now, which may be newer than \(r.version).")
+                                    .help("Puts back the version Homebrew has now, which may be newer than \(r.version).")
                             }
                         }
                     }

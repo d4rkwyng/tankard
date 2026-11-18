@@ -43,7 +43,7 @@ struct ContentView: View {
                         } label: {
                             Label("Refresh", systemImage: "arrow.clockwise")
                         }
-                        .help("brew update, then re-read installed packages (⌘R)")
+                        .help("Check Homebrew for new versions and reload the list (⌘R)")
                         .disabled(store.isUpgrading)
                     }
                 }
@@ -468,7 +468,7 @@ struct FilterActions: View {
                 }
                 .controlSize(.small)
                 .disabled(store.isUpgrading || store.isRefreshing)
-                .help("brew reinstall --force-bottle --formula each one, through the queue")
+                .help("Reinstall each one from a ready-made download instead of building it")
             }
         case .vulnerable:
             // In the filter's own header (VulnerableScanBar).

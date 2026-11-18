@@ -246,8 +246,8 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .timedOut: return String(localized: "took too long and was stopped; the next automatic run tries again")
         case .slept: return String(localized: "interrupted by sleep; the next automatic run tries again")
         case .quit: return String(localized: "Tankard quit; the next automatic run upgrades it")
-        case .foreignAskpass(let helper?): return String(localized: "brew.env sets its own password helper (\(helper)); upgrade it in Terminal")
-        case .foreignAskpass(nil): return String(localized: "brew.env clears HOMEBREW_NO_SUDO, so brew could ask for a password; upgrade it in Terminal")
+        case .foreignAskpass(_?): return String(localized: "your Homebrew settings use a different password program; upgrade it by hand")
+        case .foreignAskpass(nil): return String(localized: "your Homebrew settings allow password prompts here; upgrade it by hand")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
                 return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")

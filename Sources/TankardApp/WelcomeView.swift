@@ -74,7 +74,7 @@ struct WelcomeView: View {
                     }
                     .controlSize(.large)
                     .disabled(store.isRefreshing)
-                    Text("Tankard looks for brew at \(BrewInstallation.candidates.joined(separator: " and ")), or TANKARD_BREW.")
+                    Text("Tankard looks for Homebrew where its installer puts it.")
                         .font(.system(size: 11))
                         .foregroundStyle(.tertiary)
                 }

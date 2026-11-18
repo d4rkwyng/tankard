@@ -94,7 +94,7 @@ struct GeneralSettings: View {
                     .disabled(backgroundUpdateOptOut != nil)
             }
             if let source = backgroundUpdateOptOut {
-                Text("Off: HOMEBREW_NO_AUTO_UPDATE is set (\(source)).").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text("Off: your Homebrew settings turn this off (in \(source)).").font(.system(size: 11)).foregroundStyle(.secondary)
             }
             ExplainedRow(help: SettingsHelp.notifyNewUpgrades) {
                 Toggle("Notify me about new upgrades", isOn: Binding(

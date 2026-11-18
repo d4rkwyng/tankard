@@ -48,7 +48,7 @@ struct BrewfileMenuItems: View {
         // Opening one before exporting, as File menus order Open and Export.
         Button("Check Brewfile…") { BrewfilePanels.check(store: store) }
             .disabled(!store.canUseBrewfile || store.isSheetPresented)
-            .help("Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)")
+            .help("Lists what a Brewfile needs that this Mac doesn't have")
         Button("Export Brewfile…") { BrewfilePanels.export(store: store) }
             .disabled(!store.canUseBrewfile || store.isSheetPresented)
             .help(BrewfilePanels.leftOut)
@@ -131,7 +131,7 @@ struct BrewfileSheet: View {
                 Text("VS Code extensions and App Store apps are left out.")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
             }
-            .help(BrewfilePanels.leftOut + String(localized: " Asking VS Code for its extensions can hang brew bundle dump."))
+            .help(String(localized: "VS Code extensions and Mac App Store apps are left out."))
             HStack {
                 Button("Show in Finder") {
                     NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: s.path)])
@@ -241,11 +241,11 @@ struct BrewfileSheet: View {
                 Button("Back") { brewfile.back(to: result) }
                 Spacer()
                 Button(showTerminal ? String(localized: "Hide Terminal Command") : String(localized: "Show Terminal Command")) { showTerminal.toggle() }
-                    .help("brew bundle install with --no-upgrade, to copy. Tankard doesn't run it.")
+                    .help("A Terminal command you can copy to install everything in this Brewfile. Tankard doesn't run it.")
                 Button("Install with Tankard") { store.installBrewfilePlan(p) }
                     .keyboardShortcut(.defaultAction)
                     .disabled(p.queued.isEmpty || store.isBusy)
-                    .help("One brew install per formula and cask, through Tankard's queue and log. Add taps first with Add Tap….")
+                    .help("Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap….")
             }
         }
     }

@@ -10,18 +10,18 @@ public enum SettingsHelp {
     public static let showMenuBarIcon = String(localized: "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running.")
     /// 0.8.1: Hide Dock icon when the window is closed.
     public static let hideDockIcon = String(localized: "With every Tankard window closed, the Dock icon and the app menu go away and Tankard stays in the menu bar; opening a window brings them back. Needs \"Show Tankard in the menu bar\". On by default.")
-    public static let notifyNewUpgrades = String(localized: "Runs brew update in the background and posts a notification when new upgrades show up. Refresh and Check Now post one only when the Tankard window isn't in front; otherwise the list and the status bar show what's new. Off by default.")
-    public static let checkInterval = String(localized: "How often the background brew update runs, while \"Check for new versions in the background\" or \"Notify me about new upgrades\" is on.")
+    public static let notifyNewUpgrades = String(localized: "Checks for new versions now and then and tells you when upgrades are ready. While the Tankard window is in front, the list shows them instead. Off by default.")
+    public static let checkInterval = String(localized: "How often Tankard checks for new versions in the background.")
     /// 0.8: the background `brew update`.
-    public static let backgroundUpdate = String(localized: "After the list is shown, runs brew update in the background at most once per check interval, then refreshes the upgrade counts. It waits while brew is busy, and a failure (offline) is only logged. Off when HOMEBREW_NO_AUTO_UPDATE is set. On by default.")
+    public static let backgroundUpdate = String(localized: "Checks Homebrew for new versions in the background, so the upgrade counts stay current. If it can't (offline), it tries again later. On by default.")
     public static let openAtLogin = String(localized: "Opens Tankard when you log in, as a macOS login item.")
 
     // Upgrades
-    public static let includeSelfUpdatingApps = String(localized: "Also lists apps that update themselves (casks with auto_updates) or always download the newest version, as brew outdated --greedy does. These apps usually keep themselves current, so this is off by default.")
-    public static let dontQuitApps = String(localized: "By default brew quits a running app before upgrading its cask and opens it again afterwards. With this on, Tankard sets HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 for cask upgrades (shown in the command): the app keeps running, and the new version starts the next time you open it.")
-    public static let scanOnRefresh = String(localized: "Runs brew vulns after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Casks aren't checked. A scan that runs longer than a minute is stopped. Scan Now runs one scan whenever you ask. Off by default.")
+    public static let includeSelfUpdatingApps = String(localized: "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.")
+    public static let dontQuitApps = String(localized: "Normally an open app is closed while it upgrades and opened again afterwards. With this on, it keeps running and the new version starts the next time you open it.")
+    public static let scanOnRefresh = String(localized: "Checks your command-line tools for known security problems after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default.")
     /// 0.7: Keep the previous version after upgrades.
-    public static let keepPreviousVersion = String(localized: "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.")
+    public static let keepPreviousVersion = String(localized: "Keeps the old version on disk after an upgrade, so Restore Points can switch back to it. Uses extra space until Clean Up removes it. Apps (casks) always replace the old version. Off by default.")
     public static let notifyNewVulnerabilities = String(localized: "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.")
 
     // Upgrades → Automatic updates

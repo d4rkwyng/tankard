@@ -145,3 +145,18 @@ struct V085DoctorTests {
         #expect(DoctorWarningKind.notWritable.isHarmless == false)
     }
 }
+
+/// M4: uninstalling an app says what happens to the app and its settings.
+@MainActor
+struct V085CaskUninstallWordsTests {
+    @Test func caskUninstallNamesTheAppAndKeepsSettings() async throws {
+        let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0), settings: testSettings())
+        await store.start()
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        #expect(AppStore.uninstallSummary(chrome, dependenciesStay: true)
+                == "Deletes Google Chrome from Applications. Your settings and data for it stay on this Mac.")
+        var bare = chrome
+        bare.appPaths = nil
+        #expect(!AppStore.uninstallSummary(bare, dependenciesStay: true).contains("dependencies"))
+    }
+}
