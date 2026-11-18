@@ -171,6 +171,7 @@
 "Add Tap…" = "tap 추가…";
 "Add tap" = "tap 추가";
 "Add tap?" = "tap을 추가할까요?";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "먼저 tap을 추가한 다음(tap 추가…), Brewfile을 다시 확인해 나머지를 설치하세요.";
 "Add, Remove and Trust go through Tankard's queue and History." = "추가, 제거, 신뢰는 Tankard의 대기열과 기록을 거칩니다.";
 "Added (%lld)" = "추가됨(%lld)";
 "Adding tap" = "tap 추가 중";
@@ -534,6 +535,7 @@
 "Keep Running" = "계속 실행";
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
+"Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on." = "\"업그레이드 후 이전 버전 유지\"가 켜져 있으므로 복원 지점을 위해 %@의 이전 버전을 남겨 둡니다.";
 "Keg-only" = "Keg-only";
 "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다.";
 "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: 의도적으로 Homebrew 공유 폴더에 링크되지 않아, 셸이 기본적으로 해당 명령을 찾지 못합니다.";
@@ -653,11 +655,14 @@
 "Nothing changed since then" = "그 이후 변경된 것 없음";
 "Nothing here" = "여기엔 아무것도 없음";
 "Nothing here can be restored automatically" = "여기 있는 항목은 자동으로 복원할 수 없습니다";
+"Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제하고 이 tap을 더 이상 신뢰하지 않습니다. 나중에 다시 추가하면 Tankard가 다시 묻습니다.";
+"Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제합니다. 나중에 다시 추가할 수 있습니다.";
 "Nothing matches" = "일치하는 항목 없음";
 "Nothing matches “%@”." = "“%@”와(과) 일치하는 항목이 없습니다.";
 "Nothing runs on its own after the relaunch." = "다시 시작한 후 자동으로 실행되는 것은 없습니다.";
 "Nothing to clean up" = "정리할 항목 없음";
 "Nothing to remove" = "제거할 항목 없음";
+"Nothing to restore" = "복원할 항목 없음";
 "Nothing to retry" = "다시 시도할 항목 없음";
 "Nothing to upgrade" = "업그레이드할 항목 없음";
 "Nothing upgraded" = "업그레이드된 항목 없음";
@@ -668,13 +673,13 @@
 "OK" = "확인";
 "Off" = "끔";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "기본값은 꺼짐입니다. 검사에서 이전에 없던 취약점이 발견되면 메뉴 막대 메뉴에 알림을 표시합니다. 지금 검사(여기) 또는 Homebrew ▸ 취약점 검사를 누르면 언제든 한 번 검사합니다.";
-"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "기본값은 꺼짐입니다. 켜면 Tankard의 업그레이드, 설치, 재설치(수동 및 자동 업데이트)가 HOMEBREW_NO_INSTALL_CLEANUP=1(명령에 표시됨)로 실행되어, brew가 이전 버전을 디스크에 남기고 복원 지점으로 되돌릴 수 있습니다. 남겨 둔 각 버전은 정리로 제거할 때까지 디스크 공간을 차지합니다. Tankard 밖에서 brew가 자체적으로 수행하는 주기적 정리도 이를 제거할 수 있습니다. cask는 항상 이전 버전을 교체합니다.";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "기본값은 꺼짐입니다. 켜면 Tankard의 업그레이드, 설치, 재설치(수동 및 자동 업데이트)가 HOMEBREW_NO_INSTALL_CLEANUP=1(명령에 표시됨)로 실행되어, brew가 이전 버전을 디스크에 남기고 복원 지점으로 되돌릴 수 있습니다. 남겨 둔 각 버전은 디스크 공간을 차지합니다. 이 설정이 켜져 있는 동안 정리는 남겨 둔 버전을 건드리지 않습니다. 제거하려면 먼저 이 설정을 끄세요. Tankard 밖에서 brew가 자체적으로 수행하는 주기적 정리도 이를 제거할 수 있습니다. cask는 항상 이전 버전을 교체합니다.";
 "Off for Tankard in System Settings → Notifications" = "시스템 설정 → 알림에서 Tankard가 꺼져 있음";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "꺼짐: HOMEBREW_NO_AUTO_UPDATE가 설정됨(%@).";
 "Official" = "공식";
 "Old version removed by cleanup" = "정리로 이전 버전이 삭제됨";
 "Old versions" = "이전 버전";
-"Old versions, stale downloads and old logs. Nothing you use is removed." = "이전 버전, 오래된 다운로드, 오래된 로그입니다. 사용 중인 것은 제거되지 않습니다.";
+"Old versions, stale downloads and old logs. The versions you use now stay installed." = "이전 버전, 오래된 다운로드, 오래된 로그입니다. 지금 사용 중인 버전은 설치된 채로 남습니다.";
 "Older now (%lld)" = "현재 이전 버전 (%lld)";
 "On disk" = "디스크에 있음";
 "One at a time through Tankard's queue. Each is recorded in History." = "Tankard의 대기열을 통해 하나씩 실행합니다. 각각 기록에 남습니다.";
@@ -771,6 +776,7 @@
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Homebrew와 함께 설치된 모든 패키지(formula %lld개, cask %lld개)를 제거합니다. 되돌릴 수 없습니다.";
 "Removes all installed versions of %@ (%@)." = "%1$@의 설치된 모든 버전(%2$@)을 제거합니다.";
 "Removes all installed versions of %@ (%@). Its dependencies stay installed." = "%1$@의 설치된 모든 버전(%2$@)을 제거합니다. 의존성은 설치된 채로 남습니다.";
+"Removes old versions you could roll back to" = "되돌릴 수 있는 이전 버전을 제거합니다";
 "Removes old versions, stale downloads and old logs" = "이전 버전, 오래된 다운로드, 오래된 로그를 제거합니다";
 "Remove…" = "제거…";
 "Removing tap" = "tap 제거 중";
@@ -784,6 +790,8 @@
 "Restore" = "복원";
 "Restore Plan…" = "복원 계획…";
 "Restore Points" = "복원 지점";
+"Restore Points can't roll back to these after Clean Up." = "정리 후에는 복원 지점으로 이 버전들로 되돌릴 수 없습니다.";
+"Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points." = "정리 후에는 복원 지점으로 이 버전들로 되돌릴 수 없습니다. 이전 버전을 남기려면 복원 지점에서 \"업그레이드 후 이전 버전 유지\"를 켜세요.";
 "Restore Points…" = "복원 지점…";
 "Restore never uninstalls what was added. Uninstall it from its details if you don't want it." = "복원해도 추가된 항목은 제거되지 않습니다. 필요 없으면 세부 정보에서 제거하세요.";
 "Restore plan" = "복원 계획";
@@ -948,6 +956,10 @@
 "Tankard Updates" = "Tankard 업데이트";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard는 대화상자에서 암호를 묻고 sudo에만 전달하며, 절대 저장하지 않습니다. 취소하면 시트에 터미널용 명령이 표시됩니다.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "여기서는 암호를 물을 수 없으므로 시트에 터미널용 명령이 표시됩니다.";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
+"Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard가 Homebrew의 패키지 목록을 내려받기 위해 네트워크에 연결하지 못했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 다음 다시 시도하세요.";
+"Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard가 tap의 패키지를 읽지 못했습니다. 잠시 후 다시 시도하세요.";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard가 Brewfile에서 이 tap의 출처를 읽지 못했습니다. 아래의 터미널 명령을 사용하세요.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard가 아직 이 Mac의 Homebrew 접두사를 읽지 않았습니다. 먼저 새로 고치세요.";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard가 %@을(를) 자동으로 업그레이드하고 있습니다(%lld/%lld).";
 "Tankard is upgrading %@ automatically." = "Tankard가 %@을(를) 자동으로 업그레이드하고 있습니다.";
@@ -965,6 +977,7 @@
 "Tankard quit; the next automatic run upgrades it" = "Tankard가 종료되었습니다. 다음 자동 실행에서 업그레이드됩니다";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOS가 앱 관리를 적용하도록 Tankard를 다시 시작했습니다. 다시 실행을 클릭하기 전에는 아무것도 실행되지 않습니다.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 ▸ 일반에서 끌 수 있습니다.";
+"Tankard runs:" = "Tankard가 실행하는 명령:";
 "Tankard update available" = "Tankard 업데이트 사용 가능";
 "Tankard updates itself through brew" = "Tankard는 brew를 통해 스스로 업데이트합니다";
 "Tankard upgraded %lld package" = "Tankard가 패키지 %lld개를 업그레이드함";
@@ -1264,6 +1277,7 @@
 "pin changed" = "고정 변경됨";
 "pinned" = "고정됨";
 "reinstalled" = "재설치됨";
+"result unknown" = "결과 알 수 없음";
 "set to update itself" = "자체 업데이트로 설정됨";
 "source" = "소스";
 "still outdated after brew upgrade" = "brew upgrade 후에도 여전히 오래됨";

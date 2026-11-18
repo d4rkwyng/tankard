@@ -171,6 +171,7 @@
 "Add Tap…" = "Add Tap…";
 "Add tap" = "Add tap";
 "Add tap?" = "Add tap?";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Add the taps first (Add Tap…), then check the Brewfile again to install the rest.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Add, Remove and Trust go through Tankard's queue and History.";
 "Added (%lld)" = "Added (%lld)";
 "Adding tap" = "Adding tap";
@@ -534,6 +535,7 @@
 "Keep Running" = "Keep Running";
 "Keep the previous version after upgrades" = "Keep the previous version after upgrades";
 "Keeps %@; upgrades skip it" = "Keeps %@; upgrades skip it";
+"Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on." = "Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on.";
 "Keg-only" = "Keg-only";
 "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.";
 "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default.";
@@ -653,11 +655,14 @@
 "Nothing changed since then" = "Nothing changed since then";
 "Nothing here" = "Nothing here";
 "Nothing here can be restored automatically" = "Nothing here can be restored automatically";
+"Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again.";
+"Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nothing installed comes from it. brew deletes its local copy; you can add it again later.";
 "Nothing matches" = "Nothing matches";
 "Nothing matches “%@”." = "Nothing matches “%@”.";
 "Nothing runs on its own after the relaunch." = "Nothing runs on its own after the relaunch.";
 "Nothing to clean up" = "Nothing to clean up";
 "Nothing to remove" = "Nothing to remove";
+"Nothing to restore" = "Nothing to restore";
 "Nothing to retry" = "Nothing to retry";
 "Nothing to upgrade" = "Nothing to upgrade";
 "Nothing upgraded" = "Nothing upgraded";
@@ -668,13 +673,13 @@
 "OK" = "OK";
 "Off" = "Off";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask.";
-"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version.";
 "Off for Tankard in System Settings → Notifications" = "Off for Tankard in System Settings → Notifications";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@).";
 "Official" = "Official";
 "Old version removed by cleanup" = "Old version removed by cleanup";
 "Old versions" = "Old versions";
-"Old versions, stale downloads and old logs. Nothing you use is removed." = "Old versions, stale downloads and old logs. Nothing you use is removed.";
+"Old versions, stale downloads and old logs. The versions you use now stay installed." = "Old versions, stale downloads and old logs. The versions you use now stay installed.";
 "Older now (%lld)" = "Older now (%lld)";
 "On disk" = "On disk";
 "One at a time through Tankard's queue. Each is recorded in History." = "One at a time through Tankard's queue. Each is recorded in History.";
@@ -771,6 +776,7 @@
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone.";
 "Removes all installed versions of %@ (%@)." = "Removes all installed versions of %@ (%@).";
 "Removes all installed versions of %@ (%@). Its dependencies stay installed." = "Removes all installed versions of %@ (%@). Its dependencies stay installed.";
+"Removes old versions you could roll back to" = "Removes old versions you could roll back to";
 "Removes old versions, stale downloads and old logs" = "Removes old versions, stale downloads and old logs";
 "Remove…" = "Remove…";
 "Removing tap" = "Removing tap";
@@ -784,6 +790,8 @@
 "Restore" = "Restore";
 "Restore Plan…" = "Restore Plan…";
 "Restore Points" = "Restore Points";
+"Restore Points can't roll back to these after Clean Up." = "Restore Points can't roll back to these after Clean Up.";
+"Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points." = "Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points.";
 "Restore Points…" = "Restore Points…";
 "Restore never uninstalls what was added. Uninstall it from its details if you don't want it." = "Restore never uninstalls what was added. Uninstall it from its details if you don't want it.";
 "Restore plan" = "Restore plan";
@@ -948,6 +956,10 @@
 "Tankard Updates" = "Tankard Updates";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard can't ask for it here, so the sheet will show the command for Terminal.";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard couldn't load Homebrew's list of packages. Try again in a moment.";
+"Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again.";
+"Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard couldn't read the packages in your taps. Try again in a moment.";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first.";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard is upgrading %@ automatically (%lld of %lld).";
 "Tankard is upgrading %@ automatically." = "Tankard is upgrading %@ automatically.";
@@ -965,6 +977,7 @@
 "Tankard quit; the next automatic run upgrades it" = "Tankard quit; the next automatic run upgrades it";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off.";
+"Tankard runs:" = "Tankard runs:";
 "Tankard update available" = "Tankard update available";
 "Tankard updates itself through brew" = "Tankard updates itself through brew";
 "Tankard upgraded %lld package" = "Tankard upgraded %lld package";
@@ -1264,6 +1277,7 @@
 "pin changed" = "pin changed";
 "pinned" = "pinned";
 "reinstalled" = "reinstalled";
+"result unknown" = "result unknown";
 "set to update itself" = "set to update itself";
 "source" = "source";
 "still outdated after brew upgrade" = "still outdated after brew upgrade";

@@ -171,6 +171,7 @@
 "Add Tap…" = "Añadir tap…";
 "Add tap" = "Añadir tap";
 "Add tap?" = "¿Añadir tap?";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Añade primero los taps (Añadir tap…) y vuelve a comprobar el Brewfile para instalar el resto.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Añadir, Quitar y Confiar pasan por la cola y el Historial de Tankard.";
 "Added (%lld)" = "Añadidos (%lld)";
 "Adding tap" = "Añadiendo tap";
@@ -534,6 +535,7 @@
 "Keep Running" = "Seguir";
 "Keep the previous version after upgrades" = "Conservar la versión anterior tras las actualizaciones";
 "Keeps %@; upgrades skip it" = "Conserva %@; las actualizaciones lo omiten";
+"Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on." = "Conserva las versiones anteriores de %@ para los Puntos de restauración, porque «Conservar la versión anterior tras las actualizaciones» está activado.";
 "Keg-only" = "Keg-only";
 "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@. No se enlaza a propósito en las carpetas compartidas de Homebrew, así que la shell no encuentra sus comandos por defecto.";
 "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: no se enlaza a propósito en las carpetas compartidas de Homebrew, así que la shell no encuentra sus comandos por defecto.";
@@ -653,11 +655,14 @@
 "Nothing changed since then" = "No ha cambiado nada desde entonces";
 "Nothing here" = "Nada aquí";
 "Nothing here can be restored automatically" = "Nada de aquí se puede restaurar automáticamente";
+"Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nada de lo instalado viene de él. brew borra su copia local y deja de confiar en él; si lo vuelves a añadir más adelante, Tankard volverá a preguntar.";
+"Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nada de lo instalado viene de él. brew borra su copia local; puedes volver a añadirlo más adelante.";
 "Nothing matches" = "Sin coincidencias";
 "Nothing matches “%@”." = "Sin coincidencias para “%@”.";
 "Nothing runs on its own after the relaunch." = "Nada se ejecuta solo después de reiniciar.";
 "Nothing to clean up" = "Nada que limpiar";
 "Nothing to remove" = "Nada que quitar";
+"Nothing to restore" = "Nada que restaurar";
 "Nothing to retry" = "Nada que reintentar";
 "Nothing to upgrade" = "Nada que actualizar";
 "Nothing upgraded" = "No se actualizó nada";
@@ -668,13 +673,13 @@
 "OK" = "OK";
 "Off" = "Desactivado";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "Desactivado por defecto. Muestra un aviso en el menú de la barra de menús cuando un análisis encuentra vulnerabilidades que antes no estaban. Analizar ahora (aquí) o Homebrew ▸ Buscar vulnerabilidades ejecuta un análisis cada vez que lo pidas.";
-"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Desactivado por defecto. Las actualizaciones, instalaciones y reinstalaciones de Tankard (manuales y de actualización automática) se ejecutan entonces con HOMEBREW_NO_INSTALL_CLEANUP=1 (se muestra en el comando), así que brew conserva la versión anterior en el disco y los Puntos de restauración pueden volver a ella. Cada versión conservada ocupa espacio en disco hasta que Limpiar la elimina. La limpieza periódica propia de brew, ejecutada por brew fuera de Tankard, también puede eliminarla. Los casks siempre reemplazan la versión anterior.";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "Desactivado por defecto. Las actualizaciones, instalaciones y reinstalaciones de Tankard (manuales y de actualización automática) se ejecutan entonces con HOMEBREW_NO_INSTALL_CLEANUP=1 (se muestra en el comando), así que brew conserva la versión anterior en el disco y los Puntos de restauración pueden volver a ella. Cada versión conservada ocupa espacio en disco. Limpiar no toca las versiones conservadas mientras esto está activado; desactívalo primero para eliminarlas. La limpieza periódica propia de brew, ejecutada por brew fuera de Tankard, también puede eliminarla. Los casks siempre reemplazan la versión anterior.";
 "Off for Tankard in System Settings → Notifications" = "Desactivado para Tankard en Ajustes del Sistema → Notificaciones";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "Desactivado: HOMEBREW_NO_AUTO_UPDATE está definido (%@).";
 "Official" = "Oficial";
 "Old version removed by cleanup" = "Versión antigua eliminada por la limpieza";
 "Old versions" = "Versiones antiguas";
-"Old versions, stale downloads and old logs. Nothing you use is removed." = "Versiones antiguas, descargas obsoletas y registros antiguos. No se elimina nada que uses.";
+"Old versions, stale downloads and old logs. The versions you use now stay installed." = "Versiones antiguas, descargas obsoletas y registros antiguos. Las versiones que usas ahora siguen instaladas.";
 "Older now (%lld)" = "Ahora más antiguo (%lld)";
 "On disk" = "En disco";
 "One at a time through Tankard's queue. Each is recorded in History." = "Una a una mediante la cola de Tankard. Cada una queda registrada en el Historial.";
@@ -771,6 +776,7 @@
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Quita Homebrew y todos los paquetes instalados con él: %lld formulae y %lld casks. No se puede deshacer.";
 "Removes all installed versions of %@ (%@)." = "Elimina todas las versiones instaladas de %1$@ (%2$@).";
 "Removes all installed versions of %@ (%@). Its dependencies stay installed." = "Elimina todas las versiones instaladas de %1$@ (%2$@). Sus dependencias siguen instaladas.";
+"Removes old versions you could roll back to" = "Elimina versiones antiguas a las que podrías volver";
 "Removes old versions, stale downloads and old logs" = "Quita versiones antiguas, descargas obsoletas y registros antiguos";
 "Remove…" = "Quitar…";
 "Removing tap" = "Quitando el tap";
@@ -784,6 +790,8 @@
 "Restore" = "Restaurar";
 "Restore Plan…" = "Plan de restauración…";
 "Restore Points" = "Puntos de restauración";
+"Restore Points can't roll back to these after Clean Up." = "Los Puntos de restauración no podrán volver a estas versiones después de Limpiar.";
+"Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points." = "Los Puntos de restauración no podrán volver a estas versiones después de Limpiar. Para conservar versiones antiguas, activa «Conservar la versión anterior tras las actualizaciones» en Puntos de restauración.";
 "Restore Points…" = "Puntos de restauración…";
 "Restore never uninstalls what was added. Uninstall it from its details if you don't want it." = "Restaurar nunca desinstala lo que se añadió. Desinstálalo desde sus detalles si no lo quieres.";
 "Restore plan" = "Plan de restauración";
@@ -948,6 +956,10 @@
 "Tankard Updates" = "Actualizaciones de Tankard";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard la pide en un cuadro de diálogo y solo se la pasa a sudo; nunca la guarda. Si cancelas, la hoja muestra el comando para Terminal.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard no puede pedirla aquí, así que la hoja mostrará el comando para Terminal.";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento.";
+"Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard no pudo acceder a la red para descargar la lista de paquetes de Homebrew. Comprueba la conexión a Internet (o una VPN o un proxy) y vuelve a intentarlo.";
+"Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard no pudo leer los paquetes de tus taps. Inténtalo de nuevo en un momento.";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard no pudo leer en el Brewfile de dónde viene este tap. Usa el comando de Terminal de abajo.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard aún no ha leído el prefijo de Homebrew de este Mac. Actualiza primero.";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard está actualizando %@ automáticamente (%lld de %lld).";
 "Tankard is upgrading %@ automatically." = "Tankard está actualizando %@ automáticamente.";
@@ -965,6 +977,7 @@
 "Tankard quit; the next automatic run upgrades it" = "Tankard se cerró; la próxima ejecución automática lo actualiza";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard se reinició para que macOS aplique Gestión de apps. No se ejecuta nada hasta que hagas clic en Ejecutar de nuevo.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard ejecuta brew update en segundo plano para que los números estén al día. Se desactiva en Ajustes ▸ General.";
+"Tankard runs:" = "Tankard ejecuta:";
 "Tankard update available" = "Actualización de Tankard disponible";
 "Tankard updates itself through brew" = "Tankard se actualiza a sí mismo mediante brew";
 "Tankard upgraded %lld package" = "Tankard actualizó %lld paquete";
@@ -1264,6 +1277,7 @@
 "pin changed" = "fijado modificado";
 "pinned" = "fijado";
 "reinstalled" = "reinstalado";
+"result unknown" = "resultado desconocido";
 "set to update itself" = "configurada para actualizarse sola";
 "source" = "código fuente";
 "still outdated after brew upgrade" = "sigue desactualizado tras brew upgrade";

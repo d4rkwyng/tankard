@@ -171,6 +171,7 @@
 "Add Tap…" = "tapを追加…";
 "Add tap" = "tapを追加";
 "Add tap?" = "tapを追加しますか?";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "まずtapを追加し（「tapを追加…」）、それからBrewfileをもう一度確認して残りをインストールしてください。";
 "Add, Remove and Trust go through Tankard's queue and History." = "追加、削除、信頼はTankardのキューと履歴を通じて行われます。";
 "Added (%lld)" = "追加済み(%lld)";
 "Adding tap" = "tapを追加中";
@@ -534,6 +535,7 @@
 "Keep Running" = "続行";
 "Keep the previous version after upgrades" = "アップグレード後も以前のバージョンを残す";
 "Keeps %@; upgrades skip it" = "%@を維持します。アップグレードではスキップされます";
+"Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on." = "「アップグレード後も以前のバージョンを残す」がオンなので、復元ポイントのために %@ の古いバージョンを残します。";
 "Keg-only" = "Keg-only";
 "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: %@。意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。";
 "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only: 意図的にHomebrewの共有フォルダへリンクされていないため、シェルはそのコマンドを標準では見つけません。";
@@ -653,11 +655,14 @@
 "Nothing changed since then" = "それ以降の変更はありません";
 "Nothing here" = "ここには何もありません";
 "Nothing here can be restored automatically" = "ここにある項目は自動で復元できません";
+"Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除し、このtapの信頼も解除します。後でもう一度追加すると、Tankardは再び確認します。";
+"Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除します。後でもう一度追加できます。";
 "Nothing matches" = "一致するものはありません";
 "Nothing matches “%@”." = "「%@」に一致するものはありません。";
 "Nothing runs on its own after the relaunch." = "再起動後に自動で実行されるものはありません。";
 "Nothing to clean up" = "クリーンアップするものはありません";
 "Nothing to remove" = "削除するものはありません";
+"Nothing to restore" = "復元するものはありません";
 "Nothing to retry" = "再試行するものはありません";
 "Nothing to upgrade" = "アップグレードするものはありません";
 "Nothing upgraded" = "アップグレードされたものはありません";
@@ -668,13 +673,13 @@
 "OK" = "OK";
 "Off" = "オフ";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "デフォルトではオフです。スキャンで新たな脆弱性が見つかったとき、メニューバーのメニューに通知を表示します。ここの「今すぐスキャン」または Homebrew ▸ 脆弱性をスキャン を選ぶと、そのたびに1回スキャンを実行します。";
-"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "デフォルトではオフです。オンにすると、Tankardによるアップグレード、インストール、再インストール（手動および自動アップデート）は HOMEBREW_NO_INSTALL_CLEANUP=1 付きで実行され（コマンドに表示されます）、brewは古いバージョンをディスクに残すため、復元ポイントでロールバックできます。残された各バージョンは、クリーンアップで削除するまでディスク容量を使用します。Tankardの外でbrewが行う定期クリーンアップでも削除される場合があります。caskは常に古いバージョンを置き換えます。";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "デフォルトではオフです。オンにすると、Tankardによるアップグレード、インストール、再インストール（手動および自動アップデート）は HOMEBREW_NO_INSTALL_CLEANUP=1 付きで実行され（コマンドに表示されます）、brewは古いバージョンをディスクに残すため、復元ポイントでロールバックできます。残された各バージョンはディスク容量を使用します。この設定がオンの間、クリーンアップは残されたバージョンを削除しません。削除するには先にこの設定をオフにしてください。Tankardの外でbrewが行う定期クリーンアップでも削除される場合があります。caskは常に古いバージョンを置き換えます。";
 "Off for Tankard in System Settings → Notifications" = "システム設定 → 通知 でTankardがオフになっています";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "オフ：HOMEBREW_NO_AUTO_UPDATE が設定されています（%@）。";
 "Official" = "公式";
 "Old version removed by cleanup" = "クリーンアップで古いバージョンが削除されました";
 "Old versions" = "古いバージョン";
-"Old versions, stale downloads and old logs. Nothing you use is removed." = "古いバージョン、不要なダウンロード、古いログ。使用中のものは削除されません。";
+"Old versions, stale downloads and old logs. The versions you use now stay installed." = "古いバージョン、不要なダウンロード、古いログ。いま使っているバージョンはインストールされたままです。";
 "Older now (%lld)" = "以前のバージョン (%lld)";
 "On disk" = "ディスク上";
 "One at a time through Tankard's queue. Each is recorded in History." = "Tankardのキューで1つずつ実行されます。それぞれ履歴に記録されます。";
@@ -771,6 +776,7 @@
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Homebrewと、それでインストールしたすべてのパッケージ（%lld個のformulaと%lld個のcask）を削除します。この操作は取り消せません。";
 "Removes all installed versions of %@ (%@)." = "%1$@ のインストール済みの全バージョン（%2$@）を削除します。";
 "Removes all installed versions of %@ (%@). Its dependencies stay installed." = "%1$@ のインストール済みの全バージョン（%2$@）を削除します。依存関係はそのまま残ります。";
+"Removes old versions you could roll back to" = "ロールバック先にできる古いバージョンを削除します";
 "Removes old versions, stale downloads and old logs" = "古いバージョン、不要なダウンロード、古いログを削除します";
 "Remove…" = "削除…";
 "Removing tap" = "tapを削除中";
@@ -784,6 +790,8 @@
 "Restore" = "復元";
 "Restore Plan…" = "復元プラン…";
 "Restore Points" = "復元ポイント";
+"Restore Points can't roll back to these after Clean Up." = "クリーンアップ後は、復元ポイントでこれらのバージョンに戻せなくなります。";
+"Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points." = "クリーンアップ後は、復元ポイントでこれらのバージョンに戻せなくなります。古いバージョンを残すには、復元ポイントで「アップグレード後も以前のバージョンを残す」をオンにしてください。";
 "Restore Points…" = "復元ポイント…";
 "Restore never uninstalls what was added. Uninstall it from its details if you don't want it." = "復元しても、追加されたものはアンインストールされません。不要な場合は、詳細からアンインストールしてください。";
 "Restore plan" = "復元プラン";
@@ -948,6 +956,10 @@
 "Tankard Updates" = "Tankardのアップデート";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankardはダイアログでパスワードを尋ね、sudoにのみ渡します。保存することはありません。キャンセルすると、シートにターミナル用のコマンドが表示されます。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "ここではパスワードを尋ねられないため、シートにターミナル用のコマンドが表示されます。";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
+"Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";
+"Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankardはtap内のパッケージを読み取れませんでした。少し待ってからもう一度お試しください。";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "TankardはBrewfileからこのtapの取得元を読み取れませんでした。下のターミナルコマンドを使ってください。";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankardはこの MacのHomebrewのprefixをまだ読み込んでいません。先に更新してください。";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard は %@ を自動でアップグレード中です(%lld/%lld)。";
 "Tankard is upgrading %@ automatically." = "Tankard は %@ を自動でアップグレード中です。";
@@ -965,6 +977,7 @@
 "Tankard quit; the next automatic run upgrades it" = "Tankard が終了しました。次回の自動実行でアップグレードされます";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOSがApp管理を適用できるようTankardを再起動しました。「もう一度実行」をクリックするまで何も実行されません。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」▸「一般」でオフにできます。";
+"Tankard runs:" = "Tankardが実行するコマンド:";
 "Tankard update available" = "Tankardのアップデートがあります";
 "Tankard updates itself through brew" = "Tankardはbrew経由で自己アップデートします";
 "Tankard upgraded %lld package" = "Tankardが%lld個のパッケージをアップグレードしました";
@@ -1264,6 +1277,7 @@
 "pin changed" = "ピン留めを変更しました";
 "pinned" = "ピン留め済み";
 "reinstalled" = "再インストール済み";
+"result unknown" = "結果不明";
 "set to update itself" = "自己更新に設定";
 "source" = "ソース";
 "still outdated after brew upgrade" = "brew upgrade後も古いままです";

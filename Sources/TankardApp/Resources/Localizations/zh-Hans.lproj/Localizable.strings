@@ -171,6 +171,7 @@
 "Add Tap…" = "添加 Tap…";
 "Add tap" = "添加 tap";
 "Add tap?" = "添加 tap？";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "请先添加这些 Tap（添加 Tap…），然后再次检查 Brewfile 以安装其余项目。";
 "Add, Remove and Trust go through Tankard's queue and History." = "“添加”“移除”和“信任”会经过 Tankard 的队列和历史记录。";
 "Added (%lld)" = "已添加（%lld）";
 "Adding tap" = "正在添加 tap";
@@ -534,6 +535,7 @@
 "Keep Running" = "继续运行";
 "Keep the previous version after upgrades" = "升级后保留上一个版本";
 "Keeps %@; upgrades skip it" = "保留 %@；升级会跳过它";
+"Keeps the old versions of %@ for Restore Points, because “Keep the previous version after upgrades” is on." = "由于“升级后保留上一个版本”已开启，将为恢复点保留 %@ 的旧版本。";
 "Keg-only" = "Keg-only";
 "Keg-only: %@. Deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only：%@。有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。";
 "Keg-only: deliberately left out of Homebrew's shared folders, so your shell doesn't find its commands by default." = "Keg-only：有意不链接到 Homebrew 的共享文件夹，因此 shell 默认找不到它的命令。";
@@ -653,11 +655,14 @@
 "Nothing changed since then" = "此后没有变化";
 "Nothing here" = "这里没有内容";
 "Nothing here can be restored automatically" = "这里的内容无法自动恢复";
+"Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "没有已安装的内容来自它。brew 会删除其本地副本并不再信任它；以后再次添加时，Tankard 会再次询问。";
+"Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "没有已安装的内容来自它。brew 会删除其本地副本；你以后可以再次添加。";
 "Nothing matches" = "没有匹配项";
 "Nothing matches “%@”." = "没有与“%@”匹配的项目。";
 "Nothing runs on its own after the relaunch." = "重新启动后不会自动运行任何操作。";
 "Nothing to clean up" = "无需清理";
 "Nothing to remove" = "没有可移除的项目";
+"Nothing to restore" = "没有可恢复的内容";
 "Nothing to retry" = "没有可重试的项目";
 "Nothing to upgrade" = "没有可升级的项目";
 "Nothing upgraded" = "没有已升级的项目";
@@ -668,13 +673,13 @@
 "OK" = "好";
 "Off" = "关";
 "Off by default. Shows a notice in the menu-bar menu when a scan finds vulnerabilities that weren't there before. Scan Now (here) or Homebrew ▸ Scan for Vulnerabilities runs one scan whenever you ask." = "默认关闭。当扫描发现以前没有的漏洞时，在菜单栏菜单中显示通知。随时可在此处点按“立即扫描”，或使用 Homebrew ▸ 扫描漏洞 来执行一次扫描。";
-"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space until Clean Up removes it. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "默认关闭。此时 Tankard 的升级、安装和重新安装（手动和自动更新）会带 HOMEBREW_NO_INSTALL_CLEANUP=1 运行（会显示在命令中），因此 brew 会在磁盘上保留旧版本，恢复点即可回滚。保留的每个版本都会占用磁盘空间，直到“清理”将其移除。Tankard 之外由 brew 自身执行的定期清理也可能将其移除。Cask 始终会替换旧版本。";
+"Off by default. Tankard's upgrades, installs and reinstalls (manual and auto-update) then run with HOMEBREW_NO_INSTALL_CLEANUP=1 (shown in the command), so brew keeps the old version on disk and Restore Points can roll it back. Each kept version uses disk space. Clean Up leaves kept versions alone while this is on; turn it off first to remove them. brew's own periodic cleanup, run by brew outside Tankard, can remove it too. Casks always replace the old version." = "默认关闭。此时 Tankard 的升级、安装和重新安装（手动和自动更新）会带 HOMEBREW_NO_INSTALL_CLEANUP=1 运行（会显示在命令中），因此 brew 会在磁盘上保留旧版本，恢复点即可回滚。保留的每个版本都会占用磁盘空间。此项开启时，“清理”不会动保留的版本；要移除它们，请先关闭此项。Tankard 之外由 brew 自身执行的定期清理也可能将其移除。Cask 始终会替换旧版本。";
 "Off for Tankard in System Settings → Notifications" = "在“系统设置 → 通知”中，Tankard 的通知已关闭";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "已关闭：已设置 HOMEBREW_NO_AUTO_UPDATE（%@）。";
 "Official" = "官方";
 "Old version removed by cleanup" = "旧版本已被清理删除";
 "Old versions" = "旧版本";
-"Old versions, stale downloads and old logs. Nothing you use is removed." = "旧版本、过期的下载和旧日志。不会移除你正在使用的任何内容。";
+"Old versions, stale downloads and old logs. The versions you use now stay installed." = "旧版本、过期的下载和旧日志。你现在使用的版本会保持安装。";
 "Older now (%lld)" = "现为较旧版本 (%lld)";
 "On disk" = "磁盘上";
 "One at a time through Tankard's queue. Each is recorded in History." = "通过 Tankard 的队列逐个执行。每项都会记录在“历史记录”中。";
@@ -771,6 +776,7 @@
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "移除 Homebrew 及用它安装的所有软件包：%lld 个 formula 和 %lld 个 cask。此操作无法撤销。";
 "Removes all installed versions of %@ (%@)." = "移除 %1$@ 的所有已安装版本（%2$@）。";
 "Removes all installed versions of %@ (%@). Its dependencies stay installed." = "移除 %1$@ 的所有已安装版本（%2$@）。其依赖项保持安装。";
+"Removes old versions you could roll back to" = "会移除你可以回滚到的旧版本";
 "Removes old versions, stale downloads and old logs" = "移除旧版本、过期的下载和旧日志";
 "Remove…" = "移除…";
 "Removing tap" = "正在移除 tap";
@@ -784,6 +790,8 @@
 "Restore" = "恢复";
 "Restore Plan…" = "恢复计划…";
 "Restore Points" = "恢复点";
+"Restore Points can't roll back to these after Clean Up." = "清理之后，恢复点将无法回滚到这些版本。";
+"Restore Points can't roll back to these after Clean Up. To keep old versions, turn on “Keep the previous version after upgrades” in Restore Points." = "清理之后，恢复点将无法回滚到这些版本。要保留旧版本，请在恢复点中开启“升级后保留上一个版本”。";
 "Restore Points…" = "恢复点…";
 "Restore never uninstalls what was added. Uninstall it from its details if you don't want it." = "恢复不会卸载后来新增的内容。若不需要，请在其详情中卸载。";
 "Restore plan" = "恢复计划";
@@ -948,6 +956,10 @@
 "Tankard Updates" = "Tankard 更新";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard 会在对话框中询问密码，并只把它交给 sudo；从不存储。如果取消，表单会显示用于“终端”的命令。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard 无法在这里询问密码，因此表单会显示用于“终端”的命令。";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
+"Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。";
+"Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard 无法读取你的 Tap 中的软件包。请稍后重试。";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard 无法从 Brewfile 中读出此 Tap 的来源。请使用下方的终端命令。";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard 正在自动升级 %@(第 %lld 个,共 %lld 个)。";
 "Tankard is upgrading %@ automatically." = "Tankard 正在自动升级 %@。";
@@ -965,6 +977,7 @@
 "Tankard quit; the next automatic run upgrades it" = "Tankard 已退出;下次自动运行会升级它";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard 已重新启动，以便 macOS 应用“App 管理”。在你点按“再次运行”之前不会运行任何操作。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”▸“通用”中关闭。";
+"Tankard runs:" = "Tankard 会运行：";
 "Tankard update available" = "Tankard 有可用更新";
 "Tankard updates itself through brew" = "Tankard 通过 brew 自行更新";
 "Tankard upgraded %lld package" = "Tankard 已升级 %lld 个软件包";
@@ -1264,6 +1277,7 @@
 "pin changed" = "固定状态已更改";
 "pinned" = "已固定";
 "reinstalled" = "已重新安装";
+"result unknown" = "结果未知";
 "set to update itself" = "设为自行更新";
 "source" = "源码";
 "still outdated after brew upgrade" = "brew upgrade 后仍然过期";
