@@ -16,10 +16,24 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         case succeeded, failed, cancelled
         /// brew couldn't be started at all.
         case notStarted
+        /// 0.8.5: a value this build doesn't know (written by a newer
+        /// Tankard, or edited by hand). Shown as "result unknown".
+        case unknown
+
+        public init(from decoder: Decoder) throws {
+            let raw = try decoder.singleValueContainer().decode(String.self)
+            self = Outcome(rawValue: raw) ?? .unknown
+        }
     }
 
     public enum Origin: String, Codable, Sendable {
         case user, autoUpdate
+
+        /// 0.8.5: an origin this build doesn't know reads as the user's.
+        public init(from decoder: Decoder) throws {
+            let raw = try decoder.singleValueContainer().decode(String.self)
+            self = Origin(rawValue: raw) ?? .user
+        }
     }
 
     public var id: UUID
@@ -61,6 +75,32 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         self.origin = origin
         self.failure = failure
         self.outputTail = outputTail
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, startedAt, duration, command, arguments, outcome, exitCode, origin, failure, outputTail
+        case quietReason, quietCount, quietSince, builtFromSource
+    }
+
+    /// 0.8.5 (M2): the fields this entry can't do without must be there;
+    /// the rest are read leniently, so a value this build doesn't know
+    /// doesn't cost the entry (and an entry never costs the file).
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        startedAt = try c.decode(Date.self, forKey: .startedAt)
+        duration = (try? c.decode(TimeInterval.self, forKey: .duration)) ?? 0
+        command = try c.decode(String.self, forKey: .command)
+        arguments = (try? c.decode([String].self, forKey: .arguments)) ?? []
+        outcome = (try? c.decode(Outcome.self, forKey: .outcome)) ?? .unknown
+        exitCode = try? c.decodeIfPresent(Int32.self, forKey: .exitCode)
+        origin = (try? c.decode(Origin.self, forKey: .origin)) ?? .user
+        failure = try? c.decodeIfPresent(String.self, forKey: .failure)
+        outputTail = (try? c.decode([String].self, forKey: .outputTail)) ?? []
+        quietReason = try? c.decodeIfPresent(ScheduledQuietReason.self, forKey: .quietReason)
+        quietCount = try? c.decodeIfPresent(Int.self, forKey: .quietCount)
+        quietSince = try? c.decodeIfPresent(Date.self, forKey: .quietSince)
+        builtFromSource = try? c.decodeIfPresent(Bool.self, forKey: .builtFromSource)
     }
 
     public var category: HistoryCategory { HistoryCategory(arguments: arguments) }
@@ -110,6 +150,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         case .failed: return exitCode.map { code in String(localized: "failed (exit \(code))") } ?? String(localized: "failed")
         case .cancelled: return String(localized: "stopped")
         case .notStarted: return String(localized: "didn't start")
+        case .unknown: return String(localized: "result unknown")
         }
     }
 
@@ -247,14 +288,86 @@ public final class HistoryLog {
     }
 
     nonisolated static func load(_ url: URL) -> [HistoryEntry]? {
-        guard let data = try? Data(contentsOf: url) else { return nil }
-        return (try? StatusReport.jsonDecoder().decode([HistoryEntry].self, from: data)).map { Array($0.prefix(maxEntries)) }
+        SafeJSONList.load(HistoryEntry.self, from: url).map { Array($0.prefix(maxEntries)) }
     }
 
     private func save() {
         guard let url else { return }
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? StatusReport.jsonEncoder().encode(entries).write(to: url, options: .atomic)
+    }
+}
+
+/// 0.8.5 (bug hunt M2): History's and the Auto-update log's files, read
+/// entry by entry. One entry Tankard can't read used to make the whole list
+/// load as empty, and the next write then replaced the file (5,000 entries
+/// became 2). Now an entry it can't read is skipped; the file as it was is
+/// copied aside (`<name>.unreadable-<date>`) before anything is written over
+/// it, and a file it can't read at all is moved aside and the list starts
+/// empty.
+enum SafeJSONList {
+    /// Reads any one element, so the list can step past one it can't decode.
+    private struct Skip: Decodable {
+        init(from decoder: Decoder) throws {}
+    }
+
+    private struct Lossy<T: Decodable>: Decodable {
+        var items: [T] = []
+        var dropped = 0
+        init(from decoder: Decoder) throws {
+            var c = try decoder.unkeyedContainer()
+            while !c.isAtEnd {
+                if let v = try? c.decode(T.self) {
+                    items.append(v)
+                    continue
+                }
+                dropped += 1
+                // A failed decode doesn't move the container on.
+                if (try? c.decode(Skip.self)) == nil {
+                    dropped += max(0, (c.count ?? c.currentIndex) - c.currentIndex - 1)
+                    break
+                }
+            }
+        }
+    }
+
+    /// nil: no file. Otherwise the entries it could read.
+    static func load<T: Decodable>(_ type: T.Type, from url: URL, now: Date = Date()) -> [T]? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        guard let list = try? StatusReport.jsonDecoder().decode(Lossy<T>.self, from: data) else {
+            setAside(url, now: now, move: true)
+            return []
+        }
+        if list.dropped > 0 { setAside(url, now: now, move: false) }
+        return list.items
+    }
+
+    /// `history.json.unreadable-20261118-142501`, beside the file.
+    static func asideURL(for url: URL, now: Date) -> URL {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyyMMdd-HHmmss"
+        var candidate = url.deletingLastPathComponent().appendingPathComponent(url.lastPathComponent + ".unreadable-" + f.string(from: now))
+        var n = 2
+        while FileManager.default.fileExists(atPath: candidate.path) {
+            candidate = url.deletingLastPathComponent()
+                .appendingPathComponent(url.lastPathComponent + ".unreadable-" + f.string(from: now) + "-\(n)")
+            n += 1
+        }
+        return candidate
+    }
+
+    private static func setAside(_ url: URL, now: Date, move: Bool) {
+        let dest = asideURL(for: url, now: now)
+        let fm = FileManager.default
+        if move {
+            if (try? fm.moveItem(at: url, to: dest)) == nil {
+                // Couldn't move it: at least don't lose it when it's replaced.
+                try? fm.copyItem(at: url, to: dest)
+            }
+        } else {
+            try? fm.copyItem(at: url, to: dest)
+        }
     }
 }
 
