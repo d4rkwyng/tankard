@@ -229,10 +229,10 @@ struct VulnerableUpgradeTests {
         store.upgradeVulnerable()
         let session = try #require(store.upgrade)
         #expect(session.items.map(\.command.arguments) == [["upgrade", "--formula", "homebrew/core/openssl@4"]])
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         // Re-read and re-scanned: 4.1.0 is what brew checked, and OSV still
         // lists it (fixes are upstream commits, no release yet).
-        #expect(await waitUntil(timeout: .seconds(10)) { !store.isRefreshing && store.insights.scanState == .idle
+        #expect(await waitUntil { !store.isRefreshing && store.insights.scanState == .idle
                 && store.packages.first { $0.name == "openssl@4" }?.upgradeAvailable == false })
         #expect(store.packages.first { $0.name == "openssl@4" }?.isVulnerable == true)
     }
@@ -259,9 +259,9 @@ struct PostInstallNotesTests {
         let targets = store.upgradable.filter { ["python@3.15", "sqlite"].contains($0.name) }
         store.startUpgrade(targets)
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         // The sheet is still open: the notes wait for it to close.
-        #expect(await waitUntil(timeout: .seconds(10)) { !store.isRefreshing && store.insights.pendingNotes != nil })
+        #expect(await waitUntil { !store.isRefreshing && store.insights.pendingNotes != nil })
         #expect(store.insights.postInstallNotes == nil)
         store.closeUpgrade()
         #expect(await waitUntil { store.insights.postInstallNotes != nil })
@@ -334,7 +334,7 @@ struct SelfUpdatingAndNoQuitTests {
         store.startUpgrade([ts])
         let session = try #require(store.upgrade)
         #expect(session.items.map(\.command.arguments) == [["upgrade", "--cask", "homebrew/cask/tailscale-app"]])
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished && !store.isRefreshing })
+        #expect(await waitUntil { session.isFinished && !store.isRefreshing })
         #expect(await waitUntil { store.packages.first { $0.name == "tailscale-app" }?.upgradeAvailable == false })
     }
 
@@ -351,7 +351,7 @@ struct SelfUpdatingAndNoQuitTests {
         #expect(f.display == "brew upgrade --formula \(formula.qualifiedName)")
         #expect(store.insights.upgradeDisplay(for: cask).hasPrefix("HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 brew upgrade --cask"))
         #expect(InsightSettings.extraEnvironment(.uninstall, cask, dontQuitApps: true).isEmpty)
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
     }
 
     @Test func settingsPersist() {

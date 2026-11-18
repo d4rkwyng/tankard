@@ -25,15 +25,16 @@ struct UninstallOrphansTests {
         store.uninstallRemovesOrphans = false
         store.requestUninstall(p)
         #expect(store.uninstallRemovesOrphans) // every sheet starts on
+        let reads = store.refreshesCompleted
         store.startUninstall(p)
         let s = try #require(store.upgrade)
         #expect(s.items.map(\.package.name) == [p.name] + orphans.map(\.name))
         #expect(s.subtitle == "With the dependencies nothing else needs")
         #expect(s.items.allSatisfy { $0.command.environment[RestorePlan.noAutoremoveKey] == "1" })
         #expect(s.items.dropFirst().allSatisfy { $0.command.arguments.prefix(2) == ["uninstall", "--formula"] })
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         #expect(s.failedItems.isEmpty)
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitForRead(store, after: reads))
         for o in orphans + [p] { #expect(!store.packages.contains { $0.id == o.id }, "\(o.name)") }
     }
 
@@ -41,12 +42,13 @@ struct UninstallOrphansTests {
         let (store, p, orphans) = try await rig()
         store.requestUninstall(p)
         store.uninstallRemovesOrphans = false
+        let reads = store.refreshesCompleted
         store.startUninstall(p)
         let s = try #require(store.upgrade)
         #expect(s.items.map(\.package.name) == [p.name])
         #expect(s.subtitle.hasPrefix("Its dependencies stay installed"))
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitUntil { s.isFinished })
+        #expect(await waitForRead(store, after: reads))
         for o in orphans { #expect(store.packages.contains { $0.id == o.id }, "\(o.name)") }
     }
 
@@ -66,7 +68,7 @@ struct UninstallOrphansTests {
         store.requestUninstall(p)
         store.startUninstall(p)
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         #expect(log.count("uninstall") == 1)   // only the package's own
         #expect(s.failedItems.map(\.package.name) == [p.name])
         #expect(s.items.dropFirst().allSatisfy { $0.state == .cancelled })
@@ -141,7 +143,7 @@ struct UninstallOrphansTests {
         store.requestUninstall(p)
         store.startUninstall(p)
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         #expect(s.failedItems.isEmpty)
         #expect(s.items.first { $0.package.id == kept.id }?.state == .skipped)
         #expect(s.items.filter { $0.package.id != kept.id }.allSatisfy { $0.state == .done })

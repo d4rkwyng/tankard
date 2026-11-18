@@ -120,7 +120,7 @@ struct PinTests {
         store.startUpgrade()
         let session = try #require(store.upgrade)
         #expect(session.items.map(\.package.name).sorted() == ["openssl@4", "python@3.15", "ruby", "xz"])
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
     }
 
     @Test func demoPinAndUnpinRoundTrip() async throws {

@@ -50,7 +50,7 @@ struct PinnedUninstallTests {
         store.requestUninstall(p)
         store.unpinAndUninstall(p)
         #expect(store.uninstallCandidate == nil)
-        #expect(await waitUntil(timeout: .seconds(10)) { store.upgrade?.isFinished == true })
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
         let session = try #require(store.upgrade)
         #expect(session.action == .uninstall)
         #expect(session.items.map(\.package.name) == [name])
@@ -98,7 +98,7 @@ struct PinnedUninstallTests {
         let p = try leaf(store)
         store.startSession(.uninstall, packages: [p], skipGate: true)
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(session.failedItems.map(\.package.name) == [p.name])
         #expect(session.title == "Uninstall finished with errors")
         #expect(session.log.lines.contains { $0.contains("is pinned (brew still exited 0)") })
@@ -112,7 +112,7 @@ struct PinnedUninstallTests {
         let q = try leaf(ok)
         ok.startUninstall(q)
         let s2 = try #require(ok.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s2.isFinished })
+        #expect(await waitUntil { s2.isFinished })
         #expect(s2.failedItems.isEmpty)
     }
 

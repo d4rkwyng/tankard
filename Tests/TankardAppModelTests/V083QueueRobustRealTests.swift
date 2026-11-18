@@ -68,7 +68,7 @@ struct V083QueueRobustRealTests {
         print("cancel-real log:\n" + s.log.lines.joined(separator: "\n"))
         #expect(s.items[0].state == .cancelled)
         #expect(s.title == "Install stopped")
-        #expect(await waitUntil(timeout: .seconds(5)) { store.history.entries.first?.outcome == .cancelled })
+        #expect(await waitUntil { store.history.entries.first?.outcome == .cancelled })
         print("cancel-real: History: \(store.history.entries.first.map { "\($0.command) → \($0.resultText)" } ?? "none")")
         #expect(await waitUntil(timeout: .seconds(60)) { !store.isRefreshing })
         #expect(!store.packages.contains { $0.kind == .cask && $0.name == token })
@@ -109,6 +109,6 @@ struct V083QueueRobustRealTests {
         #expect(s.items[0].state == .done)
         #expect(s.failedItems.isEmpty)
         #expect(s.log.lines.contains { $0.contains("running it again") })
-        #expect(await waitUntil(timeout: .seconds(5)) { store.history.entries.first?.outcome == .succeeded })
+        #expect(await waitUntil { store.history.entries.first?.outcome == .succeeded })
     }
 }

@@ -224,6 +224,7 @@ struct AdminPasswordTests {
     @Test func aCaskUpgradeGetsTheDialogAFormulaDoesNot() async throws {
         let store = await store()
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        let reads = store.refreshesCompleted
         store.startUpgrade([chrome])
         let cmd = try #require(store.upgrade?.items.first?.command)
         #expect(cmd.environment["SUDO_ASKPASS"] == Self.helper)
@@ -233,7 +234,7 @@ struct AdminPasswordTests {
         #expect(cmd.display.hasPrefix("brew upgrade --cask"))
         await #expect(waitUntil { store.upgrade?.isFinished == true })
         store.closeUpgrade()
-        await #expect(waitUntil { !store.isRefreshing })
+        await #expect(waitForRead(store, after: reads))
 
         let formula = try #require(store.packages.first { $0.kind == .formula && $0.isManualUpgradeTarget })
         store.startUpgrade([formula])

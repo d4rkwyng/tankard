@@ -415,7 +415,7 @@ struct ReplaceWithBottleTests {
         await store.start()
         store.startReplaceWithBottle()
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(await waitUntil { !store.isRefreshing && store.bottleReplaceable.isEmpty })
         let vim = try #require(store.packages.first { $0.name == "vim" })
         #expect(vim.status == .bottle)
@@ -448,7 +448,7 @@ struct CleanupStoreTests {
         #expect(session.title == "Cleaning up")
         #expect(session.items[0].command.arguments == ["cleanup"])
         #expect(session.items[0].command.display == "brew cleanup")
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(session.title == "Cleanup complete")
         #expect(session.log.lines.contains { $0.hasPrefix("Removing: /usr/local/Cellar/python@3.15/3.15.0...") })
     }
@@ -531,11 +531,12 @@ struct AppManagementTests {
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         // Formulae never trigger it.
         let formula = try #require(store.packages.first { $0.kind == .formula && $0.upgradeAvailable })
+        var reads = store.refreshesCompleted
         store.startUpgrade([formula])
         #expect(store.appManagementPrompt == nil)
         let first = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { first.isFinished })
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitUntil { first.isFinished })
+        #expect(await waitForRead(store, after: reads))
         store.closeUpgrade()
 
         store.startUpgrade([chrome])
@@ -544,13 +545,14 @@ struct AppManagementTests {
         #expect(prompt.packages.map(\.name) == ["google-chrome"])
         #expect(store.upgrade == nil) // waits for the user
         #expect(store.showUpgradeSheet)
+        reads = store.refreshesCompleted
         store.appManagementDone()
         #expect(settings.appManagementExplained)
         #expect(store.appManagementPrompt == nil)
         let session = try #require(store.upgrade)
         #expect(session.items.map(\.package.name) == ["google-chrome"])
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitUntil { session.isFinished })
+        #expect(await waitForRead(store, after: reads))
         store.closeUpgrade()
 
         // Remembered: the next cask change starts straight away.
@@ -579,7 +581,7 @@ struct AppManagementTests {
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         store.startUpgrade([chrome])
         let first = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { first.isFinished })
+        #expect(await waitUntil { first.isFinished })
         #expect(first.failedItems.count == 1)
         #expect(first.blockedPackages.map(\.name) == ["google-chrome"])
         let prompt = try #require(store.appManagementPrompt)
@@ -591,7 +593,7 @@ struct AppManagementTests {
         #expect(retry !== first)
         #expect(retry.isRetry)
         #expect(retry.items.map(\.command.display) == ["brew upgrade --cask homebrew/cask/google-chrome"])
-        #expect(await waitUntil(timeout: .seconds(10)) { retry.isFinished })
+        #expect(await waitUntil { retry.isFinished })
         #expect(retry.failedItems.isEmpty) // the demo lets the second attempt through
         #expect(store.appManagementPrompt == nil)
     }

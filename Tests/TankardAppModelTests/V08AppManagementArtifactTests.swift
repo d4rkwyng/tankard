@@ -44,13 +44,14 @@ struct AppManagementArtifactTests {
         font.appPaths = []
         font.suitePaths = []
         font.installsPkg = false
+        let reads = store.refreshesCompleted
         store.startUninstall(font)
         #expect(store.appManagementPrompt == nil)
         #expect(store.upgrade != nil)
         #expect(!settings.appManagementExplained) // still shown before the first app cask
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitUntil { s.isFinished })
+        #expect(await waitForRead(store, after: reads))
         store.closeUpgrade()
         let app = try #require(store.packages.first { $0.kind == .cask && $0.id != real.id })
         var withApp = app

@@ -347,6 +347,7 @@ struct V083RetryTests {
         await store.start()
         let pkgs = Array(store.upgradable.filter(\.isManualUpgradeTarget).filter { !store.deps.classifier.upgradeMethod($0).compiles }.prefix(2))
         #expect(pkgs.count == 2)
+        let reads = store.refreshesCompleted
         store.startUpgrade(pkgs)
         let s = try #require(store.upgrade)
         #expect(await waitUntil { s.isFinished })
@@ -354,7 +355,7 @@ struct V083RetryTests {
         #expect(s.retryableItems.count == 1)
         #expect(s.nextStep == "Check your internet connection, then retry.")
         failing.value = false
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitForRead(store, after: reads))
         store.retryInSheet()
         let again = try #require(store.upgrade)
         #expect(again !== s)

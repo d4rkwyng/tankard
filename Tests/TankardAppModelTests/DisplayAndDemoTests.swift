@@ -145,7 +145,7 @@ struct DisplayAndDemoTests {
         #expect(ForkSummary(try #require(store.report).fork).text == "Fork: current (Homebrew 7.0.14)")
         store.startUpgrade()
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(session.succeededCount == 5)
         // Reconciled: demo brew now reports them current.
         #expect(await waitUntil { store.upgradable.isEmpty && !store.isRefreshing })

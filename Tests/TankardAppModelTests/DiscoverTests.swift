@@ -385,12 +385,13 @@ struct InstallUninstallTests {
         let (store, _, dir) = try await rig()
         defer { try? FileManager.default.removeItem(at: dir) }
         let e = CatalogEntry(kind: .formula, name: "jq", fullName: "jq", tap: "homebrew/core", desc: nil, bottle: .forThisMac)
+        let reads = store.refreshesCompleted
         store.startInstall(e)
         let session = try #require(store.upgrade)
         #expect(session.subtitle == "1 Homebrew bottle")
         #expect(await waitUntil { session.isFinished })
         let src = CatalogEntry(kind: .formula, name: "jo", fullName: "jo", tap: "homebrew/core", desc: nil, bottle: .fromSource)
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitForRead(store, after: reads))
         store.closeUpgrade()
         store.startInstall(src)
         #expect(store.upgrade?.subtitle == "1 build from source (jo)")

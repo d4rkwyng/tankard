@@ -237,7 +237,7 @@ struct SkipVersionStoreTests {
         store.startUpgrade([skipped])
         let session = try #require(store.upgrade)
         #expect(session.items.map(\.package.id) == [p.id])
-        #expect(await waitUntil(timeout: .seconds(20)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         // Upgraded: the skip clears on the reconcile.
         #expect(await waitUntil { !store.isRefreshing && store.upgradeRules.skippedVersions.isEmpty })
         store.setVersionSkipped(skipped, false)

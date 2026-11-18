@@ -119,8 +119,12 @@ func tempDir() throws -> URL {
 }
 
 /// Polls `condition` on the main actor until true or `timeout` passes.
+/// It returns as soon as the condition holds, so the timeout costs nothing
+/// on success; it is only how long a broken test hangs. 30 s, not 5: the
+/// whole suite runs at once and on GitHub's macos-15 runner (3 slow cores)
+/// a demo session that takes 0.2 s here took over 5 s of wall clock.
 @MainActor
-func waitUntil(timeout: Duration = .seconds(5), _ condition: @MainActor () -> Bool) async -> Bool {
+func waitUntil(timeout: Duration = .seconds(30), _ condition: @MainActor () -> Bool) async -> Bool {
     let deadline = ContinuousClock.now + timeout
     while !condition() {
         if ContinuousClock.now > deadline { return false }
@@ -132,4 +136,13 @@ func waitUntil(timeout: Duration = .seconds(5), _ condition: @MainActor () -> Bo
 /// Sleeps until cancelled (throws CancellationError then).
 func sleepUntilCancelled() async throws {
     try await Task.sleep(for: .seconds(60))
+}
+
+/// Waits for a status read that ended after `reads` (`refreshesCompleted`
+/// taken before the session started): the read a finished session starts.
+/// `waitUntil { !store.isRefreshing }` right after `isFinished` could pass
+/// before that read began (it runs in a Task) and race it.
+@MainActor
+func waitForRead(_ store: AppStore, after reads: Int, timeout: Duration = .seconds(30)) async -> Bool {
+    await waitUntil(timeout: timeout) { store.refreshesCompleted > reads && !store.isRefreshing }
 }

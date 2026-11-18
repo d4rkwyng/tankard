@@ -222,7 +222,7 @@ struct V083SelfUpdateTests {
         let cask = AppStore.demoTankardCask(bundlePath: "/Applications/Tankard.app")
         store.startSession(.upgrade, packages: [cask])
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(store.selfReplaced)
         #expect(store.offerRelaunch)
         // No reconcile re-read, now or on any trigger.
@@ -250,7 +250,7 @@ struct V083SelfUpdateTests {
         let cask = try #require(store.packages.first { $0.kind == .cask && $0.upgradeAvailable })
         store.startSession(.upgrade, packages: [cask])
         let session = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { session.isFinished })
+        #expect(await waitUntil { session.isFinished })
         #expect(!store.selfReplaced && !store.offerRelaunch)
         #expect(!store.isBusy || store.isRefreshing)
     }

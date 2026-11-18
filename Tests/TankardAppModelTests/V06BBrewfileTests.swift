@@ -116,8 +116,14 @@ struct BrewfileStoreTests {
     @Test func timeoutStopsDumpAndCheck() async {
         let store = BrewfileStore()
         store.timeout = .milliseconds(150)
+        let cancelled = Count()
         store.run = { _ in
-            try await Task.sleep(for: .seconds(30)) // a hung `code`; cancelled by the timeout
+            do {
+                try await Task.sleep(for: .seconds(30)) // a hung `code`; cancelled by the timeout
+            } catch {
+                cancelled.add()
+                throw error
+            }
             return Self.ok("")
         }
         let start = Date()
@@ -128,7 +134,11 @@ struct BrewfileStoreTests {
         await store.waitForIdle()
         guard case .failed(let m) = store.page else { Issue.record("check didn't time out"); return }
         #expect(m.contains("didn't finish"))
-        #expect(Date().timeIntervalSince(start) < 5)
+        // Both hung runs were cancelled by the timeout, not waited out. (A
+        // wall-clock bound of 5 s failed on a loaded CI runner at 5.27 s;
+        // the cancellations are the proof, the bound only says "not 30 s".)
+        #expect(cancelled.value == 2)
+        #expect(Date().timeIntervalSince(start) < 25)
         #expect(BrewfileError.timedOut(seconds: 60).description.hasPrefix("brew bundle didn't finish within 60 seconds"))
     }
 
@@ -210,4 +220,11 @@ struct BrewfileStoreTests {
         #expect(info.casks.map(\.installsPkg) == [true, false, nil])
         #expect(BrewfilePlanner.needsAdmin(info) == ["a"])
     }
+}
+
+final class Count: @unchecked Sendable {
+    private let lock = NSLock()
+    private var n = 0
+    var value: Int { lock.withLock { n } }
+    func add() { lock.withLock { n += 1 } }
 }

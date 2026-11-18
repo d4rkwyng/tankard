@@ -342,7 +342,7 @@ struct V08AdoptAppTests {
         store.settings.appManagementExplained = true // no first-use explainer in between
         store.requestUninstall(ob)
         store.startUninstall(ob)
-        #expect(await waitUntil(timeout: .seconds(10)) { store.upgrade?.isFinished == true })
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
         #expect(store.upgrade?.succeededCount == 1)
         #expect(store.upgradeRules.selfUpdatePolicies[SelfUpdateRule.key(ob)] == nil)
     }
