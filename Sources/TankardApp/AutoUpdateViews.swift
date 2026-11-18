@@ -60,7 +60,7 @@ final class SleepAndNetworkWatch {
         observers.append(center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { conditions.didWake(at: Date()) }
         })
-        monitor.pathUpdateHandler = { path in
+        monitor.pathUpdateHandler = { @Sendable path in
             let ok = path.status == .satisfied
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { conditions.network(satisfied: ok, at: Date()) }
