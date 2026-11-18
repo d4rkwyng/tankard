@@ -68,6 +68,9 @@ public struct BrewClient: Sendable {
                                         intelbrew: IntelbrewDetection(detected: false, reasons: [], env: [:], found: [:]),
                                         readOnly: true)
         env["GIT_TERMINAL_PROMPT"] = "0"
+        // 0.8.4: `forkStatus(checkRemote:)` runs `git ls-remote`, which needs
+        // the proxy a shell profile sets too (git reads http_proxy and co.).
+        env.merge(EnvironmentPolicy.passThrough(sources).filter { ProxySettings.passedByBrew.contains($0.key) }) { $1 }
         return env
     }
 

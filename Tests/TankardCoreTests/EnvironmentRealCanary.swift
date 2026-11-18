@@ -38,4 +38,50 @@ struct EnvironmentRealCanary {
             }
         }
     }
+
+    /// 0.8.4: a profile's http_proxy (with user:password) and XDG_CONFIG_HOME
+    /// reach the real brew through Tankard's environment; Health shows the
+    /// proxy masked. No proxy is used: `brew config` makes no request, and
+    /// the proxy is 127.0.0.1:9 (discard). The XDG brew.env sets
+    /// HOMEBREW_DISPLAY_INSTALL_TIMES, which only reaches brew if bin/brew
+    /// reads the file Tankard picked.
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["TANKARD_REAL_ENV"] != nil))
+    func proxyAndXDGReachBrew() async throws {
+        let fm = FileManager.default
+        let home = fm.temporaryDirectory.appendingPathComponent("tankard-proxy-\(UUID().uuidString)").path
+        try fm.createDirectory(atPath: home + "/.config/homebrew", withIntermediateDirectories: true)
+        defer { try? fm.removeItem(atPath: home) }
+        try """
+        export http_proxy=http://tankuser:tankpass@127.0.0.1:9
+        export https_proxy=$http_proxy
+        export no_proxy=localhost
+        export XDG_CONFIG_HOME="$HOME/.config"
+        """.write(toFile: home + "/.zshrc", atomically: true, encoding: .utf8)
+        try "HOMEBREW_DISPLAY_INSTALL_TIMES=1\n".write(toFile: home + "/.config/homebrew/brew.env", atomically: true, encoding: .utf8)
+
+        let installation = try #require(BrewInstallation.locate(override: ProcessInfo.processInfo.environment["TANKARD_BREW"]))
+        var sources = EnvironmentSources.load(prefix: installation.prefix,
+                                              process: ["HOME": home, "SHELL": "/bin/zsh", "USER": NSUserName()])
+        #expect(sources.brewEnvFiles.last?.0 == "~/.config/homebrew/brew.env")
+        sources.process["HOME"] = NSHomeDirectory()
+        let client = BrewClient(installation: installation, sources: sources)
+        let detection = await client.detectIntelbrew()
+        let env = client.environment(for: detection)
+        let r = try await client.runner.run(installation.brewPath, ["config"], environment: env)
+        let raw = r.stdoutString + r.stderrString
+        let lines = raw.split(separator: "\n").map(String.init)
+            .filter { $0.contains("proxy") || $0.contains("INSTALL_TIMES") }
+        print("brew config (masked):\n  " + ProxySettings.maskText(lines.joined(separator: "\n  ")))
+        #expect(lines.contains("http_proxy: http://tankuser:tankpass@127.0.0.1:9"))   // brew got the real value
+        #expect(lines.contains("https_proxy: http://tankuser:tankpass@127.0.0.1:9"))
+        #expect(lines.contains("no_proxy: localhost"))
+        #expect(lines.contains("HOMEBREW_DISPLAY_INSTALL_TIMES: set"))   // the XDG brew.env was read
+        #expect(!ProxySettings.maskText(raw).contains("tankpass"))
+        let rows = EnvironmentPolicy.entries(sources: sources, intelbrew: detection, readOnly: true)
+        let row = rows.first { $0.key == "http_proxy" }
+        print("Health row: \(row?.key ?? "-")=\(row?.value ?? "-")  (\(row?.source ?? "-"))")
+        #expect(row?.value == "http://•••@127.0.0.1:9")
+        #expect(row?.source == "~/.zshrc")
+        #expect(rows.allSatisfy { !($0.value ?? "").contains("tankpass") })
+    }
 }

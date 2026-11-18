@@ -617,6 +617,7 @@
 "Not passed: Tankard's self-updating apps setting decides this." = "전달 안 함: Tankard의 자체 업데이트 앱 설정이 결정합니다.";
 "Not passed: a credential." = "전달 안 함: 자격 증명입니다.";
 "Not passed: auto-update relies on brew's dependents check." = "전달 안 함: 자동 업데이트는 brew의 종속 항목 검사에 의존합니다.";
+"Not passed: brew ignores the upper-case form; use the lower-case one." = "전달 안 함: brew는 대문자 형식을 무시합니다. 소문자 형식을 사용하세요.";
 "Not passed: changes where brew gets code from, or what it trusts." = "전달 안 함: brew가 코드를 가져오는 곳이나 신뢰하는 대상을 바꿉니다.";
 "Not passed: changes where brew lives or keeps its files." = "전달 안 함: brew의 위치나 파일 보관 위치를 바꿉니다.";
 "Not running" = "실행 중 아님";
@@ -683,6 +684,7 @@
 "Partial scan" = "일부만 검사됨";
 "Partly applied: %@" = "일부 적용: %@";
 "Passed to brew." = "brew에 전달됩니다.";
+"Passed to brew: it picks the brew.env file brew reads." = "brew에 전달: brew가 읽는 brew.env 파일을 정합니다.";
 "Password:" = "암호:";
 "Patch only" = "패치만";
 "Pause automatic updates. Manual upgrades still work." = "자동 업데이트를 일시 중지합니다. 수동 업그레이드는 계속 사용할 수 있습니다.";
@@ -831,7 +833,17 @@
 "Set by Intelbrew mode." = "Intelbrew 모드가 설정함.";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "확인과 업그레이드를 위해 Tankard가 설정: brew update 실행 시점은 Tankard가 정합니다.";
 "Set by Tankard: it reads brew's output." = "Tankard가 설정: brew 출력을 읽기 때문입니다.";
+"Set in brew.env, so Uninstall may also remove other unused dependencies." = "brew.env에 설정됨: 제거할 때 사용하지 않는 다른 종속 항목도 함께 제거될 수 있습니다.";
+"Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "brew.env에 설정됨: brew는 이 미러를 사용하지만 둘러보기와 탭 색인은 사용하지 않습니다.";
+"Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "brew.env에 설정되어 Tankard의 brew에도 적용됨: brew가 코드를 가져오는 곳이나 신뢰하는 대상을 바꿉니다.";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "brew.env에 설정되어 있어 Tankard의 설치에도 적용됩니다. 앱 가져오기의 위치 확인은 /Applications를 전제로 합니다.";
+"Set in brew.env, so it overrides Intelbrew mode's value." = "brew.env에 설정됨: Intelbrew 모드의 값을 덮어씁니다.";
+"Set in brew.env, so it overrides Tankard's self-updating apps setting." = "brew.env에 설정됨: Tankard의 자동 업데이트 앱 설정을 덮어씁니다.";
+"Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "brew.env에 설정되어 Tankard의 brew에 전달됨: 설정되어 있는 동안 자동 업데이트가 일시 중지됩니다.";
+"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "brew.env에 설정됨: 암호 요청이 Tankard 대화상자가 아닌 이 도우미로 갑니다.";
+"Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "brew.env에 설정됨: Tankard의 다운로드 진행 상황과 정리는 기본 폴더를 가정합니다.";
+"Set in brew.env: it changes brew's output, which Tankard reads." = "brew.env에 설정됨: Tankard가 읽는 brew의 출력을 바꿉니다.";
+"Set in brew.env: it moves brew's files from where Tankard looks." = "brew.env에 설정됨: brew의 파일을 Tankard가 찾는 위치에서 옮깁니다.";
 "Several casks install an app with this name. Pick the one you have." = "이 이름의 앱을 설치하는 cask가 여러 개 있습니다. 가지고 있는 것을 선택하세요.";
 "Show" = "보기";
 "Show %@ in Tankard" = "Tankard에서 %@ 보기";
@@ -927,6 +939,7 @@
 "Tankard upgraded %lld package" = "Tankard가 패키지 %lld개를 업그레이드함";
 "Tankard upgraded %lld packages" = "Tankard가 패키지 %lld개를 업그레이드함";
 "Tankard was upgraded" = "Tankard가 업그레이드됨";
+"Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard 자체 다운로드(둘러보기, 설치 수, 업데이트 확인)는 이 값이 아닌 시스템 설정의 프록시를 사용합니다.";
 "Tankard: upgrades ready" = "Tankard: 업그레이드 준비됨";
 "Tap" = "Tap";
 "Tap has %@" = "Tap에 %@ 있음";
@@ -1079,7 +1092,7 @@
 "Xcode is out of date" = "Xcode가 오래되었습니다";
 "Yes" = "예";
 "You have Tankard %@." = "현재 Tankard %@ 사용 중입니다.";
-"Your HOMEBREW_* settings and what Tankard does with each when it runs brew." = "HOMEBREW_* 설정과 Tankard가 brew를 실행할 때 각 설정을 처리하는 방식.";
+"Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "HOMEBREW_*, 프록시, XDG_CONFIG_HOME 설정과 Tankard가 brew를 실행할 때 각각을 어떻게 처리하는지.";
 "Your PATH finds other tools before Homebrew's" = "PATH에서 Homebrew의 도구보다 다른 도구가 먼저 발견됩니다";
 "a symlink to %@: that file is backed up and edited" = "%@에 대한 심볼릭 링크: 해당 파일이 백업된 후 편집됩니다";
 "adopted" = "가져옴";

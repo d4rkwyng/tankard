@@ -71,20 +71,89 @@ public enum EnvFileParser {
     /// optionally exported, value unquoted or in matching quotes, optional
     /// trailing `;` and comment. Values containing `$` or backticks are
     /// skipped (Tankard does not evaluate shell). Later lines win.
-    public static func parseShell(_ text: String) -> [String: String] {
+    ///
+    /// 0.8.4: besides HOMEBREW_* names, the proxy variables
+    /// (`ProxySettings.names`) and XDG_CONFIG_HOME are read too. Two common
+    /// forms that need expansion are understood, and nothing else: a proxy
+    /// set to another proxy variable assigned earlier in the same file
+    /// (`export https_proxy=$http_proxy`), and an XDG_CONFIG_HOME starting
+    /// with `$HOME`, `${HOME}` or `~/` (expanded with `home`; skipped
+    /// without one).
+    public static func parseShell(_ text: String, home: String? = nil) -> [String: String] {
         var out: [String: String] = [:]
         for rawLine in text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline) {
             var line = rawLine.trimmingCharacters(in: .whitespaces)
             if line.hasPrefix("export ") || line.hasPrefix("export\t") {
                 line = String(line.dropFirst("export".count)).trimmingCharacters(in: .whitespaces)
             }
-            guard let eq = line.firstIndex(of: "="), line.hasPrefix("HOMEBREW_") else { continue }
+            guard let eq = line.firstIndex(of: "=") else { continue }
             let name = String(line[..<eq])
+            guard name.hasPrefix("HOMEBREW_") || shellExtraNames.contains(name) else { continue }
             guard name.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "_" }) else { continue }
-            guard let value = parseShellWord(String(line[line.index(after: eq)...])) else { continue }
+            var rhs = String(line[line.index(after: eq)...])
+            if ProxySettings.names.contains(name), let ref = proxyReference(rhs) {
+                // `https_proxy=$http_proxy`: the earlier value in this file, if any.
+                guard let v = out[ref.name] else { continue }
+                rhs = ref.quote + v + ref.quote + ref.rest
+            } else if name == xdgConfigHomeKey {
+                guard let expanded = expandHome(rhs, home: home) else { continue }
+                rhs = expanded
+            }
+            guard let value = parseShellWord(rhs) else { continue }
             out[name] = value
         }
         return out
+    }
+
+    /// The non-HOMEBREW_* names parseShell reads (0.8.4).
+    public static let shellExtraNames: Set<String> = ProxySettings.names.union([xdgConfigHomeKey])
+    public static let xdgConfigHomeKey = "XDG_CONFIG_HOME"
+
+    /// `$name`, `${name}` or `"$name"` (one proxy variable, nothing else in
+    /// the word): the name, the quote used and what follows the word.
+    static func proxyReference(_ s: String) -> (name: String, quote: String, rest: String)? {
+        var rest = Substring(s)
+        var quote = ""
+        if rest.first == "\"" { quote = "\""; rest = rest.dropFirst() }
+        guard rest.first == "$" else { return nil }
+        rest = rest.dropFirst()
+        var name: Substring
+        if rest.first == "{" {
+            guard let close = rest.firstIndex(of: "}") else { return nil }
+            name = rest[rest.index(after: rest.startIndex)..<close]
+            rest = rest[rest.index(after: close)...]
+        } else {
+            let end = rest.firstIndex { !($0.isLetter || $0.isNumber || $0 == "_") } ?? rest.endIndex
+            name = rest[..<end]
+            rest = rest[end...]
+        }
+        guard ProxySettings.names.contains(String(name)) else { return nil }
+        if !quote.isEmpty {
+            guard rest.first == "\"" else { return nil }
+            rest = rest.dropFirst()
+        }
+        return (String(name), quote, String(rest))
+    }
+
+    /// XDG_CONFIG_HOME's value with a leading `$HOME`, `${HOME}` (optionally
+    /// in double quotes) or unquoted `~` replaced by `home`. nil when it
+    /// needs expansion and there is no home; unchanged when it needs none.
+    static func expandHome(_ s: String, home: String?) -> String? {
+        var rest = Substring(s)
+        var quote = ""
+        if rest.first == "\"" { quote = "\""; rest = rest.dropFirst() }
+        for token in ["${HOME}", "$HOME"] where rest.hasPrefix(token) {
+            let after = rest.dropFirst(token.count)
+            // `$HOMEDIR` is another variable.
+            if let c = after.first, c.isLetter || c.isNumber || c == "_" { return s }
+            guard let home else { return nil }
+            return quote + home + after
+        }
+        if quote.isEmpty, rest == "~" || rest.hasPrefix("~/") {
+            guard let home else { return nil }
+            return home + rest.dropFirst()
+        }
+        return s
     }
 
     /// One shell word followed by nothing but an optional `;` and comment.
@@ -110,17 +179,32 @@ public enum EnvFileParser {
     }
 
     /// brew.env: brew's own parser (bin/brew export_homebrew_env_file) keeps
-    /// the value literally after the first `=`, quotes included, and only
-    /// accepts HOMEBREW_* names.
+    /// the value literally after the first `=`, quotes included. It accepts
+    /// HOMEBREW_* names, SUDO_ASKPASS and the lower-case proxy variables
+    /// (`^(HOMEBREW_|SUDO_ASKPASS=|(all|no|ftp|https?)_proxy=)` in brew
+    /// 7.0.14; 0.8.3 read only HOMEBREW_*), and skips the names bin/brew sets
+    /// itself (`brewEnvIgnored`).
     public static func parseBrewEnv(_ text: String) -> [String: String] {
         var out: [String: String] = [:]
         for rawLine in text.split(whereSeparator: \.isNewline) {
             let line = rawLine.trimmingCharacters(in: .whitespaces)
-            guard line.hasPrefix("HOMEBREW_"), let eq = line.firstIndex(of: "=") else { continue }
-            out[String(line[..<eq])] = String(line[line.index(after: eq)...])
+            guard let eq = line.firstIndex(of: "=") else { continue }
+            let name = String(line[..<eq])
+            guard name.hasPrefix("HOMEBREW_") || brewEnvExtraNames.contains(name),
+                  !brewEnvIgnored.contains(name) else { continue }
+            out[name] = String(line[line.index(after: eq)...])
         }
         return out
     }
+
+    /// The non-HOMEBREW_* names bin/brew takes from a brew.env file.
+    public static let brewEnvExtraNames: Set<String> = ProxySettings.brewEnvNames.union(["SUDO_ASKPASS"])
+
+    /// bin/brew's BIN_BREW_EXPORTED_VARS: set by bin/brew itself, and a
+    /// brew.env line for one of them is skipped.
+    public static let brewEnvIgnored: Set<String> = [
+        "HOMEBREW_BREW_FILE", "HOMEBREW_PREFIX", "HOMEBREW_REPOSITORY", "HOMEBREW_LIBRARY", "HOMEBREW_USER_CONFIG_HOME",
+    ]
 }
 
 /// Inputs for detection and environment construction, gathered from the
@@ -161,7 +245,11 @@ public struct EnvironmentSources: Sendable {
         return paths
     }
 
-    /// brew.env files in bin/brew's order: system, prefix, user.
+    /// brew.env files in bin/brew's order: system, prefix, user. `env` is
+    /// the environment brew gets: the user file is in XDG_CONFIG_HOME, else
+    /// HOMEBREW_XDG_CONFIG_HOME, else ~/.homebrew (bin/brew's rule). `load`
+    /// passes `configHomeEnvironment()`, the same values BrewEnvironment
+    /// gives brew, so Tankard reads the file brew will read.
     public static func brewEnvPaths(prefix: String, home: String, env: [String: String]) -> [String] {
         let user: String
         if let x = env["XDG_CONFIG_HOME"], !x.isEmpty {
@@ -183,8 +271,11 @@ public struct EnvironmentSources: Sendable {
             path.hasPrefix(home + "/") ? "~" + path.dropFirst(home.count) : path
         }
         let profiles = profilePaths(home: home, shell: shell, zdotdir: process["ZDOTDIR"])
-            .compactMap { p in read(p).map { (tilde(p), EnvFileParser.parseShell($0)) } }
-        let brewEnvs = brewEnvPaths(prefix: prefix, home: home, env: process)
+            .compactMap { p in read(p).map { (tilde(p), EnvFileParser.parseShell($0, home: home)) } }
+        // 0.8.4: the user brew.env that the brew Tankard runs will read. Before,
+        // this used Tankard's own XDG_CONFIG_HOME, which brew never got.
+        let configHome = EnvironmentSources(process: process, shellProfiles: profiles).configHomeEnvironment()
+        let brewEnvs = brewEnvPaths(prefix: prefix, home: home, env: configHome)
             .compactMap { p in read(p).map { (tilde(p), EnvFileParser.parseBrewEnv($0)) } }
         return EnvironmentSources(process: process, shellProfiles: profiles, brewEnvFiles: brewEnvs)
     }
@@ -209,6 +300,14 @@ public struct EnvironmentSources: Sendable {
 }
 
 extension EnvironmentSources {
+    /// 0.8.4: XDG_CONFIG_HOME and HOMEBREW_XDG_CONFIG_HOME as Tankard passes
+    /// them to brew (EnvironmentPolicy.passThrough: the app's environment,
+    /// else the last shell profile; empty means unset). bin/brew picks the
+    /// user brew.env with them, so `load` looks there too.
+    public func configHomeEnvironment() -> [String: String] {
+        EnvironmentPolicy.passThrough(self).filter { EnvironmentPolicy.configHomeKeys.contains($0.key) }
+    }
+
     /// The system brew.env, which HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY puts last.
     public static let systemBrewEnv = "/etc/homebrew/brew.env"
 
@@ -292,7 +391,9 @@ public enum BrewEnvironment {
     /// - 0.8.3: the user's own HOMEBREW_* settings from the app's
     ///   environment and shell profiles that EnvironmentPolicy allows
     ///   (HOMEBREW_NO_ANALYTICS, HOMEBREW_CASK_OPTS, ...). Before 0.8.3
-    ///   none were passed.
+    ///   none were passed. 0.8.4: also the proxy variables bin/brew keeps
+    ///   (ProxySettings) and XDG_CONFIG_HOME / HOMEBREW_XDG_CONFIG_HOME, so
+    ///   brew reads the user brew.env Tankard shows.
     /// - In Intelbrew mode, the three Intelbrew variables (they win).
     /// - Tankard's own (EnvironmentPolicy.tankardControlled, they win):
     ///   HOMEBREW_NO_ENV_HINTS=1, HOMEBREW_NO_COLOR=1, no HOMEBREW_COLOR,

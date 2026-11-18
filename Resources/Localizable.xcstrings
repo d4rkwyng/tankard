@@ -32425,6 +32425,58 @@
         }
       }
     },
+    "Not passed: brew ignores the upper-case form; use the lower-case one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht übergeben: brew ignoriert die Großschreibung; nutze die Kleinschreibung."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non transmis : brew ignore la forme en majuscules ; utilisez celle en minuscules."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pasa: brew ignora la forma en mayúsculas; usa la de minúsculas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡しません: brew は大文字の形式を無視します。小文字の形式を使ってください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未传递：brew 会忽略大写形式；请使用小写形式。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não repassado: o brew ignora a forma em maiúsculas; use a em minúsculas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non passato: brew ignora la forma maiuscola; usa quella minuscola."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "전달 안 함: brew는 대문자 형식을 무시합니다. 소문자 형식을 사용하세요."
+          }
+        }
+      }
+    },
     "Not passed: changes where brew gets code from, or what it trusts.": {
       "localizations": {
         "de": {
@@ -35853,6 +35905,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew에 전달됩니다."
+          }
+        }
+      }
+    },
+    "Passed to brew: it picks the brew.env file brew reads.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An brew übergeben: bestimmt, welche brew.env brew liest."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transmis à brew : choisit le fichier brew.env que brew lit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se pasa a brew: elige el archivo brew.env que lee brew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew に渡します: brew が読む brew.env ファイルを決めます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已传递给 brew：它决定 brew 读取哪个 brew.env 文件。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repassado ao brew: define qual arquivo brew.env o brew lê."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passato a brew: sceglie il file brew.env che brew legge."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew에 전달: brew가 읽는 brew.env 파일을 정합니다."
           }
         }
       }
@@ -43606,6 +43710,162 @@
         }
       }
     },
+    "Set in brew.env, so Uninstall may also remove other unused dependencies.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: Deinstallieren kann weitere ungenutzte Abhängigkeiten entfernen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : Désinstaller peut aussi supprimer d'autres dépendances inutilisées."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: Desinstalar puede eliminar también otras dependencias sin usar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: アンインストールで他の未使用の依存関係も削除される場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：卸载时可能还会移除其他未使用的依赖项。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: Desinstalar pode remover também outras dependências não usadas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: Disinstalla può rimuovere anche altre dipendenze inutilizzate."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: 제거할 때 사용하지 않는 다른 종속 항목도 함께 제거될 수 있습니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so brew uses this mirror; Discover and the tap index don't.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: brew nutzt diesen Mirror, Entdecken und der Tap-Index nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : brew utilise ce miroir, mais pas Découvrir ni l'index des taps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: brew usa este espejo; Descubrir y el índice de taps no."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: brew はこのミラーを使いますが、「見つける」とタップインデックスは使いません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：brew 会使用此镜像；“探索”和 tap 索引不会。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: o brew usa este espelho; Descobrir e o índice de taps não."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: brew usa questo mirror; Scopri e l'indice dei tap no."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: brew는 이 미러를 사용하지만 둘러보기와 탭 색인은 사용하지 않습니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt, gilt also auch für Tankards brew: ändert Codequelle oder Vertrauen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env, donc appliqué au brew de Tankard : change d'où brew obtient du code ou à quoi il fait confiance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env, así que se aplica al brew de Tankard: cambia de dónde obtiene código brew o en qué confía."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定されているため Tankard の brew にも適用されます: brew のコードの取得元や信頼する対象を変えます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置，因此也适用于 Tankard 的 brew：它会改变 brew 获取代码的来源或信任的对象。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env, então vale também para o brew do Tankard: muda de onde o brew obtém código ou em que confia."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env, quindi vale anche per il brew di Tankard: cambia da dove brew prende il codice o di cosa si fida."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정되어 Tankard의 brew에도 적용됨: brew가 코드를 가져오는 곳이나 신뢰하는 대상을 바꿉니다."
+          }
+        }
+      }
+    },
     "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.": {
       "localizations": {
         "de": {
@@ -43654,6 +43914,370 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew.env에 설정되어 있어 Tankard의 설치에도 적용됩니다. 앱 가져오기의 위치 확인은 /Applications를 전제로 합니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so it overrides Intelbrew mode's value.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: überschreibt den Wert des Intelbrew-Modus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : remplace la valeur du mode Intelbrew."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: reemplaza el valor del modo Intelbrew."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: Intelbrew モードの値を上書きします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：会覆盖 Intelbrew 模式的值。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: substitui o valor do modo Intelbrew."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: sostituisce il valore della modalità Intelbrew."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: Intelbrew 모드의 값을 덮어씁니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so it overrides Tankard's self-updating apps setting.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: überschreibt Tankards Einstellung für selbstaktualisierende Apps."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : remplace le réglage de Tankard pour les apps qui se mettent à jour seules."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: reemplaza el ajuste de Tankard para apps que se actualizan solas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: Tankard の自動更新アプリの設定を上書きします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：会覆盖 Tankard 的自动更新应用设置。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: substitui o ajuste do Tankard para apps que se atualizam sozinhos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: sostituisce l'impostazione di Tankard per le app che si aggiornano da sole."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: Tankard의 자동 업데이트 앱 설정을 덮어씁니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt, erreicht Tankards brew: Auto-Updates pausieren, solange es gesetzt ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env, donc transmis au brew de Tankard : les mises à jour automatiques sont en pause tant qu'il est défini."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env, así que llega al brew de Tankard: las actualizaciones automáticas se pausan mientras esté definido."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定されているため Tankard の brew に届きます: 設定中は自動アップデートが一時停止します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置，因此会影响 Tankard 的 brew：设置期间自动更新会暂停。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env, então chega ao brew do Tankard: as atualizações automáticas pausam enquanto estiver definido."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env, quindi arriva al brew di Tankard: gli aggiornamenti automatici restano in pausa finché è impostato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정되어 Tankard의 brew에 전달됨: 설정되어 있는 동안 자동 업데이트가 일시 중지됩니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env, so password prompts go to this helper, not Tankard's dialog.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: Passwortabfragen gehen an dieses Programm, nicht an Tankards Dialog."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : les demandes de mot de passe vont à cet assistant, pas à la fenêtre de Tankard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: las solicitudes de contraseña van a este asistente, no al diálogo de Tankard."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: パスワードの入力はこのヘルパーに送られ、Tankard のダイアログは使われません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：密码请求会交给此辅助程序，而不是 Tankard 的对话框。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: os pedidos de senha vão para este auxiliar, não para a janela do Tankard."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: le richieste di password vanno a questo helper, non alla finestra di Tankard."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: 암호 요청이 Tankard 대화상자가 아닌 이 도우미로 갑니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env: Tankard's download progress and Clean Up assume the default folders.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: Download-Fortschritt und Aufräumen erwarten die Standardordner."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : la progression des téléchargements et Nettoyer de Tankard supposent les dossiers par défaut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: el progreso de descarga y Limpiar de Tankard asumen las carpetas predeterminadas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: Tankard のダウンロード進行状況とクリーンアップは標準のフォルダを前提にしています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：Tankard 的下载进度和清理功能假定使用默认文件夹。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: o progresso de download e o Limpar do Tankard pressupõem as pastas padrão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: l'avanzamento dei download e Pulisci di Tankard presuppongono le cartelle predefinite."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: Tankard의 다운로드 진행 상황과 정리는 기본 폴더를 가정합니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env: it changes brew's output, which Tankard reads.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: ändert brews Ausgabe, die Tankard liest."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : modifie la sortie de brew, que Tankard lit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: cambia la salida de brew, que Tankard lee."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: Tankard が読み取る brew の出力を変えます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：会改变 Tankard 所读取的 brew 输出。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: muda a saída do brew, que o Tankard lê."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: cambia l'output di brew, che Tankard legge."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: Tankard가 읽는 brew의 출력을 바꿉니다."
+          }
+        }
+      }
+    },
+    "Set in brew.env: it moves brew's files from where Tankard looks.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: verschiebt brews Dateien weg von dort, wo Tankard sucht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : déplace les fichiers de brew hors de l'endroit où Tankard regarde."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: mueve los archivos de brew de donde Tankard los busca."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: brew のファイルを Tankard が探す場所から移動します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：会把 brew 的文件移出 Tankard 查找的位置。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: move os arquivos do brew para fora de onde o Tankard procura."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: sposta i file di brew da dove Tankard li cerca."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: brew의 파일을 Tankard가 찾는 위치에서 옮깁니다."
           }
         }
       }
@@ -48594,6 +49218,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 업그레이드됨"
+          }
+        }
+      }
+    },
+    "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankards eigene Downloads (Entdecken, Installationszahlen, Update-Prüfung) nutzen den Proxy der Systemeinstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les téléchargements de Tankard (Découvrir, nombre d'installations, recherche de mise à jour) utilisent le proxy des Réglages Système, pas ceux-ci."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las descargas propias de Tankard (Descubrir, número de instalaciones, comprobación de actualizaciones) usan el proxy de Ajustes del Sistema, no estos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 自身のダウンロード（見つける、インストール数、アップデート確認）は、これらではなくシステム設定のプロキシを使います。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 自己的下载（探索、安装次数、更新检查）使用“系统设置”中的代理，而不是这些。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os downloads do próprio Tankard (Descobrir, número de instalações, verificação de atualização) usam o proxy dos Ajustes do Sistema, não estes."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I download di Tankard (Scopri, numero di installazioni, controllo aggiornamenti) usano il proxy di Impostazioni di Sistema, non questi."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 자체 다운로드(둘러보기, 설치 수, 업데이트 확인)는 이 값이 아닌 시스템 설정의 프록시를 사용합니다."
           }
         }
       }
@@ -56502,54 +57178,54 @@
         }
       }
     },
-    "Your HOMEBREW_* settings and what Tankard does with each when it runs brew.": {
+    "Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deine HOMEBREW_*-Einstellungen und was Tankard beim Ausführen von brew damit macht."
+            "value": "Deine HOMEBREW_*-, Proxy- und XDG_CONFIG_HOME-Einstellungen und was Tankard damit macht, wenn es brew ausführt."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vos réglages HOMEBREW_* et ce que Tankard en fait quand il lance brew."
+            "value": "Vos réglages HOMEBREW_*, proxy et XDG_CONFIG_HOME, et ce que Tankard en fait quand il lance brew."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tus ajustes HOMEBREW_* y lo que Tankard hace con cada uno al ejecutar brew."
+            "value": "Tus ajustes HOMEBREW_*, de proxy y XDG_CONFIG_HOME, y qué hace Tankard con cada uno al ejecutar brew."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "HOMEBREW_* 設定と、Tankard が brew を実行するときの各設定の扱い。"
+            "value": "HOMEBREW_*、プロキシ、XDG_CONFIG_HOME の設定と、Tankard が brew を実行するときのそれぞれの扱い。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你的 HOMEBREW_* 设置，以及 Tankard 运行 brew 时如何处理每一项。"
+            "value": "你的 HOMEBREW_*、代理和 XDG_CONFIG_HOME 设置，以及 Tankard 运行 brew 时如何处理每一项。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seus ajustes HOMEBREW_* e o que o Tankard faz com cada um ao executar o brew."
+            "value": "Seus ajustes HOMEBREW_*, de proxy e XDG_CONFIG_HOME, e o que o Tankard faz com cada um ao executar o brew."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le tue impostazioni HOMEBREW_* e cosa ne fa Tankard quando esegue brew."
+            "value": "Le tue impostazioni HOMEBREW_*, proxy e XDG_CONFIG_HOME, e cosa fa Tankard con ciascuna quando esegue brew."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "HOMEBREW_* 설정과 Tankard가 brew를 실행할 때 각 설정을 처리하는 방식."
+            "value": "HOMEBREW_*, 프록시, XDG_CONFIG_HOME 설정과 Tankard가 brew를 실행할 때 각각을 어떻게 처리하는지."
           }
         }
       }

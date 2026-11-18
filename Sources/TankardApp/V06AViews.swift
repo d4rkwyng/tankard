@@ -186,12 +186,7 @@ struct HealthSheet: View {
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
         }
         if !health.environment.isEmpty {
-            DisclosureGroup {
-                EnvironmentList(entries: health.environment)
-            } label: {
-                Text("Environment")
-            }
-            .font(.system(size: 12))
+            EnvironmentDisclosure(entries: health.environment)
         }
         DisclosureGroup {
             Text(health.config).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
@@ -208,23 +203,63 @@ struct HealthSheet: View {
     }
 }
 
+/// 0.8.4: the Environment disclosure, open from the start (with a warning
+/// sign) when a brew.env setting overrides one of Tankard's.
+struct EnvironmentDisclosure: View {
+    var entries: [EnvironmentPolicy.Entry]
+    private let expanded: State<Bool>
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
+
+    init(entries: [EnvironmentPolicy.Entry]) {
+        self.entries = entries
+        expanded = State(initialValue: entries.contains { $0.conflict != nil })
+    }
+
+    var body: some View {
+        DisclosureGroup(isExpanded: expanded.projectedValue) {
+            EnvironmentList(entries: entries)
+        } label: {
+            HStack(spacing: 4) {
+                Text("Environment")
+                if entries.contains(where: { $0.conflict != nil }) {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(theme.warning(scheme).text)
+                }
+            }
+        }
+        .font(.system(size: 12))
+    }
+}
+
 /// 0.8.3: Health ▸ Environment. Each HOMEBREW_* setting, where it came
-/// from, and whether Tankard's brew gets it (EnvironmentPolicy).
+/// from, and whether Tankard's brew gets it (EnvironmentPolicy). 0.8.4:
+/// proxies and XDG_CONFIG_HOME too (proxy passwords masked), and a warning
+/// on each brew.env setting that overrides one of Tankard's.
 struct EnvironmentList: View {
     var entries: [EnvironmentPolicy.Entry]
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Your HOMEBREW_* settings and what Tankard does with each when it runs brew.")
+            Text("Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew.")
                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             ForEach(entries) { e in
                 VStack(alignment: .leading, spacing: 1) {
                     Text(verbatim: line(e)).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
-                    Text(Self.explanation(e)).font(.system(size: 11)).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if let c = e.conflict {
+                        Label(Self.conflictReason(c), systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(Self.explanation(e)).font(.system(size: 11)).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
             Text("brew reads brew.env files itself, so a setting there reaches brew whatever this list says.")
+                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Text("Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these.")
                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -238,9 +273,29 @@ struct EnvironmentList: View {
         return s
     }
 
+    /// 0.8.4: why a brew.env setting gets a warning.
+    static func conflictReason(_ c: EnvironmentPolicy.BrewEnvConflict) -> String {
+        switch c {
+        case .dependentsCheck: return String(localized: "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set.")
+        case .greedy: return String(localized: "Set in brew.env, so it overrides Tankard's self-updating apps setting.")
+        case .intelbrew: return String(localized: "Set in brew.env, so it overrides Intelbrew mode's value.")
+        case .autoremove: return String(localized: "Set in brew.env, so Uninstall may also remove other unused dependencies.")
+        case .output: return String(localized: "Set in brew.env: it changes brew's output, which Tankard reads.")
+        case .caskOptions: return String(localized: "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.")
+        case .askpass: return String(localized: "Set in brew.env, so password prompts go to this helper, not Tankard's dialog.")
+        case .location: return String(localized: "Set in brew.env: it moves brew's files from where Tankard looks.")
+        case .defaultFolders: return String(localized: "Set in brew.env: Tankard's download progress and Clean Up assume the default folders.")
+        case .trust: return String(localized: "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts.")
+        case .mirror: return String(localized: "Set in brew.env, so brew uses this mirror; Discover and the tap index don't.")
+        }
+    }
+
     static func explanation(_ e: EnvironmentPolicy.Entry) -> String {
         switch e.status {
+        case .passed where EnvironmentPolicy.configHomeKeys.contains(e.key):
+            return String(localized: "Passed to brew: it picks the brew.env file brew reads.")
         case .passed: return String(localized: "Passed to brew.")
+        case .droppedByBrew: return String(localized: "Not passed: brew ignores the upper-case form; use the lower-case one.")
         case .partial: return caskOptions(e.caskOptions)
         case .brewEnv:
             // CASK_OPTS in brew.env with options Tankard would drop: they apply anyway.
