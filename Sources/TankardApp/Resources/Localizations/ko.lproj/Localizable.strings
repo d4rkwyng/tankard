@@ -113,6 +113,7 @@
 "%lld newer" = "더 최신 %lld개";
 "%lld no bottle" = "bottle 없음 %lld개";
 "%lld not checked" = "검사 안 됨 %lld개";
+"%lld not included" = "%lld개 제외";
 "%lld of %lld" = "%lld/%lld";
 "%lld of %lld versions" = "%lld/%lld 버전";
 "%lld of them Homebrew can't read" = "그중 %lld개는 Homebrew가 읽을 수 없음";
@@ -642,6 +643,9 @@
 "Newer" = "더 최신";
 "Newer than Intelbrew" = "Intelbrew보다 최신";
 "Newer than tap" = "tap보다 최신";
+"Newer version: %@ → %@ (left to the app's own updater)" = "새 버전: %@ → %@ (앱 자체 업데이트에 맡김)";
+"Newer version: %@ → %@ (pinned: upgrades leave it)" = "새 버전: %@ → %@ (고정됨: 업그레이드에서 제외)";
+"Newer version: %@ → %@ (you skipped this version)" = "새 버전: %@ → %@ (이 버전을 건너뜀)";
 "Next run: %@" = "다음 실행: %@";
 "No Homebrew app to check with yet" = "아직 확인할 Homebrew 앱이 없음";
 "No Homebrew cask installs these apps." = "이 앱들을 설치하는 Homebrew cask가 없습니다.";
@@ -1196,7 +1200,7 @@
 "Upgrade finished" = "업그레이드 완료";
 "Upgrade finished with problems" = "업그레이드 완료 (문제 있음)";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
-"Upgrade ready: " = "업그레이드 준비됨: ";
+"Upgrade ready: %@ → %@" = "업그레이드 준비됨: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "새 버전이 있는 패키지 %lld개를 하나씩 업그레이드";
 "Upgrade the 1 package that has a newer version" = "새 버전이 있는 패키지 1개 업그레이드";
 "Upgrade the Remaining %lld Packages" = "남은 %lld개 업그레이드";

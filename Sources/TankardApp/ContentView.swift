@@ -381,7 +381,7 @@ struct SummaryStrip: View {
     @ViewBuilder
     private func upgradesLine(_ summary: StatusSummary, detail showDetail: Bool, disk: Bool) -> some View {
         HStack(spacing: 6) {
-            if let (ready, detail) = SummaryText.upgrades(summary) {
+            if let (ready, detail) = SummaryText.upgrades(summary, targets: store.upgradable) {
                 Circle().fill(theme.upgrade).frame(width: 7, height: 7)
                 Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
                 if showDetail { Text(detail).foregroundStyle(.secondary) }
@@ -403,7 +403,7 @@ struct SummaryStrip: View {
     /// Everything the strip's left side says, unshortened, for its tooltip.
     private var fullText: String {
         guard let report = store.report else { return "" }
-        var second = SummaryText.upgrades(report.summary).map { "\($0.0) \($0.1)" } ?? String(localized: "Everything is up to date")
+        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map { "\($0.0) \($0.1)" } ?? String(localized: "Everything is up to date")
         if let total = store.totalDiskBytes {
             second += " " + String(localized: "· \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)")
         }

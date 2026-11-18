@@ -6217,6 +6217,58 @@
         }
       }
     },
+    "%lld not included": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld nicht enthalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld non inclus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld no incluidos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個は対象外"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个未包含"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld não incluídos"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld non inclusi"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 제외"
+          }
+        }
+      }
+    },
     "%lld of %lld": {
       "localizations": {
         "de": {
@@ -33721,6 +33773,162 @@
           "stringUnit": {
             "state": "translated",
             "value": "tap보다 최신"
+          }
+        }
+      }
+    },
+    "Newer version: %@ → %@ (left to the app's own updater)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (dem eigenen Updater der App überlassen)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (laissée à l’outil de mise à jour de l’app)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (se deja al actualizador de la app)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（アプリ自身のアップデータに任せています）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（交给 App 自己的更新程序）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (deixada para o atualizador do próprio app)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (lasciata al sistema di aggiornamento dell’app)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (앱 자체 업데이트에 맡김)"
+          }
+        }
+      }
+    },
+    "Newer version: %@ → %@ (pinned: upgrades leave it)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (fixiert: Upgrades lassen es aus)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (épinglé : les mises à jour le laissent)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (fijado: las actualizaciones lo dejan)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（固定中：アップグレードの対象外）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（已固定：升级时跳过）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (fixado: as atualizações o deixam)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (bloccato: gli aggiornamenti lo lasciano)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (고정됨: 업그레이드에서 제외)"
+          }
+        }
+      }
+    },
+    "Newer version: %@ → %@ (you skipped this version)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (du hast diese Version übersprungen)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (vous avez ignoré cette version)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (omitiste esta versión)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（このバージョンはスキップ済み）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（你已跳过此版本）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (você pulou esta versão)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (hai saltato questa versione)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (이 버전을 건너뜀)"
           }
         }
       }
@@ -62533,54 +62741,54 @@
         }
       }
     },
-    "Upgrade ready: ": {
+    "Upgrade ready: %@ → %@": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upgrade bereit: "
+            "value": "Upgrade bereit: %@ → %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mise à niveau prête : "
+            "value": "Mise à niveau prête : %@ → %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualización lista: "
+            "value": "Actualización lista: %@ → %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップグレードの準備完了: "
+            "value": "アップグレードの準備完了：%@ → %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级已就绪： "
+            "value": "升级已就绪：%@ → %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualização pronta: "
+            "value": "Atualização pronta: %@ → %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiornamento pronto: "
+            "value": "Aggiornamento pronto: %@ → %@"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "업그레이드 준비됨: "
+            "value": "업그레이드 준비됨: %@ → %@"
           }
         }
       }

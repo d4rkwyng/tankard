@@ -113,6 +113,7 @@
 "%lld newer" = "%lld mais recentes";
 "%lld no bottle" = "%lld sem bottle";
 "%lld not checked" = "%lld não verificados";
+"%lld not included" = "%lld não incluídos";
 "%lld of %lld" = "%lld de %lld";
 "%lld of %lld versions" = "%lld de %lld versões";
 "%lld of them Homebrew can't read" = "%lld deles o Homebrew não consegue ler";
@@ -642,6 +643,9 @@
 "Newer" = "Mais recente";
 "Newer than Intelbrew" = "Mais recente que o Intelbrew";
 "Newer than tap" = "Mais recente que o tap";
+"Newer version: %@ → %@ (left to the app's own updater)" = "Versão mais nova: %@ → %@ (deixada para o atualizador do próprio app)";
+"Newer version: %@ → %@ (pinned: upgrades leave it)" = "Versão mais nova: %@ → %@ (fixado: as atualizações o deixam)";
+"Newer version: %@ → %@ (you skipped this version)" = "Versão mais nova: %@ → %@ (você pulou esta versão)";
 "Next run: %@" = "Próxima execução: %@";
 "No Homebrew app to check with yet" = "Nenhum app do Homebrew para verificar ainda";
 "No Homebrew cask installs these apps." = "Nenhum cask do Homebrew instala esses apps.";
@@ -1196,7 +1200,7 @@
 "Upgrade finished" = "Atualização concluída";
 "Upgrade finished with problems" = "Atualização concluída com problemas";
 "Upgrade packages automatically" = "Atualizar pacotes automaticamente";
-"Upgrade ready: " = "Atualização pronta: ";
+"Upgrade ready: %@ → %@" = "Atualização pronta: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Atualizar os %lld pacotes que têm versão mais nova, um de cada vez";
 "Upgrade the 1 package that has a newer version" = "Atualizar o 1 pacote que tem versão mais nova";
 "Upgrade the Remaining %lld Packages" = "Atualizar os %lld restantes";

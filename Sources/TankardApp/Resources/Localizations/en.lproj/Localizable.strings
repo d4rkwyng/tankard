@@ -113,6 +113,7 @@
 "%lld newer" = "%lld newer";
 "%lld no bottle" = "%lld no bottle";
 "%lld not checked" = "%lld not checked";
+"%lld not included" = "%lld not included";
 "%lld of %lld" = "%lld of %lld";
 "%lld of %lld versions" = "%lld of %lld versions";
 "%lld of them Homebrew can't read" = "%lld of them Homebrew can't read";
@@ -642,6 +643,9 @@
 "Newer" = "Newer";
 "Newer than Intelbrew" = "Newer than Intelbrew";
 "Newer than tap" = "Newer than tap";
+"Newer version: %@ → %@ (left to the app's own updater)" = "Newer version: %@ → %@ (left to the app's own updater)";
+"Newer version: %@ → %@ (pinned: upgrades leave it)" = "Newer version: %@ → %@ (pinned: upgrades leave it)";
+"Newer version: %@ → %@ (you skipped this version)" = "Newer version: %@ → %@ (you skipped this version)";
 "Next run: %@" = "Next run: %@";
 "No Homebrew app to check with yet" = "No Homebrew app to check with yet";
 "No Homebrew cask installs these apps." = "No Homebrew cask installs these apps.";
@@ -1196,7 +1200,7 @@
 "Upgrade finished" = "Upgrade finished";
 "Upgrade finished with problems" = "Upgrade finished with problems";
 "Upgrade packages automatically" = "Upgrade packages automatically";
-"Upgrade ready: " = "Upgrade ready: ";
+"Upgrade ready: %@ → %@" = "Upgrade ready: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Upgrade the %lld packages that have a newer version, one at a time";
 "Upgrade the 1 package that has a newer version" = "Upgrade the 1 package that has a newer version";
 "Upgrade the Remaining %lld Packages" = "Upgrade the Remaining %lld Packages";

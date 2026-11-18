@@ -91,8 +91,9 @@ struct PackageDetail: View {
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.up.circle").foregroundStyle(theme.upgrade)
-                        (Text("Upgrade ready: ") + Text(verbatim: "\(p.installedVersion) → \(p.currentVersion ?? "?")")
-                            .foregroundColor(theme.upgrade).fontWeight(.semibold))
+                        Text(UpgradeBanner.text(p))
+                            .foregroundStyle(p.isUpgradeTarget ? theme.upgrade : Color.primary)
+                            .fontWeight(p.isUpgradeTarget ? .semibold : .regular)
                             .font(.system(size: 12))
                             .lineLimit(2)
                     }

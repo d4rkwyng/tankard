@@ -348,6 +348,19 @@ public enum SummaryText {
         return candidates.filter { seen.insert($0).inserted }
     }
 
+    /// 0.8.6 (UI details M3): counted from what Upgrade All takes
+    /// (`targets`, the store's `upgradable`), like the Upgrade button and the
+    /// menu bar; the upgrades it leaves out (pinned, a skipped version, an
+    /// app left to its own updater) are named after the detail. nil when
+    /// none are ready.
+    public static func upgrades(_ s: StatusSummary, targets: [Package]) -> (String, String)? {
+        let left = max(0, s.upgrades - targets.count)
+        guard let (ready, base) = upgrades(StatusSummary(packages: targets)) else { return nil }
+        var detail = base
+        if left > 0 { detail += " · " + String(localized: "\(left) not included") }
+        return (ready, detail)
+    }
+
     /// ("5 upgrades ready", "(4 with bottles, 1 compiles)"), or nil when none.
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }
@@ -355,6 +368,20 @@ public enum SummaryText {
         if s.upgradesFromSource > 0 { detail.append(s.upgradesFromSource == 1 ? String(localized: "\(s.upgradesFromSource) compiles") : String(localized: "\(s.upgradesFromSource) compile")) }
         if s.caskUpgrades > 0 { detail.append(s.caskUpgrades == 1 ? String(localized: "\(s.caskUpgrades) cask") : String(localized: "\(s.caskUpgrades) casks")) }
         return (s.upgrades == 1 ? String(localized: "\(s.upgrades) upgrade ready") : String(localized: "\(s.upgrades) upgrades ready"), "(\(detail.joined(separator: ", ")))")
+    }
+}
+
+/// 0.8.6 (UI details M3, L1): the detail pane's upgrade line, one whole
+/// sentence. A pinned, skipped or held package says why Upgrade All leaves
+/// it (it said "Upgrade ready" while the header and button didn't count it).
+public enum UpgradeBanner {
+    public static func text(_ p: Package) -> String {
+        let from = p.installedVersion, to = p.currentVersion ?? "?"
+        if p.isUpgradeTarget { return String(localized: "Upgrade ready: \(from) → \(to)") }
+        if p.pinned { return String(localized: "Newer version: \(from) → \(to) (pinned: upgrades leave it)") }
+        if p.versionSkipped == true { return String(localized: "Newer version: \(from) → \(to) (you skipped this version)") }
+        if p.selfUpdateHeld == true { return String(localized: "Newer version: \(from) → \(to) (left to the app's own updater)") }
+        return String(localized: "Upgrade ready: \(from) → \(to)")
     }
 }
 

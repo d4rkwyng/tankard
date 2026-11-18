@@ -113,6 +113,7 @@
 "%lld newer" = "%lld個が新しい";
 "%lld no bottle" = "%lld個はbottleなし";
 "%lld not checked" = "%lld個は未確認";
+"%lld not included" = "%lld 個は対象外";
 "%lld of %lld" = "%lld / %lld";
 "%lld of %lld versions" = "%lld/%lld バージョン";
 "%lld of them Homebrew can't read" = "うち %lld 個は Homebrew が読み込めません";
@@ -642,6 +643,9 @@
 "Newer" = "新しい";
 "Newer than Intelbrew" = "Intelbrewより新しい";
 "Newer than tap" = "tapより新しい";
+"Newer version: %@ → %@ (left to the app's own updater)" = "新しいバージョン：%@ → %@（アプリ自身のアップデータに任せています）";
+"Newer version: %@ → %@ (pinned: upgrades leave it)" = "新しいバージョン：%@ → %@（固定中：アップグレードの対象外）";
+"Newer version: %@ → %@ (you skipped this version)" = "新しいバージョン：%@ → %@（このバージョンはスキップ済み）";
 "Next run: %@" = "次回の実行: %@";
 "No Homebrew app to check with yet" = "確認に使えるHomebrewのアプリがまだありません";
 "No Homebrew cask installs these apps." = "これらのアプリをインストールする Homebrew の cask はありません。";
@@ -1196,7 +1200,7 @@
 "Upgrade finished" = "アップグレード完了";
 "Upgrade finished with problems" = "アップグレード完了 (問題あり)";
 "Upgrade packages automatically" = "パッケージを自動でアップグレード";
-"Upgrade ready: " = "アップグレードの準備完了: ";
+"Upgrade ready: %@ → %@" = "アップグレードの準備完了：%@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "新しいバージョンがある%lld個のパッケージを1つずつアップグレードします";
 "Upgrade the 1 package that has a newer version" = "新しいバージョンがある1個のパッケージをアップグレードします";
 "Upgrade the Remaining %lld Packages" = "残りの %lld 件をアップグレード";

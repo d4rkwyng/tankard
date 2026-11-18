@@ -113,6 +113,7 @@
 "%lld newer" = "%lld 个较新";
 "%lld no bottle" = "%lld 个无 bottle";
 "%lld not checked" = "%lld 个未检查";
+"%lld not included" = "%lld 个未包含";
 "%lld of %lld" = "%lld / %lld";
 "%lld of %lld versions" = "%lld / %lld 个版本";
 "%lld of them Homebrew can't read" = "其中 %lld 个 Homebrew 无法读取";
@@ -642,6 +643,9 @@
 "Newer" = "较新";
 "Newer than Intelbrew" = "比 Intelbrew 新";
 "Newer than tap" = "比 tap 新";
+"Newer version: %@ → %@ (left to the app's own updater)" = "更新的版本：%@ → %@（交给 App 自己的更新程序）";
+"Newer version: %@ → %@ (pinned: upgrades leave it)" = "更新的版本：%@ → %@（已固定：升级时跳过）";
+"Newer version: %@ → %@ (you skipped this version)" = "更新的版本：%@ → %@（你已跳过此版本）";
 "Next run: %@" = "下次运行：%@";
 "No Homebrew app to check with yet" = "还没有可用于检查的 Homebrew App";
 "No Homebrew cask installs these apps." = "没有 Homebrew cask 会安装这些 App。";
@@ -1196,7 +1200,7 @@
 "Upgrade finished" = "升级已完成";
 "Upgrade finished with problems" = "升级已完成，但有问题";
 "Upgrade packages automatically" = "自动升级软件包";
-"Upgrade ready: " = "升级已就绪： ";
+"Upgrade ready: %@ → %@" = "升级已就绪：%@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "逐个升级有新版本的 %lld 个软件包";
 "Upgrade the 1 package that has a newer version" = "升级有新版本的 1 个软件包";
 "Upgrade the Remaining %lld Packages" = "升级剩余的 %lld 个";
