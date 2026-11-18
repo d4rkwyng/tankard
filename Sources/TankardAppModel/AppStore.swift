@@ -292,7 +292,11 @@ public final class AppStore {
             recorder.observe(id, command, event)
         })
         self.history = HistoryLog(url: deps.historyURL)
-        self.settings = settings ?? AppSettings.ephemeral()
+        // No settings (tests only; the app always passes them): a private
+        // suite per store. One shared suite let concurrent tests see each
+        // other's run journal and App Management retry (an interrupted-run
+        // offer opened the sheet in an unrelated test).
+        self.settings = settings ?? AppSettings.ephemeral("net.mindtricks.tankard.ephemeral.\(UUID().uuidString)")
         self.restorePoints = RestorePointStore(directory: deps.restorePointsURL,
                                                settings: RollbackSettings(defaults: self.settings.defaults))
         self.insights = InsightsStore(settings: InsightSettings(defaults: self.settings.defaults),
