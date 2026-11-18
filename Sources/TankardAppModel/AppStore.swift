@@ -1188,6 +1188,11 @@ public final class AppStore {
         // 0.8.5: after the rest (it may open the App Management page).
         defer { progressPanelSessionFinished(session) }
         if session.action == .adopt { adoptSessionFinished(session) }
+        // 0.8.5: a tap added or removed (Enable Casks among them): Discover
+        // lists what the taps now hold.
+        if session.action == .tap || session.action == .untap, let d = discover {
+            Task { await d.reload() }
+        }
         runJournalSessionFinished(session)
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch

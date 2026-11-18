@@ -203,6 +203,7 @@ public final class AppSettings {
         static let onboardingDone = "onboardingDone"
         static let hideDockIconWhenClosed = "hideDockIconWhenClosed"
         static let notifyHintShown = "notifyHintShown"
+        static let casksBannerHidden = "casksBannerHidden"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -275,6 +276,10 @@ public final class AppSettings {
 
     /// 0.8.2: the "Turn on notifications…" hint after a Refresh was shown once.
     public var notifyHintShown: Bool { didSet { defaults.set(notifyHintShown, forKey: Key.notifyHintShown) } }
+    /// 0.8.5: Discover's "Casks are off" banner was closed (CasksBanner).
+    public var casksBannerHidden: Bool {
+        didSet { if casksBannerHidden != oldValue { defaults.set(casksBannerHidden, forKey: Key.casksBannerHidden) } }
+    }
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -291,6 +296,7 @@ public final class AppSettings {
         onboardingDone = defaults.bool(forKey: Key.onboardingDone)
         hideDockIconWhenClosed = defaults.object(forKey: Key.hideDockIconWhenClosed) as? Bool ?? true
         notifyHintShown = defaults.bool(forKey: Key.notifyHintShown)
+        casksBannerHidden = defaults.bool(forKey: Key.casksBannerHidden)
     }
 
     /// Settings that persist nowhere real (tests, demo mode): a private
