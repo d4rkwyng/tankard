@@ -234,7 +234,7 @@ struct AdminPasswordTests {
         #expect(cmd.display.hasPrefix("brew upgrade --cask"))
         await #expect(waitUntil { store.upgrade?.isFinished == true })
         store.closeUpgrade()
-        await #expect(waitForRead(store, after: reads))
+        #expect(await waitForRead(store, after: reads))
 
         let formula = try #require(store.packages.first { $0.kind == .formula && $0.isManualUpgradeTarget })
         store.startUpgrade([formula])
