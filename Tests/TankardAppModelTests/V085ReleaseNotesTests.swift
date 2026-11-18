@@ -27,8 +27,9 @@ func releaseBody(_ version: String) throws -> String {
     }
     let body = section.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     try #require(!body.isEmpty, "no CHANGELOG section \(version)")
-    return "Tankard v\(version): a native Homebrew app for macOS 14 Sonoma and later (universal: Intel and Apple silicon). Signed with Developer ID and notarized.\n\n"
-        + body + "\n\nInstall or upgrade: `brew install --cask d4rkwyng/tap/tankard` / `brew upgrade --cask tankard`"
+    return "Tankard v\(version) for macOS 14 Sonoma and later.\n\n" + body
+        + "\n\nA native Homebrew app, universal (Intel and Apple silicon), signed with Developer ID and notarized."
+        + "\n\nInstall or upgrade: `brew install --cask d4rkwyng/tap/tankard` / `brew upgrade --cask tankard`"
 }
 
 struct V085ReleaseNotesTests {
@@ -42,7 +43,6 @@ struct V085ReleaseNotesTests {
             return nil
         }
         #expect(headings.contains("Added"))
-        #expect(headings.contains("Changed"))
         // No paragraph: every line is short, no Markdown, no intro or install line.
         for line in s.plainText.split(separator: "\n") {
             #expect(line.count <= 140, "\(line)")
@@ -61,6 +61,41 @@ struct V085ReleaseNotesTests {
             .bullet("Your shell profile's proxy settings reach brew (http_proxy, https_proxy, all_proxy, no_proxy and the forms brew keeps)"),
             .bullet("Health warns about brew.env settings that override Tankard, one row each with the reason: the dependents check, the…"),
         ])
+    }
+
+    @Test func v085StartsWithHighlights() throws {
+        let s = ReleaseNotesSummary.make(try releaseBody("0.8.5"))
+        #expect(s.items.first == .heading("Highlights"))
+        #expect(s.items.dropFirst().prefix(6).allSatisfy { if case .bullet = $0 { true } else { false } })
+        #expect(s.items[7] == .heading("Added"))
+    }
+
+    /// 0.8.4's excerpt, unchanged: what a 0.8.4 app shows for the 0.8.5
+    /// release. The 0.8.5 section starts with a short Highlights list and
+    /// release.yml's intro is one short line, so that is a tidy list too.
+    static func excerpt084(_ body: String, limit: Int = 700) -> String {
+        let lines = body.replacingOccurrences(of: "\r\n", with: "\n").split(separator: "\n", omittingEmptySubsequences: false).map { line -> String in
+            var l = String(line)
+            while l.hasPrefix("#") { l.removeFirst() }
+            return l.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: .whitespaces)
+        }
+        var text = lines.joined(separator: "\n")
+        while text.contains("\n\n\n") { text = text.replacingOccurrences(of: "\n\n\n", with: "\n\n") }
+        text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text.count > limit else { return text }
+        let head = String(text.prefix(limit))
+        let cut = head.lastIndex(of: "\n").map { String(head[..<$0]) } ?? head
+        return cut.trimmingCharacters(in: .whitespacesAndNewlines) + "…"
+    }
+
+    @Test func oldAppShowsV085AsAList() throws {
+        let shown = Self.excerpt084(try releaseBody("0.8.5"))
+        let lines = shown.split(separator: "\n").map(String.init)
+        #expect(lines.first == "Tankard v0.8.5 for macOS 14 Sonoma and later.")
+        #expect(lines.contains("Highlights"))
+        let bullets = lines.filter { $0.hasPrefix("- ") }
+        #expect((4...6).contains(bullets.count), "\(shown)")
+        for line in lines { #expect(line.count < 80, "\(line)") }
     }
 
     @Test func leadRules() {

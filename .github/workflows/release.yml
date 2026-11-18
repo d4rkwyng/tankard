@@ -61,10 +61,14 @@ jobs:
         run: |
           Scripts/changelog-section.sh --self-test
           {
-            echo "Tankard ${TAG}: a native Homebrew app for macOS 14 Sonoma and later (universal: Intel and Apple silicon). Signed with Developer ID and notarized."
+            # Short: Check for Tankard Updates… in 0.8.4 and earlier shows
+            # only the first 700 characters of this body.
+            echo "Tankard ${TAG} for macOS 14 Sonoma and later."
             echo
             BASE="${TAG#v}"; BASE="${BASE%%-*}"   # v0.3.1-rc1 -> 0.3.1
             Scripts/changelog-section.sh "$BASE"
+            echo
+            echo "A native Homebrew app, universal (Intel and Apple silicon), signed with Developer ID and notarized."
             echo
             echo 'Install or upgrade: `brew install --cask d4rkwyng/tap/tankard` / `brew upgrade --cask tankard`'
           } > "$RUNNER_TEMP/release-notes.md"

@@ -6,6 +6,14 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.5]
 
+### Highlights
+- Upgrade All from the menu bar runs in a small window of its own
+- Builds from source show how long they have taken so far
+- Apps that need your password show a lock and upgrade last
+- Tankard warns before an upgrade closes apps you have open
+- Clean Up keeps the old versions that Restore Points needs
+- Calmer Health and History: no red alarms for harmless notes
+
 ### Added
 - **Long builds show their time.** While a package builds from source, the upgrade sheet and the progress window say "Building from source… 4 min so far". After you have built the same formula from source on this Mac before, it adds an estimate: "(last time on this Mac: about 15 min)". brew doesn't estimate builds itself, so with no earlier build only the time so far shows.
 - **Discover says when apps (casks) are turned off.** An Intelbrew Mac set up without casks can't install apps like Firefox or VLC. Discover now explains this in a banner, and **Turn On Apps…** runs `brew tap homebrew/cask` after asking, the same thing the Intelbrew installer does (a one-time download of about 620 MB). Close the banner to hide it.
