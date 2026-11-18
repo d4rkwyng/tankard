@@ -126,3 +126,20 @@ public extension Package {
         return [head, from].compactMap { $0 }.joined(separator: " ")
     }
 }
+
+/// 0.8.6 (walkthrough M4): when brew last changed what is installed, by
+/// the folders an install, upgrade or uninstall always touches (a folder's
+/// modification time changes when an entry is added or removed).
+public enum HomebrewChanges {
+    public static func paths(client: BrewClient) -> [String] {
+        let prefix = client.installation.prefix
+        return [client.platform.cellar, prefix + "/Caskroom", prefix + "/opt", prefix + "/var/homebrew/linked"]
+    }
+
+    public static func latest(client: BrewClient) -> Date? { latest(paths: paths(client: client)) }
+
+    /// The newest modification time of those that exist; nil when none do.
+    public static func latest(paths: [String]) -> Date? {
+        paths.compactMap { (try? FileManager.default.attributesOfItem(atPath: $0))?[.modificationDate] as? Date }.max()
+    }
+}

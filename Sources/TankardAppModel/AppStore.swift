@@ -125,6 +125,11 @@ public final class AppStore {
         /// 0.8.5: the Mac Pro 6,1 Electron check (ElectronGPU.swift). Off
         /// (reads nothing) unless set: `live()`, or the demo's hook.
         public var electronGPU: ElectronGPUProbe = .disabled
+        /// 0.8.6 (walkthrough M4): when brew last changed what is installed
+        /// (the newest modification time of the Cellar, Caskroom, opt and
+        /// var/homebrew/linked folders), for a re-read when that is newer
+        /// than the report. nil (tests, demo): never.
+        public var homebrewChangedAt: (@Sendable (BrewClient) -> Date?)?
         /// 0.8.5 (M3): a Brewfile's text, for its taps' URLs (demo: a fixed one).
         public var readBrewfile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
 
@@ -179,6 +184,7 @@ public final class AppStore {
             d.updateFeed = .live()
             d.lockWait = .live
             d.electronGPU = .live
+            d.homebrewChangedAt = { HomebrewChanges.latest(client: $0) }
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -475,20 +481,31 @@ public final class AppStore {
             reportFromCache = true
             LaunchTiming.mark("list (cache)", once: true)
         }
-        if isStale {
+        // 0.8.6 (M4): also when brew changed something since the cached
+        // read (Terminal), or an interrupted run waits to be offered.
+        if isStale || homebrewChangedSinceRead || settings.defaults.data(forKey: RunJournal.key) != nil {
             await refresh(manual: false)
         } else {
             startInsights(force: false)
         }
     }
 
-    /// Re-reads status if the data is older than the TTL (window became active).
+    /// 0.8.6 (M4): brew's folders changed after the report on screen was
+    /// read (a few stat calls; nothing is run).
+    public var homebrewChangedSinceRead: Bool {
+        guard let probe = deps.homebrewChangedAt, let t = lastUpdated, let client = try? resolvedClient(),
+              let changed = probe(client) else { return false }
+        return changed > t
+    }
+
+    /// Re-reads status if the data is older than the TTL, or (0.8.6, M4)
+    /// brew changed something since (window became active).
     public func revalidateIfStale() {
         if homebrewState.needsWelcome, !isRefreshing {
             Task { await checkAgain() }
             return
         }
-        guard isStale, !isRefreshing, !isUpgrading, !selfReplaced else { return }
+        guard !isRefreshing, !isUpgrading, !selfReplaced, isStale || homebrewChangedSinceRead else { return }
         Task { await refresh(manual: false) }
     }
 

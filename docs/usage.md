@@ -78,6 +78,10 @@ you start still report every failure in full.
   `brew install wget` or `brew install --cask firefox` into either search field: Tankard
   searches for the package name. When nothing installed matches, the list offers **Search Discover for "wget"**,
   which opens Discover with the same search.
+- **Keeping current:** the list opens from the last read, then reads brew again when that is
+  over an hour old, or as soon as something was installed, upgraded or removed since (in
+  Terminal too: Tankard compares the modification times of brew's Cellar, Caskroom and opt
+  folders, at launch and whenever the window comes to the front).
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
   until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
