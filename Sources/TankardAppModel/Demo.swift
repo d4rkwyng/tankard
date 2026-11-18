@@ -294,7 +294,8 @@ public enum Demo {
                 formulae.append(e)
             } else {
                 e["installed"] = e["version"]
-                e["installed_time"] = Date().timeIntervalSince1970
+                // brew's own (zone-shifted) value, so it reads back as now.
+                e["installed_time"] = CaskInstallTime.brewInstalledTime(for: Date())
                 e["outdated"] = false
                 extraCasks.append(e)
             }

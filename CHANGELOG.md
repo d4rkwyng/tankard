@@ -22,6 +22,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **"Upgrade N with bottles" no longer cut off** in the Upgrades header at the default window width (German especially).
 - **Proxy passwords are masked** in upgrade.log, History, the Auto-update Log and notifications.
 - **Relaunch no longer carries debug settings over** to the new copy (demo, snapshot or script mode).
+- **A cask's "Installed on" date is no longer a day late in the evening** (west of Greenwich). brew reports a cask's install time as the UTC clock read as local time; Tankard now undoes that offset. Formula dates were already right.
 
 ### For contributors
 - The tests delete the UserDefaults suites they create; a run used to leave a few hundred plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.

@@ -6,10 +6,13 @@ public struct StatusClassifier: Sendable {
     public var platform: BottlePlatform
     /// Intelbrew mode: bottle labels say whose bottle it is.
     public var intelbrewMode: Bool
+    /// 0.8.4: the zone brew read a cask's install time in (see `CaskInstallTime`).
+    public var timeZone: TimeZone
 
-    public init(platform: BottlePlatform, intelbrewMode: Bool) {
+    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current) {
         self.platform = platform
         self.intelbrewMode = intelbrewMode
+        self.timeZone = timeZone
     }
 
     public static func bottleOrigin(url: String?) -> BottleOrigin {
@@ -143,7 +146,7 @@ public struct StatusClassifier: Sendable {
             bottleTag: nil,
             bottleOrigin: nil,
             bottleURL: nil,
-            installedAt: c.installedTime.map { Date(timeIntervalSince1970: $0) },
+            installedAt: c.installedTime.map { CaskInstallTime.date(brewInstalledTime: $0, timeZone: timeZone) },
             upgradeAvailable: outdated,
             upgradeHasBottle: nil,
             autoUpdates: c.autoUpdates,
@@ -184,5 +187,29 @@ public struct StatusClassifier: Sendable {
         case .noBottle: return String(localized: "no bottle")
         case .cask: return String(localized: "cask")
         }
+    }
+}
+
+/// 0.8.4: a cask's real install time from brew's `installed_time`.
+///
+/// brew names the cask's metadata folder after the install time in UTC
+/// (cask/metadata.rb: `Time.now.utc.strftime("%Y%m%d%H%M%S.%L")`), then
+/// reads it back with `Time.strptime(name, "%Y%m%d%H%M%S.%L")` and no zone
+/// (cask/cask.rb `install_time`), which Ruby takes as local time. So
+/// `installed_time` is off by the UTC offset: 7 hours late in Arizona (an
+/// evening install shows the next day), early east of Greenwich. Formulae
+/// (the receipt's `time`) are right. Reading the brew value as local time
+/// gives back the UTC wall clock brew wrote: adding the offset in force at
+/// that instant undoes the error exactly, daylight saving included.
+public enum CaskInstallTime {
+    public static func date(brewInstalledTime t: Double, timeZone: TimeZone = .current) -> Date {
+        let read = Date(timeIntervalSince1970: t)
+        return read.addingTimeInterval(TimeInterval(timeZone.secondsFromGMT(for: read)))
+    }
+
+    /// What brew reports for a cask installed at `date` (demo data, tests).
+    public static func brewInstalledTime(for date: Date, timeZone: TimeZone = .current) -> Double {
+        let guess = date.addingTimeInterval(-TimeInterval(timeZone.secondsFromGMT(for: date)))
+        return date.timeIntervalSince1970 - TimeInterval(timeZone.secondsFromGMT(for: guess))
     }
 }
