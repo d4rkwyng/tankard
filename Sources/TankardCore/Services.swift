@@ -143,6 +143,14 @@ public enum BrewServices {
         ["services", action.rawValue, "--", name]
     }
 
+    /// 0.8.5 (bug hunt L12): the command as the user would type it, for the
+    /// Command box: no `--` unless the name could be read as an option
+    /// (a formula name never starts with "-"). brew treats both the same:
+    /// `brew services info --json <name>` and `… -- <name>` print the same.
+    public static func displayArguments(_ action: ServiceAction, _ name: String) -> [String] {
+        name.hasPrefix("-") ? arguments(action, name) : ["services", action.rawValue, name]
+    }
+
     /// `brew services list --json` (brew prints `[]` when there are none,
     /// and nothing at all from `info --all` then).
     public static func decode(_ data: Data) throws -> [BrewService] {

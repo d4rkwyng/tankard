@@ -249,7 +249,8 @@ struct ServicesStoreTests {
         let (store, services, log) = try await rig()
         await services.load()
         let php = try #require(services.services.first { $0.name == "php" })
-        #expect(services.command(.start, php) == "brew services start -- php")
+        // 0.8.5 (L12): shown as typed; the queue still runs it with `--`.
+        #expect(services.command(.start, php) == "brew services start php")
         await services.perform(.start, on: php, store: store)
         #expect(log.calls.contains(["services", "start", "--", "php"]))
         #expect(log.calls.filter { $0 == ["services", "list", "--json"] }.count == 2)
@@ -275,7 +276,7 @@ struct ServicesStoreTests {
         #expect(services.needsSudo(unbound))
         await services.perform(.stop, on: unbound, store: store)
         #expect(!log.calls.contains(["services", "stop", "--", "unbound"]))
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- unbound")
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop unbound")
     }
 
     @Test func brewsSudoMessageBecomesTerminalGuidance() async throws {
@@ -288,7 +289,7 @@ struct ServicesStoreTests {
         let pg = try #require(services.services.first { $0.name == "postgresql@18" })
         #expect(!services.needsSudo(pg)) // the list said "test", brew disagreed
         await services.perform(.stop, on: pg, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services stop -- postgresql@18")
+        #expect(services.actionError?.terminalCommand == "sudo brew services stop postgresql@18")
         #expect(services.actionError?.title.contains("needs sudo") == true)
     }
 
@@ -328,7 +329,7 @@ struct ServicesStoreTests {
         #expect(services.services.first { $0.name == "redis" }?.status == .started)
         let unbound = try #require(services.services.first { $0.name == "unbound" })
         await services.perform(.restart, on: unbound, store: store)
-        #expect(services.actionError?.terminalCommand == "sudo brew services restart -- unbound")
+        #expect(services.actionError?.terminalCommand == "sudo brew services restart unbound")
     }
 }
 

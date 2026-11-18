@@ -58,7 +58,7 @@ public final class ServicesStore {
 
     /// The command for an action, as the user would type it.
     public func command(_ action: ServiceAction, _ s: BrewService) -> String {
-        BrewCommands.display(BrewServices.arguments(action, s.name))
+        BrewCommands.display(BrewServices.displayArguments(action, s.name))
     }
 
     /// What to run in Terminal instead, for a service only root can control.
