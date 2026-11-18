@@ -37,3 +37,16 @@ struct V084MenuBarVersionTests {
         #expect(row.fullVersions == "3.29.15,86776fcb52ca505783155631089b65d646f9b03f → 3.30.14,5f54c8173e5552412beb40702adac16275677fa0")
     }
 }
+
+// 0.8.4: About kept wrapping "BSD-2-" / "Clause.".
+struct V084AboutLicenceTests {
+    @Test func licenceNameDoesNotBreak() {
+        let joined = "BSD-\u{2060}2-\u{2060}Clause"
+        #expect(AboutInfo.keepTogether("Homebrew © Homebrew contributors, BSD-2-Clause.") == "Homebrew © Homebrew contributors, \(joined).")
+        #expect(AboutInfo.homebrewCopyright.contains(joined))
+        #expect(AboutInfo.licence.contains(joined))
+        // Only the joiners were added.
+        #expect(AboutInfo.homebrewCopyright.replacingOccurrences(of: "\u{2060}", with: "") == "Homebrew © Homebrew contributors, BSD-2-Clause.")
+        #expect(AboutInfo.keepTogether("MIT") == "MIT")
+    }
+}

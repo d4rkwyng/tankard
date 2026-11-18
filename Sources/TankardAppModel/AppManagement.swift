@@ -372,12 +372,20 @@ public enum AboutInfo {
     }
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
     public static let author = String(localized: "Made by d4rkwyng")
-    public static let licence = String(localized: "BSD-2-Clause license")
+    public static let licence = keepTogether(String(localized: "BSD-2-Clause license"))
     public static let homebrew = URL(string: "https://brew.sh")!
     /// About Homebrew, kept short enough for the About panel's width
     /// (~280 pt): "brew.sh" is the link.
     public static let homebrewLine = String(localized: "An independent app for Homebrew (brew.sh).")
-    public static let homebrewCopyright = String(localized: "Homebrew © Homebrew contributors, BSD-2-Clause.")
+    public static let homebrewCopyright = keepTogether(String(localized: "Homebrew © Homebrew contributors, BSD-2-Clause."))
+
+    /// 0.8.4: the About panel wrapped "BSD-2-" / "Clause.". A word joiner
+    /// (U+2060) after each hyphen of the licence name forbids a line break
+    /// there and draws nothing, so the name stays on one line in every
+    /// language (the translations keep the plain name).
+    static func keepTogether(_ s: String) -> String {
+        s.replacingOccurrences(of: "BSD-2-Clause", with: "BSD-\u{2060}2-\u{2060}Clause")
+    }
     public static let notAffiliated = String(localized: "Not affiliated with or endorsed by the Homebrew project.")
     /// Intelbrew mode: replaces the plain Intelbrew link line.
     public static let intelbrewBottlesLine = String(localized: "Intelbrew bottles from d4rkwyng/intelbrew")
