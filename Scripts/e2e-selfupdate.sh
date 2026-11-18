@@ -287,7 +287,15 @@ STEPS
     # 0.8.4: wait for step 2's result line (the screenshot alone was taken
     # as "sheet up", and the wait timing out went on regardless: rc2's C
     # said "has its sheet up" with no results.jsonl at all).
-    sheet_done() { [ "$(step_result "$D/results.jsonl" 2 "open-sheet history")" != missing ] || ! kill -0 $OLDPID 2>/dev/null; }
+    # Still waiting while step 2 is "missing" or "missing (no FILE)" (before
+    # results.jsonl exists; rc2 matrix: comparing with exactly "missing"
+    # ended the 180 s wait at once) and the old pid runs.
+    sheet_done() {
+        case "$(step_result "$D/results.jsonl" 2 "open-sheet history")" in
+            missing*) ! kill -0 $OLDPID 2>/dev/null ;;
+            *) true ;;
+        esac
+    }
     wait_for 180 sheet_done >/dev/null
     SHEET=$(step_result "$D/results.jsonl" 2 "open-sheet history")
     if [ "$SHEET" != ok ] || ! kill -0 $OLDPID 2>/dev/null; then
