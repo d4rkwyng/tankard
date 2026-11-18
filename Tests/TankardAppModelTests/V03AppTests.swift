@@ -725,15 +725,22 @@ struct AboutTests {
     }
 
     /// Help ▸ Tankard Help opens the user guide on GitHub: a file of this
-    /// repository, on main, so the link can't point at a missing page.
+    /// repository. 0.8.4: at this version's release tag, so it matches the
+    /// app; main for a dev or unknown version.
     @Test func helpLinksToTheUsageGuideInThisRepository() throws {
-        let prefix = AboutInfo.repository.absoluteString + "/blob/main/"
         let url = AboutInfo.help.absoluteString
-        #expect(url.hasPrefix(prefix))
+        #expect(url == AboutInfo.repository.absoluteString + "/blob/v\(TankardVersion.string)/docs/usage.md")
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let path = root.appendingPathComponent(String(url.dropFirst(prefix.count))).path
-        #expect(path.hasSuffix("docs/usage.md"))
-        #expect(FileManager.default.fileExists(atPath: path))
+        #expect(FileManager.default.fileExists(atPath: root.appendingPathComponent("docs/usage.md").path))
+    }
+
+    @Test func helpFallsBackToMainForADevOrUnknownVersion() {
+        let base = "https://github.com/d4rkwyng/tankard/blob/"
+        #expect(AboutInfo.help(version: "0.8.4").absoluteString == base + "v0.8.4/docs/usage.md")
+        #expect(AboutInfo.help(version: "0.8.4-rc1").absoluteString == base + "v0.8.4-rc1/docs/usage.md")
+        for v in ["", "0.8.4-dev", "dev", "0.8", "0.8.4 ", "1.0.0-beta", "../x"] {
+            #expect(AboutInfo.help(version: v).absoluteString == base + "main/docs/usage.md", "\(v)")
+        }
     }
 }
 

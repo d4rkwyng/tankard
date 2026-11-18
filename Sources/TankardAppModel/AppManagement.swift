@@ -283,8 +283,22 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
 public enum AboutInfo {
     public static let repository = URL(string: "https://github.com/d4rkwyng/tankard")!
     public static let newIssue = URL(string: "https://github.com/d4rkwyng/tankard/issues/new")!
-    /// Help ▸ Tankard Help: the user guide.
-    public static let help = URL(string: "https://github.com/d4rkwyng/tankard/blob/main/docs/usage.md")!
+    /// Help ▸ Tankard Help: the user guide of this version (0.8.4), so it
+    /// describes the app the user has, not what main has since changed.
+    public static var help: URL { help(version: TankardVersion.string) }
+
+    /// The guide at the release tag `v<version>` for a release version
+    /// ("0.8.4", "0.8.4-rc1"); main for anything else (a dev build, an
+    /// empty or unknown version), where no tag can be assumed to exist.
+    public static func help(version: String) -> URL {
+        let ref = isReleaseVersion(version) ? "v" + version : "main"
+        return URL(string: repository.absoluteString + "/blob/\(ref)/docs/usage.md")!
+    }
+
+    /// "1.2.3" or "1.2.3-rc1": digits, then at most an `-rcN` suffix.
+    static func isReleaseVersion(_ v: String) -> Bool {
+        v.wholeMatch(of: /[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?/) != nil
+    }
     public static let intelbrew = URL(string: "https://github.com/d4rkwyng/intelbrew")!
     public static let author = String(localized: "Made by d4rkwyng")
     public static let licence = String(localized: "BSD-2-Clause license")
