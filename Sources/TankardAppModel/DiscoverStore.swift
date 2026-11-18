@@ -130,6 +130,13 @@ public final class DiscoverStore {
         loadTask = nil
     }
 
+    /// 0.8.5: loads again now, whatever the TTL (a tap was added or removed).
+    public func reload() async {
+        if let running = loadTask { await running.value }
+        loadedAt = nil
+        await activate()
+    }
+
     private func performLoad() async {
         if all.isEmpty { phase = .loading }
         let provider = self.provider

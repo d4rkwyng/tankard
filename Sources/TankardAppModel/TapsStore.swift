@@ -10,7 +10,11 @@ import TankardCore
 
 /// A tap the user asked to add, waiting for the confirmation.
 public struct TapAddRequest: Equatable, Sendable, Identifiable {
-    public enum Source: Equatable, Sendable { case tapsSheet, brewfile }
+    public enum Source: Equatable, Sendable {
+        case tapsSheet, brewfile
+        /// 0.8.5: Discover's "Casks are off" banner (Enable Casks…).
+        case discover
+    }
     public var name: String
     public var url: String?
     public var source: Source

@@ -89,6 +89,8 @@
 "%lld from an untrusted tap" = "%lld 个来自不受信任的 tap";
 "%lld from source" = "%lld 个来自源码";
 "%lld from the App Store" = "%lld 个来自 App Store";
+"%lld h" = "%lld 小时";
+"%lld h %lld min" = "%lld 小时 %lld 分钟";
 "%lld h ago" = "%lld 小时前";
 "%lld hours" = "%lld 小时";
 "%lld installed" = "%lld 个已安装";
@@ -130,6 +132,7 @@
 "%lld with bottles" = "%lld 个有 bottle";
 "%lld with no source repository brew can match" = "%lld 个没有 brew 可匹配的源码仓库";
 "%lld would compile from source: no bottle for this Mac. That can take a long time." = "%lld 个将从源码编译：没有适用于这台 Mac 的 bottle。这可能需要很长时间。";
+"(%lld times)" = "（%lld 次）";
 "(Tankard's sum: brew printed no total)" = "（Tankard 的合计：brew 未输出总数）";
 "+%lld dependencies also compile: %@" = "另有 +%lld 个依赖项也会编译：%@";
 "+%lld more" = "另有 +%lld 个";
@@ -211,10 +214,12 @@
 "App Store apps" = "App Store App";
 "App updates itself" = "App 自行更新";
 "Appearance" = "外观";
+"Apps (casks) are turned off" = "应用（cask）已关闭";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自行更新的 App 会继续自行更新。你为每个 App 选择的更新方式会随接管一起保存。";
 "Apps you installed yourself that Homebrew can manage: %lld" = "你自行安装、Homebrew 可以管理的 App：%lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "你自行安装、且 Homebrew cask 也会安装的 App。接管后 brew 即可更新它们，无需重新安装。";
 "Asking brew info…" = "正在询问 brew info…";
+"Asks first, then turns apps on" = "先询问，然后开启应用";
 "Auto-update" = "自动更新";
 "Auto-update didn't run" = "自动更新未运行";
 "Auto-update failed" = "自动更新失败";
@@ -243,6 +248,8 @@
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "仅限 bottle：没有 bottle 的 formula，或升级时会连带升级一个没有 bottle 的依赖项的 formula，会被跳过。如果某个 formula 的升级会让 brew 升级或重建一个没有 bottle 的已安装依赖方，也会被跳过：它会留在“升级”中，需手动升级。";
 "Brewfile" = "Brewfile";
 "Brewfile saved" = "Brewfile 已存储";
+"Building from source… %@ so far" = "正在从源代码构建… 已用 %@";
+"Building from source… %@ so far (last time on this Mac: about %@)" = "正在从源代码构建… 已用 %@（上次在这台 Mac 上：约 %@）";
 "Built from source" = "从源码构建";
 "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same." = "从源码构建，但 %@ 有适用于这台 Mac 的 bottle（%@）。替换后将改用 bottle 安装；版本保持不变。";
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "从源码构建，但 %@ 有适用于这台 Mac 的 bottle。替换后将改用 bottle 安装；版本保持不变。";
@@ -436,6 +443,7 @@
 "Hide" = "隐藏";
 "Hide Dock icon when the window is closed" = "关闭窗口时隐藏程序坞图标";
 "Hide Terminal Command" = "隐藏终端命令";
+"Hide this message" = "隐藏此消息";
 "High" = "高";
 "History" = "历史记录";
 "History…" = "历史记录…";
@@ -519,6 +527,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrew 的相关行仍保留在你的 shell 配置文件（%@）中；请事后手动移除，或先使用“还原为标准 Homebrew”。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "它会删除 %@ 的 Homebrew 文件以及所有已安装的 formula 和 cask，包括作为 cask 安装在 /Applications 中的 App。这台 Mac 上的其他 Homebrew（位于不同前缀）不受影响。它可能会要求输入密码。";
 "It took %@; expect longer on an older Mac." = "耗时 %@；在较旧的 Mac 上会更久。";
+"It was stopped." = "已被停止。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
 "KB" = "KB";
 "Keep Old Versions" = "保留旧版本";
@@ -833,6 +842,10 @@
 "Scanning %lld formula…" = "正在扫描 %lld 个 formula…";
 "Scanning…" = "正在扫描…";
 "Scheduled" = "已计划";
+"Scheduled check didn't run: another Homebrew command was running. Will retry." = "计划的检查未运行：另一个 Homebrew 命令正在运行。稍后重试。";
+"Scheduled check didn't run: offline. Will retry." = "计划的检查未运行：离线。稍后重试。";
+"Scheduled check interrupted by sleep. Will retry." = "计划的检查因睡眠而中断。稍后重试。";
+"Scheduled check took too long and was stopped. Will retry." = "计划的检查耗时过长，已停止。稍后重试。";
 "Search %@ packages" = "搜索 %@ 个软件包";
 "Search Discover for “%@”" = "在“探索”中搜索“%@”";
 "Search Homebrew" = "搜索 Homebrew";
@@ -997,6 +1010,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "这些 App 与某个 cask 匹配，但 brew install --adopt 不会接管它们。";
 "These need your administrator password: %@" = "以下项目需要你的管理员密码：%@";
 "Third-party" = "第三方";
+"This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "此 Homebrew 可以安装命令行工具，但不能安装 Firefox 或 VLC 等应用。开启应用需要一次性下载约 620 MB。";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。";
@@ -1017,6 +1031,7 @@
 "Trust…" = "信任…";
 "Try Again" = "再试一次";
 "Try another filter." = "请尝试其他过滤条件。";
+"Turn On Apps…" = "开启应用…";
 "Turn automatic updates back on now" = "立即重新开启自动更新";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "开启 Tankard。如果列表中没有，请点按 + 并在“应用程序”中选择 Tankard。";
 "Turn on notifications in Settings ▸ General" = "可在“设置 ▸ 通用”中打开通知";
@@ -1210,6 +1225,7 @@
 "has an archived upstream repository" = "上游仓库已归档";
 "has no license" = "没有许可证";
 "installed" = "已安装";
+"interrupted by sleep; the next automatic run tries again" = "因睡眠而中断；下次自动运行时会重试";
 "is a versioned formula" = "是带版本号的 formula";
 "is deprecated upstream" = "上游已弃用";
 "is discontinued upstream" = "上游已停止维护";
@@ -1259,6 +1275,8 @@
 "tapped" = "已添加 tap";
 "today %@" = "今天 %@";
 "tomorrow %@" = "明天 %@";
+"took too long and was stopped; the next automatic run tries again" = "耗时过长，已停止；下次自动运行时会重试";
+"under a minute" = "不到一分钟";
 "uninstalled" = "已卸载";
 "untapped" = "已取消 tap";
 "updated %@" = "已更新 %@";

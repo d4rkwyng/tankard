@@ -41,12 +41,12 @@ public enum BackgroundUpdatePolicy {
     /// and the brew repository's last fetch (any `brew update`, Terminal's too).
     public static func decide(enabled: Bool, available: Bool, optOut: String?, interval: TimeInterval,
                               lastUpdate: Date?, lastFailure: Date?, launchedAt: Date, now: Date,
-                              busy: Bool) -> Decision {
+                              busy: Bool, retryAfterFailure: TimeInterval = failureRetry) -> Decision {
         guard available, enabled else { return .off }
         if let optOut { return .optedOut(source: optOut) }
         var next = launchedAt.addingTimeInterval(launchDelay)
         if let lastUpdate { next = max(next, lastUpdate.addingTimeInterval(interval)) }
-        if let lastFailure { next = max(next, lastFailure.addingTimeInterval(min(interval, failureRetry))) }
+        if let lastFailure { next = max(next, lastFailure.addingTimeInterval(min(interval, retryAfterFailure))) }
         if next > now { return .notDue(next: next) }
         return busy ? .waiting(retry: busyRetry) : .run
     }
@@ -92,7 +92,8 @@ extension AppStore {
         return BackgroundUpdatePolicy.decide(enabled: settings.backgroundUpdate, available: deps.backgroundUpdates,
                                              optOut: BackgroundUpdatePolicy.optOut(sources), interval: interval,
                                              lastUpdate: last, lastFailure: lastBackgroundUpdateFailure,
-                                             launchedAt: launchedAt, now: now, busy: backgroundUpdateBusy)
+                                             launchedAt: launchedAt, now: now, busy: backgroundUpdateBusy,
+                                             retryAfterFailure: backgroundFailureRetry)
     }
 
     /// `brew update` through the queue (so never beside another brew command
@@ -106,8 +107,19 @@ extension AppStore {
         backgroundUpdateRuns += 1
         defer { backgroundUpdating = false }
         let started = deps.now()
-        if let failure = await runUpdate(client) {
+        // 0.8.5: with a time limit, stopped by sleep; "try later" is quiet.
+        let result = await runScheduledUpdate(client)
+        lastScheduledUpdate = result
+        if let quiet = result.quiet {
             lastBackgroundUpdateFailure = deps.now()
+            backgroundFailureRetry = quiet.retryAfter
+            Self.log.notice("background brew update: \(quiet.rawValue, privacy: .public); will retry")
+            deps.logURL.map(LogFile.init)?.append(["=== \(ISO8601DateFormatter().string(from: started)) background brew update failed: \(quiet.rawValue); will retry"])
+            return false
+        }
+        if let failure = result.error {
+            lastBackgroundUpdateFailure = deps.now()
+            backgroundFailureRetry = BackgroundUpdatePolicy.failureRetry
             let line = ProxySettings.maskText("background brew update failed: \(failure.title)"
                 + (failure.detail.isEmpty ? "" : ": " + (failure.detail.split(separator: "\n").last.map(String.init) ?? "")))
             Self.log.notice("\(line, privacy: .public)")

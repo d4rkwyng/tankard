@@ -36,6 +36,17 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     public var failure: String?
     /// brew's last lines, for a failed command.
     public var outputTail: [String]
+    /// 0.8.5: a scheduled check that couldn't finish for a reason that
+    /// means "try later" (offline, brew busy, slept, timed out): shown as
+    /// one quiet line, not a failure. Optional, so older files still load.
+    public var quietReason: ScheduledQuietReason?
+    /// 0.8.5: how many scheduled checks this quiet line stands for, and
+    /// when the first of them was (nil: one).
+    public var quietCount: Int?
+    public var quietSince: Date?
+    /// 0.8.5: this step built the formula from source (the plan said so
+    /// and brew poured no bottle). The next build's estimate reads it.
+    public var builtFromSource: Bool?
 
     public init(id: UUID = UUID(), startedAt: Date, duration: TimeInterval, command: String, arguments: [String],
                 outcome: Outcome, exitCode: Int32? = nil, origin: Origin = .user, failure: String? = nil,
@@ -54,7 +65,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
 
     public var category: HistoryCategory { HistoryCategory(arguments: arguments) }
     public var failureKind: BrewFailureKind? { failure.flatMap(BrewFailureKind.init(rawValue:)) }
-    public var isFailure: Bool { outcome == .failed || outcome == .notStarted }
+    public var isFailure: Bool { quietReason == nil && (outcome == .failed || outcome == .notStarted) }
 
     /// Retry runs the same brew arguments again, through the queue.
     /// Retry is offered only where it goes back through the normal gated
@@ -90,6 +101,10 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
 
     /// "succeeded", "failed (exit 1)", "stopped", "didn't start".
     public var resultText: String {
+        if let quietReason {
+            guard let n = quietCount, n > 1 else { return quietReason.text }
+            return quietReason.text + " " + String(localized: "(\(n) times)")
+        }
         switch outcome {
         case .succeeded: return String(localized: "succeeded")
         case .failed: return exitCode.map { code in String(localized: "failed (exit \(code))") } ?? String(localized: "failed")
@@ -211,6 +226,15 @@ public final class HistoryLog {
         entries = Array(list.sorted { $0.startedAt > $1.startedAt }.prefix(Self.maxEntries))
     }
 
+    /// 0.8.5: `entry` in place of the entries `ids` (markQuiet).
+    func replace(removing ids: [UUID], with entry: HistoryEntry) {
+        var list = entries.filter { !ids.contains($0.id) }
+        list.append(entry)
+        list.sort { $0.startedAt > $1.startedAt }
+        entries = Array(list.prefix(Self.maxEntries))
+        save()
+    }
+
     public func clear() {
         guard !entries.isEmpty else { return }
         entries = []
@@ -321,6 +345,10 @@ public extension AppStore {
         var e = e
         if autoUpdate.isRunning { e.origin = .autoUpdate }
         history.record(e)
+        // 0.8.5: a scheduled check that ended "try later" (it may finish
+        // before this entry arrives from the queue's thread).
+        if let reason = pendingQuiet.removeValue(forKey: e.id) { history.markQuiet(e.id, reason: reason) }
+        if pendingBuilt.remove(e.id) != nil { history.markBuiltFromSource(e.id) }
     }
 
     /// Runs a failed entry's brew arguments again through the queue (a

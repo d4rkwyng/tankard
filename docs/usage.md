@@ -61,6 +61,15 @@ installs or upgrades anything on its own unless you turn on
 [automatic updates](#automatic-updates). To stop the background update, untick
 **Settings ▸ General ▸ Check for new versions in the background**.
 
+Scheduled checks (the background update, the new-upgrades notification check and
+automatic updates) don't start while the Mac is asleep or has no network. After the Mac
+wakes, Tankard waits for the network, then checks once. A scheduled `brew update` that
+takes more than 15 minutes is stopped, and one that is running when the Mac goes to sleep
+is stopped too. When a scheduled check can't finish (offline, another Homebrew command
+running, sleep, too slow), History shows one gray line, such as "Scheduled check didn't
+run: offline. Will retry.", instead of a red failure each time. Refresh and anything else
+you start still report every failure in full.
+
 ## The Installed list at a glance
 
 - **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search.
@@ -138,6 +147,12 @@ sheet opens on a plan first: tick **Skip packages that would compile** to upgrad
 bottled ones. The Upgrades filter offers the same thing as a **Skip packages that would
 compile** button. In Intelbrew mode the warning also says how long the build took on the
 Intelbrew builder; expect longer on an older Mac.
+
+**Long builds.** While a package builds from source, the sheet (and the small progress
+window) shows how long it has been building: "Building from source… 4 min so far". brew
+doesn't say how long a build will take, so the estimate comes from this Mac: once you have
+built the same formula from source before, the line adds "(last time on this Mac: about 15
+min)", the middle of the last three builds, rounded.
 
 **Replace a source build with a bottle.** A package you built from source whose version
 now has a bottle says **Bottle available** under its name and gets a **Replace with Bottle**
@@ -228,6 +243,11 @@ font-inter… 25.4 of 33.7 MB (75%)".
 
 - A formula with no bottle for your Mac says so, and the button reads **Install
   X (compiles)…**. Tankard asks before it starts.
+- **Apps (casks) are turned off.** An Intelbrew Mac set up without casks can't install
+  apps like Firefox: casks come from the homebrew/cask tap, which the Intelbrew installer
+  adds only when you say yes. Discover then shows a banner; **Turn On Apps…** asks, then runs
+  `brew tap homebrew/cask` (a one-time download of about 620 MB). The ✕ hides the banner;
+  you can add the tap later from **Homebrew ▸ Taps…**.
 - The **Has bottle** filter (**Has Intel bottle** in Intelbrew mode) hides formulae that
   would compile. It is on by default in Intelbrew mode.
 - A package you already have offers **Show in Installed** instead.

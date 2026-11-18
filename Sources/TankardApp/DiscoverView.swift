@@ -12,8 +12,8 @@ struct DiscoverView: View {
         VStack(spacing: 0) {
             DiscoverStrip(discover: discover)
             Divider()
-            if let notice = discover.casksNotice {
-                NoticeBanner(text: notice, systemImage: "info.circle")
+            if store.showsCasksBanner {
+                CasksOffBanner(store: store)
                 Divider()
             }
             if let warning = discover.warning {
@@ -30,6 +30,41 @@ struct DiscoverView: View {
                     .background(theme.pane)
             }
         }
+        // 0.8.5: Enable Casks…'s confirmation (the Taps sheet has its own).
+        .modifier(TapAddConfirmation(store: store, taps: store.taps, only: .discover))
+    }
+}
+
+/// 0.8.5: casks are off (no homebrew/cask tap): what that means, and the
+/// one command that turns them on. Closing it hides it for good.
+struct CasksOffBanner: View {
+    var store: AppStore
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "shippingbox").foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(CasksBanner.title).font(.system(size: 12, weight: .semibold))
+                Text(CasksBanner.detail).font(.system(size: 11.5)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            Button("Turn On Apps…") { store.requestEnableCasks() }
+                .controlSize(.small)
+                .disabled(store.isBusy)
+                .help(String(localized: "Asks first, then turns apps on"))
+            Button {
+                store.hideCasksBanner()
+            } label: {
+                Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
+            }
+            .buttonStyle(.borderless)
+            .help(String(localized: "Hide this message"))
+            .accessibilityLabel(Text("Hide this message"))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.secondary.opacity(0.08))
     }
 }
 

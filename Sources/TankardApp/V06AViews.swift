@@ -466,13 +466,18 @@ struct HistoryRow: View {
                 }
             }
             HStack(spacing: 8) {
-                Text(e.startedAt.formatted(Self.time))
+                if let since = e.quietSince {
+                    // 0.8.5: a collapsed run of quiet scheduled checks.
+                    Text(verbatim: "\(since.formatted(Self.time)) – \(e.startedAt.formatted(Self.time))")
+                } else {
+                    Text(e.startedAt.formatted(Self.time))
+                }
                 Text(e.resultText).foregroundStyle(e.isFailure ? w.text : .secondary)
                 Text(e.durationText).monospacedDigit()
             }
             .font(.system(size: 11)).foregroundStyle(.secondary)
             .padding(.leading, 24)
-            if let k = e.failureKind {
+            if let k = e.failureKind, e.quietReason == nil {
                 Text(verbatim: "\(k.title). \(k.explanation)").font(.system(size: 11)).foregroundStyle(w.text)
                     .fixedSize(horizontal: false, vertical: true).padding(.leading, 24)
             }
@@ -489,6 +494,8 @@ struct HistoryRow: View {
     }
 
     private var icon: String {
+        // 0.8.5: a scheduled check that will retry (offline, busy, slept).
+        if entry.quietReason != nil { return "clock.arrow.circlepath" }
         switch entry.outcome {
         case .succeeded: return "checkmark.circle.fill"
         case .failed, .notStarted: return "xmark.octagon.fill"

@@ -130,6 +130,21 @@ public final class UpgradeSession: Identifiable {
     public private(set) var download: DownloadProgress?
     /// 0.8: how many times a download was seen (e2e checks, tests).
     public private(set) var downloadObservations = 0
+    /// 0.8.5: when each step started (the build line's time so far).
+    public private(set) var itemStartedAt: [UUID: Date] = [:]
+    /// 0.8.5: steps the plan says build from source, and this Mac's
+    /// estimate for each (BuildProgress.swift).
+    public private(set) var compilingItems: Set<UUID> = []
+    public private(set) var buildEstimates: [UUID: TimeInterval] = [:]
+    /// 0.8.5: compile steps where brew poured a bottle after all.
+    public private(set) var pouringItems: Set<UUID> = []
+    /// The clock for `itemStartedAt` (tests set it).
+    @ObservationIgnored public var now: @Sendable () -> Date = { Date() }
+
+    func setBuildProgress(compiling: Set<UUID>, estimates: [UUID: TimeInterval]) {
+        compilingItems = compiling
+        buildEstimates = estimates
+    }
 
     @ObservationIgnored private let queue: CommandQueue
     @ObservationIgnored private let logFile: LogFile?
@@ -442,6 +457,7 @@ public final class UpgradeSession: Identifiable {
         switch event {
         case .started:
             items[i].state = .running
+            itemStartedAt[itemID] = now()
             watchDownloads(of: items[i].package)
             if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
             commandLines = []
@@ -465,6 +481,11 @@ public final class UpgradeSession: Identifiable {
             let lines = log.feed(data)
             commandLines += lines
             logFile?.append(lines)
+            // 0.8.5: "==> Pouring xz--5.8.1…": a bottle after all, no build.
+            if compilingItems.contains(itemID), !pouringItems.contains(itemID),
+               lines.contains(where: { $0.hasPrefix("==> Pouring ") }) {
+                pouringItems.insert(itemID)
+            }
             if !passwordNoted, items[i].command.environment[Askpass.askpassKey] != nil, AdminPassword.announcesSudo(lines) {
                 note("brew runs sudo for this step: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
                 passwordNoted = true

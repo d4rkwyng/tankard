@@ -33,10 +33,15 @@ private func pendingBinding(_ isSet: @escaping @MainActor () -> Bool, _ cancel: 
 struct TapAddConfirmation: ViewModifier {
     var store: AppStore
     var taps: TapsStore
+    /// 0.8.5: only requests from here (Discover's banner), so two views
+    /// never present the same alert.
+    var only: TapAddRequest.Source? = nil
 
     func body(content: Content) -> some View {
-        content.alert(taps.pendingAdd.map { String(localized: "Add \($0.name)?") } ?? String(localized: "Add tap?"),
-                      isPresented: pendingBinding({ taps.pendingAdd != nil }, { taps.cancelPending() }),
+        let only = only
+        let mine: @MainActor () -> Bool = { taps.pendingAdd.map { only == nil || $0.source == only } ?? false }
+        return content.alert(taps.pendingAdd.map { String(localized: "Add \($0.name)?") } ?? String(localized: "Add tap?"),
+                      isPresented: pendingBinding(mine, { taps.cancelPending() }),
                       presenting: taps.pendingAdd) { _ in
             Button("Cancel", role: .cancel) { taps.cancelPending() }
             Button("Add Tap") { store.confirmAddTap() }
