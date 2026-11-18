@@ -619,6 +619,38 @@ enum PackageRow {
     /// The tallest mark the Package column's trailing area is laid out for
     /// (an icon-size badge).
     static let trailingBadge: CGFloat = 18
+    /// 0.8.6: the gap between the trailing marks.
+    static let markSpacing: CGFloat = 2
+}
+
+/// 0.8.6: the row's trailing marks (RowMark), each in a
+/// `PackageRow.trailingBadge` square, `markSpacing` apart.
+struct TrailingRowMarks: View {
+    var store: AppStore
+    var package: Package
+
+    var body: some View {
+        let marks = RowMark.marks(package, isElectron: store.electron.isElectron(package))
+        if !marks.isEmpty {
+            HStack(spacing: PackageRow.markSpacing) {
+                ForEach(marks) { m in
+                    mark(m).frame(width: PackageRow.trailingBadge, height: PackageRow.trailingBadge)
+                }
+            }
+            .fixedSize()
+        }
+    }
+
+    @ViewBuilder
+    private func mark(_ m: RowMark) -> some View {
+        switch m {
+        case .updatesItself:
+            SelfUpdateMark(help: package.selfUpdateHelp(policy: store.selfUpdatePolicy(package),
+                                                        includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps))
+        case .password: PasswordLockBadge(size: 11)
+        case .electron: ElectronMark()
+        }
+    }
 }
 
 /// The Package column's cell: the name, its badges, the row's note, and
@@ -640,18 +672,14 @@ struct PackageNameCell: View {
                     .fixedSize()
                     .help("Installed as a dependency")
             }
-            if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p), includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps)) }
             if p.pinned { PinnedBadge() }
             RetiredBadge(package: p)
             VulnerabilityTag(package: p)
             note(p)
             Spacer(minLength: 0)
-            // The trailing area: marks up to PackageRow.trailingBadge high.
-            if AdminPassword.required(p) {
-                PasswordLockBadge(size: 11)
-                    .frame(width: PackageRow.trailingBadge, height: PackageRow.trailingBadge)
-            }
-            if store.electron.isElectron(p) { ElectronMark() }
+            // The trailing area: marks up to PackageRow.trailingBadge high,
+            // one cluster in RowMark's order (0.8.6).
+            TrailingRowMarks(store: store, package: p)
         }
         .frame(maxHeight: PackageRow.content)
     }
@@ -735,9 +763,11 @@ struct NotInstalledEmptyState: View {
     }
 }
 
-/// 0.8.1: marks a self-updating cask (auto_updates) next to its name. It
-/// replaced the "Updates itself" line under the name (Derek: a symbol, so the
-/// row isn't messy). The tooltip says it in words and who updates the app.
+/// 0.8.1: marks a self-updating cask (auto_updates). It replaced the
+/// "Updates itself" line under the name (Derek: a symbol, so the row isn't
+/// messy). The tooltip says it in words and who updates the app. 0.8.6: at
+/// the end of the row with the other marks (TrailingRowMarks), 11 pt like
+/// the lock.
 struct SelfUpdateMark: View {
     var help: String
     @Environment(\.backgroundProminence) private var prominence
@@ -745,7 +775,7 @@ struct SelfUpdateMark: View {
 
     var body: some View {
         Image(systemName: "arrow.triangle.2.circlepath")
-            .font(.system(size: 9.5, weight: .semibold))
+            .font(.system(size: 11, weight: .semibold))
             .foregroundStyle(prominence == .increased && !theme.isCustom ? AnyShapeStyle(Color.white.opacity(0.85)) : AnyShapeStyle(.secondary))
             .fixedSize()
             .help(help)

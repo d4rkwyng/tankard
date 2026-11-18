@@ -6,6 +6,9 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.6] (unreleased)
 
+### Changed
+- **The marks at the end of a row sit together.** The ⟳ for apps that update themselves moved from after the name to the end of the row, next to the password lock and the Electron ⓘ: always in that order, evenly spaced, the same size.
+
 ### Fixed
 - **Adopt Apps no longer matches a different app with the same name.** A "Copilot.app" that wasn't the one the copilot-money cask installs was offered for adopting as copilot-money. A cask that names app IDs (in what it quits, unloads or deletes, such as `~/Library/Containers/com.copilot.production`) now matches only an app with one of those IDs; any other app with the same name is listed under **No cask** as "possibly a different app, not offered", with both IDs. Each match says what matched: **Matched by app ID**, **Matched by name and website** or **Matched by name only — check before adopting** (never ticked for you).
 

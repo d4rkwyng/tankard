@@ -338,7 +338,8 @@ Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online
 ## Apps that update themselves
 
 Many apps (casks) update themselves. By default brew doesn't list their upgrades, and
-neither does Tankard. They show ⟳ next to the name.
+neither does Tankard. They show ⟳ at the end of their row, before the lock and the ⓘ when
+those show too.
 
 - **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to list
   them as upgrades too.
