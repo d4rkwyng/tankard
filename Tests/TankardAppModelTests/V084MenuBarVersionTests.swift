@@ -68,3 +68,21 @@ struct V084MenuWordingTests {
         #expect(m.title == "Upgrade xz (compiles)…")
     }
 }
+
+// 0.8.4: the open menu-bar panel shrinks when rows go, top edge kept.
+struct V084MenuBarPanelFrameTests {
+    @Test func shrinksKeepingTheTopEdge() throws {
+        let f = CGRect(x: 2000, y: 900, width: 300, height: 510) // top at 1410
+        let s = try #require(MenuBarPanelFrame.shrunk(frame: f, contentHeight: 510, fitting: 430))
+        #expect(s == CGRect(x: 2000, y: 980, width: 300, height: 430))
+        #expect(s.maxY == f.maxY)
+    }
+
+    @Test func leavesGrowingAndEqualAlone() {
+        let f = CGRect(x: 0, y: 0, width: 300, height: 400)
+        #expect(MenuBarPanelFrame.shrunk(frame: f, contentHeight: 400, fitting: 400) == nil)
+        #expect(MenuBarPanelFrame.shrunk(frame: f, contentHeight: 400, fitting: 400.3) == nil)
+        #expect(MenuBarPanelFrame.shrunk(frame: f, contentHeight: 400, fitting: 520) == nil) // SwiftUI grows it
+        #expect(MenuBarPanelFrame.shrunk(frame: f, contentHeight: 400, fitting: 0) == nil)   // not laid out yet
+    }
+}

@@ -66,6 +66,7 @@ struct MenuBarContent: View {
                                 // too long (from the front hid both versions).
                                 Text(row.versions).font(.system(size: 11)).monospacedDigit()
                                     .foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+                                    .layoutPriority(1) // the name gives way first
                                     .help(row.fullVersions)
                             }
                         }
@@ -129,6 +130,10 @@ struct MenuBarContent: View {
             .padding(.vertical, 5)
         }
         .frame(width: 300)
+        // 0.8.4: shrink the open panel when rows go (an upgrade finished):
+        // SwiftUI's window-style extra grows with its content but kept its
+        // height when it got shorter, leaving a gap until it was reopened.
+        .background(GeometryReader { g in PanelHeightSync(height: g.size.height) })
         .background(theme.window ?? .clear)
         .task { if store.report == nil { await store.start() } }
     }
@@ -435,5 +440,27 @@ enum AboutPanel {
         s.append(line)
         s.append(NSAttributedString(string: AboutInfo.homebrewCopyright + "\n" + AboutInfo.notAffiliated, attributes: small))
         return s
+    }
+}
+
+/// 0.8.4: makes the menu-bar panel's window as tall as its content when
+/// the content gets shorter while it is open, keeping its top edge under
+/// the menu bar (`MenuBarPanelFrame`). Only the extra's own window: not the
+/// main window, nor a titled one; a snapshot's window already fits.
+struct PanelHeightSync: NSViewRepresentable {
+    var height: CGFloat
+
+    func makeNSView(context: Context) -> NSView { NSView() }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        let height = height
+        DispatchQueue.main.async { [weak view] in
+            guard let w = view?.window, !w.styleMask.contains(.titled),
+                  w.identifier?.rawValue.hasPrefix("main") != true,
+                  let content = w.contentView,
+                  let frame = MenuBarPanelFrame.shrunk(frame: w.frame, contentHeight: content.frame.height, fitting: height)
+            else { return }
+            w.setFrame(frame, display: true)
+        }
     }
 }

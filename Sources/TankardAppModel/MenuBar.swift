@@ -1,3 +1,4 @@
+import CoreGraphics
 import CryptoKit
 import Foundation
 import Observation
@@ -440,5 +441,17 @@ public final class BackgroundChecker {
         AppStore.notificationLog.notice("background check: \(keys.count, privacy: .public) upgrades, baseline=\(self.settings.notifiedUpgrades?.count ?? -1, privacy: .public), post=\(message != nil, privacy: .public)")
         if let message { notifier?.post(message) }
         settings.notifiedUpgrades = keys
+    }
+}
+
+/// 0.8.4: the menu-bar panel's frame once its content is `fitting` points
+/// tall: nil unless that is shorter than the window's content now (SwiftUI
+/// grows the window itself); the top edge stays where it is (AppKit's
+/// origin is the bottom-left corner), so the panel stays under the menu bar.
+public enum MenuBarPanelFrame {
+    public static func shrunk(frame: CGRect, contentHeight: CGFloat, fitting: CGFloat) -> CGRect? {
+        guard fitting > 1, contentHeight - fitting > 0.5 else { return nil }
+        let delta = contentHeight - fitting
+        return CGRect(x: frame.minX, y: frame.minY + delta, width: frame.width, height: frame.height - delta)
     }
 }
