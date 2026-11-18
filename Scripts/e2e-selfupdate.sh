@@ -29,7 +29,7 @@
 # Cleans up the cask, the tap, /Applications/Tankard.app and its processes.
 set -uo pipefail
 cd "$(dirname "$0")/.."
-# step_result, relaunch_logged, ran_tankard_code, no_instance_yield
+# step_result, step_logged, relaunch_logged, ran_tankard_code, no_instance_yield
 # (0.8.4; `Scripts/e2e-selfupdate-checks.sh --self-test` checks them).
 source Scripts/e2e-selfupdate-checks.sh
 
@@ -192,12 +192,13 @@ STEPS
     stop_watch
     # 0.8.4: a pid count and the bundle's version aren't evidence on their
     # own (rc2 passed with a new pid that never logged a line). Also
-    # required: steps 1-5 passed in the old copy, its relaunch helper and
+    # required: steps 1-5 passed in the old copy (from its app.log: the
+    # relaunched copy recreates results.jsonl), its relaunch helper and
     # terminate lines, no copy yielding to another, and a line from the new
     # pid itself.
     WHY=()
     for s in "1 expect-ready" "2 check-updates $VNEW brew" "3 upgrade-self $VNEW" "4 expect-quiet 5" "5 open-sheet history"; do
-        r=$(step_result "$D/results.jsonl" "${s%% *}" "${s#* }") || WHY+=("step ${s%% *} ${s#* }: $r")
+        r=$(step_logged "$D/app.log" "${s%% *}" "${s#* }") || WHY+=("step ${s%% *} ${s#* }: $r")
     done
     r=$(relaunch_logged "$D/logstream.txt" "$OLDPID") || WHY+=("relaunch: $r")
     r=$(no_instance_yield "$D/logstream.txt") || WHY+=("$r")
