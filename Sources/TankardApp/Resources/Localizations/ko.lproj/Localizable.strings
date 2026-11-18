@@ -66,6 +66,7 @@
 "%lld Intelbrew bottle" = "Intelbrew bottle %lld개";
 "%lld Intelbrew bottles" = "Intelbrew bottle %lld개";
 "%lld already from Homebrew" = "%lld개는 이미 Homebrew에서 설치됨";
+"%lld already up to date" = "%lld개는 이미 최신";
 "%lld bottle" = "bottle %lld개";
 "%lld bottle from Intelbrew" = "Intelbrew의 bottle %lld개";
 "%lld bottles" = "bottle %lld개";
@@ -211,6 +212,7 @@
 "Already above in this branch" = "이 분기에 이미 위에 있음";
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "웹에서 받은 앱이 있나요? Homebrew가 실행되면 Homebrew ▸ 앱 가져오기…로 brew가 앱을 최신 상태로 유지하게 할 수 있습니다.";
 "Already installed" = "이미 설치됨";
+"Already up to date (done elsewhere)" = "이미 최신(다른 곳에서 완료됨)";
 "Also" = "함께";
 "Also remove these" = "이것들도 제거";
 "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Chrome처럼 자체 업데이트 기능이 있는 앱도 ‘모두 업그레이드’와 자동 업데이트에서 업그레이드합니다. 끄면 Homebrew에 새 버전이 있어도 Tankard는 앱 자체 업데이트에 맡깁니다. ⟳ 표시와 함께 보이지만 직접 업그레이드하지 않는 한 개수에 포함되거나 업그레이드되지 않습니다.";
@@ -1351,6 +1353,7 @@
 "newer" = "더 새로움";
 "no bottle" = "bottle 없음";
 "no bottle, would compile from source" = "bottle 없음, 소스에서 컴파일해야 함";
+"no change (already up to date)" = "변경 없음(이미 최신)";
 "no longer meets the criteria for casks" = "더 이상 cask 기준을 충족하지 않음";
 "none" = "없음";
 "none (API mode)" = "없음 (API 모드)";

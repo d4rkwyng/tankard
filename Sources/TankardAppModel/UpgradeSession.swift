@@ -265,7 +265,11 @@ public final class UpgradeSession: Identifiable {
     }
     /// Finished with nothing wrong: no failed step and nothing left installed.
     public var hasProblems: Bool { !failedItems.isEmpty || !stillInstalled.isEmpty }
-    public var succeededCount: Int { items.filter { $0.state == .done }.count }
+    public var succeededCount: Int { items.filter { $0.state == .done && !doneElsewhere.contains($0.id) }.count }
+    /// 0.8.6 (M3): steps brew found already done ("already installed",
+    /// exit 0): another Homebrew command, often in Terminal while Tankard
+    /// waited for brew's lock, did the work. Not counted as Tankard's.
+    public private(set) var doneElsewhere: Set<UUID> = []
     public var failedItems: [Item] { items.filter { if case .failed = $0.state { true } else { false } } }
     public var current: Item? { items.first { $0.state == .running } }
 
@@ -339,6 +343,7 @@ public final class UpgradeSession: Identifiable {
             if checkingInstalled { return String(localized: "Checking what is still installed…") }
             if !failedItems.isEmpty { return String(localized: "\(verb) finished with errors") }
             if !stillInstalled.isEmpty { return String(localized: "Uninstall incomplete") }
+            if !doneElsewhere.isEmpty, succeededCount == 0 { return String(localized: "Already up to date (done elsewhere)") }
             return String(localized: "\(verb) complete")
         }
         if action == .cleanup { return String(localized: "Cleaning up") }
@@ -383,9 +388,11 @@ public final class UpgradeSession: Identifiable {
         // 0.8.4: once finished with failures, what was actually done, not
         // the plan: a failed download said "1 build from source" although
         // nothing was built. Nothing done: why, when brew's output says.
-        var packages = items.map(\.package)
+        // 0.8.6 (M3): steps brew found already done aren't Tankard's work.
+        var packages = items.filter { !doneElsewhere.contains($0.id) }.map(\.package)
+        let already = items.filter { doneElsewhere.contains($0.id) }.count
         if isFinished && !failedItems.isEmpty {
-            packages = items.filter { $0.state == .done }.map(\.package)
+            packages = items.filter { $0.state == .done && !doneElsewhere.contains($0.id) }.map(\.package)
             if packages.isEmpty {
                 return failureKinds.last?.title ?? String(localized: "The log below shows what brew printed")
             }
@@ -410,6 +417,7 @@ public final class UpgradeSession: Identifiable {
             parts.append((compiles.count == 1 ? String(localized: "\(compiles.count) build from source") : String(localized: "\(compiles.count) builds from source")) + names)
         }
         if casks > 0 { parts.append(casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")) }
+        if already > 0 { parts.append(String(localized: "\(already) already up to date")) }
         return parts.joined(separator: " · ")
     }
 
@@ -455,6 +463,7 @@ public final class UpgradeSession: Identifiable {
                     String(localized: "\(n) \(stillInstalled[n, default: []].joined(separator: ", ")) still installed")
                 }.joined(separator: ", "))
             }
+            if !doneElsewhere.isEmpty { parts.append(String(localized: "\(doneElsewhere.count) already up to date")) }
             if !failedItems.isEmpty { parts.append(String(localized: "\(failedItems.count) failed")) }
             let skipped = items.filter { $0.state == .cancelled }.count
             if skipped > 0 { parts.append(String(localized: "\(skipped) stopped")) }
@@ -549,6 +558,10 @@ public final class UpgradeSession: Identifiable {
             items[i].state = code == 0 && !refused ? .done : .failed(code)
             if refused {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
+            }
+            if code == 0, !refused, action == .upgrade || action == .install, BrewRefusal.alreadyInstalled(commandLines) {
+                doneElsewhere.insert(items[i].id)
+                note("Already up to date: brew says \(items[i].package.name) is already installed, so another Homebrew command (in Terminal, perhaps) did it. Tankard changed nothing.")
             }
             if action == .uninstall, code == 0, !refused,
                let v = Self.removedVersion(commandLines, name: items[i].package.name) {

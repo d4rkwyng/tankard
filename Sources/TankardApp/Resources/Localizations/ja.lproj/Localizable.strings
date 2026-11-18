@@ -66,6 +66,7 @@
 "%lld Intelbrew bottle" = "%lld個のIntelbrew bottle";
 "%lld Intelbrew bottles" = "%lld個のIntelbrew bottle";
 "%lld already from Homebrew" = "%lld個は Homebrew から導入済み";
+"%lld already up to date" = "%lld 個はすでに最新";
 "%lld bottle" = "%lld個のbottle";
 "%lld bottle from Intelbrew" = "%lld個のbottle(Intelbrew提供)";
 "%lld bottles" = "%lld個のbottle";
@@ -211,6 +212,7 @@
 "Already above in this branch" = "このブランチの上位にすでにあります";
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Web から入手したアプリがありますか？ Homebrew が動作したら、Homebrew ▸ アプリを引き継ぐ… で brew に最新の状態を保たせることができます。";
 "Already installed" = "インストール済み";
+"Already up to date (done elsewhere)" = "すでに最新（ほかで実行済み）";
 "Also" = "その他";
 "Also remove these" = "これらも削除";
 "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Chrome のように独自のアップデータを持つアプリも、「すべてアップグレード」と自動アップデートでアップグレードします。オフにすると、Homebrew に新しいバージョンがあっても Tankard はアプリ自身のアップデータに任せます。⟳ 付きで表示されますが、自分でアップグレードしない限り数に含めず、アップグレードもしません。";
@@ -1351,6 +1353,7 @@
 "newer" = "新しい";
 "no bottle" = "bottleなし";
 "no bottle, would compile from source" = "bottleなし、ソースからコンパイルされます";
+"no change (already up to date)" = "変更なし（すでに最新）";
 "no longer meets the criteria for casks" = "caskの基準を満たさなくなりました";
 "none" = "なし";
 "none (API mode)" = "なし（APIモード）";

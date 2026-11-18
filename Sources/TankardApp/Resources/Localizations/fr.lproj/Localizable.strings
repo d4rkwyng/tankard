@@ -66,6 +66,7 @@
 "%lld Intelbrew bottle" = "%lld bottle Intelbrew";
 "%lld Intelbrew bottles" = "%lld bottles Intelbrew";
 "%lld already from Homebrew" = "%lld déjà via Homebrew";
+"%lld already up to date" = "%lld déjà à jour";
 "%lld bottle" = "%lld bottle";
 "%lld bottle from Intelbrew" = "%lld bottle depuis Intelbrew";
 "%lld bottles" = "%lld bottles";
@@ -211,6 +212,7 @@
 "Already above in this branch" = "Déjà plus haut dans cette branche";
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "Vous avez déjà des apps téléchargées sur le web ? Une fois Homebrew en place, Homebrew ▸ Adopter des apps… permet à brew de les tenir à jour.";
 "Already installed" = "Déjà installé";
+"Already up to date (done elsewhere)" = "Déjà à jour (fait ailleurs)";
 "Also" = "Aussi";
 "Also remove these" = "Supprimer aussi celles-ci";
 "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "Met aussi à jour les apps qui ont leur propre outil de mise à jour, comme Chrome, dans « Tout mettre à jour » et les mises à jour automatiques. Désactivé, Tankard les laisse à leur propre outil même quand Homebrew a une version plus récente : elles apparaissent avec ⟳ mais ne sont ni comptées ni mises à jour, sauf si vous en mettez une à jour vous-même.";
@@ -1351,6 +1353,7 @@
 "newer" = "plus récent";
 "no bottle" = "pas de bottle";
 "no bottle, would compile from source" = "pas de bottle, serait compilé depuis les sources";
+"no change (already up to date)" = "aucun changement (déjà à jour)";
 "no longer meets the criteria for casks" = "ne répond plus aux critères des casks";
 "none" = "aucun";
 "none (API mode)" = "aucun (mode API)";

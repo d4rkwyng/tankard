@@ -604,6 +604,7 @@ struct HistoryRow: View {
         if entry.quietReason != nil { return "clock.arrow.circlepath" }
         switch entry.outcome {
         case .succeeded: return "checkmark.circle.fill"
+        case .noChange: return "equal.circle"
         case .failed, .notStarted: return "xmark.octagon.fill"
         case .cancelled: return "stop.circle"
         case .unknown: return "questionmark.circle"

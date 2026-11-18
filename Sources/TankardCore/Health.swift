@@ -204,6 +204,23 @@ public enum BrewFailure {
 /// which doesn't set a failing exit status, so the queue would see success
 /// while nothing changed.
 public enum BrewRefusal {
+    /// 0.8.6 (walkthrough M3): brew had nothing to do. `brew upgrade x`
+    /// after another brew (Terminal) upgraded it prints "Warning:
+    /// <tap>/x 1.2 already installed" and exits 0. Only when nothing was
+    /// upgraded, poured or built in the same output.
+    public static func alreadyInstalled<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
+        var already = false
+        for line in lines {
+            let l = line.trimmingCharacters(in: .whitespaces)
+            if l.hasPrefix("==> Upgrading") || l.hasPrefix("==> Pouring") || l.hasPrefix("==> Installing")
+                || l.hasPrefix("==> Summary") || l.hasPrefix("==> Moving App") || l.hasPrefix("==> Downloading") {
+                return false
+            }
+            if l.hasPrefix("Warning: "), l.hasSuffix(" already installed") || l.hasSuffix(" already installed.") { already = true }
+        }
+        return already
+    }
+
     public static func pinned<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
         lines.contains { $0.contains(" is pinned. You must unpin it to ") }
     }

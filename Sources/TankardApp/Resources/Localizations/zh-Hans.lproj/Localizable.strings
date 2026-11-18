@@ -66,6 +66,7 @@
 "%lld Intelbrew bottle" = "%lld 个 Intelbrew bottle";
 "%lld Intelbrew bottles" = "%lld 个 Intelbrew bottle";
 "%lld already from Homebrew" = "%lld 个已来自 Homebrew";
+"%lld already up to date" = "%lld 个已是最新";
 "%lld bottle" = "%lld 个 bottle";
 "%lld bottle from Intelbrew" = "%lld 个来自 Intelbrew 的 bottle";
 "%lld bottles" = "%lld 个 bottle";
@@ -211,6 +212,7 @@
 "Already above in this branch" = "已在此分支上方";
 "Already have apps from the web? Once Homebrew runs, Homebrew ▸ Adopt Apps… lets brew keep them up to date." = "已有从网上下载的 App？Homebrew 运行后，可通过 Homebrew ▸ 接管 App… 让 brew 为其保持最新。";
 "Already installed" = "已安装";
+"Already up to date (done elsewhere)" = "已是最新（已在别处完成）";
 "Also" = "另外";
 "Also remove these" = "同时移除这些";
 "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself." = "在“全部升级”和自动更新中也升级自带更新程序的 App（如 Chrome）。关闭时，即使 Homebrew 有更新的版本，Tankard 也交给 App 自己的更新程序：它们带 ⟳ 显示，但不计入数量、也不会升级，除非你自己升级某一个。";
@@ -1351,6 +1353,7 @@
 "newer" = "较新";
 "no bottle" = "无 bottle";
 "no bottle, would compile from source" = "无 bottle，需要从源码编译";
+"no change (already up to date)" = "无变化（已是最新）";
 "no longer meets the criteria for casks" = "不再符合 cask 的收录标准";
 "none" = "无";
 "none (API mode)" = "无（API 模式）";
