@@ -27,6 +27,36 @@ public enum AdminPassword {
         p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true)
     }
 
+    /// 0.8.5: the row badge's tooltip.
+    public static var badgeHelp: String { String(localized: "Needs your password to upgrade") }
+
+    /// 0.8.5: an upgrade run's order with the password casks last, so the
+    /// password dialogs come together at the end instead of in the middle
+    /// of the run (each cask's sudo may still ask on its own). Otherwise the
+    /// order is kept: the queue runs steps in list order and brew resolves
+    /// each step's dependencies itself. A cask that depends on (`depends_on
+    /// cask:`) one moved to the end moves to the end too, so no step is
+    /// moved ahead of something it needs; the moved group keeps its own
+    /// order. Formulae never depend on casks, so moving casks later can't
+    /// put a formula before its dependency.
+    public static func passwordStepsLast(_ packages: [Package]) -> [Package] {
+        var last = Set(packages.filter(required).map(\.id))
+        guard !last.isEmpty else { return packages }
+        func names(_ p: Package) -> Set<String> { [p.name, p.fullName] }
+        var changed = true
+        while changed {
+            changed = false
+            let lastNames = packages.filter { last.contains($0.id) }.reduce(into: Set<String>()) { $0.formUnion(names($1)) }
+            for p in packages where p.kind == .cask && !last.contains(p.id) {
+                if (p.caskDependencies ?? []).contains(where: { lastNames.contains($0) || lastNames.contains(($0 as NSString).lastPathComponent) }) {
+                    last.insert(p.id)
+                    changed = true
+                }
+            }
+        }
+        return packages.filter { !last.contains($0.id) } + packages.filter { last.contains($0.id) }
+    }
+
     /// 0.8.4: brew's output says it is about to run sudo: "Running
     /// installer for x with `sudo` (which may request your password)", or
     /// a `/usr/bin/sudo` command line (uninstall's pkgutil, launchctl, rm).
@@ -246,5 +276,32 @@ public enum AskpassProcess {
             current = p
         }
         return false
+    }
+}
+
+// MARK: 0.8.5: Upgrade Now for casks an automatic run skipped
+
+public extension AppStore {
+    /// The casks `run` skipped for the administrator password that still
+    /// have an upgrade Upgrade would run now (in the list's order).
+    func passwordSkippedUpgrades(_ run: AutoUpdateRun) -> [Package] {
+        let names = Set(run.passwordSkipped)
+        guard !names.isEmpty else { return [] }
+        return packages.filter { $0.kind == .cask && names.contains($0.name) && $0.isManualUpgradeTarget }
+    }
+
+    /// The Auto-update log's Upgrade Now: a normal upgrade of those casks
+    /// (the plan, which says the password will be asked, then the run).
+    /// `closeLog` closes the sheet the log is in first.
+    func upgradePasswordSkipped(_ run: AutoUpdateRun, closeLog: (() -> Void)? = nil) {
+        let targets = passwordSkippedUpgrades(run)
+        guard !targets.isEmpty, !isUpgrading, !autoUpdate.isRunning else { return }
+        closeLog?()
+        showAutoUpdateLog = false
+        Task { @MainActor in
+            // The log's sheet goes first; the plan opens once it has gone.
+            try? await Task.sleep(for: .milliseconds(450))
+            self.requestUpgrade(targets)
+        }
     }
 }

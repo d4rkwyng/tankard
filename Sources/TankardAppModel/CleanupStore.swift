@@ -80,7 +80,8 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     public var skipCompiling = false
 
     public init(packages: [Package], classifier: CompileClassifier) {
-        rows = packages.map { Row(package: $0, warning: classifier.upgradeWarning($0)) }
+        // 0.8.5: in the order the run takes (password casks last).
+        rows = AdminPassword.passwordStepsLast(packages).map { Row(package: $0, warning: classifier.upgradeWarning($0)) }
     }
 
     public var compiling: [Package] { rows.filter { $0.warning != nil }.map(\.package) }

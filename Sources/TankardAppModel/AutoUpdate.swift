@@ -554,10 +554,15 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
         public var isCask: Bool
         /// "5.8.3 → 5.8.4", a skip reason, or a failure.
         public var detail: String
-        public init(name: String, isCask: Bool, detail: String) {
+        /// 0.8.5: skipped because the cask needs the administrator password
+        /// (`AutoUpdateSkip.needsPassword`); the log offers Upgrade Now.
+        /// nil otherwise and in logs from before 0.8.5.
+        public var needsPassword: Bool?
+        public init(name: String, isCask: Bool, detail: String, needsPassword: Bool? = nil) {
             self.name = name
             self.isCask = isCask
             self.detail = detail
+            self.needsPassword = needsPassword
         }
     }
 
@@ -585,6 +590,9 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
         self.note = note
         self.dryRun = dryRun
     }
+
+    /// 0.8.5: the casks skipped for the administrator password.
+    public var passwordSkipped: [String] { skipped.filter { $0.needsPassword == true }.map(\.name) }
 
     /// "3 upgraded · 1 skipped · 1 failed", "Nothing to upgrade",
     /// "Dry run: 3 would upgrade".
@@ -857,7 +865,10 @@ public final class AutoUpdater {
                                            running: conditions.runningApps(),
                                            dontQuitApps: store.insights.settings.dontQuitAppsDuringUpgrade,
                                            only: settings.only, rules: rules.snapshot)
-        record.skipped = plan.skipped.map { .init(name: $0.package.name, isCask: $0.package.kind == .cask, detail: $0.reason.text) }
+        record.skipped = plan.skipped.map {
+            .init(name: $0.package.name, isCask: $0.package.kind == .cask, detail: $0.reason.text,
+                  needsPassword: $0.reason == .needsPassword ? true : nil)
+        }
         if settings.dryRun {
             record.upgraded = plan.run.map { .init(name: $0.name, isCask: $0.kind == .cask, detail: Self.versions($0)) }
             record.note = String(localized: "Dry run: no brew command ran")

@@ -128,10 +128,7 @@ struct PlanRow: View {
             }
             .layoutPriority(1)
             Spacer()
-            if AdminPassword.required(p) {
-                Image(systemName: "lock.fill").font(.system(size: 10)).foregroundStyle(.orange)
-                    .help(Text("Needs your administrator password"))
-            }
+            if AdminPassword.required(p) { PasswordLockBadge() }
             if let w = row.warning {
                 CompileBadge(text: skipped ? String(localized: "Skipped: would compile") : w.label)
             } else if p.kind == .cask {
@@ -144,6 +141,25 @@ struct PlanRow: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .opacity(skipped ? 0.55 : 1)
+    }
+}
+
+/// 0.8.5: a small lock on a cask whose upgrade asks for the administrator
+/// password (a `.pkg` installer or a sudo installer script), in the
+/// package list, the upgrade plan and the run's chips.
+struct PasswordLockBadge: View {
+    var size: CGFloat = 9.5
+    @Environment(\.backgroundProminence) private var prominence
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        let selected = prominence == .increased && !theme.isCustom
+        Image(systemName: "lock.fill")
+            .font(.system(size: size))
+            .foregroundStyle(selected ? Color.white : Color.orange)
+            .fixedSize()
+            .help(AdminPassword.badgeHelp)
+            .accessibilityLabel(Text(AdminPassword.badgeHelp))
     }
 }
 

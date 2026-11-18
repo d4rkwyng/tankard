@@ -172,6 +172,8 @@ struct AutoUpdateScheduleRow: View {
 struct AutoUpdateLogView: View {
     var log: AutoUpdateLog
     var done: (() -> Void)?
+    /// 0.8.5: for Upgrade Now on casks skipped for the password (nil: not offered).
+    var store: AppStore? = nil
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -192,7 +194,14 @@ struct AutoUpdateLogView: View {
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(log.runs) { run in AutoUpdateRunRow(run: run) }
+                        // 0.8.5: Upgrade Now on the newest run whose password
+                        // casks still have that upgrade (once, not per run).
+                        let offer = store.flatMap { st in log.runs.first { !st.passwordSkippedUpgrades($0).isEmpty }?.id }
+                        ForEach(log.runs) { run in
+                            AutoUpdateRunRow(run: run, upgradeNow: run.id == offer ? store.map { st in
+                                { st.upgradePasswordSkipped(run, closeLog: done) }
+                            } : nil)
+                        }
                     }
                 }
                 .frame(maxHeight: 380)
@@ -211,6 +220,8 @@ struct AutoUpdateLogView: View {
 
 struct AutoUpdateRunRow: View {
     var run: AutoUpdateRun
+    /// 0.8.5: starts a normal upgrade of the casks skipped for the password.
+    var upgradeNow: (() -> Void)? = nil
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -229,6 +240,19 @@ struct AutoUpdateRunRow: View {
             items(run.upgraded, symbol: "checkmark.circle.fill", color: theme.badge(.bottle).dot)
             items(run.failed, symbol: "xmark.octagon.fill", color: .red)
             items(run.skipped, symbol: "forward.fill", color: .secondary)
+            if let upgradeNow {
+                HStack(spacing: 8) {
+                    PasswordLockBadge(size: 10)
+                    Text("Automatic updates never ask for your password.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Button("Upgrade Now", action: upgradeNow)
+                        .controlSize(.small)
+                        .help("Upgrade the casks skipped for your password now. Tankard asks for your password.")
+                }
+                .padding(.top, 2)
+            }
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
