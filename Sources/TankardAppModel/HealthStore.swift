@@ -71,9 +71,11 @@ public final class HealthStore {
             async let m = runner.run(path, Self.missingArguments, environment: env)
             let (dr, cr, mr) = try await (d, c, m)
             // brew prints the maintainers' note on stderr, the warnings after it.
-            doctorRaw = [dr.stderrString, dr.stdoutString].filter { !$0.isEmpty }.joined(separator: "\n")
+            // 0.8.4: brew config prints proxy variables as they are; never
+            // show a proxy's user:password (ProxySettings.maskText).
+            doctorRaw = ProxySettings.maskText([dr.stderrString, dr.stdoutString].filter { !$0.isEmpty }.joined(separator: "\n"))
             doctor = DoctorReport.parse(doctorRaw)
-            config = text(cr).trimmingCharacters(in: .whitespacesAndNewlines)
+            config = ProxySettings.maskText(text(cr).trimmingCharacters(in: .whitespacesAndNewlines))
             missingRaw = text(mr).trimmingCharacters(in: .whitespacesAndNewlines)
             missing = MissingDependencies.parse(mr.stdoutString).map { Missing(formula: $0.formula, missing: $0.missing) }
             phase = .ready

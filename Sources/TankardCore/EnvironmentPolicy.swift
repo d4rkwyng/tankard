@@ -22,10 +22,10 @@ import Foundation
 /// over the environment Tankard hands it, so a setting there reaches brew
 /// whatever this list says (Tankard just shows it).
 ///
-/// Not read in 0.8.3: proxy settings (http_proxy, https_proxy, all_proxy,
-/// no_proxy and their upper-case forms) in shell profiles. bin/brew honours
-/// them from its environment and from brew.env; EnvFileParser.parseShell only
-/// reads HOMEBREW_* lines. Next release: parse and pass them too.
+/// 0.8.4: the proxy variables (`ProxySettings`) and XDG_CONFIG_HOME pass
+/// the same way, so brew works behind a proxy and reads the same user
+/// brew.env Tankard shows. brew.env settings that undo one of Tankard's
+/// own values, or one it denies, get a warning (`brewEnvConflict`).
 public enum EnvironmentPolicy {
     /// Passed through from the app's environment and shell profiles.
     public static let allowed: Set<String> = [
@@ -66,7 +66,19 @@ public enum EnvironmentPolicy {
         "HOMEBREW_DOWNLOAD_CONCURRENCY",
         "HOMEBREW_MAKE_JOBS",
         "HOMEBREW_FAIL_LOG_LINES",
+        // 0.8.4: picks the user brew.env (bin/brew's fallback when
+        // XDG_CONFIG_HOME is unset); see configHomeKeys.
+        "HOMEBREW_XDG_CONFIG_HOME",
     ]
+
+    /// 0.8.4: the variables bin/brew picks the user brew.env with. Passed
+    /// like the allowed settings, and `EnvironmentSources.load` reads the
+    /// brew.env they point to, so Tankard and its brew agree on the file.
+    public static let configHomeKeys: Set<String> = [EnvFileParser.xdgConfigHomeKey, "HOMEBREW_XDG_CONFIG_HOME"]
+
+    /// 0.8.4: the non-HOMEBREW_* names that pass from the app's environment
+    /// and shell profiles: the proxies bin/brew keeps, and XDG_CONFIG_HOME.
+    public static let otherAllowed: Set<String> = ProxySettings.passedByBrew.union([EnvFileParser.xdgConfigHomeKey])
 
     /// Why Tankard sets (or removes) a setting itself.
     public enum Control: String, Sendable, Codable, Equatable {
@@ -146,9 +158,16 @@ public enum EnvironmentPolicy {
         case ignored
         /// From a brew.env file: brew reads it itself.
         case brewEnv
+        /// 0.8.4: HTTP_PROXY or NO_PROXY: bin/brew drops the upper-case
+        /// form itself (only the lower-case one reaches curl and git), so
+        /// Tankard doesn't pass it either.
+        case droppedByBrew
     }
 
     public static func status(of key: String) -> Status {
+        if ProxySettings.droppedByBrew.contains(key) { return .droppedByBrew }
+        if otherAllowed.contains(key) { return .passed }
+        if !key.hasPrefix("HOMEBREW_") { return .ignored }
         if Intelbrew.keys.contains(key) { return .denied(.trust) }
         if let c = tankardControlled[key] { return .tankard(c.why) }
         if let d = denial(key) { return .denied(d) }
@@ -166,10 +185,12 @@ public enum EnvironmentPolicy {
         return nil
     }
 
-    /// Every HOMEBREW_* name the user set in the app's environment or a shell profile.
+    /// Every HOMEBREW_* name (and, 0.8.4, proxy variable and
+    /// XDG_CONFIG_HOME) the user set in the app's environment or a shell profile.
     static func shellKeys(_ sources: EnvironmentSources) -> Set<String> {
-        var keys = Set(sources.process.keys.filter { $0.hasPrefix("HOMEBREW_") })
-        for (_, vars) in sources.shellProfiles { keys.formUnion(vars.keys) }
+        let wanted = { (k: String) in k.hasPrefix("HOMEBREW_") || EnvFileParser.shellExtraNames.contains(k) }
+        var keys = Set(sources.process.keys.filter(wanted))
+        for (_, vars) in sources.shellProfiles { keys.formUnion(vars.keys.filter(wanted)) }
         return keys
     }
 
@@ -213,6 +234,9 @@ public enum EnvironmentPolicy {
         /// From a brew.env file: set only when it has options Tankard would
         /// drop, which then apply anyway (see `entries`).
         public var caskOptions: CaskOptions?
+        /// 0.8.4: a brew.env value that undoes one of Tankard's own values
+        /// or one it denies, and why (Health warns on the row).
+        public var conflict: BrewEnvConflict?
         public var id: String { key }
     }
 
@@ -221,7 +245,7 @@ public enum EnvironmentPolicy {
     public static func entries(sources: EnvironmentSources, intelbrew: IntelbrewDetection,
                                readOnly: Bool = false) -> [Entry] {
         var keys = shellKeys(sources)
-        for (_, vars) in sources.brewEnvFiles { keys.formUnion(vars.keys) }
+        for (_, vars) in sources.brewEnvFiles { keys.formUnion(vars.keys) }   // parseBrewEnv's names only
         keys.formUnion(tankardControlled.compactMap { $0.value.value == nil ? nil : $0.key })
         keys.formUnion(intelbrew.env.keys)
         if readOnly { keys.insert("HOMEBREW_NO_AUTO_UPDATE") }
@@ -264,13 +288,181 @@ public enum EnvironmentPolicy {
                 let c = CaskOptions.filter(v)
                 if !c.dropped.isEmpty { entry.caskOptions = c }
             }
+            if let brewEnv {
+                entry.conflict = brewEnvConflict(key, brewEnv.value, intelbrew: intelbrew)
+            }
             return entry
         }
     }
 
-    /// Tokens and passwords are never shown.
+    /// Tokens and passwords are never shown; 0.8.4: nor a proxy's
+    /// user:password (`http://•••@proxy:8080`).
     public static func mask(_ key: String, _ value: String) -> String {
-        denial(key) == .credential && !value.isEmpty ? "••••••" : value
+        if ProxySettings.names.contains(key) { return ProxySettings.mask(value) }
+        return denial(key) == .credential && !value.isEmpty ? "••••••" : value
+    }
+
+    // MARK: brew.env conflicts (0.8.4)
+
+    /// brew settings whose `boolean: true` form is off for 0, false, no, off
+    /// and nil (env_config.rb, brew 7.0.14). Every other boolean Tankard
+    /// checks is `boolean: :set`: any non-empty value turns it on.
+    static let trueBooleans: Set<String> = [
+        "HOMEBREW_VERBOSE_USING_DOTS", "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK",
+        "HOMEBREW_UPGRADE_GREEDY", "HOMEBREW_NO_AUTOREMOVE",
+    ]
+
+    /// Whether brew treats `value` as turning boolean setting `key` on.
+    static func brewOn(_ key: String, _ value: String) -> Bool {
+        trueBooleans.contains(key) ? BrewBoolean.isSet(value)
+            : !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Why a brew.env setting gets a warning in Health ▸ Environment.
+    /// bin/brew `export`s every brew.env line over the environment Tankard
+    /// passes (7.0.14 bin/brew l.128-181), so these reach Tankard's brew.
+    ///
+    /// No brew 7.0.14 command-line flag undoes any of them for the commands
+    /// Tankard runs: `--greedy` is a switch with no `--no-greedy`
+    /// (cmd/upgrade.rb, cmd/outdated.rb); `uninstall` has no flag against
+    /// autoremove (cmd/uninstall.rb reads only HOMEBREW_NO_AUTOREMOVE);
+    /// `--verbose`/`--debug` have no negation; utils/tty.sh colours when
+    /// HOMEBREW_COLOR is set whatever HOMEBREW_NO_COLOR says. Only the cask
+    /// `--*dir=`/`--[no-]binaries` options have explicit flags that beat
+    /// HOMEBREW_CASK_OPTS (cask/config.rb `explicit`); Tankard doesn't pass
+    /// them, as forcing /Applications would undo a choice the user made on
+    /// purpose in brew.env.
+    public enum BrewEnvConflict: String, Sendable, Codable, Equatable {
+        /// HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: automatic updates pause.
+        case dependentsCheck
+        /// UPGRADE_GREEDY, UPGRADE_GREEDY_CASKS, NO_UPGRADE_AUTO_UPDATES_CASKS:
+        /// overrides the per-app self-updating apps choice.
+        case greedy
+        /// Intelbrew mode: a remote other than the fork's, or the API back on.
+        case intelbrew
+        /// NO_AUTOREMOVE off: Uninstall would also autoremove.
+        case autoremove
+        /// COLOR, VERBOSE, DEBUG, or Tankard's NO_COLOR / NO_ENV_HINTS emptied.
+        case output
+        /// CASK_OPTS with options Tankard would drop.
+        case caskOptions
+        /// SUDO_ASKPASS: password prompts go to that helper, not Tankard's dialog.
+        case askpass
+        /// CELLAR: where brew keeps its files.
+        case location
+        /// CACHE, LOGS: download progress and Clean Up assume the defaults.
+        case defaultFolders
+        /// Where brew gets code from or what it trusts (*_GIT_REMOTE outside
+        /// Intelbrew mode, DEVELOPER, NO_VERIFY_ATTESTATIONS...).
+        case trust
+        /// A *_DOMAIN mirror: brew uses it; Discover and the tap index don't.
+        case mirror
+    }
+
+    /// The warning for brew.env setting `key=value`, or nil when it doesn't
+    /// conflict. Tokens (brew.env is a fine place for them) and the names
+    /// bin/brew ignores in brew.env never warn.
+    public static func brewEnvConflict(_ key: String, _ value: String,
+                                       intelbrew: IntelbrewDetection) -> BrewEnvConflict? {
+        switch key {
+        case "SUDO_ASKPASS":
+            return value.isEmpty ? nil : .askpass
+        case "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK":
+            return brewOn(key, value) ? .dependentsCheck : nil
+        case "HOMEBREW_UPGRADE_GREEDY", "HOMEBREW_UPGRADE_GREEDY_CASKS", "HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS":
+            return brewOn(key, value) ? .greedy : nil
+        case "HOMEBREW_NO_AUTOREMOVE":
+            // Tankard's uninstall sets it to 1; an off value here undoes that.
+            return brewOn(key, value) ? nil : .autoremove
+        case CaskOptions.key:
+            return CaskOptions.filter(value).dropped.isEmpty ? nil : .caskOptions
+        case "HOMEBREW_SYSTEM_ENV_TAKES_PRIORITY", "HOMEBREW_XDG_CONFIG_HOME":
+            return nil
+        default:
+            break
+        }
+        if intelbrew.detected, let mine = intelbrew.env[key] {
+            if key == Intelbrew.noAPIKey { return brewOn(key, value) ? nil : .intelbrew }
+            return Intelbrew.normalize(remote: value) == Intelbrew.normalize(remote: mine) ? nil : .intelbrew
+        }
+        if let c = tankardControlled[key] {
+            switch c.why {
+            case .output:
+                // Forced on (NO_COLOR, NO_ENV_HINTS): only emptying it undoes it.
+                return c.value != nil ? (brewOn(key, value) ? nil : .output) : (brewOn(key, value) ? .output : nil)
+            case .greedy: return brewOn(key, value) ? .greedy : nil
+            case .autoUpdate, .intelbrew: return nil
+            }
+        }
+        switch denial(key) {
+        case .location: return .location
+        case .defaultFolders: return .defaultFolders
+        case .trust:
+            // The Intelbrew remotes outside Intelbrew mode: only when they
+            // point somewhere other than the fork (a fork remote there turns
+            // Intelbrew mode on).
+            if key == Intelbrew.coreRemoteKey, Intelbrew.isCoreFork(value) { return nil }
+            if key == Intelbrew.brewRemoteKey, Intelbrew.isBrewFork(value) { return nil }
+            return .trust
+        case .mirror: return .mirror
+        case .dependentsCheck: return brewOn(key, value) ? .dependentsCheck : nil
+        case .credential, nil: return nil
+        }
+    }
+
+    /// Every brew.env setting that conflicts, with its file, as brew reads
+    /// them (the last file wins; values masked).
+    public static func brewEnvConflicts(sources: EnvironmentSources,
+                                        intelbrew: IntelbrewDetection) -> [Entry] {
+        entries(sources: sources, intelbrew: intelbrew).filter { $0.conflict != nil }
+    }
+}
+
+/// 0.8.4: proxy variables. bin/brew keeps http_proxy, https_proxy, ftp_proxy,
+/// no_proxy, all_proxy, HTTPS_PROXY, FTP_PROXY and ALL_PROXY when it filters
+/// its environment (bin/brew ENV_VAR_NAMES, brew 7.0.14), and curl and git
+/// use them. It drops HTTP_PROXY (curl ignores it too, httpoxy) and NO_PROXY.
+/// A brew.env file can set only the lower-case ones.
+///
+/// Tankard reads them from the app's environment and the shell profiles,
+/// the app's environment first, and passes the ones bin/brew keeps.
+/// Tankard's own URLSession requests (Discover's catalog, install counts,
+/// the update check) don't use them: URLSession follows the system proxy
+/// settings (System Settings ▸ Network ▸ Proxies, PAC files included), which
+/// is how other Mac apps behave, and a proxy the user sets only in a shell
+/// profile is for command-line tools.
+public enum ProxySettings {
+    public static let passedByBrew: Set<String> = [
+        "http_proxy", "https_proxy", "ftp_proxy", "all_proxy", "no_proxy",
+        "HTTPS_PROXY", "FTP_PROXY", "ALL_PROXY",
+    ]
+    public static let droppedByBrew: Set<String> = ["HTTP_PROXY", "NO_PROXY"]
+    public static let names: Set<String> = passedByBrew.union(droppedByBrew)
+    /// What bin/brew accepts from brew.env.
+    public static let brewEnvNames: Set<String> = ["http_proxy", "https_proxy", "ftp_proxy", "all_proxy", "no_proxy"]
+
+    public static let masked = "•••"
+
+    /// The value with each URL's user:password replaced by •••
+    /// (`http://user:pass@proxy:8080` -> `http://•••@proxy:8080`, also
+    /// without a scheme). Comma-separated lists are masked item by item.
+    public static func mask(_ value: String) -> String {
+        value.split(separator: ",", omittingEmptySubsequences: false).map { item -> String in
+            let s = String(item)
+            let start = s.range(of: "://")?.upperBound ?? s.startIndex
+            let hostEnd = s[start...].firstIndex(of: "/") ?? s.endIndex
+            guard let at = s[start..<hostEnd].lastIndex(of: "@") else { return s }
+            let lead = s[s.startIndex..<start].prefix { $0 == " " }
+            let scheme = start == s.startIndex ? String(lead) : String(s[..<start])
+            return scheme + masked + s[at...]
+        }.joined(separator: ",")
+    }
+
+    /// Text (brew config, brew doctor) with every `scheme://user:pass@`
+    /// masked: brew config prints proxy variables as they are.
+    public static func maskText(_ text: String) -> String {
+        text.replacingOccurrences(of: #"([A-Za-z][A-Za-z0-9+.-]*://)[^/\s@]*(?:@[^/\s@]*)*@"#,
+                                  with: "$1" + masked + "@", options: .regularExpression)
     }
 }
 
