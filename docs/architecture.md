@@ -38,7 +38,12 @@ pixel-art mark (`Sources/TankardApp/Resources/tankard-mark.png`; nearest-neighbo
 scaling only, on a drawn plate) with ffmpeg, `swiftc` and `iconutil`. In Intelbrew mode
 the app sets its Dock icon at run time to the Intelbrew "i" mug (`intelbrew-mug.png`) on
 the same plate, scaled 3x the same way. The version is `TANKARD_VERSION` (the release workflow sets it from the tag),
-else the default in `bundle-app.sh`, kept in step with `tankard --version`. `CFBundleVersion`
+else `TankardVersion.source` (`Sources/TankardCore/Version.swift`, what `tankard --version`
+prints). Inside Tankard.app, `TankardVersion.string` (About's fallback, the API User-Agent,
+the update check) is the Info.plist's version (0.8.4), so a build made with another
+`TANKARD_VERSION`, like the self-update e2e's `0.8.4-e2e.0`, is that version throughout;
+`release.sh` refuses a `TANKARD_VERSION` that differs from the source's, so a release
+says one version everywhere. `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
 "Version <x.y.z>" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).

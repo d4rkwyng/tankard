@@ -21,7 +21,8 @@
 #                            made once with `xcrun notarytool store-credentials tankard`
 #   NOTARY_APPLE_ID, NOTARY_TEAM_ID, NOTARY_PASSWORD
 #                            used instead of the profile when all three are set (CI)
-#   TANKARD_VERSION          version string (default: latest v* tag)
+#   TANKARD_VERSION          version string (default: TankardVersion.source in
+#                            Sources/TankardCore/Version.swift); must equal it
 #
 # Output: dist/Tankard.app (stapled) and dist/Tankard.zip; when notarizing,
 # also dist/notary-result.json (notarytool submit's answer) and
@@ -44,7 +45,7 @@ for a in "$@"; do
         --host-arch) UNIVERSAL=0 ;;
         --skip-notarize) NOTARIZE=0 ;;
         --skip-launch-check) LAUNCH_CHECK=0 ;;
-        -h|--help) sed -n '2,33p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
         *) echo "release.sh: unknown option $a" >&2; exit 2 ;;
     esac
 done
@@ -66,6 +67,18 @@ fail() { echo "release.sh: $*" >&2; exit 1; }
 APP=dist/Tankard.app
 ZIP=dist/Tankard.zip
 SUBMIT_ZIP=dist/Tankard-notarize.zip
+
+# 0. The version. A release's Info.plist (TANKARD_VERSION, the tag's in CI)
+#    must be the source's: the app reports the plist's version and the CLI
+#    the source's, and they must not disagree in what ships.
+SOURCE_VERSION=$(sed -n 's/.*static let source = "\([^"]*\)".*/\1/p' Sources/TankardCore/Version.swift)
+[ -n "$SOURCE_VERSION" ] || fail "no TankardVersion.source in Sources/TankardCore/Version.swift"
+if [ -n "${TANKARD_VERSION:-}" ] && [ "$TANKARD_VERSION" != "$SOURCE_VERSION" ]; then
+    msg="TANKARD_VERSION $TANKARD_VERSION differs from TankardVersion.source $SOURCE_VERSION (bump Sources/TankardCore/Version.swift, or tag the version it says)"
+    [ $DRY = 1 ] || fail "$msg"
+    echo "(dry run) $msg" >&2
+fi
+echo "Version: ${TANKARD_VERSION:-$SOURCE_VERSION}"
 
 # 1. Signing identity.
 ID=${TANKARD_SIGN_ID:-}

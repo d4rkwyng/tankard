@@ -214,9 +214,18 @@ else
         || fail "tag $RC isn't here and couldn't be fetched"
     echo "+ git archive $RC | tar -x -C $SRC"
     git -C "$REPO_DIR" archive "$RC" | tar -x -C "$SRC" || fail "git archive $RC failed"
+    # The compiled version too (a throwaway tree): before 0.8.4's
+    # TankardVersion.source/Info.plist rule the update check used the
+    # literal, so a re-versioned build of an older tag would still call
+    # itself the rc's version and see no update.
+    sed -i '' -E "s/(static let (string|source)) = \"[^\"]*\"/\1 = \"$VNEW-e2e.0\"/" "$SRC/Sources/TankardCore/Version.swift" \
+        && grep -qF "\"$VNEW-e2e.0\"" "$SRC/Sources/TankardCore/Version.swift" \
+        || fail "couldn't set the version in $SRC/Sources/TankardCore/Version.swift"
     echo "+ TANKARD_VERSION=$VNEW-e2e.0 Scripts/bundle-app.sh --out $OUT/old-a"
     ( cd "$SRC" && TANKARD_VERSION="$VNEW-e2e.0" Scripts/bundle-app.sh --out "$OUT/old-a" ) > "$OUT/old-a/build.log" 2>&1 \
         || fail "building $RC as $VNEW-e2e.0 failed (see $OUT/old-a/build.log)"
+    [ "$(version "$OUT/old-a/Tankard.app")" = "$VNEW-e2e.0" ] && grep -aqF "$VNEW-e2e.0" "$OUT/old-a/Tankard.app/Contents/MacOS/Tankard" \
+        || fail "the rebuilt OLD isn't $VNEW-e2e.0 in both Info.plist and binary"
     if [ -n "${TANKARD_SIGN_ID:-}" ]; then
         # As release.sh: the helper first (its own identifier), then the app.
         SIGN=(codesign --force --options runtime --timestamp -s "$TANKARD_SIGN_ID")
