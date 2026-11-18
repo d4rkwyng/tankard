@@ -442,7 +442,7 @@ struct ErrorBanner: View {
     }
 }
 
-/// Buttons that belong to a filter: "Upgrade N with bottles" in Upgrades
+/// Buttons that belong to a filter: "Upgrade N without building from source" in Upgrades
 /// when some would compile, "Replace all" in Bottle available.
 struct FilterActions: View {
     @Bindable var store: AppStore
@@ -451,16 +451,16 @@ struct FilterActions: View {
     var body: some View {
         switch store.filter {
         case .upgrades:
-            let (bottled, compiling) = store.deps.classifier.partitionUpgrades(store.upgradable)
-            if !compiling.isEmpty && !bottled.isEmpty {
-                // 0.8.4: short, and never truncated: the old "Skip packages
-                // that would compile (N with bottles)" was cut off at the
-                // default 1040-pt width. The summary on the left gives way.
-                Button("Upgrade \(bottled.count) with bottles") { store.startUpgradeSkippingCompiles() }
+            if let button = store.skipCompilesButton {
+                // 0.8.4: short, and never truncated (.fixedSize): the
+                // summary on the left gives way. 0.8.5 (F1): opens the plan
+                // with the compiling ones skipped, like the other Upgrade
+                // buttons; casks count too, so it doesn't say "bottles".
+                Button(button.title) { store.startUpgradeSkippingCompiles() }
                     .controlSize(.small)
                     .fixedSize()
                     .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
-                    .help("Upgrade only the packages that pour a bottle; skip \(compiling.map(\.name).joined(separator: ", "))")
+                    .help(button.help)
             }
         case .bottleAvailable:
             let n = store.bottleReplaceable.count

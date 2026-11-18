@@ -1151,7 +1151,7 @@
 "Upgrade %lld" = "Atualizar %lld";
 "Upgrade %lld (skip %lld)" = "Atualizar %lld (ignorar %lld)";
 "Upgrade %lld packages?" = "Atualizar %lld pacotes?";
-"Upgrade %lld with bottles" = "Atualizar %lld com bottles";
+"Upgrade %lld without building from source" = "Atualizar %lld sem compilar do código-fonte";
 "Upgrade 1 package?" = "Atualizar 1 pacote?";
 "Upgrade All" = "Atualizar tudo";
 "Upgrade All…" = "Atualizar tudo…";
@@ -1162,9 +1162,9 @@
 "Upgrade available: %@" = "Atualização disponível: %@";
 "Upgrade builds from source" = "Atualização compila da origem";
 "Upgrade command" = "Comando de atualização";
+"Upgrade everything except what would build from source: %@. Shows the plan first." = "Atualizar tudo, exceto o que seria compilado do código-fonte: %@. Mostra o plano primeiro.";
 "Upgrade finished" = "Atualização concluída";
 "Upgrade finished with problems" = "Atualização concluída com problemas";
-"Upgrade only the packages that pour a bottle; skip %@" = "Atualizar apenas os pacotes que usam bottle; ignorar %@";
 "Upgrade packages automatically" = "Atualizar pacotes automaticamente";
 "Upgrade ready: " = "Atualização pronta: ";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Atualizar os %lld pacotes que têm versão mais nova, um de cada vez";

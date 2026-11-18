@@ -1151,7 +1151,7 @@
 "Upgrade %lld" = "升级 %lld";
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
-"Upgrade %lld with bottles" = "升级 %lld 个有 bottle 的";
+"Upgrade %lld without building from source" = "升级 %lld 个（不从源码构建）";
 "Upgrade 1 package?" = "升级 1 个软件包？";
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";
@@ -1162,9 +1162,9 @@
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";
+"Upgrade everything except what would build from source: %@. Shows the plan first." = "升级除需从源码构建之外的全部：%@。会先显示计划。";
 "Upgrade finished" = "升级已完成";
 "Upgrade finished with problems" = "升级已完成，但有问题";
-"Upgrade only the packages that pour a bottle; skip %@" = "仅升级使用 bottle 的软件包；跳过 %@";
 "Upgrade packages automatically" = "自动升级软件包";
 "Upgrade ready: " = "升级已就绪： ";
 "Upgrade the %lld packages that have a newer version, one at a time" = "逐个升级有新版本的 %lld 个软件包";

@@ -358,6 +358,11 @@ struct UpgradePlanTests {
     @Test func skipCompilingFromTheFilter() async throws {
         let (store, _) = try await rig()
         store.startUpgradeSkippingCompiles()
+        // 0.8.5 (F1): the plan first, with ruby already skipped.
+        #expect(store.upgrade == nil)
+        #expect(store.upgradePlan?.skipCompiling == true)
+        #expect(store.upgradePlan?.startTitle == "Upgrade 4 (skip 1)")
+        store.confirmUpgradePlan()
         #expect(store.upgrade?.items.count == 4)
         #expect(store.upgrade?.items.contains { $0.package.name == "ruby" } == false)
     }

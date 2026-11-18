@@ -1151,7 +1151,7 @@
 "Upgrade %lld" = "%lld개 업그레이드";
 "Upgrade %lld (skip %lld)" = "%lld개 업그레이드 (%lld개 건너뜀)";
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
-"Upgrade %lld with bottles" = "bottle 있는 %lld개 업그레이드";
+"Upgrade %lld without building from source" = "소스 빌드 없이 %lld개 업그레이드";
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
 "Upgrade All…" = "모두 업그레이드…";
@@ -1162,9 +1162,9 @@
 "Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";
+"Upgrade everything except what would build from source: %@. Shows the plan first." = "소스에서 빌드해야 하는 것을 제외하고 모두 업그레이드: %@. 먼저 계획을 보여 줍니다.";
 "Upgrade finished" = "업그레이드 완료";
 "Upgrade finished with problems" = "업그레이드 완료 (문제 있음)";
-"Upgrade only the packages that pour a bottle; skip %@" = "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: " = "업그레이드 준비됨: ";
 "Upgrade the %lld packages that have a newer version, one at a time" = "새 버전이 있는 패키지 %lld개를 하나씩 업그레이드";

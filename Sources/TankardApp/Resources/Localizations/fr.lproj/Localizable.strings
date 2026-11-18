@@ -1151,7 +1151,7 @@
 "Upgrade %lld" = "Mettre à niveau %lld";
 "Upgrade %lld (skip %lld)" = "Mettre à niveau %lld (ignorer %lld)";
 "Upgrade %lld packages?" = "Mettre à niveau %lld paquets ?";
-"Upgrade %lld with bottles" = "Mettre à jour %lld avec bottles";
+"Upgrade %lld without building from source" = "Mettre à jour %lld sans compiler depuis les sources";
 "Upgrade 1 package?" = "Mettre à niveau 1 paquet ?";
 "Upgrade All" = "Tout mettre à niveau";
 "Upgrade All…" = "Tout mettre à niveau…";
@@ -1162,9 +1162,9 @@
 "Upgrade available: %@" = "Mise à niveau disponible : %@";
 "Upgrade builds from source" = "La mise à niveau compile depuis les sources";
 "Upgrade command" = "Commande de mise à niveau";
+"Upgrade everything except what would build from source: %@. Shows the plan first." = "Tout mettre à jour sauf ce qui serait compilé depuis les sources : %@. Affiche d’abord le plan.";
 "Upgrade finished" = "Mise à jour terminée";
 "Upgrade finished with problems" = "Mise à jour terminée avec des problèmes";
-"Upgrade only the packages that pour a bottle; skip %@" = "Mettre à niveau uniquement les paquets disposant d’une bottle ; ignorer %@";
 "Upgrade packages automatically" = "Mettre à niveau les paquets automatiquement";
 "Upgrade ready: " = "Mise à niveau prête : ";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Mettre à niveau les %lld paquets qui ont une version plus récente, un à la fois";

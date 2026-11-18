@@ -60193,54 +60193,54 @@
         }
       }
     },
-    "Upgrade %lld with bottles": {
+    "Upgrade %lld without building from source": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld mit Bottles aktualisieren"
+            "value": "%lld ohne Bauen aus Quellcode aktualisieren"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mettre à jour %lld avec bottles"
+            "value": "Mettre à jour %lld sans compiler depuis les sources"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualizar %lld con bottles"
+            "value": "Actualizar %lld sin compilar desde el código fuente"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "bottleありの%lld件をアップグレード"
+            "value": "ソースからビルドせずに%lld件をアップグレード"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级 %lld 个有 bottle 的"
+            "value": "升级 %lld 个（不从源码构建）"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualizar %lld com bottles"
+            "value": "Atualizar %lld sem compilar do código-fonte"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiorna %lld con bottle"
+            "value": "Aggiorna %lld senza compilare dai sorgenti"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "bottle 있는 %lld개 업그레이드"
+            "value": "소스 빌드 없이 %lld개 업그레이드"
           }
         }
       }
@@ -60765,6 +60765,58 @@
         }
       }
     },
+    "Upgrade everything except what would build from source: %@. Shows the plan first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles aktualisieren außer dem, was aus Quellcode gebaut würde: %@. Zeigt zuerst den Plan."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout mettre à jour sauf ce qui serait compilé depuis les sources : %@. Affiche d’abord le plan."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar todo excepto lo que se compilaría desde el código fuente: %@. Muestra primero el plan."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからビルドが必要なもの以外をすべてアップグレード: %@。最初にプランを表示します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级除需从源码构建之外的全部：%@。会先显示计划。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar tudo, exceto o que seria compilado do código-fonte: %@. Mostra o plano primeiro."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna tutto tranne ciò che verrebbe compilato dai sorgenti: %@. Mostra prima il piano."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드해야 하는 것을 제외하고 모두 업그레이드: %@. 먼저 계획을 보여 줍니다."
+          }
+        }
+      }
+    },
     "Upgrade finished": {
       "localizations": {
         "de": {
@@ -60865,58 +60917,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드 완료 (문제 있음)"
-          }
-        }
-      }
-    },
-    "Upgrade only the packages that pour a bottle; skip %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Pakete upgraden, die eine Bottle gießen; %@ überspringen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mettre à niveau uniquement les paquets disposant d’une bottle ; ignorer %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Actualiza solo los paquetes que instalan un bottle; omite %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "bottleを使うパッケージのみアップグレードし、%@をスキップします"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅升级使用 bottle 的软件包；跳过 %@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Atualizar apenas os pacotes que usam bottle; ignorar %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aggiorna solo i pacchetti che usano una bottle; salta %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기"
           }
         }
       }

@@ -898,11 +898,14 @@ public final class AppStore {
 
     /// `requestUpgrade`, from the activity itself (Retry): may replace the
     /// finished run it shows.
-    func requestUpgradeInActivity(_ packages: [Package]? = nil) {
+    /// `skipCompiling`: the plan starts with "Skip packages that would
+    /// compile" ticked (the Upgrades filter's button).
+    func requestUpgradeInActivity(_ packages: [Package]? = nil, skipCompiling: Bool = false) {
         guard !isUpgrading else { return }
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
         var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        plan.skipCompiling = skipCompiling
         // 0.8.5: and when brew would close an app that is open now.
         plan.runningApps = runningCaskApps(targets)
         // 0.8.3: also when a cask's installer will ask for the password.
@@ -952,10 +955,33 @@ public final class AppStore {
         showUpgradeSheet = false
     }
 
-    /// Upgrades with a bottle only (the Upgrades filter's "skip" button).
+    /// The Upgrades filter's "Upgrade N without building from source":
+    /// every upgrade except what would compile. 0.8.5 (final pass F1): it
+    /// opens the plan like the other Upgrade buttons, with the compiling
+    /// ones already skipped, so the open-apps note and the password lock
+    /// and order show first; it no longer starts at once.
     public func startUpgradeSkippingCompiles() {
-        let (bottled, _) = deps.classifier.partitionUpgrades(upgradable)
-        startUpgrade(bottled)
+        guard !progressPanelHoldsActivity else { return }
+        requestUpgradeInActivity(nil, skipCompiling: true)
+    }
+
+    /// The Upgrades filter's button: shown when some upgrades would
+    /// compile and some wouldn't. `count` includes casks (they never
+    /// compile), so the title doesn't say "bottles".
+    public struct SkipCompilesButton: Equatable, Sendable {
+        public var count: Int
+        public var title: String
+        public var help: String
+    }
+
+    public var skipCompilesButton: SkipCompilesButton? {
+        let (rest, compiling) = deps.classifier.partitionUpgrades(upgradable)
+        guard !rest.isEmpty, !compiling.isEmpty else { return nil }
+        let names = ListFormatter.localizedString(byJoining: compiling.map(\.name))
+        return SkipCompilesButton(
+            count: rest.count,
+            title: String(localized: "Upgrade \(rest.count) without building from source"),
+            help: String(localized: "Upgrade everything except what would build from source: \(names). Shows the plan first."))
     }
 
     // MARK: replace with bottle (0.3)

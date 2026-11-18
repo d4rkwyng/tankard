@@ -1151,7 +1151,7 @@
 "Upgrade %lld" = "%lld件をアップグレード";
 "Upgrade %lld (skip %lld)" = "%lld件をアップグレード（%lld件をスキップ）";
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
-"Upgrade %lld with bottles" = "bottleありの%lld件をアップグレード";
+"Upgrade %lld without building from source" = "ソースからビルドせずに%lld件をアップグレード";
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
 "Upgrade All" = "すべてアップグレード";
 "Upgrade All…" = "すべてアップグレード…";
@@ -1162,9 +1162,9 @@
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";
+"Upgrade everything except what would build from source: %@. Shows the plan first." = "ソースからビルドが必要なもの以外をすべてアップグレード: %@。最初にプランを表示します。";
 "Upgrade finished" = "アップグレード完了";
 "Upgrade finished with problems" = "アップグレード完了 (問題あり)";
-"Upgrade only the packages that pour a bottle; skip %@" = "bottleを使うパッケージのみアップグレードし、%@をスキップします";
 "Upgrade packages automatically" = "パッケージを自動でアップグレード";
 "Upgrade ready: " = "アップグレードの準備完了: ";
 "Upgrade the %lld packages that have a newer version, one at a time" = "新しいバージョンがある%lld個のパッケージを1つずつアップグレードします";
