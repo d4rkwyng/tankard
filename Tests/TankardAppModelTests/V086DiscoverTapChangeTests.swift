@@ -11,8 +11,9 @@ import os
 @MainActor
 @Suite(.serialized)
 struct V086DiscoverTapChangeTests {
+    /// Unique per test: UserTapsCatalog keeps one index per process, by key.
     final class Key: @unchecked Sendable {
-        let lock = OSAllocatedUnfairLock(initialState: "a")
+        let lock = OSAllocatedUnfairLock(initialState: UUID().uuidString)
         var value: String { get { lock.withLock { $0 } } set { lock.withLock { $0 = newValue } } }
     }
 
@@ -35,7 +36,7 @@ struct V086DiscoverTapChangeTests {
         #expect(indexer.reads == 1)
         // `brew tap walktest/probe` in Terminal.
         indexer.entries = first + [TapIndexEntry(kind: .formula, name: "walk-new", tap: "walktest/probe", desc: "A probe formula")]
-        key.value = "b"
+        key.value = UUID().uuidString
         await d.activate()
         #expect(indexer.reads == 2)
         #expect(d.totalCount == 4)
@@ -60,7 +61,7 @@ struct V086DiscoverTapChangeTests {
         try await Task.sleep(for: .milliseconds(100))
         #expect(indexer.reads == 1)
         indexer.entries += [TapIndexEntry(kind: .formula, name: "walk-new", tap: "walktest/probe", desc: "A probe formula")]
-        key.value = "c"
+        key.value = UUID().uuidString
         store.revalidateIfStale()
         #expect(await waitUntil { d.totalCount == 4 })
         #expect(indexer.reads == 2)
