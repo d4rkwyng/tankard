@@ -881,7 +881,10 @@ public final class AppStore {
     /// Opens the Cleanup sheet and runs the dry run.
     public func openCleanup() {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        let c = CleanupStore(client: client, env: client.environment(for: detection))
+        // 0.8.5 (M1): the old versions kept for Restore Points stay.
+        let keep = restorePoints.settings.keepPreviousVersion
+        let c = CleanupStore(client: client, env: client.environment(for: detection),
+                             kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep)
         cleanup = c
         showCleanupSheet = true
         Task { await c.load() }
@@ -1094,7 +1097,8 @@ public final class AppStore {
             packages: ordered, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
-                            askpass = deps.askpassHelper, foreign] p in
+                            askpass = deps.askpassHelper, foreign,
+                            cleanupKeep = action == .cleanup ? (cleanup?.extraEnvironment ?? [:]) : [:]] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
@@ -1102,6 +1106,7 @@ public final class AppStore {
                 let extra = InsightSettings.extraEnvironment(action, p, dontQuitApps: dontQuit)
                     .merging(RollbackSettings.extraEnvironment(action, p, keep: keep)) { $1 }
                     .merging(Self.uninstallEnvironment(action)) { $1 }
+                    .merging(cleanupKeep) { $1 }
                 let display = BrewCommands.display(args, environment: extra)
                 // 0.8.3: a cask change may run sudo: Tankard's password dialog
                 // (not in the command shown or copied).

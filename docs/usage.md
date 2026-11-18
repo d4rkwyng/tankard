@@ -346,7 +346,8 @@ casks as a Brewfile.
 **Roll back an upgrade:**
 
 1. Turn on **Settings ▸ Upgrades ▸ Keep the previous version after upgrades** before you
-   upgrade. It uses disk space until Clean Up removes the old versions.
+   upgrade. The old versions use disk space. Clean Up leaves them alone while the setting
+   is on; turn it off first if you want Clean Up to remove them.
 2. In Restore Points, choose a point and click **Restore…**. The plan shows every brew
    command first.
 3. Leave **Pin rolled-back formulae** on, so the next upgrade doesn't undo it.
@@ -413,7 +414,11 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
 - **Homebrew ▸ History…** lists every brew command Tankard ran (the last 500), with its
   result. Failed ones have **Retry**.
 - **Homebrew ▸ Clean Up…** shows what `brew cleanup` would remove and how much space it
-  frees, then runs it when you click **Clean Up**.
+  frees, then runs it when you click **Clean Up**. While **Keep the previous version after
+  upgrades** is on, it leaves those old versions alone (it runs with
+  `HOMEBREW_NO_CLEANUP_FORMULAE` set to those formulae, shown in the command). Old versions
+  it would remove are listed under "Removes old versions you could roll back to", and then
+  Return doesn't run it: click **Clean Up**.
 - **Homebrew ▸ Remove Unused Dependencies…** shows what `brew autoremove` would remove
   before it runs.
 - **File ▸ Export Brewfile…** saves a Brewfile of your taps, formulae and casks.
