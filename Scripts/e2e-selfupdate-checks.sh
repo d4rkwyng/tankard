@@ -66,6 +66,26 @@ step_logged() {
         }' "$log"
 }
 
+# relaunched_idle PHASEDIR: the relaunched copy came up as an idle e2e run
+# (0.8.4, AppManagement.relaunchEnvironment): its own empty step file in
+# PHASEDIR/relaunched, a summary.json there with no step run, and the
+# phase's own results.jsonl not recreated by it (not empty).
+relaunched_idle() {
+    local d=$1
+    [ -s "$d/results.jsonl" ] || { echo "the phase's results.jsonl is empty or missing (recreated by the new copy?)"; return 1; }
+    [ -f "$d/relaunched/steps.txt" ] || { echo "no $d/relaunched/steps.txt (the new copy got no e2e identity)"; return 1; }
+    [ -s "$d/relaunched/steps.txt" ] && { echo "$d/relaunched/steps.txt is not empty"; return 1; }
+    [ -f "$d/relaunched/summary.json" ] || { echo "no $d/relaunched/summary.json (the new copy didn't run as an e2e copy)"; return 1; }
+    /usr/bin/python3 -I - "$d/relaunched/summary.json" <<'PY'
+import json, sys
+s = json.load(open(sys.argv[1]))
+n = s.get("passed", 0) + s.get("failed", 0) + s.get("skipped", 0)
+if n:
+    print("the relaunched copy ran %d step(s)" % n); sys.exit(1)
+print("ok")
+PY
+}
+
 # relaunch_logged LOGSTREAM OLDPID: the relaunch helper started for OLDPID,
 # OLDPID logged its terminate, and neither gave-up line is there.
 relaunch_logged() {
@@ -170,6 +190,19 @@ L
     { cat "$t/good.txt"; echo '2026-11-17 17:25:48.000 E  Tankard[64559:da834c] [net.mindtricks.tankard:relaunch] relaunch: pid 64559 is still running after two terminate attempts; the helper opens nothing'; } > "$t/gaveup.txt"
     { cat "$t/good.txt"; echo '2026-11-17 17:25:48.000 Df logger[1:2] relaunch: Tankard (pid 64559) still running, not reopening'; } > "$t/helpergaveup.txt"
     { cat "$t/good.txt"; echo '2026-11-17 17:25:39.000 Df Tankard[65999:dd] [net.mindtricks.tankard:instance] pid 65999: others 65875 launched ?; executable written ?; yield(to: 65875)'; } > "$t/yield.txt"
+    mkdir -p "$t/ph/relaunched"
+    echo '{"index":1}' > "$t/ph/results.jsonl"
+    : > "$t/ph/relaunched/steps.txt"
+    echo '{"failed":0,"failures":[],"passed":0,"script":"steps.txt","skipped":0}' > "$t/ph/relaunched/summary.json"
+    expect 0 "relaunched copy idle" relaunched_idle "$t/ph"
+    cp -R "$t/ph" "$t/ph2"; : > "$t/ph2/results.jsonl"
+    expect 1 "results.jsonl recreated (0.8.3)" relaunched_idle "$t/ph2"
+    cp -R "$t/ph" "$t/ph3"; rm -rf "$t/ph3/relaunched"
+    expect 1 "no relaunched dir" relaunched_idle "$t/ph3"
+    cp -R "$t/ph" "$t/ph4"; echo '{"failed":0,"passed":5,"skipped":0}' > "$t/ph4/relaunched/summary.json"
+    expect 1 "relaunched copy ran steps" relaunched_idle "$t/ph4"
+    cp -R "$t/ph" "$t/ph5"; rm "$t/ph5/relaunched/summary.json"
+    expect 1 "relaunched copy never ran" relaunched_idle "$t/ph5"
     expect 0 "relaunch logged" relaunch_logged "$t/good.txt" 64559
     expect 1 "relaunch for another pid" relaunch_logged "$t/good.txt" 6455
     expect 1 "no terminate line" relaunch_logged "$t/noterm.txt" 64559

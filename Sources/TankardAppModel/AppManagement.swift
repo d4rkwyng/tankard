@@ -107,6 +107,77 @@ extension AppManagement {
     public static func canRelaunch(bundlePath: String) -> Bool {
         bundlePath.hasSuffix(".app")
     }
+
+    /// The defaults suite prefix of scripted (e2e) runs.
+    public static let e2eSuitePrefix = "net.mindtricks.tankard.e2e"
+
+    /// A per-run e2e suite name (`net.mindtricks.tankard.e2e.<something>`),
+    /// or nil: never the real settings' domain, the shared e2e suite itself
+    /// or anything outside the prefix. ScriptLaunch uses the same rule.
+    public static func validE2ESuite(_ requested: String?) -> String? {
+        guard let r = requested, r.hasPrefix(e2eSuitePrefix + "."), r.count > e2eSuitePrefix.count + 1,
+              r.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" || $0 == "_" }) else { return nil }
+        return r
+    }
+
+    /// What the relaunch helper (and so `open -n`, which passes its
+    /// environment on to the app it starts) gives the new copy.
+    public struct RelaunchEnvironment: Equatable, Sendable {
+        public var environment: [String: String]
+        /// Set when an e2e identity was dropped (for the relaunch log).
+        public var note: String?
+        /// The relaunched e2e copy's (empty) step file, to create first.
+        public var scriptPath: String?
+    }
+
+    /// 0.8.4: the relaunched copy inherits no TANKARD_* variable (demo,
+    /// snapshot, script, debug, update feed): before, an e2e run's new copy
+    /// ran the parent's steps again and recreated its results.jsonl. Every
+    /// other variable (HOMEBREW_* included) is kept as it is.
+    ///
+    /// A scripted e2e run (TANKARD_E2E=1, TANKARD_SCRIPT, a valid per-run
+    /// TANKARD_E2E_SUITE) gets back only an isolated, idle e2e identity, so
+    /// the new copy still never touches the real settings or Tankard's real
+    /// files: the same suite and state folder (and self-update tap), an
+    /// empty step file in <parent's out>/relaunched, which it stays open
+    /// after. With TANKARD_E2E=1 but an invalid suite, nothing comes back
+    /// (a normal relaunch) and `note` says why.
+    public static func relaunchEnvironment(_ env: [String: String]) -> RelaunchEnvironment {
+        var out = env.filter { !$0.key.hasPrefix("TANKARD_") }
+        func value(_ k: String) -> String? { env[k].flatMap { $0.isEmpty ? nil : $0 } }
+        guard env["TANKARD_E2E"] == "1", let script = value("TANKARD_SCRIPT") else {
+            return RelaunchEnvironment(environment: out, note: nil, scriptPath: nil)
+        }
+        guard let suite = validE2ESuite(env["TANKARD_E2E_SUITE"]) else {
+            return RelaunchEnvironment(environment: out,
+                note: "relaunch: e2e identity dropped (invalid TANKARD_E2E_SUITE \(env["TANKARD_E2E_SUITE"].map { "'\($0)'" } ?? "unset")); the new copy starts as a normal app",
+                scriptPath: nil)
+        }
+        // The parent's own defaults, as ScriptLaunch works them out.
+        let parentOut = URL(fileURLWithPath: value("TANKARD_SCRIPT_OUT") ?? script + ".out", isDirectory: true)
+        let state = value("TANKARD_E2E_STATE") ?? parentOut.appendingPathComponent("state", isDirectory: true).path
+        let relOut = parentOut.appendingPathComponent("relaunched", isDirectory: true)
+        let steps = relOut.appendingPathComponent("steps.txt").path
+        out["TANKARD_E2E"] = "1"
+        out["TANKARD_E2E_SUITE"] = suite
+        out["TANKARD_E2E_STATE"] = state
+        out["TANKARD_SCRIPT_OUT"] = relOut.path
+        out["TANKARD_SCRIPT"] = steps
+        out["TANKARD_SCRIPT_STAY"] = "1"
+        for k in ["TANKARD_E2E_SELFUPDATE", "TANKARD_E2E_SELF_TAP"] { if let v = env[k] { out[k] = v } }
+        return RelaunchEnvironment(environment: out, note: nil, scriptPath: steps)
+    }
+
+    /// Creates the relaunched e2e copy's folder and an empty step file
+    /// (a missing one stops a script run with exit 2). Keeps one that exists.
+    public static func prepareRelaunchScript(_ r: RelaunchEnvironment) throws {
+        guard let path = r.scriptPath else { return }
+        let fm = FileManager.default
+        try fm.createDirectory(at: URL(fileURLWithPath: path).deletingLastPathComponent(), withIntermediateDirectories: true)
+        if !fm.fileExists(atPath: path) {
+            guard fm.createFile(atPath: path, contents: Data()) else { throw CocoaError(.fileWriteUnknown) }
+        }
+    }
 }
 
 /// 0.8.1: the operation to offer again once Tankard has relaunched, kept in

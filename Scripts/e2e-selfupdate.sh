@@ -90,6 +90,9 @@ cleanup() {
     qbrew tap | grep -qx "$TAP" && qbrew untap "$TAP" >> "$OUT/brew.log" 2>&1
     [ -e "$APP" ] && echo "cleanup: $APP still present" >&2
     defaults delete "$SUITE" >/dev/null 2>&1; rm -f ~/Library/Preferences/"$SUITE".plist
+    # The relaunched copies' script folders (AppManagement.relaunchEnvironment):
+    # their app is gone by now; the phase's verdict is already recorded.
+    rm -rf "$OUT"/[ABC]/relaunched
     rm -rf "$LOCK"
     echo "after cleanup: pids=[$(pids)] app=$([ -e "$APP" ] && echo present || echo absent) tap=$(qbrew tap | grep -cx "$TAP")" | tee -a "$OUT/summary.txt"
 }
@@ -203,12 +206,17 @@ STEPS
     r=$(relaunch_logged "$D/logstream.txt" "$OLDPID") || WHY+=("relaunch: $r")
     r=$(no_instance_yield "$D/logstream.txt") || WHY+=("$r")
     NEWRAN=$(ran_tankard_code "$D/logstream.txt" "$NEWPID") || WHY+=("new pid: $NEWRAN")
+    # 0.8.4: the new copy inherits no TANKARD_* variable but an idle e2e
+    # identity, its output in $D/relaunched (its summary.json can take a
+    # moment: the store starts first).
+    wait_for 30 test -f "$D/relaunched/summary.json" >/dev/null
+    r=$(relaunched_idle "$D") || WHY+=("relaunched copy: $r")
     [ "$OLDRC" = 0 ] || WHY+=("old pid exit status $OLDRC")
     one_new_running "$OLDPID" || WHY+=("not exactly one new Tankard running $VNEW: pids=[$(pids)]")
     [ "$(ips_new)" = 0 ] || WHY+=("ips_new=$(ips_new)")
     printf 'A evidence: %s\n' "${WHY[@]:-all present}" >> "$D/events.txt"
     if [ ${#WHY[@]} = 0 ]; then
-        record "A fixed->newer relaunch: PASS (old $OLDPID: steps 1-5 passed, helper + terminate logged, gone; one Tankard $NEWPID running $VNEW, its log: ${NEWRAN#ok: }; no yield, no .ips)"
+        record "A fixed->newer relaunch: PASS (old $OLDPID: steps 1-5 passed, helper + terminate logged, gone; one Tankard $NEWPID running $VNEW, idle e2e copy, its log: ${NEWRAN#ok: }; no yield, no .ips)"
     else
         record "A fixed->newer relaunch: FAIL ($(IFS=';'; echo "${WHY[*]}"); see $D)"
     fi
