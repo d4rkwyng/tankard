@@ -30,6 +30,8 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Only one Tankard runs.** An older copy still open after an update is asked to quit (never forced), and opening Tankard a second time brings the running one to the front.
 - **Check for Tankard Updates offered Download instead of Upgrade with Homebrew** when Tankard's cached package list was still fresh but didn't include the Tankard cask yet.
 - **Your `HOMEBREW_*` settings from a shell profile now reach brew.** Before, the brew Tankard runs saw none of them (only brew.env), so `HOMEBREW_NO_ANALYTICS=1` in `~/.zshrc` was dropped and installs from Tankard sent analytics you'd turned off. Privacy and behavior settings on an explicit list now pass; settings that change where brew installs or what it trusts, mirrors, tokens and unknown names don't.
+- **Stop Now right after a step starts now stops it.** Pressed in the instant before brew had started, it sent no signal and the step ran to the end.
+- **The Run Again offer after relaunching for App Management could be lost** when a status read was still running in the old window as it quit.
 - **Stop Now gives brew time to undo the step.** Tankard interrupts brew as Ctrl-C does and waits 15 seconds before forcing it; before, brew was killed 2 seconds after being told to stop, which could cut its own rollback short.
 
 ### For contributors
