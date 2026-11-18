@@ -117,8 +117,8 @@ Reading status never changes your Homebrew. Your packages change only when you c
 when you turn on automatic updates, off by default), and every button shows the exact brew
 command it runs. Commands run one at a time and never through a shell. Tankard never runs
 sudo itself; when a cask's installer needs your administrator password, a Tankard dialog
-passes it straight to sudo (or you can run the command in Terminal). That's casks with a
-`.pkg` installer, such as Windows App. Tankard never stores the password, and automatic
+passes it straight to sudo (or you can run the command in Terminal). That's mostly casks
+with a `.pkg` installer, such as Windows App. Tankard never stores the password, and automatic
 updates never ask for it; they skip those casks. The one thing Tankard runs on its own is
 a throttled `brew update` in the background, which refreshes Homebrew's package lists and
 upgrades nothing; Settings ▸ General turns it off.
