@@ -29,10 +29,8 @@ struct UninstallSheet: View {
                         .font(.system(size: 14, weight: .bold))
                     Text(pinned
                          ? String(localized: "Homebrew doesn't uninstall pinned packages. Unpin \(package.name) first, or keep it.")
-                         : dependents.isEmpty && !orphans.isEmpty
-                         ? String(localized: "Removes \(package.name) \(package.installedVersion).")
                          : dependents.isEmpty
-                         ? String(localized: "Removes \(package.name) \(package.installedVersion). Its dependencies stay installed.")
+                         ? AppStore.uninstallSummary(package, dependenciesStay: orphans.isEmpty)
                          : String(localized: "These installed packages need it. Uninstall them first, or keep \(package.name)."))
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)

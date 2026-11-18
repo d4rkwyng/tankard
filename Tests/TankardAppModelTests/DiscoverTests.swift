@@ -351,8 +351,14 @@ struct InstallUninstallTests {
         let log = CallLog()
         let info = FakeInfoRunner(log: log, info: demoIntelInfo())
         let client = makeClient(info)
-        let runner = FakeStreamRunner(log: log) { _, output in
+        let runner = FakeStreamRunner(log: log) { args, output in
             output(Data("ok\n".utf8))
+            // 0.8.4: an uninstalled formula is gone from what brew lists
+            // (the check after an uninstall reads it).
+            if args.first == "uninstall", let name = args.last?.split(separator: "/").last,
+               let now = try? infoWithKegs(info.info, name: String(name), versions: []) {
+                info.info = now
+            }
             return 0
         }
         let deps = AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil,
@@ -450,7 +456,7 @@ struct InstallUninstallTests {
         store.startUninstall(vim)
         let session = try #require(store.upgrade)
         #expect(session.title == "Uninstalling vim")
-        #expect(await waitUntil { session.isFinished })
+        #expect(await waitUntil { session.isFinished && !session.checkingInstalled })
         #expect(session.title == "Uninstall complete")
         #expect(log.calls.contains(["uninstall", "--formula", "homebrew/core/vim"]))
         // 0.8: brew 7 autoremoves after an uninstall unless told not to; the

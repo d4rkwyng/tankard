@@ -278,9 +278,12 @@ public final class ScriptContext {
         } else {
             try await waitUntil("\(what) to finish", timeout: timeout) { session.isFinished }
         }
+        // 0.8.4: an uninstall's check of what is still installed.
+        try await waitUntil("\(what): the installed check", timeout: 120) { !session.checkingInstalled }
         try await settle()
         await snapshot("sheet")
         let failed = session.failedItems.map { "\($0.package.name): \($0.state)" }
+            + session.stillInstalled.keys.sorted().map { "\($0): still installed (\(session.stillInstalled[$0, default: []].joined(separator: ", ")))" }
         let blocked = store.appManagementPrompt?.reason == .blocked
         store.closeUpgrade()
         if blocked {

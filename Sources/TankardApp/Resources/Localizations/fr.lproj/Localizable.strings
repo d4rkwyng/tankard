@@ -18,6 +18,7 @@
 "%@ %@ failed (exit %d)" = "%@ %@ a échoué (code %d)";
 "%@ %@ needs administrator rights" = "%@ %@ nécessite des droits d’administrateur";
 "%@ %@ so far" = "%@ %@ jusqu’ici";
+"%@ %@ still installed" = "%1$@ %2$@ encore installé";
 "%@ %@: %@" = "%@ %@ : %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld paquet";
@@ -270,6 +271,7 @@
 "Checked %@" = "Vérifié %@";
 "Checking Brewfile…" = "Vérification du Brewfile…";
 "Checking for updates…" = "Recherche de mises à jour…";
+"Checking what is still installed…" = "Vérification de ce qui reste installé…";
 "Checking…" = "Vérification…";
 "Clean Up" = "Nettoyer";
 "Clean Up…" = "Nettoyer…";
@@ -369,6 +371,7 @@
 "Every brew command Tankard ran: when, the command, the result and how long it took." = "Chaque commande brew exécutée par Tankard : quand, la commande, le résultat et sa durée.";
 "Every day" = "Tous les jours";
 "Every day at %@" = "Tous les jours à %@";
+"Every installed version, one brew uninstall each" = "Chaque version installée, un brew uninstall par version";
 "Every week" = "Toutes les semaines";
 "Everything in this Brewfile is installed" = "Tout ce qui figure dans ce Brewfile est installé";
 "Everything is up to date" = "Tout est à jour";
@@ -748,6 +751,8 @@
 "Removes %@ %@." = "Supprime %@ %@.";
 "Removes %@ %@. Its dependencies stay installed." = "Supprime %@ %@. Ses dépendances restent installées.";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Supprime Homebrew et tous les paquets installés avec lui : %lld formulae et %lld casks. Cette action est irréversible.";
+"Removes all installed versions of %@ (%@)." = "Supprime toutes les versions installées de %1$@ (%2$@).";
+"Removes all installed versions of %@ (%@). Its dependencies stay installed." = "Supprime toutes les versions installées de %1$@ (%2$@). Ses dépendances restent installées.";
 "Removes old versions, stale downloads and old logs" = "Supprime les anciennes versions, téléchargements obsolètes et anciens journaux";
 "Remove…" = "Supprimer…";
 "Removing tap" = "Suppression du tap";
@@ -1015,6 +1020,7 @@
 "Uninstall Homebrew?" = "Désinstaller Homebrew ?";
 "Uninstall Homebrew…" = "Désinstaller Homebrew…";
 "Uninstall again from the package's details; it asks first." = "Désinstallez de nouveau depuis les détails du paquet ; une confirmation est demandée.";
+"Uninstall incomplete" = "Désinstallation incomplète";
 "Uninstalling" = "Désinstallation";
 "Uninstall…" = "Désinstaller…";
 "Uninstall… (needed by %@%@)" = "Désinstaller… (requis par %@%@)";

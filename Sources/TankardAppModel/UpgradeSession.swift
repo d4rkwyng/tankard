@@ -161,6 +161,12 @@ public final class UpgradeSession: Identifiable {
     /// refused, and the sheet says why with the Terminal command.
     @ObservationIgnored public var foreignAskpass: ForeignAskpass?
     @ObservationIgnored private var passwordTask: Task<Void, Never>?
+    /// 0.8.4: an uninstall left versions installed (brew's "is still
+    /// installed", or the check after the run): name → versions.
+    public private(set) var stillInstalled: [String: [String]] = [:]
+    /// 0.8.4: the run is over and what is still installed is being read
+    /// again; the sheet doesn't say "complete" before that has answered.
+    public private(set) var checkingInstalled = false
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -234,6 +240,14 @@ public final class UpgradeSession: Identifiable {
 
     public var total: Int { items.count }
     public var completedCount: Int { items.filter { $0.state.isTerminal }.count }
+    /// 0.8.4: the packages, once each (an uninstall runs one step per
+    /// installed version of a formula).
+    public var packages: [Package] {
+        var seen = Set<Package.ID>()
+        return items.map(\.package).filter { seen.insert($0.id).inserted }
+    }
+    /// Finished with nothing wrong: no failed step and nothing left installed.
+    public var hasProblems: Bool { !failedItems.isEmpty || !stillInstalled.isEmpty }
     public var succeededCount: Int { items.filter { $0.state == .done }.count }
     public var failedItems: [Item] { items.filter { if case .failed = $0.state { true } else { false } } }
     public var current: Item? { items.first { $0.state == .running } }
@@ -265,13 +279,17 @@ public final class UpgradeSession: Identifiable {
         let verb = action.verb
         if isFinished {
             if stopRequested && items.contains(where: { $0.state == .cancelled }) { return String(localized: "\(verb) stopped") }
-            return failedItems.isEmpty ? String(localized: "\(verb) complete") : String(localized: "\(verb) finished with errors")
+            if checkingInstalled { return String(localized: "Checking what is still installed…") }
+            if !failedItems.isEmpty { return String(localized: "\(verb) finished with errors") }
+            if !stillInstalled.isEmpty { return String(localized: "Uninstall incomplete") }
+            return String(localized: "\(verb) complete")
         }
         if action == .cleanup { return String(localized: "Cleaning up") }
         if action == .restore { return total == 1 ? String(localized: "Restoring (\(total) step)") : String(localized: "Restoring (\(total) steps)") }
         if action == .replaceBottle {
             return total == 1 ? String(localized: "Reinstalling \(items[0].package.name) from a bottle") : String(localized: "Reinstalling \(total) packages from bottles")
         }
+        if action == .uninstall && packages.count == 1 { return String(localized: "\(action.gerund) \(items[0].package.name)") }
         if action != .upgrade && total == 1 { return String(localized: "\(action.gerund) \(items[0].package.name)") }
         return total == 1 ? String(localized: "\(action.gerund) \(total) package") : String(localized: "\(action.gerund) \(total) packages")
     }
@@ -280,7 +298,9 @@ public final class UpgradeSession: Identifiable {
     public var subtitle: String {
         if action == .uninstall {
             // 0.8: more than one item is the package and its no-longer-needed dependencies.
-            if total > 1 { return String(localized: "With the dependencies nothing else needs") }
+            if packages.count > 1 { return String(localized: "With the dependencies nothing else needs") }
+            // 0.8.4: one step per installed version.
+            if total > 1 { return String(localized: "Every installed version, one brew uninstall each") }
             return String(localized: "Its dependencies stay installed (brew autoremove removes unused ones)")
         }
         if action == .cleanup {
@@ -346,7 +366,16 @@ public final class UpgradeSession: Identifiable {
         }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
         if isFinished {
-            var parts = [String(localized: "\(succeededCount) \(action.past)")]
+            // 0.8.4: an uninstall counts packages (all of its steps done), not steps.
+            let succeeded = action == .uninstall
+                ? packages.filter { p in items.allSatisfy { $0.package.id != p.id || $0.state == .done } && stillInstalled[p.name] == nil }.count
+                : succeededCount
+            var parts = [String(localized: "\(succeeded) \(action.past)")]
+            if !stillInstalled.isEmpty {
+                parts.append(stillInstalled.keys.sorted().map { n in
+                    String(localized: "\(n) \(stillInstalled[n, default: []].joined(separator: ", ")) still installed")
+                }.joined(separator: ", "))
+            }
             if !failedItems.isEmpty { parts.append(String(localized: "\(failedItems.count) failed")) }
             let skipped = items.filter { $0.state == .cancelled }.count
             if skipped > 0 { parts.append(String(localized: "\(skipped) stopped")) }
@@ -426,6 +455,15 @@ public final class UpgradeSession: Identifiable {
             if refused {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
             }
+            // 0.8.4: the package's last step and brew still has versions of it.
+            if action == .uninstall, code == 0, !refused,
+               !items.dropFirst(i + 1).contains(where: { $0.package.id == items[i].package.id }),
+               let left = BrewRefusal.stillInstalled(commandLines, name: items[i].package.name) {
+                markStillInstalled(items[i].package.name, versions: left)
+            } else if action == .uninstall, code == 0, !refused,
+                      BrewRefusal.stillInstalled(commandLines, name: items[i].package.name) != nil {
+                note("The next step removes the next installed version (plain brew uninstall again, with its checks; not --force).")
+            }
             if code != 0 {
                 if SudoDetector.needsSudo(commandLines) {
                     sudoCommand = items[i].command.display
@@ -486,6 +524,30 @@ public final class UpgradeSession: Identifiable {
             noteChainSkipped(after: i)
         }
         finishIfDone()
+    }
+
+    // MARK: what an uninstall left (0.8.4)
+
+    func markStillInstalled(_ name: String, versions: [String]) {
+        guard stillInstalled[name] != versions else { return }
+        stillInstalled[name] = versions
+        note(versions.isEmpty ? "\(name) is still installed."
+             : "\(name) \(versions.joined(separator: ", ")) still installed: the uninstall didn't remove every version.")
+    }
+
+    /// Called from onFinish: the sheet waits for `finishInstalledCheck`.
+    func beginInstalledCheck() { checkingInstalled = true }
+
+    /// What a fresh read found still installed (name → versions) of this
+    /// session's packages; nil: the read failed (said in the log).
+    func finishInstalledCheck(_ found: [String: [String]]?, error: String? = nil) {
+        if let found {
+            for name in found.keys.sorted() { markStillInstalled(name, versions: found[name] ?? []) }
+            if found.isEmpty && stillInstalled.isEmpty { note("Checked: nothing it uninstalled is still installed.") }
+        } else {
+            note("Couldn't check what is still installed: \(error ?? "the read failed").")
+        }
+        checkingInstalled = false
     }
 
     private func finishIfDone() {

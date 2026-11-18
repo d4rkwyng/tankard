@@ -18,6 +18,7 @@
 "%@ %@ failed (exit %d)" = "%@ %@ 실패(종료 코드 %d)";
 "%@ %@ needs administrator rights" = "%@ %@에는 관리자 권한이 필요합니다";
 "%@ %@ so far" = "%@ %@ 받음";
+"%@ %@ still installed" = "%1$@ %2$@ 아직 설치됨";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ 패키지 %lld개";
@@ -270,6 +271,7 @@
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
 "Checking for updates…" = "업데이트 확인 중…";
+"Checking what is still installed…" = "아직 설치된 항목 확인 중…";
 "Checking…" = "확인 중…";
 "Clean Up" = "정리";
 "Clean Up…" = "정리…";
@@ -369,6 +371,7 @@
 "Every brew command Tankard ran: when, the command, the result and how long it took." = "Tankard가 실행한 모든 brew 명령: 시각, 명령, 결과, 소요 시간.";
 "Every day" = "매일";
 "Every day at %@" = "매일 %@에";
+"Every installed version, one brew uninstall each" = "설치된 버전마다 brew uninstall을 한 번씩 실행";
 "Every week" = "매주";
 "Everything in this Brewfile is installed" = "이 Brewfile의 모든 항목이 설치되어 있음";
 "Everything is up to date" = "모두 최신 상태입니다";
@@ -748,6 +751,8 @@
 "Removes %@ %@." = "%@ %@을(를) 제거합니다.";
 "Removes %@ %@. Its dependencies stay installed." = "%@ %@을(를) 제거합니다. 의존성은 그대로 설치되어 있습니다.";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Homebrew와 함께 설치된 모든 패키지(formula %lld개, cask %lld개)를 제거합니다. 되돌릴 수 없습니다.";
+"Removes all installed versions of %@ (%@)." = "%1$@의 설치된 모든 버전(%2$@)을 제거합니다.";
+"Removes all installed versions of %@ (%@). Its dependencies stay installed." = "%1$@의 설치된 모든 버전(%2$@)을 제거합니다. 의존성은 설치된 채로 남습니다.";
 "Removes old versions, stale downloads and old logs" = "이전 버전, 오래된 다운로드, 오래된 로그를 제거합니다";
 "Remove…" = "제거…";
 "Removing tap" = "tap 제거 중";
@@ -1015,6 +1020,7 @@
 "Uninstall Homebrew?" = "Homebrew를 제거할까요?";
 "Uninstall Homebrew…" = "Homebrew 제거…";
 "Uninstall again from the package's details; it asks first." = "패키지 세부 정보에서 다시 제거하세요. 먼저 확인합니다.";
+"Uninstall incomplete" = "제거가 완료되지 않음";
 "Uninstalling" = "제거 중";
 "Uninstall…" = "제거…";
 "Uninstall… (needed by %@%@)" = "제거… (%@%@에서 필요로 함)";

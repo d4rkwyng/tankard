@@ -207,6 +207,31 @@ public enum BrewRefusal {
     public static func pinned<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
         lines.contains { $0.contains(" is pinned. You must unpin it to ") }
     }
+
+    /// 0.8.4: plain `brew uninstall` removes one keg; with more installed it
+    /// prints "hello 1.0 is still installed." (or "hello 1.0 and 1.1 are
+    /// still installed.") and exits 0 (brew 7.0.14 uninstall.rb:86). The
+    /// versions it names for `name`, or nil when it printed no such line.
+    public static func stillInstalled<S: Sequence>(_ lines: S, name: String) -> [String]? where S.Element == String {
+        for line in lines {
+            let l = line.trimmingCharacters(in: .whitespaces)
+            guard l.hasPrefix(name + " ") else { continue }
+            var rest = l.dropFirst(name.count + 1)
+            if rest.hasSuffix(" is still installed.") {
+                rest = rest.dropLast(" is still installed.".count)
+            } else if rest.hasSuffix(" are still installed.") {
+                rest = rest.dropLast(" are still installed.".count)
+            } else {
+                continue
+            }
+            // Utils::Text.to_sentence: "a", "a and b", "a, b, and c".
+            let versions = rest.replacingOccurrences(of: ", and ", with: ", ")
+                .replacingOccurrences(of: " and ", with: ", ")
+                .split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            return versions
+        }
+        return nil
+    }
 }
 
 // MARK: - brew doctor

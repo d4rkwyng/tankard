@@ -18,6 +18,7 @@
 "%@ %@ failed (exit %d)" = "%@ %@ fehlgeschlagen (Exit %d)";
 "%@ %@ needs administrator rights" = "%@ %@ erfordert Administratorrechte";
 "%@ %@ so far" = "bisher %@ %@";
+"%@ %@ still installed" = "%1$@ %2$@ noch installiert";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld Paket";
@@ -270,6 +271,7 @@
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
 "Checking for updates…" = "Suche Updates…";
+"Checking what is still installed…" = "Prüfe, was noch installiert ist…";
 "Checking…" = "Wird geprüft…";
 "Clean Up" = "Aufräumen";
 "Clean Up…" = "Aufräumen…";
@@ -369,6 +371,7 @@
 "Every brew command Tankard ran: when, the command, the result and how long it took." = "Jeder brew-Befehl, den Tankard ausgeführt hat: wann, der Befehl, das Ergebnis und die Dauer.";
 "Every day" = "Jeden Tag";
 "Every day at %@" = "Jeden Tag um %@";
+"Every installed version, one brew uninstall each" = "Jede Version, je ein brew uninstall";
 "Every week" = "Jede Woche";
 "Everything in this Brewfile is installed" = "Alles in diesem Brewfile ist installiert";
 "Everything is up to date" = "Alles ist auf dem neuesten Stand";
@@ -748,6 +751,8 @@
 "Removes %@ %@." = "Entfernt %@ %@.";
 "Removes %@ %@. Its dependencies stay installed." = "Entfernt %@ %@. Die Abhängigkeiten bleiben installiert.";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Entfernt Homebrew und alle damit installierten Pakete: %lld Formulae und %lld Casks. Das lässt sich nicht rückgängig machen.";
+"Removes all installed versions of %@ (%@)." = "Entfernt alle Versionen von %1$@ (%2$@).";
+"Removes all installed versions of %@ (%@). Its dependencies stay installed." = "Entfernt alle Versionen von %1$@ (%2$@). Abhängigkeiten bleiben.";
 "Removes old versions, stale downloads and old logs" = "Entfernt alte Versionen, veraltete Downloads und alte Protokolle";
 "Remove…" = "Entfernen…";
 "Removing tap" = "Tap wird entfernt";
@@ -1015,6 +1020,7 @@
 "Uninstall Homebrew?" = "Homebrew deinstallieren?";
 "Uninstall Homebrew…" = "Homebrew deinstallieren…";
 "Uninstall again from the package's details; it asks first." = "Deinstalliere erneut über die Details des Pakets; es fragt vorher nach.";
+"Uninstall incomplete" = "Deinstallation unvollständig";
 "Uninstalling" = "Wird deinstalliert";
 "Uninstall…" = "Deinstallieren…";
 "Uninstall… (needed by %@%@)" = "Deinstallieren… (benötigt von %@%@)";

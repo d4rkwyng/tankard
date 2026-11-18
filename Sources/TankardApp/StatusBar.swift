@@ -62,7 +62,7 @@ struct StatusBar: View {
                     store.showUpgradeSheet = true
                 } label: {
                     if session.isFinished {
-                        Label(session.title, systemImage: session.failedItems.isEmpty ? "checkmark.circle" : "exclamationmark.triangle")
+                        Label(session.title, systemImage: !session.hasProblems ? "checkmark.circle" : "exclamationmark.triangle")
                     } else {
                         HStack(spacing: 6) {
                             ProgressView().controlSize(.mini)

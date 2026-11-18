@@ -647,10 +647,28 @@ public final class AppStore {
     /// The uninstall's command as the queue runs it (HOMEBREW_NO_AUTOREMOVE=1),
     /// then, with `orphans`, one line per no-longer-needed dependency: what
     /// the sheet shows and the detail pane's Uninstall button tooltip.
+    /// 0.8.4: a formula with several installed versions shows its command
+    /// once per version, as it runs.
     public nonisolated static func uninstallDisplay(_ p: Package, orphans: [Package] = []) -> String {
-        ([p] + orphans).map {
+        uninstallSteps([p] + orphans).map {
             BrewCommands.display(BrewCommands.uninstallArguments(for: $0), environment: uninstallEnvironment(.uninstall))
         }.joined(separator: "\n")
+    }
+
+    /// The confirmation's line: "Removes xz 5.8.1." or, 0.8.4, with several
+    /// installed versions, "Removes all installed versions of xz (5.6.3,
+    /// 5.8.1)." `dependenciesStay`: adds "Its dependencies stay installed."
+    public nonisolated static func uninstallSummary(_ p: Package, dependenciesStay: Bool) -> String {
+        let versions = Set(p.installedVersions).sorted { PkgVersion(parsing: $0) < PkgVersion(parsing: $1) }
+        if p.kind == .formula && versions.count > 1 {
+            let list = versions.joined(separator: ", ")
+            return dependenciesStay
+                ? String(localized: "Removes all installed versions of \(p.name) (\(list)). Its dependencies stay installed.")
+                : String(localized: "Removes all installed versions of \(p.name) (\(list)).")
+        }
+        return dependenciesStay
+            ? String(localized: "Removes \(p.name) \(p.installedVersion). Its dependencies stay installed.")
+            : String(localized: "Removes \(p.name) \(p.installedVersion).")
     }
 
     /// Runs `brew uninstall` for a package nothing depends on. 0.8: not
@@ -675,7 +693,51 @@ public final class AppStore {
                 return skip
             }
         }
-        startSession(.uninstall, packages: [p] + orphans, skipCheck: skipCheck)
+        startSession(.uninstall, packages: Self.uninstallSteps([p] + orphans), skipCheck: skipCheck)
+    }
+
+    /// 0.8.4: plain `brew uninstall` removes one keg of a formula (the
+    /// linked one, else the newest) and prints "… is still installed" for
+    /// the rest. So a formula with several installed versions gets one step
+    /// per version, chained: each keeps brew's own checks (pinned, keg
+    /// lock, dependents), unlike `--force`, which skips the pin check and
+    /// the keg lock (uninstall.rb). After the run the installed packages
+    /// are read again (`checkUninstalled`).
+    public nonisolated static func uninstallSteps(_ packages: [Package]) -> [Package] {
+        packages.flatMap { p in
+            Array(repeating: p, count: p.kind == .formula ? max(1, Set(p.installedVersions).count) : 1)
+        }
+    }
+
+    /// 0.8.4: after an uninstall, what of it is still installed: a fresh
+    /// `brew info --json=v2 --installed`, for the packages whose every step
+    /// succeeded (a failed one is still installed, and says so already).
+    func checkUninstalled(_ session: UpgradeSession) {
+        let ran = session.packages.filter { p in
+            session.items.allSatisfy { $0.package.id != p.id || $0.state == .done }
+        }
+        guard !ran.isEmpty else { return }
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else {
+            session.finishInstalledCheck(nil, error: "brew isn't available")
+            return
+        }
+        session.beginInstalledCheck()
+        let env = client.environment(for: detection)
+        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected)
+        Task {
+            do {
+                let live = classifier.classify(info: try await client.installedInfo(env: env))
+                var left: [String: [String]] = [:]
+                for p in ran {
+                    if let now = live.first(where: { $0.id == p.id }) {
+                        left[p.name] = now.installedVersions.isEmpty ? [now.installedVersion] : now.installedVersions
+                    }
+                }
+                session.finishInstalledCheck(left)
+            } catch {
+                session.finishInstalledCheck(nil, error: String(describing: error))
+            }
+        }
     }
 
     /// 0.8: reads the installed packages again (`brew info --json=v2
@@ -1076,6 +1138,7 @@ public final class AppStore {
         if selfReplaced { return }
         // 0.8: an uninstalled cask's self-update choice goes with it.
         if session.action == .uninstall {
+            checkUninstalled(session)
             for item in session.items where item.state == .done && item.package.kind == .cask {
                 upgradeRules.setSelfUpdatePolicy(SelfUpdateRule.key(item.package), .automatic)
             }
