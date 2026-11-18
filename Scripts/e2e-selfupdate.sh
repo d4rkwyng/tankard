@@ -62,6 +62,10 @@ CASK=$TAP/tankard
 APP=/Applications/Tankard.app
 BREW=$(command -v brew)
 qbrew() { HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTOREMOVE=1 HOMEBREW_NO_ENV_HINTS=1 "$BREW" "$@"; }
+# No `brew ... | grep -q` under pipefail: grep quits at the first match,
+# brew can get SIGPIPE, and the pipeline then fails (141) on a match.
+has_tap() { grep -qx "$TAP" <<<"$(qbrew tap 2>/dev/null)"; }
+has_cask() { grep -qx tankard <<<"$(qbrew list --cask 2>/dev/null)"; }
 SUITE=net.mindtricks.tankard.e2e.$$
 RESULTS=()
 record() { RESULTS+=("$1"); echo "==> $1" | tee -a "$OUT/summary.txt"; }
@@ -73,8 +77,8 @@ pids() { pgrep -f '^/Applications/Tankard.app/Contents/MacOS/Tankard' | tr '\n' 
 # MARK: preconditions (never touch what isn't ours)
 [ -z "$(pids)" ] || { echo "e2e-selfupdate.sh: Tankard is running (pids $(pids)); quit it first" >&2; exit 3; }
 [ ! -e "$APP" ] || { echo "e2e-selfupdate.sh: $APP exists; this run installs its own and would remove it" >&2; exit 3; }
-qbrew tap | grep -qx "$TAP" && { echo "e2e-selfupdate.sh: tap $TAP already exists" >&2; exit 3; }
-qbrew list --cask 2>/dev/null | grep -qx tankard && { echo "e2e-selfupdate.sh: a tankard cask is installed" >&2; exit 3; }
+has_tap && { echo "e2e-selfupdate.sh: tap $TAP already exists" >&2; exit 3; }
+has_cask && { echo "e2e-selfupdate.sh: a tankard cask is installed" >&2; exit 3; }
 # The machine-wide e2e lock (Scripts/e2e.sh's): one run using brew and the app at a time.
 LOCK=/tmp/net.mindtricks.tankard.e2e.lock
 until mkdir "$LOCK" 2>/dev/null; do
@@ -94,8 +98,8 @@ cleanup() {
     for p in $(pids); do kill -9 "$p" 2>/dev/null; done
     [ -n "${SAMPLER:-}" ] && kill "$SAMPLER" 2>/dev/null
     [ -n "${LOGSTREAM:-}" ] && kill "$LOGSTREAM" 2>/dev/null
-    qbrew list --cask 2>/dev/null | grep -qx tankard && qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
-    qbrew tap | grep -qx "$TAP" && qbrew untap "$TAP" >> "$OUT/brew.log" 2>&1
+    has_cask && qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1
+    has_tap && qbrew untap "$TAP" >> "$OUT/brew.log" 2>&1
     [ -e "$APP" ] && echo "cleanup: $APP still present" >&2
     defaults delete "$SUITE" >/dev/null 2>&1; rm -f ~/Library/Preferences/"$SUITE".plist
     # The relaunched copies' script folders (AppManagement.relaunchEnvironment):
@@ -268,7 +272,7 @@ fi
 D=$OUT/C
 if ! want C; then
     echo "$(now) C: skipped (--phases $PHASES)"
-elif mkdir -p "$D" && { ! qbrew list --cask 2>/dev/null | grep -qx tankard || qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1; } \
+elif mkdir -p "$D" && { ! has_cask || qbrew uninstall --cask "$CASK" >> "$OUT/brew.log" 2>&1; } \
     && echo "$(now) C: install $VOLD" | tee "$D/events.txt" && install_old; then
     cat > "$D/steps.txt" <<STEPS
 expect-ready
@@ -316,5 +320,5 @@ fi
 
 echo
 printf '%s\n' "${RESULTS[@]}"
-printf '%s\n' "${RESULTS[@]}" | grep -q FAIL && exit 1
+grep -q FAIL <<<"$(printf '%s\n' "${RESULTS[@]}")" && exit 1
 exit 0

@@ -170,7 +170,9 @@ check "rc $VNEW newer than $VOLD" newer "$VOLD" "$VNEW"
 # whole environment (AppManagement.relaunchEnvironment); its log text is
 # the marker.
 MARKER='relaunch: e2e identity dropped'
-has_marker() { strings -a "$1/Contents/MacOS/Tankard" | grep -qF "$MARKER"; }
+# grep -a on the binary itself: `strings | grep -q` under pipefail fails
+# with SIGPIPE (141) exactly when grep finds the marker early.
+has_marker() { grep -aqF "$MARKER" "$1/Contents/MacOS/Tankard"; }
 OLD_RELAUNCH=no; has_marker "$OLDAPP" && OLD_RELAUNCH=yes
 NEW_RELAUNCH=no; has_marker "$NEWAPP" && NEW_RELAUNCH=yes
 echo "==> 0.8.4 relaunch identity: old $OLD_RELAUNCH, new $NEW_RELAUNCH"
@@ -196,7 +198,7 @@ fi
 [ $NEW_RELAUNCH = yes ] || fail "not running the e2e: $RC lacks 0.8.4's relaunch identity"
 # 0.8.3's self-update script hooks (TANKARD_E2E_SELF_TAP, upgrade-self):
 # phases A and C drive OLD with them.
-strings -a "$OLDAPP/Contents/MacOS/Tankard" | grep -qF TANKARD_E2E_SELF_TAP \
+grep -aqF TANKARD_E2E_SELF_TAP "$OLDAPP/Contents/MacOS/Tankard" \
     || fail "not running the e2e: $PREV has no self-update e2e hooks (before 0.8.3)"
 
 # MARK: 3. the e2e run
