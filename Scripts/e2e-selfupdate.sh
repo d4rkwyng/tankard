@@ -148,7 +148,9 @@ real_check() {
     fi
     # The full key diff, from the backup and the domain as it is now.
     local now="$OUT/real-defaults-after.plist"
-    real_xml > "$now"
+    # Binary, like the backup: an XML plist keeps whole seconds only, so a
+    # date key (lastBrewUpdate) would look changed against the binary backup.
+    defaults export "$REAL_DOMAIN" "$now" 2>/dev/null
     [ -s "$now" ] || printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<plist version="1.0"><dict/></plist>' > "$now"
     diffs=$(real_defaults_diff "$([ -f "$REAL_BACKUP" ] && echo "$REAL_BACKUP")" "$now" $REAL_IGNORE_FRAMES) && verdict=PASS
     # Always restored in full. `defaults import` merges, so delete first:

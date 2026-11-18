@@ -162,9 +162,15 @@ def load(p):
     with open(p, "rb") as f:
         return plistlib.load(f)
 before, after, ignore = load(sys.argv[1]), load(sys.argv[2]), sys.argv[3] == "1"
+import datetime
+def same(a, b):
+    # Dates compared to the second: an XML plist keeps whole seconds only.
+    if isinstance(a, datetime.datetime) and isinstance(b, datetime.datetime):
+        return a.replace(microsecond=0) == b.replace(microsecond=0)
+    return a == b
 bad = 0
 for k in sorted(set(before) | set(after)):
-    if k in before and k in after and before[k] == after[k]:
+    if k in before and k in after and same(before[k], after[k]):
         continue
     kind = "added" if k not in before else "removed" if k not in after else "changed"
     if ignore and fnmatch.fnmatchcase(k, "NSWindow Frame *"):
@@ -275,6 +281,10 @@ L
     expect 1 "lookalike key, ignored" real_defaults_diff "$t/p0.plist" "$t/p3.plist" 1
     mk "$t/p4.plist" '{"NSWindow Frame main-AppWindow-1": "1 2 3 4"}'
     expect 0 "domain created with only a frame, ignored" real_defaults_diff "" "$t/p4.plist" 1
+    # rc3: a binary backup's sub-second date against an XML copy of the same domain.
+    /usr/bin/python3 -I -c 'import plistlib,datetime,sys; d=datetime.datetime(2026,11,17,22,47,25,914896); plistlib.dump({"lastBrewUpdate": d}, open(sys.argv[1],"wb"), fmt=plistlib.FMT_BINARY); plistlib.dump({"lastBrewUpdate": d.replace(microsecond=0)}, open(sys.argv[2],"wb"), fmt=plistlib.FMT_XML); plistlib.dump({"lastBrewUpdate": d.replace(second=26)}, open(sys.argv[3],"wb"))' "$t/d0.plist" "$t/d1.plist" "$t/d2.plist"
+    expect 0 "same date, binary vs XML precision" real_defaults_diff "$t/d0.plist" "$t/d1.plist" 1
+    expect 1 "date really changed" real_defaults_diff "$t/d0.plist" "$t/d2.plist" 1
     expect 1 "domain created with more, ignored" real_defaults_diff "" "$t/p1.plist" 1
     rm -rf "$t"
     echo "self-test: $fails failed"
