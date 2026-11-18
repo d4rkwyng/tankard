@@ -4,7 +4,7 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.8.5] (unreleased)
+## [0.8.5]
 
 ### Added
 - **Long builds show their time.** While a package builds from source, the upgrade sheet and the progress window say "Building from source… 4 min so far". After you have built the same formula from source on this Mac before, it adds an estimate: "(last time on this Mac: about 15 min)". brew doesn't estimate builds itself, so with no earlier build only the time so far shows.
