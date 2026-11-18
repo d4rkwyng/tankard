@@ -705,6 +705,7 @@
 "Nothing to retry" = "Nothing to retry";
 "Nothing to upgrade" = "Nothing to upgrade";
 "Nothing upgraded" = "Nothing upgraded";
+"Nothing was removed because keeping %@ failed." = "Nothing was removed because keeping %@ failed.";
 "Nothing will compile from source." = "Nothing will compile from source.";
 "Nothing yet" = "Nothing yet";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Notifications are off for Tankard, so runs are only in the Auto-update log. ";

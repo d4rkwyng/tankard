@@ -110,6 +110,30 @@ struct V085AutoremoveKeepTests {
         #expect(await waitUntil { store.history.entries.contains { $0.arguments == ["autoremove"] && $0.outcome == .succeeded } })
     }
 
+    /// HK-47 review (0.8.5, blocker): a keep step that fails stops the
+    /// autoremove, which would otherwise remove the formula it was keeping.
+    @Test func aFailedKeepStepRemovesNothing() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0)
+        let log = CallLog()
+        deps.streamRunner = FakeStreamRunner(log: log) { args, out in
+            if args.first == "tab" { out(Data("Error: No such keg\n".utf8)); return 1 }
+            return 0
+        }
+        let store = AppStore(deps: deps)
+        await store.start()
+        store.openAutoremove()
+        let a = try #require(store.autoremove)
+        #expect(await waitUntil { a.phase == .ready })
+        a.setKeep("libyaml", true)
+        store.startAutoremove()
+        let session = try #require(store.upgrade)
+        #expect(await waitUntil { session.isFinished })
+        #expect(log.count("tab") == 1)
+        #expect(log.count("autoremove") == 0)
+        #expect(session.items.map(\.state) == [.failed(1), .cancelled])
+        #expect(session.subtitle == "Nothing was removed because keeping libyaml failed.")
+    }
+
     @Test func keepingEverythingRemovesNothing() async throws {
         let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0))
         await store.start()

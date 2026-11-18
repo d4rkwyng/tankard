@@ -705,6 +705,7 @@
 "Nothing to retry" = "再試行するものはありません";
 "Nothing to upgrade" = "アップグレードするものはありません";
 "Nothing upgraded" = "アップグレードされたものはありません";
+"Nothing was removed because keeping %@ failed." = "%@ を残す処理に失敗したため、何も削除されませんでした。";
 "Nothing will compile from source." = "ソースからコンパイルするものはありません。";
 "Nothing yet" = "まだありません";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Tankardの通知がオフのため、実行内容は自動アップデートのログにのみ記録されます。 ";

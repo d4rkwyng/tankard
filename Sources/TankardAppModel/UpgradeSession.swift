@@ -375,6 +375,11 @@ public final class UpgradeSession: Identifiable {
             return intelbrewMode && ib == n ? String(localized: "Swaps source builds for Intelbrew bottles")
                 : (n == 1 ? String(localized: "Swaps source build for bottle") : String(localized: "Swaps source builds for bottles"))
         }
+        // 0.8.5 (HK-47 review): Remove Unused whose keep step failed
+        // removed nothing (the autoremove was skipped).
+        if action == .autoremove, let kept = keepStepFailed {
+            return String(localized: "Nothing was removed because keeping \(kept) failed.")
+        }
         // 0.8.4: once finished with failures, what was actually done, not
         // the plan: a failed download said "1 build from source" although
         // nothing was built. Nothing done: why, when brew's output says.
@@ -776,7 +781,19 @@ public final class UpgradeSession: Identifiable {
     private func noteChainSkipped(after i: Int) {
         guard let key = chainKey?(items[i].package),
               items.dropFirst(i + 1).contains(where: { chainKey?($0.package) == key }) else { return }
+        if action == .autoremove, let kept = items[i].package.autoremoveKeptNames {
+            note("Nothing was removed because keeping \(kept.joined(separator: ", ")) failed")
+            return
+        }
         note("Skipped the next steps for this package")
+    }
+
+    /// 0.8.5 (HK-47 review): Remove Unused's keep step failed (or couldn't
+    /// run): the formulae it was keeping ("python@3.14, libyaml"), else nil.
+    var keepStepFailed: String? {
+        guard isFinished, let keep = items.first(where: { $0.package.autoremoveKeptNames != nil }),
+              failedItems.contains(where: { $0.id == keep.id }) else { return nil }
+        return keep.package.autoremoveKeptNames?.joined(separator: ", ")
     }
 
     private func flush() {

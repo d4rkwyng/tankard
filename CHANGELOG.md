@@ -49,6 +49,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **A menu-bar Upgrade never starts a run behind a plan or another sheet**: it shows what is already up instead.
 - **Uninstalling every version of a formula counts in plain words**: "2 uninstalled (4 versions)" beside "4 of 4 versions", and each step's chip names the version brew removed ("xz 5.8.3"; "xz (1 of 2)" until brew says).
 - A lock-wait test that failed under a loaded test run now waits on the queue's events instead of a clock.
+- **Remove Unused Dependencies removes nothing when keeping a package fails.** If marking an unticked package as installed by you (`brew tab`) fails, the removal no longer runs anyway (it would have removed that package): the sheet says "Nothing was removed because keeping python failed."
 - **Demo, snapshot and script runs no longer save the window frame into Tankard's real settings** (`NSWindow Frame main-AppWindow-1`, open since the 0.8.3 review).
 
 ## [0.8.4]

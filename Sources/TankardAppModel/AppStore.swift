@@ -1207,7 +1207,9 @@ public final class AppStore {
             },
             logURL: deps.logURL,
             // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.
-            chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
+            // 0.8.5 (HK-47 review): the same for Remove Unused: a failed keep
+            // step skips the autoremove, which would remove what it kept.
+            chainKey: (action == .uninstall || action == .autoremove) && targets.count > 1 ? { _ in action.rawValue } : nil,
             precondition: foreignAskpassPrecondition(client, action: action, foreignAtStart: foreign),
             skipCheck: skipCheck,
             downloads: deps.downloadMonitor?(client, env),

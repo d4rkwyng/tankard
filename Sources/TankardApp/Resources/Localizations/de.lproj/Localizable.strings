@@ -705,6 +705,7 @@
 "Nothing to retry" = "Nichts zu wiederholen";
 "Nothing to upgrade" = "Nichts zu aktualisieren";
 "Nothing upgraded" = "Nichts aktualisiert";
+"Nothing was removed because keeping %@ failed." = "Es wurde nichts entfernt, weil das Behalten von %@ fehlgeschlagen ist.";
 "Nothing will compile from source." = "Nichts wird aus dem Quellcode kompiliert.";
 "Nothing yet" = "Noch nichts";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Benachrichtigungen sind für Tankard deaktiviert, daher erscheinen Läufe nur im Auto-Update-Protokoll. ";

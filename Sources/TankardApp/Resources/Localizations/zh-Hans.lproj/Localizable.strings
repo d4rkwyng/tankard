@@ -705,6 +705,7 @@
 "Nothing to retry" = "没有可重试的项目";
 "Nothing to upgrade" = "没有可升级的项目";
 "Nothing upgraded" = "没有已升级的项目";
+"Nothing was removed because keeping %@ failed." = "保留 %@ 失败，因此没有移除任何内容。";
 "Nothing will compile from source." = "没有需要从源代码编译的软件包。";
 "Nothing yet" = "暂无";
 "Notifications are off for Tankard, so runs are only in the Auto-update log. " = "Tankard 的通知已关闭，因此运行记录只会出现在自动更新日志中。 ";
