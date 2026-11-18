@@ -191,10 +191,13 @@ field.widthAnchor.constraint(equalToConstant: width).isActive = true
 let actions = Actions()
 // Return in the field is OK even before the panel is key (focus can arrive
 // late; see bringToFront), not only through the default button. Only on
-// Return: not when the field merely loses focus.
+// Return: with sendsActionOnEndEditing the field would also send `ok` when
+// editing merely ends (Tab, a click on Cancel or Details, the watchdog),
+// and the password would go to sudo. Set explicitly, never the default.
 field.target = actions
 field.action = #selector(Actions.ok(_:))
-field.cell?.sendsActionOnEndEditing = false
+guard let fieldCell = field.cell as? NSTextFieldCell else { fail("no text field cell") }
+fieldCell.sendsActionOnEndEditing = false
 
 var rows: [NSView] = [icon, titleLabel, bodyLabel]
 if request.prompt != "Password:" {
