@@ -194,7 +194,11 @@ public final class AppStore {
     /// Upgrade opens (`activityPresentation`). Hiding it puts the next one
     /// back on the main window.
     public var showUpgradeSheet = false {
-        didSet { if !showUpgradeSheet, activityPresentation != .mainWindowSheet { activityPresentation = .mainWindowSheet } }
+        didSet {
+            if !showUpgradeSheet, activityPresentation != .mainWindowSheet { activityPresentation = .mainWindowSheet }
+            // The panel's notes page goes with it (Close, a relaunch).
+            if !showUpgradeSheet, progressPanelNotes != nil { progressPanelNotes = nil }
+        }
     }
     /// 0.8.5: where the activity shows (ProgressPanel.swift).
     public internal(set) var activityPresentation: ActivityPresentation = .mainWindowSheet
@@ -204,6 +208,24 @@ public final class AppStore {
     public internal(set) var mainWindowRequests = 0
     /// 0.8.5: how long a progress panel stays up after a clean finish.
     @ObservationIgnored public var progressPanelAutoClose: Duration = .seconds(2)
+    /// 0.8.5 (review): bumped when the progress panel must come to the
+    /// front even though it is already open (the menu-bar panel's Show
+    /// Upgrade Progress, the panel may be behind other windows).
+    public internal(set) var progressPanelFrontRequests = 0
+    /// 0.8.5 (review): where the current session belongs: the progress
+    /// panel (a menu-bar Upgrade) or the main window. Unlike
+    /// `activityPresentation` it stays while the panel is hidden, so a
+    /// hidden panel run still notifies, and keeps its notes, at the end.
+    @ObservationIgnored var runHome: ActivityPresentation = .mainWindowSheet
+    /// 0.8.5 (review): the post-install notes of a progress-panel run,
+    /// shown as the panel's last page (never handed to a main window
+    /// that may be closed or behind other apps).
+    public internal(set) var progressPanelNotes: PostInstallNotes?
+    /// 0.8.5 (review): the panel's close button mid-run asks once per
+    /// launch whether to close it ("Closing this window doesn't stop the
+    /// upgrade"). True while that question is up.
+    public var progressPanelHideQuestion = false
+    @ObservationIgnored var progressPanelHideExplained = false
     /// 0.8.3: an upgrade run a quit interrupted, offered at the next launch (QuitGuard.swift).
     public internal(set) var interruptedRun: InterruptedRunOffer?
     /// 0.8.3: the running session is ending because Tankard quits.
@@ -654,6 +676,8 @@ public final class AppStore {
     /// Opens the uninstall confirmation. "Also remove these" starts on,
     /// as brew's own uninstall would remove them (its autoremove).
     public func requestUninstall(_ p: Package) {
+        // 0.8.5 (review): not while the progress panel holds the activity.
+        guard !progressPanelHoldsActivity else { return }
         uninstallRemovesOrphans = true
         uninstallCandidate = p
     }
@@ -700,6 +724,7 @@ public final class AppStore {
     /// earlier step fails.
     public func startUninstall(_ p: Package) {
         uninstallCandidate = nil
+        guard !progressPanelHoldsActivity else { return }
         guard dependents(of: p).isEmpty, !p.pinned else { return }
         let orphans = uninstallRemovesOrphans ? uninstallOrphans(of: p) : []
         // The list is from the last refresh: right before each dependency's
@@ -790,6 +815,16 @@ public final class AppStore {
     /// first shows the plan with the compile warnings and "Skip packages
     /// that would compile"; otherwise it starts at once, as before.
     public func requestUpgrade(_ packages: [Package]? = nil) {
+        // 0.8.5 (review): not over the progress panel's plan or result
+        // (the window's buttons say why); its own Retry goes through
+        // `requestUpgradeInActivity`.
+        guard !progressPanelHoldsActivity else { return }
+        requestUpgradeInActivity(packages)
+    }
+
+    /// `requestUpgrade`, from the activity itself (Retry): may replace the
+    /// finished run it shows.
+    func requestUpgradeInActivity(_ packages: [Package]? = nil) {
         guard !isUpgrading else { return }
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
@@ -1092,6 +1127,8 @@ public final class AppStore {
         upgrade?.isRetry = isRetry
         upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
+        // 0.8.5 (review): the panel's run stays the panel's while hidden.
+        runHome = activityPresentation
         showUpgradeSheet = true
     }
 
@@ -1172,6 +1209,9 @@ public final class AppStore {
         Task {
             await self.refresh(manual: false)
             self.offerPostInstallNotes(for: session)
+            // 0.8.5 (review): a progress-panel run closes, or notifies,
+            // only now that its notes are known.
+            self.progressPanelRunSettled(session)
         }
         // A cask step macOS blocked: explain, offer one retry. 0.8.1: a
         // restore's blocked step (a command row) is explained too, without
@@ -1185,8 +1225,25 @@ public final class AppStore {
 
     /// Clears a finished session (the sheet's Done button).
     public func closeUpgrade() {
+        // 0.8.5 (review): a progress-panel run's notes are the panel's
+        // last page, not a sheet on a main window that may be closed or
+        // behind other apps (whose sheet would also hold the menu gate).
+        if runHome == .progressPanel, !selfReplaced, let notes = insights.pendingNotes {
+            insights.pendingNotes = nil
+            if upgrade?.isFinished == true { upgrade = nil }
+            runHome = .mainWindowSheet
+            let wasShowing = showsProgressPanel
+            progressPanelNotes = notes
+            activityPresentation = .progressPanel
+            showUpgradeSheet = true
+            if !wasShowing { progressPanelFrontRequests += 1 }
+            return
+        }
         showUpgradeSheet = false
-        if upgrade?.isFinished == true { upgrade = nil }
+        if upgrade?.isFinished == true {
+            upgrade = nil
+            runHome = .mainWindowSheet
+        }
         if !selfReplaced { insights.presentPending() }
     }
 }

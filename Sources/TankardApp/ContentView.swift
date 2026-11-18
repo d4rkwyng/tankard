@@ -455,7 +455,7 @@ struct FilterActions: View {
                 Button("Upgrade \(bottled.count) with bottles") { store.startUpgradeSkippingCompiles() }
                     .controlSize(.small)
                     .fixedSize()
-                    .disabled(store.isUpgrading || store.isRefreshing)
+                    .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
                     .help("Upgrade only the packages that pour a bottle; skip \(compiling.map(\.name).joined(separator: ", "))")
             }
         case .bottleAvailable:
@@ -467,7 +467,7 @@ struct FilterActions: View {
                     Label("Replace all (\(n))", systemImage: "shippingbox.and.arrow.backward")
                 }
                 .controlSize(.small)
-                .disabled(store.isUpgrading || store.isRefreshing)
+                .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
                 .help("brew reinstall --force-bottle --formula each one, through the queue")
             }
         case .vulnerable:

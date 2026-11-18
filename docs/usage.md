@@ -414,13 +414,30 @@ brew's output, the compile plan when something builds from source, and **Stop**.
 dialog for a cask appears above it.
 
 - **Show in Tankard** opens the Tankard window with the same run in its sheet.
-- When everything upgraded, the window closes by itself after a moment (with a "Tankard
-  upgraded N packages" notification when notifications are on; click it for History).
+- When everything upgraded, the window closes by itself after a moment, with a "Tankard
+  upgraded N packages" notification (click it for History). If brew printed post-install
+  notes, the window shows them instead and stays until you click **Done**.
 - When something failed or you stopped it, the window stays open with what went wrong,
   **Retry** where it applies, and **Close**.
-- Closing it while brew runs only hides it: the run goes on, and **Show Upgrade Progress**
-  in the menu brings it back.
-- With the Tankard window already in front, Upgrade All opens the usual sheet on it.
+- Closing it while brew runs only hides it: the run goes on. The first time in a session
+  Tankard says so and asks before closing. The menu's line then reads **Show Upgrade
+  Progress** while brew runs, **Show Upgrade Results** once it has finished, and **Show
+  Upgrade Plan** when a compile plan is waiting. It always brings the window to the front,
+  even when other windows cover it.
+- A hidden run that finishes posts a notification: "Tankard upgraded N packages" when all
+  went well (the menu goes back to **Upgrade All**), or "The upgrade finished with
+  problems" (or with notes to read), which opens the results.
+- These notifications follow macOS's notification setting for Tankard (System Settings ▸
+  Notifications), not Tankard's "new upgrades" setting: you started the run. With
+  notifications off for Tankard, nothing is shown and everything else works the same.
+- With the Tankard window already in front (Tankard active, you were last in its window,
+  and the window not covered or on another Space), Upgrade All opens the usual sheet on it.
+- The window opens in the middle of the screen you're on, then where you last left it
+  until Tankard quits. It opens on the Space you are on, also over a full-screen app.
+- While the window shows a run, its results or a plan, the Tankard window's own Upgrade,
+  Uninstall, Install and Replace buttons wait, as they did behind the sheet; their help
+  says why. The button at the bottom right of the Tankard window moves the run (or plan)
+  into the window instead.
 
 The Homebrew and File menus wait while this window is open, as they do for a sheet.
 

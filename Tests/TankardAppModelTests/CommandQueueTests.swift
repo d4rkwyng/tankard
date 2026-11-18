@@ -13,7 +13,28 @@ struct CommandQueueTests {
     final class Events: @unchecked Sendable {
         private let lock = NSLock()
         private var _events: [(String, CommandEvent)] = []
-        func add(_ name: String, _ e: CommandEvent) { lock.withLock { _events.append((name, e)) } }
+        private var waiters: [(match: @Sendable (CommandEvent) -> Bool, done: CheckedContinuation<Void, Never>)] = []
+        func add(_ name: String, _ e: CommandEvent) {
+            let ready = lock.withLock {
+                _events.append((name, e))
+                let ready = waiters.filter { $0.match(e) }
+                waiters.removeAll { $0.match(e) }
+                return ready
+            }
+            for w in ready { w.done.resume() }
+        }
+        /// Returns once an event matching `match` has arrived (at once if
+        /// one has): a signal, no clock. Pair with a `.timeLimit` trait.
+        func arrival(of match: @escaping @Sendable (CommandEvent) -> Bool) async {
+            await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
+                let seen = lock.withLock {
+                    if _events.contains(where: { match($0.1) }) { return true }
+                    waiters.append((match, c))
+                    return false
+                }
+                if seen { c.resume() }
+            }
+        }
         var all: [(String, CommandEvent)] { lock.withLock { _events } }
         func terminal(_ name: String) -> CommandEvent? {
             all.last { $0.0 == name && { if case .output = $0.1 { false } else if case .started = $0.1 { false } else { true } }($0) }?.1

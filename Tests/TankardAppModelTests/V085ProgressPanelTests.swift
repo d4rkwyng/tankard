@@ -31,10 +31,12 @@ struct V085ProgressPanelTests {
         return store
     }
 
-    /// Upgrades that start at once (no plan page: a bottle, no password).
+    /// Upgrades that start at once (no plan page: a bottle, no password)
+    /// and print no post-install notes (0.8.5 review: those keep the
+    /// panel open on its notes page).
     func plain(_ store: AppStore, count: Int = 1) throws -> [Package] {
         let ps = store.packages.filter {
-            $0.isManualUpgradeTarget && $0.kind == .formula
+            $0.isManualUpgradeTarget && $0.kind == .formula && $0.caveats == nil
                 && !UpgradePlan(packages: [$0], classifier: store.deps.classifier).needsConfirmation
         }
         try #require(ps.count >= count)
@@ -146,13 +148,14 @@ struct V085ProgressPanelTests {
         #expect(NotificationRoute.route(action: "com.apple.UNNotificationDefaultActionIdentifier",
                                         kind: message.kind.rawValue) == .showHistory)
 
-        // Notifications off: it still closes, posts nothing.
+        // 0.8.5 review: "notify new upgrades" off doesn't matter (macOS's
+        // permission for Tankard decides; V085PanelReviewTests).
         let quiet = await rig()
         let n2 = FakeNotifier()
         quiet.notifier = n2
         quiet.requestUpgradeFromMenuBar(try plain(quiet), windowInFront: false)
         #expect(await waitUntil { quiet.upgrade == nil && !quiet.showUpgradeSheet })
-        #expect(n2.posted.isEmpty)
+        #expect(n2.posted.count == 1)
     }
 
     @Test func aFailedRunStaysOpen() async throws {
@@ -196,15 +199,15 @@ struct V085ProgressPanelTests {
         store.requestUpgradeFromMenuBar(try plain(store), windowInFront: false)
         let session = try #require(store.upgrade)
         store.closeProgressPanel()
+        // 0.8.5 review: the first time in a launch it asks.
+        store.answerProgressPanelHideQuestion(close: true)
         #expect(!store.showUpgradeSheet)
         #expect(store.isUpgrading && store.upgrade === session)
         #expect(store.hasActivityToShow)
-        // A hidden panel run that finishes cleanly isn't closed under the
-        // user (nothing is showing), and the status bar still offers it.
+        // 0.8.5 review: a hidden panel run that finishes cleanly (no
+        // notes) notifies and clears (V085PanelReviewTests).
         hold.release()
-        #expect(await waitUntil { session.isFinished })
-        try await Task.sleep(for: .milliseconds(200))
-        #expect(store.upgrade === session)
+        #expect(await waitUntil { session.isFinished && store.upgrade == nil })
     }
 
     @Test func theMenuGateCountsThePanel() async throws {
@@ -215,15 +218,15 @@ struct V085ProgressPanelTests {
         #expect(store.isSheetPresented)
         #expect(store.menuActionsBlocked)
         store.closeProgressPanel() // hidden, still running
+        store.answerProgressPanelHideQuestion(close: true) // asked once
         #expect(!store.isSheetPresented)
         #expect(store.menuActionsBlocked)
         let session = try #require(store.upgrade)
         hold.release()
-        #expect(await waitUntil { session.isFinished })
-        // Finished with the panel showing again: still a sheet for the gate.
-        store.showActivity(windowInFront: false)
-        #expect(store.showsProgressPanel && store.menuActionsBlocked)
-        store.closeProgressPanel()
+        // 0.8.5 review: a clean hidden run clears itself (notified): no
+        // sheet left for the gate.
+        #expect(await waitUntil { session.isFinished && store.upgrade == nil })
+        #expect(!store.isSheetPresented)
         #expect(!store.menuActionsBlocked || store.isRefreshing)
     }
 

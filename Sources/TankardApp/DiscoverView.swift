@@ -370,8 +370,8 @@ struct DiscoverDetail: View {
                         Label(ContextMenus.installTitle(e.name, compiles: compiles), systemImage: compiles ? "hammer" : "arrow.down.circle")
                     }
                     .buttonStyle(.primaryAction)
-                    .disabled(store.isUpgrading || e.disabled)
-                    .help(store.isUpgrading ? String(localized: "Wait for the running brew to finish") : e.installDisplay)
+                    .disabled(store.windowBrewActionsBlocked || e.disabled)
+                    .help(store.isUpgrading ? String(localized: "Wait for the running brew to finish") : store.windowBrewActionsNote ?? e.installDisplay)
                 }
             }
         }

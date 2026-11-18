@@ -286,7 +286,11 @@
 "Cleanup" = "Limpieza";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "Haz clic en Abrir Ajustes del Sistema y elige Privacidad y seguridad → Gestión de apps.";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "Haz clic en Abrir Ajustes del Sistema. Se abre Privacidad y seguridad → Gestión de apps.";
+"Click to read the notes Homebrew printed." = "Haz clic para leer las notas de Homebrew.";
+"Click to see what happened." = "Haz clic para ver qué pasó.";
 "Close" = "Cerrar";
+"Close Window" = "Cerrar ventana";
+"Closing this window doesn't stop the upgrade." = "Cerrar esta ventana no detiene la actualización.";
 "Collapse" = "Contraer";
 "Come back and click I've done this." = "Vuelve y haz clic en Ya lo hice.";
 "Command" = "Comando";
@@ -390,6 +394,7 @@
 "Failed: " = "Fallido: ";
 "Files Homebrew didn't install are in its folders" = "Los archivos que Homebrew no instaló están en sus carpetas";
 "Filter" = "Filtro";
+"Find it again in the menu bar." = "Puedes volver a encontrarla en la barra de menús.";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "Los comandos de corrección se muestran, nunca se ejecutan. Cópialo en Terminal si lo quieres.";
 "Fixed in %@" = "Corregido en %@";
 "Fixed upstream in commit %@" = "Corregido en upstream en el commit %@";
@@ -520,6 +525,7 @@
 "It took %@; expect longer on an older Mac." = "Tardó %@; espera más tiempo en un Mac más antiguo.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Sus dependencias siguen instaladas (brew autoremove elimina las que no se usan)";
 "KB" = "KB";
+"Keep Open" = "Mantener abierta";
 "Keep Running" = "Seguir";
 "Keep the previous version after upgrades" = "Conservar la versión anterior tras las actualizaciones";
 "Keeps %@; upgrades skip it" = "Conserva %@; las actualizaciones lo omiten";
@@ -551,6 +557,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "Taps locales (%@) · %@ formulae · %@ casks";
 "Log" = "Registro";
 "Logs and other" = "Registros y otros";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "Primero revisa los resultados de la última actualización: haz clic en su botón, abajo a la derecha de esta ventana.";
 "Low" = "Baja";
 "MB" = "MB";
 "Made by d4rkwyng" = "Creado por d4rkwyng";
@@ -868,7 +875,9 @@
 "Show Older Copy" = "Mostrar copia anterior";
 "Show Tankard in the menu bar" = "Mostrar Tankard en la barra de menús";
 "Show Terminal Command" = "Mostrar comando de Terminal";
+"Show Upgrade Plan" = "Mostrar plan de actualización";
 "Show Upgrade Progress" = "Mostrar el progreso de la actualización";
+"Show Upgrade Results" = "Mostrar resultados de la actualización";
 "Show What Uses It" = "Mostrar qué lo usa";
 "Show What Uses It (%lld)" = "Mostrar qué lo usa (%lld)";
 "Show all upgrades in Tankard" = "Mostrar todas las actualizaciones en Tankard";
@@ -984,6 +993,9 @@
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "La versión anterior sigue instalada. brew uninstall quita la nueva y luego brew link enlaza la anterior.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Las demás apps se comprueban: si una descarga no coincide, brew se detiene para esa app y la deja como estaba.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "Se canceló el cuadro de la contraseña, así que este paso no se ejecutó. Para ejecutarlo tú, usa Terminal:";
+"The upgrade finished" = "La actualización terminó";
+"The upgrade finished with problems" = "La actualización terminó con problemas";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "La ventana de actualización está abierta. Ciérrala primero o haz clic en Mostrar en Tankard.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Las variables se desactivan primero, así que este brew update no vuelve a poner el fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "El desarrollador coincide, pero el cask no indica este bundle id exacto.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Sus comandos y bibliotecas no están en el prefijo de Homebrew. Normalmente se interrumpió una instalación o actualización.";

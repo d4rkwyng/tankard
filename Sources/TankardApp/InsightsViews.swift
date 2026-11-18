@@ -244,7 +244,7 @@ struct VulnerableFilterActions: View {
                         .lineLimit(1)
                 }
                 .buttonStyle(.primaryAction)
-                .disabled(targets.isEmpty || store.isUpgrading || store.isRefreshing)
+                .disabled(targets.isEmpty || store.windowBrewActionsBlocked || store.isRefreshing)
                 .help(String(localized: "Upgrade vulnerable packages. ") + upgradeHelp(targets)
                       + (scan?.partialReason.map { String(localized: " Partial scan: \($0).") } ?? ""))
             }

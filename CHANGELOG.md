@@ -9,6 +9,16 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - **Upgrade All in the menu-bar panel no longer opens the whole Tankard window.** The menu closes and the upgrade shows in a small window of its own, in the middle of the screen: the same list, progress, log, compile plan and Stop buttons as the sheet, plus **Show in Tankard** to move the run (the same one, nothing restarts) into the main window. A run that finishes cleanly closes it after a moment, with a "Tankard upgraded N packages" notification when notifications are on; a failure or a stop keeps it open with **Close**. The same goes for a row's Upgrade. With the Tankard window already in front, the sheet opens on it as before. Closing the small window while brew runs only hides it; **Show Upgrade Progress** in the menu-bar panel brings it back.
 
+### Fixed
+- **The Tankard window can't take over the small upgrade window's run.** While that window shows a run, its results or a compile plan, the Tankard window's Upgrade, Uninstall, Install and Replace buttons wait (their help says why), as they did behind the sheet. Before, an Uninstall started there replaced a failed run's results and ran out of sight, and a plan left open there did nothing when confirmed. The button at the bottom right of the Tankard window moves the run into it instead.
+- **Show Upgrade Progress always brings the upgrade window to the front**, also when other apps' windows cover it.
+- **Post-install notes from a menu-bar upgrade show in the upgrade window**, which then stays open until you click Done. Before, they went to a Tankard window that might be closed, and the Homebrew and File menus stayed greyed out with nothing on screen.
+- **"The Tankard window is in front" no longer counts a window covered by another app or on another Space**, nor one that is open only because the menu-bar click activated Tankard: Upgrade All then uses the small window.
+- **Closing the upgrade window mid-run says that brew keeps going** (once per session), and a hidden run posts a notification when it finishes, done or with problems. The menu-bar line reads Show Upgrade Progress, Show Upgrade Results or Show Upgrade Plan, and goes back to Upgrade All once the results are closed.
+- **The upgrade window remembers where you put it** until Tankard quits, opens on the screen you're using and on the current Space (also over a full-screen app).
+- **The "Tankard upgraded N packages" notification follows macOS's notification setting for Tankard**, not the "new upgrades" setting.
+- A lock-wait test that failed under a loaded test run now waits on the queue's events instead of a clock.
+
 ## [0.8.4]
 
 ### Added

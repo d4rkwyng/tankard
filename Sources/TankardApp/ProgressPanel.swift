@@ -25,11 +25,16 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
     private let appearance: AppearanceSettings
     private var panel: NSPanel?
     private var seenWindowRequests = 0
+    private var seenFrontRequests = 0
+    /// 0.8.5 review: where the user left the panel, for this launch (the
+    /// next show puts it back there instead of re-centering).
+    private var lastFrame: NSRect?
 
     init(store: AppStore, appearance: AppearanceSettings) {
         self.store = store
         self.appearance = appearance
         self.seenWindowRequests = store.mainWindowRequests
+        self.seenFrontRequests = store.progressPanelFrontRequests
     }
 
     func start() {
@@ -43,6 +48,7 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
         withObservationTracking {
             _ = store.showsProgressPanel
             _ = store.mainWindowRequests
+            _ = store.progressPanelFrontRequests
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
@@ -59,12 +65,16 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
             seenWindowRequests = store.mainWindowRequests
             NotificationActions.showMainWindow()
         }
-        if store.showsProgressPanel { show() } else { close() }
+        // 0.8.5 review: Show Upgrade Progress on a panel that is already
+        // open (maybe behind other apps' windows) brings it forward.
+        let front = store.progressPanelFrontRequests != seenFrontRequests
+        seenFrontRequests = store.progressPanelFrontRequests
+        if store.showsProgressPanel { show(front: front) } else { close() }
     }
 
-    private func show() {
+    private func show(front: Bool) {
         if let panel {
-            if !panel.isVisible { present(panel) }
+            if !panel.isVisible || front { present(panel) }
             return
         }
         let p = ProgressNSPanel(contentRect: NSRect(x: 0, y: 0, width: 600, height: 400),
@@ -77,6 +87,9 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
         p.isRestorable = false
         p.isExcludedFromWindowsMenu = true
         p.level = .normal
+        // 0.8.5 review: shows on the Space the user is on (also over a
+        // full-screen app) rather than switching Spaces to where it was.
+        p.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         p.delegate = self
         let host = NSHostingView(rootView: ProgressPanelContent(store: store, appearance: appearance))
         // The panel follows the content's size (the plan page, the session,
@@ -87,11 +100,45 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
         present(p)
     }
 
+    /// Brings the panel in front of every app's windows and makes it key.
+    /// Placed only when it isn't on screen yet: where the user left it
+    /// this launch, else centered on the screen with the mouse (the one
+    /// whose menu bar was clicked).
     private func present(_ p: NSPanel) {
-        p.layoutIfNeeded()
-        p.center()
+        if !p.isVisible { place(p) }
         NSApp.activate(ignoringOtherApps: true)
-        p.makeKeyAndOrderFront(nil)
+        p.orderFrontRegardless()
+        p.makeKey()
+    }
+
+    private func place(_ p: NSPanel) {
+        // The content's size first, so centering uses the real one.
+        p.layoutIfNeeded()
+        if let size = p.contentView?.fittingSize, size.width > 0, size.height > 0 { p.setContentSize(size) }
+        let mouse = NSEvent.mouseLocation
+        let mouseScreen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
+        var frame = p.frame
+        if let last = lastFrame {
+            // Same top-left corner (the height follows the page), kept on
+            // a screen that still exists.
+            frame.origin = NSPoint(x: last.minX, y: last.maxY - frame.height)
+            let screen = NSScreen.screens.first { $0.visibleFrame.intersects(frame) } ?? mouseScreen
+            if let visible = screen?.visibleFrame { frame = Self.clamp(frame, to: visible) }
+        } else if let visible = mouseScreen?.visibleFrame {
+            frame.origin = NSPoint(x: visible.midX - frame.width / 2, y: visible.midY - frame.height / 2)
+            frame = Self.clamp(frame, to: visible)
+        } else {
+            p.center()
+            return
+        }
+        p.setFrame(frame, display: false)
+    }
+
+    private static func clamp(_ f: NSRect, to visible: NSRect) -> NSRect {
+        var r = f
+        r.origin.x = min(max(r.minX, visible.minX), max(visible.minX, visible.maxX - r.width))
+        r.origin.y = min(max(r.minY, visible.minY), max(visible.minY, visible.maxY - r.height))
+        return r
     }
 
     /// Closes the panel now (the store already says it is hidden, or a
@@ -103,6 +150,7 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
             sheet.orderOut(nil)
         }
         panel = nil
+        if p.isVisible { lastFrame = p.frame }
         p.delegate = nil
         p.close()
     }
@@ -124,7 +172,7 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
 /// The panel's content: the activity, themed, marked as in the panel (its
 /// buttons: Show in Tankard, Close).
 private struct ProgressPanelContent: View {
-    var store: AppStore
+    @Bindable var store: AppStore
     var appearance: AppearanceSettings
 
     var body: some View {
@@ -132,6 +180,13 @@ private struct ProgressPanelContent: View {
         ActivitySheet(store: store)
             .environment(\.inProgressPanel, true)
             .themed(theme)
+            // 0.8.5 review: the close button mid-run, once per launch.
+            .alert("Closing this window doesn't stop the upgrade.", isPresented: $store.progressPanelHideQuestion) {
+                Button("Close Window") { store.answerProgressPanelHideQuestion(close: true) }
+                Button("Keep Open", role: .cancel) { store.answerProgressPanelHideQuestion(close: false) }
+            } message: {
+                Text("Find it again in the menu bar.")
+            }
     }
 }
 

@@ -78,7 +78,7 @@ struct UninstallSheet: View {
                             .disabled(store.isBusy)
                     } else {
                         Button("Uninstall", role: .destructive) { store.startUninstall(package) }
-                            .disabled(store.isUpgrading)
+                            .disabled(store.windowBrewActionsBlocked)
                     }
                 } else {
                     Button("OK") { store.uninstallCandidate = nil }

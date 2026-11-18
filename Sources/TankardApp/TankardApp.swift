@@ -594,6 +594,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             MenuDump.scheduleIfRequested()
             Self.dock?.start()
             ProgressPanelController.shared?.start()
+            MainWindowState.start()
         }
     }
 

@@ -48,11 +48,13 @@ struct V084AutoUpdateQueueTests {
 
     // MARK: the lock
 
+    // 0.8.5: no wall-clock limit in reach (as V083LockWaitTests): under a
+    // loaded suite the 5 s one could pass before the lock is released.
     @Test func waitsForTheLockThenUpgrades() async throws {
         let dir = try tempDir()
         defer { try? FileManager.default.removeItem(at: dir) }
         let held = LockSwitch(true)
-        let (store, calls, notifier) = await rig(logURL: dir.appendingPathComponent("upgrade.log"), lockWait: fakeWait(held: held)) { name, out in
+        let (store, calls, notifier) = await rig(logURL: dir.appendingPathComponent("upgrade.log"), lockWait: fakeWait(held: held, limit: .seconds(24 * 3600))) { name, out in
             guard name == "xz", held.value else { return nil }
             out(Data(Self.lockedLine.utf8))
             return 1

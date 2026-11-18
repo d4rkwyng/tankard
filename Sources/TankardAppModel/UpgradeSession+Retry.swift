@@ -61,7 +61,7 @@ extension AppStore {
                                    detail: String(localized: "\(pkgs.map(\.name).joined(separator: ", ")) has nothing left to upgrade."))
                 return
             }
-            requestUpgrade(targets)
+            requestUpgradeInActivity(targets)
         case .install:
             let left = pkgs.filter { !installedIDs.contains($0.id) }
             guard !left.isEmpty else { return }

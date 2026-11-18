@@ -286,7 +286,11 @@
 "Cleanup" = "Cleanup";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "Click Open System Settings, then choose Privacy & Security → App Management.";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "Click Open System Settings. It opens Privacy & Security → App Management.";
+"Click to read the notes Homebrew printed." = "Click to read the notes Homebrew printed.";
+"Click to see what happened." = "Click to see what happened.";
 "Close" = "Close";
+"Close Window" = "Close Window";
+"Closing this window doesn't stop the upgrade." = "Closing this window doesn't stop the upgrade.";
 "Collapse" = "Collapse";
 "Come back and click I've done this." = "Come back and click I've done this.";
 "Command" = "Command";
@@ -390,6 +394,7 @@
 "Failed: " = "Failed: ";
 "Files Homebrew didn't install are in its folders" = "Files Homebrew didn't install are in its folders";
 "Filter" = "Filter";
+"Find it again in the menu bar." = "Find it again in the menu bar.";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "Fix commands are shown, never run. Copy one into Terminal if you want it.";
 "Fixed in %@" = "Fixed in %@";
 "Fixed upstream in commit %@" = "Fixed upstream in commit %@";
@@ -520,6 +525,7 @@
 "It took %@; expect longer on an older Mac." = "It took %@; expect longer on an older Mac.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
 "KB" = "KB";
+"Keep Open" = "Keep Open";
 "Keep Running" = "Keep Running";
 "Keep the previous version after upgrades" = "Keep the previous version after upgrades";
 "Keeps %@; upgrades skip it" = "Keeps %@; upgrades skip it";
@@ -551,6 +557,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "Local taps (%@) · %@ formulae · %@ casks";
 "Log" = "Log";
 "Logs and other" = "Logs and other";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "Look at the last upgrade's results first: click its button at the bottom right of this window.";
 "Low" = "Low";
 "MB" = "MB";
 "Made by d4rkwyng" = "Made by d4rkwyng";
@@ -868,7 +875,9 @@
 "Show Older Copy" = "Show Older Copy";
 "Show Tankard in the menu bar" = "Show Tankard in the menu bar";
 "Show Terminal Command" = "Show Terminal Command";
+"Show Upgrade Plan" = "Show Upgrade Plan";
 "Show Upgrade Progress" = "Show Upgrade Progress";
+"Show Upgrade Results" = "Show Upgrade Results";
 "Show What Uses It" = "Show What Uses It";
 "Show What Uses It (%lld)" = "Show What Uses It (%lld)";
 "Show all upgrades in Tankard" = "Show all upgrades in Tankard";
@@ -984,6 +993,9 @@
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "The old version is still installed. brew uninstall removes the new one, then brew link links the old one.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:";
+"The upgrade finished" = "The upgrade finished";
+"The upgrade finished with problems" = "The upgrade finished with problems";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "The upgrade window is open. Close it, or click Show in Tankard, first.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "The variables are unset first, so this brew update doesn't put the fork back.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "The vendor matches, but the cask doesn't name this exact bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.";
