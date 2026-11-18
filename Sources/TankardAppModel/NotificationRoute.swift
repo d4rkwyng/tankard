@@ -69,7 +69,10 @@ extension AppStore {
             return
         }
         guard upgradePlan == nil, !upgradable.isEmpty else { return }
-        upgradePlan = UpgradePlan(packages: upgradable, classifier: deps.classifier)
+        var plan = UpgradePlan(packages: upgradable, classifier: deps.classifier)
+        // 0.8.5 (newbie review H2): this plan names open apps too.
+        plan.runningApps = runningCaskApps(upgradable)
+        upgradePlan = plan
         showUpgradeSheet = true
     }
 

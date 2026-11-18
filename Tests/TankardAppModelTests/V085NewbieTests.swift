@@ -54,6 +54,16 @@ struct V085RunningAppsTests {
         #expect(plan.runningAppsToRun == ["Google Chrome"])
     }
 
+    /// A notification's Upgrade All plan (and the panel's demo plan) names
+    /// them too.
+    @Test func upgradeAllPlanNamesOpenApps() async throws {
+        let store = await rig(running: [Self.chrome])
+        _ = try chromeCask(store)
+        store.requestUpgradeAllPlan()
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.runningAppsToRun == ["Google Chrome"])
+    }
+
     /// Nothing open, or only formulae: no extra question.
     @Test func noPromptWhenNothingIsOpenOrFormulaOnly() async throws {
         let none = await rig(running: [])
