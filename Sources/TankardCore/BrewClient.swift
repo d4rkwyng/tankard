@@ -37,6 +37,10 @@ public struct BrewClient: Sendable {
     /// Checks whether a path exists (the core tap's .git). Injectable so a
     /// fake installation (tests, demo mode) can claim a tap checkout.
     public var fileExists: @Sendable (String) -> Bool
+    /// 0.8.4: a cask's install folder's modification time, from
+    /// `<prefix>/Caskroom` (StatusClassifier.folderTime). Demo mode sets
+    /// nil: its dates come from the fixtures only, never this Mac's disk.
+    public var caskFolderTime: (@Sendable (_ token: String, _ version: String) -> Date?)?
 
     public init(installation: BrewInstallation,
                 platform: BottlePlatform? = nil,
@@ -50,6 +54,8 @@ public struct BrewClient: Sendable {
         self.sources = sources ?? EnvironmentSources.load(prefix: installation.prefix)
         self.gitPath = gitPath
         self.fileExists = fileExists
+        let caskroom = installation.prefix + "/Caskroom"
+        self.caskFolderTime = { CaskInstallTime.folderTime(caskroom: caskroom, token: $0, version: $1) }
     }
 
     /// Locates brew (override path, else the standard locations).
@@ -233,7 +239,7 @@ public struct BrewClient: Sendable {
         let (fork, gitTime) = await forkTask
 
         let classifier = StatusClassifier(platform: platform, intelbrewMode: detection.detected,
-                                          caskroom: installation.prefix + "/Caskroom")
+                                          folderTime: caskFolderTime)
         let packages = classifier.classify(info: info)
 
         if detection.detected && !fork.coreIsFork {

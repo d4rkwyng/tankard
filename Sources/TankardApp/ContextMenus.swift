@@ -63,7 +63,7 @@ enum ContextMenuActions {
 
     private static func existingKegPath(_ p: Package, store: AppStore) -> String? {
         guard let host = store.report?.host, let path = ContextMenus.kegPath(p, host: host),
-              FileManager.default.fileExists(atPath: path) else { return nil }
+              store.pathExists(path) else { return nil }
         return path
     }
 

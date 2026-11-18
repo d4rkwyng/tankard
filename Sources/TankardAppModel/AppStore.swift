@@ -460,6 +460,13 @@ public final class AppStore {
         refreshTask = nil
     }
 
+    /// 0.8.4: whether a path exists, through the client (demo mode's is
+    /// a fake; this Mac's disk is never asked). The context menu's Show in
+    /// Finder.
+    public func pathExists(_ path: String) -> Bool {
+        (try? resolvedClient())?.fileExists(path) ?? false
+    }
+
     func resolvedClient() throws -> BrewClient {
         if let client { return client }
         let c = try deps.makeClient()
@@ -685,7 +692,7 @@ public final class AppStore {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
         let env = client.environment(for: detection)
         let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected,
-                                          caskroom: client.installation.prefix + "/Caskroom")
+                                          folderTime: client.caskFolderTime)
         return { orphan in
             do {
                 let live = classifier.classify(info: try await client.installedInfo(env: env))

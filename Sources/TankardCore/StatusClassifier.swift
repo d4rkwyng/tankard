@@ -8,16 +8,24 @@ public struct StatusClassifier: Sendable {
     public var intelbrewMode: Bool
     /// 0.8.4: the zone brew read a cask's install time in (see `CaskInstallTime`).
     public var timeZone: TimeZone
-    /// 0.8.4: `<prefix>/Caskroom`, where the install folders' modification
-    /// times tell whether brew's `installed_time` needs the correction.
-    /// nil (tests, demo): no folder to read.
-    public var caskroom: String?
+    /// 0.8.4: a cask's install folder's modification time (token,
+    /// version), which tells whether brew's `installed_time` needs the
+    /// correction (`CaskInstallTime`). nil (demo mode, tests): nothing is
+    /// read from disk.
+    public var folderTime: (@Sendable (_ token: String, _ version: String) -> Date?)?
 
-    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current, caskroom: String? = nil) {
+    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current,
+                folderTime: (@Sendable (_ token: String, _ version: String) -> Date?)? = nil) {
         self.platform = platform
         self.intelbrewMode = intelbrewMode
         self.timeZone = timeZone
-        self.caskroom = caskroom
+        self.folderTime = folderTime
+    }
+
+    /// The folder times read from `<caskroom>` (`CaskInstallTime.folderTime`).
+    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current, caskroom: String) {
+        self.init(platform: platform, intelbrewMode: intelbrewMode, timeZone: timeZone,
+                  folderTime: { CaskInstallTime.folderTime(caskroom: caskroom, token: $0, version: $1) })
     }
 
     public static func bottleOrigin(url: String?) -> BottleOrigin {
@@ -153,7 +161,7 @@ public struct StatusClassifier: Sendable {
             bottleURL: nil,
             installedAt: c.installedTime.map { t in
                 CaskInstallTime.date(brewInstalledTime: t,
-                                     folderTime: caskroom.flatMap { CaskInstallTime.folderTime(caskroom: $0, token: c.token, version: installed) },
+                                     folderTime: folderTime?(c.token, installed),
                                      timeZone: timeZone)
             },
             upgradeAvailable: outdated,

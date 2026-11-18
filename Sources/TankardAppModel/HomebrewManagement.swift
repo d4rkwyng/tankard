@@ -348,9 +348,12 @@ public extension AppStore {
         guard intelbrewMode, let client = try? resolvedClient() else { return nil }
         let process = client.sources.process
         let read = Self.profileReader ?? { try? String(contentsOfFile: $0, encoding: .utf8) }
+        // 0.8.4: demo mode doesn't resolve symlinks on this Mac's disk either.
+        let demo = Self.profileReader != nil
+        let resolve: (String) -> String = { path in demo ? path : RevertPlan.realPath(path) }
         return RevertPlan.make(home: process["HOME"] ?? NSHomeDirectory(), zdotdir: process["ZDOTDIR"],
                                repository: client.installation.repository, brewPath: client.installation.brewPath,
-                               brewEnvFiles: client.sources.brewEnvFiles, date: date, read: read)
+                               brewEnvFiles: client.sources.brewEnvFiles, date: date, read: read, resolve: resolve)
     }
 
     /// Opens a Homebrew menu sheet (revert only in Intelbrew mode).

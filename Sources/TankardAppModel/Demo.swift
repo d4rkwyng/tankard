@@ -108,20 +108,27 @@ public enum Demo {
 
     public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
                                     failAppManagement: Bool = false, pinned: Set<String> = [],
-                                    replaced: Set<String> = []) -> AppStore.Dependencies {
+                                    replaced: Set<String> = [], prefix: String? = nil) -> AppStore.Dependencies {
         let state = State(failAppManagement: failAppManagement, pinned: pinned, replaced: replaced)
-        let installation: BrewInstallation
+        var installation: BrewInstallation
         let platform: BottlePlatform
         switch variant {
         case .intelbrew:
             installation = BrewInstallation(brewPath: "/usr/local/bin/brew", prefix: "/usr/local", repository: "/usr/local/Homebrew")
-            platform = BottlePlatform(arch: .x86_64, macOSVersion: "14", cellar: "/usr/local/Cellar")
+            platform = BottlePlatform(arch: .x86_64, macOSVersion: "14", cellar: (prefix ?? "/usr/local") + "/Cellar")
         case .arm64:
             installation = BrewInstallation(brewPath: "/opt/homebrew/bin/brew", prefix: "/opt/homebrew", repository: "/opt/homebrew")
-            platform = BottlePlatform(arch: .arm64, macOSVersion: "27", cellar: "/opt/homebrew/Cellar")
+            platform = BottlePlatform(arch: .arm64, macOSVersion: "27", cellar: (prefix ?? "/opt/homebrew") + "/Cellar")
+        }
+        // 0.8.4, tests: a stand-in prefix (a temp dir), to check that demo
+        // mode reads nothing under it (Demo's paths are the standard ones,
+        // which on a real Mac hold the real brew).
+        if let prefix {
+            installation = BrewInstallation(brewPath: prefix + "/bin/brew", prefix: prefix,
+                                             repository: variant == .intelbrew ? prefix + "/Homebrew" : prefix)
         }
         let runner = InfoRunner(variant: variant, state: state, info: fixtureInfo(variant))
-        let client = BrewClient(installation: installation, platform: platform, runner: runner,
+        var client = BrewClient(installation: installation, platform: platform, runner: runner,
                                 // The demo's own user (0.4: services and the revert sheet
                                 // show it, never this Mac's).
                                 sources: EnvironmentSources(process: variant == .intelbrew ? ["HOME": "/Users/demo", "USER": "demo"]
@@ -130,8 +137,12 @@ public enum Demo {
                                 fileExists: { path in
                                     (variant == .intelbrew && path.hasSuffix("homebrew-core/.git")) || path.contains("/Cellar/")
                                 })
+        // 0.8.4: cask dates come from the fixtures alone; the Caskroom
+        // (this Mac's real one at the demo's prefix) is never read.
+        client.caskFolderTime = nil
+        let demoClient = client
         var deps = AppStore.Dependencies(
-            makeClient: { client },
+            makeClient: { demoClient },
             streamRunner: ScriptRunner(variant: variant, state: state, info: fixtureInfo(variant), pace: pace),
             cache: nil,
             logURL: nil,
@@ -149,6 +160,8 @@ public enum Demo {
         // 0.8.1: the welcome's check never touches a real app in the demo.
         deps.appManagementProbe = { _ in .blocked }
         deps.appManagementProbeExists = { _ in true }
+        // 0.8.4: no look at the real Caskroom for Tankard's own cask.
+        deps.selfCaskroomExists = { _ in false }
         // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
         deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {
