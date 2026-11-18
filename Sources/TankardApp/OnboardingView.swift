@@ -5,7 +5,7 @@ import TankardCore
 
 /// 0.8.1: the first-launch welcome (Onboarding.swift). Two cards: App
 /// Management (open the pane, check, relaunch) and, once the background
-/// scan has found some, Adopt Apps. Done closes it for good.
+/// scan has found some, Adopt Apps. Done (or Esc) closes it for good.
 struct OnboardingSheet: View {
     @Bindable var store: AppStore
     var state: OnboardingState
@@ -72,6 +72,9 @@ struct OnboardingSheet: View {
         .padding(20)
         .frame(width: 500)
         .background(theme.window ?? .clear)
+        // 0.8.6 (VM test L1): Esc is Done. It used to close the sheet
+        // without marking it done, so it came back at every launch.
+        .escapeCloses { store.finishOnboarding() }
     }
 
     @ViewBuilder private var checkResult: some View {

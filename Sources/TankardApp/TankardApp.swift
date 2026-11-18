@@ -308,6 +308,13 @@ struct TankardApp: App {
             CommandMenu("Homebrew") {
                 HomebrewCommands(store: store)
             }
+            // 0.8.6 (VM test, known Welcome bug): ⌘Q did nothing while a
+            // sheet (the first-launch Welcome) was up: AppKit won't
+            // terminate with a sheet attached. See QuitGuard.quitFromMenu.
+            CommandGroup(replacing: .appTermination) {
+                Button("Quit Tankard") { QuitGuard.quitFromMenu() }
+                    .keyboardShortcut("q")
+            }
             CommandGroup(replacing: .help) {
                 Button("Tankard Help") { NSWorkspace.shared.open(AboutInfo.help) }
                 Button("Homebrew Words Explained") {

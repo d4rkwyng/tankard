@@ -133,7 +133,7 @@ struct MenuBarContent: View {
                 }
                 Divider().padding(.vertical, 3)
                 MenuRow(title: String(localized: "Quit Tankard"), systemImage: "power", shortcut: "Q", enabled: true) {
-                    NSApp.terminate(nil)
+                    QuitGuard.quitFromMenu()
                 }
             }
             .padding(.horizontal, 5)

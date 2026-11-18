@@ -13,6 +13,17 @@ enum QuitGuard {
     /// only runs while nothing does).
     static var exempt = false
 
+    /// 0.8.6: Tankard ▸ Quit Tankard (⌘Q) and the menu-bar panel's Quit.
+    /// AppKit refuses to terminate while a sheet is attached ("App
+    /// termination blocked by modal sheet"), so ⌘Q did nothing over the
+    /// Welcome sheet. With no brew running (nothing for the guard to ask
+    /// about), the sheets are closed first; with brew running, quitting
+    /// goes to the guard as before.
+    static func quitFromMenu() {
+        if exempt || store?.quitPrompt == nil { Relauncher.closeSheets() }
+        NSApp.terminate(nil)
+    }
+
     static func shouldTerminate() -> NSApplication.TerminateReply {
         guard !exempt, let store, let prompt = store.quitPrompt else { return .terminateNow }
         let alert = NSAlert()
