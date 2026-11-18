@@ -571,9 +571,12 @@ struct HealthCommands: View {
     var store: AppStore
 
     var body: some View {
+        // 0.8.4: Health runs brew (read-only): not during a run. History
+        // only reads Tankard's file: during a run too, but not over a sheet.
         Button("Health…") { store.openHealth() }
-            .disabled(store.report == nil)
+            .disabled(store.report == nil || store.menuActionsBlocked)
         Button("History…") { store.openHistory() }
+            .disabled(store.isSheetPresented)
     }
 }
 

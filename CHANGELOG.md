@@ -23,6 +23,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Proxy passwords are masked** in upgrade.log, History, the Auto-update Log and notifications.
 - **Relaunch no longer carries debug settings over** to the new copy (demo, snapshot or script mode).
 - **Uninstall removes every installed version.** With two versions of a formula (after an upgrade with "Keep the previous version", or a rollback), Uninstall and Unpin and Uninstall removed only the newest, said "Uninstall complete", and the older one came back unlinked as an upgrade. Now Tankard runs `brew uninstall` once per version (each with brew's usual checks), the confirmation says "Removes all installed versions of x (1.0, 1.1)", and after the run it checks what is still installed: anything left shows as "Uninstall incomplete" with the versions, never as complete.
+- **The Homebrew and File menus wait while brew runs or a sheet is open.** Scan for Vulnerabilities, Health…, Taps…, Adopt Apps… and Restore Points… stayed enabled during an upgrade, and with a sheet such as History open every item was enabled, Clean Up… and Uninstall Homebrew… included. They are now greyed out until the run ends (shown or hidden) and the sheet closes; History… stays available during a hidden run.
 
 ### For contributors
 - The tests delete the UserDefaults suites they create; a run used to leave a few hundred plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
