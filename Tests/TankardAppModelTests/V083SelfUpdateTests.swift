@@ -275,6 +275,27 @@ struct V083SelfUpdateTests {
         #expect(store.error?.detail == AppStore.quitAndReopen)
     }
 
+    /// The relaunch closes every sheet `isSheetPresented` counts, the
+    /// Brewfile sheet and Discover's install confirmation included, so
+    /// SwiftUI has none to put back while the app quits.
+    @Test func relaunchClosesEverySheetTheMenuGateCounts() async throws {
+        let store = await demoStore(relaunch: { true })
+        let discover = try #require(store.openDiscover())
+        store.toolSheet = .history
+        store.showCleanupSheet = true
+        store.showAutoUpdateLog = true
+        store.restorePoints.isShowing = true
+        store.brewfile.check(path: "/nonexistent/Brewfile")
+        discover.confirmInstall = "formula:wget"
+        #expect(store.brewfile.isPresented)
+        #expect(store.isSheetPresented)
+        store.offerRelaunch = true
+        store.relaunchAfterSelfUpgrade()
+        #expect(!store.brewfile.isPresented)
+        #expect(discover.confirmInstall == nil)
+        #expect(!store.isSheetPresented)
+    }
+
     // MARK: the tankard cask with a status cache from before it
 
     func infoWithTankardCask(appPath: String) throws -> Data {

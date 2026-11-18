@@ -86,6 +86,8 @@ extension AppStore {
     /// doesn't put one back after the relaunch ends it in AppKit (AppKit
     /// refuses to terminate under a sheet; the first e2e run saw the first
     /// terminate refused with the History sheet's state still set).
+    /// The same set as `isSheetPresented` (Pins.swift); a test keeps them
+    /// in step.
     func dismissPresentations() {
         if upgrade.map(\.isFinished) ?? true { showUpgradeSheet = false }
         showSelfUpdate = false
@@ -96,6 +98,9 @@ extension AppStore {
         toolSheet = nil
         restorePoints.isShowing = false
         insights.postInstallNotes = nil
+        // Counted by isSheetPresented but missing here before 0.8.5.
+        brewfile.dismiss()
+        discover?.confirmInstall = nil
     }
 
     /// The relaunch couldn't quit this copy (or couldn't start).

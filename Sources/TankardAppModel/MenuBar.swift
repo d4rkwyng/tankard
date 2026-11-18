@@ -69,9 +69,12 @@ public struct MenuBarSummary: Equatable, Sendable {
         return (main, shortHash(parts[1]))
     }
 
-    /// A commit hash (12+ hex digits) as its first 7; anything else as is.
+    /// A commit hash (12+ hex digits, at least one a-f) as its first 7;
+    /// anything else as is. All digits is a build number or a timestamp
+    /// ("202411081530"), not a hash: cut to 7, two builds of the same day
+    /// would read the same.
     static func shortHash(_ s: String) -> String {
-        s.count >= 12 && s.allSatisfy(\.isHexDigit) ? String(s.prefix(7)) : s
+        s.count >= 12 && s.allSatisfy(\.isHexDigit) && !s.allSatisfy(\.isNumber) ? String(s.prefix(7)) : s
     }
 
     /// "5 upgrades ready", "1 upgrade ready", "Everything is up to date",

@@ -58,14 +58,6 @@ extension AppStore {
         restorePoints.pendingPlan = nil
     }
 
-    /// The queued commands of `steps`, exactly as they will run.
-    public func restoreCommands(_ steps: [RestoreStep]) -> [QueuedCommand]? {
-        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
-        return steps.map { Self.restoreCommand($0, brew: client.installation.brewPath,
-                                               base: client.environment(for: detection, readOnly: false),
-                                               askpass: deps.askpassHelper, foreign: foreignAskpass(client)) }
-    }
-
     nonisolated static func restoreCommand(_ step: RestoreStep, brew: String, base: [String: String],
                                            askpass: String? = nil, foreign: ForeignAskpass? = nil) -> QueuedCommand {
         var env = base

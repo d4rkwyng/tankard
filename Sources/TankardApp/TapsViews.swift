@@ -90,7 +90,9 @@ struct TapsSheet: View {
     @ViewBuilder
     private var list: some View {
         switch taps.phase {
-        case .idle, .loading where taps.taps.isEmpty:
+        // Each pattern needs its own `where`: on `.idle, .loading where …`
+        // the condition applied to .loading only (a compiler warning).
+        case .idle where taps.taps.isEmpty, .loading where taps.taps.isEmpty:
             HStack(spacing: 8) {
                 ProgressView().controlSize(.small)
                 Text("Reading taps…").font(.system(size: 12)).foregroundStyle(.secondary)

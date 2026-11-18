@@ -223,6 +223,22 @@ struct V084MultiKegUninstallTests {
         #expect(s.title == "Uninstall complete")
     }
 
+    /// A formula with two kegs and one no-longer-needed dependency is three
+    /// steps but two packages: the running title counts packages.
+    @Test func runningTitleCountsPackagesNotSteps() {
+        var p = Package.command("probe")
+        p.installedVersions = ["1.0", "1.1"]
+        let steps = AppStore.uninstallSteps([p, Package.command("probe-dep")])
+        let s = UpgradeSession(packages: steps, intelbrewMode: false, action: .uninstall,
+                               queue: CommandQueue(runner: FakeStreamRunner(log: CallLog()) { _, _ in 0 }),
+                               makeCommand: { p in QueuedCommand(executable: "/bin/true", arguments: [p.name], environment: [:], display: p.name) },
+                               logURL: nil, onFinish: { _ in })
+        #expect(s.total == 3)
+        #expect(s.packages.count == 2)
+        #expect(!s.isFinished)
+        #expect(s.title == "Uninstalling 2 packages")
+    }
+
     /// After a rollback: 1.0 pinned, 1.1 kept. Unpin and Uninstall unpins,
     /// re-reads, then removes both kegs.
     @Test func unpinAndUninstallAfterARollbackRemovesBoth() async throws {
