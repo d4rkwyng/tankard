@@ -17,7 +17,7 @@ struct SelfUpdateTests {
         let r = await feed(json("v0.9.0")).check(current: "0.8.1")
         guard case .available(let rel) = r else { Issue.record("\(r)"); return }
         #expect(rel.version == "0.9.0")
-        #expect(rel.notes == "Added\n- Thing: new")
+        #expect(rel.notes == "Added\n• Thing: new")
         #expect(rel.url.absoluteString == "https://github.com/d4rkwyng/tankard/releases/tag/v0.9.0")
     }
 
@@ -53,12 +53,12 @@ struct SelfUpdateTests {
         #expect(SemanticVersion("") == nil)
     }
 
-    @Test func notesExcerptIsShortened() {
-        let long = (1...100).map { "- line \($0)" }.joined(separator: "\n")
-        let e = UpdateFeed.excerpt(long, limit: 50)
-        #expect(e.hasSuffix("…"))
-        #expect(e.count <= 51)
-        #expect(!e.contains("- line 1\n- line 2\n- line 3\n- line 4\n- line 5\n- line 6\n- line 7"))
+    @Test func notesSummaryIsShortened() {
+        let long = "## Fixed\n" + (1...100).map { "- line \($0)" }.joined(separator: "\n")
+        let s = ReleaseNotesSummary.make(long, limit: 5)
+        #expect(s.items == [.heading("Fixed"), .bullet("line 1"), .bullet("line 2"), .bullet("line 3"), .bullet("line 4"), .bullet("line 5")])
+        #expect(s.more == 95)
+        #expect(s.plainText.hasSuffix("…and 95 more"))
     }
 
     @Test func brewInstalledVersusZip() {

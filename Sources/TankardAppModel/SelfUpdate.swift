@@ -10,15 +10,140 @@ import TankardCore
 public struct TankardRelease: Equatable, Sendable {
     /// "0.9.0" (the tag without its "v").
     public var version: String
-    /// The release notes, shortened for the sheet.
-    public var notes: String
-    /// The release page (Download).
+    /// The release notes, shortened to a few headings and one line per
+    /// change for the sheet.
+    public var summary: ReleaseNotesSummary
+    /// The release page (Download, Full Release Notes).
     public var url: URL
 
-    public init(version: String, notes: String, url: URL) {
+    /// The summary as plain text: headings, "• change" lines, then
+    /// "…and N more".
+    public var notes: String { summary.plainText }
+
+    public init(version: String, summary: ReleaseNotesSummary, url: URL) {
         self.version = version
-        self.notes = notes
+        self.summary = summary
         self.url = url
+    }
+}
+
+/// 0.8.5: the release notes as a short list. GitHub's release body is the
+/// CHANGELOG section (Scripts/changelog-section.sh) between an intro line
+/// and an install line, and each change is a paragraph: a bold lead
+/// sentence and the detail. 0.8.4 showed its first 700 characters, which
+/// was the intro and one long change: one giant paragraph. Now: the
+/// section headings (Added, Changed, Fixed) and, per change, only its bold
+/// lead, or its first sentence when it has none; at most `limit` changes.
+public struct ReleaseNotesSummary: Equatable, Sendable {
+    public enum Item: Equatable, Sendable {
+        case heading(String)
+        case bullet(String)
+    }
+
+    public var items: [Item]
+    /// Changes left out after the first `limit`.
+    public var more: Int
+
+    public init(items: [Item] = [], more: Int = 0) {
+        self.items = items
+        self.more = more
+    }
+
+    public var isEmpty: Bool { items.isEmpty }
+
+    public var bullets: [String] {
+        items.compactMap { item -> String? in
+            if case .bullet(let b) = item { return b }
+            return nil
+        }
+    }
+
+    public var plainText: String {
+        var lines = items.map { item -> String in
+            switch item {
+            case .heading(let h): return h
+            case .bullet(let b): return "• " + b
+            }
+        }
+        if more > 0 { lines.append("…" + String(localized: "and \(more) more")) }
+        return lines.joined(separator: "\n")
+    }
+
+    /// A change's line is cut (at a word, with "…") past this many characters.
+    public static let lineLimit = 120
+
+    public static func make(_ body: String, limit: Int = 12) -> ReleaseNotesSummary {
+        let lines = body.replacingOccurrences(of: "\r\n", with: "\n").split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        // The intro ("Tankard v0.8.5: …") comes before the first heading.
+        // A body with no heading at all starts at its first line.
+        let start = lines.firstIndex { $0.hasPrefix("#") } ?? 0
+        var items: [Item] = []
+        var pendingHeading: String?
+        var shown = 0, total = 0
+        for raw in lines[start...] {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("#") {
+                var h = Substring(line)
+                while h.hasPrefix("#") { h = h.dropFirst() }
+                let text = plain(String(h))
+                pendingHeading = text.isEmpty ? nil : text
+                continue
+            }
+            // Only top-level list items: an indented sub-item or a wrapped
+            // line belongs to the change above it.
+            guard raw.hasPrefix("- ") || raw.hasPrefix("* ") else { continue }
+            let text = lead(String(raw.dropFirst(2)))
+            guard !text.isEmpty else { continue }
+            total += 1
+            guard shown < limit else { continue }
+            if let h = pendingHeading {
+                items.append(.heading(h))
+                pendingHeading = nil
+            }
+            items.append(.bullet(text))
+            shown += 1
+        }
+        return ReleaseNotesSummary(items: items, more: total - shown)
+    }
+
+    /// One change's line: its bold lead when that is a sentence of its own
+    /// ("**Long builds show their time.** While…" -> "Long builds show
+    /// their time"), else the first sentence, Markdown dropped.
+    static func lead(_ item: String) -> String {
+        let t = item.trimmingCharacters(in: .whitespaces)
+        if t.hasPrefix("**"), let close = t.range(of: "**", range: t.index(t.startIndex, offsetBy: 2)..<t.endIndex) {
+            let bold = String(t[t.index(t.startIndex, offsetBy: 2)..<close.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if let last = bold.last, ".:!?".contains(last) {
+                var b = plain(bold)
+                while let l = b.last, ".:".contains(l) { b.removeLast() }
+                return capped(b)
+            }
+        }
+        return capped(firstSentence(plain(t)))
+    }
+
+    /// Bold, code and link Markdown dropped: "**x** `y` [z](u)" -> "x y z".
+    static func plain(_ s: String) -> String {
+        var out = s.replacingOccurrences(of: "**", with: "").replacingOccurrences(of: "`", with: "")
+        out = out.replacingOccurrences(of: #"\[([^\]]*)\]\([^)]*\)"#, with: "$1", options: .regularExpression)
+        return out.trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Up to the first ". " (or the end), without the period.
+    static func firstSentence(_ s: String) -> String {
+        var sentence = s
+        if let r = s.range(of: ". ") { sentence = String(s[..<r.lowerBound]) }
+        while let l = sentence.last, ".:".contains(l) { sentence.removeLast() }
+        return sentence
+    }
+
+    static func capped(_ s: String) -> String {
+        guard s.count > lineLimit else { return s }
+        let head = String(s.prefix(lineLimit - 1))
+        let cut = head.lastIndex(of: " ").map { String(head[..<$0]) } ?? head
+        var c = cut.trimmingCharacters(in: .whitespaces)
+        while let l = c.last, ",;:(".contains(l) { c.removeLast() }
+        return c + "…"
     }
 }
 
@@ -169,24 +294,7 @@ public struct UpdateFeed: Sendable {
         }
         guard running < latest else { return .upToDate(current) }
         let page = release.html_url.flatMap(URL.init(string:)).flatMap { $0.host == "github.com" ? $0 : nil } ?? releasesPage
-        return .available(TankardRelease(version: latest.description, notes: excerpt(release.body ?? ""), url: page))
-    }
-
-    /// The notes as plain text: Markdown heading marks and bold dropped,
-    /// at most `limit` characters, cut at a line end with "…".
-    static func excerpt(_ body: String, limit: Int = 700) -> String {
-        let lines = body.replacingOccurrences(of: "\r\n", with: "\n").split(separator: "\n", omittingEmptySubsequences: false).map { line -> String in
-            var l = String(line)
-            while l.hasPrefix("#") { l.removeFirst() }
-            return l.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: .whitespaces)
-        }
-        var text = lines.joined(separator: "\n")
-        while text.contains("\n\n\n") { text = text.replacingOccurrences(of: "\n\n\n", with: "\n\n") }
-        text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard text.count > limit else { return text }
-        let head = String(text.prefix(limit))
-        let cut = head.lastIndex(of: "\n").map { String(head[..<$0]) } ?? head
-        return cut.trimmingCharacters(in: .whitespacesAndNewlines) + "…"
+        return .available(TankardRelease(version: latest.description, summary: ReleaseNotesSummary.make(release.body ?? ""), url: page))
     }
 }
 

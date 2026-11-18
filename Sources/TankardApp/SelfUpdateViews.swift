@@ -58,12 +58,17 @@ struct SelfUpdateSheet: View {
             .font(.system(size: 13))
         case .available(let r)?:
             Text("Tankard \(r.version) is available.").font(.system(size: 13, weight: .semibold))
-            if !r.notes.isEmpty {
-                Text("Release notes").font(.system(size: 11)).foregroundStyle(.secondary)
+            if !r.summary.isEmpty {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Release notes").font(.system(size: 11)).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Full Release Notes") { NSWorkspace.shared.open(r.url) }
+                        .buttonStyle(.link)
+                        .font(.system(size: 11))
+                        .help(r.url.absoluteString)
+                }
                 ScrollView {
-                    Text(r.notes)
-                        .font(.system(size: 12))
-                        .textSelection(.enabled)
+                    ReleaseNotesList(summary: r.summary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(8)
                 }
@@ -123,6 +128,39 @@ struct SelfUpdateSheet: View {
                     .keyboardShortcut(.defaultAction)
             }
         }
+    }
+}
+
+/// 0.8.5: the release notes as a list: section headings as small bold
+/// labels, one line per change with a hanging indent, then "…and N more".
+struct ReleaseNotesList: View {
+    var summary: ReleaseNotesSummary
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            ForEach(Array(summary.items.enumerated()), id: \.offset) { i, item in
+                switch item {
+                case .heading(let h):
+                    Text(h)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, i == 0 ? 0 : 6)
+                case .bullet(let b):
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(verbatim: "•").foregroundStyle(.secondary)
+                        Text(b).fixedSize(horizontal: false, vertical: true)
+                    }
+                    .font(.system(size: 12))
+                }
+            }
+            if summary.more > 0 {
+                Text(verbatim: "…" + String(localized: "and \(summary.more) more"))
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 2)
+            }
+        }
+        .textSelection(.enabled)
     }
 }
 

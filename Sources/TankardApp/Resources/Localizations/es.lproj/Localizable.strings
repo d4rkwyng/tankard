@@ -452,6 +452,7 @@
 "From source" = "Desde el código fuente";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "Del README de Homebrew/install (\"Uninstall Homebrew\"), con su opción --path para que solo elimine el Homebrew que Tankard está mostrando. Se ejecuta en Terminal y pregunta una vez más antes de eliminar nada.";
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "A partir de ahí, Homebrew gestiona estas apps: brew upgrade las reemplaza por la versión del cask, y desinstalar el cask (en Tankard o con brew uninstall) elimina la app.";
+"Full Release Notes" = "Notas de la versión completas";
 "Full log saved to %@" = "Registro completo guardado en %@";
 "Full scan" = "Análisis completo";
 "GB" = "GB";

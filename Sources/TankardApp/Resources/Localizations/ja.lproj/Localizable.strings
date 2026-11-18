@@ -452,6 +452,7 @@
 "From source" = "ソースから";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "Homebrew/install のREADME(「Uninstall Homebrew」)に基づき、--path オプションを付けて、Tankardが表示しているHomebrewだけを削除します。ターミナルで実行され、削除前にもう一度確認します。";
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "以降、これらのアプリは Homebrew が管理します。brew upgrade で cask のバージョンに置き換えられ、cask をアンインストールすると（Tankard でも brew uninstall でも）アプリは削除されます。";
+"Full Release Notes" = "リリースノート全文";
 "Full log saved to %@" = "完全なログを %@ に保存しました";
 "Full scan" = "フルスキャン";
 "GB" = "GB";
