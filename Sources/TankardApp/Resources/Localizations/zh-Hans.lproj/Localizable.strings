@@ -480,6 +480,7 @@
 "Include self-updating apps" = "包含自行更新的 App";
 "Install" = "安装";
 "Install %@" = "安装 %@";
+"Install %@ (compiles)…" = "安装 %@（需编译）…";
 "Install %@ from source?" = "从源码安装 %@？";
 "Install (checking…)" = "安装（正在检查…）";
 "Install (compiles)" = "安装（需编译）";
@@ -873,7 +874,6 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
 "Shows the brew commands first" = "先显示 brew 命令";
 "Size" = "大小";
-"Skip This Version" = "跳过此版本";
 "Skip Version %@" = "跳过版本 %@";
 "Skip packages that would compile (%@)" = "跳过需要编译的软件包 (%@)";
 "Skipped: would compile" = "已跳过：需要编译";
@@ -1038,9 +1038,10 @@
 "Updates itself (auto_updates).\nUpdates: %@" = "自行更新 (auto_updates)。\n更新：%@";
 "Upgrade" = "升级";
 "Upgrade %@" = "升级 %@";
-"Upgrade %@ (compiles)" = "升级 %@（需编译）";
+"Upgrade %@ (compiles)…" = "升级 %@（需编译）…";
 "Upgrade %@ (pinned)" = "升级 %@（已固定）";
 "Upgrade %@." = "升级 %@。";
+"Upgrade %@…" = "升级 %@…";
 "Upgrade %lld" = "升级 %lld";
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";

@@ -75,7 +75,7 @@ struct ContextMenuTests {
         p.upgradeAvailable = true
         let m = ContextMenus.installed(p, dependents: [], dependencies: [],
                                        compileWarning: CompileWarning(context: .upgrade), busy: false, kegPath: nil)
-        #expect(item(m, "upgrade")?.title == "Upgrade xz (compiles)")
+        #expect(item(m, "upgrade")?.title == "Upgrade xz (compiles)…")
         // Same action: requestUpgrade shows the plan with the warning.
         #expect(item(m, "upgrade")?.action == .upgrade)
     }
@@ -171,7 +171,7 @@ struct ContextMenuTests {
         #expect(item(plain, "homepage")?.action == .open(URL(string: "https://nodered.org")!))
 
         let compiles = ContextMenus.discover(e, installed: false, compileWarning: CompileWarning(context: .install), busy: false)
-        #expect(item(compiles, "install")?.title == "Install (compiles)")
+        #expect(item(compiles, "install")?.title == "Install node-red (compiles)…")
         #expect(item(compiles, "install")?.action == .install(confirmCompile: true))
     }
 

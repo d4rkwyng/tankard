@@ -25301,6 +25301,58 @@
         }
       }
     },
+    "Install %@ (compiles)…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installieren (kompiliert)…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installer %@ (compile)…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar %@ (compila)…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@をインストール（コンパイル）…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装 %@（需编译）…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar %@ (compila)…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installa %@ (compila)…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 설치(컴파일)…"
+          }
+        }
+      }
+    },
     "Install %@ from source?": {
       "localizations": {
         "de": {
@@ -45790,58 +45842,6 @@
         }
       }
     },
-    "Skip This Version": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diese Version überspringen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorer cette version"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Omitir esta versión"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "このバージョンをスキップ"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跳过此版本"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorar Esta Versão"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Salta questa versione"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 버전 건너뛰기"
-          }
-        }
-      }
-    },
     "Skip Version %@": {
       "localizations": {
         "de": {
@@ -54370,54 +54370,54 @@
         }
       }
     },
-    "Upgrade %@ (compiles)": {
+    "Upgrade %@ (compiles)…": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ upgraden (kompiliert)"
+            "value": "%@ upgraden (kompiliert)…"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mettre à niveau %@ (compilation)"
+            "value": "Mettre à niveau %@ (compilation)…"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualizar %@ (compila)"
+            "value": "Actualizar %@ (compila)…"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@をアップグレード（コンパイルあり）"
+            "value": "%@をアップグレード（コンパイルあり）…"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级 %@（需编译）"
+            "value": "升级 %@（需编译）…"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualizar %@ (compila)"
+            "value": "Atualizar %@ (compila)…"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiorna %@ (compila)"
+            "value": "Aggiorna %@ (compila)…"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 업그레이드 (컴파일)"
+            "value": "%@ 업그레이드 (컴파일)…"
           }
         }
       }
@@ -54522,6 +54522,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 업그레이드."
+          }
+        }
+      }
+    },
+    "Upgrade %@…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ upgraden…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à niveau %@…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar %@…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@をアップグレード…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级 %@…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar %@…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna %@…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 업그레이드…"
           }
         }
       }

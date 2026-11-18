@@ -480,6 +480,7 @@
 "Include self-updating apps" = "Selbstaktualisierende Apps einbeziehen";
 "Install" = "Installieren";
 "Install %@" = "%@ installieren";
+"Install %@ (compiles)…" = "%@ installieren (kompiliert)…";
 "Install %@ from source?" = "%@ aus Quellcode installieren?";
 "Install (checking…)" = "Installieren (wird geprüft…)";
 "Install (compiles)" = "Installieren (kompiliert)";
@@ -873,7 +874,6 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Zeigt einen Humpen mit der Anzahl bereiter Upgrades. Solange aktiv, läuft Tankard nach dem Schließen des Fensters weiter.";
 "Shows the brew commands first" = "Zeigt zuerst die brew-Befehle";
 "Size" = "Größe";
-"Skip This Version" = "Diese Version überspringen";
 "Skip Version %@" = "Version %@ überspringen";
 "Skip packages that would compile (%@)" = "Pakete überspringen, die kompiliert würden (%@)";
 "Skipped: would compile" = "Übersprungen: würde kompilieren";
@@ -1038,9 +1038,10 @@
 "Updates itself (auto_updates).\nUpdates: %@" = "Aktualisiert sich selbst (auto_updates).\nUpdates: %@";
 "Upgrade" = "Upgrade";
 "Upgrade %@" = "%@ upgraden";
-"Upgrade %@ (compiles)" = "%@ upgraden (kompiliert)";
+"Upgrade %@ (compiles)…" = "%@ upgraden (kompiliert)…";
 "Upgrade %@ (pinned)" = "%@ upgraden (fixiert)";
 "Upgrade %@." = "%@ upgraden.";
+"Upgrade %@…" = "%@ upgraden…";
 "Upgrade %lld" = "%lld upgraden";
 "Upgrade %lld (skip %lld)" = "%lld upgraden (%lld überspringen)";
 "Upgrade %lld packages?" = "%lld Pakete upgraden?";

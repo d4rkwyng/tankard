@@ -26,6 +26,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **The menu-bar panel shows both versions** ("3.29.15 → 3.30.14"): a cask version's build or commit-hash suffix is left out (kept, shortened, when only it changes), and a long pair is cut in the middle, not from the front. The full versions are in the tooltip.
 - **A sheet that finished with errors says what was done**, not the plan: a failed download no longer reads "1 build from source". When nothing finished it says why, if brew's output shows it.
 - **No more orange "If brew needs sudo…" line on every cask upgrade.** The password note shows for casks that need it (the same rule as the plan and the dialog), or once brew's output says it runs sudo.
+- **Wording**: About no longer splits "BSD-2-Clause" across two lines; context-menu items that open a confirmation end in "…" and name the package ("Install node-red (compiles)…"), and Skip Version reads the same in the detail pane and the context menu.
 - **A cask's "Installed on" date is no longer a day late in the evening** (west of Greenwich). brew reports a cask's install time as the UTC clock read as local time; Tankard now undoes that offset. Formula dates were already right.
 
 ### For contributors

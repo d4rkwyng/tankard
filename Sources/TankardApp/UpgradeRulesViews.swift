@@ -5,7 +5,8 @@ import TankardCore
 // v0.6 (part B): the views for skip this version, snooze and bump rules.
 // Short labels; the details are in tooltips.
 
-/// The detail pane's "Skip This Version" / "Don't Skip", under Upgrade.
+/// The detail pane's "Skip Version 1.1" / "Don't Skip", under Upgrade
+/// (0.8.4: the context menu's words; it was "Skip This Version").
 struct SkipVersionRow: View {
     var skipped: Bool
     var version: String
@@ -22,7 +23,7 @@ struct SkipVersionRow: View {
                     .controlSize(.small)
                     .help("Count \(version) as an upgrade again")
             } else {
-                Button("Skip This Version") { toggle(true) }
+                Button(String(localized: "Skip Version \(version)")) { toggle(true) }
                     .controlSize(.small)
                     .help("Leave \(version) out of Upgrade All, the counts and auto-update. Upgrade still works by hand; a newer version clears this.")
             }

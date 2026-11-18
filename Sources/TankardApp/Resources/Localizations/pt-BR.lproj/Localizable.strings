@@ -480,6 +480,7 @@
 "Include self-updating apps" = "Incluir apps que se atualizam sozinhos";
 "Install" = "Instalar";
 "Install %@" = "Instalar %@";
+"Install %@ (compiles)…" = "Instalar %@ (compila)…";
 "Install %@ from source?" = "Instalar %@ do código-fonte?";
 "Install (checking…)" = "Instalar (verificando…)";
 "Install (compiles)" = "Instalar (compila)";
@@ -873,7 +874,6 @@
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Mostra uma caneca com o número de atualizações prontas. Enquanto ativado, fechar a janela mantém o Tankard aberto.";
 "Shows the brew commands first" = "Mostra antes os comandos brew";
 "Size" = "Tamanho";
-"Skip This Version" = "Ignorar Esta Versão";
 "Skip Version %@" = "Ignorar Versão %@";
 "Skip packages that would compile (%@)" = "Ignorar pacotes que seriam compilados (%@)";
 "Skipped: would compile" = "Ignorado: seria compilado";
@@ -1038,9 +1038,10 @@
 "Updates itself (auto_updates).\nUpdates: %@" = "Atualiza sozinho (auto_updates).\nAtualizações: %@";
 "Upgrade" = "Atualizar";
 "Upgrade %@" = "Atualizar %@";
-"Upgrade %@ (compiles)" = "Atualizar %@ (compila)";
+"Upgrade %@ (compiles)…" = "Atualizar %@ (compila)…";
 "Upgrade %@ (pinned)" = "Atualizar %@ (fixado)";
 "Upgrade %@." = "Atualizar %@.";
+"Upgrade %@…" = "Atualizar %@…";
 "Upgrade %lld" = "Atualizar %lld";
 "Upgrade %lld (skip %lld)" = "Atualizar %lld (ignorar %lld)";
 "Upgrade %lld packages?" = "Atualizar %lld pacotes?";

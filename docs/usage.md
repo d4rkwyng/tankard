@@ -222,7 +222,7 @@ The sheet shows brew's output and the download's progress, such as "Downloading
 font-inter… 25.4 of 33.7 MB (75%)".
 
 - A formula with no bottle for your Mac says so, and the button reads **Install
-  (compiles)**. Tankard asks before it starts.
+  X (compiles)…**. Tankard asks before it starts.
 - The **Has bottle** filter (**Has Intel bottle** in Intelbrew mode) hides formulae that
   would compile. It is on by default in Intelbrew mode.
 - A package you already have offers **Show in Installed** instead.
@@ -248,8 +248,8 @@ font-inter… 25.4 of 33.7 MB (75%)".
 menu. A pinned package is never upgraded, by Tankard or by `brew upgrade`. **Unpin**
 undoes it. The **Pinned** filter (in **More**) lists them.
 
-**Skip one version:** click **Skip This Version** in the detail pane, or choose **Skip
-Version X** from the right-click menu. Upgrade N, the menu-bar count and automatic updates
+**Skip one version:** click **Skip Version X** in the detail pane or the right-click
+menu. Upgrade N, the menu-bar count and automatic updates
 leave that version out. You can still upgrade it by hand, and the next version clears the
 skip.
 

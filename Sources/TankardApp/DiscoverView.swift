@@ -367,7 +367,7 @@ struct DiscoverDetail: View {
                     Button {
                         if compiles { discover.confirmInstall = e.id } else { store.startInstall(e) }
                     } label: {
-                        Label(compiles ? String(localized: "Install (compiles)") : String(localized: "Install \(e.name)"), systemImage: compiles ? "hammer" : "arrow.down.circle")
+                        Label(ContextMenus.installTitle(e.name, compiles: compiles), systemImage: compiles ? "hammer" : "arrow.down.circle")
                     }
                     .buttonStyle(.primaryAction)
                     .disabled(store.isUpgrading || e.disabled)

@@ -50,3 +50,21 @@ struct V084AboutLicenceTests {
         #expect(AboutInfo.keepTogether("MIT") == "MIT")
     }
 }
+
+// 0.8.4: menu items that open a confirmation end in "…" and name the package.
+struct V084MenuWordingTests {
+    @Test func confirmationItemsEndInEllipsis() {
+        var xz = versioned("xz", "5.8.1", "5.8.2")
+        xz.upgradeAvailable = true
+        #expect(ContextMenus.upgradeTitle(xz, compiles: false) == "Upgrade xz")
+        #expect(ContextMenus.upgradeTitle(xz, compiles: true) == "Upgrade xz (compiles)…")
+        var win = versioned("windows-app", "1", "2", kind: .cask)
+        win.installsPkg = true // the plan asks for the password first
+        #expect(ContextMenus.upgradeTitle(win, compiles: false) == "Upgrade windows-app…")
+        #expect(ContextMenus.installTitle("hello", compiles: false) == "Install hello")
+        #expect(ContextMenus.installTitle("node-red", compiles: true) == "Install node-red (compiles)…")
+        let row = ContextMenus.menuBarRow(xz, compileWarning: CompileWarning(context: .upgrade), busy: false)
+        guard case .item(let m)? = row.first else { Issue.record("no item"); return }
+        #expect(m.title == "Upgrade xz (compiles)…")
+    }
+}

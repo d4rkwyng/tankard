@@ -85,7 +85,7 @@ public enum ContextMenus {
                                          action: .upgrade, isEnabled: false))
         } else if p.upgradeAvailable {
             actions.append(MenuItemModel(id: "upgrade",
-                                         title: compileWarning == nil ? String(localized: "Upgrade \(p.name)") : String(localized: "Upgrade \(p.name) (compiles)"),
+                                         title: upgradeTitle(p, compiles: compileWarning != nil),
                                          systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
                                          action: .upgrade, isEnabled: !busy))
             if let v = p.currentVersion {
@@ -164,7 +164,7 @@ public enum ContextMenus {
                                     action: .install(confirmCompile: false), isEnabled: false)
         } else {
             let compiles = compileWarning != nil
-            install = MenuItemModel(id: "install", title: compiles ? String(localized: "Install (compiles)") : String(localized: "Install \(e.name)"),
+            install = MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
                                     systemImage: compiles ? "hammer" : "arrow.down.circle",
                                     action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
         }
@@ -179,12 +179,26 @@ public enum ContextMenus {
         return joined([[install], copy, open])
     }
 
+    /// 0.8.4: "Upgrade xz", or with "…" when it opens the upgrade plan
+    /// first (UpgradePlan.needsConfirmation: it compiles, or a cask's
+    /// installer asks for the password): "Upgrade xz (compiles)…".
+    public static func upgradeTitle(_ p: Package, compiles: Bool) -> String {
+        if compiles { return String(localized: "Upgrade \(p.name) (compiles)…") }
+        return AdminPassword.required(p) ? String(localized: "Upgrade \(p.name)…") : String(localized: "Upgrade \(p.name)")
+    }
+
+    /// 0.8.4: "Install hello", or "Install node-red (compiles)…" (it opens
+    /// the compile confirmation; it used to be "Install (compiles)").
+    public static func installTitle(_ name: String, compiles: Bool) -> String {
+        compiles ? String(localized: "Install \(name) (compiles)…") : String(localized: "Install \(name)")
+    }
+
     /// The menu-bar list's row menu: Upgrade and Copy Name.
     public static func menuBarRow(_ p: Package, compileWarning: CompileWarning?, busy: Bool) -> [MenuEntry] {
         var items: [MenuEntry] = []
         if p.upgradeAvailable {
             items.append(.item(MenuItemModel(id: "upgrade",
-                                             title: compileWarning == nil ? String(localized: "Upgrade \(p.name)") : String(localized: "Upgrade \(p.name) (compiles)"),
+                                             title: upgradeTitle(p, compiles: compileWarning != nil),
                                              systemImage: compileWarning == nil ? "arrow.up.circle" : "hammer",
                                              action: .upgrade, isEnabled: !busy)))
         }

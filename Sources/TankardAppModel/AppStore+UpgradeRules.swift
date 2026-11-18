@@ -42,7 +42,7 @@ extension AppStore {
         upgradeRules.setSelfUpdatePolicy(SelfUpdateRule.key(p), policy)
     }
 
-    /// "Skip This Version" / "Don't Skip" (detail pane, right-click).
+    /// "Skip Version X" / "Don't Skip" (detail pane, right-click).
     public func setVersionSkipped(_ p: Package, _ skipped: Bool) {
         if skipped { upgradeRules.skip(p) } else { upgradeRules.unskip(p) }
     }

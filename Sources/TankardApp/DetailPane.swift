@@ -50,7 +50,7 @@ struct PackageDetail: View {
     /// 0.4: the scan behind the vulnerability list, and brew's prefix for caveats.
     var insights: InsightsStore? = nil
     var prefix: String? = nil
-    /// 0.6: "Skip This Version" (true) or "Don't Skip" (false).
+    /// 0.6: "Skip Version 1.1" (true) or "Don't Skip" (false).
     var skipVersion: ((Bool) -> Void)? = nil
     /// 0.8: formulae.brew.sh's install counts, when Discover has loaded
     /// them this session (the Installed tab never fetches them itself).
