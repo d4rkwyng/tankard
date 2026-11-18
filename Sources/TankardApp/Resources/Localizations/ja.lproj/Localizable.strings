@@ -253,8 +253,13 @@
 "Cancel" = "キャンセル";
 "Cask" = "Cask";
 "Cask, updates itself" = "Cask(自己更新)";
+"Cask: installs a command-line tool; no bottles." = "Cask: コマンドラインツールをインストールします。bottleはありません。";
+"Cask: installs a plug-in; no bottles." = "Cask: プラグインをインストールします。bottleはありません。";
+"Cask: installs fonts; no bottles." = "Cask: フォントをインストールします。bottleはありません。";
 "Cask: installs the vendor's app; no bottles." = "Cask: ベンダーのアプリをインストールします。bottleはありません。";
+"Cask: installs the vendor's files; no bottles." = "Cask: ベンダーのファイルをインストールします。bottleはありません。";
 "Cask: no older version" = "Cask: 古いバージョンはありません";
+"Cask: runs the vendor's installer package; no bottles." = "Cask: ベンダーのインストーラパッケージを実行します。bottleはありません。";
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "caskは有効ではありません: `brew tap homebrew/cask` を実行してください(約620 MB)";
 "Changes since then" = "それ以降の変更";

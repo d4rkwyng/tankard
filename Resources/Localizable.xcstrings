@@ -13497,6 +13497,162 @@
         }
       }
     },
+    "Cask: installs a command-line tool; no bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installiert ein Befehlszeilen-Tool; keine Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask : installe un outil en ligne de commande ; pas de bottles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala una herramienta de línea de comandos; sin bottles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: コマンドラインツールをインストールします。bottleはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask：安装命令行工具；没有 bottle。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala uma ferramenta de linha de comando; sem bottles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installa uno strumento da riga di comando; nessuna bottle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: 명령어 도구를 설치합니다. bottle 없음."
+          }
+        }
+      }
+    },
+    "Cask: installs a plug-in; no bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installiert ein Plug-in; keine Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask : installe un module ; pas de bottles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala un plug-in; sin bottles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: プラグインをインストールします。bottleはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask：安装插件；没有 bottle。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala um plug-in; sem bottles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installa un plug-in; nessuna bottle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: 플러그인을 설치합니다. bottle 없음."
+          }
+        }
+      }
+    },
+    "Cask: installs fonts; no bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installiert Schriften; keine Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask : installe des polices ; pas de bottles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala tipografías; sin bottles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: フォントをインストールします。bottleはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask：安装字体；没有 bottle。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala fontes; sem bottles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installa font; nessuna bottle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: 서체를 설치합니다. bottle 없음."
+          }
+        }
+      }
+    },
     "Cask: installs the vendor's app; no bottles.": {
       "localizations": {
         "de": {
@@ -13549,6 +13705,58 @@
         }
       }
     },
+    "Cask: installs the vendor's files; no bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installiert Dateien des Herstellers; keine Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask : installe les fichiers de l’éditeur ; pas de bottles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala los archivos del proveedor; sin bottles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: ベンダーのファイルをインストールします。bottleはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask：安装厂商的文件；没有 bottle。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: instala os arquivos do fornecedor; sem bottles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: installa i file del fornitore; nessuna bottle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: 공급업체의 파일을 설치합니다. bottle 없음."
+          }
+        }
+      }
+    },
     "Cask: no older version": {
       "localizations": {
         "de": {
@@ -13597,6 +13805,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cask: 이전 버전 없음"
+          }
+        }
+      }
+    },
+    "Cask: runs the vendor's installer package; no bottles.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: führt das Installationspaket des Herstellers aus; keine Bottles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask : lance le paquet d’installation de l’éditeur ; pas de bottles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: ejecuta el paquete instalador del proveedor; sin bottles."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: ベンダーのインストーラパッケージを実行します。bottleはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask：运行厂商的安装器包；没有 bottle。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: executa o pacote instalador do fornecedor; sem bottles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: esegue il pacchetto di installazione del fornitore; nessuna bottle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cask: 공급업체의 설치 패키지를 실행합니다. bottle 없음."
           }
         }
       }

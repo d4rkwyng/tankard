@@ -233,6 +233,10 @@ public struct BrewInfoJSON: Decodable, Sendable {
         public var adoptArtifacts: AdoptArtifacts?
         /// 0.8: the download URL (formulae.brew.sh and `brew info` give it).
         public var url: String?
+        /// 0.8.4: the stanza keys of `artifacts` ("app", "font", "binary",
+        /// "pkg", …), in order, without uninstall/zap and the flight
+        /// blocks. nil when brew gave no artifacts.
+        public var artifactKinds: [String]?
 
         public struct AdoptArtifacts: Sendable, Equatable {
             /// One installed app: `source` is the name in the download
@@ -315,6 +319,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 quitBundleIDs = list.flatMap(\.quit)
                 installsPkg = list.contains(where: \.pkg)
                 sudoInstaller = list.contains(where: \.sudoInstaller)
+                artifactKinds = CaskContents.kinds(list.flatMap(\.keys))
                 adoptArtifacts = AdoptArtifacts(apps: list.flatMap(\.apps), suites: list.flatMap(\.suites),
                                                 pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings))
             }
@@ -336,6 +341,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
             var apps: [AdoptArtifacts.App] = []
             var suites: [String] = []
             var idStrings: [String] = []
+            /// 0.8.4: every stanza key in this entry.
+            var keys: [String] = []
 
             struct Key: CodingKey {
                 var stringValue: String
@@ -385,6 +392,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
 
             init(from decoder: Decoder) throws {
                 guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                keys = c.allKeys.map(\.stringValue).filter { $0 != "target" }
                 pkg = c.contains(Key(stringValue: "pkg"))
                 if let items = try? c.decodeIfPresent([InstallerItem].self, forKey: Key(stringValue: "installer")) {
                     sudoInstaller = items.contains(where: \.sudo)

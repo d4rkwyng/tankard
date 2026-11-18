@@ -253,11 +253,37 @@ struct PackageDetail: View {
                 Image(systemName: "exclamationmark.circle").foregroundStyle(theme.badge(.noBottle).dot)
                 Text("No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
             case .cask:
-                Image(systemName: "macwindow").foregroundStyle(theme.badge(.cask).dot)
-                Text("Cask: installs the vendor's app; no bottles.")
+                // 0.8.4: from the cask's artifacts (a font isn't an app).
+                let contents = CaskContents(p)
+                Image(systemName: Self.caskSymbol(contents)).foregroundStyle(theme.badge(.cask).dot)
+                Text(Self.caskLine(contents))
             }
         }
         .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+extension PackageDetail {
+    static func caskSymbol(_ c: CaskContents) -> String {
+        switch c {
+        case .app: return "macwindow"
+        case .installer: return "shippingbox"
+        case .font: return "textformat"
+        case .commandLineTool: return "terminal"
+        case .plugin: return "puzzlepiece.extension"
+        case .other: return "doc"
+        }
+    }
+
+    static func caskLine(_ c: CaskContents) -> String {
+        switch c {
+        case .app: return String(localized: "Cask: installs the vendor's app; no bottles.")
+        case .installer: return String(localized: "Cask: runs the vendor's installer package; no bottles.")
+        case .font: return String(localized: "Cask: installs fonts; no bottles.")
+        case .commandLineTool: return String(localized: "Cask: installs a command-line tool; no bottles.")
+        case .plugin: return String(localized: "Cask: installs a plug-in; no bottles.")
+        case .other: return String(localized: "Cask: installs the vendor's files; no bottles.")
+        }
     }
 }
 

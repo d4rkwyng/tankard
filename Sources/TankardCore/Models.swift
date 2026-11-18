@@ -143,6 +143,11 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// a change needs the administrator password. nil for formulae, when
     /// brew gave no artifacts, and in older reports.
     public var sudoInstaller: Bool? = nil
+    /// 0.8.4, casks: the kinds of `artifacts` stanza it has ("app",
+    /// "font", "binary", "pkg", …; not uninstall/zap/flight blocks), for
+    /// the detail pane's "installs …" line (`CaskContents`). nil for
+    /// formulae, when brew gave no artifacts, and in older reports.
+    public var caskArtifacts: [String]? = nil
 
     public var isDependency: Bool { !requested }
 

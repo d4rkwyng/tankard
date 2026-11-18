@@ -253,8 +253,13 @@
 "Cancel" = "取消";
 "Cask" = "Cask";
 "Cask, updates itself" = "Cask，自行更新";
+"Cask: installs a command-line tool; no bottles." = "Cask：安装命令行工具；没有 bottle。";
+"Cask: installs a plug-in; no bottles." = "Cask：安装插件；没有 bottle。";
+"Cask: installs fonts; no bottles." = "Cask：安装字体；没有 bottle。";
 "Cask: installs the vendor's app; no bottles." = "Cask：安装厂商的 App；没有 bottle。";
+"Cask: installs the vendor's files; no bottles." = "Cask：安装厂商的文件；没有 bottle。";
 "Cask: no older version" = "Cask：没有更旧的版本";
+"Cask: runs the vendor's installer package; no bottles." = "Cask：运行厂商的安装器包；没有 bottle。";
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "未启用 cask：请运行 `brew tap homebrew/cask`（约 620 MB）";
 "Changes since then" = "此后的更改";

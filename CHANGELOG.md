@@ -22,6 +22,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **"Upgrade N with bottles" no longer cut off** in the Upgrades header at the default window width (German especially).
 - **Proxy passwords are masked** in upgrade.log, History, the Auto-update Log and notifications.
 - **Relaunch no longer carries debug settings over** to the new copy (demo, snapshot or script mode).
+- **A cask's detail says what it installs**: fonts, a command-line tool, an installer package or a plug-in, from the cask's artifacts. A font cask used to say "installs the vendor's app".
 - **A cask's "Installed on" date is no longer a day late in the evening** (west of Greenwich). brew reports a cask's install time as the UTC clock read as local time; Tankard now undoes that offset. Formula dates were already right.
 
 ### For contributors

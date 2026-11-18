@@ -253,8 +253,13 @@
 "Cancel" = "Annulla";
 "Cask" = "Cask";
 "Cask, updates itself" = "Cask, si aggiorna da solo";
+"Cask: installs a command-line tool; no bottles." = "Cask: installa uno strumento da riga di comando; nessuna bottle.";
+"Cask: installs a plug-in; no bottles." = "Cask: installa un plug-in; nessuna bottle.";
+"Cask: installs fonts; no bottles." = "Cask: installa font; nessuna bottle.";
 "Cask: installs the vendor's app; no bottles." = "Cask: installa l'app del fornitore; nessuna bottle.";
+"Cask: installs the vendor's files; no bottles." = "Cask: installa i file del fornitore; nessuna bottle.";
 "Cask: no older version" = "Cask: nessuna versione precedente";
+"Cask: runs the vendor's installer package; no bottles." = "Cask: esegue il pacchetto di installazione del fornitore; nessuna bottle.";
 "Casks" = "Cask";
 "Casks aren't enabled: run `brew tap homebrew/cask` (about 620 MB)" = "I cask non sono abilitati: esegui `brew tap homebrew/cask` (circa 620 MB)";
 "Changes since then" = "Modifiche da allora";
