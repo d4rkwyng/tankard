@@ -94,8 +94,8 @@ struct DiscoverStrip: View {
         case .ready:
             if discover.resultsQuery.isEmpty { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
             let n = discover.results.count
-            if n == 200 { return String(localized: "Top 200 results for “\(discover.resultsQuery)”") }
-        return n == 1 ? String(localized: "\(n) result for “\(discover.resultsQuery)”") : String(localized: "\(n) results for “\(discover.resultsQuery)”")
+            if n == 200 { return String(localized: "Top 200 results for “\(discover.resultsTerm)”") }
+        return n == 1 ? String(localized: "\(n) result for “\(discover.resultsTerm)”") : String(localized: "\(n) results for “\(discover.resultsTerm)”")
         }
     }
 }

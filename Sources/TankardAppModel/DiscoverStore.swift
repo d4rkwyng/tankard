@@ -28,6 +28,9 @@ public final class DiscoverStore {
     public private(set) var results: [CatalogEntry] = []
     /// The query `results` answer (the field can be ahead while debouncing).
     public private(set) var resultsQuery = ""
+    /// 0.8.4: what the header names: `resultsQuery` without a pasted
+    /// `brew install …` around it ("wget", not "brew install wget").
+    public var resultsTerm: String { PastedCommand.searchTerm(resultsQuery) }
     public private(set) var source = ""
     public private(set) var warning: String?
     public private(set) var casksEnabled = true

@@ -287,6 +287,21 @@ struct IntelbrewDiscoverTests {
         #expect(runner.log.calls.count == 1)
     }
 
+    /// 0.8.4: a pasted command searches for the package, and the header
+    /// names the package ("2 results for “xz”"), not the pasted text.
+    @Test func pastedCommandHeaderNamesThePackage() async throws {
+        let (d, _) = store()
+        await d.activate()
+        d.query = "brew install --formula xz"
+        await d.searchNow()
+        #expect(d.results.map(\.name) == ["xz"])
+        #expect(d.resultsQuery == "brew install --formula xz")
+        #expect(d.resultsTerm == "xz")
+        d.query = "compression"
+        await d.searchNow()
+        #expect(d.resultsTerm == "compression")
+    }
+
     @Test func anUnloadableNameIsDroppedAndTheRestRetried() async throws {
         let (d, runner) = store()
         await d.activate()
