@@ -4,6 +4,28 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.8.4] (unreleased)
+
+### Added
+- **Automatic updates wait for brew and ask before quitting.** A step that finds a Terminal brew holding Homebrew's lock waits for it quietly (up to 15 minutes, logged) instead of failing, and is listed as skipped ("Homebrew was busy") if it is still busy. Quitting Tankard while an automatic run is upgrading asks first ("Tankard is upgrading xz automatically (3 of 7). Quit anyway?"); the steps not run are done by the next automatic run.
+- **Your shell profile's proxy settings reach brew** (`http_proxy`, `https_proxy`, `all_proxy`, `no_proxy` and the forms brew keeps). Health ▸ Environment lists them with any password masked.
+- **Health warns about brew.env settings that override Tankard**, one row each with the reason: the dependents check, the Intelbrew remotes, `HOMEBREW_NO_AUTOREMOVE`, `HOMEBREW_CASK_OPTS`, `SUDO_ASKPASS` and others.
+
+### Changed
+- **The password dialog is centered and shorter**, like a modern macOS alert: "Tankard needs your password", one line for what it's for ("To upgrade windows-app."), and the brew command under **Details**. A long list names two packages and the rest as a count ("To upgrade xz, wget and 7 more.").
+- **A brew.env `SUDO_ASKPASS` that points to another program wins over Tankard's dialog**, so Tankard no longer offers its own: a step that needs your password says to run it in Terminal, with the command. Automatic updates skip such cask steps.
+- **Tankard reads the brew.env brew reads**, including the one under `XDG_CONFIG_HOME` (or `HOMEBREW_XDG_CONFIG_HOME`), and passes those settings to brew.
+- **Help ▸ Tankard Help opens the guide for your version** of Tankard, not the latest one.
+- **The Discover header shows the search term**: '2 results for "wget"', not for the whole pasted `brew install wget`.
+
+### Fixed
+- **"Upgrade N with bottles" no longer cut off** in the Upgrades header at the default window width (German especially).
+- **Proxy passwords are masked** in upgrade.log, History, the Auto-update Log and notifications.
+- **Relaunch no longer carries debug settings over** to the new copy (demo, snapshot or script mode).
+
+### For contributors
+- The tests delete the UserDefaults suites they create; a run used to leave about 240 plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
+
 ## [0.8.3]
 
 ### Added
