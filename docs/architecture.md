@@ -1158,6 +1158,7 @@ afterwards.
 Its script runs set `TANKARD_E2E_SELFUPDATE=1` (the single-instance guard and the
 relaunch treat the run as the real app) and `TANKARD_E2E_SELF_TAP` (the tap), with the
 steps `check-updates`, `upgrade-self`, `expect-quiet`, `open-sheet` and `relaunch`.
+`--phases` (0.8.4) runs a subset (`A`, `BC`, ...); without A, B installs NEW first.
 
 **Opt-in real-brew checks (0.8.3)**, off unless the variable is set:
 `TANKARD_REAL_CANCEL_CASK=font-inter Scripts/test.sh --filter V083QueueRobustRealTests`
@@ -1199,6 +1200,13 @@ It builds universal (`--host-arch` for this Mac's architecture only), finds the
 `codesign --verify --strict --deep`, submits a zip with `notarytool --wait` (profile name:
 `TANKARD_NOTARY_PROFILE`, default `tankard`), fails unless the status is Accepted, staples,
 checks with `spctl -a -vv`, and zips the stapled app with `ditto -c -k --keepParent`.
+After every submission, accepted or not, it fetches Apple's log with `notarytool log`
+(0.8.4), prints it and keeps it as `dist/notary-log.json`, next to `notarytool submit`'s
+answer in `dist/notary-result.json`. The log is the submission id, status, archive name,
+upload date, the zip's sha256, the cdhash of every signed binary Apple ticketed (the app
+and `tankard-askpass`) and the issues list (path, message and help link for each); no
+Apple ID, password or certificate. An Invalid submission still fails the release, after
+its log is printed; an Accepted one whose log can't be fetched (three tries) only warns.
 `--skip-notarize` stops after signing. Before notarizing it real-launches the signed app
 five times with `Scripts/launch-check.sh` and stops if it crashes (`--skip-launch-check`
 only on a Mac with no GUI session; then run the check on the downloaded zip before
@@ -1211,7 +1219,10 @@ hardened-runtime build reads real brew data.)
 
 **On GitHub.** `.github/workflows/release.yml` runs on a `v*` tag push (or by hand with a
 tag), on `macos-15`: tests, imports the certificate, runs `Scripts/release.sh`, and
-attaches `Tankard.zip` to the release. Actions are pinned by commit SHA. The owner must add
+attaches `Tankard.zip` to the release. A step with `if: always()` uploads
+`notary-result.json` and `notary-log.json` as the workflow artifact `notary-<tag>` (kept
+90 days), so a failed notarization leaves Apple's issues list behind (Actions ▸ the run ▸
+Artifacts, or `gh run download <run-id> -n notary-<tag>`). Actions are pinned by commit SHA. The owner must add
 five repository secrets first (the workflow stops with a clear message if any is missing):
 
 | secret | value |
@@ -1223,6 +1234,38 @@ five repository secrets first (the workflow stops with a clear message if any is
 | `NOTARY_PASSWORD` | app-specific password |
 
 No secrets live in the repository.
+
+### Every rc: the signed-pair self-update test
+
+`Scripts/rc-selfupdate-signed.sh RC_TAG [--prev TAG]` (0.8.4) runs the self-update
+end to end on what users get: the rc's notarized `Tankard.zip` from its draft release
+against the previous release's (default: the latest published non-prerelease). It
+downloads both with `gh release download` (a draft needs a gh login with access to the
+repository; otherwise pass the rc's zip with `--new-zip`, and `--old-zip` likewise),
+unzips each with `ditto`, and checks both: `codesign --verify --deep --strict`,
+`spctl -a -vv -t exec` saying `source=Notarized Developer ID`, `stapler validate`,
+`tankard-askpass` signed with the hardened runtime, a Developer ID and a secure
+timestamp, one Team ID, each version matching its tag (the rc's without the suffix, as
+the release workflow builds it) and the rc newer. `--verify-only` stops there; then it
+runs `Scripts/e2e-selfupdate.sh` (needs an unlocked GUI session; nothing else may answer
+a Gatekeeper prompt). Output in `--out DIR` (default: a new folder in `$TMPDIR`).
+
+Release builds honour the script hooks (`TANKARD_E2E*` are read at runtime, not compiled
+out), and every release from 0.8.3 on has the self-update steps. But a build before
+0.8.4 relaunches the new copy with its whole environment, so the rc, relaunched by a
+0.8.3, runs the old copy's script again and quits; phase A can't judge that pair. The
+script finds out from the old binary (0.8.4's relaunch log text) and then runs:
+
+- phases B and C with OLD = the previous release: the shipped old build with a sheet
+  open, replaced by the notarized rc;
+- phase A with OLD = the rc's tag rebuilt here as `<version>-e2e.0` (ad hoc, or signed
+  with `TANKARD_SIGN_ID`) and NEW = the notarized rc: the rc's own update and relaunch
+  code installing and starting the notarized rc, which brew has quarantined (the
+  harness removes quarantine only from OLD).
+
+So until the previous release is 0.8.4 or later, the shipped old build's own
+Upgrade-and-Relaunch path is not covered by this test. From then on all three phases run
+on the two notarized builds.
 
 ### Release notes
 

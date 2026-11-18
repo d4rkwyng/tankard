@@ -88,6 +88,22 @@ jobs:
           V="${TAG#v}"; export TANKARD_VERSION="${V%%-*}"
           ./Scripts/release.sh
 
+      # Apple's notarization answer and log, kept also when the step above
+      # failed (an Invalid submission's issues list is in the log). Apple's
+      # log has no credentials: id, status, archive name, sha256, cdhashes
+      # and the issues. Nothing to upload when the run stopped before
+      # notarizing.
+      - name: Keep the notarization log
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: notary-${{ env.TAG }}
+          path: |
+            dist/notary-result.json
+            dist/notary-log.json
+          if-no-files-found: ignore
+          retention-days: 90
+
       - name: Upload to the release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3  # v3
         with:
