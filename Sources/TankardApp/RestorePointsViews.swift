@@ -253,10 +253,12 @@ struct RestoreConfirmView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(plan.steps.count == 1 ? String(localized: "Run 1 brew command?") : String(localized: "Run \(plan.steps.count) brew commands?"))
+            // 0.8.5 (L6): with nothing to run, why (not "Run 0 brew commands?").
+            Text(plan.confirmTitle)
                 .font(.system(size: 16, weight: .bold))
-            Text("One at a time through Tankard's queue. Each is recorded in History.")
+            Text(plan.confirmSubtitle)
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             if let notice = plan.notice {
                 // The plan changed since it was shown (an old keg was cleaned up).
                 Text(notice)
@@ -269,7 +271,7 @@ struct RestoreConfirmView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            if let notIncluded = plan.notIncludedText {
+            if let notIncluded = plan.notIncludedText, !plan.steps.isEmpty {
                 Text(notIncluded)
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

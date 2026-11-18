@@ -339,6 +339,24 @@ public struct RestorePlan: Sendable, Equatable {
         }
         return String(localized: "Nothing here can be restored automatically")
     }
+    /// 0.8.5 (bug hunt L6): the confirmation's title. With nothing left to
+    /// run it said "Run 0 brew commands?"; now it says why.
+    public var confirmTitle: String {
+        switch steps.count {
+        case 0: return String(localized: "Nothing to restore")
+        case 1: return String(localized: "Run 1 brew command?")
+        default: return String(localized: "Run \(steps.count) brew commands?")
+        }
+    }
+
+    /// Under the title: how the commands run, or, with none, why not and
+    /// each package's reason.
+    public var confirmSubtitle: String {
+        guard steps.isEmpty else { return String(localized: "One at a time through Tankard's queue. Each is recorded in History.") }
+        let reasons = manual.map { "\($0.change.now.name): \($0.block.title)" }
+        return ([nothingToRestoreReason] + reasons).joined(separator: "\n")
+    }
+
     /// Set when the plan changed between showing it and confirming it (an
     /// old keg was cleaned up meanwhile): why, for the confirmation.
     public var notice: String?
