@@ -29,6 +29,9 @@
 # Cleans up the cask, the tap, /Applications/Tankard.app and its processes.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+# step_result, relaunch_logged, ran_tankard_code, no_instance_yield
+# (0.8.4; `Scripts/e2e-selfupdate-checks.sh --self-test` checks them).
+source Scripts/e2e-selfupdate-checks.sh
 
 OLD= NEW= OUT=
 while [ $# -gt 0 ]; do
@@ -91,6 +94,7 @@ cleanup() {
     echo "after cleanup: pids=[$(pids)] app=$([ -e "$APP" ] && echo present || echo absent) tap=$(qbrew tap | grep -cx "$TAP")" | tee -a "$OUT/summary.txt"
 }
 trap cleanup EXIT
+trap 'exit 130' INT TERM
 
 # MARK: the tap and its cask
 qbrew tap-new --no-git "$TAP" > "$OUT/brew.log" 2>&1 || { echo "tap-new failed" >&2; exit 1; }
@@ -186,10 +190,26 @@ STEPS
     echo "$(now) A: after: pids=[$NEWPID] bundle=$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist") ips_new=$(ips_new)" | tee -a "$D/events.txt"
     [ -n "$NEWPID" ] && ps -o pid=,lstart=,command= -p "$NEWPID" | tee -a "$D/events.txt"
     stop_watch
-    if [ "$OLDRC" = 0 ] && one_new_running "$OLDPID" && [ "$(ips_new)" = 0 ]; then
-        record "A fixed->newer relaunch: PASS (old $OLDPID gone, one Tankard $NEWPID running $VNEW, no .ips)"
+    # 0.8.4: a pid count and the bundle's version aren't evidence on their
+    # own (rc2 passed with a new pid that never logged a line). Also
+    # required: steps 1-5 passed in the old copy, its relaunch helper and
+    # terminate lines, no copy yielding to another, and a line from the new
+    # pid itself.
+    WHY=()
+    for s in "1 expect-ready" "2 check-updates $VNEW brew" "3 upgrade-self $VNEW" "4 expect-quiet 5" "5 open-sheet history"; do
+        r=$(step_result "$D/results.jsonl" "${s%% *}" "${s#* }") || WHY+=("step ${s%% *} ${s#* }: $r")
+    done
+    r=$(relaunch_logged "$D/logstream.txt" "$OLDPID") || WHY+=("relaunch: $r")
+    r=$(no_instance_yield "$D/logstream.txt") || WHY+=("$r")
+    NEWRAN=$(ran_tankard_code "$D/logstream.txt" "$NEWPID") || WHY+=("new pid: $NEWRAN")
+    [ "$OLDRC" = 0 ] || WHY+=("old pid exit status $OLDRC")
+    one_new_running "$OLDPID" || WHY+=("not exactly one new Tankard running $VNEW: pids=[$(pids)]")
+    [ "$(ips_new)" = 0 ] || WHY+=("ips_new=$(ips_new)")
+    printf 'A evidence: %s\n' "${WHY[@]:-all present}" >> "$D/events.txt"
+    if [ ${#WHY[@]} = 0 ]; then
+        record "A fixed->newer relaunch: PASS (old $OLDPID: steps 1-5 passed, helper + terminate logged, gone; one Tankard $NEWPID running $VNEW, its log: ${NEWRAN#ok: }; no yield, no .ips)"
     else
-        record "A fixed->newer relaunch: FAIL (pids=[$(pids)], ips_new=$(ips_new); see $D)"
+        record "A fixed->newer relaunch: FAIL ($(IFS=';'; echo "${WHY[*]}"); see $D)"
     fi
 else
     record "A: FAIL (install of $VOLD)"
@@ -205,7 +225,7 @@ echo "$(now) B: first pid $FIRST; open -n" | tee "$D/events.txt"
 open -n "$APP"; sleep 6
 echo "$(now) B: after: pids=[$(pids)]" | tee -a "$D/events.txt"
 stop_watch
-if [ "$(pids)" = "$FIRST" ] && grep -q "yield" "$D/logstream.txt" && [ "$(ips_new)" = 0 ]; then
+if [ "$(pids)" = "$FIRST" ] && grep -q "yield(to: $FIRST)" "$D/logstream.txt" && [ "$(ips_new)" = 0 ]; then
     record "B same-build double launch: PASS (second launch yielded to $FIRST and quit)"
 else
     record "B same-build double launch: FAIL (pids=[$(pids)], first $FIRST; see $D)"
@@ -227,10 +247,19 @@ STEPS
     start_watch "$D"
     env $(script_env "$D") "$APP/Contents/MacOS/Tankard" -ApplePersistenceIgnoreState YES > "$D/app.log" 2>&1 &
     OLDPID=$!
-    sheet_up() { ls "$D"/02-open-sheet* >/dev/null 2>&1 || ! kill -0 $OLDPID 2>/dev/null; }
-    wait_for 180 sheet_up >/dev/null
-    kill -0 $OLDPID 2>/dev/null || echo "$(now) C: old pid $OLDPID exited before its sheet was up" | tee -a "$D/events.txt"
-    echo "$(now) C: old pid $OLDPID has its sheet up; brew upgrade to $VNEW (no quit), then open -n" | tee -a "$D/events.txt"
+    # 0.8.4: wait for step 2's result line (the screenshot alone was taken
+    # as "sheet up", and the wait timing out went on regardless: rc2's C
+    # said "has its sheet up" with no results.jsonl at all).
+    sheet_done() { [ "$(step_result "$D/results.jsonl" 2 "open-sheet history")" != missing ] || ! kill -0 $OLDPID 2>/dev/null; }
+    wait_for 180 sheet_done >/dev/null
+    SHEET=$(step_result "$D/results.jsonl" 2 "open-sheet history")
+    if [ "$SHEET" != ok ] || ! kill -0 $OLDPID 2>/dev/null; then
+        echo "$(now) C: no sheet up in old pid $OLDPID (step 2: $SHEET; $(kill -0 $OLDPID 2>/dev/null && echo running || echo exited))" | tee -a "$D/events.txt"
+        stop_watch
+        record "C stale copy with sheet: FAIL (the sheet never came up: step 2 $SHEET; see $D)"
+        quit_all
+    else
+    echo "$(now) C: old pid $OLDPID has its sheet up (step 2: ok); brew upgrade to $VNEW (no quit), then open -n" | tee -a "$D/events.txt"
     write_cask new
     HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 qbrew upgrade --cask "$CASK" >> "$OUT/brew.log" 2>&1
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
@@ -246,6 +275,7 @@ STEPS
         record "C stale copy with sheet: PASS (new copy asked $OLDPID to quit; alert lines: $ALERT; one Tankard $(pids) running $VNEW)"
     else
         record "C stale copy with sheet: FAIL (pids=[$(pids)]; see $D)"
+    fi
     fi
 else
     record "C: FAIL (install of $VOLD)"

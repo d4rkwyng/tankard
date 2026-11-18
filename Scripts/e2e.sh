@@ -120,7 +120,11 @@ if [ "${STEPS_HELP:-0}" = 1 ]; then
     # The vocabulary, from the app itself (an unknown verb lists it).
     tmp=$(mktemp -d)
     echo "help" > "$tmp/s"
-    TANKARD_E2E=1 TANKARD_SCRIPT="$tmp/s" TANKARD_SCRIPT_OUT="$tmp/o" TANKARD_DEMO=intelbrew "$BIN" -ApplePersistenceIgnoreState YES 2>&1 >/dev/null | sed 's/^e2e: //'
+    # Its own suite, deleted after (without one the app falls back to the
+    # shared net.mindtricks.tankard.e2e, which then stays behind).
+    TANKARD_E2E=1 TANKARD_E2E_SUITE=net.mindtricks.tankard.e2e.$$ TANKARD_SCRIPT="$tmp/s" TANKARD_SCRIPT_OUT="$tmp/o" TANKARD_DEMO=intelbrew "$BIN" -ApplePersistenceIgnoreState YES 2>&1 >/dev/null | sed 's/^e2e: //'
+    defaults delete net.mindtricks.tankard.e2e.$$ >/dev/null 2>&1
+    rm -f ~/Library/Preferences/net.mindtricks.tankard.e2e.$$.plist
     rm -rf "$tmp"
     exit 0
 fi
@@ -171,6 +175,10 @@ delete_suite() {
     defaults delete "$SUITE" >/dev/null 2>&1 || true
     rm -f ~/Library/Preferences/"$SUITE".plist
 }
+# Also on any exit (a failed check's exit 1, ^C, a kill), not just after the
+# last scenario: before 0.8.4 an interrupted run left its suite behind.
+trap 'delete_suite; release_lock' EXIT
+trap 'delete_suite; release_lock; exit 130' INT TERM
 
 BREW=$(command -v brew || true)
 [ -n "$BREW" ] || { echo "e2e.sh: no brew on PATH" >&2; exit 1; }
