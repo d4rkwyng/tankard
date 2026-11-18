@@ -20,6 +20,7 @@ struct RestorePointsSheet: View {
     @Bindable var store: AppStore
     var points: RestorePointStore
     @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
     // `State(...)`, not `@State`: see CommandBox (the macro needs Xcode).
     private let pinAfterState = State(initialValue: true)
 
@@ -40,6 +41,21 @@ struct RestorePointsSheet: View {
                     Text("Saved before each upgrade and auto-update run. The last \(RestorePointStore.maxPoints) are kept.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
+            }
+            // 0.8.5: say up front why upgrades can't be rolled back.
+            if points.showsKeepOldVersionsBanner {
+                HStack(spacing: 10) {
+                    Image(systemName: "info.circle.fill").foregroundStyle(theme.warning(scheme).text)
+                    Text("Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades.")
+                        .font(.system(size: 12))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Button("Keep Old Versions") { points.keepOldVersions() }
+                        .help("Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back.")
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(RoundedRectangle(cornerRadius: 8).fill(theme.chip.opacity(0.8)))
             }
             if points.points.isEmpty {
                 Text("No restore points yet. One is saved before the next upgrade.")
@@ -106,7 +122,8 @@ struct RestoreDiffView: View {
                     if !diff.upgraded.isEmpty {
                         DiffSection(title: String(localized: "Upgraded (\(diff.upgraded.count))")) {
                             ForEach(diff.upgraded) { c in
-                                UpgradedRow(change: c, eligibility: RollbackPolicy.eligibility(c, installed: store.packages))
+                                UpgradedRow(change: c, eligibility: RollbackPolicy.eligibility(c, installed: store.packages),
+                                            keepPrevious: store.restorePoints.settings.keepPreviousVersion)
                             }
                         }
                     }
@@ -156,7 +173,7 @@ struct RestoreDiffView: View {
                 Button("Restore…") { store.requestRestore(point, pinAfter: pinAfter) }
                     .buttonStyle(.primaryAction)
                     .disabled(plan.steps.isEmpty || store.isBusy)
-                    .help(plan.steps.isEmpty ? String(localized: "Nothing here can be restored automatically") : String(localized: "Shows the brew commands first"))
+                    .help(plan.steps.isEmpty ? plan.nothingToRestoreReason : String(localized: "Shows the brew commands first"))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -193,6 +210,7 @@ private struct PlainDiffRow: View {
 private struct UpgradedRow: View {
     var change: RestoreDiff.Change
     var eligibility: RollbackEligibility
+    var keepPrevious = false
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var scheme
 
@@ -209,7 +227,7 @@ private struct UpgradedRow: View {
                         .help("The old version is still installed. brew uninstall removes the new one, then brew link links the old one.")
                 case .manual(let block):
                     Text(block.title).font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
-                        .help("Can't roll back automatically. " + block.explanation)
+                        .help("Can't roll back automatically. " + block.explanation(keepPrevious: keepPrevious))
                 }
             }
             if case .manual(let block) = eligibility {
@@ -220,7 +238,7 @@ private struct UpgradedRow: View {
                     }
                         .help(block == .cleanedUp
                               ? String(localized: "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on.")
-                              : block.explanation)
+                              : block.explanation(keepPrevious: keepPrevious))
                 }
             }
         }
@@ -251,9 +269,10 @@ struct RestoreConfirmView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            if !plan.manual.isEmpty {
-                Text("Not included: \(plan.manual.map(\.change.now.name).joined(separator: ", ")) (can't roll back automatically)")
+            if let notIncluded = plan.notIncludedText {
+                Text(notIncluded)
                     .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 0)
             HStack {
