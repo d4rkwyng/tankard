@@ -217,6 +217,9 @@ public final class AppStore {
     /// sheets taller than a small window (`SheetHeight.fit`). nil before
     /// the window has laid out.
     public var sheetRoom: Double?
+    /// 0.8.6 (UI details M8): the main window's content width (the detail
+    /// pane narrows in a narrow window, `DetailPaneWidth`).
+    public var windowWidth: Double?
 
     public var showUpgradeSheet = false {
         didSet {

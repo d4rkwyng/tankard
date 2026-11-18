@@ -66,8 +66,9 @@ struct ContentView: View {
         // 0.8.6 (UI M2): how tall a sheet can be in this window.
         .background(GeometryReader { geo in
             Color.clear
-                .onAppear { store.sheetRoom = Double(geo.size.height) }
+                .onAppear { store.sheetRoom = Double(geo.size.height); store.windowWidth = Double(geo.size.width) }
                 .onChange(of: geo.size.height) { _, h in store.sheetRoom = Double(h) }
+                .onChange(of: geo.size.width) { _, w in store.windowWidth = Double(w) }
         })
         .onChange(of: store.tab) { _, tab in
             store.tabChanged(to: tab)
@@ -138,7 +139,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     Divider()
                     DetailPane(store: store)
-                        .frame(width: 272)
+                        .frame(width: CGFloat(DetailPaneWidth.width(window: store.windowWidth)))
                         .frame(maxHeight: .infinity)
                         .background(theme.pane)
                 }
@@ -555,7 +556,7 @@ struct PackageTable: View {
             TableColumn("Size", value: \Package.sizeSortKey) { p in
                 SizeCell(package: p)
             }
-            .width(min: 56, ideal: 72)
+            .width(min: 64, ideal: 72)
         }
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)

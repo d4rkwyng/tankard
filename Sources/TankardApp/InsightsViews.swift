@@ -63,7 +63,8 @@ struct SizeCell: View {
 
     var body: some View {
         if let b = package.diskBytes {
-            VersionText(text: DiskSizes.format(b), same: true)
+            // 0.8.6 (UI M8): a size never loses digits from its middle.
+            VersionText(text: DiskSizes.format(b), same: true).fixedSize()
         } else {
             VersionText(text: "–", same: true)
         }

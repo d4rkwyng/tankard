@@ -401,6 +401,21 @@ public enum SheetHeight {
     }
 }
 
+/// 0.8.6 (UI details M8): at the minimum window width (820 pt) the table's
+/// columns couldn't fit beside a 272 pt detail pane: sizes lost digits
+/// from the middle ("77…5"), a header read "Grö". Below 900 pt the pane
+/// is 224 pt.
+public enum DetailPaneWidth {
+    public static let regular: Double = 272
+    public static let narrow: Double = 224
+    public static let narrowBelow: Double = 900
+
+    public static func width(window: Double?) -> Double {
+        guard let w = window, w < narrowBelow else { return regular }
+        return narrow
+    }
+}
+
 /// The Intelbrew fork line in the status bar.
 public struct ForkSummary: Equatable, Sendable {
     public enum Level: Sendable { case ok, warning, problem }

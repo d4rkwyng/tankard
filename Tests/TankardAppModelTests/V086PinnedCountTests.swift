@@ -48,3 +48,16 @@ struct V086SheetHeightTests {
         #expect(SheetHeight.fit(480, room: 600) == 480)
     }
 }
+
+// 0.8.6 (UI details M8): the detail pane narrows in a narrow window.
+struct V086DetailWidthTests {
+    @Test func narrowWindowNarrowPane() {
+        #expect(DetailPaneWidth.width(window: nil) == 272)
+        #expect(DetailPaneWidth.width(window: 1040) == 272)
+        #expect(DetailPaneWidth.width(window: 820) == 224)
+        // Table minimums (150+80+80+120+64) and spacing still fit beside it at 820.
+        let columns: Double = 150 + 80 + 80 + 120 + 64 + 85
+        let left: Double = 820 - DetailPaneWidth.width(window: 820) - 1
+        #expect(left >= columns)
+    }
+}
