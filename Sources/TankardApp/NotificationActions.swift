@@ -42,12 +42,25 @@ enum NotificationActions {
     static func showMainWindow() {
         AppDelegate.dock?.prepareToShowWindow()
         NSApp.activate(ignoringOtherApps: true)
-        if let w = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true && ($0.isVisible || $0.isMiniaturized) }) {
-            if w.isMiniaturized { w.deminiaturize(nil) }
-            w.makeKeyAndOrderFront(nil)
-        } else {
+        if !bringBackMainWindow() {
             openWindow?(id: "main")
         }
+    }
+
+    /// The existing main window to the front, out of the Dock if it was
+    /// minimized. false: there is none (open one). 0.8.5: also the menu
+    /// bar's Open Tankard (MainWindowPick).
+    @discardableResult
+    static func bringBackMainWindow() -> Bool {
+        let windows = NSApp.windows
+        let candidates = windows.map {
+            MainWindowPick.Candidate(identifier: $0.identifier?.rawValue, isVisible: $0.isVisible, isMiniaturized: $0.isMiniaturized)
+        }
+        guard let i = MainWindowPick.pick(candidates) else { return false }
+        let w = windows[i]
+        if w.isMiniaturized { w.deminiaturize(nil) }
+        w.makeKeyAndOrderFront(nil)
+        return true
     }
 }
 

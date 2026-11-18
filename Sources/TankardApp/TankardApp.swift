@@ -395,9 +395,8 @@ struct MenuBarPanel: View {
         // 0.8.1: back to a Dock icon before the window shows.
         AppDelegate.dock?.prepareToShowWindow()
         NSApp.activate(ignoringOtherApps: true)
-        if let w = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true && $0.isVisible }) {
-            w.makeKeyAndOrderFront(nil)
-        } else {
+        // 0.8.5 (M5): a minimized window comes back, not a second window.
+        if !NotificationActions.bringBackMainWindow() {
             openWindow(id: "main")
         }
     }
