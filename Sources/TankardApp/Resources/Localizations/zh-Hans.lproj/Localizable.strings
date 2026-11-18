@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld 个软件包";
 "%@ %lld packages" = "%@ %lld 个软件包";
+"%@ (%lld of %lld)" = "%@ (%lld / %lld)";
 "%@ and %lld more" = "%@ 及另外 %lld 个";
 "%@ and more" = "%@ 等";
 "%@ can't be uninstalled" = "无法卸载 %@";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld 个无 bottle";
 "%lld not checked" = "%lld 个未检查";
 "%lld of %lld" = "%lld / %lld";
+"%lld of %lld versions" = "%lld / %lld 个版本";
 "%lld pinned upgrade not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld pinned upgrades not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld result for “%@”" = "%lld 个“%@”的结果";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld 个已停止";
 "%lld tap" = "%lld 个 tap";
 "%lld taps" = "%lld 个 tap";
+"%lld uninstalled (%lld version)" = "已卸载 %lld 个 (%lld 个版本)";
+"%lld uninstalled (%lld versions)" = "已卸载 %lld 个 (%lld 个版本)";
 "%lld upgrade ready" = "%lld 个可升级";
 "%lld upgraded" = "%lld 个已升级";
 "%lld upgrades ready" = "%lld 个可升级";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "升级 1 个软件包？";
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";
+"Upgrade Plan" = "升级计划";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "用 brew upgrade --cask tankard 升级 Tankard（自动更新不处理 Tankard，留给 brew）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";
+"Upgrade finished" = "升级已完成";
+"Upgrade finished with problems" = "升级已完成，但有问题";
 "Upgrade only the packages that pour a bottle; skip %@" = "仅升级使用 bottle 的软件包；跳过 %@";
 "Upgrade packages automatically" = "自动升级软件包";
 "Upgrade ready: " = "升级已就绪： ";

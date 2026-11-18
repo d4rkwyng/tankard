@@ -103,6 +103,7 @@ struct UpgradePlanView: View {
                 .keyboardShortcut(.defaultAction)
                 .disabled(plan.toRun.isEmpty)
             }
+            .panelButtonRow("plan.buttons")
             .padding(.top, 14)
         }
         .padding(20)

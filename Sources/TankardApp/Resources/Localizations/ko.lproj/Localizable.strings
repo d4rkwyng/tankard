@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ 패키지 %lld개";
 "%@ %lld packages" = "%@ 패키지 %lld개";
+"%@ (%lld of %lld)" = "%@ (%lld/%lld)";
 "%@ and %lld more" = "%@ 외 %lld개";
 "%@ and more" = "%@ 등";
 "%@ can't be uninstalled" = "%@을(를) 제거할 수 없음";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "bottle 없음 %lld개";
 "%lld not checked" = "검사 안 됨 %lld개";
 "%lld of %lld" = "%lld/%lld";
+"%lld of %lld versions" = "%lld/%lld 버전";
 "%lld pinned upgrade not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld pinned upgrades not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld result for “%@”" = "“%2$@” 결과 %1$lld개";
@@ -122,6 +124,8 @@
 "%lld stopped" = "중지됨 %lld개";
 "%lld tap" = "tap %lld개";
 "%lld taps" = "tap %lld개";
+"%lld uninstalled (%lld version)" = "%lld개 제거됨 (%lld개 버전)";
+"%lld uninstalled (%lld versions)" = "%lld개 제거됨 (%lld개 버전)";
 "%lld upgrade ready" = "업그레이드 %lld개 준비됨";
 "%lld upgraded" = "업그레이드됨 %lld개";
 "%lld upgrades ready" = "업그레이드 %lld개 준비됨";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
 "Upgrade All…" = "모두 업그레이드…";
+"Upgrade Plan" = "업그레이드 계획";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";
+"Upgrade finished" = "업그레이드 완료";
+"Upgrade finished with problems" = "업그레이드 완료 (문제 있음)";
 "Upgrade only the packages that pour a bottle; skip %@" = "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: " = "업그레이드 준비됨: ";

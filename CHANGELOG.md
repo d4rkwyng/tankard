@@ -17,6 +17,10 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Closing the upgrade window mid-run says that brew keeps going** (once per session), and a hidden run posts a notification when it finishes, done or with problems. The menu-bar line reads Show Upgrade Progress, Show Upgrade Results or Show Upgrade Plan, and goes back to Upgrade All once the results are closed.
 - **The upgrade window remembers where you put it** until Tankard quits, opens on the screen you're using and on the current Space (also over a full-screen app).
 - **The "Tankard upgraded N packages" notification follows macOS's notification setting for Tankard**, not the "new upgrades" setting.
+- **The upgrade window fits each page.** It stayed 600×400 whatever it showed, so a run lost its title and its whole button row (Stop, Show in Tankard, Retry, Close): a failed menu-bar upgrade had no visible way out. It now takes each page's size (plan, run, results, notes), up to the screen's height, past which the page scrolls. `Scripts/panel-check.sh` renders every page and checks the title and buttons are inside the window.
+- **The upgrade window is named for what it shows**: "Upgrading 3 packages", then "Upgrade finished" or "Upgrade finished with problems", not a second "Tankard".
+- **A menu-bar Upgrade never starts a run behind a plan or another sheet**: it shows what is already up instead.
+- **Uninstalling every version of a formula counts in plain words**: "2 uninstalled (4 versions)" beside "4 of 4 versions", and each step's chip names the version brew removed ("xz 5.8.3"; "xz (1 of 2)" until brew says).
 - A lock-wait test that failed under a loaded test run now waits on the queue's events instead of a clock.
 
 ## [0.8.4]

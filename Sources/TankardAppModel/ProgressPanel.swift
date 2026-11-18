@@ -30,9 +30,14 @@ public extension AppStore {
     /// `.mainWindowSheet` (as 0.8.4 did), nothing for `.progressPanel`.
     @discardableResult
     func requestUpgradeFromMenuBar(_ packages: [Package]? = nil, windowInFront: Bool) -> ActivityPresentation {
-        // 0.8.5 (review): the panel's plan or unread result first.
-        if progressPanelHoldsActivity { return showActivity(windowInFront: windowInFront) }
-        guard !windowInFront, !showUpgradeSheet, !isUpgrading else {
+        // 0.8.5 (review): the panel's plan or unread result, or the run
+        // going, first; nothing new starts.
+        if progressPanelHoldsActivity || isUpgrading { return showActivity(windowInFront: windowInFront) }
+        // 0.8.5 (test pass M2, M4): a sheet already up in the window (a
+        // plan, post-install notes, any other): the caller opens the
+        // window, where it is; nothing starts behind it.
+        if isSheetPresented { return .mainWindowSheet }
+        guard !windowInFront else {
             requestUpgrade(packages)
             return .mainWindowSheet
         }
@@ -72,6 +77,22 @@ public extension AppStore {
         showUpgradeSheet = true
         if activityPresentation == .progressPanel { progressPanelFrontRequests += 1 }
         return activityPresentation
+    }
+
+    /// 0.8.5 (test pass L4): the progress panel's window title, not a
+    /// second "Tankard": "Upgrading 3 packages", then "Upgrade finished"
+    /// or "Upgrade finished with problems" (a stop: "Upgrade stopped").
+    var progressPanelTitle: String {
+        let app = intelbrewMode ? "Intelbrew" : "Tankard"
+        if progressPanelNotes != nil { return String(localized: "Post-install notes") }
+        if appManagementPrompt != nil || appManagementResume != nil || interruptedRun != nil { return app }
+        if let u = upgrade {
+            guard u.action == .upgrade, u.isFinished, !u.stopRequested else { return u.title }
+            return u.hasProblems || !u.finishedCleanly
+                ? String(localized: "Upgrade finished with problems") : String(localized: "Upgrade finished")
+        }
+        if upgradePlan != nil { return String(localized: "Upgrade Plan") }
+        return app
     }
 
     /// There is something Show Upgrade Progress can show.
@@ -271,5 +292,27 @@ public enum MainWindowFront {
     public static func inFront(appActive: Bool, mainWindowHadFocus: Bool, windows: [Window]) -> Bool {
         guard appActive, mainWindowHadFocus else { return false }
         return windows.contains { $0.isMain && $0.isVisible && !$0.isMiniaturized && $0.isUnoccluded && $0.isOnActiveSpace }
+    }
+}
+
+public extension AppStore {
+    /// 0.8.5, demo only (TANKARD_DEMO_PANEL): the progress panel on one
+    /// page, for the render check (Scripts/panel-check.sh): `plan`,
+    /// `running`, `finished` (no auto-close), `failed` (with
+    /// TANKARD_DEMO_FAIL naming one of the run's packages) or `notes`.
+    func demoProgressPanel(_ page: String) {
+        progressPanelAutoClose = .seconds(3600)
+        activityPresentation = .progressPanel
+        let plain = upgradable.filter { $0.kind == .formula && $0.caveats == nil }
+        switch page {
+        case "plan":
+            requestUpgradeAllPlan()
+        case "notes":
+            progressPanelAutoClose = .zero
+            startUpgrade(Array(upgradable.filter { $0.caveats != nil }.prefix(1)))
+        default:
+            startUpgrade(Array(plain.prefix(3)))
+        }
+        if !showUpgradeSheet { activityPresentation = .mainWindowSheet }
     }
 }

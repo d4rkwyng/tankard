@@ -432,6 +432,9 @@ dialog for a cask appears above it.
   notifications off for Tankard, nothing is shown and everything else works the same.
 - With the Tankard window already in front (Tankard active, you were last in its window,
   and the window not covered or on another Space), Upgrade All opens the usual sheet on it.
+- The window is titled for what it shows ("Upgrading 3 packages", "Upgrade finished", "Upgrade
+  finished with problems") and takes each page's size; a page taller than the screen scrolls.
+- A menu-bar Upgrade while a plan or another sheet is up shows that first and starts nothing.
 - The window opens in the middle of the screen you're on, then where you last left it
   until Tankard quits. It opens on the Space you are on, also over a full-screen app.
 - While the window shows a run, its results or a plan, the Tankard window's own Upgrade,

@@ -88,7 +88,9 @@ struct NotificationClickTests {
     @Test func coldLaunchWaitsForTheList() async throws {
         let (store, log) = await rig(start: false)
         #expect(store.report == nil)
-        let click = Task { await store.handleNotification(.upgradeAll, timeout: .seconds(5)) }
+        // 0.8.5: the cap only bounds a wait that ends as soon as the list
+        // is read; 5 s ran out once under a loaded full suite (8.2 s).
+        let click = Task { await store.handleNotification(.upgradeAll, timeout: .seconds(120)) }
         await store.start()
         await click.value
         #expect(store.upgradePlan != nil)

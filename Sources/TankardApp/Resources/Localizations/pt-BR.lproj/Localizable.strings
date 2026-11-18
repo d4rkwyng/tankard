@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld pacote";
 "%@ %lld packages" = "%@ %lld pacotes";
+"%@ (%lld of %lld)" = "%@ (%lld de %lld)";
 "%@ and %lld more" = "%@ e mais %lld";
 "%@ and more" = "%@ e outros";
 "%@ can't be uninstalled" = "%@ não pode ser desinstalado";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld sem bottle";
 "%lld not checked" = "%lld não verificados";
 "%lld of %lld" = "%lld de %lld";
+"%lld of %lld versions" = "%lld de %lld versões";
 "%lld pinned upgrade not included (%@)" = "%lld atualização fixada não incluída (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld atualizações fixadas não incluídas (%@)";
 "%lld result for “%@”" = "%lld resultado para “%@”";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld parados";
 "%lld tap" = "%lld tap";
 "%lld taps" = "%lld taps";
+"%lld uninstalled (%lld version)" = "%lld desinstalado(s) (%lld versão)";
+"%lld uninstalled (%lld versions)" = "%lld desinstalado(s) (%lld versões)";
 "%lld upgrade ready" = "%lld atualização pronta";
 "%lld upgraded" = "%lld atualizados";
 "%lld upgrades ready" = "%lld atualizações prontas";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "Atualizar 1 pacote?";
 "Upgrade All" = "Atualizar tudo";
 "Upgrade All…" = "Atualizar tudo…";
+"Upgrade Plan" = "Plano de atualização";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Atualize o Tankard com brew upgrade --cask tankard (a atualização automática deixa o Tankard para o brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Atualize novamente da forma habitual: avisos de compilação, fixações e versões ignoradas continuam valendo";
 "Upgrade available: %@" = "Atualização disponível: %@";
 "Upgrade builds from source" = "Atualização compila da origem";
 "Upgrade command" = "Comando de atualização";
+"Upgrade finished" = "Atualização concluída";
+"Upgrade finished with problems" = "Atualização concluída com problemas";
 "Upgrade only the packages that pour a bottle; skip %@" = "Atualizar apenas os pacotes que usam bottle; ignorar %@";
 "Upgrade packages automatically" = "Atualizar pacotes automaticamente";
 "Upgrade ready: " = "Atualização pronta: ";

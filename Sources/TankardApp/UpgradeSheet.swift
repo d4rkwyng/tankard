@@ -18,6 +18,7 @@ struct UpgradeSheet: View {
                     Text(session.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
                 }
             }
+            .panelButtonRow("session.title")
             .padding(.bottom, 14)
 
             HStack {
@@ -47,7 +48,7 @@ struct UpgradeSheet: View {
 
             FlowLayout(spacing: 6) {
                 ForEach(session.items) { item in
-                    Chip(item: item, action: session.action)
+                    Chip(item: item, action: session.action, title: session.chipName(item))
                         .contextMenu {
                             // 0.8.3: one failed step again.
                             if session.retryableItems.contains(where: { $0.id == item.id }) {
@@ -155,6 +156,7 @@ struct UpgradeSheet: View {
                     }
                 }
             }
+            .panelButtonRow("session.buttons")
             .padding(.top, 14)
         }
         .padding(.horizontal, 20)
@@ -174,11 +176,14 @@ struct UpgradeSheet: View {
 struct Chip: View {
     var item: UpgradeSession.Item
     var action: SessionAction = .upgrade
+    /// 0.8.5: the session's name for the step ("xz 5.8.3" for one
+    /// version of several); nil: the package's name.
+    var title: String? = nil
     @Environment(\.theme) private var theme
 
     var body: some View {
         let compiles = (action == .upgrade || action == .install) && item.package.kind == .formula && item.package.upgradeHasBottle != true
-        let name = item.package.name + (compiles ? String(localized: " · source") : "")
+        let name = (title ?? item.package.name) + (compiles ? String(localized: " · source") : "")
         HStack(spacing: 4) {
             switch item.state {
             case .done:

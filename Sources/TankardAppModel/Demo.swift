@@ -53,6 +53,8 @@ public enum Demo {
         /// App Management block (these already failed and will succeed).
         let appManagementFailed = OSAllocatedUnfairLock<Set<String>>(initialState: [])
         let failAppManagement: Bool
+        /// 0.8.5: TANKARD_DEMO_FAIL=a,b: these packages' upgrades fail.
+        let failing: Set<String>
         /// 0.4a: pins and services (Demo+V04A.swift).
         let v04a: V04AState
         /// 0.6: `brew autoremove` ran (the dry run is empty after).
@@ -60,8 +62,9 @@ public enum Demo {
         /// 0.7: taps added, removed, trusted (Demo+Taps.swift).
         let taps = TapsDemoState()
 
-        init(failAppManagement: Bool = false, pinned: Set<String> = [], replaced: Set<String> = []) {
+        init(failAppManagement: Bool = false, pinned: Set<String> = [], replaced: Set<String> = [], failing: Set<String> = []) {
             self.failAppManagement = failAppManagement
+            self.failing = failing
             self.v04a = V04AState(pinned: pinned)
             self.replaced.withLock { $0 = replaced }
         }
@@ -108,8 +111,8 @@ public enum Demo {
 
     public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
                                     failAppManagement: Bool = false, pinned: Set<String> = [],
-                                    replaced: Set<String> = [], prefix: String? = nil) -> AppStore.Dependencies {
-        let state = State(failAppManagement: failAppManagement, pinned: pinned, replaced: replaced)
+                                    replaced: Set<String> = [], prefix: String? = nil, failing: Set<String> = []) -> AppStore.Dependencies {
+        let state = State(failAppManagement: failAppManagement, pinned: pinned, replaced: replaced, failing: failing)
         var installation: BrewInstallation
         let platform: BottlePlatform
         switch variant {
@@ -566,6 +569,12 @@ public enum Demo {
             let entry = Demo.entry(named: name, in: data)
 
             try await say("==> Fetching downloads for: \(name)\n", 400)
+            if state.failing.contains(name) {
+                try await say("==> Downloading \(name) \(entry.current)\n", 200)
+                try await say("curl: (22) The requested URL returned error: 404\n", 300)
+                try await say("Error: \(name): Failed to download resource \"\(name)\"\n", 100)
+                return 1
+            }
             if entry.cask {
                 try await say("==> Downloading \(name) \(entry.current)\n", 200)
                 try await progress(output)

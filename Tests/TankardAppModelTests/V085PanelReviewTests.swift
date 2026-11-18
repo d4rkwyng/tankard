@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Testing
 import TankardCore
 @testable import TankardAppModel
@@ -310,5 +311,122 @@ struct V085PanelReviewTests {
         store.requestUpgradeFromMenuBar(try base.plain(store), windowInFront: false)
         #expect(await waitUntil { store.upgrade == nil && !store.showUpgradeSheet })
         #expect(notifier.posted.last?.kind == .upgradeDone)
+    }
+}
+
+// 0.8.5 test pass (results.md): H1's titles (L4), M2, M4's second half,
+// and the multi-version uninstall's counts (L3).
+@MainActor
+struct V085TestPassTests {
+    let review = V085PanelReviewTests()
+    let base = V085ProgressPanelTests()
+
+    // M2: a menu-bar row's Upgrade while a plan is up starts nothing.
+    @Test func aMenuBarRowUpgradeWhileThePanelShowsAPlanStartsNothing() async throws {
+        let store = await review.rig()
+        let p = try base.plain(store)[0]
+        store.activityPresentation = .progressPanel
+        store.requestUpgradeAllPlan()
+        let rows = try #require(store.upgradePlan).rows.count
+        #expect(store.requestUpgradeFromMenuBar([p], windowInFront: false) == .progressPanel)
+        #expect(store.upgrade == nil && store.upgradePlan?.rows.count == rows)
+        #expect(store.showsProgressPanel)
+        // Window in front: the same (the plan stays where it is).
+        store.requestUpgradeFromMenuBar([p], windowInFront: true)
+        #expect(store.upgrade == nil && store.upgradePlan?.rows.count == rows)
+    }
+
+    @Test func aMenuBarRowUpgradeWhileTheWindowShowsAPlanStartsNothing() async throws {
+        let store = await review.rig()
+        let p = try base.plain(store)[0]
+        store.requestUpgradeAllPlan() // in the window's sheet
+        #expect(store.showsActivitySheet)
+        #expect(store.requestUpgradeFromMenuBar([p], windowInFront: false) == .mainWindowSheet)
+        #expect(store.upgrade == nil && store.upgradePlan != nil)
+        #expect(store.showsActivitySheet && !store.showsProgressPanel)
+    }
+
+    // M4, second half: the window's notes sheet up; a menu-bar Upgrade
+    // opens the window on it instead of starting a run behind it.
+    @Test func aMenuBarUpgradeWaitsForTheWindowsNotesSheet() async throws {
+        let store = await review.rig()
+        let p = try base.plain(store)[0]
+        store.insights.postInstallNotes = PostInstallNotes(action: .upgrade, notes: [])
+        #expect(store.isSheetPresented)
+        #expect(store.requestUpgradeFromMenuBar([p], windowInFront: false) == .mainWindowSheet)
+        #expect(store.upgrade == nil && !store.showUpgradeSheet)
+    }
+
+    // L4: the panel's window title follows the page.
+    @Test func theProgressPanelsTitleFollowsTheRun() async throws {
+        let ps = try base.plain(await review.rig(), count: 2)
+        let hold = Latch()
+        let store = await review.rig(failing: [ps[0].name], hold: hold)
+        store.progressPanelAutoClose = .seconds(3600)
+        #expect(store.progressPanelTitle == "Tankard")
+        store.activityPresentation = .progressPanel
+        store.requestUpgradeAllPlan()
+        #expect(store.progressPanelTitle == "Upgrade Plan")
+        store.cancelUpgradePlan()
+        store.requestUpgradeFromMenuBar(ps, windowInFront: false)
+        let session = try #require(store.upgrade)
+        #expect(store.progressPanelTitle == "Upgrading 2 packages")
+        hold.release()
+        #expect(await waitUntil { session.isFinished })
+        #expect(store.progressPanelTitle == "Upgrade finished with problems")
+
+        let clean = await review.rig(hold: nil)
+        clean.progressPanelAutoClose = .seconds(3600)
+        clean.requestUpgradeFromMenuBar([ps[1]], windowInFront: false)
+        let s2 = try #require(clean.upgrade)
+        #expect(await waitUntil { s2.isFinished })
+        #expect(clean.progressPanelTitle == "Upgrade finished")
+    }
+
+    // L3: one step per version: versions in the chips once brew says
+    // which, and both counts in words.
+    @Test func aMultiVersionUninstallNamesVersionsAndCountsAgree() async throws {
+        var p = Package.command("probe")
+        p.installedVersions = ["1.0", "1.1"]
+        var dep = Package.command("probe-dep")
+        dep.installedVersions = ["2.0", "2.1"]
+        let removed = OSAllocatedUnfairLock(initialState: ["probe": ["1.1", "1.0"], "probe-dep": ["2.1", "2.0"]])
+        let steps = AppStore.uninstallSteps([p, dep])
+        let hold = Latch()
+        let s = UpgradeSession(packages: steps, intelbrewMode: false, action: .uninstall,
+                               queue: CommandQueue(runner: FakeStreamRunner(log: CallLog()) { args, out in
+                                   await hold.wait()
+                                   let name = args.last ?? ""
+                                   let v = removed.withLock { $0[name]?.isEmpty == false ? $0[name]!.removeFirst() : "?" }
+                                   out(Data("Uninstalling /opt/homebrew/Cellar/\(name)/\(v)... (12 files, 40KB)\n".utf8))
+                                   return 0
+                               }),
+                               makeCommand: { p in QueuedCommand(executable: "/bin/true", arguments: [p.name], environment: [:], display: p.name) },
+                               logURL: nil, onFinish: { _ in })
+        #expect(s.total == 4 && s.packages.count == 2 && s.countsVersions)
+        #expect(s.items.map(s.chipName) == ["probe (1 of 2)", "probe (2 of 2)", "probe-dep (1 of 2)", "probe-dep (2 of 2)"])
+        hold.release()
+        #expect(await waitUntil { s.isFinished })
+        #expect(s.items.map(s.chipName) == ["probe 1.1", "probe 1.0", "probe-dep 2.1", "probe-dep 2.0"])
+        #expect(s.countLine == "4 of 4 versions")
+        #expect(s.statusLine(behindBrewUpdate: false) == "2 uninstalled (4 versions)")
+    }
+
+    @Test func removedVersionReadsBrewsLine() {
+        let lines = ["==> Something", "Uninstalling /usr/local/Cellar/xz/5.8.3... (95 files, 1.9MB)"]
+        #expect(UpgradeSession.removedVersion(lines, name: "xz") == "5.8.3")
+        #expect(UpgradeSession.removedVersion(lines, name: "lzma") == nil)
+        #expect(UpgradeSession.removedVersion(["==> Uninstalling Cask firefox"], name: "firefox") == nil)
+    }
+
+    // A single-version uninstall and an upgrade read as before.
+    @Test func singleStepCountsAreUnchanged() {
+        let s = UpgradeSession(packages: [Package.command("one"), Package.command("two")], intelbrewMode: false, action: .uninstall,
+                               queue: CommandQueue(runner: FakeStreamRunner(log: CallLog()) { _, _ in 0 }),
+                               makeCommand: { p in QueuedCommand(executable: "/bin/true", arguments: [p.name], environment: [:], display: p.name) },
+                               logURL: nil, onFinish: { _ in })
+        #expect(!s.countsVersions)
+        #expect(s.items.map(s.chipName) == ["one", "two"])
+        #expect(s.countLine == "0 of 2")
     }
 }

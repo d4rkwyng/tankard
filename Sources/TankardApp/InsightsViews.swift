@@ -441,6 +441,7 @@ struct PostInstallNotesSheet: View {
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
             }
+            .panelButtonRow("notes.buttons")
         }
         .padding(20)
         .frame(width: 520)

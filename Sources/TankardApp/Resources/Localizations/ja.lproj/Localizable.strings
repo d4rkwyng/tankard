@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld個のパッケージ";
 "%@ %lld packages" = "%@ %lld個のパッケージ";
+"%@ (%lld of %lld)" = "%@ (%lld/%lld)";
 "%@ and %lld more" = "%@ ほか%lld件";
 "%@ and more" = "%@ など";
 "%@ can't be uninstalled" = "%@ はアンインストールできません";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld個はbottleなし";
 "%lld not checked" = "%lld個は未確認";
 "%lld of %lld" = "%lld / %lld";
+"%lld of %lld versions" = "%lld/%lld バージョン";
 "%lld pinned upgrade not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld result for “%@”" = "「%2$@」の結果: %1$lld件";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld個が停止中";
 "%lld tap" = "%lld個のtap";
 "%lld taps" = "%lld個のtap";
+"%lld uninstalled (%lld version)" = "%lld 個アンインストール済み (%lld バージョン)";
+"%lld uninstalled (%lld versions)" = "%lld 個アンインストール済み (%lld バージョン)";
 "%lld upgrade ready" = "%lld件のアップグレードが利用可能";
 "%lld upgraded" = "%lld個をアップグレード済み";
 "%lld upgrades ready" = "%lld件のアップグレードが利用可能";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
 "Upgrade All" = "すべてアップグレード";
 "Upgrade All…" = "すべてアップグレード…";
+"Upgrade Plan" = "アップグレードの計画";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";
+"Upgrade finished" = "アップグレード完了";
+"Upgrade finished with problems" = "アップグレード完了 (問題あり)";
 "Upgrade only the packages that pour a bottle; skip %@" = "bottleを使うパッケージのみアップグレードし、%@をスキップします";
 "Upgrade packages automatically" = "パッケージを自動でアップグレード";
 "Upgrade ready: " = "アップグレードの準備完了: ";

@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld Paket";
 "%@ %lld packages" = "%@ %lld Pakete";
+"%@ (%lld of %lld)" = "%@ (%lld von %lld)";
 "%@ and %lld more" = "%@ und %lld weiteren";
 "%@ and more" = "%@ und weiteren";
 "%@ can't be uninstalled" = "%@ kann nicht deinstalliert werden";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld ohne Bottle";
 "%lld not checked" = "%lld nicht geprüft";
 "%lld of %lld" = "%lld von %lld";
+"%lld of %lld versions" = "%lld von %lld Versionen";
 "%lld pinned upgrade not included (%@)" = "%lld fixiertes Upgrade nicht enthalten (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld fixierte Upgrades nicht enthalten (%@)";
 "%lld result for “%@”" = "%lld Ergebnis für „%@“";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld angehalten";
 "%lld tap" = "%lld Tap";
 "%lld taps" = "%lld Taps";
+"%lld uninstalled (%lld version)" = "%lld deinstalliert (%lld Version)";
+"%lld uninstalled (%lld versions)" = "%lld deinstalliert (%lld Versionen)";
 "%lld upgrade ready" = "%lld Upgrade bereit";
 "%lld upgraded" = "%lld aktualisiert";
 "%lld upgrades ready" = "%lld Upgrades bereit";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "1 Paket upgraden?";
 "Upgrade All" = "Alle upgraden";
 "Upgrade All…" = "Alle upgraden…";
+"Upgrade Plan" = "Upgrade-Plan";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankard mit brew upgrade --cask tankard upgraden (Auto-Update überlässt Tankard brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Auf dem üblichen Weg erneut upgraden: Compile-Warnungen, Fixierungen und übersprungene Versionen gelten weiterhin";
 "Upgrade available: %@" = "Upgrade verfügbar: %@";
 "Upgrade builds from source" = "Upgrade baut aus dem Quellcode";
 "Upgrade command" = "Upgrade-Befehl";
+"Upgrade finished" = "Upgrade fertig";
+"Upgrade finished with problems" = "Upgrade mit Problemen fertig";
 "Upgrade only the packages that pour a bottle; skip %@" = "Nur Pakete upgraden, die eine Bottle gießen; %@ überspringen";
 "Upgrade packages automatically" = "Pakete automatisch upgraden";
 "Upgrade ready: " = "Upgrade bereit: ";

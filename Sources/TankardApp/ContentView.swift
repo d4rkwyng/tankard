@@ -295,6 +295,10 @@ struct ContentView: View {
                 if let p = store.packages.first(where: { $0.name == what }) { store.showFromMenuBar(.package(p.id)) }
             }
         }
+        // 0.8.5: the progress panel on one page (Scripts/panel-check.sh).
+        if options.demo != nil, let page = ProcessInfo.processInfo.environment["TANKARD_DEMO_PANEL"], !page.isEmpty {
+            store.demoProgressPanel(page)
+        }
         if options.tab == .discover {
             store.tab = .discover
             guard let d = store.openDiscover() else { return }

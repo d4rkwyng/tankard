@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld paquet";
 "%@ %lld packages" = "%@ %lld paquets";
+"%@ (%lld of %lld)" = "%@ (%lld sur %lld)";
 "%@ and %lld more" = "%@ et %lld autres";
 "%@ and more" = "%@ et d’autres";
 "%@ can't be uninstalled" = "%@ ne peut pas être désinstallé";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld sans bottle";
 "%lld not checked" = "%lld non vérifié(s)";
 "%lld of %lld" = "%lld sur %lld";
+"%lld of %lld versions" = "%lld sur %lld versions";
 "%lld pinned upgrade not included (%@)" = "%lld mise à niveau épinglée non incluse (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld mises à niveau épinglées non incluses (%@)";
 "%lld result for “%@”" = "%lld résultat pour « %@ »";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld arrêté(s)";
 "%lld tap" = "%lld tap";
 "%lld taps" = "%lld taps";
+"%lld uninstalled (%lld version)" = "%lld désinstallé(s) (%lld version)";
+"%lld uninstalled (%lld versions)" = "%lld désinstallé(s) (%lld versions)";
 "%lld upgrade ready" = "%lld mise à niveau prête";
 "%lld upgraded" = "%lld mis à niveau";
 "%lld upgrades ready" = "%lld mises à niveau prêtes";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "Mettre à niveau 1 paquet ?";
 "Upgrade All" = "Tout mettre à niveau";
 "Upgrade All…" = "Tout mettre à niveau…";
+"Upgrade Plan" = "Plan de mise à jour";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Mettez à niveau Tankard avec brew upgrade --cask tankard (la mise à jour automatique laisse Tankard à brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Mettre à niveau de nouveau normalement : les avertissements de compilation, les épingles et les versions ignorées s’appliquent toujours";
 "Upgrade available: %@" = "Mise à niveau disponible : %@";
 "Upgrade builds from source" = "La mise à niveau compile depuis les sources";
 "Upgrade command" = "Commande de mise à niveau";
+"Upgrade finished" = "Mise à jour terminée";
+"Upgrade finished with problems" = "Mise à jour terminée avec des problèmes";
 "Upgrade only the packages that pour a bottle; skip %@" = "Mettre à niveau uniquement les paquets disposant d’une bottle ; ignorer %@";
 "Upgrade packages automatically" = "Mettre à niveau les paquets automatiquement";
 "Upgrade ready: " = "Mise à niveau prête : ";

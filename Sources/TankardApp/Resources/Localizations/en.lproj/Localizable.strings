@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld package";
 "%@ %lld packages" = "%@ %lld packages";
+"%@ (%lld of %lld)" = "%@ (%lld of %lld)";
 "%@ and %lld more" = "%@ and %lld more";
 "%@ and more" = "%@ and more";
 "%@ can't be uninstalled" = "%@ can't be uninstalled";
@@ -109,6 +110,7 @@
 "%lld no bottle" = "%lld no bottle";
 "%lld not checked" = "%lld not checked";
 "%lld of %lld" = "%lld of %lld";
+"%lld of %lld versions" = "%lld of %lld versions";
 "%lld pinned upgrade not included (%@)" = "%lld pinned upgrade not included (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld pinned upgrades not included (%@)";
 "%lld result for “%@”" = "%lld result for “%@”";
@@ -122,6 +124,8 @@
 "%lld stopped" = "%lld stopped";
 "%lld tap" = "%lld tap";
 "%lld taps" = "%lld taps";
+"%lld uninstalled (%lld version)" = "%lld uninstalled (%lld version)";
+"%lld uninstalled (%lld versions)" = "%lld uninstalled (%lld versions)";
 "%lld upgrade ready" = "%lld upgrade ready";
 "%lld upgraded" = "%lld upgraded";
 "%lld upgrades ready" = "%lld upgrades ready";
@@ -1070,11 +1074,14 @@
 "Upgrade 1 package?" = "Upgrade 1 package?";
 "Upgrade All" = "Upgrade All";
 "Upgrade All…" = "Upgrade All…";
+"Upgrade Plan" = "Upgrade Plan";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
 "Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";
+"Upgrade finished" = "Upgrade finished";
+"Upgrade finished with problems" = "Upgrade finished with problems";
 "Upgrade only the packages that pour a bottle; skip %@" = "Upgrade only the packages that pour a bottle; skip %@";
 "Upgrade packages automatically" = "Upgrade packages automatically";
 "Upgrade ready: " = "Upgrade ready: ";
