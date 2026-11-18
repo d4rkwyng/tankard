@@ -230,7 +230,22 @@ struct DiscoverTable: View {
             } description: {
                 Text(message)
             } actions: {
-                Button("Try Again") { Task { await discover.activate() } }
+                VStack(spacing: 10) {
+                    Button("Try Again") { Task { await discover.activate() } }
+                    // 0.8.5 (M4): the system's error, for a bug report.
+                    if let detail = discover.failureDetail {
+                        DisclosureGroup("Details") {
+                            ScrollView {
+                                Text(verbatim: detail).font(.system(size: 10.5, design: .monospaced))
+                                    .foregroundStyle(.secondary).textSelection(.enabled)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(maxHeight: 120)
+                        }
+                        .font(.system(size: 11))
+                        .frame(maxWidth: 420)
+                    }
+                }
             }
         case .ready:
             if discover.query.trimmingCharacters(in: .whitespaces).isEmpty {

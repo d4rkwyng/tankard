@@ -2,6 +2,41 @@ import Foundation
 import Observation
 import TankardCore
 
+/// 0.8.5 (bug hunt M4): why the catalog didn't load, in a sentence. With
+/// the network off and no cached catalog, Discover showed the raw NSError
+/// (12 lines of `Error Domain=NSPOSIXErrorDomain Code=1 … UserInfo={…}`),
+/// while Refresh offline said "Homebrew couldn't reach the network".
+public enum CatalogFailure {
+    public static func isNetwork(_ error: Error) -> Bool {
+        if let u = error as? URLError {
+            switch u.code {
+            case .notConnectedToInternet, .networkConnectionLost, .cannotFindHost, .cannotConnectToHost, .timedOut,
+                 .dnsLookupFailed, .internationalRoamingOff, .dataNotAllowed, .secureConnectionFailed,
+                 .callIsActive, .cannotLoadFromNetwork:
+                return true
+            default: break
+            }
+        }
+        let ns = error as NSError
+        if ns.domain == NSURLErrorDomain, [-1009, -1005, -1003, -1004, -1001, -1006, -1018, -1020, -1200, -2000].contains(ns.code) {
+            return true
+        }
+        // EPERM (a firewall or sandbox denying the connection), ENETDOWN,
+        // ENETUNREACH, ECONNRESET, ETIMEDOUT, ECONNREFUSED, EHOSTDOWN, EHOSTUNREACH.
+        if ns.domain == NSPOSIXErrorDomain, [1, 50, 51, 54, 60, 61, 64, 65].contains(ns.code) { return true }
+        if let underlying = ns.userInfo[NSUnderlyingErrorKey] as? Error { return isNetwork(underlying) }
+        return false
+    }
+
+    public static func sentence(_ error: Error, localTaps: Bool) -> String {
+        if !localTaps, isNetwork(error) {
+            return String(localized: "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again.")
+        }
+        return localTaps ? String(localized: "Tankard couldn't read the packages in your taps. Try again in a moment.")
+            : String(localized: "Tankard couldn't load Homebrew's list of packages. Try again in a moment.")
+    }
+}
+
 /// Discover: search every formula and cask, see details, install.
 ///
 /// - The catalog loads when Discover is opened (`activate()`), never at
@@ -25,6 +60,9 @@ public final class DiscoverStore {
     }
 
     public private(set) var phase: Phase = .idle
+    /// 0.8.5 (bug hunt M4): the error behind `.failed`, as the system gave
+    /// it, for the Details disclosure. `.failed` itself carries a sentence.
+    public private(set) var failureDetail: String?
     public private(set) var results: [CatalogEntry] = []
     /// The query `results` answer (the field can be ahead while debouncing).
     public private(set) var resultsQuery = ""
@@ -143,13 +181,17 @@ public final class DiscoverStore {
         do {
             let load = try await Task.detached(priority: .userInitiated) { try await provider.load() }.value
             install(load)
+            failureDetail = nil
             phase = .ready
             await runSearch()
         } catch {
+            // 0.8.5 (M4): a sentence, not the NSError dump; that goes under Details.
+            let sentence = CatalogFailure.sentence(error, localTaps: isLocalTaps)
             if all.isEmpty {
-                phase = .failed(String(describing: error))
+                failureDetail = String(describing: error)
+                phase = .failed(sentence)
             } else {
-                warning = String(localized: "Couldn't reload: \(String(describing: error))")
+                warning = String(localized: "Couldn't reload: \(sentence)")
             }
         }
     }
@@ -224,6 +266,9 @@ public final class DiscoverStore {
 
     // MARK: search
 
+    /// The search running off the main actor (0.8.5: cancelled by the next).
+    @ObservationIgnored private var searchWork: Task<[CatalogEntry], Never>?
+
     private func scheduleSearch(immediately: Bool = false) {
         searchTask?.cancel()
         let delay = immediately ? Duration.zero : debounce
@@ -242,10 +287,15 @@ public final class DiscoverStore {
 
     private func runSearch() async {
         let q = query, k = kind, entries = all, only = bottledOnly, pop = popularity
-        let found = await Task.detached(priority: .userInitiated) {
+        // 0.8.5 (bug hunt L5): the previous search stops when a new one
+        // starts (a detached task doesn't follow its caller's cancellation).
+        searchWork?.cancel()
+        let work = Task.detached(priority: .userInitiated) {
             CatalogSearch.search(q, in: entries, kind: k, preferBottled: true, bottledOnly: only, popularity: pop)
-        }.value
-        guard q == query, k == kind, only == bottledOnly else { return } // superseded
+        }
+        searchWork = work
+        let found = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
+        guard !work.isCancelled, q == query, k == kind, only == bottledOnly else { return } // superseded
         results = found
         resultsQuery = q
         if let s = selection, !found.contains(where: { $0.id == s }) { selection = nil }
