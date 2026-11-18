@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-VERSION=${TANKARD_VERSION:-0.8.3}
+VERSION=${TANKARD_VERSION:-0.8.4}
 # CFBundleVersion is the same string as the short version, so About says
 # "Version 0.3.0" with no "(N)" build number after it.
 BUILD=$VERSION

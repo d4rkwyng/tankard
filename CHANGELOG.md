@@ -4,7 +4,7 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.8.4] (unreleased)
+## [0.8.4]
 
 ### Added
 - **Automatic updates wait for brew and ask before quitting.** A step that finds a Terminal brew holding Homebrew's lock waits for it quietly (up to 15 minutes, logged) instead of failing, and is listed as skipped ("Homebrew was busy") if it is still busy. Quitting Tankard while an automatic run is upgrading asks first ("Tankard is upgrading xz automatically (3 of 7). Quit anyway?"); the steps not run are done by the next automatic run.
