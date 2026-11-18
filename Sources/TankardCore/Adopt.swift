@@ -364,29 +364,154 @@ public struct AdoptScan: Sendable, Equatable {
     }
 }
 
+/// 0.8.5: what ties an app on disk to an installed cask that has no `app`
+/// stanza. pkg casks (microsoft-word, microsoft-teams, windows-app, ...)
+/// install their app through an installer package, so `brew info` lists no
+/// app for them and Adopt Apps offered them although brew already has them.
+/// From `uninstall`: the receipt ids (`pkgutil`) and the `.app` paths it
+/// deletes; from `uninstall` and `zap`: bundle-id-like strings, which count
+/// only together with the cask's name (`AdoptIndex.bundleIDHints`).
+public struct CaskAppOwnership: Sendable, Equatable, Codable {
+    /// The cask's names ("Microsoft Word").
+    public var names: [String]
+    /// `uninstall` → `pkgutil`, as brew gives them (some are patterns).
+    public var receiptIDs: [String]
+    /// `uninstall` → `delete` paths that are app bundles.
+    public var appPaths: [String]
+    /// Bundle-id-like strings from `uninstall` and `zap`, lower-cased.
+    public var bundleIDHints: [String]
+
+    public init(names: [String] = [], receiptIDs: [String] = [], appPaths: [String] = [], bundleIDHints: [String] = []) {
+        self.names = names
+        self.receiptIDs = receiptIDs
+        self.appPaths = appPaths
+        self.bundleIDHints = bundleIDHints
+    }
+
+    /// From the decoded stanzas: `deletePaths` keeps the ones ending in
+    /// ".app", `idStrings` becomes bundle-id hints.
+    public init(names: [String], receiptIDs: [String], deletePaths: [String], idStrings: [String]) {
+        self.init(names: names, receiptIDs: receiptIDs,
+                  appPaths: deletePaths.filter { $0.lowercased().hasSuffix(".app") && !$0.contains("*") },
+                  bundleIDHints: AdoptIndex.bundleIDHints(idStrings).sorted())
+    }
+
+    /// The receipt ids that are plain ids (brew also takes regular
+    /// expressions there: "com.example.*").
+    public var plainReceiptIDs: [String] {
+        receiptIDs.filter { id in !id.isEmpty && !id.contains(where: { "*\\[](){}^$|+?".contains($0) }) }
+    }
+}
+
+/// 0.8.5: the app bundles an installer package receipt put on disk
+/// (`pkgutil --pkg-info-plist` and `pkgutil --only-dirs --files`).
+public enum PkgReceipts {
+    public static let pkgutil = "/usr/sbin/pkgutil"
+
+    /// The top-level bundles in a receipt's directory list: "Foo.app",
+    /// "Sub/Foo.app", not anything inside a bundle. `volume` and
+    /// `installLocation` are the receipt's ("/" and "Applications").
+    public static func appPaths(volume: String, installLocation: String, dirs: [String]) -> [String] {
+        var base = volume.isEmpty ? "/" : volume
+        if !installLocation.isEmpty { base = (base as NSString).appendingPathComponent(installLocation) }
+        var out: [String] = []
+        for raw in dirs {
+            var d = raw.trimmingCharacters(in: .whitespaces)
+            if d.hasPrefix("./") { d.removeFirst(2) }
+            guard d.lowercased().hasSuffix(".app") else { continue }
+            let parts = d.split(separator: "/")
+            // Only the bundle itself (no ".app" folder above it).
+            guard !parts.dropLast().contains(where: { $0.lowercased().hasSuffix(".app") }) else { continue }
+            out.append(((base as NSString).appendingPathComponent(d) as NSString).standardizingPath)
+        }
+        return out
+    }
+
+    /// Reads the receipts of `ids` (missing receipts are skipped). Only
+    /// apps in an Applications folder are kept.
+    public static func live(ids: [String], runner: CommandRunning = ProcessRunner()) async -> [String: [String]] {
+        var out: [String: [String]] = [:]
+        for id in Set(ids) {
+            guard let info = try? await runner.run(pkgutil, ["--pkg-info-plist", id], environment: [:]), info.exitCode == 0,
+                  let plist = try? PropertyListSerialization.propertyList(from: info.stdout, format: nil) as? [String: Any],
+                  let files = try? await runner.run(pkgutil, ["--only-dirs", "--files", id], environment: [:]), files.exitCode == 0
+            else { continue }
+            let apps = appPaths(volume: plist["volume"] as? String ?? "/",
+                                installLocation: plist["install-location"] as? String ?? "",
+                                dirs: files.stdoutString.split(separator: "\n").map(String.init))
+                .filter { $0.contains("/Applications/") }
+            if !apps.isEmpty { out[id] = apps }
+        }
+        return out
+    }
+}
+
 /// What brew already owns: the installed casks' app paths and bundle ids.
 public struct ManagedApps: Sendable {
     public var paths: Set<String>
     public var bundleIDs: Set<String>
     public var tokens: Set<String>
+    /// 0.8.5: installed casks' receipt ids (`adding(receiptApps:)` turns
+    /// them into paths).
+    public var receiptIDs: Set<String> = []
+    /// 0.8.5: casks without an `app` stanza: a bundle id they name counts
+    /// only for an app with the cask's name (microsoft-office's zap names
+    /// OneDrive's id; a hand-installed OneDrive is not Homebrew's).
+    public var namedHints: [NamedHint] = []
+
+    public struct NamedHint: Sendable, Equatable {
+        public var names: Set<String>
+        public var bundleIDs: Set<String>
+        public init(names: Set<String>, bundleIDs: Set<String>) {
+            self.names = Set(names.map { $0.lowercased() })
+            self.bundleIDs = Set(bundleIDs.map { $0.lowercased() })
+        }
+    }
 
     public init(paths: Set<String> = [], bundleIDs: Set<String> = [], tokens: Set<String> = []) {
-        self.paths = Set(paths.map { ($0 as NSString).standardizingPath })
+        self.paths = Set(paths.map { Self.normalize($0) })
         self.bundleIDs = Set(bundleIDs.map { $0.lowercased() })
         self.tokens = tokens
     }
 
+    static func normalize(_ p: String) -> String {
+        ((p as NSString).expandingTildeInPath as NSString).standardizingPath
+    }
+
     /// From the installed casks Tankard already read (`brew info`): their
     /// app paths, and the bundle ids their `uninstall` quits (the apps
-    /// themselves). Not the ids in `zap` or the rest of `uninstall`: those
-    /// name other apps too (choosy's zap lists Opera's, tidgi's VS Code's,
-    /// microsoft-office's OneDrive's in cask.json, 2026-11-17), and an app
-    /// installed by hand would be hidden as "already from Homebrew". `index`
-    /// is kept for the call sites; it adds nothing now.
+    /// themselves). Not the ids in `zap` or the rest of `uninstall` on
+    /// their own: those name other apps too (choosy's zap lists Opera's,
+    /// tidgi's VS Code's, microsoft-office's OneDrive's in cask.json,
+    /// 2026-11-17), and an app installed by hand would be hidden as
+    /// "already from Homebrew".
+    ///
+    /// 0.8.5: pkg casks list no app, so also: the `.app` paths `uninstall`
+    /// deletes, the receipt ids (some are the app's bundle id: teams2,
+    /// rdc.macos), the receipts' apps (`adding(receiptApps:)`), and for
+    /// casks without an app stanza a uninstall/zap bundle id together with
+    /// the cask's name. `index` is kept for the call sites; it adds nothing.
     public init(packages: [Package], index: AdoptIndex?) {
         let casks = packages.filter { $0.kind == .cask }
-        let ids = Set(casks.flatMap { $0.quitBundleIDs ?? [] })
-        self.init(paths: Set(casks.flatMap { $0.appPaths ?? [] }), bundleIDs: ids, tokens: Set(casks.map(\.name)))
+        let own = casks.compactMap(\.caskOwnership)
+        let ids = Set(casks.flatMap { $0.quitBundleIDs ?? [] }).union(own.flatMap(\.plainReceiptIDs))
+        let paths = Set(casks.flatMap { $0.appPaths ?? [] }).union(own.flatMap(\.appPaths))
+        self.init(paths: paths, bundleIDs: ids, tokens: Set(casks.map(\.name)))
+        receiptIDs = Set(own.flatMap(\.plainReceiptIDs))
+        for c in casks where (c.appPaths ?? []).isEmpty {
+            guard let o = c.caskOwnership, !o.bundleIDHints.isEmpty else { continue }
+            namedHints.append(NamedHint(names: Set(o.names + [c.name]), bundleIDs: Set(o.bundleIDHints)))
+        }
+    }
+
+    /// The receipts' apps (receipt id → app paths, `PkgReceipts.live`),
+    /// for this list's receipt ids.
+    public func adding(receiptApps: [String: [String]]) -> ManagedApps {
+        var m = self
+        for (id, apps) in receiptApps where receiptIDs.contains(id) {
+            m.paths.formUnion(apps.map { Self.normalize($0) })
+        }
+        return m
     }
 
     public func owns(_ app: InstalledApp) -> Bool {
@@ -394,8 +519,10 @@ public struct ManagedApps: Sendable {
         let real = (p as NSString).resolvingSymlinksInPath
         if paths.contains(p) || paths.contains(real) { return true }
         if paths.contains(where: { p.hasPrefix($0 + "/") }) { return true }
-        if let b = app.bundleID?.lowercased(), bundleIDs.contains(b) { return true }
-        return false
+        guard let b = app.bundleID?.lowercased() else { return false }
+        if bundleIDs.contains(b) { return true }
+        let names: Set<String> = [app.displayName.lowercased(), (app.fileName as NSString).deletingPathExtension.lowercased()]
+        return namedHints.contains { $0.bundleIDs.contains(b) && !$0.names.isDisjoint(with: names) }
     }
 }
 

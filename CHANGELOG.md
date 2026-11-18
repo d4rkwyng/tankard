@@ -9,6 +9,9 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - **Upgrade All in the menu-bar panel no longer opens the whole Tankard window.** The menu closes and the upgrade shows in a small window of its own, in the middle of the screen: the same list, progress, log, compile plan and Stop buttons as the sheet, plus **Show in Tankard** to move the run (the same one, nothing restarts) into the main window. A run that finishes cleanly closes it after a moment, with a "Tankard upgraded N packages" notification when notifications are on; a failure or a stop keeps it open with **Close**. The same goes for a row's Upgrade. With the Tankard window already in front, the sheet opens on it as before. Closing the small window while brew runs only hides it; **Show Upgrade Progress** in the menu-bar panel brings it back.
 
+### Fixed
+- **Adopt Apps no longer lists apps Homebrew already installed with an installer package** (Microsoft Word, Excel, Outlook, PowerPoint, Teams, Windows App). These casks name no app, so Tankard didn't see that the app was theirs and listed it under "Can't adopt". Now an app counts as Homebrew's when an installed cask's installer receipt put it there, its uninstall removes it, or its uninstall/zap names the app's bundle id and the app has the cask's name.
+
 ## [0.8.4]
 
 ### Added
