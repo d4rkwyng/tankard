@@ -159,6 +159,11 @@ struct TankardApp: App {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
         let env = ProcessInfo.processInfo.environment
+        // 0.8.5: demo, snapshot and script runs never save window frames
+        // into the real defaults domain (before any window exists).
+        if options.isDemo || options.snapshot != nil || options.script != nil {
+            WindowFrameIsolation.install()
+        }
         // 0.8.3: one Tankard at a time (a demo, snapshot or script run is a
         // dev instance tests run side by side: no guard, and never counted).
         // A same-build second launch quits here, before any window.
