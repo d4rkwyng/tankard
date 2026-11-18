@@ -18,6 +18,9 @@ struct V084MenuBarVersionTests {
         ("86776fcb52ca505783155631089b65d646f9b03f", "5f54c8173e5552412beb40702adac16275677fa0", "86776fc → 5f54c81"),
         // Hex-looking but short, or not hex: as is.
         ("20261108", "20261117", "20261108 → 20261117"),
+        // 12+ digits but all numbers: a timestamp build, kept whole (cut to
+        // 7 the two builds of one day would both read "2026111").
+        ("1.0,202611081530", "1.0,202611081545", "1.0 (202611081530) → 1.0 (202611081545)"),
         ("latest", "latest", "latest → latest"),
     ])
     func pair(installed: String, current: String, shown: String) {
