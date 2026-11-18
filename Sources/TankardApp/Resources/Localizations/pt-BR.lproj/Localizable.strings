@@ -854,7 +854,6 @@
 "Skip This Version" = "Ignorar Esta Versão";
 "Skip Version %@" = "Ignorar Versão %@";
 "Skip packages that would compile (%@)" = "Ignorar pacotes que seriam compilados (%@)";
-"Skip packages that would compile (%lld with bottles)" = "Ignorar pacotes que seriam compilados (%lld com bottles)";
 "Skipped: would compile" = "Ignorado: seria compilado";
 "Skipping %@" = "Ignorando %@";
 "Snooze" = "Adiar";
@@ -1015,6 +1014,7 @@
 "Upgrade %lld" = "Atualizar %lld";
 "Upgrade %lld (skip %lld)" = "Atualizar %lld (ignorar %lld)";
 "Upgrade %lld packages?" = "Atualizar %lld pacotes?";
+"Upgrade %lld with bottles" = "Atualizar %lld com bottles";
 "Upgrade 1 package?" = "Atualizar 1 pacote?";
 "Upgrade All" = "Atualizar tudo";
 "Upgrade All…" = "Atualizar tudo…";

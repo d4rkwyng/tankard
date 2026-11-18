@@ -854,7 +854,6 @@
 "Skip This Version" = "이 버전 건너뛰기";
 "Skip Version %@" = "버전 %@ 건너뛰기";
 "Skip packages that would compile (%@)" = "컴파일이 필요한 패키지 건너뛰기 (%@)";
-"Skip packages that would compile (%lld with bottles)" = "컴파일이 필요한 패키지 건너뛰기 (bottle 있음 %lld개)";
 "Skipped: would compile" = "건너뜀: 컴파일 필요";
 "Skipping %@" = "%@ 건너뛰는 중";
 "Snooze" = "알림 일시 중지";
@@ -1015,6 +1014,7 @@
 "Upgrade %lld" = "%lld개 업그레이드";
 "Upgrade %lld (skip %lld)" = "%lld개 업그레이드 (%lld개 건너뜀)";
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
+"Upgrade %lld with bottles" = "bottle 있는 %lld개 업그레이드";
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
 "Upgrade All…" = "모두 업그레이드…";

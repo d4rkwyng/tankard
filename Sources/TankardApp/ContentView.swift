@@ -443,8 +443,12 @@ struct FilterActions: View {
         case .upgrades:
             let (bottled, compiling) = store.deps.classifier.partitionUpgrades(store.upgradable)
             if !compiling.isEmpty && !bottled.isEmpty {
-                Button("Skip packages that would compile (\(bottled.count) with bottles)") { store.startUpgradeSkippingCompiles() }
+                // 0.8.4: short, and never truncated: the old "Skip packages
+                // that would compile (N with bottles)" was cut off at the
+                // default 1040-pt width. The summary on the left gives way.
+                Button("Upgrade \(bottled.count) with bottles") { store.startUpgradeSkippingCompiles() }
                     .controlSize(.small)
+                    .fixedSize()
                     .disabled(store.isUpgrading || store.isRefreshing)
                     .help("Upgrade only the packages that pour a bottle; skip \(compiling.map(\.name).joined(separator: ", "))")
             }

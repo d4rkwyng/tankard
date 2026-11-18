@@ -854,7 +854,6 @@
 "Skip This Version" = "跳过此版本";
 "Skip Version %@" = "跳过版本 %@";
 "Skip packages that would compile (%@)" = "跳过需要编译的软件包 (%@)";
-"Skip packages that would compile (%lld with bottles)" = "跳过需要编译的软件包（%lld 个有 bottle）";
 "Skipped: would compile" = "已跳过：需要编译";
 "Skipping %@" = "正在跳过 %@";
 "Snooze" = "稍后提醒";
@@ -1015,6 +1014,7 @@
 "Upgrade %lld" = "升级 %lld";
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
+"Upgrade %lld with bottles" = "升级 %lld 个有 bottle 的";
 "Upgrade 1 package?" = "升级 1 个软件包？";
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";

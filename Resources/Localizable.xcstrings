@@ -44802,58 +44802,6 @@
         }
       }
     },
-    "Skip packages that would compile (%lld with bottles)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pakete überspringen, die kompiliert würden (%lld mit Bottles)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorer les paquets qui seraient compilés (%lld avec bottles)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Omitir paquetes que se compilarían (%lld con bottles)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "コンパイルが必要なパッケージをスキップ（bottleあり: %lld）"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跳过需要编译的软件包（%lld 个有 bottle）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorar pacotes que seriam compilados (%lld com bottles)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Salta i pacchetti che verrebbero compilati (%lld con bottle)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "컴파일이 필요한 패키지 건너뛰기 (bottle 있음 %lld개)"
-          }
-        }
-      }
-    },
     "Skipped: would compile": {
       "localizations": {
         "de": {
@@ -53170,6 +53118,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "패키지 %lld개를 업그레이드할까요?"
+          }
+        }
+      }
+    },
+    "Upgrade %lld with bottles": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mit Bottles aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour %lld avec bottles"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar %lld con bottles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottleありの%lld件をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级 %lld 个有 bottle 的"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar %lld com bottles"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna %lld con bottle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottle 있는 %lld개 업그레이드"
           }
         }
       }

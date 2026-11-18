@@ -854,7 +854,6 @@
 "Skip This Version" = "このバージョンをスキップ";
 "Skip Version %@" = "バージョン%@をスキップ";
 "Skip packages that would compile (%@)" = "コンパイルが必要なパッケージをスキップ (%@)";
-"Skip packages that would compile (%lld with bottles)" = "コンパイルが必要なパッケージをスキップ（bottleあり: %lld）";
 "Skipped: would compile" = "スキップ: コンパイルが必要です";
 "Skipping %@" = "%@をスキップ中";
 "Snooze" = "スヌーズ";
@@ -1015,6 +1014,7 @@
 "Upgrade %lld" = "%lld件をアップグレード";
 "Upgrade %lld (skip %lld)" = "%lld件をアップグレード（%lld件をスキップ）";
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
+"Upgrade %lld with bottles" = "bottleありの%lld件をアップグレード";
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
 "Upgrade All" = "すべてアップグレード";
 "Upgrade All…" = "すべてアップグレード…";

@@ -854,7 +854,6 @@
 "Skip This Version" = "Salta questa versione";
 "Skip Version %@" = "Salta la versione %@";
 "Skip packages that would compile (%@)" = "Salta i pacchetti che verrebbero compilati (%@)";
-"Skip packages that would compile (%lld with bottles)" = "Salta i pacchetti che verrebbero compilati (%lld con bottle)";
 "Skipped: would compile" = "Saltato: verrebbe compilato";
 "Skipping %@" = "Salto di %@";
 "Snooze" = "Posticipa";
@@ -1015,6 +1014,7 @@
 "Upgrade %lld" = "Aggiorna %lld";
 "Upgrade %lld (skip %lld)" = "Aggiorna %lld (salta %lld)";
 "Upgrade %lld packages?" = "Aggiornare %lld pacchetti?";
+"Upgrade %lld with bottles" = "Aggiorna %lld con bottle";
 "Upgrade 1 package?" = "Aggiornare 1 pacchetto?";
 "Upgrade All" = "Aggiorna tutto";
 "Upgrade All…" = "Aggiorna tutto…";
