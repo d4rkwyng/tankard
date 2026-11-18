@@ -223,6 +223,7 @@
 "Auto-update: downloading %lld packages" = "자동 업데이트: 패키지 %lld개 다운로드 중";
 "Auto-update: upgrading %@" = "자동 업데이트: %@ 업그레이드 중";
 "Automatic updates" = "자동 업데이트";
+"Automatic updates never ask for your password." = "자동 업데이트는 암호를 묻지 않습니다.";
 "Automatically upgrade:" = "자동으로 업그레이드:";
 "Available" = "사용 가능";
 "BSD-2-Clause license" = "BSD-2-Clause 라이선스";
@@ -520,6 +521,7 @@
 "It took %@; expect longer on an older Mac." = "%@ 걸렸습니다. 오래된 Mac에서는 더 오래 걸립니다.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
 "KB" = "KB";
+"Keep Old Versions" = "이전 버전 유지";
 "Keep Running" = "계속 실행";
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
@@ -565,7 +567,7 @@
 "Name only" = "이름만 일치";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
-"Needs your administrator password" = "관리자 암호가 필요합니다";
+"Needs your password to upgrade" = "업그레이드하려면 암호가 필요합니다";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "앱을 종료하지 않습니다: 앱이 실행 중인 cask는 \"실행 중인 앱 종료 안 함\"이 켜져 있지 않으면 건너뜁니다(켜져 있으면 업그레이드되고 새 버전은 다음에 열립니다).";
 "New vulnerabilities" = "새 취약점";
 "New: %@" = "새로움: %@";
@@ -618,7 +620,7 @@
 "Not checked by brew vulns: untrusted tap." = "brew vulns가 검사하지 않음: 신뢰할 수 없는 tap.";
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "편집되지 않음: %@번째 줄을 제거하면 빈 if, 반복문 또는 { } 블록이 남아 bash가 거부합니다. 되돌린 후 줄을 직접 제거하세요(또는 블록에 :를 넣으세요).";
 "Not in Intelbrew mode: nothing to revert." = "Intelbrew 모드가 아님: 되돌릴 것이 없습니다.";
-"Not included: %@ (can't roll back automatically)" = "포함되지 않음: %@(자동으로 되돌릴 수 없음)";
+"Not included, can't roll back automatically: %@" = "포함되지 않음, 자동으로 되돌릴 수 없음: %@";
 "Not installed" = "설치되지 않음";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "링크되지 않음: 명령이 Homebrew의 bin에 없습니다. `brew link %@`로 링크하세요.";
 "Not listed: %@." = "목록에 없음: %@.";
@@ -661,7 +663,7 @@
 "Off for Tankard in System Settings → Notifications" = "시스템 설정 → 알림에서 Tankard가 꺼져 있음";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "꺼짐: HOMEBREW_NO_AUTO_UPDATE가 설정됨(%@).";
 "Official" = "공식";
-"Old version was cleaned up" = "이전 버전이 정리되었습니다";
+"Old version removed by cleanup" = "정리로 이전 버전이 삭제됨";
 "Old versions" = "이전 버전";
 "Old versions, stale downloads and old logs. Nothing you use is removed." = "이전 버전, 오래된 다운로드, 오래된 로그입니다. 사용 중인 것은 제거되지 않습니다.";
 "Older now (%lld)" = "현재 이전 버전 (%lld)";
@@ -786,6 +788,7 @@
 "Retry Failed (%lld)" = "실패 항목 다시 시도(%lld)";
 "Revert to Standard Homebrew…" = "표준 Homebrew로 되돌리기…";
 "Revert to standard Homebrew?" = "표준 Homebrew로 되돌릴까요?";
+"Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades." = "되돌리려면 이전 버전이 필요하지만, Tankard는 업그레이드 후 이전 버전을 유지하지 않고 있습니다.";
 "Run %@ again, through the queue" = "대기열을 통해 %@ 다시 실행";
 "Run %lld brew commands?" = "brew 명령 %lld개를 실행할까요?";
 "Run 1 brew command?" = "brew 명령 1개를 실행할까요?";
@@ -982,6 +985,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
+"The old versions were removed by cleanup, so nothing here can be rolled back." = "이전 버전이 정리로 삭제되어 여기서는 되돌릴 수 있는 항목이 없습니다.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
@@ -1016,6 +1020,7 @@
 "Turn automatic updates back on now" = "자동 업데이트 지금 다시 켜기";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Tankard를 켜세요. 목록에 없으면 +를 클릭하고 응용 프로그램에서 Tankard를 선택하세요.";
 "Turn on notifications in Settings ▸ General" = "설정 ▸ 일반에서 알림을 켤 수 있습니다";
+"Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back." = "'업그레이드 후 이전 버전 유지'를 켭니다(설정 ▸ 업그레이드). 이후의 업그레이드는 되돌릴 수 있습니다.";
 "Type" = "유형";
 "Type " = "입력: ";
 "Type a name or a word from a description." = "이름이나 설명에 있는 단어를 입력하세요.";
@@ -1058,6 +1063,7 @@
 "Upgrade 1 package?" = "패키지 1개를 업그레이드할까요?";
 "Upgrade All" = "모두 업그레이드";
 "Upgrade All…" = "모두 업그레이드…";
+"Upgrade Now" = "지금 업그레이드";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";
@@ -1068,6 +1074,7 @@
 "Upgrade ready: " = "업그레이드 준비됨: ";
 "Upgrade the Remaining %lld Packages" = "남은 %lld개 업그레이드";
 "Upgrade the Remaining Package" = "남은 패키지 업그레이드";
+"Upgrade the casks skipped for your password now. Tankard asks for your password." = "암호 때문에 건너뛴 cask를 지금 업그레이드합니다. Tankard가 암호를 묻습니다.";
 "Upgrade vulnerable packages. " = "취약한 패키지를 업그레이드합니다. ";
 "Upgrade with Homebrew" = "Homebrew로 업그레이드";
 "Upgraded (%lld)" = "업그레이드됨 (%lld)";
@@ -1132,6 +1139,7 @@
 "brew checked every installed formula." = "brew가 설치된 모든 formula를 확인했습니다.";
 "brew cleanup -n exited %d." = "brew cleanup -n이 %d(으)로 종료됨.";
 "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "brew cleanup이 업그레이드 후 이전 keg를 제거했습니다. 다음에도 유지하려면 \"업그레이드 후 이전 버전 유지\"를 켜세요.";
+"brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard)." = "brew cleanup이 이전 버전을 삭제했습니다(정리, 또는 Tankard 밖에서 실행한 brew 명령).";
 "brew clones %@ and reads its formulae and casks." = "brew가 %@을(를) 클론하고 해당 formulae와 cask를 읽습니다.";
 "brew doctor (raw output)" = "brew doctor (원본 출력)";
 "brew doctor found nothing to fix." = "brew doctor에서 수정할 항목이 없습니다.";

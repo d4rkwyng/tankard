@@ -193,6 +193,10 @@ struct Chip: View {
                 EmptyView()
             }
             Text(name)
+            // 0.8.5: this step will ask for the password.
+            if action == .upgrade, AdminPassword.required(item.package), !item.state.isTerminal {
+                PasswordLockBadge(size: 8.5)
+            }
         }
         .font(.system(size: 11, weight: item.state == .running ? .semibold : .regular))
         .foregroundStyle(foreground)

@@ -237,6 +237,10 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// "pkg", …), in order, without uninstall/zap and the flight
         /// blocks. nil when brew gave no artifacts.
         public var artifactKinds: [String]?
+        /// 0.8.5: what says an app on disk belongs to this cask when the
+        /// cask has no `app` stanza (pkg casks such as microsoft-word).
+        /// nil when brew gave no artifacts.
+        public var ownership: CaskAppOwnership?
 
         public struct AdoptArtifacts: Sendable, Equatable {
             /// One installed app: `source` is the name in the download
@@ -320,6 +324,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 installsPkg = list.contains(where: \.pkg)
                 sudoInstaller = list.contains(where: \.sudoInstaller)
                 artifactKinds = CaskContents.kinds(list.flatMap(\.keys))
+                ownership = CaskAppOwnership(names: name ?? [], receiptIDs: list.flatMap(\.pkgutil),
+                                             deletePaths: list.flatMap(\.delete),
+                                             idStrings: list.flatMap(\.idStrings))
                 adoptArtifacts = AdoptArtifacts(apps: list.flatMap(\.apps), suites: list.flatMap(\.suites),
                                                 pkg: installsPkg ?? false, idStrings: list.flatMap(\.idStrings))
             }
@@ -333,6 +340,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
         struct Artifact: Decodable {
             var appPaths: [String] = []
             var quit: [String] = []
+            /// 0.8.5: `uninstall`'s `pkgutil` (receipt ids) and `delete` paths.
+            var pkgutil: [String] = []
+            var delete: [String] = []
             var pkg = false
             /// 0.8.3: `"installer": [{"script": {"executable": …, "sudo": true}}]`
             /// (cask/artifact/installer.rb: `requires_sudo?` is `args[:sudo] == true`;
@@ -382,11 +392,19 @@ public struct BrewInfoJSON: Decodable, Sendable {
             /// `"uninstall": [{"quit": "com.example.app"}]` (a string or a list).
             struct Uninstall: Decodable {
                 var quit: [String] = []
+                var pkgutil: [String] = []
+                var delete: [String] = []
                 init(from decoder: Decoder) throws {
                     guard let c = try? decoder.container(keyedBy: Key.self) else { return }
-                    let k = Key(stringValue: "quit")
-                    if let a = try? c.decodeIfPresent([String].self, forKey: k) { quit = a }
-                    else if let s = try? c.decodeIfPresent(String.self, forKey: k) { quit = [s] }
+                    func list(_ name: String) -> [String] {
+                        let k = Key(stringValue: name)
+                        if let a = try? c.decodeIfPresent([String].self, forKey: k) { return a }
+                        if let s = try? c.decodeIfPresent(String.self, forKey: k) { return [s] }
+                        return []
+                    }
+                    quit = list("quit")
+                    pkgutil = list("pkgutil")
+                    delete = list("delete")
                 }
             }
 
@@ -423,6 +441,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 }
                 if let u = try? c.decodeIfPresent([Uninstall].self, forKey: Key(stringValue: "uninstall")) {
                     quit = u.flatMap(\.quit)
+                    pkgutil = u.flatMap(\.pkgutil)
+                    delete = u.flatMap(\.delete)
                 }
                 for k in ["uninstall", "zap"] {
                     if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) {

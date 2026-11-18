@@ -1053,8 +1053,10 @@ public final class AppStore {
         let brew = client.installation.brewPath
         // 0.8.4: a password helper in brew.env that isn't Tankard's: no dialog.
         let foreign = foreignAskpass(client)
+        // 0.8.5: an upgrade run asks for the password near the end, once.
+        let ordered = action == .upgrade ? AdminPassword.passwordStepsLast(targets) : targets
         upgrade = UpgradeSession(
-            packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
+            packages: ordered, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
                             askpass = deps.askpassHelper, foreign] p in

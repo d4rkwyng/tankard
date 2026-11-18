@@ -148,6 +148,10 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// the detail pane's "installs …" line (`CaskContents`). nil for
     /// formulae, when brew gave no artifacts, and in older reports.
     public var caskArtifacts: [String]? = nil
+    /// 0.8.5, casks: what ties an app on disk to this cask besides
+    /// `appPaths` (receipts, uninstall paths, ids), for Adopt Apps. nil for
+    /// formulae, when brew gave no artifacts, and in older reports.
+    public var caskOwnership: CaskAppOwnership? = nil
 
     public var isDependency: Bool { !requested }
 

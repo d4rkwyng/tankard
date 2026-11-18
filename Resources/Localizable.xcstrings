@@ -11937,6 +11937,58 @@
         }
       }
     },
+    "Automatic updates never ask for your password.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatische Updates fragen nie nach deinem Passwort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour automatiques ne demandent jamais votre mot de passe."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las actualizaciones automáticas nunca piden tu contraseña."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動アップデートはパスワードを要求しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动更新从不询问你的密码。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As atualizações automáticas nunca pedem sua senha."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gli aggiornamenti automatici non chiedono mai la password."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자동 업데이트는 암호를 묻지 않습니다."
+          }
+        }
+      }
+    },
     "Automatically upgrade:": {
       "localizations": {
         "de": {
@@ -27381,6 +27433,58 @@
         }
       }
     },
+    "Keep Old Versions": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alte Versionen behalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conserver les anciennes versions"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conservar versiones antiguas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古いバージョンを残す"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保留旧版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manter versões antigas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conserva le versioni precedenti"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 버전 유지"
+          }
+        }
+      }
+    },
     "Keep Running": {
       "localizations": {
         "de": {
@@ -29721,54 +29825,54 @@
         }
       }
     },
-    "Needs your administrator password": {
+    "Needs your password to upgrade": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Braucht dein Admin-Passwort"
+            "value": "Braucht dein Passwort für das Upgrade"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nécessite votre mot de passe administrateur"
+            "value": "Nécessite votre mot de passe pour la mise à niveau"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Necesita tu contraseña de administrador"
+            "value": "Necesita tu contraseña para actualizar"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "管理者パスワードが必要です"
+            "value": "アップグレードにパスワードが必要です"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "需要你的管理员密码"
+            "value": "升级需要你的密码"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Precisa da sua senha de administrador"
+            "value": "Precisa da sua senha para atualizar"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Richiede la password di amministratore"
+            "value": "Serve la password per aggiornare"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "관리자 암호가 필요합니다"
+            "value": "업그레이드하려면 암호가 필요합니다"
           }
         }
       }
@@ -32477,54 +32581,54 @@
         }
       }
     },
-    "Not included: %@ (can't roll back automatically)": {
+    "Not included, can't roll back automatically: %@": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nicht enthalten: %@ (Rollback nicht automatisch möglich)"
+            "value": "Nicht enthalten, kein automatisches Zurücksetzen möglich: %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Non inclus : %@ (retour arrière automatique impossible)"
+            "value": "Non inclus, retour en arrière automatique impossible : %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No incluido: %@ (no se puede revertir automáticamente)"
+            "value": "No incluido, no se puede revertir automáticamente: %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "含まれません: %@(自動でロールバックできません)"
+            "value": "含まれないもの（自動で戻せません）: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "未包含：%@（无法自动回滚）"
+            "value": "未包含（无法自动回滚）：%@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não incluído: %@ (não pode reverter automaticamente)"
+            "value": "Não incluído, não é possível reverter automaticamente: %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Non incluso: %@ (impossibile tornare indietro automaticamente)"
+            "value": "Non incluso, impossibile tornare indietro automaticamente: %@"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "포함되지 않음: %@(자동으로 되돌릴 수 없음)"
+            "value": "포함되지 않음, 자동으로 되돌릴 수 없음: %@"
           }
         }
       }
@@ -34713,54 +34817,54 @@
         }
       }
     },
-    "Old version was cleaned up": {
+    "Old version removed by cleanup": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alte Version wurde bereinigt"
+            "value": "Alte Version beim Aufräumen entfernt"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’ancienne version a été nettoyée"
+            "value": "Ancienne version supprimée par le nettoyage"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se limpió la versión anterior"
+            "value": "Versión antigua eliminada por la limpieza"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "古いバージョンはクリーンアップされました"
+            "value": "クリーンアップで古いバージョンが削除されました"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "旧版本已被清理"
+            "value": "旧版本已被清理删除"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A versão antiga foi limpa"
+            "value": "Versão antiga removida pela limpeza"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La vecchia versione è stata ripulita"
+            "value": "Versione precedente rimossa dalla pulizia"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이전 버전이 정리되었습니다"
+            "value": "정리로 이전 버전이 삭제됨"
           }
         }
       }
@@ -41209,6 +41313,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "표준 Homebrew로 되돌릴까요?"
+          }
+        }
+      }
+    },
+    "Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Zurücksetzen braucht es die alte Version, und Tankard behält nach Upgrades keine alten Versionen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revenir en arrière nécessite l'ancienne version, et Tankard ne conserve pas les anciennes versions après les mises à niveau."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para revertir hace falta la versión antigua, y Tankard no conserva versiones antiguas tras las actualizaciones."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元に戻すには古いバージョンが必要ですが、Tankard はアップグレード後に古いバージョンを残していません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回滚需要旧版本，而 Tankard 目前不会在升级后保留旧版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reverter precisa da versão antiga, e o Tankard não está mantendo versões antigas após as atualizações."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per tornare indietro serve la versione precedente, e Tankard non conserva le versioni precedenti dopo gli aggiornamenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌리려면 이전 버전이 필요하지만, Tankard는 업그레이드 후 이전 버전을 유지하지 않고 있습니다."
           }
         }
       }
@@ -51458,6 +51614,58 @@
         }
       }
     },
+    "The old versions were removed by cleanup, so nothing here can be rolled back.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die alten Versionen wurden beim Aufräumen entfernt, daher lässt sich hier nichts zurücksetzen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les anciennes versions ont été supprimées par le nettoyage : rien ici ne peut être annulé."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La limpieza eliminó las versiones antiguas, así que aquí no se puede revertir nada."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古いバージョンはクリーンアップで削除されたため、ここでは何も元に戻せません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "旧版本已被清理删除，因此这里没有可回滚的内容。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As versões antigas foram removidas pela limpeza, então nada aqui pode ser revertido."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le versioni precedenti sono state rimosse dalla pulizia, quindi qui non si può tornare indietro."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 버전이 정리로 삭제되어 여기서는 되돌릴 수 있는 항목이 없습니다."
+          }
+        }
+      }
+    },
     "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.": {
       "localizations": {
         "de": {
@@ -53222,6 +53430,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "설정 ▸ 일반에서 알림을 켤 수 있습니다"
+          }
+        }
+      }
+    },
+    "Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltet „Vorherige Version nach Upgrades behalten“ ein (Einstellungen ▸ Upgrades). Upgrades ab jetzt lassen sich zurücksetzen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active « Conserver la version précédente après les mises à niveau » (Réglages ▸ Mises à niveau). Les prochaines mises à niveau pourront être annulées."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa «Conservar la versión anterior tras las actualizaciones» (Ajustes ▸ Actualizaciones). Las actualizaciones a partir de ahora se podrán revertir."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「アップグレード後も以前のバージョンを残す」をオンにします（設定 ▸ アップグレード）。これ以降のアップグレードは元に戻せます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开“升级后保留上一个版本”（设置 ▸ 升级）。之后的升级都可以回滚。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativa \"Manter a versão anterior após as atualizações\" (Ajustes ▸ Atualizações). As atualizações a partir de agora poderão ser revertidas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiva \"Conserva la versione precedente dopo gli aggiornamenti\" (Impostazioni ▸ Aggiornamenti). Da ora gli aggiornamenti si potranno annullare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "'업그레이드 후 이전 버전 유지'를 켭니다(설정 ▸ 업그레이드). 이후의 업그레이드는 되돌릴 수 있습니다."
           }
         }
       }
@@ -55410,6 +55670,58 @@
         }
       }
     },
+    "Upgrade Now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt upgraden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à niveau maintenant"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar ahora"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今すぐアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即升级"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar agora"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna ora"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 업그레이드"
+          }
+        }
+      }
+    },
     "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)": {
       "localizations": {
         "de": {
@@ -55926,6 +56238,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "남은 패키지 업그레이드"
+          }
+        }
+      }
+    },
+    "Upgrade the casks skipped for your password now. Tankard asks for your password.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die wegen des Passworts übersprungenen Casks jetzt upgraden. Tankard fragt nach deinem Passwort."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à niveau maintenant les casks ignorés à cause du mot de passe. Tankard vous demande votre mot de passe."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiza ahora los casks omitidos por la contraseña. Tankard te pide la contraseña."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードのためにスキップされた cask を今すぐアップグレードします。Tankard がパスワードを尋ねます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即升级因需要密码而跳过的 cask。Tankard 会询问你的密码。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualiza agora os casks pulados por causa da senha. O Tankard pede sua senha."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna ora i cask saltati per via della password. Tankard ti chiede la password."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호 때문에 건너뛴 cask를 지금 업그레이드합니다. Tankard가 암호를 묻습니다."
           }
         }
       }
@@ -59254,6 +59618,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew cleanup이 업그레이드 후 이전 keg를 제거했습니다. 다음에도 유지하려면 \"업그레이드 후 이전 버전 유지\"를 켜세요."
+          }
+        }
+      }
+    },
+    "brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup hat die alte Version entfernt (Aufräumen oder ein brew-Befehl außerhalb von Tankard)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup a supprimé l'ancienne version (Nettoyer, ou une commande brew lancée hors de Tankard)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup eliminó la versión antigua (Limpiar, o un comando brew ejecutado fuera de Tankard)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup が古いバージョンを削除しました（クリーンアップ、または Tankard 以外で実行した brew コマンド）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup 删除了旧版本（清理，或在 Tankard 之外运行的 brew 命令）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew cleanup removeu a versão antiga (Limpar, ou um comando brew executado fora do Tankard)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup ha rimosso la versione precedente (Pulisci, o un comando brew eseguito fuori da Tankard)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew cleanup이 이전 버전을 삭제했습니다(정리, 또는 Tankard 밖에서 실행한 brew 명령)."
           }
         }
       }

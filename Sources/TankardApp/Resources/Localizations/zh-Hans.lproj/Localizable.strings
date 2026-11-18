@@ -223,6 +223,7 @@
 "Auto-update: downloading %lld packages" = "自动更新：正在下载 %lld 个软件包";
 "Auto-update: upgrading %@" = "自动更新：正在升级 %@";
 "Automatic updates" = "自动更新";
+"Automatic updates never ask for your password." = "自动更新从不询问你的密码。";
 "Automatically upgrade:" = "自动升级：";
 "Available" = "可用";
 "BSD-2-Clause license" = "BSD-2-Clause 许可证";
@@ -520,6 +521,7 @@
 "It took %@; expect longer on an older Mac." = "耗时 %@；在较旧的 Mac 上会更久。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
 "KB" = "KB";
+"Keep Old Versions" = "保留旧版本";
 "Keep Running" = "继续运行";
 "Keep the previous version after upgrades" = "升级后保留上一个版本";
 "Keeps %@; upgrades skip it" = "保留 %@；升级会跳过它";
@@ -565,7 +567,7 @@
 "Name only" = "仅名称";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "仅名称匹配：%@。只有名称一致，可能是另一个 App；若是如此，brew upgrade 会替换它，卸载该 Cask 会删除它。";
 "Needs update first" = "需先更新";
-"Needs your administrator password" = "需要你的管理员密码";
+"Needs your password to upgrade" = "升级需要你的密码";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "绝不退出 App：正在运行的 cask 会被跳过，除非开启了“不退出正在运行的 App”（此时会升级，新版本在下次打开时生效）。";
 "New vulnerabilities" = "新漏洞";
 "New: %@" = "新增：%@";
@@ -618,7 +620,7 @@
 "Not checked by brew vulns: untrusted tap." = "brew vulns 未检查：不受信任的 tap。";
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "未编辑：移除第 %@ 行会留下空的 if、循环或 { } 块，bash 会拒绝它。请在还原后手动移除这些行（或在块中放入 :）。";
 "Not in Intelbrew mode: nothing to revert." = "不在 Intelbrew 模式：无需还原。";
-"Not included: %@ (can't roll back automatically)" = "未包含：%@（无法自动回滚）";
+"Not included, can't roll back automatically: %@" = "未包含（无法自动回滚）：%@";
 "Not installed" = "未安装";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "未链接：它的命令不在 Homebrew 的 bin 中。`brew link %@` 可链接它。";
 "Not listed: %@." = "未列出：%@。";
@@ -661,7 +663,7 @@
 "Off for Tankard in System Settings → Notifications" = "在“系统设置 → 通知”中，Tankard 的通知已关闭";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "已关闭：已设置 HOMEBREW_NO_AUTO_UPDATE（%@）。";
 "Official" = "官方";
-"Old version was cleaned up" = "旧版本已被清理";
+"Old version removed by cleanup" = "旧版本已被清理删除";
 "Old versions" = "旧版本";
 "Old versions, stale downloads and old logs. Nothing you use is removed." = "旧版本、过期的下载和旧日志。不会移除你正在使用的任何内容。";
 "Older now (%lld)" = "现为较旧版本 (%lld)";
@@ -786,6 +788,7 @@
 "Retry Failed (%lld)" = "重试失败项(%lld)";
 "Revert to Standard Homebrew…" = "还原为标准 Homebrew…";
 "Revert to standard Homebrew?" = "还原为标准 Homebrew？";
+"Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades." = "回滚需要旧版本，而 Tankard 目前不会在升级后保留旧版本。";
 "Run %@ again, through the queue" = "通过队列再次运行 %@";
 "Run %lld brew commands?" = "运行 %lld 条 brew 命令？";
 "Run 1 brew command?" = "运行 1 条 brew 命令？";
@@ -982,6 +985,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "菜单栏图标已关闭，因此关闭窗口时 Tankard 会退出，且届时不会运行任何任务。";
 "The official installer from brew.sh." = "来自 brew.sh 的官方安装程序。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "旧版本仍已安装。brew uninstall 会移除新版本，然后 brew link 会链接旧版本。";
+"The old versions were removed by cleanup, so nothing here can be rolled back." = "旧版本已被清理删除，因此这里没有可回滚的内容。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”：";
 "The variables are unset first, so this brew update doesn't put the fork back." = "这些变量会先被取消设置，因此这次 brew update 不会把 fork 放回去。";
@@ -1016,6 +1020,7 @@
 "Turn automatic updates back on now" = "立即重新开启自动更新";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "开启 Tankard。如果列表中没有，请点按 + 并在“应用程序”中选择 Tankard。";
 "Turn on notifications in Settings ▸ General" = "可在“设置 ▸ 通用”中打开通知";
+"Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back." = "打开“升级后保留上一个版本”（设置 ▸ 升级）。之后的升级都可以回滚。";
 "Type" = "类型";
 "Type " = "输入 ";
 "Type a name or a word from a description." = "输入名称或描述中的词语。";
@@ -1058,6 +1063,7 @@
 "Upgrade 1 package?" = "升级 1 个软件包？";
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";
+"Upgrade Now" = "立即升级";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "用 brew upgrade --cask tankard 升级 Tankard（自动更新不处理 Tankard，留给 brew）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
 "Upgrade available: %@" = "有可用升级：%@";
@@ -1068,6 +1074,7 @@
 "Upgrade ready: " = "升级已就绪： ";
 "Upgrade the Remaining %lld Packages" = "升级剩余的 %lld 个";
 "Upgrade the Remaining Package" = "升级剩余的软件包";
+"Upgrade the casks skipped for your password now. Tankard asks for your password." = "立即升级因需要密码而跳过的 cask。Tankard 会询问你的密码。";
 "Upgrade vulnerable packages. " = "升级存在漏洞的软件包。 ";
 "Upgrade with Homebrew" = "使用 Homebrew 升级";
 "Upgraded (%lld)" = "已升级 (%lld)";
@@ -1132,6 +1139,7 @@
 "brew checked every installed formula." = "brew 已检查所有已安装的 formula。";
 "brew cleanup -n exited %d." = "brew cleanup -n 已退出，代码 %d。";
 "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "升级后 brew cleanup 移除了旧 keg。开启“升级后保留旧版本”，下次即可保留。";
+"brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard)." = "brew cleanup 删除了旧版本（清理，或在 Tankard 之外运行的 brew 命令）。";
 "brew clones %@ and reads its formulae and casks." = "brew 会克隆 %@ 并读取其中的 formula 和 cask。";
 "brew doctor (raw output)" = "brew doctor（原始输出）";
 "brew doctor found nothing to fix." = "brew doctor 未发现需要修复的问题。";

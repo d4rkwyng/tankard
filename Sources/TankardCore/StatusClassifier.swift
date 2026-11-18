@@ -177,7 +177,8 @@ public struct StatusClassifier: Sendable {
             suitePaths: c.adoptArtifacts?.suites,
             installsPkg: c.installsPkg,
             sudoInstaller: c.sudoInstaller,
-            caskArtifacts: c.artifactKinds
+            caskArtifacts: c.artifactKinds,
+            caskOwnership: c.ownership
         )
     }
 

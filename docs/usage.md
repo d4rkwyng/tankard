@@ -163,6 +163,10 @@ login password and click **OK**:
 - Each brew command asks at most once: brew clears sudo's remembered password before its
   first sudo, and later sudo steps of the same command don't ask again. Upgrading two such
   casks asks twice.
+- These casks show a small lock next to the name in the lists, in the upgrade plan and
+  in the running upgrade ("Needs your password to upgrade"). Upgrade All runs them last, so
+  the password dialogs come at the end instead of in the middle of the run (a cask that
+  depends on one of them runs after it).
 - The dialog closes by itself after 5 minutes, or when you click **Stop Now**.
 - The dialog only ever answers Tankard's own brew commands. Run any other way (another
   program's sudo, Terminal), it refuses before showing anything, so it can't be used to
@@ -193,7 +197,8 @@ default.
   - Never a password prompt: a cask whose installer needs your administrator password is
     skipped ("needs your administrator password; upgrade it by hand"), and brew is told
     not to run sudo at all (`HOMEBREW_NO_SUDO=1`), so any other step that would need it
-    fails with that reason instead of asking.
+    fails with that reason instead of asking. The Auto-update log has **Upgrade Now** for
+    those casks: a normal upgrade, which asks for your password.
   - Tankard doesn't upgrade itself this way. The menu-bar icon says when a new Tankard is
     available.
 - **Terminal brew running, or quitting mid-run:** a step that finds brew busy waits for it
@@ -283,7 +288,9 @@ The apps are grouped:
   the cask puts it.
 - **No cask.**
 
-Apple's apps, App Store apps and apps Homebrew already manages aren't listed.
+Apple's apps, App Store apps and apps Homebrew already manages aren't listed. That includes
+apps a cask installed with an installer package (Microsoft Word, Teams, Windows App):
+Tankard knows them from the package's install receipt and the cask's uninstall steps.
 
 **After adopting, Homebrew owns the app.** It stays where it is, but `brew upgrade`
 replaces it with the cask's version, and uninstalling the cask deletes the app.
@@ -323,6 +330,10 @@ casks as a Brewfile.
 2. In Restore Points, choose a point and click **Restore…**. The plan shows every brew
    command first.
 3. Leave **Pin rolled-back formulae** on, so the next upgrade doesn't undo it.
+
+While **Keep the previous version after upgrades** is off, Restore Points says so at the
+top, with **Keep Old Versions** to turn it on. An upgrade whose old version is gone says
+"Old version removed by cleanup".
 
 Only formulae whose old version is still installed can be rolled back. Casks, keg-only and
 pinned formulae, HEAD builds and formulae other packages depend on can't. Tankard marks

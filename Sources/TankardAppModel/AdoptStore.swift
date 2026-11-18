@@ -19,11 +19,15 @@ public struct AdoptInput: Sendable {
     public var apps: [InstalledApp]
     /// "formulae.brew.sh · 7,828 casks", for the sheet's footer.
     public var source: String
+    /// 0.8.5: installed pkg casks' receipts: receipt id → the apps it put
+    /// on disk (`PkgReceipts.live`), so they count as Homebrew's.
+    public var receiptApps: [String: [String]]
 
-    public init(index: AdoptIndex, apps: [InstalledApp], source: String) {
+    public init(index: AdoptIndex, apps: [InstalledApp], source: String, receiptApps: [String: [String]] = [:]) {
         self.index = index
         self.apps = apps
         self.source = source
+        self.receiptApps = receiptApps
     }
 }
 
@@ -191,7 +195,7 @@ public final class AdoptStore {
     public func apply(_ input: AdoptInput) {
         index = input.index
         source = input.source
-        scan = AdoptMatcher.match(input.apps, index: input.index, managed: managed(input.index))
+        scan = AdoptMatcher.match(input.apps, index: input.index, managed: managed(input.index).adding(receiptApps: input.receiptApps))
         chosen = [:]
         policies = [:]
         ticked = Set(scan.rows.filter(defaultTicked).map(\.id))
@@ -352,19 +356,23 @@ public extension AppStore {
         } else if detection.detected || client.sources.effective(Intelbrew.noAPIKey) != nil {
             adopt.loader = { throw AdoptUnavailable.noAPI }
         } else {
-            adopt.loader = Self.liveAdoptLoader(fetcher: APIFetcher())
+            let receiptIDs = ManagedApps(packages: packages, index: nil).receiptIDs.sorted()
+            adopt.loader = Self.liveAdoptLoader(fetcher: APIFetcher(), receiptIDs: receiptIDs)
         }
         return true
     }
 
     /// cask.json through Discover's cache (1 h, ETag), then the disk scan.
-    nonisolated static func liveAdoptLoader(fetcher: APIFetcher) -> AdoptLoader {
+    /// 0.8.5: and the installed pkg casks' receipts (`receiptIDs`).
+    nonisolated static func liveAdoptLoader(fetcher: APIFetcher, receiptIDs: [String] = []) -> AdoptLoader {
         { @Sendable in
             let (data, _, _) = try await fetcher.fetch("cask.json")
             let index = try AdoptIndex.decode(caskJSON: data)
             let apps = AppScanner.scan()
+            let receipts = await PkgReceipts.live(ids: receiptIDs)
             return AdoptInput(index: index, apps: apps,
-                              source: String(localized: "formulae.brew.sh · \(index.count.formatted()) casks"))
+                              source: String(localized: "formulae.brew.sh · \(index.count.formatted()) casks"),
+                              receiptApps: receipts)
         }
     }
 

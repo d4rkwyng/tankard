@@ -223,6 +223,7 @@
 "Auto-update: downloading %lld packages" = "自動アップデート: %lld 個のパッケージをダウンロード中";
 "Auto-update: upgrading %@" = "自動アップデート: %@ をアップグレード中";
 "Automatic updates" = "自動アップデート";
+"Automatic updates never ask for your password." = "自動アップデートはパスワードを要求しません。";
 "Automatically upgrade:" = "自動的にアップグレード:";
 "Available" = "利用可能";
 "BSD-2-Clause license" = "BSD-2-Clauseライセンス";
@@ -520,6 +521,7 @@
 "It took %@; expect longer on an older Mac." = "%@かかりました。古いMacではもっとかかります。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
 "KB" = "KB";
+"Keep Old Versions" = "古いバージョンを残す";
 "Keep Running" = "続行";
 "Keep the previous version after upgrades" = "アップグレード後も以前のバージョンを残す";
 "Keeps %@; upgrades skip it" = "%@を維持します。アップグレードではスキップされます";
@@ -565,7 +567,7 @@
 "Name only" = "名前のみ";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "名前のみ: %@。一致しているのは名前だけなので、別のアプリかもしれません。その場合、brew upgrade はそれを置き換え、Cask をアンインストールすると削除されます。";
 "Needs update first" = "先に更新が必要";
-"Needs your administrator password" = "管理者パスワードが必要です";
+"Needs your password to upgrade" = "アップグレードにパスワードが必要です";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "アプリを終了することはありません: アプリが実行中のcaskはスキップされます。「実行中のアプリを終了しない」がオンの場合を除きます(その場合はアップグレードされ、新しいバージョンは次回に開きます)。";
 "New vulnerabilities" = "新しい脆弱性";
 "New: %@" = "新規: %@";
@@ -618,7 +620,7 @@
 "Not checked by brew vulns: untrusted tap." = "brew vulnsでは確認されていません: 信頼されていないtapです。";
 "Not edited: removing line %@ would leave an empty if, loop or { } block, which bash rejects. Remove the lines by hand (or put : in the block) after the revert." = "編集しませんでした: %@行目を削除すると、bashが拒否する空のif、ループ、{ } ブロックが残ります。元に戻した後で、手動で行を削除してください(またはブロックに : を入れてください)。";
 "Not in Intelbrew mode: nothing to revert." = "Intelbrewモードではありません: 元に戻すものはありません。";
-"Not included: %@ (can't roll back automatically)" = "含まれません: %@(自動でロールバックできません)";
+"Not included, can't roll back automatically: %@" = "含まれないもの（自動で戻せません）: %@";
 "Not installed" = "未インストール";
 "Not linked: its commands aren't in Homebrew's bin. `brew link %@` links it." = "リンクされていません: コマンドがHomebrewのbinにありません。`brew link %@` でリンクします。";
 "Not listed: %@." = "一覧にないもの: %@。";
@@ -661,7 +663,7 @@
 "Off for Tankard in System Settings → Notifications" = "システム設定 → 通知 でTankardがオフになっています";
 "Off: HOMEBREW_NO_AUTO_UPDATE is set (%@)." = "オフ：HOMEBREW_NO_AUTO_UPDATE が設定されています（%@）。";
 "Official" = "公式";
-"Old version was cleaned up" = "古いバージョンはクリーンアップされました";
+"Old version removed by cleanup" = "クリーンアップで古いバージョンが削除されました";
 "Old versions" = "古いバージョン";
 "Old versions, stale downloads and old logs. Nothing you use is removed." = "古いバージョン、不要なダウンロード、古いログ。使用中のものは削除されません。";
 "Older now (%lld)" = "以前のバージョン (%lld)";
@@ -786,6 +788,7 @@
 "Retry Failed (%lld)" = "失敗分を再試行(%lld)";
 "Revert to Standard Homebrew…" = "標準のHomebrewに戻す…";
 "Revert to standard Homebrew?" = "標準のHomebrewに戻しますか？";
+"Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades." = "元に戻すには古いバージョンが必要ですが、Tankard はアップグレード後に古いバージョンを残していません。";
 "Run %@ again, through the queue" = "%@をキュー経由でもう一度実行";
 "Run %lld brew commands?" = "brewコマンドを%lld件実行しますか？";
 "Run 1 brew command?" = "brewコマンドを1件実行しますか？";
@@ -982,6 +985,7 @@
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "メニューバーアイコンがオフのため、ウインドウを閉じるとTankardは終了し、その間は何も実行されません。";
 "The official installer from brew.sh." = "brew.shの公式インストーラ。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "古いバージョンはまだインストールされています。brew uninstallで新しい方を削除し、brew linkで古い方をリンクします。";
+"The old versions were removed by cleanup, so nothing here can be rolled back." = "古いバージョンはクリーンアップで削除されたため、ここでは何も元に戻せません。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "その他のアプリは確認されます。ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "パスワードダイアログがキャンセルされたため、このステップは実行されませんでした。自分で実行するには、ターミナルを使用してください:";
 "The variables are unset first, so this brew update doesn't put the fork back." = "この変数は先に解除されるため、このbrew updateでフォークが元に戻ることはありません。";
@@ -1016,6 +1020,7 @@
 "Turn automatic updates back on now" = "自動アップデートを今すぐ再びオンにする";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Tankardをオンにします。一覧にない場合は、+をクリックしてアプリケーションからTankardを選んでください。";
 "Turn on notifications in Settings ▸ General" = "通知は「設定」▸「一般」でオンにできます";
+"Turns on \"Keep the previous version after upgrades\" (Settings ▸ Upgrades). Upgrades from now on can be rolled back." = "「アップグレード後も以前のバージョンを残す」をオンにします（設定 ▸ アップグレード）。これ以降のアップグレードは元に戻せます。";
 "Type" = "種類";
 "Type " = "入力: ";
 "Type a name or a word from a description." = "名前または説明内の単語を入力してください。";
@@ -1058,6 +1063,7 @@
 "Upgrade 1 package?" = "1個のパッケージをアップグレードしますか？";
 "Upgrade All" = "すべてアップグレード";
 "Upgrade All…" = "すべてアップグレード…";
+"Upgrade Now" = "今すぐアップグレード";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
 "Upgrade available: %@" = "アップグレードあり: %@";
@@ -1068,6 +1074,7 @@
 "Upgrade ready: " = "アップグレードの準備完了: ";
 "Upgrade the Remaining %lld Packages" = "残りの %lld 件をアップグレード";
 "Upgrade the Remaining Package" = "残りのパッケージをアップグレード";
+"Upgrade the casks skipped for your password now. Tankard asks for your password." = "パスワードのためにスキップされた cask を今すぐアップグレードします。Tankard がパスワードを尋ねます。";
 "Upgrade vulnerable packages. " = "脆弱性のあるパッケージをアップグレードします。 ";
 "Upgrade with Homebrew" = "Homebrewでアップグレード";
 "Upgraded (%lld)" = "アップグレード済み (%lld)";
@@ -1132,6 +1139,7 @@
 "brew checked every installed formula." = "brewはインストール済みのすべてのformulaを確認しました。";
 "brew cleanup -n exited %d." = "brew cleanup -nが%dで終了しました。";
 "brew cleanup removed the old keg after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "brew cleanupがアップグレード後に古いkegを削除しました。次回から残すには「アップグレード後に以前のバージョンを残す」をオンにしてください。";
+"brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard)." = "brew cleanup が古いバージョンを削除しました（クリーンアップ、または Tankard 以外で実行した brew コマンド）。";
 "brew clones %@ and reads its formulae and casks." = "brewは%@をクローンし、そのformulaとcaskを読み込みます。";
 "brew doctor (raw output)" = "brew doctor（生の出力）";
 "brew doctor found nothing to fix." = "brew doctorで修正が必要な点は見つかりませんでした。";

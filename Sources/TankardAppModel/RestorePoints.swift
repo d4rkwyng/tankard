@@ -186,13 +186,22 @@ public enum RollbackBlock: String, Sendable, Equatable, CaseIterable {
     public var title: String {
         switch self {
         case .cask: return String(localized: "Cask: no older version")
-        case .cleanedUp: return String(localized: "Old version was cleaned up")
+        case .cleanedUp: return String(localized: "Old version removed by cleanup")
         case .kegOnly: return String(localized: "Keg-only")
         case .pinned: return String(localized: "Pinned")
         case .hasDependents: return String(localized: "Other packages need it")
         case .otherKegWouldLink: return String(localized: "Another old version is installed")
         case .headVersion: return String(localized: "HEAD build")
         }
+    }
+
+    /// 0.8.5: the detail, saying how to keep old versions only while
+    /// Tankard isn't keeping them.
+    public func explanation(keepPrevious: Bool) -> String {
+        if self == .cleanedUp && keepPrevious {
+            return String(localized: "brew cleanup removed the old version (Clean Up, or a brew command run outside Tankard).")
+        }
+        return explanation
     }
 
     /// The detail, for help text.
@@ -312,6 +321,24 @@ public struct RestorePlan: Sendable, Equatable {
     /// Upgrades that need the manual route.
     public var manual: [(change: RestoreDiff.Change, block: RollbackBlock)] = []
     public var source: Source?
+
+    /// 0.8.5: what the confirmation leaves out, each with its reason:
+    /// "Not included, can't roll back automatically: xz (Old version
+    /// removed by cleanup), node (Pinned)". nil when nothing is left out.
+    public var notIncludedText: String? {
+        guard !manual.isEmpty else { return nil }
+        let list = manual.map { "\($0.change.now.name) (\($0.block.title))" }.joined(separator: ", ")
+        return String(localized: "Not included, can't roll back automatically: \(list)")
+    }
+
+    /// 0.8.5: why Restore… is off when there is nothing to run; the
+    /// cleanup reason when that is what happened to every old version.
+    public var nothingToRestoreReason: String {
+        if !manual.isEmpty && manual.allSatisfy({ $0.block == .cleanedUp }) {
+            return String(localized: "The old versions were removed by cleanup, so nothing here can be rolled back.")
+        }
+        return String(localized: "Nothing here can be restored automatically")
+    }
     /// Set when the plan changed between showing it and confirming it (an
     /// old keg was cleaned up meanwhile): why, for the confirmation.
     public var notice: String?
@@ -437,6 +464,15 @@ public final class RestorePointStore {
         self.directory = directory
         self.settings = settings
         points = directory.map(Self.load) ?? []
+    }
+
+    /// 0.8.5: the banner at the top of Restore Points: rolling back needs
+    /// the old version, and Tankard isn't keeping old versions.
+    public var showsKeepOldVersionsBanner: Bool { !settings.keepPreviousVersion }
+
+    /// 0.8.5: the banner's Keep Old Versions (the Settings toggle, on).
+    public func keepOldVersions() {
+        settings.keepPreviousVersion = true
     }
 
     /// Saves `point` and drops the oldest past `maxPoints`.

@@ -99,7 +99,7 @@ struct ContentView: View {
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "autoupdate-log":
-                return AnyView(AutoUpdateLogView(log: store.autoUpdate.log)
+                return AnyView(AutoUpdateLogView(log: store.autoUpdate.log, done: nil, store: store)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "settings-upgrades":
@@ -161,7 +161,7 @@ struct ContentView: View {
             BrewfileSheet(store: store, brewfile: store.brewfile).themed(theme)
         }
         .sheet(isPresented: $store.showAutoUpdateLog) {
-            AutoUpdateLogView(log: store.autoUpdate.log) { store.showAutoUpdateLog = false }.themed(theme)
+            AutoUpdateLogView(log: store.autoUpdate.log, done: { store.showAutoUpdateLog = false }, store: store).themed(theme)
         }
         .sheet(isPresented: RestorePointsSheet.binding(store.restorePoints)) {
             RestorePointsSheet(store: store, points: store.restorePoints).themed(theme)
@@ -533,6 +533,7 @@ struct PackageTable: View {
                         }
                         if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p), includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps)) }
                         if p.pinned { PinnedBadge() }
+                        if AdminPassword.required(p) { PasswordLockBadge() }
                         RetiredBadge(package: p)
                         VulnerabilityTag(package: p)
                     }
