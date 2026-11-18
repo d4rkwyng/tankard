@@ -223,7 +223,8 @@ struct HealthSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 640, height: 560, alignment: .top)
+        .sheetFrame(width: 640, height: 560, store: store)
+        .escapeCloses { store.closeToolSheet() }
         .background(theme.window ?? .clear)
     }
 
@@ -529,7 +530,8 @@ struct HistorySheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 680, height: 560, alignment: .top)
+        .sheetFrame(width: 680, height: 560, store: store)
+        .escapeCloses { store.closeToolSheet() }
         .background(theme.window ?? .clear)
     }
 
@@ -667,7 +669,7 @@ struct AutoremoveSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 600, height: 500, alignment: .top)
+        .sheetFrame(width: 600, height: 500, store: store)
         .background(theme.window ?? .clear)
     }
 

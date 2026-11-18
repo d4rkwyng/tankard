@@ -85,7 +85,7 @@ struct RestorePointsSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 760, height: 520, alignment: .top)
+        .sheetFrame(width: 760, height: 520, store: store)
         .background(theme.window ?? .clear)
     }
 }
@@ -170,8 +170,9 @@ struct RestoreDiffView: View {
                     NSPasteboard.general.setString(point.brewfile, forType: .string)
                 }
                 .help("This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)")
+                // 0.8.6 (UI M9): not styled as the default button: Return
+                // doesn't run it (Done is Esc), so it shouldn't look like it does.
                 Button("Restore…") { store.requestRestore(point, pinAfter: pinAfter) }
-                    .buttonStyle(.primaryAction)
                     .disabled(plan.steps.isEmpty || store.isBusy)
                     .help(plan.steps.isEmpty ? plan.nothingToRestoreReason : String(localized: "Shows what will change first"))
             }

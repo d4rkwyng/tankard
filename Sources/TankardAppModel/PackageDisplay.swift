@@ -385,6 +385,22 @@ public enum UpgradeBanner {
     }
 }
 
+/// 0.8.6 (UI details M2): a sheet's height. Sheets had fixed heights up
+/// to 620 pt, taller than the 480 pt minimum window (and at the default
+/// size Adopt's buttons were cut off). Now each is its usual height when
+/// the window has room, and shorter when it hasn't (its list scrolls, the
+/// buttons stay), down to `minimum`.
+public enum SheetHeight {
+    public static let minimum: Double = 340
+    /// Room left between the sheet's bottom and the window's.
+    public static let margin: Double = 16
+
+    public static func fit(_ ideal: Double, room: Double?) -> Double {
+        guard let room, room > 0 else { return ideal }
+        return min(ideal, max(minimum, room - margin))
+    }
+}
+
 /// The Intelbrew fork line in the status bar.
 public struct ForkSummary: Equatable, Sendable {
     public enum Level: Sendable { case ok, warning, problem }

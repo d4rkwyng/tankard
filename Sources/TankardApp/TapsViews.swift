@@ -86,7 +86,8 @@ struct TapsSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 720, height: 580, alignment: .top)
+        .sheetFrame(width: 720, height: 580, store: store)
+        .escapeCloses { store.closeToolSheet() }
         .background(theme.window ?? .clear)
         .modifier(TapAddConfirmation(store: store, taps: taps))
         .modifier(TapsAlerts(store: store, taps: taps))

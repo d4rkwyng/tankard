@@ -525,7 +525,7 @@ struct CleanupSheet: View {
         .padding(.vertical, 16)
         // One height for every phase: a sheet that grows after the dry run
         // answers would otherwise jump.
-        .frame(width: 600, height: 480, alignment: .top)
+        .sheetFrame(width: 600, height: 480, store: store)
         .background(theme.window ?? .clear)
     }
 

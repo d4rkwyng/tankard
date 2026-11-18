@@ -62,7 +62,7 @@ struct AdoptSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 760, height: 620, alignment: .top)
+        .sheetFrame(width: 760, height: 620, store: store)
         .background(theme.window ?? .clear)
         .modifier(AdoptConfirmation(store: store, adopt: adopt))
     }
@@ -250,7 +250,9 @@ struct AdoptSheet: View {
                 Spacer()
                 Button("Scan Again") { Task { await adopt.load() } }
                     .disabled(adopt.phase == .scanning)
+                // 0.8.6 (UI M9): Esc closes, as on every sheet.
                 Button("Done") { store.closeToolSheet() }
+                    .keyboardShortcut(.cancelAction)
                 let n = adopt.plan.count
                 Button(n == 0 ? String(localized: "Adopt Apps…") : n == 1 ? String(localized: "Adopt 1 App…") : String(localized: "Adopt \(n) Apps…")) { adopt.requestAdopt() }
                     .buttonStyle(.primaryAction)

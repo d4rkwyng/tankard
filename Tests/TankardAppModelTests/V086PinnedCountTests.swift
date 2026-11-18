@@ -36,3 +36,15 @@ struct V086PinnedCountTests {
         #expect(UpgradeBanner.text(skipped) == "Newer version: 1 → 2 (you skipped this version)")
     }
 }
+
+// 0.8.6 (UI details M2): sheets fit the window.
+struct V086SheetHeightTests {
+    @Test func sheetsShrinkToTheWindowNotBelowTheMinimum() {
+        #expect(SheetHeight.fit(620, room: nil) == 620)          // before layout
+        #expect(SheetHeight.fit(620, room: 900) == 620)          // room to spare
+        #expect(SheetHeight.fit(620, room: 600) == 584)          // default window: buttons stay in
+        #expect(SheetHeight.fit(620, room: 430) == 414)          // minimum window
+        #expect(SheetHeight.fit(620, room: 200) == SheetHeight.minimum)
+        #expect(SheetHeight.fit(480, room: 600) == 480)
+    }
+}

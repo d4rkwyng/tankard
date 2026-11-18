@@ -213,6 +213,11 @@ public final class AppStore {
     /// the main window's sheet, or (0.8.5) the progress panel a menu-bar
     /// Upgrade opens (`activityPresentation`). Hiding it puts the next one
     /// back on the main window.
+    /// 0.8.6 (UI details M2): the main window's content height, for
+    /// sheets taller than a small window (`SheetHeight.fit`). nil before
+    /// the window has laid out.
+    public var sheetRoom: Double?
+
     public var showUpgradeSheet = false {
         didSet {
             if !showUpgradeSheet, activityPresentation != .mainWindowSheet { activityPresentation = .mainWindowSheet }

@@ -63,6 +63,12 @@ struct ContentView: View {
         .onChange(of: activeState) { _, state in
             if state == .key { store.revalidateIfStale() }
         }
+        // 0.8.6 (UI M2): how tall a sheet can be in this window.
+        .background(GeometryReader { geo in
+            Color.clear
+                .onAppear { store.sheetRoom = Double(geo.size.height) }
+                .onChange(of: geo.size.height) { _, h in store.sheetRoom = Double(h) }
+        })
         .onChange(of: store.tab) { _, tab in
             store.tabChanged(to: tab)
             if tab == .discover { openDiscover() }

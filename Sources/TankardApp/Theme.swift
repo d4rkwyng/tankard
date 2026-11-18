@@ -511,3 +511,25 @@ struct ActionCountPill: View {
             .background(Capsule().fill(theme.isCustom ? theme.actionPill : Color.black.opacity(0.25)))
     }
 }
+
+// MARK: sheets (0.8.6, UI details M2 and M9)
+
+extension View {
+    /// A sheet's size: its usual height when the window has room, shorter
+    /// in a small window (`SheetHeight.fit`).
+    func sheetFrame(width: CGFloat, height: CGFloat, store: AppStore) -> some View {
+        frame(width: width, height: CGFloat(SheetHeight.fit(Double(height), room: store.sheetRoom)), alignment: .top)
+    }
+
+    /// Esc runs `action` (Done) on a sheet whose Done is the Return button:
+    /// a SwiftUI button has one shortcut, so this adds an invisible one.
+    func escapeCloses(_ action: @escaping () -> Void) -> some View {
+        background(
+            Button("", action: action)
+                .keyboardShortcut(.cancelAction)
+                .frame(width: 0, height: 0)
+                .opacity(0)
+                .accessibilityHidden(true)
+        )
+    }
+}
