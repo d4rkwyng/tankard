@@ -214,3 +214,14 @@ func sleepUntilCancelled() async throws {
 func waitForRead(_ store: AppStore, after reads: Int, timeout: Duration = .seconds(30)) async -> Bool {
     await waitUntil(timeout: timeout) { store.refreshesCompleted > reads && !store.isRefreshing }
 }
+
+/// 0.8.4: `AppStore(deps:)` in a test gets settings TestDefaults removes.
+/// Without settings the store makes its own suite,
+/// net.mindtricks.tankard.ephemeral.<UUID> (AppStore.swift), which nothing
+/// deleted: about 33 plists a test run. Swift prefers this overload, which
+/// needs no default argument, over `init(deps:settings: = nil)`.
+extension AppStore {
+    convenience init(deps: Dependencies) {
+        self.init(deps: deps, settings: testSettings())
+    }
+}
