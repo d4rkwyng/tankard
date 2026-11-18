@@ -97,6 +97,7 @@
 "%lld hours" = "%lld 小时";
 "%lld installed" = "%lld 个已安装";
 "%lld installed from it" = "%lld 个由其安装";
+"%lld installed packages Homebrew can't read" = "Homebrew 无法读取的已安装软件包：%lld 个";
 "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "这个 tap（%2$@）提供了 %1$lld 个已安装的软件包。请先卸载它们：只要还装有来自该 tap 的软件包，brew 就不会移除它。";
 "%lld installs in the last 30 days" = "过去 30 天安装 %lld 次";
 "%lld installs in the last 365 days" = "过去 365 天安装 %lld 次";
@@ -114,6 +115,7 @@
 "%lld not checked" = "%lld 个未检查";
 "%lld of %lld" = "%lld / %lld";
 "%lld of %lld versions" = "%lld / %lld 个版本";
+"%lld of them Homebrew can't read" = "其中 %lld 个 Homebrew 无法读取";
 "%lld pinned upgrade not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld pinned upgrades not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld result for “%@”" = "%lld 个“%@”的结果";
@@ -150,6 +152,7 @@
 "1 cask" = "1 个 cask";
 "1 formula" = "1 个 formula";
 "1 hour" = "1 小时";
+"1 installed package Homebrew can't read" = "Homebrew 无法读取的已安装软件包：1 个";
 "1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "这个 tap（%@）提供了 1 个已安装的软件包。请先卸载它：只要还装有来自该 tap 的软件包，brew 就不会移除它。";
 "1 item" = "1 项";
 "1 known vulnerability" = "1 个已知漏洞";
@@ -479,6 +482,10 @@
 "Homebrew Health" = "Homebrew 健康状况";
 "Homebrew Words Explained" = "Homebrew 术语解释";
 "Homebrew bottle" = "Homebrew bottle";
+"Homebrew can't read %@ any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from." = "Homebrew 已无法读取 %@，因此 brew 本身不会阻止移除；Tankard 会阻止，因为移除后该软件包将无处可升级或重新安装。";
+"Homebrew can't read this package" = "Homebrew 无法读取此软件包";
+"Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew 已无法读取此软件包，因此不会升级它。";
+"Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew 已无法读取此软件包，因此不会升级它。brew 提示：%@";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。";
@@ -543,6 +550,7 @@
 "Installed as" = "安装为";
 "Installed as a dependency" = "作为依赖项安装";
 "Installed by you" = "你安装的";
+"Installed from %@." = "安装自 %@。";
 "Installed on" = "安装于";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "已安装的软件包，或搜索 Homebrew 的全部内容（⌘1、⌘2）";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "已安装的版本比 tap 的 %@ 更新。brew 不会降级它。";
@@ -564,6 +572,7 @@
 "Intelbrew update available (%@; %@ is out)" = "Intelbrew 有可用更新（%1$@；%2$@ 已发布）";
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrew 的相关行仍保留在你的 shell 配置文件（%@）中；请事后手动移除，或先使用“还原为标准 Homebrew”。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "它会删除 %@ 的 Homebrew 文件以及所有已安装的 formula 和 cask，包括作为 cask 安装在 /Applications 中的 App。这台 Mac 上的其他 Homebrew（位于不同前缀）不受影响。它可能会要求输入密码。";
+"It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "它仍处于安装状态（brew list 会列出它）。信任它的 Tap，或以新名称重新安装，Homebrew 就能读取它。";
 "It took %@; expect longer on an older Mac." = "耗时 %@；在较旧的 Mac 上会更久。";
 "It was built from the latest source, so there is no fixed version to go back to." = "它是从最新源码构建的，因此没有可以退回的固定版本。";
 "It was stopped." = "已被停止。";
@@ -1282,6 +1291,7 @@
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew 不会升级它，“全部升级”也不包含它。";
 "brew's output" = "brew 的输出";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env 关闭了 brew 的依赖项检查；自动更新已暂停。";
+"can't be read" = "无法读取";
 "cancelled" = "已取消";
 "cask" = "cask";
 "changes where apps go, which Adopt and App Management rely on" = "会改变 App 的安装位置，而接管和 App 管理依赖于此";

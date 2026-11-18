@@ -416,7 +416,14 @@ packages you installed from each.
 - **Show Installed** filters the Installed list to one tap.
 - **Add Tap…** takes `user/repo`, and optionally a git URL. Third-party taps run their
   authors' code; Tankard warns you first.
-- **Remove…** runs `brew untap`. It is blocked while anything installed comes from the tap.
+- **Remove…** runs `brew untap`. It is blocked while anything installed comes from the tap,
+  including packages Homebrew can't read (below), which brew's own check would miss.
+- **Packages Homebrew can't read.** brew refuses to load a formula from a tap you don't
+  trust, or one its tap has renamed, and then leaves it out of everything it lists for
+  Tankard. Tankard finds it in the Cellar or Caskroom instead and shows it in Installed
+  with **can't be read**, brew's own reason in its details, and a line in Health. The tap's
+  row counts it. brew won't upgrade it until you trust the tap or install it again under its
+  new name.
 - **Trust…** and **Stop Trusting…** set Homebrew 7's trust for a third-party tap.
 
 ## Services

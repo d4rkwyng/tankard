@@ -147,6 +147,7 @@ public enum Demo {
         // 0.8.4: cask dates come from the fixtures alone; the Caskroom
         // (this Mac's real one at the demo's prefix) is never read.
         client.caskFolderTime = nil
+        client.unreadableScan = nil
         let demoClient = client
         var deps = AppStore.Dependencies(
             makeClient: { demoClient },

@@ -41,6 +41,10 @@ public struct BrewClient: Sendable {
     /// `<prefix>/Caskroom` (StatusClassifier.folderTime). Demo mode sets
     /// nil: its dates come from the fixtures only, never this Mac's disk.
     public var caskFolderTime: (@Sendable (_ token: String, _ version: String) -> Date?)?
+    /// 0.8.6 (M1): installed packages brew's JSON leaves out (it can't
+    /// load them), from the Cellar and Caskroom (`UnreadableKegs.find`).
+    /// Demo mode sets nil: it never reads this Mac's disk.
+    public var unreadableScan: (@Sendable (BrewInfoJSON) -> [Package])?
 
     public init(installation: BrewInstallation,
                 platform: BottlePlatform? = nil,
@@ -56,6 +60,8 @@ public struct BrewClient: Sendable {
         self.fileExists = fileExists
         let caskroom = installation.prefix + "/Caskroom"
         self.caskFolderTime = { CaskInstallTime.folderTime(caskroom: caskroom, token: $0, version: $1) }
+        let cellar = self.platform.cellar
+        self.unreadableScan = { UnreadableKegs.find(cellar: cellar, caskroom: caskroom, info: $0) }
     }
 
     /// Locates brew (override path, else the standard locations).
@@ -240,7 +246,11 @@ public struct BrewClient: Sendable {
 
         let classifier = StatusClassifier(platform: platform, intelbrewMode: detection.detected,
                                           folderTime: caskFolderTime)
-        let packages = classifier.classify(info: info)
+        var packages = classifier.classify(info: info)
+        // 0.8.6 (M1): what brew can't read, with brew's reason for the first few.
+        if let scan = unreadableScan {
+            packages += await withUnreadableReasons(scan(info), env: env)
+        }
 
         if detection.detected && !fork.coreIsFork {
             warnings.append(fork.coreTapPath == nil
@@ -261,6 +271,31 @@ public struct BrewClient: Sendable {
             ],
             warnings: warnings
         )
+    }
+}
+
+extension BrewClient {
+    /// Asks brew why it can't read each package (`brew info --json=v2`
+    /// on the name, which fails with the reason), at most `limit` of them.
+    func withUnreadableReasons(_ rows: [Package], env: [String: String], limit: Int = 5) async -> [Package] {
+        guard !rows.isEmpty else { return rows }
+        var out: [Package?] = rows
+        await withTaskGroup(of: (Int, ProcessResult?).self) { group in
+            for (i, p) in rows.enumerated().prefix(limit) {
+                group.addTask {
+                    let args = ["info", "--json=v2", p.kind == .cask ? "--cask" : "--formula", p.name]
+                    return (i, try? await runner.run(installation.brewPath, args, environment: env))
+                }
+            }
+            for await (i, r) in group {
+                guard let r else { continue }
+                // brew read it after all (a folder brew's JSON names some
+                // other way): not Tankard's to second-guess.
+                if r.exitCode == 0 { out[i] = nil; continue }
+                if let why = UnreadableKegs.reason(stderr: r.stderrString) { out[i]?.unreadable = why }
+            }
+        }
+        return out.compactMap { $0 }
     }
 }
 

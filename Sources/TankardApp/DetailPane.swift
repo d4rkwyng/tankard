@@ -86,6 +86,7 @@ struct PackageDetail: View {
                 }
 
                 RetiredDetail(package: p)
+                UnreadableDetail(package: p)
 
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {

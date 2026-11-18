@@ -97,6 +97,7 @@
 "%lld hours" = "%lld horas";
 "%lld installed" = "%lld instalados";
 "%lld installed from it" = "%lld instalados a partir dele";
+"%lld installed packages Homebrew can't read" = "%lld pacotes instalados que o Homebrew não consegue ler";
 "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "%lld pacotes instalados vêm deste tap (%@). Desinstale-os primeiro: o brew não remove um tap enquanto houver pacotes dele instalados.";
 "%lld installs in the last 30 days" = "%lld instalações nos últimos 30 dias";
 "%lld installs in the last 365 days" = "%lld instalações nos últimos 365 dias";
@@ -114,6 +115,7 @@
 "%lld not checked" = "%lld não verificados";
 "%lld of %lld" = "%lld de %lld";
 "%lld of %lld versions" = "%lld de %lld versões";
+"%lld of them Homebrew can't read" = "%lld deles o Homebrew não consegue ler";
 "%lld pinned upgrade not included (%@)" = "%lld atualização fixada não incluída (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld atualizações fixadas não incluídas (%@)";
 "%lld result for “%@”" = "%lld resultado para “%@”";
@@ -150,6 +152,7 @@
 "1 cask" = "1 cask";
 "1 formula" = "1 formula";
 "1 hour" = "1 hora";
+"1 installed package Homebrew can't read" = "1 pacote instalado que o Homebrew não consegue ler";
 "1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "1 pacote instalado vem deste tap (%@). Desinstale-o primeiro: o brew não remove um tap enquanto houver pacotes dele instalados.";
 "1 item" = "1 item";
 "1 known vulnerability" = "1 vulnerabilidade conhecida";
@@ -479,6 +482,10 @@
 "Homebrew Health" = "Integridade do Homebrew";
 "Homebrew Words Explained" = "Termos do Homebrew explicados";
 "Homebrew bottle" = "Bottle do Homebrew";
+"Homebrew can't read %@ any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from." = "O Homebrew não consegue mais ler %@, então o próprio brew não impediria a remoção; o Tankard impede, porque o pacote ficaria sem nada de onde atualizá-lo ou reinstalá-lo.";
+"Homebrew can't read this package" = "O Homebrew não consegue ler este pacote";
+"Homebrew can't read this package any more, so it won't upgrade it." = "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo.";
+"Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo. O brew diz: %@";
 "Homebrew couldn't reach the network" = "O Homebrew não conseguiu acessar a rede";
 "Homebrew couldn't write to its folders" = "O Homebrew não conseguiu gravar em suas pastas";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "O Homebrew ainda não lista o Tankard %@: o tap pode levar um tempo após uma versão. Tente mais tarde ou baixe-o.";
@@ -543,6 +550,7 @@
 "Installed as" = "Instalado como";
 "Installed as a dependency" = "Instalado como dependência";
 "Installed by you" = "Instalados por você";
+"Installed from %@." = "Instalado de %@.";
 "Installed on" = "Instalado em";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "Pacotes instalados, ou pesquise tudo o que o Homebrew tem (⌘1, ⌘2)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "A versão instalada é mais recente que a %@ do tap. O brew não faz downgrade.";
@@ -564,6 +572,7 @@
 "Intelbrew update available (%@; %@ is out)" = "Atualização do Intelbrew disponível (%1$@; %2$@ já saiu)";
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "As linhas do Intelbrew permanecem no perfil do shell (%@); remova-as manualmente depois, ou use antes Reverter para o Homebrew Padrão.";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "Exclui os arquivos do Homebrew de %@ e todas as formulae e casks instalados, inclusive apps instalados como casks em /Applications. Outro Homebrew neste Mac (em outro prefixo) não é afetado. Pode pedir sua senha.";
+"It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "Ele continua instalado (o brew list mostra). Confiar no tap dele, ou instalá-lo de novo com o nome novo, permite que o Homebrew o leia.";
 "It took %@; expect longer on an older Mac." = "Levou %@; espere mais tempo em um Mac mais antigo.";
 "It was built from the latest source, so there is no fixed version to go back to." = "Foi compilado do código-fonte mais recente, então não há uma versão fixa para a qual voltar.";
 "It was stopped." = "Foi interrompido.";
@@ -1282,6 +1291,7 @@
 "brew won't upgrade it, and Upgrade All leaves it out." = "O brew não a atualiza e Atualizar tudo a deixa de fora.";
 "brew's output" = "saída do brew";
 "brew.env turns off brew's dependents check; automatic updates paused." = "O brew.env desativa a verificação de dependentes do brew; atualizações automáticas pausadas.";
+"can't be read" = "ilegível";
 "cancelled" = "cancelado";
 "cask" = "cask";
 "changes where apps go, which Adopt and App Management rely on" = "muda para onde vão os apps, algo de que a adoção e o Gerenciamento de Apps dependem";

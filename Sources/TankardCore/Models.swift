@@ -152,6 +152,11 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// `appPaths` (receipts, uninstall paths, ids), for Adopt Apps. nil for
     /// formulae, when brew gave no artifacts, and in older reports.
     public var caskOwnership: CaskAppOwnership? = nil
+    /// 0.8.6 (walkthrough M1): brew can't load this installed package (an
+    /// untrusted or renamed tap), so `brew info --installed` leaves it out
+    /// and Tankard found it in the Cellar or Caskroom instead. brew's
+    /// reason, or "" when brew gave none. nil for every readable package.
+    public var unreadable: String? = nil
 
     public var isDependency: Bool { !requested }
 

@@ -5097,6 +5097,58 @@
         }
       }
     },
+    "%lld installed packages Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld installierte Pakete kann Homebrew nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquets installés que Homebrew ne peut pas lire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquetes instalados que Homebrew no puede leer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が読み込めないインストール済みパッケージ：%lld 個"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取的已安装软件包：%lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacotes instalados que o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacchetti installati che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 읽을 수 없는 설치된 패키지 %lld개"
+          }
+        }
+      }
+    },
     "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.": {
       "localizations": {
         "de": {
@@ -6265,6 +6317,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld/%lld 버전"
+          }
+        }
+      }
+    },
+    "%lld of them Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "davon kann Homebrew %lld nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dont %lld illisibles par Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de ellos no los puede leer Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "うち %lld 個は Homebrew が読み込めません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 个 Homebrew 无法读取"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld deles o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "di cui %lld che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그중 %lld개는 Homebrew가 읽을 수 없음"
           }
         }
       }
@@ -8137,6 +8241,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "1시간"
+          }
+        }
+      }
+    },
+    "1 installed package Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 installiertes Paket kann Homebrew nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquet installé que Homebrew ne peut pas lire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquete instalado que Homebrew no puede leer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が読み込めないインストール済みパッケージ：1 個"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取的已安装软件包：1 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacote instalado que o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacchetto installato che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 읽을 수 없는 설치된 패키지 1개"
           }
         }
       }
@@ -25249,6 +25405,214 @@
         }
       }
     },
+    "Homebrew can't read %@ any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann %@ nicht mehr lesen, daher würde brew das Entfernen selbst nicht verhindern; Tankard tut es, weil das Paket sonst ohne Quelle zum Aktualisieren oder Neuinstallieren zurückbliebe."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire %@ : brew n’empêcherait donc pas lui-même la suppression ; Tankard l’empêche, car le paquet n’aurait plus rien pour le mettre à jour ou le réinstaller."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer %@, así que brew no impediría la eliminación por sí mismo; Tankard sí lo hace, porque el paquete quedaría sin nada desde donde actualizarlo o reinstalarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew は %@ をもう読み込めないため、brew 自体は削除を止めません。Tankard が止めます。削除すると、そのパッケージをアップグレードや再インストールする元がなくなるためです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取 %@，因此 brew 本身不会阻止移除；Tankard 会阻止，因为移除后该软件包将无处可升级或重新安装。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler %@, então o próprio brew não impediria a remoção; o Tankard impede, porque o pacote ficaria sem nada de onde atualizá-lo ou reinstalá-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere %@, quindi brew da solo non impedirebbe la rimozione; Tankard sì, perché il pacchetto resterebbe senza nulla da cui aggiornarlo o reinstallarlo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 %@을(를) 읽을 수 없어 brew 자체는 제거를 막지 않습니다. Tankard가 막습니다. 제거하면 그 패키지를 업그레이드하거나 다시 설치할 곳이 없어지기 때문입니다."
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut pas lire ce paquet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew no puede leer este paquete"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージを読み込めません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取此软件包"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue ler este pacote"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce a leggere questo pacchetto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 이 패키지를 읽을 수 없습니다"
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package any more, so it won't upgrade it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire ce paquet et ne le mettra donc pas à jour."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer este paquete, así que no lo actualizará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取此软件包，因此不会升级它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere questo pacchetto, quindi non lo aggiornerà."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 이 패키지를 읽을 수 없어 업그레이드하지 않습니다."
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht. brew meldet: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire ce paquet et ne le mettra donc pas à jour. brew indique : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer este paquete, así que no lo actualizará. brew dice: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。brew の表示：%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取此软件包，因此不会升级它。brew 提示：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo. O brew diz: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere questo pacchetto, quindi non lo aggiornerà. brew dice: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 이 패키지를 읽을 수 없어 업그레이드하지 않습니다. brew 메시지: %@"
+          }
+        }
+      }
+    },
     "Homebrew couldn't reach the network": {
       "localizations": {
         "de": {
@@ -28577,6 +28941,58 @@
         }
       }
     },
+    "Installed from %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installiert aus %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installé depuis %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado desde %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ からインストールされました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装自 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado de %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installato da %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에서 설치됨."
+          }
+        }
+      }
+    },
     "Installed on": {
       "localizations": {
         "de": {
@@ -29665,6 +30081,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@의 Homebrew 파일과 설치된 모든 formula와 cask를 삭제하며, /Applications에 cask로 설치된 앱도 포함됩니다. 이 Mac의 다른 prefix에 있는 Homebrew는 건드리지 않습니다. 암호를 요청할 수 있습니다."
+          }
+        }
+      }
+    },
+    "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es ist weiterhin installiert (brew list zeigt es). Wenn du seinem Tap vertraust oder es unter seinem neuen Namen neu installierst, kann Homebrew es wieder lesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il est toujours installé (brew list l’affiche). Faire confiance à son tap, ou le réinstaller sous son nouveau nom, permet à Homebrew de le lire."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue instalado (brew list lo muestra). Confiar en su tap, o instalarlo de nuevo con su nombre nuevo, permite que Homebrew lo lea."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールされたままです（brew list に表示されます）。Tap を信頼するか、新しい名前で再インストールすると Homebrew が読み込めるようになります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它仍处于安装状态（brew list 会列出它）。信任它的 Tap，或以新名称重新安装，Homebrew 就能读取它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ele continua instalado (o brew list mostra). Confiar no tap dele, ou instalá-lo de novo com o nome novo, permite que o Homebrew o leia."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È ancora installato (brew list lo mostra). Fidarsi del suo tap, o reinstallarlo con il nuovo nome, permette a Homebrew di leggerlo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여전히 설치되어 있습니다(brew list에 표시됨). Tap을 신뢰하거나 새 이름으로 다시 설치하면 Homebrew가 읽을 수 있습니다."
           }
         }
       }
@@ -67001,6 +67469,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew.env가 brew의 종속 항목 검사를 끕니다. 자동 업데이트가 일시 중지되었습니다."
+          }
+        }
+      }
+    },
+    "can't be read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nicht lesbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "illisible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ilegible"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み込み不可"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ilegível"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "illeggibile"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "읽을 수 없음"
           }
         }
       }

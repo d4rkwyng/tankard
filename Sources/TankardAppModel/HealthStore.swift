@@ -19,6 +19,14 @@ public enum ToolSheet: String, Identifiable, Sendable {
     public var id: String { rawValue }
 }
 
+/// 0.8.6 (M1): Health's words for packages brew can't read.
+public enum HealthText {
+    public static func unreadableTitle(_ n: Int) -> String {
+        n == 1 ? String(localized: "1 installed package Homebrew can't read")
+               : String(localized: "\(n) installed packages Homebrew can't read")
+    }
+}
+
 /// `brew doctor`, `brew config` and `brew missing`, all read-only.
 @Observable @MainActor
 public final class HealthStore {

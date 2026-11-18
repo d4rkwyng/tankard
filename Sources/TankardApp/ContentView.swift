@@ -699,6 +699,7 @@ struct PackageNameCell: View {
         if p.kind == .formula && !p.requested { lines.append(String(localized: "Installed as a dependency")) }
         if p.pinned { lines.append(String(localized: "Pinned: upgrades leave it at this version")) }
         if let r = p.retiredLabel { lines.append(r) }
+        if let u = p.unreadableDetail { lines.append(u) }
         if p.vulnerabilityBadge != nil { lines.append(VulnerabilityText.help(p)) }
         return lines.isEmpty ? nil : ([p.name] + lines).joined(separator: "\n")
     }
@@ -750,6 +751,7 @@ struct NameBadges: View {
             }
             if p.pinned { PinnedBadge(compact: compact) }
             RetiredBadge(package: p, compact: compact)
+            UnreadableBadge(package: p, compact: compact)
             VulnerabilityTag(package: p, compact: compact)
         }
         .fixedSize()

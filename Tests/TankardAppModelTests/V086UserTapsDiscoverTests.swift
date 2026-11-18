@@ -133,3 +133,20 @@ struct V086UserTapsDiscoverTests {
         #expect(idx.fingerprint() != before)
     }
 }
+
+// 0.8.6 (walkthrough M1): the app's side of packages brew can't read.
+@MainActor
+struct V086UnreadableAppTests {
+    @Test func healthAndTapsCountThem() throws {
+        var p = Package.command("obsidian-cli")
+        p.id = "formula:yakitrak/yakitrak/obsidian-cli"
+        p.tap = "yakitrak/yakitrak"
+        p.unreadable = "Refusing to load formula yakitrak/yakitrak/notesmd-cli from untrusted tap yakitrak/yakitrak."
+        #expect(p.isUnreadable)
+        #expect(HealthText.unreadableTitle(1) == "1 installed package Homebrew can't read")
+        #expect(HealthText.unreadableTitle(2) == "2 installed packages Homebrew can't read")
+        let detail = try #require(p.unreadableDetail)
+        #expect(detail.hasPrefix("Homebrew can't read this package any more, so it won't upgrade it. brew says: Refusing"))
+        #expect(detail.hasSuffix("Installed from yakitrak/yakitrak."))
+    }
+}

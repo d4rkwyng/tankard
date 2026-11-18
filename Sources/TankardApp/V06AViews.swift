@@ -36,6 +36,64 @@ struct RetiredBadge: View {
     }
 }
 
+/// 0.8.6 (M1): "can't read" next to the name of a package brew can't load.
+struct UnreadableBadge: View {
+    var package: Package
+    var compact = false
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
+    @Environment(\.backgroundProminence) private var prominence
+
+    var body: some View {
+        if package.isUnreadable {
+            let w = theme.warning(scheme)
+            let selected = prominence == .increased && !theme.isCustom
+            HStack(spacing: 2) {
+                Image(systemName: "questionmark.folder").font(.system(size: 8))
+                if !compact { Text("can't be read") }
+            }
+            .font(.system(size: 9.5, weight: .semibold))
+            .foregroundStyle(selected ? Color.white : w.text)
+            .padding(.horizontal, 4).padding(.vertical, 0.5)
+            .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : w.tag))
+            .fixedSize()
+            .help(package.unreadableDetail ?? "")
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Homebrew can't read this package"))
+        }
+    }
+}
+
+/// 0.8.6 (M1): the detail pane's box for a package brew can't read.
+struct UnreadableDetail: View {
+    var package: Package
+    @Environment(AppStore.self) private var store
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        if let detail = package.unreadableDetail {
+            let w = theme.warning(scheme)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Image(systemName: "questionmark.folder").foregroundStyle(w.text)
+                    Text(detail).font(.system(size: 12)).foregroundStyle(w.text).fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                }
+                Text("It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                if package.tap != nil {
+                    Button("Taps…") { store.openTaps() }.controlSize(.small)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 8).fill(w.tag))
+        }
+    }
+}
+
 /// The detail pane's deprecated/disabled box and keg-only / not-linked notes.
 struct RetiredDetail: View {
     var package: Package
@@ -181,6 +239,18 @@ struct HealthSheet: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             ForEach(d.warnings) { w in DoctorWarningCard(warning: w, store: store) }
+        }
+        // 0.8.6 (M1): installed packages brew can't read (not a brew doctor note).
+        let unreadable = store.unreadablePackages
+        if !unreadable.isEmpty {
+            VStack(alignment: .leading, spacing: 4) {
+                Label(HealthText.unreadableTitle(unreadable.count), systemImage: "questionmark.folder")
+                    .font(.system(size: 12, weight: .semibold)).foregroundStyle(theme.warning(scheme).text)
+                ForEach(unreadable) { p in
+                    Text(verbatim: "\(p.name): \(p.unreadableDetail ?? "")").font(.system(size: 11.5))
+                        .fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
+                }
+            }
         }
         if !health.missing.isEmpty {
             Text("Missing dependencies").font(.system(size: 12, weight: .semibold))

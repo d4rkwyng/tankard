@@ -97,6 +97,7 @@
 "%lld hours" = "%lld時間";
 "%lld installed" = "%lld個がインストール済み";
 "%lld installed from it" = "%lld個がここからインストール済み";
+"%lld installed packages Homebrew can't read" = "Homebrew が読み込めないインストール済みパッケージ：%lld 個";
 "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed." = "このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。";
 "%lld installs in the last 30 days" = "過去30日間に%lld回インストール";
 "%lld installs in the last 365 days" = "過去365日間に%lld回インストール";
@@ -114,6 +115,7 @@
 "%lld not checked" = "%lld個は未確認";
 "%lld of %lld" = "%lld / %lld";
 "%lld of %lld versions" = "%lld/%lld バージョン";
+"%lld of them Homebrew can't read" = "うち %lld 個は Homebrew が読み込めません";
 "%lld pinned upgrade not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld result for “%@”" = "「%2$@」の結果: %1$lld件";
@@ -150,6 +152,7 @@
 "1 cask" = "1個のcask";
 "1 formula" = "1個のformula";
 "1 hour" = "1時間";
+"1 installed package Homebrew can't read" = "Homebrew が読み込めないインストール済みパッケージ：1 個";
 "1 installed package comes from this tap (%@). Uninstall it first: brew won't remove a tap while packages from it are installed." = "このtap(%@)から1個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。";
 "1 item" = "1項目";
 "1 known vulnerability" = "1件の既知の脆弱性";
@@ -479,6 +482,10 @@
 "Homebrew Health" = "Homebrewのヘルスチェック";
 "Homebrew Words Explained" = "Homebrew用語の説明";
 "Homebrew bottle" = "Homebrew bottle";
+"Homebrew can't read %@ any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from." = "Homebrew は %@ をもう読み込めないため、brew 自体は削除を止めません。Tankard が止めます。削除すると、そのパッケージをアップグレードや再インストールする元がなくなるためです。";
+"Homebrew can't read this package" = "Homebrew はこのパッケージを読み込めません";
+"Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。";
+"Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。brew の表示：%@";
 "Homebrew couldn't reach the network" = "Homebrewがネットワークに接続できませんでした";
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "HomebrewにはまだTankard %@ がありません。リリース後、tapへの反映には少し時間がかかることがあります。後でもう一度試すか、ダウンロードしてください。";
@@ -543,6 +550,7 @@
 "Installed as" = "インストール名";
 "Installed as a dependency" = "依存関係としてインストール";
 "Installed by you" = "自分でインストール";
+"Installed from %@." = "%@ からインストールされました。";
 "Installed on" = "インストール日";
 "Installed packages, or search everything Homebrew has (⌘1, ⌘2)" = "インストール済みパッケージ、またはHomebrewのすべてを検索(⌘1、⌘2)";
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "インストール済みのバージョンはtapの %@ より新しいです。brewはダウングレードしません。";
@@ -564,6 +572,7 @@
 "Intelbrew update available (%@; %@ is out)" = "Intelbrewのアップデートがあります(%1$@。%2$@ が公開されています)";
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrewの行はシェルプロファイル(%@)に残ります。後で手動で削除するか、先に「標準のHomebrewに戻す」を使ってください。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "%@ のHomebrewファイルと、/Applications にcaskとしてインストールされたアプリを含め、インストール済みのすべてのformulaとcaskを削除します。このMac上の別のHomebrew(別のプレフィックス)には手を触れません。パスワードを求められる場合があります。";
+"It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it." = "インストールされたままです（brew list に表示されます）。Tap を信頼するか、新しい名前で再インストールすると Homebrew が読み込めるようになります。";
 "It took %@; expect longer on an older Mac." = "%@かかりました。古いMacではもっとかかります。";
 "It was built from the latest source, so there is no fixed version to go back to." = "最新のソースからビルドされたため、戻る先の固定バージョンがありません。";
 "It was stopped." = "停止されました。";
@@ -1282,6 +1291,7 @@
 "brew won't upgrade it, and Upgrade All leaves it out." = "brewはアップグレードせず、すべてアップグレードにも含まれません。";
 "brew's output" = "brewの出力";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env で brew の依存元チェックがオフになっているため、自動アップデートを一時停止しています。";
+"can't be read" = "読み込み不可";
 "cancelled" = "キャンセル済み";
 "cask" = "cask";
 "changes where apps go, which Adopt and App Management rely on" = "アプリの保存先が変わります（引き継ぎと App 管理はこれに依存）";

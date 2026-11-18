@@ -181,6 +181,12 @@ public extension AppStore {
     /// Installed packages that came from `tap`.
     func installedCount(from tap: TapInfo) -> Int { packages.filter { tap.owns($0) }.count }
 
+    /// 0.8.6 (M1): of those, the ones brew can't read.
+    func unreadableCount(from tap: TapInfo) -> Int { packages.filter { tap.owns($0) && $0.isUnreadable }.count }
+
+    /// 0.8.6 (M1): installed packages brew can't read (Health, the list).
+    public var unreadablePackages: [Package] { packages.filter(\.isUnreadable) }
+
     /// Clicking a tap: the Installed list, filtered to it ("tap:user/repo"
     /// in the search field, as Show Dependencies does).
     func showInstalled(from tap: TapInfo) {
@@ -209,7 +215,7 @@ public extension AppStore {
     /// against what's installed.
     func confirmRemoveTap() {
         guard let tap = taps.takeRemove() else { return }
-        if case .inUse = TapRemoval.check(tap, packages: packages) { return }
+        if !TapRemoval.check(tap, packages: packages).isAllowed { return }
         let steps = Self.removeTapPlaceholders(tap)
         closeToolSheet()
         Task { @MainActor in
