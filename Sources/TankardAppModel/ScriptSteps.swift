@@ -60,6 +60,36 @@ extension ScriptRunner {
             if t == .discover, let d = c.store.openDiscover() { await d.activate() }
             if t == .services { c.store.openServices() }
         },
+        // 0.8.4: the list jumps a user makes (Upgrades → All, clearing a
+        // search), for the NSTableView reentrancy check (RowStaging). Script
+        // mode only, like every step.
+        "filter": ScriptStepDef("filter <all|upgrades|source|newer|bottleAvailable|pinned|leaves|vulnerable|hasNotes|deprecated>  (Installed's filter, as clicking it)") { c in
+            let name = try c.arg(0, "filter")
+            guard let f = PackageFilter.allCases.first(where: { $0.rawValue.lowercased() == name.lowercased() }) else {
+                throw ScriptFailure("no filter \(name)")
+            }
+            c.store.tab = .installed
+            c.store.filter = f
+            try await Task.sleep(for: .milliseconds(400)) // the table's second step (RowStaging.delay)
+            c.check("filter \(f.rawValue): \(c.store.visiblePackages.count) rows", c.store.filter == f)
+        },
+        "search": ScriptStepDef("search <text>|-  (types into Installed's search field; - clears it)") { c in
+            let text = try c.arg(0, "text")
+            c.store.tab = .installed
+            c.store.search = text == "-" ? "" : text
+            try await Task.sleep(for: .milliseconds(400))
+            c.check("search '\(c.store.search)': \(c.store.visiblePackages.count) rows", true)
+        },
+        "search-burst": ScriptStepDef("search-burst <text>|- ...  (each one 30 ms after the last: fast typing; - is an empty field)") { c in
+            guard !c.args.isEmpty else { throw ScriptFailure("search-burst needs at least one text") }
+            c.store.tab = .installed
+            for t in c.args {
+                c.store.search = t == "-" ? "" : t
+                try await Task.sleep(for: .milliseconds(30))
+            }
+            try await Task.sleep(for: .milliseconds(400))
+            c.check("search '\(c.store.search)': \(c.store.visiblePackages.count) rows", true)
+        },
         "select": ScriptStepDef("select <name>  (a row in Installed)") { c in
             let p = try c.requirePackage(try c.arg(0, "name"))
             c.store.tab = .installed
