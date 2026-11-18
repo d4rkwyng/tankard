@@ -26,6 +26,20 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Fixed
 - **Adopt Apps no longer lists apps Homebrew already installed with an installer package** (Microsoft Word, Excel, Outlook, PowerPoint, Teams, Windows App). These casks name no app, so Tankard didn't see that the app was theirs and listed it under "Can't adopt". Now an app counts as Homebrew's when an installed cask's installer receipt put it there, its uninstall removes it, or its uninstall/zap names the app's bundle id and the app has the cask's name.
 
+### Added
+- **Upgrade warns before it closes open apps.** Upgrading an app that is open now (Google Chrome, VS Code) first shows the plan with "These apps will be closed during the upgrade and opened again afterwards: Google Chrome, Visual Studio Code. Save your work in them first." and **Upgrade** / **Cancel**, from the window and from the menu-bar panel. Formula-only upgrades, and upgrades with "Don't quit running apps during upgrades" on, don't ask.
+- **Discover explains an empty search while apps are off.** With apps (casks) turned off, a search that finds nothing ("firefox") says the app may simply be in the app catalog that isn't turned on, with **Turn On Apps…**, even after the banner was closed. Nothing is looked up online.
+- **Help ▸ Homebrew Words Explained** opens a new glossary in the guide: formula, cask, bottle, tap, keg, pinned, poured, build from source, dependency, Restore Point, Intelbrew and more, in plain words.
+
+### Changed
+- **Remove Unused Dependencies is safer.** Return no longer removes anything (no default button). Each package shows its description and a checkbox: untick one to keep it, and Tankard marks it as installed by you (`brew tab --installed-on-request`, Homebrew's own way), so later clean-ups leave it too. Tools people often use directly in Terminal (python, node, ruby…) carry a note.
+- **Restore Points' confirmation is in words** ("Put wget back", "Return xz to 5.8.2 and pin it there"); the brew commands are under **Details**. The Terminal route for a removed old version is folded under **Advanced**, and the reasons a rollback can't run are plain sentences.
+- **Health doesn't sound alarms for harmless notes.** Known harmless `brew doctor` notes (files Homebrew didn't install, an older Command Line Tools, broken links, deprecated packages…) show as neutral information; the rest, and unknown ones, in yellow, never red. Broken links get a **Clean Up…** button and an outdated Command Line Tools **Open Software Update**, with the command under Details.
+- **Plainer words throughout.** Tooltips and setting notes say what happens instead of naming brew commands or `HOMEBREW_*` variables (the technical detail moved to the guide's Settings reference). The uninstall sheet's command is under **Details**; uninstalling an app says "Deletes Google Chrome from Applications. Your settings and data for it stay on this Mac.", with a red Uninstall button. The copy-command buttons have a VoiceOver label. The status bar says "Intelbrew is up to date" instead of "Fork: current".
+
+### Fixed
+- **Demo, snapshot and script runs no longer save the window frame into Tankard's real settings** (`NSWindow Frame main-AppWindow-1`, open since the 0.8.3 review).
+
 ## [0.8.4]
 
 ### Added
