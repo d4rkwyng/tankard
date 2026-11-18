@@ -34,8 +34,15 @@ public final class ScheduleConditions {
     public nonisolated static let settleDelay: TimeInterval = 30
     /// How often a gated check looks again.
     public nonisolated static let gatedRetry: TimeInterval = 60
+    /// 0.8.5 (HK-47 review): a willSleep with no didWake (the wake
+    /// notification can go missing, or sleep was cancelled) stops holding
+    /// scheduled checks off after this long. Ticks don't run while the Mac
+    /// really sleeps, so the first one after a wake sees it expired.
+    public nonisolated static let sleepExpiry: TimeInterval = 10 * 60
 
     public private(set) var isAsleep = false
+    /// When the last willSleep came.
+    public private(set) var asleepSince: Date?
     /// nil: not known (no monitor): treated as online.
     public private(set) var isOnline: Bool?
     /// The last wake, or the last time the network came back.
@@ -47,14 +54,16 @@ public final class ScheduleConditions {
 
     public init() {}
 
-    public func willSleep() {
+    public func willSleep(at now: Date = Date()) {
         isAsleep = true
+        asleepSince = now
         sleepCount += 1
         onWillSleep?()
     }
 
     public func didWake(at now: Date) {
         isAsleep = false
+        asleepSince = nil
         settleFrom = now
     }
 
@@ -65,7 +74,7 @@ public final class ScheduleConditions {
     }
 
     public func gate(now: Date) -> ScheduleGate {
-        if isAsleep { return .asleep }
+        if isAsleep, now.timeIntervalSince(asleepSince ?? now) < Self.sleepExpiry { return .asleep }
         if isOnline == false { return .offline }
         if let from = settleFrom {
             let until = from.addingTimeInterval(Self.settleDelay)

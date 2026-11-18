@@ -328,3 +328,20 @@ struct ScheduledRefreshResultTests {
     }
 }
 // END ITEM 5
+
+// HK-47 review (0.8.5), item 6: a willSleep whose didWake never came
+// doesn't hold scheduled checks off for good.
+@MainActor
+struct ScheduleConditionsMissedWakeTests {
+    @Test func aMissedWakeExpires() {
+        let c = ScheduleConditions()
+        c.willSleep()
+        let t = Date()
+        #expect(c.gate(now: t.addingTimeInterval(60)) == .asleep)
+        #expect(c.gate(now: t.addingTimeInterval(11 * 60)) == .open)
+        // A real wake later still settles as before.
+        c.didWake(at: t.addingTimeInterval(12 * 60))
+        #expect(c.gate(now: t.addingTimeInterval(12 * 60 + 5)) == .settling(until: t.addingTimeInterval(12 * 60 + ScheduleConditions.settleDelay)))
+    }
+}
+// END ITEM 6
