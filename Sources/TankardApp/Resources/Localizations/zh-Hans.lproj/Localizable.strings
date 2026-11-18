@@ -679,6 +679,7 @@
 "Open Tankard at login" = "登录时打开 Tankard";
 "Open Terminal" = "打开“终端”";
 "Open in Terminal" = "在“终端”中打开";
+"Open the Tankard window with this run in it" = "在 Tankard 窗口中打开此操作";
 "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here." = "已在“终端”中打开。它会再次列出这些命令并等待按下 Return。完成后，请打开新的终端窗口，然后在此处点按“刷新”。";
 "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard." = "已在“终端”中打开。它会等待按下 Return，然后 Homebrew 的卸载程序会再确认一次。完成后，请退出 Tankard。";
 "Opens Tankard when you log in, as a macOS login item." = "登录 Mac 时作为 macOS 登录项打开 Tankard。";
@@ -867,11 +868,13 @@
 "Show Older Copy" = "显示旧版";
 "Show Tankard in the menu bar" = "在菜单栏中显示 Tankard";
 "Show Terminal Command" = "显示终端命令";
+"Show Upgrade Progress" = "显示升级进度";
 "Show What Uses It" = "显示使用它的项目";
 "Show What Uses It (%lld)" = "显示使用它的项目 (%lld)";
 "Show all upgrades in Tankard" = "在 Tankard 中显示所有升级";
 "Show in Finder" = "在访达中显示";
 "Show in Installed" = "在“已安装”中显示";
+"Show in Tankard" = "在 Tankard 中显示";
 "Show new vulnerabilities in the menu bar" = "在菜单栏中显示新漏洞";
 "Show the Auto-update log" = "显示自动更新日志";
 "Show vulnerable packages in Tankard" = "在 Tankard 中显示有漏洞的软件包";

@@ -66,7 +66,8 @@ struct LaunchOptions {
     /// 0.6, demo only: TANKARD_DEMO_SHEET=health|history|autoremove opens that sheet.
     var demoSheet: ToolSheet?
     /// 0.8.3, demo only: TANKARD_DEMO_MENUBAR_SHOW=<package>|upgrades|vulnerable:
-    /// after launch, what a click on that menu-bar panel line does.
+    /// after launch, what a click on that menu-bar panel line does
+    /// (0.8.5: `upgrade` is its Upgrade All, shown in the progress panel).
     var demoMenuBarShow: String?
     /// 0.8: TANKARD_E2E=1 + TANKARD_SCRIPT=<file>: run a scripted session
     /// (ScriptLaunch.swift, Scripts/e2e.sh).
@@ -240,6 +241,8 @@ struct TankardApp: App {
         AppDelegate.settings = settings
         QuitGuard.store = store
         AppDelegate.dock = DockIconController(settings: settings)
+        // 0.8.5: the menu-bar Upgrade's progress panel.
+        ProgressPanelController.shared = ProgressPanelController(store: store, appearance: appearance)
         let checker = self.checker
         AppDelegate.onLaunch = { if !options.isDemo && (options.script == nil || options.script?.background == true) { checker.start() } }
         appearance.onChange = { theme in applyAppearance(theme) }
@@ -379,6 +382,9 @@ struct MenuBarPanel: View {
             store.showAutoUpdateLog = true
         })
             .themed(Theme.of(appearance.theme))
+            // 0.8.5: Show in Tankard (progress panel) may be the first
+            // thing to open the main window.
+            .modifier(NotificationWindowOpener())
     }
 
     private func openMain() {
@@ -467,6 +473,8 @@ enum Relauncher {
     /// by modal sheet"): end every window's sheets, and any modal session.
     static func closeSheets() {
         if NSApp.modalWindow != nil { NSApp.abortModal() }
+        // 0.8.5: the progress panel too (its alert first).
+        ProgressPanelController.shared?.close()
         for w in NSApp.windows {
             var n = 0
             while let sheet = w.attachedSheet, n < 8 {
@@ -585,6 +593,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Self.onLaunch?()
             MenuDump.scheduleIfRequested()
             Self.dock?.start()
+            ProgressPanelController.shared?.start()
         }
     }
 

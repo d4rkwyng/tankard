@@ -189,7 +189,21 @@ public final class AppStore {
     public private(set) var refreshPhase: String?
     public internal(set) var error: StoreError?
     public private(set) var upgrade: UpgradeSession?
-    public var showUpgradeSheet = false
+    /// The activity (plan, session, App Management pages) is showing:
+    /// the main window's sheet, or (0.8.5) the progress panel a menu-bar
+    /// Upgrade opens (`activityPresentation`). Hiding it puts the next one
+    /// back on the main window.
+    public var showUpgradeSheet = false {
+        didSet { if !showUpgradeSheet, activityPresentation != .mainWindowSheet { activityPresentation = .mainWindowSheet } }
+    }
+    /// 0.8.5: where the activity shows (ProgressPanel.swift).
+    public internal(set) var activityPresentation: ActivityPresentation = .mainWindowSheet
+    /// 0.8.5: bumped when the model needs the main window open (a
+    /// progress-panel run that upgraded Tankard itself: the relaunch
+    /// question lives there). The app opens the window on each change.
+    public internal(set) var mainWindowRequests = 0
+    /// 0.8.5: how long a progress panel stays up after a clean finish.
+    @ObservationIgnored public var progressPanelAutoClose: Duration = .seconds(2)
     /// 0.8.3: an upgrade run a quit interrupted, offered at the next launch (QuitGuard.swift).
     public internal(set) var interruptedRun: InterruptedRunOffer?
     /// 0.8.3: the running session is ending because Tankard quits.
@@ -1138,6 +1152,8 @@ public final class AppStore {
     }
 
     private func sessionFinished(_ session: UpgradeSession) {
+        // 0.8.5: after the rest (it may open the App Management page).
+        defer { progressPanelSessionFinished(session) }
         if session.action == .adopt { adoptSessionFinished(session) }
         runJournalSessionFinished(session)
         selfUpgradeFinished(session)

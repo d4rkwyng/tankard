@@ -16,6 +16,9 @@ public enum NotificationRoute: Equatable, Sendable {
     case later
     /// A click on an auto-update result: the Auto-update log.
     case showAutoUpdateLog
+    /// 0.8.5: a click on "Tankard upgraded N packages" (a progress panel
+    /// that closed itself): History, where the run's commands are.
+    case showHistory
 
     /// The category with the Upgrade All… and Later actions.
     public static let upgradesCategory = "net.mindtricks.tankard.upgrades"
@@ -36,7 +39,11 @@ public enum NotificationRoute: Equatable, Sendable {
         case laterAction, dismissAction: return .later
         case upgradeAllAction: return .upgradeAll
         default:
-            return kind == UpgradeNotificationDiff.Message.Kind.autoUpdate.rawValue ? .showAutoUpdateLog : .showUpgrades
+            switch kind {
+            case UpgradeNotificationDiff.Message.Kind.autoUpdate.rawValue: return .showAutoUpdateLog
+            case UpgradeNotificationDiff.Message.Kind.upgradeDone.rawValue: return .showHistory
+            default: return .showUpgrades
+            }
         }
     }
 
@@ -71,6 +78,8 @@ extension AppStore {
             return
         case .showAutoUpdateLog:
             showAutoUpdateLog = true
+        case .showHistory:
+            if !isSheetPresented { openHistory() }
         case .showUpgrades:
             showUpgrades()
         case .upgradeAll:

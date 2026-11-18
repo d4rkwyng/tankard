@@ -49,7 +49,10 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $store.showUpgradeSheet) {
+        // 0.8.5: not while the activity is in the progress panel (a
+        // menu-bar Upgrade); a dismissal only closes the sheet's own.
+        .sheet(isPresented: Binding(get: { store.showsActivitySheet },
+                                    set: { if !$0 && store.showsActivitySheet { store.showUpgradeSheet = false } })) {
             ActivitySheet(store: store).themed(theme)
         }
         .task {
@@ -285,6 +288,9 @@ struct ContentView: View {
             switch what.lowercased() {
             case "upgrades": store.showFromMenuBar(.upgrades)
             case "vulnerable": store.showFromMenuBar(.vulnerable)
+            // 0.8.5: the menu-bar panel's Upgrade All with the window not
+            // in front: the progress panel.
+            case "upgrade": store.requestUpgradeFromMenuBar(nil, windowInFront: false)
             default:
                 if let p = store.packages.first(where: { $0.name == what }) { store.showFromMenuBar(.package(p.id)) }
             }
