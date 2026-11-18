@@ -63,10 +63,10 @@ installs or upgrades anything on its own unless you turn on
 
 ## The Installed list at a glance
 
-- **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search. Search matches
-  the name and description. You can paste a whole command such as `brew install wget` or
-  `brew install --cask firefox` into either search field: Tankard searches for the package
-  name. When nothing installed matches, the list offers **Search Discover for "wget"**,
+- **Toolbar:** Installed, Discover and Services (⌘1, ⌘2, ⌘3), Refresh (⌘R) and search.
+  Search matches the name and description. You can paste a whole command such as
+  `brew install wget` or `brew install --cask firefox` into either search field: Tankard
+  searches for the package name. When nothing installed matches, the list offers **Search Discover for "wget"**,
   which opens Discover with the same search.
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
@@ -120,7 +120,8 @@ cache. A download that fails there is tried again by that package's own upgrade,
 - **Retry** (one package) or **Retry Failed (N)** runs the failed steps again, with the
   same checks as the Upgrade and Install buttons; right-click a failed package for
   **Retry <name>**. Under the log, one line says what to do about a failure Tankard
-  recognises (the network, a full disk, a checksum mismatch, folders brew can't write).
+  recognizes (another brew's lock, the network, a full disk, a checksum mismatch, folders
+  brew can't write).
 - **Quitting** while brew runs asks first: **Keep Running**, **Stop After Current and
   Quit**, or **Quit Now** (stops brew as Stop Now does). brew can't carry on after Tankard
   quits, so an interrupted run's remaining packages are offered at the next launch:
@@ -528,13 +529,13 @@ it straight to sudo (or you can run the command in Terminal). See below.
 | you click | Tankard runs |
 |---|---|
 | Refresh (⌘R) or Check Now | `brew update` |
-| Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package; with two or more bottles or casks, `brew fetch --formula\|--cask <tap>/<name>...` first |
-| Install | `brew install --formula\|--cask <tap>/<name>` |
+| Upgrade | `brew upgrade --formula\|--cask <tap>/<name>`, one per package; first, for two or more bottled formulae or two or more casks, one `brew fetch --formula\|--cask <tap>/<name>...` per kind |
+| Install | `brew install --formula\|--cask <tap>/<name>`; installing a Brewfile's missing packages fetches first, as Upgrade does |
 | Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>`, then each dependency you chose to remove |
 | Adopt | `brew install --cask --adopt <tap>/<name>`, one per app |
 | Replace with Bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
-| Clean up | `brew cleanup` |
+| Clean Up | `brew cleanup` |
 | Remove Unused Dependencies | `brew autoremove` |
 | Start / Stop / Restart a service | `brew services start\|stop\|restart -- <name>` |
 | Add / Remove a tap | `brew tap <user/repo>` / `brew untap <user/repo>` |
@@ -555,6 +556,13 @@ of a terminal. These two are left out of the command shown, because the copy you
 Terminal should ask in Terminal; the sheet's log says when a password may be asked for.
 Formulae, `brew update`, cleanup, taps, services and every status read never get them.
 Automatic updates get `HOMEBREW_NO_SUDO=1` instead.
+
+Upgrades, installs, uninstalls and Replace with Bottle run with
+`HOMEBREW_NO_AUTO_UPDATE=1`, so brew installs exactly the versions the list showed;
+Refresh is where `brew update` runs. Every brew command also gets the `HOMEBREW_*`
+settings Tankard passes on from your shell profile, such as `HOMEBREW_NO_ANALYTICS` and
+`HOMEBREW_DOWNLOAD_CONCURRENCY` (see
+[My `HOMEBREW_*` settings](#my-homebrew_-settings-from-zshrc)).
 
 ## App Management
 
@@ -637,24 +645,23 @@ Homebrew from the welcome screen, then click **Check Again**.
 
 Apps started from the Dock don't run your shell profile, so Tankard reads it (single
 `export HOMEBREW_X=value` lines; values that need shell expansion are skipped) and passes
-privacy and behaviour settings on to brew: `HOMEBREW_NO_ANALYTICS`,
+privacy and behavior settings on to brew: `HOMEBREW_NO_ANALYTICS`,
 `HOMEBREW_NO_INSECURE_REDIRECT`, `HOMEBREW_CURL_RETRIES`, `HOMEBREW_FORCE_BREWED_CURL`,
 `HOMEBREW_TEMP`, the `HOMEBREW_FORBIDDEN_*` lists, cleanup and download settings and a few
 more. From `HOMEBREW_CASK_OPTS` only `--require-sha` and `--language=…` pass: `--appdir`
 and the other `--*dir` options would move where apps go, which Adopt Apps and the App
-Management check rely on, and options like `--force` would act on apps without asking. **Homebrew ▸ Health… ▸ Environment** shows
-each one and what happened to it.
+Management check rely on, and options like `--force` would act on apps without asking.
+**Homebrew ▸ Health… ▸ Environment** shows each one and what happened to it.
 
 Not passed from a shell profile:
 
 - anything that changes where brew lives or what it trusts: `HOMEBREW_PREFIX`, the
-  `*_GIT_REMOTE`s, `HOMEBREW_DEVELOPER`,
-  `HOMEBREW_NO_INSTALL_FROM_API`, `HOMEBREW_NO_VERIFY_ATTESTATIONS` and the like (Intelbrew
-  mode sets its own remotes);
+  `*_GIT_REMOTE`s, `HOMEBREW_DEVELOPER`, `HOMEBREW_NO_INSTALL_FROM_API`,
+  `HOMEBREW_NO_VERIFY_ATTESTATIONS` and the like (Intelbrew mode sets its own remotes);
 - `HOMEBREW_CACHE` and `HOMEBREW_LOGS` (download progress and Clean Up assume the default
   folders);
 - mirrors (`*_DOMAIN`), tokens, proxies, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
-- settings Tankard controls: colour, verbose and debug output, and the greedy-upgrade
+- settings Tankard controls: color, verbose and debug output, and the greedy-upgrade
   switches (Tankard's self-updating apps setting decides those);
 - any `HOMEBREW_*` name not on Tankard's list.
 
@@ -688,6 +695,15 @@ build that was downloaded, such as a zip someone else built. On macOS 14, right-
 Tankard.app ▸ **Open** once. On macOS 15 and later, try to open it, then click **Open
 Anyway** in **System Settings ▸ Privacy & Security**. Or run
 `xattr -dr com.apple.quarantine Tankard.app`.
+
+### "An older copy of Tankard is still running"
+
+Only one Tankard runs at a time: opening it again brings the running one to the front.
+After an update, the new Tankard asks the old copy to quit (it never forces it). If the
+old copy can't quit, for example because a sheet is open in it, the new one says so;
+click **Show Older Copy**, close what's open there and quit it. Updating from 0.8.1 or
+0.8.2 can also leave a harmless "quit unexpectedly" report from the old copy. If two
+Tankards stay open, quit both and open Tankard again.
 
 ### Open at login doesn't stick
 
