@@ -114,11 +114,8 @@ REAL_DOMAIN=net.mindtricks.tankard
 REAL_PLIST=~/Library/Preferences/$REAL_DOMAIN.plist
 REAL_BACKUP="$OUT/real-defaults-backup.plist"
 real_fingerprint() { if [ -f "$REAL_PLIST" ]; then /sbin/md5 -q "$REAL_PLIST"; else echo absent; fi; }
-real_keys() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert json -o - - 2>/dev/null \
-    | /usr/bin/python3 -c 'import json,sys; print("\n".join(sorted(json.load(sys.stdin))))' 2>/dev/null; }
 real_xml() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null; }
 REAL_MD5=$(real_fingerprint)
-REAL_KEYS=$(real_keys)
 rm -f "$REAL_BACKUP"
 if [ "$REAL_MD5" != absent ]; then
     defaults export "$REAL_DOMAIN" "$REAL_BACKUP" && [ -s "$REAL_BACKUP" ] \
@@ -131,33 +128,48 @@ OTHER_TANKARD=$(others)
 REAL_CHECKED=0
 # real_check: once, after this run's apps are gone. Restores and fails
 # when the domain changed.
+# 0.8.3 as OLD: its window (phase C's sheet; A's and B's runs) saves its
+# frame into the real domain, which 0.8.3 can't avoid. While OLD is older
+# than 0.8.4, keys matching exactly `NSWindow Frame *` are labelled "known
+# 0.8.3-as-old artifact" and don't fail the run; every other changed key
+# does. Gated on OLD's version, so the exception disappears on its own once
+# OLD is 0.8.4 or later. The domain is restored in full either way.
+REAL_IGNORE_FRAMES=0
+version_lt "$VOLD" 0.8.4 && REAL_IGNORE_FRAMES=1
 real_check() {
     [ $REAL_CHECKED = 1 ] && return 0
     REAL_CHECKED=1
     sleep 2   # cfprefsd flushes a quitting app's writes shortly after
-    local after restored
+    local after restored diffs verdict=FAIL
     after=$(real_fingerprint)
     if [ "$after" = "$REAL_MD5" ]; then
         record "isolation/real-defaults: PASS ($REAL_DOMAIN unchanged, md5 $REAL_MD5)"
         return 0
     fi
-    local keys; keys=$(diff <(echo "$REAL_KEYS") <(real_keys) | sed 's/^/      keys /')
-    # `defaults import` merges, so delete first: the domain is then exactly the copy.
+    # The full key diff, from the backup and the domain as it is now.
+    local now="$OUT/real-defaults-after.plist"
+    real_xml > "$now"
+    [ -s "$now" ] || printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<plist version="1.0"><dict/></plist>' > "$now"
+    diffs=$(real_defaults_diff "$([ -f "$REAL_BACKUP" ] && echo "$REAL_BACKUP")" "$now" $REAL_IGNORE_FRAMES) && verdict=PASS
+    # Always restored in full. `defaults import` merges, so delete first:
+    # the domain is then exactly the copy.
     defaults delete "$REAL_DOMAIN" >/dev/null 2>&1
     if [ "$REAL_MD5" = absent ]; then
         rm -f "$REAL_PLIST"
-        [ "$(real_fingerprint)" = absent ] && restored="removed again (it didn't exist before)" || restored="NOT removed"
+        [ "$(real_fingerprint)" = absent ] && restored="removed again (it didn't exist before)" || { restored="NOT removed"; verdict=FAIL; }
     elif defaults import "$REAL_DOMAIN" "$REAL_BACKUP" \
         && cmp -s <(plutil -convert xml1 -o - "$REAL_BACKUP") <(real_xml); then
         restored="restored from $REAL_BACKUP (content equal)"
     else
-        restored="RESTORE FAILED: defaults import $REAL_DOMAIN $REAL_BACKUP by hand"
+        restored="RESTORE FAILED: defaults import $REAL_DOMAIN $REAL_BACKUP by hand"; verdict=FAIL
     fi
     local o; o=${OTHER_TANKARD:-$(others)}
-    record "isolation/real-defaults: FAIL ($REAL_DOMAIN changed: md5 $REAL_MD5 -> $after; $restored${o:+; another Tankard ran: pids $o})"
-    if [ -n "$keys" ]; then echo "$keys" | tee -a "$OUT/summary.txt"
-    else echo "      (same keys: a value changed)" | tee -a "$OUT/summary.txt"; fi
-    return 1
+    local why="md5 $REAL_MD5 -> $after; $restored"
+    [ $verdict = PASS ] && why="only NSWindow Frame keys changed (OLD $VOLD < 0.8.4: known 0.8.3-as-old artifact); $why"
+    record "isolation/real-defaults: $verdict ($REAL_DOMAIN changed: $why${o:+; another Tankard ran: pids $o})"
+    if [ -n "$diffs" ]; then echo "$diffs" | sed 's/^/      key /' | tee -a "$OUT/summary.txt"
+    else echo "      (no key differs: the file was rewritten)" | tee -a "$OUT/summary.txt"; fi
+    [ $verdict = PASS ]
 }
 stop_apps() {
     for p in $(pids); do kill "$p" 2>/dev/null; done

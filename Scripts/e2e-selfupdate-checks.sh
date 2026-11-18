@@ -130,6 +130,51 @@ no_instance_yield() {
     echo "ok"
 }
 
+# version_lt A B: semver A < B (pre-release before release).
+version_lt() {
+    /usr/bin/python3 -I - "$1" "$2" <<'PY'
+import sys
+def key(v):
+    core, _, pre = v.partition("-")
+    nums = tuple(int(x) for x in core.split("."))
+    if not pre:
+        return (nums, 1, ())
+    return (nums, 0, tuple((0, int(p), "") if p.isdigit() else (1, 0, p) for p in pre.split(".")))
+try:
+    sys.exit(0 if key(sys.argv[1]) < key(sys.argv[2]) else 1)
+except ValueError:
+    sys.exit(2)
+PY
+}
+
+# real_defaults_diff BEFORE AFTER IGNORE_FRAMES: every key of the settings
+# domain that differs between two plists (BEFORE may be "" for a domain
+# that didn't exist), one line each: "added|removed|changed KEY". With
+# IGNORE_FRAMES=1, keys matching exactly `NSWindow Frame *` are labelled
+# "(ignored: known 0.8.3-as-old artifact)" and don't count. True when
+# nothing counted differs.
+real_defaults_diff() {
+    /usr/bin/python3 -I - "$1" "$2" "$3" <<'PY'
+import fnmatch, plistlib, sys
+def load(p):
+    if not p:
+        return {}
+    with open(p, "rb") as f:
+        return plistlib.load(f)
+before, after, ignore = load(sys.argv[1]), load(sys.argv[2]), sys.argv[3] == "1"
+bad = 0
+for k in sorted(set(before) | set(after)):
+    if k in before and k in after and before[k] == after[k]:
+        continue
+    kind = "added" if k not in before else "removed" if k not in after else "changed"
+    if ignore and fnmatch.fnmatchcase(k, "NSWindow Frame *"):
+        print("%s %s (ignored: known 0.8.3-as-old artifact)" % (kind, k))
+    else:
+        print("%s %s" % (kind, k)); bad += 1
+sys.exit(1 if bad else 0)
+PY
+}
+
 # MARK: self-test (fixtures shaped like the rc2 run's real files)
 self_test() {
     local t fails=0
@@ -214,6 +259,23 @@ L
     expect 1 "no pid" ran_tankard_code "$t/good.txt" ""
     expect 0 "no yield" no_instance_yield "$t/good.txt"
     expect 1 "a yield" no_instance_yield "$t/yield.txt"
+    expect 0 "0.8.3 < 0.8.4" version_lt 0.8.3 0.8.4
+    expect 0 "0.8.4-e2e.0 < 0.8.4" version_lt 0.8.4-e2e.0 0.8.4
+    expect 1 "0.8.4 not < 0.8.4" version_lt 0.8.4 0.8.4
+    expect 1 "0.8.10 not < 0.8.4" version_lt 0.8.10 0.8.4
+    mk() { /usr/bin/python3 -I -c 'import plistlib,sys,json; plistlib.dump(json.loads(sys.argv[2]), open(sys.argv[1],"wb"))' "$@"; }
+    mk "$t/p0.plist" '{"SUAutomatic": true, "theme": "tankard"}'
+    mk "$t/p1.plist" '{"SUAutomatic": true, "theme": "tankard", "NSWindow Frame main-AppWindow-1": "1 2 3 4"}'
+    mk "$t/p2.plist" '{"SUAutomatic": true, "theme": "dark", "NSWindow Frame main-AppWindow-1": "1 2 3 4"}'
+    mk "$t/p3.plist" '{"SUAutomatic": true, "theme": "tankard", "NSWindow Framed": "x"}'
+    expect 0 "same content" real_defaults_diff "$t/p0.plist" "$t/p0.plist" 0
+    expect 0 "frame only, ignored" real_defaults_diff "$t/p0.plist" "$t/p1.plist" 1
+    expect 1 "frame only, not ignored" real_defaults_diff "$t/p0.plist" "$t/p1.plist" 0
+    expect 1 "frame + another key, ignored" real_defaults_diff "$t/p0.plist" "$t/p2.plist" 1
+    expect 1 "lookalike key, ignored" real_defaults_diff "$t/p0.plist" "$t/p3.plist" 1
+    mk "$t/p4.plist" '{"NSWindow Frame main-AppWindow-1": "1 2 3 4"}'
+    expect 0 "domain created with only a frame, ignored" real_defaults_diff "" "$t/p4.plist" 1
+    expect 1 "domain created with more, ignored" real_defaults_diff "" "$t/p1.plist" 1
     rm -rf "$t"
     echo "self-test: $fails failed"
     [ $fails = 0 ]
