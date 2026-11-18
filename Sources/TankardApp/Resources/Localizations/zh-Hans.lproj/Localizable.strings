@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld 个软件包";
 "%@ %lld packages" = "%@ %lld 个软件包";
+"%@ (%lld of %lld)" = "%@ (%lld / %lld)";
 "%@ and %lld more" = "%@ 及另外 %lld 个";
 "%@ and more" = "%@ 等";
 "%@ can't be uninstalled" = "无法卸载 %@";
@@ -111,6 +112,7 @@
 "%lld no bottle" = "%lld 个无 bottle";
 "%lld not checked" = "%lld 个未检查";
 "%lld of %lld" = "%lld / %lld";
+"%lld of %lld versions" = "%lld / %lld 个版本";
 "%lld pinned upgrade not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld pinned upgrades not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld result for “%@”" = "%lld 个“%@”的结果";
@@ -124,6 +126,8 @@
 "%lld stopped" = "%lld 个已停止";
 "%lld tap" = "%lld 个 tap";
 "%lld taps" = "%lld 个 tap";
+"%lld uninstalled (%lld version)" = "已卸载 %lld 个 (%lld 个版本)";
+"%lld uninstalled (%lld versions)" = "已卸载 %lld 个 (%lld 个版本)";
 "%lld upgrade ready" = "%lld 个可升级";
 "%lld upgraded" = "%lld 个已升级";
 "%lld upgrades ready" = "%lld 个可升级";
@@ -297,7 +301,11 @@
 "Cleanup" = "清理";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "点按“打开系统设置”，然后选择“隐私与安全性”→“App 管理”。";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "点按“打开系统设置”。它会打开“隐私与安全性”→“App 管理”。";
+"Click to read the notes Homebrew printed." = "点按以阅读 Homebrew 显示的说明。";
+"Click to see what happened." = "点按以查看发生了什么。";
 "Close" = "关闭";
+"Close Window" = "关闭窗口";
+"Closing this window doesn't stop the upgrade." = "关闭此窗口不会停止升级。";
 "Collapse" = "收起";
 "Come back and click I've done this." = "回来后点按“我已完成”。";
 "Command" = "命令";
@@ -403,6 +411,7 @@
 "Failed: " = "失败： ";
 "Files Homebrew didn't install are in its folders" = "并非由 Homebrew 安装的文件位于其文件夹中";
 "Filter" = "筛选";
+"Find it again in the menu bar." = "可以在菜单栏中再次找到它。";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "仅显示修复命令，不会运行。需要时请拷贝到“终端”中。";
 "Fixed in %@" = "已在 %@ 中修复";
 "Fixed upstream in commit %@" = "已在上游提交 %@ 中修复";
@@ -536,6 +545,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
 "KB" = "KB";
 "Keep Old Versions" = "保留旧版本";
+"Keep Open" = "保持打开";
 "Keep Running" = "继续运行";
 "Keep the previous version after upgrades" = "升级后保留上一个版本";
 "Keeps %@; upgrades skip it" = "保留 %@；升级会跳过它";
@@ -567,6 +577,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "本地 tap（%@）· %@ 个 formula · %@ 个 cask";
 "Log" = "日志";
 "Logs and other" = "日志和其他";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "请先查看上次升级的结果：点按此窗口右下角的按钮。";
 "Low" = "低";
 "MB" = "MB";
 "Made by d4rkwyng" = "由 d4rkwyng 制作";
@@ -889,7 +900,9 @@
 "Show Older Copy" = "显示旧版";
 "Show Tankard in the menu bar" = "在菜单栏中显示 Tankard";
 "Show Terminal Command" = "显示终端命令";
+"Show Upgrade Plan" = "显示升级计划";
 "Show Upgrade Progress" = "显示升级进度";
+"Show Upgrade Results" = "显示升级结果";
 "Show What Uses It" = "显示使用它的项目";
 "Show What Uses It (%lld)" = "显示使用它的项目 (%lld)";
 "Show all upgrades in Tankard" = "在 Tankard 中显示所有升级";
@@ -1006,6 +1019,9 @@
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "旧版本已被清理删除，因此这里没有可回滚的内容。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”：";
+"The upgrade finished" = "升级已完成";
+"The upgrade finished with problems" = "升级已完成，但有问题";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "升级窗口已打开。请先关闭它，或点按“在 Tankard 中显示”。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "这些变量会先被取消设置，因此这次 brew update 不会把 fork 放回去。";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "开发者匹配，但 cask 未列出这个确切的 bundle ID。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "它们的命令和库不在 Homebrew 的前缀中。通常是安装或升级被中断所致。";
@@ -1085,11 +1101,14 @@
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";
 "Upgrade Now" = "立即升级";
+"Upgrade Plan" = "升级计划";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "用 brew upgrade --cask tankard 升级 Tankard（自动更新不处理 Tankard，留给 brew）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";
+"Upgrade finished" = "升级已完成";
+"Upgrade finished with problems" = "升级已完成，但有问题";
 "Upgrade only the packages that pour a bottle; skip %@" = "仅升级使用 bottle 的软件包；跳过 %@";
 "Upgrade packages automatically" = "自动升级软件包";
 "Upgrade ready: " = "升级已就绪： ";

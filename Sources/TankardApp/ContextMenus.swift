@@ -53,7 +53,7 @@ enum ContextMenuActions {
                 dependents: store.dependents(of: p),
                 dependencies: Dependents.dependencies(of: p, among: store.packages),
                 compileWarning: store.deps.classifier.upgradeWarning(p),
-                busy: store.isBusy,
+                busy: store.isBusy || store.progressPanelHoldsActivity,
                 kegPath: existingKegPath(p, store: store),
                 upgradeCommand: store.insights.upgradeDisplay(for: p))) { action in
                     perform(action, on: p, store: store)
@@ -94,7 +94,7 @@ enum ContextMenuActions {
                 e,
                 installed: store.installedIDs.contains(e.id),
                 compileWarning: store.deps.classifier.installWarning(e),
-                busy: store.isUpgrading)) { action in
+                busy: store.windowBrewActionsBlocked)) { action in
                     switch action {
                     case .install(let confirmCompile):
                         // The detail pane's button: the confirmation sheet

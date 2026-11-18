@@ -172,7 +172,8 @@ struct TankardApp: App {
             deps = options.demo.map {
                 Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
                                   pinned: V04ALaunch.demoPinned(), replaced: V04ALaunch.demoReplaced(),
-                                  extraRows: min(max(Int(env["TANKARD_DEMO_ROWS"] ?? "") ?? 0, 0), 2000))
+                                  extraRows: min(max(Int(env["TANKARD_DEMO_ROWS"] ?? "") ?? 0, 0), 2000),
+                                  failing: Set((env["TANKARD_DEMO_FAIL"] ?? "").split(separator: ",").map(String.init)))
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
@@ -603,6 +604,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             MenuDump.scheduleIfRequested()
             Self.dock?.start()
             ProgressPanelController.shared?.start()
+            MainWindowState.start()
         }
     }
 

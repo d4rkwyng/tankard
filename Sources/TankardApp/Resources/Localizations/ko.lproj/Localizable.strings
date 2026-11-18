@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ 패키지 %lld개";
 "%@ %lld packages" = "%@ 패키지 %lld개";
+"%@ (%lld of %lld)" = "%@ (%lld/%lld)";
 "%@ and %lld more" = "%@ 외 %lld개";
 "%@ and more" = "%@ 등";
 "%@ can't be uninstalled" = "%@을(를) 제거할 수 없음";
@@ -111,6 +112,7 @@
 "%lld no bottle" = "bottle 없음 %lld개";
 "%lld not checked" = "검사 안 됨 %lld개";
 "%lld of %lld" = "%lld/%lld";
+"%lld of %lld versions" = "%lld/%lld 버전";
 "%lld pinned upgrade not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld pinned upgrades not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld result for “%@”" = "“%2$@” 결과 %1$lld개";
@@ -124,6 +126,8 @@
 "%lld stopped" = "중지됨 %lld개";
 "%lld tap" = "tap %lld개";
 "%lld taps" = "tap %lld개";
+"%lld uninstalled (%lld version)" = "%lld개 제거됨 (%lld개 버전)";
+"%lld uninstalled (%lld versions)" = "%lld개 제거됨 (%lld개 버전)";
 "%lld upgrade ready" = "업그레이드 %lld개 준비됨";
 "%lld upgraded" = "업그레이드됨 %lld개";
 "%lld upgrades ready" = "업그레이드 %lld개 준비됨";
@@ -297,7 +301,11 @@
 "Cleanup" = "정리";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "시스템 설정 열기를 클릭한 다음 개인정보 보호 및 보안 → 앱 관리를 선택하세요.";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "시스템 설정 열기를 클릭하세요. 개인정보 보호 및 보안 → 앱 관리가 열립니다.";
+"Click to read the notes Homebrew printed." = "클릭하면 Homebrew가 출력한 안내를 읽을 수 있습니다.";
+"Click to see what happened." = "클릭하면 무슨 일이 있었는지 볼 수 있습니다.";
 "Close" = "닫기";
+"Close Window" = "윈도우 닫기";
+"Closing this window doesn't stop the upgrade." = "이 윈도우를 닫아도 업그레이드는 멈추지 않습니다.";
 "Collapse" = "접기";
 "Come back and click I've done this." = "돌아와서 완료했음을 클릭하세요.";
 "Command" = "명령";
@@ -403,6 +411,7 @@
 "Failed: " = "실패: ";
 "Files Homebrew didn't install are in its folders" = "Homebrew가 설치하지 않은 파일이 해당 폴더에 있음";
 "Filter" = "필터";
+"Find it again in the menu bar." = "메뉴 막대에서 다시 찾을 수 있습니다.";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "수정 명령은 표시만 하며 실행하지 않습니다. 필요하면 터미널에 복사하세요.";
 "Fixed in %@" = "%@에서 수정됨";
 "Fixed upstream in commit %@" = "upstream 커밋 %@에서 수정됨";
@@ -536,6 +545,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
 "KB" = "KB";
 "Keep Old Versions" = "이전 버전 유지";
+"Keep Open" = "열어 두기";
 "Keep Running" = "계속 실행";
 "Keep the previous version after upgrades" = "업그레이드 후 이전 버전 유지";
 "Keeps %@; upgrades skip it" = "%@ 유지; 업그레이드에서 건너뜀";
@@ -567,6 +577,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "로컬 tap(%@) · formula %@개 · cask %@개";
 "Log" = "로그";
 "Logs and other" = "로그 및 기타";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "먼저 지난 업그레이드 결과를 확인하세요. 이 윈도우 오른쪽 아래의 버튼을 클릭하세요.";
 "Low" = "낮음";
 "MB" = "MB";
 "Made by d4rkwyng" = "d4rkwyng 제작";
@@ -889,7 +900,9 @@
 "Show Older Copy" = "이전 Tankard 보기";
 "Show Tankard in the menu bar" = "메뉴 막대에 Tankard 표시";
 "Show Terminal Command" = "터미널 명령 보기";
+"Show Upgrade Plan" = "업그레이드 계획 보기";
 "Show Upgrade Progress" = "업그레이드 진행 상황 보기";
+"Show Upgrade Results" = "업그레이드 결과 보기";
 "Show What Uses It" = "사용하는 항목 보기";
 "Show What Uses It (%lld)" = "사용하는 항목 보기 (%lld)";
 "Show all upgrades in Tankard" = "Tankard에서 모든 업그레이드 보기";
@@ -1006,6 +1019,9 @@
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "이전 버전이 정리로 삭제되어 여기서는 되돌릴 수 있는 항목이 없습니다.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:";
+"The upgrade finished" = "업그레이드가 끝났습니다";
+"The upgrade finished with problems" = "업그레이드가 문제와 함께 끝났습니다";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "업그레이드 윈도우가 열려 있습니다. 먼저 닫거나 'Tankard에서 보기'를 클릭하세요.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "이들의 명령과 라이브러리가 Homebrew 접두사에 없습니다. 보통 설치나 업그레이드가 중단되었기 때문입니다.";
@@ -1085,11 +1101,14 @@
 "Upgrade All" = "모두 업그레이드";
 "Upgrade All…" = "모두 업그레이드…";
 "Upgrade Now" = "지금 업그레이드";
+"Upgrade Plan" = "업그레이드 계획";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "brew upgrade --cask tankard로 Tankard를 업그레이드합니다(자동 업데이트는 Tankard를 brew에 맡깁니다)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
 "Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";
+"Upgrade finished" = "업그레이드 완료";
+"Upgrade finished with problems" = "업그레이드 완료 (문제 있음)";
 "Upgrade only the packages that pour a bottle; skip %@" = "bottle을 붓는 패키지만 업그레이드하고 %@ 건너뛰기";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: " = "업그레이드 준비됨: ";

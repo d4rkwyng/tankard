@@ -146,7 +146,9 @@ struct V084MultiKegUninstallTests {
         #expect(s.stillInstalled.isEmpty)
         #expect(!s.hasProblems)
         #expect(s.title == "Uninstall complete")
-        #expect(s.statusLine == "1 uninstalled")
+        // 0.8.5: both counts, in words, beside "2 of 2 versions".
+        #expect(s.statusLine == "1 uninstalled (2 versions)")
+        #expect(s.countLine == "2 of 2 versions")
         #expect(s.subtitle == "Every installed version, one brew uninstall each")
         #expect(await waitUntil { !store.isRefreshing && !store.packages.contains { $0.name == name } })
     }
@@ -172,7 +174,7 @@ struct V084MultiKegUninstallTests {
         #expect(s.hasProblems)
         #expect(s.title == "Uninstall incomplete")
         #expect(!s.title.contains("complete") || s.title == "Uninstall incomplete")
-        #expect(s.statusLine == "0 uninstalled, \(name) 0.9 still installed")
+        #expect(s.statusLine == "0 uninstalled (2 versions), \(name) 0.9 still installed")
         #expect(s.log.lines.contains { $0.contains("\(name) 0.9 still installed: the uninstall didn't remove every version") })
         #expect(await waitUntil { !store.isRefreshing })
         #expect(store.packages.contains { $0.name == name })

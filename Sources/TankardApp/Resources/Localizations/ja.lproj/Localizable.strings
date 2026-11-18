@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld個のパッケージ";
 "%@ %lld packages" = "%@ %lld個のパッケージ";
+"%@ (%lld of %lld)" = "%@ (%lld/%lld)";
 "%@ and %lld more" = "%@ ほか%lld件";
 "%@ and more" = "%@ など";
 "%@ can't be uninstalled" = "%@ はアンインストールできません";
@@ -111,6 +112,7 @@
 "%lld no bottle" = "%lld個はbottleなし";
 "%lld not checked" = "%lld個は未確認";
 "%lld of %lld" = "%lld / %lld";
+"%lld of %lld versions" = "%lld/%lld バージョン";
 "%lld pinned upgrade not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld result for “%@”" = "「%2$@」の結果: %1$lld件";
@@ -124,6 +126,8 @@
 "%lld stopped" = "%lld個が停止中";
 "%lld tap" = "%lld個のtap";
 "%lld taps" = "%lld個のtap";
+"%lld uninstalled (%lld version)" = "%lld 個アンインストール済み (%lld バージョン)";
+"%lld uninstalled (%lld versions)" = "%lld 個アンインストール済み (%lld バージョン)";
 "%lld upgrade ready" = "%lld件のアップグレードが利用可能";
 "%lld upgraded" = "%lld個をアップグレード済み";
 "%lld upgrades ready" = "%lld件のアップグレードが利用可能";
@@ -297,7 +301,11 @@
 "Cleanup" = "クリーンアップ";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "「システム設定を開く」をクリックし、「プライバシーとセキュリティ」→「App管理」を選択してください。";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "「システム設定を開く」をクリックします。「プライバシーとセキュリティ」→「App管理」が開きます。";
+"Click to read the notes Homebrew printed." = "クリックすると Homebrew が表示したメモを読めます。";
+"Click to see what happened." = "クリックすると何が起きたかを確認できます。";
 "Close" = "閉じる";
+"Close Window" = "ウインドウを閉じる";
+"Closing this window doesn't stop the upgrade." = "このウインドウを閉じてもアップグレードは止まりません。";
 "Collapse" = "折りたたむ";
 "Come back and click I've done this." = "戻ったら「完了しました」をクリックしてください。";
 "Command" = "コマンド";
@@ -403,6 +411,7 @@
 "Failed: " = "失敗: ";
 "Files Homebrew didn't install are in its folders" = "Homebrewがインストールしていないファイルがそのフォルダ内にあります";
 "Filter" = "フィルタ";
+"Find it again in the menu bar." = "メニューバーからもう一度開けます。";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "修正コマンドは表示されるだけで、実行はされません。必要ならターミナルにコピーしてください。";
 "Fixed in %@" = "%@で修正";
 "Fixed upstream in commit %@" = "アップストリームのコミット %@ で修正";
@@ -536,6 +545,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
 "KB" = "KB";
 "Keep Old Versions" = "古いバージョンを残す";
+"Keep Open" = "開いたままにする";
 "Keep Running" = "続行";
 "Keep the previous version after upgrades" = "アップグレード後も以前のバージョンを残す";
 "Keeps %@; upgrades skip it" = "%@を維持します。アップグレードではスキップされます";
@@ -567,6 +577,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "ローカルtap(%@) · formulae %@個 · cask %@個";
 "Log" = "ログ";
 "Logs and other" = "ログその他";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "先に前回のアップグレードの結果を確認してください。このウインドウの右下にあるボタンをクリックします。";
 "Low" = "低";
 "MB" = "MB";
 "Made by d4rkwyng" = "作者: d4rkwyng";
@@ -889,7 +900,9 @@
 "Show Older Copy" = "古いTankardを表示";
 "Show Tankard in the menu bar" = "メニューバーにTankardを表示";
 "Show Terminal Command" = "ターミナルコマンドを表示";
+"Show Upgrade Plan" = "アップグレードの計画を表示";
 "Show Upgrade Progress" = "アップグレードの進行状況を表示";
+"Show Upgrade Results" = "アップグレードの結果を表示";
 "Show What Uses It" = "使用しているものを表示";
 "Show What Uses It (%lld)" = "使用しているものを表示 (%lld)";
 "Show all upgrades in Tankard" = "すべてのアップグレードをTankardで表示";
@@ -1006,6 +1019,9 @@
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "古いバージョンはクリーンアップで削除されたため、ここでは何も元に戻せません。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "その他のアプリは確認されます。ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "パスワードダイアログがキャンセルされたため、このステップは実行されませんでした。自分で実行するには、ターミナルを使用してください:";
+"The upgrade finished" = "アップグレードが完了しました";
+"The upgrade finished with problems" = "アップグレードは問題ありで完了しました";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "アップグレードのウインドウが開いています。先に閉じるか、「Tankard で表示」をクリックしてください。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "この変数は先に解除されるため、このbrew updateでフォークが元に戻ることはありません。";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "開発元は一致しますが、cask にはこのバンドル ID が記載されていません。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "それらのコマンドとライブラリはHomebrewのprefix内にありません。通常はインストールまたはアップグレードが中断されたことが原因です。";
@@ -1085,11 +1101,14 @@
 "Upgrade All" = "すべてアップグレード";
 "Upgrade All…" = "すべてアップグレード…";
 "Upgrade Now" = "今すぐアップグレード";
+"Upgrade Plan" = "アップグレードの計画";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Tankardは brew upgrade --cask tankard でアップグレードしてください（自動アップデートではTankardはbrewに任せます）";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";
+"Upgrade finished" = "アップグレード完了";
+"Upgrade finished with problems" = "アップグレード完了 (問題あり)";
 "Upgrade only the packages that pour a bottle; skip %@" = "bottleを使うパッケージのみアップグレードし、%@をスキップします";
 "Upgrade packages automatically" = "パッケージを自動でアップグレード";
 "Upgrade ready: " = "アップグレードの準備完了: ";

@@ -116,7 +116,16 @@ struct V083LockWaitTests {
         })
     }
 
-    @Test func queueWaitsAndRunsAgain() async throws {
+    // 0.8.5: flaky under full-suite load (5.4 s, 3 failures) with the
+    // 5 s `limit`: a loaded run reached the first lock wait late, the
+    // wait's own wall-clock limit passed before the lock was released,
+    // and the step failed as locked. The limit isn't what this tests
+    // (`otherFailuresDontWait` and the auto-update suite cover giving up),
+    // so it is out of reach here, and the test waits on the queue's
+    // events as signals, not polls against a clock. A real hang still
+    // fails, through the time limit.
+    @Test(.timeLimit(.minutes(1)))
+    func queueWaitsAndRunsAgain() async throws {
         let calls = CallLog()
         let held = LockSwitch(true)
         let runner = FakeStreamRunner(log: calls, behaviour: { args, out in
@@ -131,13 +140,13 @@ struct V083LockWaitTests {
         let queue = CommandQueue(runner: runner)
         let events = CommandQueueTests.Events()
         queue.enqueue(QueuedCommand(executable: "/opt/homebrew/bin/brew", arguments: ["upgrade", "xz"], environment: [:], display: "brew upgrade xz"),
-                      lockWait: fakeWait(held: held, files: files)) { events.add("u", $0) }
-        try await waitFor { events.all.contains { $0.1 == .lockWait("4312 /bin/bash /opt/homebrew/Library/Homebrew/brew.sh install ffmpeg") } }
+                      lockWait: fakeWait(held: held, files: files, limit: .seconds(24 * 3600))) { events.add("u", $0) }
+        await events.arrival { $0 == .lockWait("4312 /bin/bash /opt/homebrew/Library/Homebrew/brew.sh install ffmpeg") }
         try await Task.sleep(for: .milliseconds(50))
         #expect(calls.count("upgrade") == 1, "still waiting while the lock is held")
         #expect(files.calls.first == ["/opt/homebrew/var/homebrew/locks/xz.formula.lock"])
         held.value = false
-        try await waitFor { events.all.contains { if case .finished = $0.1 { true } else { false } } }
+        await events.arrival { if case .finished = $0 { true } else { false } }
         #expect(events.terminal("u") == .finished(exitCode: 0))
         #expect(calls.count("upgrade") == 2)
         #expect(events.all.contains { $0.1 == .lockWait(nil) })

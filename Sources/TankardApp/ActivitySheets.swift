@@ -16,6 +16,9 @@ struct ActivitySheet: View {
             AppManagementResumeSheet(store: store, resume: resume)
         } else if let offer = store.interruptedRun {
             InterruptedRunSheet(store: store, offer: offer)
+        } else if let notes = store.progressPanelNotes {
+            // 0.8.5 review: a progress-panel run's post-install notes.
+            PostInstallNotesSheet(notes: notes) { store.closeProgressPanelNotes() }
         } else if let plan = store.upgradePlan {
             UpgradePlanView(store: store, plan: plan)
         } else if let session = store.upgrade {
@@ -100,6 +103,7 @@ struct UpgradePlanView: View {
                 .keyboardShortcut(.defaultAction)
                 .disabled(plan.toRun.isEmpty)
             }
+            .panelButtonRow("plan.buttons")
             .padding(.top, 14)
         }
         .padding(20)

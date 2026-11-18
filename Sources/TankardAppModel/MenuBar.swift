@@ -128,6 +128,9 @@ public enum UpgradeNotificationDiff {
             case upgrades, autoUpdate
             /// 0.8.5: a progress panel's upgrade finished (opens History).
             case upgradeDone
+            /// 0.8.5 (review): a hidden progress panel's run finished with
+            /// problems or notes (opens the results).
+            case upgradeResults
         }
 
         /// "upgrades-<sha256 of the sorted keys>": the same set gives the

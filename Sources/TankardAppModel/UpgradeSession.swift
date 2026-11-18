@@ -268,6 +268,42 @@ public final class UpgradeSession: Identifiable {
     public var succeededCount: Int { items.filter { $0.state == .done }.count }
     public var failedItems: [Item] { items.filter { if case .failed = $0.state { true } else { false } } }
     public var current: Item? { items.first { $0.state == .running } }
+
+    /// 0.8.5 (test pass L3): an uninstall with one step per installed
+    /// version of a formula: its count says versions, not packages.
+    public var countsVersions: Bool { action == .uninstall && total > packages.count }
+
+    /// 0.8.5: the version each uninstall step removed, from brew's
+    /// "Uninstalling /opt/homebrew/Cellar/xz/5.8.3... (95 files, 1.9MB)".
+    public private(set) var removedVersions: [UUID: String] = [:]
+
+    /// 0.8.5 (test pass L3): a step's chip. A formula uninstalled version
+    /// by version: "xz 5.8.3" once brew has said which one it removed,
+    /// "xz (1 of 2)" before (brew picks the linked version, else the
+    /// newest, so Tankard doesn't guess).
+    public func chipName(_ item: Item) -> String {
+        let name = item.package.name
+        guard action == .uninstall else { return name }
+        let steps = items.filter { $0.package.id == item.package.id }
+        guard steps.count > 1 else { return name }
+        if let v = removedVersions[item.id] { return "\(name) \(v)" }
+        let k = (steps.firstIndex { $0.id == item.id } ?? 0) + 1
+        return String(localized: "\(name) (\(k) of \(steps.count))")
+    }
+
+    /// The version in brew's "Uninstalling <cellar>/<name>/<version>..."
+    /// line, if `lines` have one for `name`.
+    nonisolated static func removedVersion(_ lines: [String], name: String) -> String? {
+        for line in lines {
+            let t = line.trimmingCharacters(in: .whitespaces)
+            guard t.hasPrefix("Uninstalling /"), let end = t.range(of: "...") else { continue }
+            let path = t[t.index(t.startIndex, offsetBy: "Uninstalling ".count)..<end.lowerBound]
+            let parts = path.split(separator: "/")
+            guard parts.count >= 2, parts[parts.count - 2] == name else { continue }
+            return String(parts[parts.count - 1])
+        }
+        return nil
+    }
     /// The packages whose step macOS blocked.
     public var blockedPackages: [Package] { items.filter { appManagementBlocked.contains($0.id) }.map(\.package) }
 
@@ -400,7 +436,11 @@ public final class UpgradeSession: Identifiable {
             let succeeded = action == .uninstall
                 ? packages.filter { p in items.allSatisfy { $0.package.id != p.id || $0.state == .done } && stillInstalled[p.name] == nil }.count
                 : succeededCount
-            var parts = [String(localized: "\(succeeded) \(action.past)")]
+            // 0.8.5: with one step per version, both counts, in words.
+            let versions = items.filter { $0.state == .done }.count
+            var parts = [countsVersions ? (versions == 1 ? String(localized: "\(succeeded) uninstalled (\(versions) version)")
+                                                        : String(localized: "\(succeeded) uninstalled (\(versions) versions)"))
+                                        : String(localized: "\(succeeded) \(action.past)")]
             if !stillInstalled.isEmpty {
                 parts.append(stillInstalled.keys.sorted().map { n in
                     String(localized: "\(n) \(stillInstalled[n, default: []].joined(separator: ", ")) still installed")
@@ -419,6 +459,8 @@ public final class UpgradeSession: Identifiable {
     /// "2 of 5"
     public var countLine: String {
         let n = current.map { c in (items.firstIndex { $0.id == c.id } ?? 0) + 1 } ?? completedCount
+        // 0.8.5: "3 of 4 versions" beside "2 uninstalled (4 versions)".
+        if countsVersions { return String(localized: "\(n) of \(total) versions") }
         return String(localized: "\(n) of \(total)")
     }
 
@@ -498,6 +540,10 @@ public final class UpgradeSession: Identifiable {
             items[i].state = code == 0 && !refused ? .done : .failed(code)
             if refused {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
+            }
+            if action == .uninstall, code == 0, !refused,
+               let v = Self.removedVersion(commandLines, name: items[i].package.name) {
+                removedVersions[items[i].id] = v
             }
             // 0.8.4: the package's last step and brew still has versions of it.
             if action == .uninstall, code == 0, !refused,

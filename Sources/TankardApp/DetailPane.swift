@@ -8,7 +8,10 @@ struct DetailPane: View {
     var body: some View {
         if let p = store.selectedPackage {
             let _ = store.buildTimesRevision
-            PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.isUpgrading,
+            // 0.8.5 review: also off while the progress panel holds the
+            // activity (blockedNote says so).
+            PackageDetail(package: p, intelbrew: store.intelbrewMode, canUpgrade: !store.windowBrewActionsBlocked,
+                          blockedNote: store.windowBrewActionsNote,
                           dependents: store.dependents(of: p),
                           // The sheet opens with "Also remove these" on: its commands.
                           uninstallCommand: AppStore.uninstallDisplay(p, orphans: store.uninstallOrphans(of: p)),
@@ -39,6 +42,9 @@ struct PackageDetail: View {
     var package: Package
     var intelbrew: Bool
     var canUpgrade: Bool
+    /// 0.8.5 review: why Upgrade and Uninstall are off (the progress
+    /// panel holds the activity), for their help.
+    var blockedNote: String? = nil
     /// Installed packages that need this one (uninstall is blocked).
     var dependents: [Package]
     /// The uninstall's commands, as the sheet shows them (the button's tooltip).
@@ -179,7 +185,7 @@ struct PackageDetail: View {
                         }
                         .buttonStyle(.primaryAction)
                         .disabled(!canUpgrade || p.isHeld)
-                        .help(p.isHeld ? String(localized: "Pinned: unpin it first") : command)
+                        .help(p.isHeld ? String(localized: "Pinned: unpin it first") : blockedNote ?? command)
                         if let skipVersion, !p.isHeld, let v = p.currentVersion {
                             SkipVersionRow(skipped: p.versionSkipped == true, version: v, toggle: skipVersion)
                         }
@@ -187,7 +193,7 @@ struct PackageDetail: View {
                 }
 
                 UninstallSection(package: p, dependents: dependents, enabled: canUpgrade, uninstall: uninstall,
-                                 command: uninstallCommand ?? AppStore.uninstallDisplay(p))
+                                 command: blockedNote ?? uninstallCommand ?? AppStore.uninstallDisplay(p))
 
                 if let page = p.releasePageURL {
                     Link(destination: page) {

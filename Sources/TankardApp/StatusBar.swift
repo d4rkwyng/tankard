@@ -59,6 +59,15 @@ struct StatusBar: View {
             Spacer()
             // 0.8.5: also while it is in the progress panel: a click
             // moves it to this window's sheet.
+            if store.upgrade == nil, store.upgradePlan != nil, store.showsProgressPanel {
+                // 0.8.5 review: a plan waiting in the progress panel.
+                Button {
+                    store.showActivity(windowInFront: true)
+                } label: {
+                    Label(store.activityMenuTitle, systemImage: "list.bullet")
+                }
+                .controlSize(.small)
+            }
             if let session = store.upgrade, !store.showsActivitySheet {
                 Button {
                     store.showActivity(windowInFront: true)
@@ -93,8 +102,8 @@ struct StatusBar: View {
                 }
             }
             .buttonStyle(.primaryAction)
-            .disabled(n == 0 || store.isUpgrading || store.isRefreshing)
-            .help(n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "brew upgrade the 1 outdated package, one at a time") : String(localized: "brew upgrade the \(n) outdated packages, one at a time")))
+            .disabled(n == 0 || store.windowBrewActionsBlocked || store.isRefreshing)
+            .help(n > 0 && store.windowBrewActionsNote != nil ? store.windowBrewActionsNote! : n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "brew upgrade the 1 outdated package, one at a time") : String(localized: "brew upgrade the \(n) outdated packages, one at a time")))
         }
         .font(.system(size: 11.5))
         .foregroundStyle(.secondary)

@@ -89,7 +89,9 @@ extension AppStore {
         let changed = session.items.filter { $0.state == .done }.map(\.package.id)
         let notes = PostInstallNotes.make(action: session.action, changedIDs: changed, packages: packages,
                                           prefix: report?.host.prefix)
-        insights.offer(notes, sheetOpen: showUpgradeSheet)
+        // 0.8.5 (review): a progress-panel run keeps them for its panel, even
+        // hidden (the panel shows them when the run is closed).
+        insights.offer(notes, sheetOpen: showUpgradeSheet || (runHome == .progressPanel && upgrade === session))
     }
 
     /// The menu-bar notice's "Show": the Vulnerable list, marked as seen.

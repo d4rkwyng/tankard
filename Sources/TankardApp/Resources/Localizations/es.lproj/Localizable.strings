@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld paquete";
 "%@ %lld packages" = "%@ %lld paquetes";
+"%@ (%lld of %lld)" = "%@ (%lld de %lld)";
 "%@ and %lld more" = "%@ y %lld más";
 "%@ and more" = "%@ y más";
 "%@ can't be uninstalled" = "%@ no se puede desinstalar";
@@ -111,6 +112,7 @@
 "%lld no bottle" = "%lld sin bottle";
 "%lld not checked" = "%lld sin comprobar";
 "%lld of %lld" = "%lld de %lld";
+"%lld of %lld versions" = "%lld de %lld versiones";
 "%lld pinned upgrade not included (%@)" = "%lld actualización fijada no incluida (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld actualizaciones fijadas no incluidas (%@)";
 "%lld result for “%@”" = "%lld resultado para “%@”";
@@ -124,6 +126,8 @@
 "%lld stopped" = "%lld detenidos";
 "%lld tap" = "%lld tap";
 "%lld taps" = "%lld taps";
+"%lld uninstalled (%lld version)" = "%lld desinstalado(s) (%lld versión)";
+"%lld uninstalled (%lld versions)" = "%lld desinstalado(s) (%lld versiones)";
 "%lld upgrade ready" = "%lld actualización lista";
 "%lld upgraded" = "%lld actualizados";
 "%lld upgrades ready" = "%lld actualizaciones listas";
@@ -297,7 +301,11 @@
 "Cleanup" = "Limpieza";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "Haz clic en Abrir Ajustes del Sistema y elige Privacidad y seguridad → Gestión de apps.";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "Haz clic en Abrir Ajustes del Sistema. Se abre Privacidad y seguridad → Gestión de apps.";
+"Click to read the notes Homebrew printed." = "Haz clic para leer las notas de Homebrew.";
+"Click to see what happened." = "Haz clic para ver qué pasó.";
 "Close" = "Cerrar";
+"Close Window" = "Cerrar ventana";
+"Closing this window doesn't stop the upgrade." = "Cerrar esta ventana no detiene la actualización.";
 "Collapse" = "Contraer";
 "Come back and click I've done this." = "Vuelve y haz clic en Ya lo hice.";
 "Command" = "Comando";
@@ -403,6 +411,7 @@
 "Failed: " = "Fallido: ";
 "Files Homebrew didn't install are in its folders" = "Los archivos que Homebrew no instaló están en sus carpetas";
 "Filter" = "Filtro";
+"Find it again in the menu bar." = "Puedes volver a encontrarla en la barra de menús.";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "Los comandos de corrección se muestran, nunca se ejecutan. Cópialo en Terminal si lo quieres.";
 "Fixed in %@" = "Corregido en %@";
 "Fixed upstream in commit %@" = "Corregido en upstream en el commit %@";
@@ -536,6 +545,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Sus dependencias siguen instaladas (brew autoremove elimina las que no se usan)";
 "KB" = "KB";
 "Keep Old Versions" = "Conservar versiones antiguas";
+"Keep Open" = "Mantener abierta";
 "Keep Running" = "Seguir";
 "Keep the previous version after upgrades" = "Conservar la versión anterior tras las actualizaciones";
 "Keeps %@; upgrades skip it" = "Conserva %@; las actualizaciones lo omiten";
@@ -567,6 +577,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "Taps locales (%@) · %@ formulae · %@ casks";
 "Log" = "Registro";
 "Logs and other" = "Registros y otros";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "Primero revisa los resultados de la última actualización: haz clic en su botón, abajo a la derecha de esta ventana.";
 "Low" = "Baja";
 "MB" = "MB";
 "Made by d4rkwyng" = "Creado por d4rkwyng";
@@ -889,7 +900,9 @@
 "Show Older Copy" = "Mostrar copia anterior";
 "Show Tankard in the menu bar" = "Mostrar Tankard en la barra de menús";
 "Show Terminal Command" = "Mostrar comando de Terminal";
+"Show Upgrade Plan" = "Mostrar plan de actualización";
 "Show Upgrade Progress" = "Mostrar el progreso de la actualización";
+"Show Upgrade Results" = "Mostrar resultados de la actualización";
 "Show What Uses It" = "Mostrar qué lo usa";
 "Show What Uses It (%lld)" = "Mostrar qué lo usa (%lld)";
 "Show all upgrades in Tankard" = "Mostrar todas las actualizaciones en Tankard";
@@ -1006,6 +1019,9 @@
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "La limpieza eliminó las versiones antiguas, así que aquí no se puede revertir nada.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Las demás apps se comprueban: si una descarga no coincide, brew se detiene para esa app y la deja como estaba.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "Se canceló el cuadro de la contraseña, así que este paso no se ejecutó. Para ejecutarlo tú, usa Terminal:";
+"The upgrade finished" = "La actualización terminó";
+"The upgrade finished with problems" = "La actualización terminó con problemas";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "La ventana de actualización está abierta. Ciérrala primero o haz clic en Mostrar en Tankard.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Las variables se desactivan primero, así que este brew update no vuelve a poner el fork.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "El desarrollador coincide, pero el cask no indica este bundle id exacto.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Sus comandos y bibliotecas no están en el prefijo de Homebrew. Normalmente se interrumpió una instalación o actualización.";
@@ -1085,11 +1101,14 @@
 "Upgrade All" = "Actualizar todo";
 "Upgrade All…" = "Actualizar todo…";
 "Upgrade Now" = "Actualizar ahora";
+"Upgrade Plan" = "Plan de actualización";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Actualiza Tankard con brew upgrade --cask tankard (la actualización automática deja Tankard a brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Actualiza de nuevo de la forma habitual: siguen aplicando las advertencias de compilación, los fijados y las versiones omitidas";
 "Upgrade available: %@" = "Actualización disponible: %@";
 "Upgrade builds from source" = "Actualizar compilaciones desde el código fuente";
 "Upgrade command" = "Comando de actualización";
+"Upgrade finished" = "Actualización terminada";
+"Upgrade finished with problems" = "Actualización terminada con problemas";
 "Upgrade only the packages that pour a bottle; skip %@" = "Actualiza solo los paquetes que instalan un bottle; omite %@";
 "Upgrade packages automatically" = "Actualizar paquetes automáticamente";
 "Upgrade ready: " = "Actualización lista: ";

@@ -23,6 +23,7 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld package";
 "%@ %lld packages" = "%@ %lld packages";
+"%@ (%lld of %lld)" = "%@ (%lld of %lld)";
 "%@ and %lld more" = "%@ and %lld more";
 "%@ and more" = "%@ and more";
 "%@ can't be uninstalled" = "%@ can't be uninstalled";
@@ -111,6 +112,7 @@
 "%lld no bottle" = "%lld no bottle";
 "%lld not checked" = "%lld not checked";
 "%lld of %lld" = "%lld of %lld";
+"%lld of %lld versions" = "%lld of %lld versions";
 "%lld pinned upgrade not included (%@)" = "%lld pinned upgrade not included (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld pinned upgrades not included (%@)";
 "%lld result for “%@”" = "%lld result for “%@”";
@@ -124,6 +126,8 @@
 "%lld stopped" = "%lld stopped";
 "%lld tap" = "%lld tap";
 "%lld taps" = "%lld taps";
+"%lld uninstalled (%lld version)" = "%lld uninstalled (%lld version)";
+"%lld uninstalled (%lld versions)" = "%lld uninstalled (%lld versions)";
 "%lld upgrade ready" = "%lld upgrade ready";
 "%lld upgraded" = "%lld upgraded";
 "%lld upgrades ready" = "%lld upgrades ready";
@@ -297,7 +301,11 @@
 "Cleanup" = "Cleanup";
 "Click Open System Settings, then choose Privacy & Security → App Management." = "Click Open System Settings, then choose Privacy & Security → App Management.";
 "Click Open System Settings. It opens Privacy & Security → App Management." = "Click Open System Settings. It opens Privacy & Security → App Management.";
+"Click to read the notes Homebrew printed." = "Click to read the notes Homebrew printed.";
+"Click to see what happened." = "Click to see what happened.";
 "Close" = "Close";
+"Close Window" = "Close Window";
+"Closing this window doesn't stop the upgrade." = "Closing this window doesn't stop the upgrade.";
 "Collapse" = "Collapse";
 "Come back and click I've done this." = "Come back and click I've done this.";
 "Command" = "Command";
@@ -403,6 +411,7 @@
 "Failed: " = "Failed: ";
 "Files Homebrew didn't install are in its folders" = "Files Homebrew didn't install are in its folders";
 "Filter" = "Filter";
+"Find it again in the menu bar." = "Find it again in the menu bar.";
 "Fix commands are shown, never run. Copy one into Terminal if you want it." = "Fix commands are shown, never run. Copy one into Terminal if you want it.";
 "Fixed in %@" = "Fixed in %@";
 "Fixed upstream in commit %@" = "Fixed upstream in commit %@";
@@ -536,6 +545,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
 "KB" = "KB";
 "Keep Old Versions" = "Keep Old Versions";
+"Keep Open" = "Keep Open";
 "Keep Running" = "Keep Running";
 "Keep the previous version after upgrades" = "Keep the previous version after upgrades";
 "Keeps %@; upgrades skip it" = "Keeps %@; upgrades skip it";
@@ -567,6 +577,7 @@
 "Local taps (%@) · %@ formulae · %@ casks" = "Local taps (%@) · %@ formulae · %@ casks";
 "Log" = "Log";
 "Logs and other" = "Logs and other";
+"Look at the last upgrade's results first: click its button at the bottom right of this window." = "Look at the last upgrade's results first: click its button at the bottom right of this window.";
 "Low" = "Low";
 "MB" = "MB";
 "Made by d4rkwyng" = "Made by d4rkwyng";
@@ -889,7 +900,9 @@
 "Show Older Copy" = "Show Older Copy";
 "Show Tankard in the menu bar" = "Show Tankard in the menu bar";
 "Show Terminal Command" = "Show Terminal Command";
+"Show Upgrade Plan" = "Show Upgrade Plan";
 "Show Upgrade Progress" = "Show Upgrade Progress";
+"Show Upgrade Results" = "Show Upgrade Results";
 "Show What Uses It" = "Show What Uses It";
 "Show What Uses It (%lld)" = "Show What Uses It (%lld)";
 "Show all upgrades in Tankard" = "Show all upgrades in Tankard";
@@ -1006,6 +1019,9 @@
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "The old versions were removed by cleanup, so nothing here can be rolled back.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:";
+"The upgrade finished" = "The upgrade finished";
+"The upgrade finished with problems" = "The upgrade finished with problems";
+"The upgrade window is open. Close it, or click Show in Tankard, first." = "The upgrade window is open. Close it, or click Show in Tankard, first.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "The variables are unset first, so this brew update doesn't put the fork back.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "The vendor matches, but the cask doesn't name this exact bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted.";
@@ -1085,11 +1101,14 @@
 "Upgrade All" = "Upgrade All";
 "Upgrade All…" = "Upgrade All…";
 "Upgrade Now" = "Upgrade Now";
+"Upgrade Plan" = "Upgrade Plan";
 "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)" = "Upgrade Tankard with brew upgrade --cask tankard (auto-update leaves Tankard to brew)";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
 "Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";
+"Upgrade finished" = "Upgrade finished";
+"Upgrade finished with problems" = "Upgrade finished with problems";
 "Upgrade only the packages that pour a bottle; skip %@" = "Upgrade only the packages that pour a bottle; skip %@";
 "Upgrade packages automatically" = "Upgrade packages automatically";
 "Upgrade ready: " = "Upgrade ready: ";

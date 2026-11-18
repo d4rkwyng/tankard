@@ -295,6 +295,10 @@ struct ContentView: View {
                 if let p = store.packages.first(where: { $0.name == what }) { store.showFromMenuBar(.package(p.id)) }
             }
         }
+        // 0.8.5: the progress panel on one page (Scripts/panel-check.sh).
+        if options.demo != nil, let page = ProcessInfo.processInfo.environment["TANKARD_DEMO_PANEL"], !page.isEmpty {
+            store.demoProgressPanel(page)
+        }
         if options.tab == .discover {
             store.tab = .discover
             guard let d = store.openDiscover() else { return }
@@ -455,7 +459,7 @@ struct FilterActions: View {
                 Button("Upgrade \(bottled.count) with bottles") { store.startUpgradeSkippingCompiles() }
                     .controlSize(.small)
                     .fixedSize()
-                    .disabled(store.isUpgrading || store.isRefreshing)
+                    .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
                     .help("Upgrade only the packages that pour a bottle; skip \(compiling.map(\.name).joined(separator: ", "))")
             }
         case .bottleAvailable:
@@ -467,7 +471,7 @@ struct FilterActions: View {
                     Label("Replace all (\(n))", systemImage: "shippingbox.and.arrow.backward")
                 }
                 .controlSize(.small)
-                .disabled(store.isUpgrading || store.isRefreshing)
+                .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
                 .help("brew reinstall --force-bottle --formula each one, through the queue")
             }
         case .vulnerable:

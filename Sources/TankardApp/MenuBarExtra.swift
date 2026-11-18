@@ -114,7 +114,8 @@ struct MenuBarContent: View {
                 if store.hasActivityToShow {
                     // 0.8.5: a run (going, or finished and not closed) or a
                     // plan: show it again (the panel, or the window's sheet).
-                    MenuRow(title: String(localized: "Show Upgrade Progress"), systemImage: "arrow.up.circle", shortcut: nil,
+                    // 0.8.5 review: Show Upgrade Plan / Progress / Results.
+                    MenuRow(title: store.activityMenuTitle, systemImage: "arrow.up.circle", shortcut: nil,
                             enabled: true) {
                         closePanel()
                         if store.showActivity(windowInFront: MainWindowState.inFront) == .mainWindowSheet { openMain() }
@@ -380,13 +381,45 @@ final class NotificationPresenter: NSObject, UNUserNotificationCenterDelegate, S
 
 /// 0.8.2: whether the user can see the list right now: Tankard is the
 /// active app and a main window is on screen (not minimized).
+/// 0.8.5 review: and not entirely covered by other apps' windows, on the
+/// Space being shown, and the user was last in it (a main window became
+/// key since Tankard last became active), so the menu-bar click that
+/// activates Tankard doesn't count by itself. The rule:
+/// `MainWindowFront.inFront` (tested in TankardAppModel).
 @MainActor
 enum MainWindowState {
     static var inFront: Bool {
-        guard NSApp.isActive else { return false }
-        // The WindowGroup's id is "main" (its windows: "main-AppWindow-1"),
-        // as ScriptLaunch and openMain look it up.
-        return NSApp.windows.contains { $0.identifier?.rawValue.hasPrefix("main") == true && $0.isVisible && !$0.isMiniaturized }
+        MainWindowFront.inFront(appActive: NSApp.isActive, mainWindowHadFocus: mainWindowHadFocus,
+                                windows: NSApp.windows.map(facts))
+    }
+
+    /// A main window was key since Tankard last became active.
+    private(set) static var mainWindowHadFocus = false
+    private static var observers: [NSObjectProtocol] = []
+
+    /// The WindowGroup's id is "main" (its windows: "main-AppWindow-1"),
+    /// as ScriptLaunch and openMain look it up.
+    static func isMain(_ w: NSWindow) -> Bool { w.identifier?.rawValue.hasPrefix("main") == true }
+
+    static func facts(_ w: NSWindow) -> MainWindowFront.Window {
+        MainWindowFront.Window(isMain: isMain(w), isVisible: w.isVisible, isMiniaturized: w.isMiniaturized,
+                               isUnoccluded: w.occlusionState.contains(.visible), isOnActiveSpace: w.isOnActiveSpace)
+    }
+
+    /// At launch (AppDelegate): follows which window the user is in.
+    static func start() {
+        guard observers.isEmpty else { return }
+        mainWindowHadFocus = NSApp.isActive && (NSApp.keyWindow.map(isMain) ?? false)
+        let center = NotificationCenter.default
+        observers.append(center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main) { note in
+            let window = note.object as? NSWindow
+            MainActor.assumeIsolated {
+                if let window, isMain(window) { mainWindowHadFocus = true }
+            }
+        })
+        observers.append(center.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { mainWindowHadFocus = false }
+        })
     }
 }
 

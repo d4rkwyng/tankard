@@ -72,6 +72,18 @@ struct SnapshotHook: NSViewRepresentable {
             DispatchQueue.main.asyncAfter(deadline: .now() + request.delay) { [weak v] in
                 guard let window = v?.window else { return }
                 if let name = request.view {
+                    // 0.8.5: the progress panel, and whether every button
+                    // in it is inside the window (Scripts/panel-check.sh).
+                    if name == "progress" {
+                        if let panel = NSApp.windows.first(where: { $0.identifier?.rawValue == ProgressPanelController.identifier && $0.isVisible }) {
+                            FileHandle.standardError.write(Data(Snapshot.panelCheck(panel).utf8))
+                            Snapshot.write(window: panel, to: request.path)
+                        } else {
+                            FileHandle.standardError.write(Data("panel-check: FAIL no progress panel on screen\n".utf8))
+                        }
+                        if request.quit { exit(0) }
+                        return
+                    }
                     if name == "about" {
                         if let panel = NSApp.windows.first(where: { $0 !== window && $0.isVisible && $0.className.contains("Panel") })
                             ?? NSApp.windows.first(where: { $0 !== window && $0.isVisible && $0.title.isEmpty }) {
@@ -163,6 +175,29 @@ enum Snapshot {
             }
         }
         return out.joined(separator: "\n") + "\n"
+    }
+
+    /// 0.8.5 (test pass H1): whether the page's title and button rows
+    /// (PanelLayoutProbe: each page marks them) lie inside the panel's
+    /// content, which shows the page from its top-left corner. A last
+    /// line: "panel-check: OK" or "panel-check: FAIL".
+    static func panelCheck(_ window: NSWindow) -> String {
+        guard let content = window.contentView else { return "panel-check: FAIL no content\n" }
+        content.layoutSubtreeIfNeeded()
+        let area = CGRect(origin: .zero, size: content.bounds.size).insetBy(dx: -1, dy: -1)
+        var lines = [String(format: "panel-check: window %.0fx%.0f content %.0fx%.0f title \"%@\"", window.frame.width, window.frame.height,
+                            content.bounds.width, content.bounds.height, window.title)]
+        let rows = PanelLayoutProbe.shared.rows
+        var ok = rows.keys.contains { $0.hasSuffix(".buttons") }
+        if !ok { lines.append("panel-check: no button row reported") }
+        for (name, f) in rows.sorted(by: { $0.key < $1.key }) {
+            let inside = f.width > 0 && f.height > 0 && area.contains(f)
+            if !inside { ok = false }
+            lines.append(String(format: "panel-check: row %@ %@ (%.0f,%.0f %.0fx%.0f)", name, inside ? "inside" : "OUTSIDE",
+                                f.minX, f.minY, f.width, f.height))
+        }
+        lines.append(ok ? "panel-check: OK" : "panel-check: FAIL")
+        return lines.joined(separator: "\n") + "\n"
     }
 
     static func render(_ window: NSWindow) -> NSBitmapImageRep? {
