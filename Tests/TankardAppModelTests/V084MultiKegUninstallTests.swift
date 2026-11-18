@@ -246,7 +246,10 @@ struct V084MultiKegUninstallTests {
         store.unpinAndUninstall(p)
         #expect(await waitUntil { store.upgrade?.isFinished == true && store.upgrade?.checkingInstalled == false })
         let s = try #require(store.upgrade)
-        #expect(log.calls.map { $0.first ?? "" }.filter { $0 == "unpin" || $0 == "uninstall" } == ["unpin", "uninstall", "uninstall"])
+        // Split up: Swift 6.1's type checker times out on the one-line chain.
+        let verbs: [String] = log.calls.map { (call: [String]) -> String in call.first ?? "" }
+        let relevant: [String] = verbs.filter { (v: String) -> Bool in v == "unpin" || v == "uninstall" }
+        #expect(relevant == ["unpin", "uninstall", "uninstall"])
         #expect(s.items.count == 2)
         #expect(s.title == "Uninstall complete")
         #expect(s.stillInstalled.isEmpty)
