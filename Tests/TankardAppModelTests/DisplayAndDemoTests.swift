@@ -45,6 +45,10 @@ struct DisplayAndDemoTests {
         #expect(try pkg("ruby").badgeKind == .noBottle)
         #expect(try pkg("ruby").subtitle == "Upgrade builds from source")
         #expect(try pkg("zstd").subtitle == "Tap has 1.5.7_1")
+        // 0.8.4: pinned shows as the badge next to the name, never repeated in the second line.
+        var pinned = try pkg("zstd")
+        pinned.pinned = true
+        #expect(pinned.subtitle == "Tap has 1.5.7_1")
     }
 
     /// 0.8.1: a self-updating cask gets a symbol next to its name, not an
@@ -152,3 +156,4 @@ struct DisplayAndDemoTests {
         #expect(session.log.lines.contains { $0.hasPrefix("🍺  /usr/local/Cellar/python@3.15/3.15.2") })
     }
 }
+

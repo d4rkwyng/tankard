@@ -147,7 +147,7 @@ public extension Package {
     /// columns don't.
     var subtitle: String? {
         var parts: [String] = []
-        if pinned { parts.append(String(localized: "Pinned")) }
+        // Pinned is the "pinned" badge next to the name (PinnedBadge), not text here.
         if disabled { parts.append(String(localized: "Disabled")) } else if deprecated { parts.append(String(localized: "Deprecated")) }
         if upgradeAvailable && kind == .formula && upgradeHasBottle != true {
             parts.append(String(localized: "Upgrade builds from source"))
