@@ -23,7 +23,9 @@
 #                            used instead of the profile when all three are set (CI)
 #   TANKARD_VERSION          version string (default: latest v* tag)
 #
-# Output: dist/Tankard.app (stapled) and dist/Tankard.zip.
+# Output: dist/Tankard.app (stapled) and dist/Tankard.zip; when notarizing,
+# also dist/notary-result.json (notarytool submit's answer) and
+# dist/notary-log.json (Apple's log for that submission, accepted or not).
 #
 # Hardened runtime needs no entitlements here: the app is plain Swift, loads
 # no third-party libraries or plug-ins, uses no JIT, and starts brew with
@@ -147,17 +149,51 @@ fi
 run rm -f "$SUBMIT_ZIP"
 run ditto -c -k --keepParent "$APP" "$SUBMIT_ZIP"
 RESULT=dist/notary-result.json
+# 0.8.4: Apple's log for the submission, fetched after every submission
+# (Accepted or not) and printed, so CI keeps it (release.yml uploads both
+# files as a workflow artifact, also when this step fails). It holds the
+# submission id, status, archive name, upload date, the zip's sha256, the
+# signed binaries' cdhashes ("ticketContents") and the issues list (path,
+# message, docUrl per issue); no Apple ID, password or certificate.
+NOTARY_LOG=dist/notary-log.json
+notary_log() { # submission id
+    local i
+    run rm -f "$NOTARY_LOG"
+    # The log can lag the status by a few seconds; three tries.
+    for i in 1 2 3; do
+        if run xcrun notarytool log "${NOTARY_ARGS[@]}" "$1" "$NOTARY_LOG"; then
+            [ $DRY = 1 ] || { echo "--- $NOTARY_LOG"; cat "$NOTARY_LOG"; echo; echo "---"; }
+            return 0
+        fi
+        [ $i = 3 ] || sleep 10
+    done
+    echo "release.sh: could not fetch the notary log for $1" >&2
+    return 1
+}
 if [ $DRY = 1 ]; then
     run xcrun notarytool submit "$SUBMIT_ZIP" "${NOTARY_ARGS[@]}" --wait --output-format json
+    notary_log "<submission-id>"
 else
+    run rm -f "$RESULT" "$NOTARY_LOG"
     echo "+ xcrun notarytool submit $SUBMIT_ZIP ${NOTARY_ARGS[0]} … --wait --output-format json"
-    xcrun notarytool submit "$SUBMIT_ZIP" "${NOTARY_ARGS[@]}" --wait --output-format json | tee "$RESULT"
+    # Not under `set -e`: an Invalid submission must still get its log.
+    SUBMIT_RC=0
+    xcrun notarytool submit "$SUBMIT_ZIP" "${NOTARY_ARGS[@]}" --wait --output-format json | tee "$RESULT" || SUBMIT_RC=$?
     echo
     STATUS=$(plutil -extract status raw -o - "$RESULT" 2>/dev/null || echo unknown)
-    if [ "$STATUS" != "Accepted" ]; then
-        SUB_ID=$(plutil -extract id raw -o - "$RESULT" 2>/dev/null || echo "<id>")
-        fail "notarization status: $STATUS. Details: xcrun notarytool log $SUB_ID ${NOTARY_ARGS[0]} …"
+    SUB_ID=$(plutil -extract id raw -o - "$RESULT" 2>/dev/null || true)
+    LOG_OK=0
+    if [ -n "$SUB_ID" ]; then
+        notary_log "$SUB_ID" && LOG_OK=1
+    else
+        echo "release.sh: no submission id in $RESULT (notarytool exit $SUBMIT_RC): nothing was submitted, no log" >&2
     fi
+    if [ "$STATUS" != "Accepted" ]; then
+        fail "notarization status: $STATUS (notarytool exit $SUBMIT_RC). Apple's log: $([ $LOG_OK = 1 ] && echo "$NOTARY_LOG, printed above" || echo "xcrun notarytool log ${SUB_ID:-<id>} ${NOTARY_ARGS[0]} …")"
+    fi
+    # Accepted with no log: the release goes on (the ticket is what ships),
+    # but say so; the workflow artifact will lack notary-log.json.
+    [ $LOG_OK = 1 ] || echo "WARNING: notarization Accepted, but Apple's log could not be fetched" >&2
 fi
 run xcrun stapler staple "$APP"
 run xcrun stapler validate "$APP"

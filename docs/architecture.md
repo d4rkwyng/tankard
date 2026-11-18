@@ -1194,6 +1194,13 @@ It builds universal (`--host-arch` for this Mac's architecture only), finds the
 `codesign --verify --strict --deep`, submits a zip with `notarytool --wait` (profile name:
 `TANKARD_NOTARY_PROFILE`, default `tankard`), fails unless the status is Accepted, staples,
 checks with `spctl -a -vv`, and zips the stapled app with `ditto -c -k --keepParent`.
+After every submission, accepted or not, it fetches Apple's log with `notarytool log`
+(0.8.4), prints it and keeps it as `dist/notary-log.json`, next to `notarytool submit`'s
+answer in `dist/notary-result.json`. The log is the submission id, status, archive name,
+upload date, the zip's sha256, the cdhash of every signed binary Apple ticketed (the app
+and `tankard-askpass`) and the issues list (path, message and help link for each); no
+Apple ID, password or certificate. An Invalid submission still fails the release, after
+its log is printed; an Accepted one whose log can't be fetched (three tries) only warns.
 `--skip-notarize` stops after signing. Before notarizing it real-launches the signed app
 five times with `Scripts/launch-check.sh` and stops if it crashes (`--skip-launch-check`
 only on a Mac with no GUI session; then run the check on the downloaded zip before
@@ -1206,7 +1213,10 @@ hardened-runtime build reads real brew data.)
 
 **On GitHub.** `.github/workflows/release.yml` runs on a `v*` tag push (or by hand with a
 tag), on `macos-15`: tests, imports the certificate, runs `Scripts/release.sh`, and
-attaches `Tankard.zip` to the release. Actions are pinned by commit SHA. The owner must add
+attaches `Tankard.zip` to the release. A step with `if: always()` uploads
+`notary-result.json` and `notary-log.json` as the workflow artifact `notary-<tag>` (kept
+90 days), so a failed notarization leaves Apple's issues list behind (Actions ▸ the run ▸
+Artifacts, or `gh run download <run-id> -n notary-<tag>`). Actions are pinned by commit SHA. The owner must add
 five repository secrets first (the workflow stops with a clear message if any is missing):
 
 | secret | value |
