@@ -185,9 +185,18 @@ public enum TapRemoval: Equatable, Sendable {
     case notTapped
     case inUse([String])
 
+    /// 0.8.6 (M1): packages from the tap that brew can't read. brew's own
+    /// untap check doesn't see them (it goes by the tap's current names),
+    /// so removing the tap would leave them behind with nothing to upgrade
+    /// or reinstall them from.
+    case inUseUnreadable([String], unreadable: [String])
+
     public static func check(_ tap: TapInfo, packages: [Package]) -> TapRemoval {
         guard tap.tapped else { return .notTapped }
-        let users = packages.filter { tap.owns($0) }.map(\.name).sorted()
+        let owned = packages.filter { tap.owns($0) }
+        let users = owned.map(\.name).sorted()
+        let unreadable = owned.filter(\.isUnreadable).map(\.name).sorted()
+        if !unreadable.isEmpty { return .inUseUnreadable(users, unreadable: unreadable) }
         return users.isEmpty ? .allowed : .inUse(users)
     }
 
@@ -203,6 +212,10 @@ public enum TapRemoval: Equatable, Sendable {
             return names.count == 1
                 ? String(localized: "1 installed package comes from this tap (\(list)). Uninstall it first: brew won't remove a tap while packages from it are installed.")
                 : String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first: brew won't remove a tap while packages from it are installed.")
+        case .inUseUnreadable(let names, let unreadable):
+            let list = unreadable.prefix(5).joined(separator: ", ") + (unreadable.count > 5 ? " +\(unreadable.count - 5)" : "")
+            let base = TapRemoval.inUse(names).reason ?? ""
+            return base + " " + String(localized: "Homebrew can't read \(list) any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from.")
         }
     }
 }

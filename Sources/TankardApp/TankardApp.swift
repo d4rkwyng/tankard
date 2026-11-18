@@ -371,6 +371,17 @@ struct HomebrewCommands: View {
         Button("Refresh") { Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) } }
             .keyboardShortcut("r", modifiers: .command)
             .disabled(store.isRefreshing || store.menuActionsBlocked)
+        // 0.8.6 (UI L10): upgrading had no menu command or shortcut.
+        // Upgrade All… always shows the plan first.
+        Button("Upgrade All…") { store.requestUpgradeAllPlan() }
+            .keyboardShortcut("u", modifiers: [.command, .shift])
+            .disabled(store.upgradable.isEmpty || store.menuActionsBlocked || store.isRefreshing)
+        Button(UpgradeMenu.selectedTitle(store.selectedUpgradeTarget)) {
+            if let p = store.selectedUpgradeTarget { store.requestUpgrade([p]) }
+        }
+        .keyboardShortcut("u", modifiers: .command)
+        .disabled(store.selectedUpgradeTarget == nil || store.menuActionsBlocked || store.isRefreshing)
+        Divider()
         Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
             .disabled(store.insights.scanState == .running || store.report == nil || store.menuActionsBlocked)
         Divider()

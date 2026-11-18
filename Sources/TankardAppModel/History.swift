@@ -14,6 +14,9 @@ import TankardCore
 public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     public enum Outcome: String, Codable, Sendable {
         case succeeded, failed, cancelled
+        /// 0.8.6 (M3): exit 0, but brew had nothing to do ("already
+        /// installed": another brew did it, e.g. in Terminal).
+        case noChange
         /// brew couldn't be started at all.
         case notStarted
         /// 0.8.5: a value this build doesn't know (written by a newer
@@ -147,6 +150,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         }
         switch outcome {
         case .succeeded: return String(localized: "succeeded")
+        case .noChange: return String(localized: "no change (already up to date)")
         case .failed: return exitCode.map { code in String(localized: "failed (exit \(code))") } ?? String(localized: "failed")
         case .cancelled: return String(localized: "stopped")
         case .notStarted: return String(localized: "didn't start")
@@ -441,7 +445,10 @@ public final class HistoryRecorder: @unchecked Sendable {
         assembler.finish()
         let lines = assembler.lines
         // 0.8: brew's "is pinned. You must unpin it to …" exits 0 but did nothing.
-        let outcome: HistoryEntry.Outcome = reported == .succeeded && BrewRefusal.pinned(lines) ? .failed : reported
+        var outcome: HistoryEntry.Outcome = reported == .succeeded && BrewRefusal.pinned(lines) ? .failed : reported
+        // 0.8.6 (M3): an upgrade or install brew found already done.
+        if outcome == .succeeded, ["upgrade", "install"].contains(r.command.arguments.first ?? ""),
+           BrewRefusal.alreadyInstalled(lines) { outcome = .noChange }
         let failed = outcome == .failed || outcome == .notStarted
         let entry = HistoryEntry(id: id, startedAt: r.started, duration: now.timeIntervalSince(r.started),
                                  command: r.command.display, arguments: r.command.arguments, outcome: outcome,

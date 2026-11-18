@@ -304,6 +304,15 @@ public final class DiscoverStore {
 
     // MARK: compile warnings (0.3)
 
+    /// 0.8.6 (H1): the empty search's explanation. Normal mode searches
+    /// formulae.brew.sh and the taps already added; a package from any
+    /// other tap needs that tap first.
+    public func noMatchesDetail(_ query: String) -> String {
+        isLocalTaps
+            ? String(localized: "Nothing matches “\(query)”.")
+            : String(localized: "Nothing matches “\(query)” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…).")
+    }
+
     /// "566 of 8,732 bottled"
     public var bottledCountText: String {
         String(localized: "\(bottledCount.formatted()) of \(formulaCount.formatted()) bottled")

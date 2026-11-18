@@ -31,7 +31,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .principal) {
                     ThemedSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases, label: \.title)
                         .environment(\.theme, Theme.of(appearance.theme))
-                        .help("Installed packages, or search everything Homebrew has (⌘1, ⌘2)")
+                        .help("Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {
@@ -63,6 +63,13 @@ struct ContentView: View {
         .onChange(of: activeState) { _, state in
             if state == .key { store.revalidateIfStale() }
         }
+        // 0.8.6 (UI M2): how tall a sheet can be in this window.
+        .background(GeometryReader { geo in
+            Color.clear
+                .onAppear { store.sheetRoom = Double(geo.size.height); store.windowWidth = Double(geo.size.width) }
+                .onChange(of: geo.size.height) { _, h in store.sheetRoom = Double(h) }
+                .onChange(of: geo.size.width) { _, w in store.windowWidth = Double(w) }
+        })
         .onChange(of: store.tab) { _, tab in
             store.tabChanged(to: tab)
             if tab == .discover { openDiscover() }
@@ -132,7 +139,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     Divider()
                     DetailPane(store: store)
-                        .frame(width: 272)
+                        .frame(width: CGFloat(DetailPaneWidth.width(window: store.windowWidth)))
                         .frame(maxHeight: .infinity)
                         .background(theme.pane)
                 }
@@ -381,7 +388,7 @@ struct SummaryStrip: View {
     @ViewBuilder
     private func upgradesLine(_ summary: StatusSummary, detail showDetail: Bool, disk: Bool) -> some View {
         HStack(spacing: 6) {
-            if let (ready, detail) = SummaryText.upgrades(summary) {
+            if let (ready, detail) = SummaryText.upgrades(summary, targets: store.upgradable) {
                 Circle().fill(theme.upgrade).frame(width: 7, height: 7)
                 Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
                 if showDetail { Text(detail).foregroundStyle(.secondary) }
@@ -403,7 +410,7 @@ struct SummaryStrip: View {
     /// Everything the strip's left side says, unshortened, for its tooltip.
     private var fullText: String {
         guard let report = store.report else { return "" }
-        var second = SummaryText.upgrades(report.summary).map { "\($0.0) \($0.1)" } ?? String(localized: "Everything is up to date")
+        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map { "\($0.0) \($0.1)" } ?? String(localized: "Everything is up to date")
         if let total = store.totalDiskBytes {
             second += " " + String(localized: "· \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)")
         }
@@ -549,7 +556,7 @@ struct PackageTable: View {
             TableColumn("Size", value: \Package.sizeSortKey) { p in
                 SizeCell(package: p)
             }
-            .width(min: 56, ideal: 72)
+            .width(min: 64, ideal: 72)
         }
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)
@@ -699,6 +706,7 @@ struct PackageNameCell: View {
         if p.kind == .formula && !p.requested { lines.append(String(localized: "Installed as a dependency")) }
         if p.pinned { lines.append(String(localized: "Pinned: upgrades leave it at this version")) }
         if let r = p.retiredLabel { lines.append(r) }
+        if let u = p.unreadableDetail { lines.append(u) }
         if p.vulnerabilityBadge != nil { lines.append(VulnerabilityText.help(p)) }
         return lines.isEmpty ? nil : ([p.name] + lines).joined(separator: "\n")
     }
@@ -747,9 +755,11 @@ struct NameBadges: View {
                     .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
                     .fixedSize()
                     .help("Installed as a dependency")
+                    .accessibilityLabel(Text("Installed as a dependency")) // 0.8.6 (UI L6): was "dep"
             }
             if p.pinned { PinnedBadge(compact: compact) }
             RetiredBadge(package: p, compact: compact)
+            UnreadableBadge(package: p, compact: compact)
             VulnerabilityTag(package: p, compact: compact)
         }
         .fixedSize()

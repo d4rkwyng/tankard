@@ -252,7 +252,7 @@ struct AppStoreTests {
         #expect(session.sudoCommand == "brew upgrade --formula homebrew/core/python@3.15")
         #expect(session.failedItems.map(\.package.name) == ["python@3.15"])
         #expect(session.succeededCount == 4)
-        #expect(session.title == "Upgrade finished with errors")
+        #expect(session.title == "Upgrade finished with problems")
     }
 
     @Test func upgradesAndRefreshShareOneQueue() async throws {

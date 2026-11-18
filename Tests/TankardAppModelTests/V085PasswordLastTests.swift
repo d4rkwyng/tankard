@@ -44,7 +44,9 @@ struct V085PasswordLastTests {
         var deps = Demo.dependencies(.arm64, pace: 0)
         deps.appManagementGate = false
         deps.askpassHelper = AdminPasswordTests.helper
-        let store = AppStore(deps: deps, settings: testSettings())
+        let settings = testSettings()
+        InsightSettings(defaults: settings.defaults).includeSelfUpdatingApps = true // 0.8.6 (M5): Chrome (auto_updates) in Upgrade All
+        let store = AppStore(deps: deps, settings: settings)
         await store.start()
         return store
     }

@@ -138,9 +138,24 @@ public extension Package {
             }
         case .source: return String(localized: "Built from source")
         case .newer: return intelbrewMode ? String(localized: "Newer than Intelbrew") : String(localized: "Newer than tap")
-        case .noBottle: return String(localized: "No bottle yet")
+        case .noBottle: return isThirdPartyTap ? String(localized: "No bottle") : String(localized: "No bottle yet")
         case .cask: return String(localized: "Cask")
         }
+    }
+
+    /// 0.8.6 (walkthrough L8): from a tap outside Homebrew's own (and not
+    /// Intelbrew's). Such taps rarely build bottles, so "yet" promised
+    /// one that may never come.
+    var isThirdPartyTap: Bool {
+        guard let tap, !tap.isEmpty else { return false }
+        return !TapIndexer.isHomebrewTap(tap) && !tap.lowercased().hasPrefix("d4rkwyng/")
+    }
+
+    /// The detail pane's line for a formula with no bottle.
+    var noBottleDetail: String {
+        isThirdPartyTap
+            ? String(localized: "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.")
+            : String(localized: "No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
     }
 
     /// A short second line under the name, only when it says something the
@@ -348,6 +363,19 @@ public enum SummaryText {
         return candidates.filter { seen.insert($0).inserted }
     }
 
+    /// 0.8.6 (UI details M3): counted from what Upgrade All takes
+    /// (`targets`, the store's `upgradable`), like the Upgrade button and the
+    /// menu bar; the upgrades it leaves out (pinned, a skipped version, an
+    /// app left to its own updater) are named after the detail. nil when
+    /// none are ready.
+    public static func upgrades(_ s: StatusSummary, targets: [Package]) -> (String, String)? {
+        let left = max(0, s.upgrades - targets.count)
+        guard let (ready, base) = upgrades(StatusSummary(packages: targets)) else { return nil }
+        var detail = base
+        if left > 0 { detail += " · " + String(localized: "\(left) not included") }
+        return (ready, detail)
+    }
+
     /// ("5 upgrades ready", "(4 with bottles, 1 compiles)"), or nil when none.
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }
@@ -355,6 +383,71 @@ public enum SummaryText {
         if s.upgradesFromSource > 0 { detail.append(s.upgradesFromSource == 1 ? String(localized: "\(s.upgradesFromSource) compiles") : String(localized: "\(s.upgradesFromSource) compile")) }
         if s.caskUpgrades > 0 { detail.append(s.caskUpgrades == 1 ? String(localized: "\(s.caskUpgrades) cask") : String(localized: "\(s.caskUpgrades) casks")) }
         return (s.upgrades == 1 ? String(localized: "\(s.upgrades) upgrade ready") : String(localized: "\(s.upgrades) upgrades ready"), "(\(detail.joined(separator: ", ")))")
+    }
+}
+
+/// 0.8.6 (UI details M3, L1): the detail pane's upgrade line, one whole
+/// sentence. A pinned, skipped or held package says why Upgrade All leaves
+/// it (it said "Upgrade ready" while the header and button didn't count it).
+public enum UpgradeBanner {
+    public static func text(_ p: Package) -> String {
+        let from = p.installedVersion, to = p.currentVersion ?? "?"
+        if p.isUpgradeTarget { return String(localized: "Upgrade ready: \(from) → \(to)") }
+        if p.pinned { return String(localized: "Newer version: \(from) → \(to) (pinned: upgrades leave it)") }
+        if p.versionSkipped == true { return String(localized: "Newer version: \(from) → \(to) (you skipped this version)") }
+        if p.selfUpdateHeld == true { return String(localized: "Newer version: \(from) → \(to) (left to the app's own updater)") }
+        return String(localized: "Upgrade ready: \(from) → \(to)")
+    }
+}
+
+/// 0.8.6 (UI details M2): a sheet's height. Sheets had fixed heights up
+/// to 620 pt, taller than the 480 pt minimum window (and at the default
+/// size Adopt's buttons were cut off). Now each is its usual height when
+/// the window has room, and shorter when it hasn't (its list scrolls, the
+/// buttons stay), down to `minimum`.
+public enum SheetHeight {
+    public static let minimum: Double = 340
+    /// Room left between the sheet's bottom and the window's.
+    public static let margin: Double = 16
+
+    public static func fit(_ ideal: Double, room: Double?) -> Double {
+        guard let room, room > 0 else { return ideal }
+        return min(ideal, max(minimum, room - margin))
+    }
+}
+
+/// 0.8.6 (UI details M8): at the minimum window width (820 pt) the table's
+/// columns couldn't fit beside a 272 pt detail pane: sizes lost digits
+/// from the middle ("77…5"), a header read "Grö". Below 900 pt the pane
+/// is 224 pt.
+public enum DetailPaneWidth {
+    public static let regular: Double = 272
+    public static let narrow: Double = 224
+    public static let narrowBelow: Double = 900
+
+    public static func width(window: Double?) -> Double {
+        guard let w = window, w < narrowBelow else { return regular }
+        return narrow
+    }
+}
+
+/// 0.8.6 (UI details L1): Discover's "Install … from source?" text, one
+/// whole sentence per case for the translations.
+public enum InstallCompileText {
+    public static func message(name: String, intelbrew: Bool, deps: [String], estimate: String?) -> String {
+        let names = deps.prefix(4).joined(separator: ", ")
+        let n = deps.count
+        var m: String
+        switch (intelbrew, n) {
+        case (true, 0): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.")
+        case (false, 0): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.")
+        case (true, 1): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (\(names)). That can take a long time on older Macs.")
+        case (false, 1): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it and 1 dependency (\(names)). That can take a long time on older Macs.")
+        case (true, _): m = String(localized: "\(name) has no Intelbrew bottle for this Mac, so brew compiles it and \(n) dependencies (\(names)). That can take a long time on older Macs.")
+        case (false, _): m = String(localized: "\(name) has no bottle for this Mac, so brew compiles it and \(n) dependencies (\(names)). That can take a long time on older Macs.")
+        }
+        if let estimate { m += " " + String(localized: "It took \(estimate).") }
+        return m
     }
 }
 

@@ -209,58 +209,6 @@
         }
       }
     },
-    " It took %@.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Das dauerte %@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Cela a pris %@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Tardó %@."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " %@かかりました。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 耗时 %@。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Levou %@."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Ha richiesto %@."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " %@ 걸렸습니다."
-          }
-        }
-      }
-    },
     " No upgrade yet for %@.": {
       "localizations": {
         "de": {
@@ -465,58 +413,6 @@
           "stringUnit": {
             "state": "translated",
             "value": " Intelbrew에서 제공"
-          }
-        }
-      }
-    },
-    " release": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " Release"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " version"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " versión"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " リリース"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 版本"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " versão"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " release"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " 릴리스"
           }
         }
       }
@@ -1769,158 +1665,366 @@
         }
       }
     },
-    "%@ finished with errors": {
+    "%@ finished with problems": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ mit Fehlern beendet"
+            "value": "%@ mit Problemen fertig"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ a terminé avec des erreurs"
+            "value": "%@ terminé avec des problèmes"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminó con errores"
+            "value": "%@ terminado con problemas"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ はエラーで終了しました"
+            "value": "%@ 完了 (問題あり)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 已完成，但有错误"
+            "value": "%@已完成，但有问题"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminou com erros"
+            "value": "%@ concluído com problemas"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminato con errori"
+            "value": "%@ terminato con problemi"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 오류와 함께 완료됨"
+            "value": "%@ 완료 (문제 있음)"
           }
         }
       }
     },
-    "%@ has no Intelbrew bottle for this Mac, so brew compiles it": {
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es"
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und %lld Abhängigkeiten (%@). Das kann auf älteren Macs lange dauern."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile"
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila"
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con %lld dependencias (%@). Puede tardar mucho en Macs más antiguos."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします"
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译"
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew compila"
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila junto com %lld dependências (%@). Isso pode demorar muito em Macs mais antigos."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila"
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a %lld dipendenze (%@). Può richiedere molto tempo sui Mac meno recenti."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다"
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
     },
-    "%@ has no bottle for this Mac, so brew compiles it": {
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es"
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und 1 Abhängigkeit (%@). Das kann auf älteren Macs lange dauern."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n’a pas de bottle pour ce Mac, donc brew le compile"
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ no tiene bottle para este Mac, así que brew lo compila"
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con 1 dependencia (%@). Puede tardar mucho en Macs más antiguos."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ にはこのMac用のbottleがないため、brewがコンパイルします"
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译"
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ não tem bottle para este Mac, então o brew compila"
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila junto com 1 dependência (%@). Isso pode demorar muito em Macs mais antigos."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila"
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a 1 dipendenza (%@). Può richiedere molto tempo sui Mac meno recenti."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다"
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es. Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle Intelbrew pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila. Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の Intelbrew bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle do Intelbrew para este Mac, então o brew o compila. Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila. Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es und %lld Abhängigkeiten (%@). Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi que %lld dépendances (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila junto con %lld dependencias (%@). Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila junto com %lld dependências (%@). Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila insieme a %lld dipendenze (%@). Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es und 1 Abhängigkeit (%@). Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac : brew le compile, ainsi qu’une dépendance (%@). Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila junto con 1 dependencia (%@). Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila junto com 1 dependência (%@). Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila insieme a 1 dipendenza (%@). Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "%@ has no bottle for this Mac, so brew compiles it. That can take a long time on older Macs.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ gibt es keine Bottle für diesen Mac, daher kompiliert brew es. Das kann auf älteren Macs lange dauern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas de bottle pour ce Mac, donc brew le compile. Cela peut prendre beaucoup de temps sur les Mac plus anciens."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no tiene bottle para este Mac, así que brew lo compila. Puede tardar mucho en Macs más antiguos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ にはこの Mac 用の bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 没有适用于这台 Mac 的 bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não tem bottle para este Mac, então o brew o compila. Isso pode demorar muito em Macs mais antigos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non ha una bottle per questo Mac, quindi brew lo compila. Può richiedere molto tempo sui Mac meno recenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -3173,58 +3277,6 @@
         }
       }
     },
-    "%lld %@ no bottle for this Mac and will compile from source, which can take a long time.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ keine Bottle für diesen Mac und werden aus Quellcode kompiliert, was lange dauern kann."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sans bottle pour ce Mac et seront compilés depuis les sources, ce qui peut prendre beaucoup de temps."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sin bottle para este Mac y se compilarán desde el código fuente, lo que puede tardar mucho."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ はこのMac用のbottleがなく、ソースからコンパイルされます。時間がかかる場合があります。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ 没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sem bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ nessuna bottle per questo Mac e verranno compilati dai sorgenti, il che può richiedere molto tempo."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
-          }
-        }
-      }
-    },
     "%lld Homebrew bottle": {
       "localizations": {
         "de": {
@@ -3481,6 +3533,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld개는 이미 Homebrew에서 설치됨"
+          }
+        }
+      }
+    },
+    "%lld already up to date": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bereits aktuell"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld déjà à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ya al día"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個はすでに最新"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个已是最新"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld já atualizado(s)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld già aggiornati"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개는 이미 최신"
           }
         }
       }
@@ -5097,6 +5201,58 @@
         }
       }
     },
+    "%lld installed packages Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld installierte Pakete kann Homebrew nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquets installés que Homebrew ne peut pas lire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquetes instalados que Homebrew no puede leer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が読み込めないインストール済みパッケージ：%lld 個"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取的已安装软件包：%lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacotes instalados que o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacchetti installati che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 읽을 수 없는 설치된 패키지 %lld개"
+          }
+        }
+      }
+    },
     "%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.": {
       "localizations": {
         "de": {
@@ -6165,6 +6321,58 @@
         }
       }
     },
+    "%lld not included": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld nicht enthalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld non inclus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld no incluidos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個は対象外"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个未包含"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld não incluídos"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld non inclusi"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 제외"
+          }
+        }
+      }
+    },
     "%lld of %lld": {
       "localizations": {
         "de": {
@@ -6265,6 +6473,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld/%lld 버전"
+          }
+        }
+      }
+    },
+    "%lld of them Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "davon kann Homebrew %lld nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dont %lld illisibles par Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de ellos no los puede leer Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "うち %lld 個は Homebrew が読み込めません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其中 %lld 个 Homebrew 无法读取"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld deles o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "di cui %lld che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그중 %lld개는 Homebrew가 읽을 수 없음"
+          }
+        }
+      }
+    },
+    "%lld packages have no bottle for this Mac and will compile from source, which can take a long time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Pakete haben keine Bottle für diesen Mac und werden aus dem Quellcode kompiliert, was lange dauern kann."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquets n’ont pas de bottle pour ce Mac et seront compilés depuis les sources, ce qui peut prendre beaucoup de temps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquetes no tienen bottle para este Mac y se compilarán desde el código fuente, lo que puede tardar mucho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacotes não têm bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacchetti non hanno una bottle per questo Mac e verranno compilati dai sorgenti, il che può richiedere molto tempo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -7777,58 +8089,6 @@
         }
       }
     },
-    ", and %lld %@ (%@)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", und %lld %@ (%@)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", et %lld %@ (%@)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", y %lld %@ (%@)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "、および%lld個の%@(%@)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "，以及 %lld %@（%@）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", e %lld %@ (%@)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", e %lld %@ (%@)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ", 그리고 %lld %@(%@)"
-          }
-        }
-      }
-    },
     ". From brew vulns (OSV.dev).": {
       "localizations": {
         "de": {
@@ -7877,58 +8137,6 @@
           "stringUnit": {
             "state": "translated",
             "value": ". brew vulns(OSV.dev) 기준."
-          }
-        }
-      }
-    },
-    ". That can take a long time on older Macs.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Das kann auf älteren Macs lange dauern."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Cela peut prendre beaucoup de temps sur les Mac plus anciens."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Puede tardar mucho en Macs más antiguos."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "。古いMacでは時間がかかる場合があります。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "。在较旧的 Mac 上这可能需要很长时间。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Isso pode demorar muito em Macs mais antigos."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". Può richiedere molto tempo sui Mac meno recenti."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ". 오래된 Mac에서는 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -8137,6 +8345,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "1시간"
+          }
+        }
+      }
+    },
+    "1 installed package Homebrew can't read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 installiertes Paket kann Homebrew nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquet installé que Homebrew ne peut pas lire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquete instalado que Homebrew no puede leer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が読み込めないインストール済みパッケージ：1 個"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取的已安装软件包：1 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacote instalado que o Homebrew não consegue ler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacchetto installato che Homebrew non riesce a leggere"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 읽을 수 없는 설치된 패키지 1개"
           }
         }
       }
@@ -8397,6 +8657,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "새 업그레이드 1개"
+          }
+        }
+      }
+    },
+    "1 package has no bottle for this Mac and will compile from source, which can take a long time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Paket hat keine Bottle für diesen Mac und wird aus dem Quellcode kompiliert, was lange dauern kann."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquet n’a pas de bottle pour ce Mac et sera compilé depuis les sources, ce qui peut prendre beaucoup de temps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquete no tiene bottle para este Mac y se compilará desde el código fuente, lo que puede tardar mucho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacote não tem bottle para este Mac e será compilado do código-fonte, o que pode demorar muito."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacchetto non ha una bottle per questo Mac e verrà compilato dai sorgenti, il che può richiedere molto tempo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -9541,6 +9853,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "tap을 추가할까요?"
+          }
+        }
+      }
+    },
+    "Add the tap a package comes from": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Tap hinzufügen, aus dem ein Paket stammt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter le tap d’où vient un paquet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir el tap del que procede un paquete"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パッケージの提供元の Tap を追加します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加软件包所在的 Tap"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar o tap de onde vem um pacote"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi il tap da cui proviene un pacchetto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "패키지가 있는 Tap을 추가합니다"
           }
         }
       }
@@ -11105,6 +11469,58 @@
         }
       }
     },
+    "Already up to date (done elsewhere)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereits aktuell (anderswo erledigt)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déjà à jour (fait ailleurs)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya al día (hecho en otro lugar)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すでに最新（ほかで実行済み）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已是最新（已在别处完成）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já atualizado (feito em outro lugar)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Già aggiornato (fatto altrove)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미 최신(다른 곳에서 완료됨)"
+          }
+        }
+      }
+    },
     "Also": {
       "localizations": {
         "de": {
@@ -11157,58 +11573,6 @@
         }
       }
     },
-    "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listet auch Apps mit eigenem Updater, wie Chrome. Sie halten sich meist selbst aktuell, daher ist das standardmäßig aus."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Liste aussi les apps qui ont leur propre outil de mise à jour, comme Chrome. Elles restent généralement à jour seules, donc c’est désactivé par défaut."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "También muestra las apps que tienen su propio actualizador, como Chrome. Normalmente se mantienen al día solas, así que está desactivado por defecto."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elenca anche le app che hanno un proprio sistema di aggiornamento, come Chrome. Di solito si tengono aggiornate da sole, quindi è disattivato per impostazione predefinita."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chromeのように独自のアップデート機能を持つアプリも一覧に含めます。これらは通常自分で最新を保つため、デフォルトではオフです。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chrome처럼 자체 업데이트 기능이 있는 앱도 나열합니다. 이런 앱은 대개 스스로 최신 상태를 유지하므로 기본적으로 꺼져 있습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同时列出自带更新程序的 App，例如 Chrome。这些 App 通常会自行保持最新，因此默认关闭。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Também lista apps que têm seu próprio atualizador, como o Chrome. Eles geralmente se mantêm atualizados, por isso fica desativado por padrão."
-          }
-        }
-      }
-    },
     "Also remove these": {
       "localizations": {
         "de": {
@@ -11257,6 +11621,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이것들도 제거"
+          }
+        }
+      }
+    },
+    "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert auch Apps mit eigenem Updater, etwa Chrome, bei „Alle aktualisieren“ und automatischen Updates. Aus: Tankard überlässt sie ihrem eigenen Updater, auch wenn Homebrew eine neuere Version hat. Sie erscheinen mit ⟳, werden aber nicht mitgezählt oder aktualisiert, außer du aktualisierst eine selbst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met aussi à jour les apps qui ont leur propre outil de mise à jour, comme Chrome, dans « Tout mettre à jour » et les mises à jour automatiques. Désactivé, Tankard les laisse à leur propre outil même quand Homebrew a une version plus récente : elles apparaissent avec ⟳ mais ne sont ni comptées ni mises à jour, sauf si vous en mettez une à jour vous-même."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "También actualiza las apps que tienen su propio actualizador, como Chrome, en Actualizar todo y en las actualizaciones automáticas. Desactivado, Tankard las deja a su propio actualizador aunque Homebrew tenga una versión más nueva: aparecen con ⟳, pero no se cuentan ni se actualizan salvo que actualices una tú mismo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chrome のように独自のアップデータを持つアプリも、「すべてアップグレード」と自動アップデートでアップグレードします。オフにすると、Homebrew に新しいバージョンがあっても Tankard はアプリ自身のアップデータに任せます。⟳ 付きで表示されますが、自分でアップグレードしない限り数に含めず、アップグレードもしません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“全部升级”和自动更新中也升级自带更新程序的 App（如 Chrome）。关闭时，即使 Homebrew 有更新的版本，Tankard 也交给 App 自己的更新程序：它们带 ⟳ 显示，但不计入数量、也不会升级，除非你自己升级某一个。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Também atualiza apps que têm o próprio atualizador, como o Chrome, em Atualizar tudo e nas atualizações automáticas. Desligado, o Tankard os deixa para o próprio atualizador mesmo quando o Homebrew tem uma versão mais nova: eles aparecem com ⟳, mas não são contados nem atualizados, a menos que você atualize um deles."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna anche le app con un proprio sistema di aggiornamento, come Chrome, in Aggiorna tutto e negli aggiornamenti automatici. Disattivato, Tankard le lascia al loro sistema di aggiornamento anche quando Homebrew ha una versione più recente: compaiono con ⟳ ma non vengono contate né aggiornate, a meno che tu non ne aggiorni una."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chrome처럼 자체 업데이트 기능이 있는 앱도 ‘모두 업그레이드’와 자동 업데이트에서 업그레이드합니다. 끄면 Homebrew에 새 버전이 있어도 Tankard는 앱 자체 업데이트에 맡깁니다. ⟳ 표시와 함께 보이지만 직접 업그레이드하지 않는 한 개수에 포함되거나 업그레이드되지 않습니다."
           }
         }
       }
@@ -15213,6 +15629,58 @@
         }
       }
     },
+    "Check Now (it runs brew update) to get the current download address, then upgrade again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Jetzt prüfen“ (führt brew update aus) holt die aktuelle Download-Adresse; danach erneut aktualisieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Vérifier maintenant » (qui lance brew update) récupère l’adresse de téléchargement actuelle ; mettez ensuite à jour de nouveau."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Comprobar ahora» (ejecuta brew update) obtiene la dirección de descarga actual; después, actualiza de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「今すぐ確認」（brew update を実行）で最新のダウンロード先を取得してから、もう一度アップグレードしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按“立即检查”（会运行 brew update）获取当前的下载地址，然后再次升级。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Verificar agora” (executa brew update) obtém o endereço de download atual; depois, atualize de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Controlla ora” (esegue brew update) recupera l’indirizzo di download attuale; poi aggiorna di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘지금 확인’(brew update 실행)으로 현재 다운로드 주소를 받은 다음 다시 업그레이드하세요."
+          }
+        }
+      }
+    },
     "Check a Brewfile": {
       "localizations": {
         "de": {
@@ -17133,6 +17601,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "컴파일"
+          }
+        }
+      }
+    },
+    "Continue Without It": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne fortfahren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer sans"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sin ello"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "許可せずに続ける"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不授权继续"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar sem isso"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continua senza"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "허용 없이 계속"
           }
         }
       }
@@ -25197,6 +25717,214 @@
         }
       }
     },
+    "Homebrew can't read %@ any more, so brew itself wouldn't stop the removal; Tankard does, because the package would be left with nothing to upgrade or reinstall it from.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann %@ nicht mehr lesen, daher würde brew das Entfernen selbst nicht verhindern; Tankard tut es, weil das Paket sonst ohne Quelle zum Aktualisieren oder Neuinstallieren zurückbliebe."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire %@ : brew n’empêcherait donc pas lui-même la suppression ; Tankard l’empêche, car le paquet n’aurait plus rien pour le mettre à jour ou le réinstaller."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer %@, así que brew no impediría la eliminación por sí mismo; Tankard sí lo hace, porque el paquete quedaría sin nada desde donde actualizarlo o reinstalarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew は %@ をもう読み込めないため、brew 自体は削除を止めません。Tankard が止めます。削除すると、そのパッケージをアップグレードや再インストールする元がなくなるためです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取 %@，因此 brew 本身不会阻止移除；Tankard 会阻止，因为移除后该软件包将无处可升级或重新安装。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler %@, então o próprio brew não impediria a remoção; o Tankard impede, porque o pacote ficaria sem nada de onde atualizá-lo ou reinstalá-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere %@, quindi brew da solo non impedirebbe la rimozione; Tankard sì, perché il pacchetto resterebbe senza nulla da cui aggiornarlo o reinstallarlo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 %@을(를) 읽을 수 없어 brew 자체는 제거를 막지 않습니다. Tankard가 막습니다. 제거하면 그 패키지를 업그레이드하거나 다시 설치할 곳이 없어지기 때문입니다."
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht lesen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut pas lire ce paquet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew no puede leer este paquete"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージを読み込めません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无法读取此软件包"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue ler este pacote"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce a leggere questo pacchetto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 이 패키지를 읽을 수 없습니다"
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package any more, so it won't upgrade it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire ce paquet et ne le mettra donc pas à jour."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer este paquete, así que no lo actualizará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取此软件包，因此不会升级它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere questo pacchetto, quindi non lo aggiornerà."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 이 패키지를 읽을 수 없어 업그레이드하지 않습니다."
+          }
+        }
+      }
+    },
+    "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht. brew meldet: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne peut plus lire ce paquet et ne le mettra donc pas à jour. brew indique : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ya no puede leer este paquete, así que no lo actualizará. brew dice: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。brew の表示：%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已无法读取此软件包，因此不会升级它。brew 提示：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew não consegue mais ler este pacote, então não vai atualizá-lo. O brew diz: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew non riesce più a leggere questo pacchetto, quindi non lo aggiornerà. brew dice: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 더 이상 이 패키지를 읽을 수 없어 업그레이드하지 않습니다. brew 메시지: %@"
+          }
+        }
+      }
+    },
     "Homebrew couldn't reach the network": {
       "localizations": {
         "de": {
@@ -28392,7 +29120,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "インストール名"
+            "value": "インストール方法"
           }
         },
         "zh-Hans": {
@@ -28416,7 +29144,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 이름"
+            "value": "설치 방식"
           }
         }
       }
@@ -28525,6 +29253,58 @@
         }
       }
     },
+    "Installed from %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installiert aus %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installé depuis %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado desde %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ からインストールされました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装自 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado de %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installato da %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에서 설치됨."
+          }
+        }
+      }
+    },
     "Installed on": {
       "localizations": {
         "de": {
@@ -28577,54 +29357,54 @@
         }
       }
     },
-    "Installed packages, or search everything Homebrew has (⌘1, ⌘2)": {
+    "Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Installierte Pakete oder alles durchsuchen, was Homebrew hat (⌘1, ⌘2)"
+            "value": "Installierte Pakete, alles, was Homebrew hat, oder deine Dienste (⌘1, ⌘2, ⌘3)"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paquets installés, ou recherche dans tout Homebrew (⌘1, ⌘2)"
+            "value": "Paquets installés, tout ce que propose Homebrew, ou vos services (⌘1, ⌘2, ⌘3)"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paquetes instalados, o busca todo lo que tiene Homebrew (⌘1, ⌘2)"
+            "value": "Paquetes instalados, todo lo que tiene Homebrew o tus servicios (⌘1, ⌘2, ⌘3)"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "インストール済みパッケージ、またはHomebrewのすべてを検索(⌘1、⌘2)"
+            "value": "インストール済みパッケージ、Homebrew のすべて、またはサービス（⌘1、⌘2、⌘3）"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已安装的软件包，或搜索 Homebrew 的全部内容（⌘1、⌘2）"
+            "value": "已安装的软件包、Homebrew 的全部内容或你的服务（⌘1、⌘2、⌘3）"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pacotes instalados, ou pesquise tudo o que o Homebrew tem (⌘1, ⌘2)"
+            "value": "Pacotes instalados, tudo o que o Homebrew tem ou seus serviços (⌘1, ⌘2, ⌘3)"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pacchetti installati, o cerca tra tutto ciò che ha Homebrew (⌘1, ⌘2)"
+            "value": "Pacchetti installati, tutto ciò che ha Homebrew o i tuoi servizi (⌘1, ⌘2, ⌘3)"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 패키지 또는 Homebrew의 모든 항목 검색(⌘1, ⌘2)"
+            "value": "설치된 패키지, Homebrew의 모든 항목 또는 서비스(⌘1, ⌘2, ⌘3)"
           }
         }
       }
@@ -29617,6 +30397,110 @@
         }
       }
     },
+    "It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es ist weiterhin installiert (brew list zeigt es). Wenn du seinem Tap vertraust oder es unter seinem neuen Namen neu installierst, kann Homebrew es wieder lesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il est toujours installé (brew list l’affiche). Faire confiance à son tap, ou le réinstaller sous son nouveau nom, permet à Homebrew de le lire."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue instalado (brew list lo muestra). Confiar en su tap, o instalarlo de nuevo con su nombre nuevo, permite que Homebrew lo lea."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールされたままです（brew list に表示されます）。Tap を信頼するか、新しい名前で再インストールすると Homebrew が読み込めるようになります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它仍处于安装状态（brew list 会列出它）。信任它的 Tap，或以新名称重新安装，Homebrew 就能读取它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ele continua instalado (o brew list mostra). Confiar no tap dele, ou instalá-lo de novo com o nome novo, permite que o Homebrew o leia."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È ancora installato (brew list lo mostra). Fidarsi del suo tap, o reinstallarlo con il nuovo nome, permette a Homebrew di leggerlo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여전히 설치되어 있습니다(brew list에 표시됨). Tap을 신뢰하거나 새 이름으로 다시 설치하면 Homebrew가 읽을 수 있습니다."
+          }
+        }
+      }
+    },
+    "It took %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das dauerte %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela a pris %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tardó %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@かかりました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "耗时 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Levou %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ha richiesto %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 걸렸습니다."
+          }
+        }
+      }
+    },
     "It took %@; expect longer on an older Mac.": {
       "localizations": {
         "de": {
@@ -29873,6 +30757,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)"
+          }
+        }
+      }
+    },
+    "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sein Tap hat keine Bottle für diesen Mac; Neuinstallieren oder Aktualisieren kompiliert es aus dem Quellcode."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son tap n’a pas de bottle pour ce Mac : le réinstaller ou le mettre à jour le compile depuis les sources."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Su tap no tiene bottle para este Mac, así que reinstalarlo o actualizarlo lo compila desde el código fuente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この Tap にはこの Mac 用の bottle がないため、再インストールやアップグレードではソースからビルドします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它的 Tap 没有适用于这台 Mac 的 bottle，因此重新安装或升级都会从源码构建。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O tap dele não tem bottle para este Mac, então reinstalar ou atualizar o compila do código-fonte."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il suo tap non ha una bottle per questo Mac, quindi reinstallarlo o aggiornarlo lo compila dai sorgenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Tap에는 이 Mac용 bottle이 없어 다시 설치하거나 업그레이드하면 소스에서 빌드합니다."
           }
         }
       }
@@ -32997,6 +33933,162 @@
         }
       }
     },
+    "Newer version: %@ → %@ (left to the app's own updater)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (dem eigenen Updater der App überlassen)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (laissée à l’outil de mise à jour de l’app)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (se deja al actualizador de la app)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（アプリ自身のアップデータに任せています）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（交给 App 自己的更新程序）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (deixada para o atualizador do próprio app)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (lasciata al sistema di aggiornamento dell’app)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (앱 자체 업데이트에 맡김)"
+          }
+        }
+      }
+    },
+    "Newer version: %@ → %@ (pinned: upgrades leave it)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (fixiert: Upgrades lassen es aus)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (épinglé : les mises à jour le laissent)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (fijado: las actualizaciones lo dejan)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（固定中：アップグレードの対象外）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（已固定：升级时跳过）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (fixado: as atualizações o deixam)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (bloccato: gli aggiornamenti lo lasciano)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (고정됨: 업그레이드에서 제외)"
+          }
+        }
+      }
+    },
+    "Newer version: %@ → %@ (you skipped this version)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuere Version: %@ → %@ (du hast diese Version übersprungen)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version plus récente : %@ → %@ (vous avez ignoré cette version)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión más nueva: %@ → %@ (omitiste esta versión)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョン：%@ → %@（このバージョンはスキップ済み）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新的版本：%@ → %@（你已跳过此版本）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão mais nova: %@ → %@ (você pulou esta versão)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione più recente: %@ → %@ (hai saltato questa versione)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 버전: %@ → %@ (이 버전을 건너뜀)"
+          }
+        }
+      }
+    },
     "Next run: %@": {
       "localizations": {
         "de": {
@@ -33357,6 +34449,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "아직 자동 실행 기록이 없습니다."
+          }
+        }
+      }
+    },
+    "No bottle": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Bottle"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de bottle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin bottle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottle なし"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无 bottle"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem bottle"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna bottle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottle 없음"
           }
         }
       }
@@ -35649,58 +36793,6 @@
         }
       }
     },
-    "Not now": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jetzt nicht"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pas maintenant"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ahora no"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "今はしない"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂不"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agora não"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Non ora"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "나중에"
-          }
-        }
-      }
-    },
     "Not passed: Tankard reads brew's output.": {
       "localizations": {
         "de": {
@@ -36841,6 +37933,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "일치하는 항목 없음"
+          }
+        }
+      }
+    },
+    "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts passt zu „%@“ im Hauptkatalog von Homebrew oder in den Taps, die du hinzugefügt hast. Ein Paket aus einem anderen Tap erscheint hier, sobald du diesen Tap hinzufügst (Homebrew ▸ Taps…)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne correspond à « %@ » dans le catalogue principal de Homebrew ni dans les taps que vous avez ajoutés. Un paquet d’un autre tap apparaît ici une fois ce tap ajouté (Homebrew ▸ Taps…)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada coincide con «%@» en el catálogo principal de Homebrew ni en los taps que has añadido. Un paquete de otro tap aparece aquí en cuanto añades ese tap (Homebrew ▸ Taps…)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew のメインカタログにも、追加した Tap にも「%@」に一致するものはありません。別の Tap のパッケージは、その Tap を追加するとここに表示されます（Homebrew ▸ Tap…）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Homebrew 主目录和你添加的 Tap 中都没有与“%@”匹配的内容。其他 Tap 中的软件包会在你添加该 Tap 后显示在这里（Homebrew ▸ Tap…）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada corresponde a “%@” no catálogo principal do Homebrew nem nos taps que você adicionou. Um pacote de outro tap aparece aqui depois que você adiciona esse tap (Homebrew ▸ Taps…)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun risultato per “%@” nel catalogo principale di Homebrew né nei tap che hai aggiunto. Un pacchetto di un altro tap compare qui dopo che aggiungi quel tap (Homebrew ▸ Tap…)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 기본 카탈로그와 추가한 Tap에서 “%@”와 일치하는 항목이 없습니다. 다른 Tap의 패키지는 그 Tap을 추가하면 여기에 표시됩니다(Homebrew ▸ Tap…)."
           }
         }
       }
@@ -40693,58 +41837,6 @@
         }
       }
     },
-    "Poured from ": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gegossen aus "
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installé depuis "
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instalado desde "
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取得元: "
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安装来源： "
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instalado de "
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installato da "
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다음에서 부음: "
-          }
-        }
-      }
-    },
     "Poured from a Homebrew bottle (ghcr.io)": {
       "localizations": {
         "de": {
@@ -40845,6 +41937,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "bottle에서 부음"
+          }
+        }
+      }
+    },
+    "Poured from the %@ release": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottle aus dem Release von %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installé depuis la version publiée par %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado desde la versión publicada de %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ のリリースから取得"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装自 %@ 的发布版本"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalado da versão publicada de %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installato dalla release di %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 릴리스에서 설치됨"
           }
         }
       }
@@ -47089,54 +48233,54 @@
         }
       }
     },
-    "Scanned %lld · found %lld": {
+    "Scanned %lld · %lld vulnerable": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld gescannt · %lld gefunden"
+            "value": "%lld gescannt · %lld verwundbar"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Analysés : %lld · trouvés : %lld"
+            "value": "Analysés : %lld · vulnérables : %lld"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Analizados %lld · encontradas %lld"
+            "value": "Analizados %lld · %lld vulnerables"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スキャン %lld · 検出 %lld"
+            "value": "スキャン %lld · 脆弱性あり %lld"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已扫描 %lld · 发现 %lld"
+            "value": "已扫描 %lld · %lld 个有漏洞"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verificados %lld · encontrados %lld"
+            "value": "Verificados %lld · %lld vulneráveis"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scansionati %lld · trovati %lld"
+            "value": "Scansionati %lld · %lld vulnerabili"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "검사 %lld · 발견 %lld"
+            "value": "검사 %lld · 취약 %lld"
           }
         }
       }
@@ -50521,6 +51665,110 @@
         }
       }
     },
+    "Skip Apps, Upgrade %lld Others": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps auslassen, %lld andere aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les apps, mettre à jour les %lld autres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir apps, actualizar los otros %lld"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを除き、ほか %lld 個をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过 App，升级其他 %lld 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular apps, atualizar os outros %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salta le app, aggiorna gli altri %lld"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱은 건너뛰고 나머지 %lld개 업그레이드"
+          }
+        }
+      }
+    },
+    "Skip Apps, Upgrade 1 Other": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps auslassen, 1 anderes aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les apps, mettre à jour l’autre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir apps, actualizar el otro"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを除き、ほか 1 個をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过 App，升级其他 1 个"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular apps, atualizar o outro"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salta le app, aggiorna l’altro"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱은 건너뛰고 나머지 1개 업그레이드"
+          }
+        }
+      }
+    },
     "Skip Version %@": {
       "localizations": {
         "de": {
@@ -51505,6 +52753,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "시작하면 로그인 시 실행되도록 등록도 합니다."
+          }
+        }
+      }
+    },
+    "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet jetzt ohne die Berechtigung. macOS kann die Schritte stoppen, die Apps ändern; Tankard sagt dann Bescheid."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarre maintenant sans l’autorisation. macOS peut bloquer les étapes qui modifient des apps ; Tankard le signale alors."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empieza ahora sin el permiso. macOS puede detener los pasos que cambian apps; Tankard lo indica entonces."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "許可なしで今すぐ開始します。アプリを変更する手順は macOS に止められることがあり、その場合は Tankard が知らせます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即开始，不授予该权限。macOS 可能会阻止更改 App 的步骤；届时 Tankard 会告诉你。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Começa agora sem a permissão. O macOS pode bloquear as etapas que alteram apps; o Tankard avisa quando isso acontecer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia ora senza il permesso. macOS potrebbe bloccare i passaggi che modificano le app; in quel caso Tankard lo segnala."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한 없이 지금 시작합니다. macOS가 앱을 변경하는 단계를 막을 수 있으며, 그러면 Tankard가 알려 줍니다."
           }
         }
       }
@@ -55305,6 +56605,58 @@
         }
       }
     },
+    "That's the latest version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist die neueste Version."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est la dernière version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es la versión más reciente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これが最新バージョンです。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是最新版本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta é a versão mais recente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È la versione più recente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "최신 버전입니다."
+          }
+        }
+      }
+    },
     "The Command Line Tools are out of date": {
       "localizations": {
         "de": {
@@ -55613,6 +56965,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱의 ID(번들 식별자)가 cask에 적힌 ID와 같습니다."
+          }
+        }
+      }
+    },
+    "The build from source failed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Kompilieren aus dem Quellcode ist fehlgeschlagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilation depuis les sources a échoué"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilación desde el código fuente falló"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからのビルドに失敗しました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从源码构建失败"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A compilação do código-fonte falhou"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilazione dai sorgenti non è riuscita"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드하지 못했습니다"
           }
         }
       }
@@ -55981,6 +57385,58 @@
         }
       }
     },
+    "The download isn't on the server": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Download ist nicht auf dem Server"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le téléchargement n’est pas sur le serveur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La descarga no está en el servidor"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードがサーバ上にありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务器上没有该下载"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O download não está no servidor"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il download non è sul server"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서버에 다운로드 파일이 없습니다"
+          }
+        }
+      }
+    },
     "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.": {
       "localizations": {
         "de": {
@@ -56341,6 +57797,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 출력한 내용은 아래 로그에 있습니다"
+          }
+        }
+      }
+    },
+    "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Protokoll zeigt, wo das Kompilieren abbrach. Eine spätere Version lässt sich vielleicht kompilieren; „Version überspringen“ hält es bis dahin aus „Alle aktualisieren“ heraus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le journal montre où la compilation s’est arrêtée. Une version ultérieure compilera peut-être ; « Ignorer la version » l’exclut de « Tout mettre à jour » d’ici là."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El registro muestra dónde se detuvo la compilación. Puede que una versión posterior compile; «Omitir versión» la deja fuera de Actualizar todo hasta entonces."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ログにビルドが止まった箇所が表示されます。後のバージョンならビルドできるかもしれません。それまでは「バージョンをスキップ」で「すべてアップグレード」から外せます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日志显示了构建停止的位置。后续版本或许能构建成功；在此之前，“跳过此版本”可让它不进入“全部升级”。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O registro mostra onde a compilação parou. Uma versão posterior pode compilar; “Pular versão” o deixa fora de Atualizar tudo até lá."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il registro mostra dove si è fermata la compilazione. Una versione successiva potrebbe compilare; “Salta versione” lo tiene fuori da Aggiorna tutto fino ad allora."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그에 빌드가 멈춘 위치가 표시됩니다. 이후 버전은 빌드될 수 있으며, 그때까지 ‘버전 건너뛰기’로 ‘모두 업그레이드’에서 뺄 수 있습니다."
           }
         }
       }
@@ -56757,6 +58265,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:"
+          }
+        }
+      }
+    },
+    "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Server antwortete beim Download des Pakets mit 404 (nicht gefunden). Dieselbe Adresse schlägt erneut genauso fehl; brew update bringt vielleicht eine neue."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur a répondu 404 (introuvable) pour le téléchargement du paquet. Réessayer la même adresse échouera de la même façon ; brew update peut en fournir une nouvelle."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El servidor respondió 404 (no encontrado) a la descarga del paquete. Volver a intentar la misma dirección falla igual; brew update puede traer una nueva."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パッケージのダウンロードに対してサーバが 404（見つかりません）を返しました。同じアドレスで再試行しても同じく失敗します。brew update で新しいアドレスが得られることがあります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务器对该软件包的下载返回了 404（未找到）。用同一地址重试会以同样方式失败；brew update 可能会带来新的地址。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O servidor respondeu 404 (não encontrado) para o download do pacote. Tentar o mesmo endereço de novo falha do mesmo jeito; o brew update pode trazer um novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il server ha risposto 404 (non trovato) per il download del pacchetto. Riprovare lo stesso indirizzo fallisce allo stesso modo; brew update potrebbe portarne uno nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "패키지 다운로드에 대해 서버가 404(찾을 수 없음)로 응답했습니다. 같은 주소로 다시 시도해도 똑같이 실패합니다. brew update로 새 주소를 받을 수 있습니다."
           }
         }
       }
@@ -60216,7 +61776,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@を更新しました"
+            "value": "更新: %@"
           }
         },
         "zh-Hans": {
@@ -61181,6 +62741,58 @@
         }
       }
     },
+    "Upgrade Selected": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour la sélection"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar selección"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択項目をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级所选项"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar seleção"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna selezionato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택 항목 업그레이드"
+          }
+        }
+      }
+    },
     "Upgrade Tankard now. Automatic updates never upgrade Tankard itself.": {
       "localizations": {
         "de": {
@@ -61649,54 +63261,54 @@
         }
       }
     },
-    "Upgrade ready: ": {
+    "Upgrade ready: %@ → %@": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upgrade bereit: "
+            "value": "Upgrade bereit: %@ → %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mise à niveau prête : "
+            "value": "Mise à niveau prête : %@ → %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actualización lista: "
+            "value": "Actualización lista: %@ → %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップグレードの準備完了: "
+            "value": "アップグレードの準備完了：%@ → %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级已就绪： "
+            "value": "升级已就绪：%@ → %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualização pronta: "
+            "value": "Atualização pronta: %@ → %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiornamento pronto: "
+            "value": "Aggiornamento pronto: %@ → %@"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "업그레이드 준비됨: "
+            "value": "업그레이드 준비됨: %@ → %@"
           }
         }
       }
@@ -62165,6 +63777,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드"
+          }
+        }
+      }
+    },
+    "Upgrades the packages that don't change apps; the apps wait until next time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert die Pakete, die keine Apps ändern; die Apps warten bis zum nächsten Mal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met à jour les paquets qui ne modifient pas d’apps ; les apps attendront la prochaine fois"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiza los paquetes que no cambian apps; las apps esperan a la próxima vez"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリを変更しないパッケージをアップグレードします。アプリは次回まで待ちます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级不更改 App 的软件包；App 留到下次"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualiza os pacotes que não alteram apps; os apps ficam para a próxima vez"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna i pacchetti che non modificano app; le app aspettano la prossima volta"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱을 변경하지 않는 패키지를 업그레이드합니다. 앱은 다음에 업그레이드합니다"
           }
         }
       }
@@ -62945,58 +64609,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "취약함"
-          }
-        }
-      }
-    },
-    "Vulnerable: %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwundbar: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnérable : %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerable: %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "脆弱性あり: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "存在漏洞：%@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerável: %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vulnerabile: %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취약함: %@"
           }
         }
       }
@@ -65497,6 +67109,58 @@
         }
       }
     },
+    "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew konnte es auf diesem Mac nicht kompilieren. Das Protokoll unten zeigt, wo es abbrach; eine neuere Version nach brew update lässt sich vielleicht kompilieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew n’a pas pu le compiler sur ce Mac. Le journal ci-dessous montre où il s’est arrêté ; une version plus récente après brew update compilera peut-être."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew no pudo compilarlo en este Mac. El registro de abajo muestra dónde se detuvo; puede que una versión más nueva tras brew update compile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew はこの Mac でビルドできませんでした。止まった箇所は下のログに表示されます。brew update 後の新しいバージョンならビルドできるかもしれません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 无法在这台 Mac 上构建它。下方日志显示了停止的位置；brew update 之后的新版本或许能构建成功。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew não conseguiu compilá-lo neste Mac. O registro abaixo mostra onde parou; uma versão mais nova após o brew update pode compilar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew non è riuscito a compilarlo su questo Mac. Il registro qui sotto mostra dove si è fermato; una versione più recente dopo brew update potrebbe compilare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 이 Mac에서 빌드하지 못했습니다. 아래 로그에 멈춘 위치가 표시됩니다. brew update 후 새 버전은 빌드될 수 있습니다."
+          }
+        }
+      }
+    },
     "brew doctor (raw output)": {
       "localizations": {
         "de": {
@@ -66901,6 +68565,58 @@
         }
       }
     },
+    "can't be read": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nicht lesbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "illisible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ilegible"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み込み不可"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ilegível"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "illeggibile"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "읽을 수 없음"
+          }
+        }
+      }
+    },
     "cancelled": {
       "localizations": {
         "de": {
@@ -67209,58 +68925,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "의존"
-          }
-        }
-      }
-    },
-    "dependencies": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abhängigkeiten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dépendances"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dependencias"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "依存関係"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "依赖项"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dependências"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dipendenze"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "의존성"
           }
         }
       }
@@ -69761,6 +71425,58 @@
         }
       }
     },
+    "no change (already up to date)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "keine Änderung (bereits aktuell)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucun changement (déjà à jour)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sin cambios (ya al día)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "変更なし（すでに最新）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无变化（已是最新）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sem alteração (já atualizado)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nessuna modifica (già aggiornato)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "변경 없음(이미 최신)"
+          }
+        }
+      }
+    },
     "no longer meets the criteria for casks": {
       "localizations": {
         "de": {
@@ -71629,6 +73345,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "seus ajustes do Homebrew usam outro programa de senha; atualize-o manualmente"
+          }
+        }
+      }
+    },
+    "your taps (%@) · %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "deine Taps (%@) · %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vos taps (%@) · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tus taps (%@) · %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "追加した Tap（%@）· %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Tap（%@）· %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seus taps (%@) · %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "i tuoi tap (%@) · %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "추가한 Tap(%@) · %@"
           }
         }
       }

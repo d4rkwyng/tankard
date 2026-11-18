@@ -102,7 +102,7 @@ struct V061ScanProgressTests {
         #expect(i.scanStartedAt == nil)
         let scan = try #require(i.vulnerabilityScan)
         #expect(i.scanOutcome == .done(checked: scan.checked, found: 2, complete: scan.complete))
-        #expect(ScanProgressText.outcome(i.scanOutcome!).hasPrefix("Scanned \(scan.checked) · found 2"))
+        #expect(ScanProgressText.outcome(i.scanOutcome!).hasPrefix("Scanned \(scan.checked) · 2 vulnerable"))
     }
 
     /// Stop cancels a hung brew vulns (a real child process) at once; the
@@ -171,7 +171,7 @@ struct V061ScanProgressTests {
         #expect(ScanProgressText.running(formulae: 1) == "Scanning 1 formula…")
         #expect(ScanProgressText.elapsed(7) == "0:07")
         #expect(ScanProgressText.elapsed(62) == "1:02")
-        #expect(ScanProgressText.outcome(.done(checked: 40, found: 2, complete: false)) == "Scanned 40 · found 2 · partial scan")
+        #expect(ScanProgressText.outcome(.done(checked: 40, found: 2, complete: false)) == "Scanned 40 · 2 vulnerable · partial scan")
         #expect(ScanProgressText.outcome(.stopped) == "Scan stopped")
         #expect(ScanProgressText.outcome(.timedOut) == "Scan timed out")
     }

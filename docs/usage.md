@@ -78,6 +78,10 @@ you start still report every failure in full.
   `brew install wget` or `brew install --cask firefox` into either search field: Tankard
   searches for the package name. When nothing installed matches, the list offers **Search Discover for "wget"**,
   which opens Discover with the same search.
+- **Keeping current:** the list opens from the last read, then reads brew again when that is
+  over an hour old, or as soon as something was installed, upgraded or removed since (in
+  Terminal too: Tankard compares the modification times of brew's Cellar, Caskroom and opt
+  folders, at launch and whenever the window comes to the front).
 - **Filter bar:** the counts, and the filters **All** and **Upgrades**, then **Bottle
   available**, **From source** and **Newer** when anything matches (the one you're on stays
   until you leave it). The **More** menu next to them has **Vulnerable**, **Pinned**,
@@ -266,6 +270,10 @@ font-inter… 25.4 of 33.7 MB (75%)".
 - The **Has bottle** filter (**Has Intel bottle** in Intelbrew mode) hides formulae that
   would compile. It is on by default in Intelbrew mode.
 - A package you already have offers **Show in Installed** instead.
+- **Your own taps are searched too.** Besides Homebrew's main catalog, Discover lists the
+  formulae and casks of every tap you added (anything outside `homebrew/`, read from the tap
+  on this Mac; nothing is sent anywhere). A package from a tap you haven't added can't be
+  found: add the tap first (**Homebrew ▸ Taps…**, or **Taps…** on an empty search).
 
 ## Uninstall a package
 
@@ -341,12 +349,16 @@ Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online
 
 ## Apps that update themselves
 
-Many apps (casks) update themselves. By default brew doesn't list their upgrades, and
-neither does Tankard. They show ⟳ at the end of their row, before the lock and the ⓘ when
-those show too.
+Many apps (casks) update themselves. They show ⟳ at the end of their row, before the lock
+and the ⓘ when those show too. Homebrew 7 lists one as outdated by itself whenever the app
+on disk is older than the cask (its own updater fell behind), so `brew upgrade` in Terminal
+replaces it. Tankard, by default, leaves them to their own updater: they still show their
+newer version, but Upgrade All, the counts, notifications and automatic updates leave them
+out. Select one and click **Upgrade** to upgrade it anyway.
 
-- **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to list
-  them as upgrades too.
+- **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to count
+  and upgrade them like any other package (and also list the ones only
+  `brew outdated --greedy` reports).
 - **For one app:** select it and use the **Updates** menu in the detail pane:
   - **Default**: follows the setting above. The menu says which way it goes now.
   - **App updates itself**: Tankard leaves its upgrades out. `brew upgrade` in Terminal
@@ -412,7 +424,14 @@ packages you installed from each.
 - **Show Installed** filters the Installed list to one tap.
 - **Add Tap…** takes `user/repo`, and optionally a git URL. Third-party taps run their
   authors' code; Tankard warns you first.
-- **Remove…** runs `brew untap`. It is blocked while anything installed comes from the tap.
+- **Remove…** runs `brew untap`. It is blocked while anything installed comes from the tap,
+  including packages Homebrew can't read (below), which brew's own check would miss.
+- **Packages Homebrew can't read.** brew refuses to load a formula from a tap you don't
+  trust, or one its tap has renamed, and then leaves it out of everything it lists for
+  Tankard. Tankard finds it in the Cellar or Caskroom instead and shows it in Installed
+  with **can't be read**, brew's own reason in its details, and a line in Health. The tap's
+  row counts it. brew won't upgrade it until you trust the tap or install it again under its
+  new name.
 - **Trust…** and **Stop Trusting…** set Homebrew 7's trust for a third-party tap.
 
 ## Services
@@ -552,7 +571,7 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 
 | setting | default | what it does |
 |---|---|---|
-| Include self-updating apps | off | Lists upgrades for apps that update themselves. |
+| Include self-updating apps | off | Counts and upgrades apps that update themselves. Off, Tankard leaves them to their own updater. |
 | Don't quit running apps during upgrades | off | brew upgrades a running app without quitting it. |
 | Keep the previous version after upgrades | off | Needed for rollback. Uses disk space. |
 | Upgrade packages automatically | off | Schedule, version rule and Snooze. See [Automatic updates](#automatic-updates). |
@@ -568,7 +587,9 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 - **Notify me about new upgrades** uses the same background `brew update`. Refresh and Check Now post a
   notification only when the Tankard window isn't in front.
 - **Include self-updating apps** lists casks with `auto_updates` or `version :latest`, as
-  `brew outdated --greedy` does.
+  `brew outdated --greedy` does. Off, the `auto_updates` casks brew lists by itself (its
+  default `HOMEBREW_UPGRADE_AUTO_UPDATES_CASKS`, when the app bundle is older than the cask)
+  stay visible but out of Upgrade All, the counts and automatic updates.
 - **Don't quit running apps during upgrades** sets `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1` for cask upgrades (it shows
   in the command under **Details**). Without it, brew quits a running app before upgrading its cask and opens it
   again afterwards, and Tankard's upgrade plan names the open apps before it starts.
@@ -589,7 +610,8 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 - **File:** **Check Brewfile…**, **Export Brewfile…**, Close (⌘W), Close All.
 - **View:** **Installed** (⌘1), **Discover** (⌘2), **Services** (⌘3).
 - **Homebrew:**
-  - **Refresh** (⌘R), **Scan for Vulnerabilities**
+  - **Refresh** (⌘R), **Upgrade All…** (⇧⌘U, shows the plan first), **Upgrade <name>** (⌘U,
+    the package selected in Installed), **Scan for Vulnerabilities**
   - **Health…**, **History…**
   - **Clean Up…**, **Remove Unused Dependencies…**
   - **Taps…**, **Adopt Apps…**, **Restore Points…**
@@ -723,8 +745,10 @@ Bottle don't need it.
 3. After the relaunch, Tankard offers **Run Again** for what you were doing. Nothing runs
    until you click it.
 
-**Continue without relaunching** tries straight away instead. **Not now** carries on
-without the permission.
+**Continue without relaunching** tries straight away instead. On the first sheet,
+**Cancel** runs nothing, **Skip Apps, Upgrade N Others** runs only the packages that don't
+change apps, and **Continue Without It** runs everything without the permission (macOS may
+then stop the app steps).
 
 When macOS blocks a change, the step fails with **"macOS blocked changing an app"**, and
 Tankard offers the relaunch again. For automatic updates, you get a notification instead.

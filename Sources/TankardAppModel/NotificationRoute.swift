@@ -63,6 +63,14 @@ extension AppStore {
     /// even when nothing would compile, so a notification button never
     /// starts brew without the user seeing what will run. While an upgrade
     /// is running it shows that session instead.
+    /// 0.8.6 (UI L10): the selected package in Installed, when it has an
+    /// upgrade Homebrew ▸ Upgrade (⌘U) can run.
+    public var selectedUpgradeTarget: Package? {
+        guard tab == .installed, let id = selection, let p = packages.first(where: { $0.id == id }),
+              p.isManualUpgradeTarget else { return nil }
+        return p
+    }
+
     public func requestUpgradeAllPlan() {
         if isUpgrading {
             showUpgradeSheet = true
@@ -101,5 +109,12 @@ extension AppStore {
             }
             requestUpgradeAllPlan()
         }
+    }
+}
+
+/// 0.8.6 (UI L10): the Homebrew menu's Upgrade item.
+public enum UpgradeMenu {
+    public static func selectedTitle(_ p: Package?) -> String {
+        p.map { String(localized: "Upgrade \($0.name)") } ?? String(localized: "Upgrade Selected")
     }
 }

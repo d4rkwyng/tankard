@@ -19,7 +19,7 @@ public enum SettingsHelp {
     public static let openAtLogin = String(localized: "Opens Tankard when you log in, as a macOS login item.")
 
     // Upgrades
-    public static let includeSelfUpdatingApps = String(localized: "Also lists apps that have their own updater, like Chrome. They usually keep themselves current, so this is off by default.")
+    public static let includeSelfUpdatingApps = String(localized: "Also upgrades apps that have their own updater, like Chrome, in Upgrade All and automatic updates. Off, Tankard leaves them to their own updater even when Homebrew has a newer version: they show with ⟳ but aren't counted or upgraded unless you upgrade one yourself.")
     public static let dontQuitApps = String(localized: "Normally an open app is closed while it upgrades and opened again afterwards. With this on, it keeps running and the new version starts the next time you open it.")
     public static let scanOnRefresh = String(localized: "Checks your command-line tools for known security problems after each refresh. ") + InsightSettings.scanPrivacyNote + String(localized: " Apps aren't checked. Scan Now checks once, whenever you ask. Off by default.")
     /// 0.7: Keep the previous version after upgrades.
@@ -83,13 +83,25 @@ public enum ScanProgressText {
         return "\(s / 60):" + String(format: "%02d", s % 60)
     }
 
-    /// "Scanned 42 · found 2", "… · partial scan", "Scan stopped".
+    /// "Scanned 42 · 2 vulnerable", "… · partial scan", "Scan stopped".
+    /// 0.8.6 (UI details M7): says what was found, counted like the
+    /// Vulnerable filter (`VulnerabilityCount.installed`).
     public static func outcome(_ o: ScanOutcome) -> String {
         switch o {
         case .done(let checked, let found, let complete):
-            return String(localized: "Scanned \(checked) · found \(found)") + (complete ? "" : String(localized: " · partial scan"))
+            return String(localized: "Scanned \(checked) · \(found) vulnerable") + (complete ? "" : String(localized: " · partial scan"))
         case .stopped: return String(localized: "Scan stopped")
         case .timedOut: return String(localized: "Scan timed out")
         }
+    }
+}
+
+/// 0.8.6 (UI details M7): the scan's count as the Vulnerable filter counts
+/// it: installed packages at the version brew checked. brew's findings can
+/// name a formula upgraded since ("found 13" beside "1 vulnerable").
+public enum VulnerabilityCount {
+    public static func installed(_ scan: VulnerabilityScan, packages: [Package]) -> Int {
+        guard !packages.isEmpty else { return scan.vulnerableCount }
+        return packages.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.count
     }
 }

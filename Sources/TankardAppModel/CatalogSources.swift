@@ -259,11 +259,12 @@ public final class TapCatalog: CatalogProviding {
     public let builder: CatalogBuilder
     public let batchSize: Int
 
-    public init(client: BrewClient, detection: IntelbrewDetection, indexer: TapIndexing? = nil, batchSize: Int = 40) {
+    public init(client: BrewClient, detection: IntelbrewDetection, indexer: TapIndexing? = nil, batchSize: Int = 40,
+                intelbrewMode: Bool = true) {
         self.client = client
         self.env = client.environment(for: detection)
         self.indexer = indexer ?? TapIndexer(repository: client.installation.repository)
-        self.builder = CatalogBuilder(platform: client.platform, intelbrewMode: true)
+        self.builder = CatalogBuilder(platform: client.platform, intelbrewMode: intelbrewMode)
         self.batchSize = batchSize
     }
 
@@ -333,4 +334,72 @@ public final class TapCatalog: CatalogProviding {
             return String(rest[..<close])
         }
     }
+}
+
+// MARK: formulae.brew.sh plus the user's own taps (0.8.6, H1)
+
+/// Discover in normal mode with the user's own taps (anything outside
+/// `homebrew/`) searched too. formulae.brew.sh only describes homebrew/core
+/// and homebrew/cask, so a formula from `steipete/tap` or a tap added in
+/// Tankard was never found.
+///
+/// The taps are read the Intelbrew way (file names and `desc` lines, no
+/// Ruby, no brew), off the main actor, at most `maxEntries` packages, and
+/// kept in memory until a tap changes (`TapIndexer.fingerprint`). Their
+/// rows get version and bottle details from `brew info` when shown, like
+/// Intelbrew mode.
+public final class UserTapsCatalog: CatalogProviding {
+    public let api: CatalogProviding
+    public let taps: TapCatalog
+    public let fingerprint: @Sendable () -> String
+
+    public static let maxEntries = 20_000
+
+    public init(api: CatalogProviding, client: BrewClient, detection: IntelbrewDetection,
+                indexer: TapIndexing? = nil, fingerprint: (@Sendable () -> String)? = nil) {
+        self.api = api
+        var live = TapIndexer(repository: client.installation.repository)
+        live.userTapsOnly = true
+        live.maxEntries = Self.maxEntries
+        self.taps = TapCatalog(client: client, detection: detection, indexer: indexer ?? live, intelbrewMode: false)
+        let liveIndexer = live
+        let injected = indexer != nil
+        let key: @Sendable () -> String = { injected ? UUID().uuidString : liveIndexer.fingerprint() }
+        self.fingerprint = fingerprint ?? key
+    }
+
+    public var isLocalTaps: Bool { false }
+
+    /// The last index, by fingerprint (one per process: Discover is made
+    /// again when it reopens).
+    static let cache = OSAllocatedUnfairLock<(key: String, index: TapIndex)?>(initialState: nil)
+
+    func userTapsIndex() -> TapIndex {
+        let key = fingerprint()
+        if let hit = Self.cache.withLock({ $0 }), hit.key == key { return hit.index }
+        let index = taps.indexer.index()
+        Self.cache.withLock { $0 = (key, index) }
+        return index
+    }
+
+    public func load() async throws -> CatalogLoad {
+        let indexTask = Task.detached(priority: .utility) { [self] in userTapsIndex() }
+        var load = try await api.load()
+        let index = await indexTask.value
+        let mine = index.entries.filter { !TapIndexer.isHomebrewTap($0.tap) }
+        guard !mine.isEmpty else { return load }
+        load.entries += mine.map { $0.catalogEntry(builder: taps.builder) }
+        let tapNames = Array(Set(mine.map(\.tap))).sorted()
+        load.source += " · " + String(localized: "your taps (\(tapNames.joined(separator: ", "))) · \(mine.count.formatted())")
+        return load
+    }
+
+    /// Tap rows from `brew info`; formulae.brew.sh rows are already complete.
+    public func details(_ entries: [CatalogEntry]) async -> [CatalogEntry] {
+        let fromTaps = entries.filter { e in e.tap.map { !TapIndexer.isHomebrewTap($0) } ?? false }
+        let rest = entries.filter { e in !(e.tap.map { !TapIndexer.isHomebrewTap($0) } ?? false) }
+        return await api.details(rest) + (fromTaps.isEmpty ? [] : taps.details(fromTaps))
+    }
+
+    public func analytics() async throws -> InstallAnalytics? { try await api.analytics() }
 }

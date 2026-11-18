@@ -51,7 +51,13 @@ struct SelfUpdateSheet: View {
             }
         case .upToDate(let v)?:
             Label {
-                Text("Tankard \(v) is the latest version.")
+                // 0.8.6 (walkthrough L4): the subtitle already names the
+                // version ("You have Tankard 0.8.5.").
+                if v == TankardVersion.string {
+                    Text("That's the latest version.")
+                } else {
+                    Text("Tankard \(v) is the latest version.")
+                }
             } icon: {
                 Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
             }

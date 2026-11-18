@@ -125,6 +125,11 @@ public final class AppStore {
         /// 0.8.5: the Mac Pro 6,1 Electron check (ElectronGPU.swift). Off
         /// (reads nothing) unless set: `live()`, or the demo's hook.
         public var electronGPU: ElectronGPUProbe = .disabled
+        /// 0.8.6 (walkthrough M4): when brew last changed what is installed
+        /// (the newest modification time of the Cellar, Caskroom, opt and
+        /// var/homebrew/linked folders), for a re-read when that is newer
+        /// than the report. nil (tests, demo): never.
+        public var homebrewChangedAt: (@Sendable (BrewClient) -> Date?)?
         /// 0.8.5 (M3): a Brewfile's text, for its taps' URLs (demo: a fixed one).
         public var readBrewfile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
 
@@ -147,12 +152,14 @@ public final class AppStore {
         }
 
         /// Intelbrew mode (or any brew told not to use the API) searches the
-        /// local taps; otherwise formulae.brew.sh.
+        /// local taps; otherwise formulae.brew.sh and the user's own taps.
         public static let liveCatalog: @Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding = { client, detection in
             if detection.detected || client.sources.effective(Intelbrew.noAPIKey) != nil {
                 return TapCatalog(client: client, detection: detection)
             }
-            return APICatalog(fetcher: APIFetcher(), platform: client.platform)
+            // 0.8.6 (H1): plus the user's own taps.
+            return UserTapsCatalog(api: APICatalog(fetcher: APIFetcher(), platform: client.platform),
+                                   client: client, detection: detection)
         }
 
         /// The real thing: brew from its standard locations (or
@@ -177,6 +184,7 @@ public final class AppStore {
             d.updateFeed = .live()
             d.lockWait = .live
             d.electronGPU = .live
+            d.homebrewChangedAt = { HomebrewChanges.latest(client: $0) }
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -205,6 +213,14 @@ public final class AppStore {
     /// the main window's sheet, or (0.8.5) the progress panel a menu-bar
     /// Upgrade opens (`activityPresentation`). Hiding it puts the next one
     /// back on the main window.
+    /// 0.8.6 (UI details M2): the main window's content height, for
+    /// sheets taller than a small window (`SheetHeight.fit`). nil before
+    /// the window has laid out.
+    public var sheetRoom: Double?
+    /// 0.8.6 (UI details M8): the main window's content width (the detail
+    /// pane narrows in a narrow window, `DetailPaneWidth`).
+    public var windowWidth: Double?
+
     public var showUpgradeSheet = false {
         didSet {
             if !showUpgradeSheet, activityPresentation != .mainWindowSheet { activityPresentation = .mainWindowSheet }
@@ -320,6 +336,8 @@ public final class AppStore {
     @ObservationIgnored var pendingQuiet: [UUID: ScheduledQuietReason] = [:]
     /// 0.8.5: History entries to mark as builds from source once they arrive.
     @ObservationIgnored var pendingBuilt: Set<UUID> = []
+    /// 0.8.6 (L7): the restore point saved before each upgrade session.
+    @ObservationIgnored var sessionRestorePoints: [UUID: RestorePoint.ID] = [:]
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
     @ObservationIgnored public internal(set) var lastScheduledUpdate: ScheduledUpdateResult?
 
@@ -473,20 +491,31 @@ public final class AppStore {
             reportFromCache = true
             LaunchTiming.mark("list (cache)", once: true)
         }
-        if isStale {
+        // 0.8.6 (M4): also when brew changed something since the cached
+        // read (Terminal), or an interrupted run waits to be offered.
+        if isStale || homebrewChangedSinceRead || settings.defaults.data(forKey: RunJournal.key) != nil {
             await refresh(manual: false)
         } else {
             startInsights(force: false)
         }
     }
 
-    /// Re-reads status if the data is older than the TTL (window became active).
+    /// 0.8.6 (M4): brew's folders changed after the report on screen was
+    /// read (a few stat calls; nothing is run).
+    public var homebrewChangedSinceRead: Bool {
+        guard let probe = deps.homebrewChangedAt, let t = lastUpdated, let client = try? resolvedClient(),
+              let changed = probe(client) else { return false }
+        return changed > t
+    }
+
+    /// Re-reads status if the data is older than the TTL, or (0.8.6, M4)
+    /// brew changed something since (window became active).
     public func revalidateIfStale() {
         if homebrewState.needsWelcome, !isRefreshing {
             Task { await checkAgain() }
             return
         }
-        guard isStale, !isRefreshing, !isUpgrading, !selfReplaced else { return }
+        guard !isRefreshing, !isUpgrading, !selfReplaced, isStale || homebrewChangedSinceRead else { return }
         Task { await refresh(manual: false) }
     }
 
@@ -1092,12 +1121,24 @@ public final class AppStore {
         }
     }
 
-    /// 0.8.1: Esc on the relaunch page: close, run nothing.
+    /// 0.8.1: Esc on the relaunch page: close, run nothing. 0.8.6 (M2):
+    /// also Cancel on the explainer, which then shows again next time.
     public func appManagementCancel() {
-        guard appManagementPrompt != nil else { return }
-        settings.appManagementExplained = true
+        guard let p = appManagementPrompt else { return }
+        if p.stage == .relaunch || p.reason == .blocked { settings.appManagementExplained = true }
         appManagementPrompt = nil
         if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
+    }
+
+    /// 0.8.6 (M2): "Skip Apps": run only the targets that don't change
+    /// apps (formulae, fonts…); with none, the same as Cancel. The
+    /// explainer shows again before the next app change.
+    public func appManagementSkipApps() {
+        guard let p = appManagementPrompt, p.reason == .firstUse, p.canRetry else { return appManagementCancel() }
+        let rest = p.others
+        guard !rest.isEmpty else { return appManagementCancel() }
+        appManagementPrompt = nil
+        startSession(p.action, packages: rest, skipGate: true, fromActivity: true)
     }
 
     /// Whether "Relaunch Tankard" can be offered now.
@@ -1171,8 +1212,9 @@ public final class AppStore {
         if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
     }
 
-    /// "Not now": first use still runs what the user asked for (it may
-    /// already be allowed); after a block, just closes.
+    /// "Continue Without It" (0.8.5: "Not now"): first use still runs what
+    /// the user asked for (it may already be allowed); after a block
+    /// ("Close"), just closes.
     public func appManagementNotNow() {
         guard let p = appManagementPrompt else { return }
         settings.appManagementExplained = true
@@ -1211,7 +1253,7 @@ public final class AppStore {
             return
         }
         // 0.7: a restore point before every upgrade session.
-        if action == .upgrade { saveRestorePoint(.upgrade, upgrading: targets) }
+        let sessionPoint = action == .upgrade ? saveRestorePoint(.upgrade, upgrading: targets) : nil
         if action == .upgrade { saveRunJournal(targets) }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
@@ -1263,6 +1305,8 @@ public final class AppStore {
                 self?.sessionFinished(session)
             })
         upgrade?.isRetry = isRetry
+        // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
+        if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
         upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
         // 0.8.5: time so far and an estimate for builds from source.
@@ -1342,6 +1386,12 @@ public final class AppStore {
         }
         runJournalSessionFinished(session)
         recordBuilds(session)
+        // 0.8.6 (walkthrough L7): a run that upgraded nothing (failed,
+        // stopped first, or already done elsewhere) keeps no restore point:
+        // eight small runs left eight points, most identical.
+        if let point = sessionRestorePoints.removeValue(forKey: session.id), session.succeededCount == 0 {
+            restorePoints.delete(point)
+        }
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
         // offer. The new instance reads status, shows notes and prompts.

@@ -49,7 +49,8 @@ struct UpgradePlanView: View {
                         if compiling.isEmpty {
                             Text("Nothing will compile from source.")
                         } else {
-                            Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
+                            // 0.8.6 (UI M4): one whole sentence per count, no English verb in a placeholder.
+                            Text(PlanText.compiles(compiling.count))
                         }
                     }
                         .font(.system(size: 12)).foregroundStyle(.secondary)
@@ -293,8 +294,12 @@ struct AppManagementSheet: View {
             AppManagementSteps()
 
             HStack {
-                Button("Not now") { store.appManagementNotNow() }
-                    .keyboardShortcut(.cancelAction)
+                // 0.8.6 (M2): Cancel runs nothing ("Not now" used to start
+                // the run); Close after a block.
+                Button(prompt.reason == .blocked ? String(localized: "Close") : String(localized: "Cancel")) {
+                    store.appManagementCancel()
+                }
+                .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Open System Settings") { AppManagementSteps.openSettings() }
                 Button {
@@ -304,6 +309,20 @@ struct AppManagementSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+            }
+            if prompt.reason == .firstUse, prompt.canRetry {
+                // Without the permission: the rest only, or everything
+                // (macOS may stop the app steps; Tankard then says so).
+                HStack {
+                    Spacer()
+                    if prompt.action == .upgrade, !prompt.others.isEmpty {
+                        Button(AppManagementPrompt.skipAppsTitle(prompt.others.count)) { store.appManagementSkipApps() }
+                            .help(String(localized: "Upgrades the packages that don't change apps; the apps wait until next time"))
+                    }
+                    Button(AppManagementPrompt.continueTitle) { store.appManagementNotNow() }
+                        .help(String(localized: "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so."))
+                }
+                .controlSize(.small)
             }
         }
     }
@@ -464,7 +483,7 @@ struct CleanupSheet: View {
                 if cleanup.measuringCache {
                     ProgressView().controlSize(.mini)
                 } else if let b = cleanup.cacheBytes {
-                    Text(ByteCountFormatter.string(fromByteCount: b, countStyle: .file)).fontWeight(.semibold).monospacedDigit()
+                    Text(DiskSizes.format(b)).fontWeight(.semibold).monospacedDigit()
                 }
             }
             .font(.system(size: 12))
@@ -506,14 +525,14 @@ struct CleanupSheet: View {
         .padding(.vertical, 16)
         // One height for every phase: a sheet that grows after the dry run
         // answers would otherwise jump.
-        .frame(width: 600, height: 480, alignment: .top)
+        .sheetFrame(width: 600, height: 480, store: store)
         .background(theme.window ?? .clear)
     }
 
     @ViewBuilder
     private func results(_ d: CleanupDryRun) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(d.items.isEmpty ? String(localized: "Nothing to clean up") : String(localized: "Would free about \(d.totalText)"))
+            Text(d.items.isEmpty ? String(localized: "Nothing to clean up") : String(localized: "Would free about \(d.totalDisplay)"))
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(d.items.isEmpty ? Color.secondary : theme.accent)
             if !d.items.isEmpty {
@@ -535,7 +554,7 @@ struct CleanupSheet: View {
                         HStack(spacing: 8) {
                             Text(AppPaths.tildePath(item.path)).lineLimit(1).truncationMode(.middle)
                             Spacer(minLength: 8)
-                            Text(item.sizeText ?? "").foregroundStyle(.secondary)
+                            Text(item.sizeDisplay ?? "").foregroundStyle(.secondary)
                         }
                         .font(.system(size: 11, design: .monospaced))
                     }
@@ -581,7 +600,7 @@ struct CleanupSheet: View {
     private func kindTotal(_ title: String, _ bytes: Int64) -> some View {
         HStack(spacing: 4) {
             Text(title).foregroundStyle(.secondary)
-            Text(CleanupDryRun.format(bytes: bytes)).fontWeight(.medium).monospacedDigit()
+            Text(DiskSizes.format(bytes)).fontWeight(.medium).monospacedDigit()
         }
     }
 }
@@ -591,16 +610,10 @@ struct CleanupSheet: View {
 /// "Install node-red from source?" before an install with no bottle here.
 struct CompileInstallConfirm: View {
     /// Built in steps: one long concatenation is too much for Swift 6.0's type checker.
+    /// 0.8.6 (UI details L1): whole sentences per case (four glued
+    /// fragments read "…brewがコンパイルします、および1個の依存関係" in Japanese).
     static func message(_ e: CatalogEntry, intelbrew: Bool, deps: [CatalogEntry], estimate: String?) -> String {
-        var m = intelbrew ? String(localized: "\(e.name) has no Intelbrew bottle for this Mac, so brew compiles it") : String(localized: "\(e.name) has no bottle for this Mac, so brew compiles it")
-        if !deps.isEmpty {
-            let names = deps.prefix(4).map(\.name).joined(separator: ", ")
-            let noun = deps.count == 1 ? String(localized: "dependency") : String(localized: "dependencies")
-            m += String(localized: ", and \(deps.count) \(noun) (\(names))")
-        }
-        m += String(localized: ". That can take a long time on older Macs.")
-        if let estimate { m += String(localized: " It took \(estimate).") }
-        return m
+        InstallCompileText.message(name: e.name, intelbrew: intelbrew, deps: deps.map(\.name), estimate: estimate)
     }
 
     @Bindable var store: AppStore

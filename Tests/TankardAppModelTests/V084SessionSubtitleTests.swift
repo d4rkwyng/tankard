@@ -43,7 +43,7 @@ struct V084SessionSubtitleTests {
         defer { try? FileManager.default.removeItem(at: r.dir) }
         let s = try await upgradeAll(r)
         #expect(s.failedItems.map(\.package.name) == ["ruby"])
-        #expect(s.title == "Upgrade finished with errors")
+        #expect(s.title == "Upgrade finished with problems")
         // The four bottles were poured; ruby built nothing.
         #expect(s.subtitle == "4 bottles from Intelbrew")
         #expect(!s.subtitle.contains("source"))

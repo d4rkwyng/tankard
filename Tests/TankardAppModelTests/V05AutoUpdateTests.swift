@@ -11,7 +11,9 @@ import TankardCore
 let utc: Calendar = {
     var c = Calendar(identifier: .gregorian)
     c.timeZone = TimeZone(identifier: "UTC")!
-    c.locale = Locale(identifier: "en_US")
+    // 0.8.6 (UI L2): auto-update times follow the calendar's locale; en_GB
+    // writes them 24-hour ("03:00"), as these tests always expected.
+    c.locale = Locale(identifier: "en_GB")
     return c
 }()
 
@@ -154,9 +156,9 @@ struct AutoUpdatePolicyTests {
     }
 
     @Test func statusText() {
-        #expect(AutoUpdateText.status(.notDue(next: at(3, days: 1)), now: at(10), calendar: utc) == "Next run: tomorrow 03:00")
-        #expect(AutoUpdateText.when(at(3), now: at(10), calendar: utc) == "today 03:00")
-        #expect(AutoUpdateText.when(at(3, days: -1), now: at(10), calendar: utc) == "yesterday 03:00")
+        #expect(AutoUpdateText.status(.notDue(next: at(3, days: 1)), now: at(10), calendar: utc) == "Next run: tomorrow 3:00")
+        #expect(AutoUpdateText.when(at(3), now: at(10), calendar: utc) == "today 3:00")
+        #expect(AutoUpdateText.when(at(3, days: -1), now: at(10), calendar: utc) == "yesterday 3:00")
         #expect(AutoUpdateText.status(.waiting(.onBattery, retry: 60), now: at(3)) == "Due: waiting for AC power")
     }
 }
@@ -425,7 +427,7 @@ struct AutoUpdateLogTests {
         #expect(broken.summary == "Didn't run")
         #expect(broken.notification?.title == "Auto-update didn't run")
         #expect(AutoUpdateRun(startedAt: at(3), upgraded: [.init(name: "a", isCask: false, detail: "")], dryRun: true).notification == nil)
-        #expect(AutoUpdateText.lastLine(five, now: at(10), calendar: utc) == "Last auto-update: today 03:00 · 5 upgraded · 1 skipped")
+        #expect(AutoUpdateText.lastLine(five, now: at(10), calendar: utc) == "Last auto-update: today 3:00 · 5 upgraded · 1 skipped")
         #expect(AutoUpdateText.lastLine(nil, now: at(10)) == nil)
     }
 }

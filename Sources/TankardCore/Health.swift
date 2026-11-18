@@ -118,6 +118,11 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
     /// 0.8.3: a download didn't match the checksum brew expected
     /// (exceptions.rb ChecksumMismatchError: "SHA-256 mismatch").
     case checksum
+    /// 0.8.6 (walkthrough L1): the download isn't on the server (HTTP 404):
+    /// retrying the same address fails the same way.
+    case notFound
+    /// 0.8.6 (walkthrough L1): building from source failed.
+    case buildFailed
 
     public var title: String {
         switch self {
@@ -127,6 +132,8 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
         case .diskFull: return String(localized: "The disk is full")
         case .permissions: return String(localized: "Homebrew couldn't write to its folders")
         case .checksum: return String(localized: "A download didn't match its checksum")
+        case .notFound: return String(localized: "The download isn't on the server")
+        case .buildFailed: return String(localized: "The build from source failed")
         }
     }
 
@@ -144,6 +151,10 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
             return String(localized: "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.")
         case .checksum:
             return String(localized: "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.")
+        case .notFound:
+            return String(localized: "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.")
+        case .buildFailed:
+            return String(localized: "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.")
         }
     }
 }
@@ -162,6 +173,10 @@ public enum BrewFailure {
         if text.contains("sha-256 mismatch") || text.contains("sha256 mismatch") || text.contains("checksum mismatch") {
             return .checksum
         }
+        // 0.8.6 (L1): before the network check (curl's 22 is an HTTP error, not a lost connection).
+        if text.contains("returned error: 404") || text.contains("404 not found") {
+            return .notFound
+        }
         if text.contains("no space left on device") || text.contains("disk full") || text.contains("enospc") {
             return .diskFull
         }
@@ -170,6 +185,10 @@ public enum BrewFailure {
             || text.contains("operation timed out") || text.contains("curl: (6)") || text.contains("curl: (7)")
             || text.contains("curl: (28)") || text.contains("curl: (35)") || text.contains("temporary failure in name resolution") {
             return .network
+        }
+        if text.contains("an exception occurred within a child process") || text.contains("failed executing:")
+            || text.contains("builderror") || text.contains("/library/logs/homebrew/") {
+            return .buildFailed
         }
         if text.contains("permission denied") || text.contains("operation not permitted")
             || text.contains("is not writable") || text.contains("eacces") {
@@ -204,6 +223,23 @@ public enum BrewFailure {
 /// which doesn't set a failing exit status, so the queue would see success
 /// while nothing changed.
 public enum BrewRefusal {
+    /// 0.8.6 (walkthrough M3): brew had nothing to do. `brew upgrade x`
+    /// after another brew (Terminal) upgraded it prints "Warning:
+    /// <tap>/x 1.2 already installed" and exits 0. Only when nothing was
+    /// upgraded, poured or built in the same output.
+    public static func alreadyInstalled<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
+        var already = false
+        for line in lines {
+            let l = line.trimmingCharacters(in: .whitespaces)
+            if l.hasPrefix("==> Upgrading") || l.hasPrefix("==> Pouring") || l.hasPrefix("==> Installing")
+                || l.hasPrefix("==> Summary") || l.hasPrefix("==> Moving App") || l.hasPrefix("==> Downloading") {
+                return false
+            }
+            if l.hasPrefix("Warning: "), l.hasSuffix(" already installed") || l.hasSuffix(" already installed.") { already = true }
+        }
+        return already
+    }
+
     public static func pinned<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
         lines.contains { $0.contains(" is pinned. You must unpin it to ") }
     }

@@ -21,6 +21,7 @@ struct V084DemoIsolationTests {
         var deps = Demo.dependencies(variant, pace: 0, prefix: prefix.path)
         var client = try deps.makeClient()
         #expect(client.caskFolderTime == nil, "demo mode must not read the Caskroom")
+        #expect(client.unreadableScan == nil, "demo mode must not read the Cellar (0.8.6 M1)")
         let exists = client.fileExists
         client.fileExists = { paths.add($0); return exists($0) }
         let c = client

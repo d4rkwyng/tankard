@@ -86,7 +86,8 @@ struct TapsSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 720, height: 580, alignment: .top)
+        .sheetFrame(width: 720, height: 580, store: store)
+        .escapeCloses { store.closeToolSheet() }
         .background(theme.window ?? .clear)
         .modifier(TapAddConfirmation(store: store, taps: taps))
         .modifier(TapsAlerts(store: store, taps: taps))
@@ -127,6 +128,9 @@ struct TapsSheet: View {
         let installed = store.installedCount(from: t)
         var facts = [t.formulaCount == 1 ? String(localized: "1 formula") : String(localized: "\(t.formulaCount) formulae"), t.caskCount == 1 ? String(localized: "1 cask") : String(localized: "\(t.caskCount) casks"),
                      String(localized: "\(installed) installed from it")]
+        // 0.8.6 (M1): counted above, and said apart: brew can't read them.
+        let unreadable = store.unreadableCount(from: t)
+        if unreadable > 0 { facts.append(String(localized: "\(unreadable) of them Homebrew can't read")) }
         if let last = t.lastCommit { facts.append(String(localized: "updated \(last)")) }
         return Button {
             taps.select(selected ? nil : t.id)

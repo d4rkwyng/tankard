@@ -27,16 +27,31 @@ struct VulnerableScanStatusTests {
     @Test func lastResultWithCountAndTime() {
         let now = Date()
         let s = VulnerableScanStatus(state: .idle, scan: scan(findings: ["expat", "xz"], at: now.addingTimeInterval(-300)))
-        #expect(s.line(now: now) == "Scanned 42 · found 2 · 5 min ago")
+        #expect(s.line(now: now) == "Scanned 42 · 2 vulnerable · 5 min ago")
         let none = VulnerableScanStatus(state: .idle, scan: scan(at: now.addingTimeInterval(-300)))
         #expect(none.emptyTitle == "No known vulnerabilities")
         #expect(none.emptyMessage(now: now) == "The last scan (5 min ago) found none.")
     }
 
+    /// 0.8.6 (UI details M7): counted like the filter: an upgraded formula
+    /// (brew checked 2.7.1, 2.7.2 is installed) isn't "found".
+    @Test func countIsTheInstalledVulnerableOnes() {
+        let now = Date()
+        var sc = scan(findings: ["expat", "xz"], at: now)
+        sc.versions = ["expat": "2.7.1", "xz": "5.8.3"]
+        func installed(_ n: String, _ v: String) -> Package {
+            var p = Package.command(n); p.fullName = n; p.installedVersion = v; return p
+        }
+        let pkgs = [installed("expat", "2.7.2"), installed("xz", "5.8.3")]
+        #expect(VulnerabilityCount.installed(sc, packages: pkgs) == 1)
+        let s = VulnerableScanStatus(state: .idle, scan: sc, installed: pkgs)
+        #expect(s.line(now: now) == "Scanned 42 · 1 vulnerable · just now")
+    }
+
     @Test func partialScanSaysSo() {
         let now = Date()
         let s = VulnerableScanStatus(state: .idle, scan: scan(complete: false, at: now))
-        #expect(s.line(now: now) == "Scanned 42 · found 0 · partial scan · just now")
+        #expect(s.line(now: now) == "Scanned 42 · 0 vulnerable · partial scan · just now")
         #expect(s.emptyMessage(now: now).contains("brew says the scan is incomplete: 2 not checked: 2 with no source repository brew can match."))
     }
 

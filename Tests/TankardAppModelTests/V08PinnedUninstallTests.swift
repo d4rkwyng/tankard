@@ -100,7 +100,7 @@ struct PinnedUninstallTests {
         let session = try #require(store.upgrade)
         #expect(await waitUntil { session.isFinished })
         #expect(session.failedItems.map(\.package.name) == [p.name])
-        #expect(session.title == "Uninstall finished with errors")
+        #expect(session.title == "Uninstall finished with problems")
         #expect(session.log.lines.contains { $0.contains("is pinned (brew still exited 0)") })
         #expect(await waitUntil { store.history.entries.contains { $0.command.contains("uninstall") } })
         let entry = try #require(store.history.entries.first { $0.command.contains("uninstall") })

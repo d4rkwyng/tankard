@@ -86,12 +86,14 @@ struct PackageDetail: View {
                 }
 
                 RetiredDetail(package: p)
+                UnreadableDetail(package: p)
 
                 if p.upgradeAvailable {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.up.circle").foregroundStyle(theme.upgrade)
-                        (Text("Upgrade ready: ") + Text(verbatim: "\(p.installedVersion) → \(p.currentVersion ?? "?")")
-                            .foregroundColor(theme.upgrade).fontWeight(.semibold))
+                        Text(UpgradeBanner.text(p))
+                            .foregroundStyle(p.isUpgradeTarget ? theme.upgrade : Color.primary)
+                            .fontWeight(p.isUpgradeTarget ? .semibold : .regular)
                             .font(.system(size: 12))
                             .lineLimit(2)
                     }
@@ -245,7 +247,8 @@ struct PackageDetail: View {
             case .bottle:
                 Image(systemName: "checkmark.circle").foregroundStyle(theme.badge(.bottle).dot)
                 if let repo = p.bottleRepository {
-                    (Text("Poured from ") + Text(repo).font(.system(size: 11, design: .monospaced)) + Text(" release"))
+                    // 0.8.6 (UI L1): one sentence for the translations.
+                    Text("Poured from the \(repo) release")
                 } else if p.bottleOrigin == .homebrew {
                     Text("Poured from a Homebrew bottle (ghcr.io)")
                 } else {
@@ -259,7 +262,7 @@ struct PackageDetail: View {
                 Text("Installed version is newer than the tap's \(p.currentVersion ?? "?"). brew won't downgrade it.")
             case .noBottle:
                 Image(systemName: "exclamationmark.circle").foregroundStyle(theme.badge(.noBottle).dot)
-                Text("No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
+                Text(p.noBottleDetail)
             case .cask:
                 // 0.8.4: from the cask's artifacts (a font isn't an app).
                 let contents = CaskContents(p)

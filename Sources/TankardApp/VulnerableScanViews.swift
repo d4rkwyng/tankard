@@ -13,7 +13,7 @@ import TankardCore
 
 extension AppStore {
     var vulnerableScanStatus: VulnerableScanStatus {
-        VulnerableScanStatus(state: insights.scanState, scan: insights.vulnerabilityScan)
+        VulnerableScanStatus(state: insights.scanState, scan: insights.vulnerabilityScan, installed: packages)
     }
 
     var canScanVulnerabilities: Bool {
