@@ -500,7 +500,9 @@ struct PackageTable: View {
     /// rows: "Application performed a reentrant operation in its NSTableView
     /// delegate. This warning will become an assert in the future." on every
     /// launch. A fresh table per fill (an .id) avoided it too, but measured
-    /// some one-line rows two lines high.
+    /// some one-line rows two lines high. 0.8.5: the rows have one fixed
+    /// height now (PackageRow), which fixes the cause for every big change,
+    /// not only the first fill; this staging is kept as it was.
     static let firstFill = 40
 
     var rows: [Package] {
@@ -521,46 +523,7 @@ struct PackageTable: View {
         let shown = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
         Table(shown, selection: $store.selection, sortOrder: sortState.projectedValue) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 4) {
-                        Text(p.name).fontWeight(.medium).lineLimit(1).layoutPriority(1)
-                        if p.kind == .formula && !p.requested {
-                            Text("dep").font(.system(size: 9.5, weight: .medium)).foregroundStyle(.secondary)
-                                .padding(.horizontal, 4).padding(.vertical, 0.5)
-                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
-                                .fixedSize()
-                                .help("Installed as a dependency")
-                        }
-                        if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p), includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps)) }
-                        if p.pinned { PinnedBadge() }
-                        if AdminPassword.required(p) { PasswordLockBadge() }
-                        RetiredBadge(package: p)
-                        VulnerabilityTag(package: p)
-                    }
-                    if let w = store.deps.classifier.upgradeWarning(p) {
-                        // Orange in every list, not only Upgrades: it's what the user is about to wait for.
-                        HStack(spacing: 3) {
-                            Image(systemName: "hammer.fill").font(.system(size: 8.5))
-                            Text(w.label)
-                        }
-                        .font(.system(size: 10.5, weight: .semibold))
-                        .foregroundStyle(theme.badge(.source).dot)
-                        .lineLimit(1)
-                        .help(w.text)
-                        .onAppear { store.compileWarningShown() }
-                    } else if BottleReplacement.isEligible(p) {
-                        HStack(spacing: 3) {
-                            Image(systemName: "shippingbox.fill").font(.system(size: 8.5))
-                            Text(BottleReplacement.badge(p, intelbrewMode: intelbrew))
-                        }
-                        .font(.system(size: 10.5, weight: .medium))
-                        .foregroundStyle(theme.badge(.bottle).dot)
-                        .lineLimit(1)
-                    } else if let sub = p.subtitle {
-                        Text(sub).font(.system(size: 10.5)).foregroundStyle(.secondary).lineLimit(1)
-                    }
-                }
-                .padding(.vertical, 3)
+                PackageNameCell(store: store, package: p, intelbrew: intelbrew)
             }
             .width(min: 150, ideal: 200)
 
@@ -591,6 +554,9 @@ struct PackageTable: View {
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.
         .tableStyle(.inset(alternatesRowBackgrounds: false))
+        // 0.8.5: the table's own row height (SwiftUI sets the NSTableView's
+        // from it): the same as every row's (PackageRow).
+        .environment(\.defaultMinListRowHeight, PackageRow.height)
         .task(id: all.isEmpty) {
             if all.isEmpty {
                 if filledState.wrappedValue { filledState.wrappedValue = false }
@@ -603,7 +569,7 @@ struct PackageTable: View {
         }
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
-        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
         .background(TableRevealer(request: store.revealRequest, row: shown.firstIndex { $0.id == store.selection }))
         .overlay {
             if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
@@ -618,6 +584,124 @@ struct PackageTable: View {
                 ProgressView(store.refreshPhase ?? String(localized: "Loading…"))
             }
         }
+    }
+}
+
+extension View {
+    /// `.help` only when there is something to say (an empty `.help("")`
+    /// would still be a tooltip region over the children's own).
+    @ViewBuilder
+    func tooltip(_ text: String?) -> some View {
+        if let text, !text.isEmpty { help(text) } else { self }
+    }
+}
+
+/// 0.8.5: the package lists' rows are all one height, `height`. With
+/// heights measured per row (30 and 43 pt, estimated at 24), a big change
+/// to the rows (Upgrades → All, clearing a search) made AppKit resize the
+/// table while it was still measuring rows: "Application performed a
+/// reentrant operation in its NSTableView delegate. This warning will
+/// become an assert in the future." Now SwiftUI gives the NSTableView this
+/// height (`.environment(\.defaultMinListRowHeight, …)`), the table
+/// measures no row (TableSelectionStyler's `fixedRowHeights`), and every
+/// row is one line: what used to be the second line (a compile warning,
+/// a bottle on offer, a note like "Deprecated") sits after the name, short,
+/// with the words in its tooltip.
+enum PackageRow {
+    static let height: CGFloat = 30
+    /// The content's height inside a row (the inset table's 4 pt above and
+    /// below). Marks up to `trailingBadge` high fit.
+    static let content: CGFloat = 22
+    /// The tallest mark the Package column's trailing area is laid out for
+    /// (an icon-size badge).
+    static let trailingBadge: CGFloat = 18
+}
+
+/// The Package column's cell: the name, its badges, the row's note, and
+/// the trailing area. 0.8.5: one line, `PackageRow.content` high.
+struct PackageNameCell: View {
+    var store: AppStore
+    var package: Package
+    var intelbrew: Bool
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        let p = package
+        HStack(spacing: 4) {
+            Text(p.name).fontWeight(.medium).lineLimit(1).layoutPriority(2)
+            if p.kind == .formula && !p.requested {
+                Text("dep").font(.system(size: 9.5, weight: .medium)).foregroundStyle(.secondary)
+                    .padding(.horizontal, 4).padding(.vertical, 0.5)
+                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
+                    .fixedSize()
+                    .help("Installed as a dependency")
+            }
+            if p.selfUpdates { SelfUpdateMark(help: p.selfUpdateHelp(policy: store.selfUpdatePolicy(p), includeSelfUpdating: store.insights.settings.includeSelfUpdatingApps)) }
+            if p.pinned { PinnedBadge() }
+            RetiredBadge(package: p)
+            VulnerabilityTag(package: p)
+            note(p)
+            Spacer(minLength: 0)
+            // The trailing area: marks up to PackageRow.trailingBadge high.
+            if AdminPassword.required(p) {
+                PasswordLockBadge(size: 11)
+                    .frame(width: PackageRow.trailingBadge, height: PackageRow.trailingBadge)
+            }
+            if store.electron.isElectron(p) { ElectronMark() }
+        }
+        .frame(maxHeight: PackageRow.content)
+    }
+
+    /// What was the second line: the compile warning, the bottle on offer,
+    /// or the subtitle (one at most). Its icon and short words, which give
+    /// way first; the whole of it in the tooltip.
+    @ViewBuilder
+    func note(_ p: Package) -> some View {
+        if let w = store.deps.classifier.upgradeWarning(p) {
+            // Orange in every list, not only Upgrades: it's what the user is about to wait for.
+            NoteMark(symbol: "hammer.fill", text: w.label, help: w.label + "\n" + w.text,
+                     color: theme.badge(.source).dot, weight: .semibold)
+                .onAppear { store.compileWarningShown() }
+        } else if BottleReplacement.isEligible(p) {
+            let text = BottleReplacement.badge(p, intelbrewMode: intelbrew)
+            NoteMark(symbol: "shippingbox.fill", text: text, help: text, color: theme.badge(.bottle).dot, weight: .medium)
+        } else if let sub = Self.note(p) {
+            Text(sub).font(.system(size: 10.5)).foregroundStyle(.secondary).lineLimit(1)
+                .help(sub)
+        }
+    }
+
+    /// The subtitle without "Deprecated" or "Disabled", which the badge
+    /// next to the name already says (RetiredBadge).
+    static func note(_ p: Package) -> String? {
+        guard let sub = p.subtitle else { return nil }
+        guard p.retiredLabel != nil else { return sub }
+        let retired = [String(localized: "Disabled"), String(localized: "Deprecated")]
+        let rest = sub.components(separatedBy: " · ").filter { !retired.contains($0) }
+        return rest.isEmpty ? nil : rest.joined(separator: " · ")
+    }
+}
+
+/// A row's note after the name: its icon and words, the words cut short
+/// when the column is narrow (all of them in the tooltip).
+struct NoteMark: View {
+    var symbol: String
+    var text: String
+    var help: String
+    var color: Color
+    var weight: Font.Weight
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Image(systemName: symbol).font(.system(size: 8.5))
+            // The first to give way (the name and badges come first).
+            Text(text).lineLimit(1).truncationMode(.tail)
+        }
+        .font(.system(size: 10.5, weight: weight))
+        .foregroundStyle(color)
+        .help(help)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(text))
     }
 }
 

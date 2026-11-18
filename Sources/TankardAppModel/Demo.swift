@@ -108,7 +108,9 @@ public enum Demo {
 
     public static func dependencies(_ variant: Variant, pace: Double = 1, hardware: MacHardware? = nil,
                                     failAppManagement: Bool = false, pinned: Set<String> = [],
-                                    replaced: Set<String> = [], prefix: String? = nil) -> AppStore.Dependencies {
+                                    replaced: Set<String> = [], prefix: String? = nil,
+                                    extraRows: Int = 0) -> AppStore.Dependencies {
+        let info = addRows(fixtureInfo(variant), count: extraRows)
         let state = State(failAppManagement: failAppManagement, pinned: pinned, replaced: replaced)
         var installation: BrewInstallation
         let platform: BottlePlatform
@@ -127,7 +129,7 @@ public enum Demo {
             installation = BrewInstallation(brewPath: prefix + "/bin/brew", prefix: prefix,
                                              repository: variant == .intelbrew ? prefix + "/Homebrew" : prefix)
         }
-        let runner = InfoRunner(variant: variant, state: state, info: fixtureInfo(variant))
+        let runner = InfoRunner(variant: variant, state: state, info: info)
         var client = BrewClient(installation: installation, platform: platform, runner: runner,
                                 // The demo's own user (0.4: services and the revert sheet
                                 // show it, never this Mac's).
@@ -143,7 +145,7 @@ public enum Demo {
         let demoClient = client
         var deps = AppStore.Dependencies(
             makeClient: { demoClient },
-            streamRunner: ScriptRunner(variant: variant, state: state, info: fixtureInfo(variant), pace: pace),
+            streamRunner: ScriptRunner(variant: variant, state: state, info: info, pace: pace),
             cache: nil,
             logURL: nil,
             makeCatalog: { client, detection in
@@ -277,6 +279,26 @@ public enum Demo {
 
     static func cachePath(_ variant: Variant) -> String {
         variant == .intelbrew ? "/Users/demo/Library/Caches/Homebrew" : "/Users/you/Library/Caches/Homebrew"
+    }
+
+    /// 0.8.5, TANKARD_DEMO_ROWS=N: N more installed formulae (copies of the
+    /// fixture's, named demo-row-001…), for a list as long as a real one
+    /// (Scripts/row-height-check.sh: the NSTableView reentrancy check).
+    static func addRows(_ data: Data, count: Int) -> Data {
+        guard count > 0, var root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              var formulae = root["formulae"] as? [[String: Any]], !formulae.isEmpty else { return data }
+        let originals = formulae
+        for i in 1...count {
+            var f = originals[(i - 1) % originals.count]
+            let name = String(format: "demo-row-%03d", i)
+            f["name"] = name
+            f["full_name"] = name
+            f["aliases"] = [String]()
+            f["oldnames"] = [String]()
+            formulae.append(f)
+        }
+        root["formulae"] = formulae
+        return (try? JSONSerialization.data(withJSONObject: root)) ?? data
     }
 
     static func fixtureInfo(_ variant: Variant) -> Data {

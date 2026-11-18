@@ -122,6 +122,9 @@ public final class AppStore {
         public var brewEnvFiles: @Sendable (BrewClient) -> [(String, [String: String])] = { $0.sources.brewEnvFiles }
         /// 0.8.3: whether brew's Caskroom has a tankard cask (path given).
         public var selfCaskroomExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
+        /// 0.8.5: the Mac Pro 6,1 Electron check (ElectronGPU.swift). Off
+        /// (reads nothing) unless set: `live()`, or the demo's hook.
+        public var electronGPU: ElectronGPUProbe = .disabled
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,
@@ -171,6 +174,7 @@ public final class AppStore {
             d.brewEnvFiles = { EnvironmentSources.load(prefix: $0.installation.prefix, process: $0.sources.process).brewEnvFiles }
             d.updateFeed = .live()
             d.lockWait = .live
+            d.electronGPU = .live
             let times = BuildTimeSource.live()
             d.buildTimes = times
             d.classifier = CompileClassifier(estimator: times)
@@ -180,7 +184,10 @@ public final class AppStore {
 
     // MARK: state
 
-    public internal(set) var report: StatusReport?
+    public internal(set) var report: StatusReport? {
+        // 0.8.5: a no-op unless the casks changed (and on an affected Mac).
+        didSet { electron.update(packages: report?.packages ?? []) }
+    }
     /// Where `report` came from on screen: the disk cache or a live read.
     public private(set) var reportFromCache = false
     public private(set) var isRefreshing = false
@@ -318,6 +325,8 @@ public final class AppStore {
     @ObservationIgnored public let adopt = AdoptStore()
     /// 0.7: restore points and "Keep the previous version" (RestorePoints.swift).
     @ObservationIgnored public let restorePoints: RestorePointStore
+    /// 0.8.5: Electron apps on a Mac Pro 6,1 (ElectronGPU.swift).
+    @ObservationIgnored public let electron: ElectronGPUStore
     @ObservationIgnored private var client: BrewClient?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
 
@@ -329,6 +338,7 @@ public final class AppStore {
         })
         self.history = HistoryLog(url: deps.historyURL)
         self.system = ScheduleConditions()
+        self.electron = ElectronGPUStore(probe: deps.electronGPU)
         // No settings (tests only; the app always passes them): a private
         // suite per store. One shared suite let concurrent tests see each
         // other's run journal and App Management retry (an interrupted-run

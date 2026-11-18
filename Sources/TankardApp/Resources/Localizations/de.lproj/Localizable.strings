@@ -286,6 +286,9 @@
 "Checking for updates…" = "Suche Updates…";
 "Checking what is still installed…" = "Prüfe, was noch installiert ist…";
 "Checking…" = "Wird geprüft…";
+"Chromium version: %@" = "Chromium-Version: %@";
+"Chromium version: reading…" = "Chromium-Version: wird gelesen…";
+"Chromium version: unknown" = "Chromium-Version: unbekannt";
 "Clean Up" = "Aufräumen";
 "Clean Up…" = "Aufräumen…";
 "Clean up" = "Aufräumen";
@@ -376,6 +379,8 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "Jede Datei wird zuerst neben sich selbst gesichert (….%@). Diese Zeilen werden entfernt:";
 "Each runs as its own brew upgrade, one at a time." = "Jedes läuft als eigenes brew upgrade, nacheinander.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Änderungen im Checkout von Homebrew können brew update stoppen. Zurücksetzen verwirft sie.";
+"Electron app" = "Electron-App";
+"Electron app: may draw incorrectly on this Mac's graphics card" = "Electron-App: wird auf der Grafikkarte dieses Macs eventuell falsch angezeigt";
 "Environment" = "Umgebung";
 "Error" = "Fehler";
 "Error (exit %lld)" = "Fehler (Exit %lld)";
@@ -1011,6 +1016,7 @@
 "These need your administrator password: %@" = "Brauchen dein Admin-Passwort: %@";
 "Third-party" = "Drittanbieter";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Dieses Homebrew kann Befehlszeilenwerkzeuge installieren, aber keine Apps wie Firefox oder VLC. Apps einzuschalten ist ein einmaliger Download von etwa 620 MB.";
+"This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Diese App ist mit Electron gebaut. Auf der Grafikkarte dieses Macs, mit einem neueren macOS über OpenCore Legacy Patcher, werden solche Apps eventuell falsch angezeigt: leere, schwarze oder flackernde Fenster oder verzerrter Text. Tankard verändert die App nicht.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Dieses brew hat kein `brew vulns` (neu in Homebrew 7). Führe `brew update` aus, um es zu erhalten.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Dieses Cask führt ein Installationspaket aus, das --adopt ignoriert: brew würde das Installationsprogramm erneut ausführen, mit deinem Passwort.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Ein symbolischer Link, nicht die App selbst. Tankard übernimmt keine Links.";

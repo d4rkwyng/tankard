@@ -286,6 +286,9 @@
 "Checking for updates…" = "正在检查更新…";
 "Checking what is still installed…" = "正在检查仍已安装的内容…";
 "Checking…" = "正在检查…";
+"Chromium version: %@" = "Chromium 版本：%@";
+"Chromium version: reading…" = "Chromium 版本：正在读取…";
+"Chromium version: unknown" = "Chromium 版本：未知";
 "Clean Up" = "清理";
 "Clean Up…" = "清理…";
 "Clean up" = "清理";
@@ -376,6 +379,8 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "每个文件都会先在其旁边备份（….%@）。将移除以下行：";
 "Each runs as its own brew upgrade, one at a time." = "每个都作为独立的 brew upgrade 依次运行。";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Homebrew 检出目录中的改动可能导致 brew update 停止。重置会丢弃这些改动。";
+"Electron app" = "Electron App";
+"Electron app: may draw incorrectly on this Mac's graphics card" = "Electron App：在这台 Mac 的显卡上可能显示不正常";
 "Environment" = "环境";
 "Error" = "错误";
 "Error (exit %lld)" = "错误（退出码 %lld）";
@@ -1011,6 +1016,7 @@
 "These need your administrator password: %@" = "以下项目需要你的管理员密码：%@";
 "Third-party" = "第三方";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "此 Homebrew 可以安装命令行工具，但不能安装 Firefox 或 VLC 等应用。开启应用需要一次性下载约 620 MB。";
+"This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "此 App 基于 Electron 构建。在这台 Mac 的显卡上，若使用 OpenCore Legacy Patcher 安装的较新 macOS，这类 App 可能显示不正常：窗口空白、发黑或闪烁，或文字错乱。Tankard 不会修改此 App。";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。";

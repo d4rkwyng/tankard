@@ -286,6 +286,9 @@
 "Checking for updates…" = "업데이트 확인 중…";
 "Checking what is still installed…" = "아직 설치된 항목 확인 중…";
 "Checking…" = "확인 중…";
+"Chromium version: %@" = "Chromium 버전: %@";
+"Chromium version: reading…" = "Chromium 버전: 읽는 중…";
+"Chromium version: unknown" = "Chromium 버전: 알 수 없음";
 "Clean Up" = "정리";
 "Clean Up…" = "정리…";
 "Clean up" = "정리";
@@ -376,6 +379,8 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "각 파일은 먼저 같은 위치에 백업됩니다(….%@). 다음 줄이 제거됩니다:";
 "Each runs as its own brew upgrade, one at a time." = "각각 별도의 brew upgrade로 하나씩 실행됩니다.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Homebrew 체크아웃을 편집하면 brew update가 중단될 수 있습니다. 재설정하면 편집 내용이 삭제됩니다.";
+"Electron app" = "Electron 앱";
+"Electron app: may draw incorrectly on this Mac's graphics card" = "Electron 앱: 이 Mac의 그래픽 카드에서 제대로 표시되지 않을 수 있음";
 "Environment" = "환경";
 "Error" = "오류";
 "Error (exit %lld)" = "오류(종료 코드 %lld)";
@@ -1011,6 +1016,7 @@
 "These need your administrator password: %@" = "관리자 암호가 필요한 항목: %@";
 "Third-party" = "서드파티";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "이 Homebrew는 명령줄 도구는 설치할 수 있지만 Firefox나 VLC 같은 앱은 설치할 수 없습니다. 앱을 켜려면 약 620MB를 한 번 다운로드해야 합니다.";
+"This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "이 앱은 Electron으로 만들어졌습니다. 이 Mac의 그래픽 카드에서 OpenCore Legacy Patcher로 설치한 최신 macOS를 사용하면 이런 앱이 제대로 표시되지 않을 수 있습니다(빈 창, 검은 창, 깜박이는 창 또는 깨진 글자). Tankard는 앱을 변경하지 않습니다.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다.";
