@@ -33,7 +33,7 @@
 "%@ exited %d" = "%@ 종료됨(%d)";
 "%@ exited %lld" = "%@ 종료됨(%lld)";
 "%@ exited %lld:\n%@" = "%@ 종료됨(%lld):\n%@";
-"%@ finished with errors" = "%@ 오류와 함께 완료됨";
+"%@ finished with problems" = "%@ 완료 (문제 있음)";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@은(는) 이 Mac용 bottle이 없어 brew가 컴파일합니다";
 "%@ has nothing left to upgrade." = "%@에는 더 업그레이드할 항목이 없습니다.";
@@ -60,7 +60,6 @@
 "%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: 다른 앱일 수 있어 제안하지 않습니다. cask %@의 앱 ID는 %@이고, 이 앱의 ID는 %@입니다.";
 "%@: upgrades will leave it out" = "%@: 업그레이드에서 제외됩니다";
 "%lld %@" = "%lld %@";
-"%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
 "%lld Homebrew bottle" = "Homebrew bottle %lld개";
 "%lld Homebrew bottles" = "Homebrew bottle %lld개";
 "%lld Intelbrew bottle" = "Intelbrew bottle %lld개";
@@ -117,6 +116,7 @@
 "%lld of %lld" = "%lld/%lld";
 "%lld of %lld versions" = "%lld/%lld 버전";
 "%lld of them Homebrew can't read" = "그중 %lld개는 Homebrew가 읽을 수 없음";
+"%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
 "%lld pinned upgrade not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld pinned upgrades not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld result for “%@”" = "“%2$@” 결과 %1$lld개";
@@ -159,6 +159,7 @@
 "1 known vulnerability" = "알려진 취약점 1개";
 "1 known vulnerability (brew vulns): %@" = "알려진 취약점 1개(brew vulns): %@";
 "1 new upgrade" = "새 업그레이드 1개";
+"1 package has no bottle for this Mac and will compile from source, which can take a long time." = "1개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
 "1 vulnerable package; more filters" = "취약한 패키지 1개; 필터 더 보기";
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "소스에서 컴파일될 항목 1개: 이 Mac용 bottle이 없습니다. 오래 걸릴 수 있습니다.";
 "1. Remove the Intelbrew lines from your shell profile" = "1. 셸 프로파일에서 Intelbrew 줄을 제거합니다";
@@ -550,7 +551,7 @@
 "Install with Tankard" = "Tankard로 설치";
 "Installed" = "설치됨";
 "Installed %@; the cask installs %@." = "설치된 버전 %1$@, cask가 설치하는 버전 %2$@.";
-"Installed as" = "설치된 이름";
+"Installed as" = "설치 방식";
 "Installed as a dependency" = "종속 항목으로 설치됨";
 "Installed by you" = "직접 설치함";
 "Installed from %@." = "%@에서 설치됨.";

@@ -49,7 +49,8 @@ struct UpgradePlanView: View {
                         if compiling.isEmpty {
                             Text("Nothing will compile from source.")
                         } else {
-                            Text("\(compiling.count) \(compiling.count == 1 ? "has" : "have") no bottle for this Mac and will compile from source, which can take a long time.")
+                            // 0.8.6 (UI M4): one whole sentence per count, no English verb in a placeholder.
+                            Text(PlanText.compiles(compiling.count))
                         }
                     }
                         .font(.system(size: 12)).foregroundStyle(.secondary)

@@ -33,7 +33,7 @@
 "%@ exited %d" = "%@ が終了コード %d で終了しました";
 "%@ exited %lld" = "%@ が終了コード %lld で終了しました";
 "%@ exited %lld:\n%@" = "%@ が終了コード %lld で終了しました:\n%@";
-"%@ finished with errors" = "%@ はエラーで終了しました";
+"%@ finished with problems" = "%@ 完了 (問題あり)";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のIntelbrew bottleがないため、brewがコンパイルします";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ にはこのMac用のbottleがないため、brewがコンパイルします";
 "%@ has nothing left to upgrade." = "%@ にはアップグレードするものがありません。";
@@ -60,7 +60,6 @@
 "%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: 別のアプリの可能性があるため、候補にしません。cask %@ のアプリIDは %@ ですが、このアプリのIDは %@ です。";
 "%@: upgrades will leave it out" = "%@: アップグレードの対象外になります";
 "%lld %@" = "%lld %@";
-"%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ はこのMac用のbottleがなく、ソースからコンパイルされます。時間がかかる場合があります。";
 "%lld Homebrew bottle" = "%lld個のHomebrew bottle";
 "%lld Homebrew bottles" = "%lld個のHomebrew bottle";
 "%lld Intelbrew bottle" = "%lld個のIntelbrew bottle";
@@ -117,6 +116,7 @@
 "%lld of %lld" = "%lld / %lld";
 "%lld of %lld versions" = "%lld/%lld バージョン";
 "%lld of them Homebrew can't read" = "うち %lld 個は Homebrew が読み込めません";
+"%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。";
 "%lld pinned upgrade not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld result for “%@”" = "「%2$@」の結果: %1$lld件";
@@ -159,6 +159,7 @@
 "1 known vulnerability" = "1件の既知の脆弱性";
 "1 known vulnerability (brew vulns): %@" = "1件の既知の脆弱性(brew vulns): %@";
 "1 new upgrade" = "新しいアップグレード 1 件";
+"1 package has no bottle for this Mac and will compile from source, which can take a long time." = "1 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。";
 "1 vulnerable package; more filters" = "脆弱なパッケージ1個、他のフィルタ";
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1個はソースからコンパイルされます: このMac用のbottleがありません。時間がかかる場合があります。";
 "1. Remove the Intelbrew lines from your shell profile" = "1. シェルプロファイルからIntelbrewの行を削除する";
@@ -550,7 +551,7 @@
 "Install with Tankard" = "Tankardでインストール";
 "Installed" = "インストール済み";
 "Installed %@; the cask installs %@." = "インストール済み: %1$@。cask がインストールするのは %2$@ です。";
-"Installed as" = "インストール名";
+"Installed as" = "インストール方法";
 "Installed as a dependency" = "依存関係としてインストール";
 "Installed by you" = "自分でインストール";
 "Installed from %@." = "%@ からインストールされました。";

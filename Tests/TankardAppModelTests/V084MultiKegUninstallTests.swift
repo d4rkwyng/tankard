@@ -287,6 +287,6 @@ struct V084MultiKegUninstallTests {
         #expect(await waitUntil { s.isFinished && !s.checkingInstalled })
         #expect(log.count("uninstall") == 1)
         #expect(s.items.map(\.state) == [.failed(1), .cancelled])
-        #expect(s.title == "Uninstall finished with errors")
+        #expect(s.title == "Uninstall finished with problems")
     }
 }

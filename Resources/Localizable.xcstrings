@@ -1769,54 +1769,54 @@
         }
       }
     },
-    "%@ finished with errors": {
+    "%@ finished with problems": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ mit Fehlern beendet"
+            "value": "%@ mit Problemen fertig"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ a terminé avec des erreurs"
+            "value": "%@ terminé avec des problèmes"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminó con errores"
+            "value": "%@ terminado con problemas"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ はエラーで終了しました"
+            "value": "%@ 完了 (問題あり)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 已完成，但有错误"
+            "value": "%@已完成，但有问题"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminou com erros"
+            "value": "%@ concluído com problemas"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ terminato con errori"
+            "value": "%@ terminato con problemi"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 오류와 함께 완료됨"
+            "value": "%@ 완료 (문제 있음)"
           }
         }
       }
@@ -3169,58 +3169,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld %@"
-          }
-        }
-      }
-    },
-    "%lld %@ no bottle for this Mac and will compile from source, which can take a long time.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ keine Bottle für diesen Mac und werden aus Quellcode kompiliert, was lange dauern kann."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sans bottle pour ce Mac et seront compilés depuis les sources, ce qui peut prendre beaucoup de temps."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sin bottle para este Mac y se compilarán desde el código fuente, lo que puede tardar mucho."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ はこのMac用のbottleがなく、ソースからコンパイルされます。時間がかかる場合があります。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ 没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ sem bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ nessuna bottle per questo Mac e verranno compilati dai sorgenti, il che può richiedere molto tempo."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %@ 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -6425,6 +6373,58 @@
         }
       }
     },
+    "%lld packages have no bottle for this Mac and will compile from source, which can take a long time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Pakete haben keine Bottle für diesen Mac und werden aus dem Quellcode kompiliert, was lange dauern kann."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquets n’ont pas de bottle pour ce Mac et seront compilés depuis les sources, ce qui peut prendre beaucoup de temps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld paquetes no tienen bottle para este Mac y se compilarán desde el código fuente, lo que puede tardar mucho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacotes não têm bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pacchetti non hanno una bottle per questo Mac e verranno compilati dai sorgenti, il che può richiedere molto tempo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
     "%lld pinned upgrade not included (%@)": {
       "localizations": {
         "de": {
@@ -8605,6 +8605,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "새 업그레이드 1개"
+          }
+        }
+      }
+    },
+    "1 package has no bottle for this Mac and will compile from source, which can take a long time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Paket hat keine Bottle für diesen Mac und wird aus dem Quellcode kompiliert, was lange dauern kann."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquet n’a pas de bottle pour ce Mac et sera compilé depuis les sources, ce qui peut prendre beaucoup de temps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 paquete no tiene bottle para este Mac y se compilará desde el código fuente, lo que puede tardar mucho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacote não tem bottle para este Mac e será compilado do código-fonte, o que pode demorar muito."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 pacchetto non ha una bottle per questo Mac e verrà compilato dai sorgenti, il che può richiedere molto tempo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다."
           }
         }
       }
@@ -28964,7 +29016,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "インストール名"
+            "value": "インストール方法"
           }
         },
         "zh-Hans": {
@@ -28988,7 +29040,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치된 이름"
+            "value": "설치 방식"
           }
         }
       }

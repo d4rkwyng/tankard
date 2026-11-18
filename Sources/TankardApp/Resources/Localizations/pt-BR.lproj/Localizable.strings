@@ -33,7 +33,7 @@
 "%@ exited %d" = "%@ saiu com %d";
 "%@ exited %lld" = "%@ saiu com %lld";
 "%@ exited %lld:\n%@" = "%@ saiu com %lld:\n%@";
-"%@ finished with errors" = "%@ terminou com erros";
+"%@ finished with problems" = "%@ concluído com problemas";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it" = "%@ não tem bottle do Intelbrew para este Mac, então o brew compila";
 "%@ has no bottle for this Mac, so brew compiles it" = "%@ não tem bottle para este Mac, então o brew compila";
 "%@ has nothing left to upgrade." = "%@ não tem mais nada para atualizar.";
@@ -60,7 +60,6 @@
 "%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: talvez seja outro app, não oferecido. O cask %@ é para o ID de app %@; o ID deste app é %@.";
 "%@: upgrades will leave it out" = "%@: as atualizações vão deixá-lo de fora";
 "%lld %@" = "%lld %@";
-"%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ sem bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito.";
 "%lld Homebrew bottle" = "%lld bottle do Homebrew";
 "%lld Homebrew bottles" = "%lld bottles do Homebrew";
 "%lld Intelbrew bottle" = "%lld bottle do Intelbrew";
@@ -117,6 +116,7 @@
 "%lld of %lld" = "%lld de %lld";
 "%lld of %lld versions" = "%lld de %lld versões";
 "%lld of them Homebrew can't read" = "%lld deles o Homebrew não consegue ler";
+"%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld pacotes não têm bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito.";
 "%lld pinned upgrade not included (%@)" = "%lld atualização fixada não incluída (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld atualizações fixadas não incluídas (%@)";
 "%lld result for “%@”" = "%lld resultado para “%@”";
@@ -159,6 +159,7 @@
 "1 known vulnerability" = "1 vulnerabilidade conhecida";
 "1 known vulnerability (brew vulns): %@" = "1 vulnerabilidade conhecida (brew vulns): %@";
 "1 new upgrade" = "1 atualização nova";
+"1 package has no bottle for this Mac and will compile from source, which can take a long time." = "1 pacote não tem bottle para este Mac e será compilado do código-fonte, o que pode demorar muito.";
 "1 vulnerable package; more filters" = "1 pacote vulnerável; mais filtros";
 "1 would compile from source: no bottle for this Mac. That can take a long time." = "1 seria compilado do código-fonte: sem bottle para este Mac. Isso pode demorar muito.";
 "1. Remove the Intelbrew lines from your shell profile" = "1. Remova as linhas do Intelbrew do perfil do shell";

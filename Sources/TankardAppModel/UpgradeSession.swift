@@ -341,7 +341,8 @@ public final class UpgradeSession: Identifiable {
         if isFinished {
             if stopRequested && items.contains(where: { $0.state == .cancelled }) { return String(localized: "\(verb) stopped") }
             if checkingInstalled { return String(localized: "Checking what is still installed…") }
-            if !failedItems.isEmpty { return String(localized: "\(verb) finished with errors") }
+            // 0.8.6 (UI M5): the same phrase as the progress window's title.
+            if !failedItems.isEmpty { return String(localized: "\(verb) finished with problems") }
             if !stillInstalled.isEmpty { return String(localized: "Uninstall incomplete") }
             if !doneElsewhere.isEmpty, succeededCount == 0 { return String(localized: "Already up to date (done elsewhere)") }
             return String(localized: "\(verb) complete")
@@ -827,5 +828,14 @@ public final class UpgradeSession: Identifiable {
     private func note(_ s: String) {
         log.feed("tankard: \(s)\n")
         logFile?.append(["tankard: \(s)"])
+    }
+}
+
+/// 0.8.6 (UI details M4): the plan's compile sentence, whole per count (the
+/// translations used to get the English "has"/"have" in a placeholder).
+public enum PlanText {
+    public static func compiles(_ n: Int) -> String {
+        n == 1 ? String(localized: "1 package has no bottle for this Mac and will compile from source, which can take a long time.")
+               : String(localized: "\(n) packages have no bottle for this Mac and will compile from source, which can take a long time.")
     }
 }

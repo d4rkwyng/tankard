@@ -198,7 +198,7 @@ struct PrefetchTests {
         #expect(r.log.count("upgrade") == 5)
         #expect(s.failedItems.map(\.package.name) == ["sqlite"])
         #expect(s.succeededCount == 4)
-        #expect(s.title == "Upgrade finished with errors")
+        #expect(s.title == "Upgrade finished with problems")
         #expect(s.statusLine == "4 upgraded, 1 failed")
         #expect(s.log.lines.contains { $0.hasPrefix("tankard: brew fetch exited with status 1") })
         // brew's own error, from the fetch and again from sqlite's step.
