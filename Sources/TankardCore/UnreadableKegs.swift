@@ -130,16 +130,52 @@ public extension Package {
 /// 0.8.6 (walkthrough M4): when brew last changed what is installed, by
 /// the folders an install, upgrade or uninstall always touches (a folder's
 /// modification time changes when an entry is added or removed).
+///
+/// 0.8.6 (VM test M2): also one level down in the Caskroom (a cask upgrade
+/// adds its version folder inside Caskroom/<token>, which leaves Caskroom's
+/// own date alone), and the pin folder (`brew pin`/`unpin` touch only
+/// var/homebrew/pinned; unpin removes it once empty, which changes
+/// var/homebrew). One stat per cask, at most `childLimit`; nothing is run.
 public enum HomebrewChanges {
+    /// Above this many entries the children aren't read (the folder's own
+    /// date still counts): the check stays a few milliseconds.
+    public static let childLimit = 3000
+
     public static func paths(client: BrewClient) -> [String] {
-        let prefix = client.installation.prefix
-        return [client.platform.cellar, prefix + "/Caskroom", prefix + "/opt", prefix + "/var/homebrew/linked"]
+        paths(prefix: client.installation.prefix, cellar: client.platform.cellar)
     }
 
-    public static func latest(client: BrewClient) -> Date? { latest(paths: paths(client: client)) }
+    public static func paths(prefix: String, cellar: String) -> [String] {
+        [cellar, prefix + "/Caskroom", prefix + "/opt", prefix + "/var/homebrew/linked",
+         prefix + "/var/homebrew/pinned", prefix + "/var/homebrew"]
+    }
+
+    /// The folders whose entries' dates count too.
+    public static func childPaths(prefix: String) -> [String] { [prefix + "/Caskroom"] }
+
+    public static func latest(client: BrewClient) -> Date? {
+        latest(paths: paths(client: client), childrenOf: childPaths(prefix: client.installation.prefix))
+    }
 
     /// The newest modification time of those that exist; nil when none do.
     public static func latest(paths: [String]) -> Date? {
-        paths.compactMap { (try? FileManager.default.attributesOfItem(atPath: $0))?[.modificationDate] as? Date }.max()
+        paths.compactMap(modified).max()
+    }
+
+    /// `paths`' dates and those of the entries directly inside `childrenOf`.
+    public static func latest(paths: [String], childrenOf parents: [String]) -> Date? {
+        (paths.compactMap(modified) + parents.compactMap { newestChild(of: $0) }).max()
+    }
+
+    /// The newest modification time of the entries directly inside `dir`
+    /// (not following links); nil when it has none, can't be read, or has
+    /// more than `limit`.
+    public static func newestChild(of dir: String, limit: Int = childLimit) -> Date? {
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir), names.count <= limit else { return nil }
+        return names.compactMap { modified(dir + "/" + $0) }.max()
+    }
+
+    static func modified(_ path: String) -> Date? {
+        (try? FileManager.default.attributesOfItem(atPath: path))?[.modificationDate] as? Date
     }
 }
