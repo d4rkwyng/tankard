@@ -63,15 +63,17 @@ extension AppStore {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
         return steps.map { Self.restoreCommand($0, brew: client.installation.brewPath,
                                                base: client.environment(for: detection, readOnly: false),
-                                               askpass: deps.askpassHelper) }
+                                               askpass: deps.askpassHelper, foreign: foreignAskpass(client)) }
     }
 
     nonisolated static func restoreCommand(_ step: RestoreStep, brew: String, base: [String: String],
-                                           askpass: String? = nil) -> QueuedCommand {
+                                           askpass: String? = nil, foreign: ForeignAskpass? = nil) -> QueuedCommand {
         var env = base
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
         // 0.8.3: a cask reinstall or uninstall may run sudo: the password dialog.
-        let password = AdminPassword.environment(helper: askpass, arguments: step.arguments, display: step.display)
+        // 0.8.4: not with brew.env's own helper (ForeignAskpass).
+        let password = AdminPassword.environment(helper: askpass, arguments: step.arguments, display: step.display,
+                                                 foreign: foreign)
         return QueuedCommand(executable: brew, arguments: step.arguments,
                              environment: env.merging(step.environment) { $1 }.merging(password) { $1 },
                              display: step.display)
@@ -83,6 +85,8 @@ extension AppStore {
         let brew = client.installation.brewPath
         let base = client.environment(for: detection, readOnly: false)
         let askpass = deps.askpassHelper
+        let foreign = foreignAskpass(client)
+        let files = deps.brewEnvFiles
         // One sheet row per step; a rollback's steps chain (a failed
         // uninstall skips its link and pin).
         var byID: [String: RestoreStep] = [:]
@@ -96,10 +100,22 @@ extension AppStore {
                                guard let s = byID[p.id] else {
                                    return QueuedCommand(executable: brew, arguments: ["--version"], environment: base, display: "brew --version")
                                }
-                               return Self.restoreCommand(s, brew: brew, base: base, askpass: askpass)
+                               return Self.restoreCommand(s, brew: brew, base: base, askpass: askpass, foreign: foreign)
                            },
                            chainKey: { p in byID[p.id].flatMap { $0.kind == .reinstall ? nil : $0.package } },
-                           precondition: { p in byID[p.id].flatMap { Self.kegCheck($0, client: client) } })
+                           precondition: { p in
+                               guard let s = byID[p.id] else { return nil }
+                               let keg = Self.kegCheck(s, client: client)
+                               guard AdminPassword.mayNeedSudo(s.arguments) else { return keg }
+                               // 0.8.4: brew.env read again right before the step.
+                               let env = Self.restoreCommand(s, brew: brew, base: [:], askpass: askpass, foreign: foreign).environment
+                               return {
+                                   if let refusal = keg?() { return refusal }
+                                   return AdminPassword.refusal(arguments: s.arguments, package: nil, environment: env,
+                                                                foreign: ForeignAskpass.detect(brewEnvFiles: files(client), own: askpass))
+                               }
+                           })
+        upgrade?.foreignAskpass = foreign
     }
 
     /// For a rollback's uninstall: checked by the queue right before it

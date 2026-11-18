@@ -108,8 +108,8 @@ extension AppStore {
         let started = deps.now()
         if let failure = await runUpdate(client) {
             lastBackgroundUpdateFailure = deps.now()
-            let line = "background brew update failed: \(failure.title)"
-                + (failure.detail.isEmpty ? "" : ": " + (failure.detail.split(separator: "\n").last.map(String.init) ?? ""))
+            let line = ProxySettings.maskText("background brew update failed: \(failure.title)"
+                + (failure.detail.isEmpty ? "" : ": " + (failure.detail.split(separator: "\n").last.map(String.init) ?? "")))
             Self.log.notice("\(line, privacy: .public)")
             deps.logURL.map(LogFile.init)?.append(["=== \(ISO8601DateFormatter().string(from: started)) \(line)"])
             return false

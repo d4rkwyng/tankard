@@ -877,7 +877,9 @@ public final class AutoUpdater {
                 logFile?.append(["tankard: skipped \(p.name): \(AutoUpdateSkip.homebrewBusy.text)"])
                 record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.homebrewBusy.text))
             } else {
-                let tail = lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
+                // 0.8.4: brew's last line goes to the Auto-update log and the
+                // notification: never with a URL's user:password.
+                let tail = ProxySettings.maskText(lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? "")
                 var why = SudoDetector.needsSudo(lines) ? String(localized: "needs administrator rights") : String(localized: "brew exited \(Int(code))") + (tail.isEmpty ? "" : ": \(tail)")
                 // 0.8.1: no sheet here to explain it: say so in the log and
                 // the notification, and explain again before the next

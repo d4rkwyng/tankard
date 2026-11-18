@@ -51,7 +51,8 @@ struct UninstallSheet: View {
                 }
                 // 0.8.3: a pkg cask's uninstall runs sudo (pkgutil, its files).
                 if AdminPassword.required(package) {
-                    AdminPasswordNote(names: [package.name], helper: store.deps.askpassHelper != nil, uninstall: true)
+                    AdminPasswordNote(names: [package.name], helper: store.deps.askpassHelper != nil, uninstall: true,
+                                      foreign: store.foreignAskpass())
                 }
             } else {
                 VStack(alignment: .leading, spacing: 4) {

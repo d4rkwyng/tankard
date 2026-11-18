@@ -309,7 +309,7 @@ public final class HistoryRecorder: @unchecked Sendable {
         let entry = HistoryEntry(id: id, startedAt: r.started, duration: now.timeIntervalSince(r.started),
                                  command: r.command.display, arguments: r.command.arguments, outcome: outcome,
                                  exitCode: code, failure: failed ? BrewFailure.classify(lines)?.rawValue : nil,
-                                 outputTail: failed ? Array(lines.suffix(Self.tailLines)) : [])
+                                 outputTail: failed ? lines.suffix(Self.tailLines).map(ProxySettings.maskText) : [])
         guard let sink = sinkLock.withLock({ $0 }) else { return }
         Task { @MainActor in sink(entry) }
     }

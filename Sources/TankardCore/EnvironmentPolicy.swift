@@ -242,8 +242,10 @@ public enum EnvironmentPolicy {
 
     /// Every HOMEBREW_* setting the user made (environment, shell profiles,
     /// brew.env), plus the ones Tankard sets, sorted by name.
+    /// `ownAskpass`: Tankard's own password helper; a brew.env SUDO_ASKPASS
+    /// pointing at it doesn't warn (0.8.4).
     public static func entries(sources: EnvironmentSources, intelbrew: IntelbrewDetection,
-                               readOnly: Bool = false) -> [Entry] {
+                               readOnly: Bool = false, ownAskpass: String? = nil) -> [Entry] {
         var keys = shellKeys(sources)
         for (_, vars) in sources.brewEnvFiles { keys.formUnion(vars.keys) }   // parseBrewEnv's names only
         keys.formUnion(tankardControlled.compactMap { $0.value.value == nil ? nil : $0.key })
@@ -289,7 +291,7 @@ public enum EnvironmentPolicy {
                 if !c.dropped.isEmpty { entry.caskOptions = c }
             }
             if let brewEnv {
-                entry.conflict = brewEnvConflict(key, brewEnv.value, intelbrew: intelbrew)
+                entry.conflict = brewEnvConflict(key, brewEnv.value, intelbrew: intelbrew, ownAskpass: ownAskpass)
             }
             return entry
         }
@@ -346,7 +348,9 @@ public enum EnvironmentPolicy {
         case output
         /// CASK_OPTS with options Tankard would drop.
         case caskOptions
-        /// SUDO_ASKPASS: password prompts go to that helper, not Tankard's dialog.
+        /// SUDO_ASKPASS, unless it is Tankard's own helper: brew would run
+        /// sudo with it, so Tankard offers no password dialog and sudo steps
+        /// go to Terminal (TankardAppModel's ForeignAskpass).
         case askpass
         /// CELLAR: where brew keeps its files.
         case location
@@ -363,10 +367,15 @@ public enum EnvironmentPolicy {
     /// conflict. Tokens (brew.env is a fine place for them) and the names
     /// bin/brew ignores in brew.env never warn.
     public static func brewEnvConflict(_ key: String, _ value: String,
-                                       intelbrew: IntelbrewDetection) -> BrewEnvConflict? {
+                                       intelbrew: IntelbrewDetection, ownAskpass: String? = nil) -> BrewEnvConflict? {
         switch key {
         case "SUDO_ASKPASS":
-            return value.isEmpty ? nil : .askpass
+            if value.isEmpty { return nil }
+            if let own = ownAskpass, !own.isEmpty,
+               URL(fileURLWithPath: value).resolvingSymlinksInPath().path == URL(fileURLWithPath: own).resolvingSymlinksInPath().path {
+                return nil
+            }
+            return .askpass
         case "HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK":
             return brewOn(key, value) ? .dependentsCheck : nil
         case "HOMEBREW_UPGRADE_GREEDY", "HOMEBREW_UPGRADE_GREEDY_CASKS", "HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS":
@@ -412,9 +421,9 @@ public enum EnvironmentPolicy {
 
     /// Every brew.env setting that conflicts, with its file, as brew reads
     /// them (the last file wins; values masked).
-    public static func brewEnvConflicts(sources: EnvironmentSources,
-                                        intelbrew: IntelbrewDetection) -> [Entry] {
-        entries(sources: sources, intelbrew: intelbrew).filter { $0.conflict != nil }
+    public static func brewEnvConflicts(sources: EnvironmentSources, intelbrew: IntelbrewDetection,
+                                        ownAskpass: String? = nil) -> [Entry] {
+        entries(sources: sources, intelbrew: intelbrew, ownAskpass: ownAskpass).filter { $0.conflict != nil }
     }
 }
 

@@ -33,9 +33,33 @@ public enum AdminPassword {
     /// (the Terminal fallback must not pop Tankard's dialog). 0.8.4: the
     /// context is the command as displayed; the dialog derives its words
     /// ("To upgrade windows-app.") from it and shows it under Details.
-    public static func environment(helper: String?, arguments: [String], display: String) -> [String: String] {
+    ///
+    /// 0.8.4: with a `foreign` helper in brew.env, never Tankard's own (brew.env
+    /// would replace it anyway): `HOMEBREW_NO_SUDO=1` instead, so brew fails
+    /// before running `sudo -A` with that helper. See `ForeignAskpass`.
+    public static func environment(helper: String?, arguments: [String], display: String,
+                                   foreign: ForeignAskpass? = nil) -> [String: String] {
         guard mayNeedSudo(arguments) else { return [:] }
+        if foreign != nil { return unattendedEnvironment }
         return Askpass.environment(helper: helper, context: display)
+    }
+
+    /// 0.8.4: why a sudo-capable step must not run from Tankard, checked
+    /// right before it starts (the queue's precondition) with brew.env read
+    /// again then; nil: it may run. Refused when brew.env has a foreign
+    /// helper and brew could still run `sudo -A` with it: the step's
+    /// environment doesn't carry HOMEBREW_NO_SUDO=1 (it was built before the
+    /// helper appeared, or with Tankard's helper), brew.env clears
+    /// HOMEBREW_NO_SUDO itself, or the cask is known to run its installer
+    /// with sudo (it would only fail).
+    public static func refusal(arguments: [String], package: Package?, environment: [String: String],
+                               foreign: ForeignAskpass?) -> String? {
+        guard mayNeedSudo(arguments), let foreign else { return nil }
+        if foreign.unstoppable || environment[Askpass.noSudoKey] != "1" || environment[Askpass.askpassKey] != nil
+            || package.map(required) == true {
+            return foreign.message
+        }
+        return nil
     }
 
     /// Automatic updates never ask: brew is told not to run sudo at all
@@ -49,6 +73,58 @@ public enum AdminPassword {
     }
 }
 
+/// 0.8.4: a `SUDO_ASKPASS` in brew.env that isn't Tankard's own helper.
+///
+/// bin/brew reads `SUDO_ASKPASS=` lines from brew.env and exports them over
+/// the environment Tankard passes, and brew 7.0.14 then runs every sudo as
+/// `/usr/bin/sudo -A -E -- ...` (system_command.rb: `-A` whenever
+/// SUDO_ASKPASS is set), so sudo runs that helper. Checked with a throwaway
+/// XDG brew.env and a helper that only records the call and exits 1:
+/// Tankard's own SUDO_ASKPASS in the environment loses to the brew.env one,
+/// and the helper runs; with HOMEBREW_NO_SUDO=1 in the environment brew
+/// stops with "sudo is disabled by HOMEBREW_NO_SUDO." and the helper never
+/// runs, unless brew.env also sets `HOMEBREW_NO_SUDO=` (empty: bin/brew
+/// drops it), and then the helper runs again.
+///
+/// So Tankard never offers its password dialog for such a step (another
+/// program's dialog would appear where Tankard said its own would), runs it
+/// with HOMEBREW_NO_SUDO=1, and refuses it outright when that can't hold
+/// (`AdminPassword.refusal`). The step's command is shown for Terminal.
+public struct ForeignAskpass: Equatable, Sendable {
+    /// The value as brew.env sets it (bin/brew exports it literally).
+    public var helper: String
+    /// The brew.env file it comes from.
+    public var source: String
+    /// brew.env also sets HOMEBREW_NO_SUDO empty, so Tankard can't stop
+    /// brew from running sudo with the helper.
+    public var unstoppable: Bool
+
+    public init(helper: String, source: String, unstoppable: Bool) {
+        self.helper = helper
+        self.source = source
+        self.unstoppable = unstoppable
+    }
+
+    /// The sheet's and the plan's sentence, above the Terminal command.
+    public var message: String {
+        String(localized: "brew.env sets its own password helper (\(helper)); run this step in Terminal:")
+    }
+
+    /// The brew.env SUDO_ASKPASS brew will use (bin/brew's precedence), when
+    /// it isn't `own` (compared after resolving symlinks); nil when unset,
+    /// empty (bin/brew drops empty values) or Tankard's own helper.
+    public static func detect(brewEnvFiles: [(String, [String: String])], own: String?,
+                              resolve: (String) -> String = { URL(fileURLWithPath: $0).resolvingSymlinksInPath().path })
+        -> ForeignAskpass? {
+        guard let s = EnvironmentSources.brewEnvSetting(Askpass.askpassKey, files: brewEnvFiles), !s.value.isEmpty else {
+            return nil
+        }
+        if let own, !own.isEmpty, resolve(s.value) == resolve(own) { return nil }
+        let noSudo = EnvironmentSources.brewEnvSetting(Askpass.noSudoKey, files: brewEnvFiles)
+        return ForeignAskpass(helper: s.value, source: s.source, unstoppable: noSudo?.value.isEmpty == true)
+    }
+}
+
 /// How a step that ran sudo through the dialog ended, from brew's output.
 public enum SudoOutcome: Equatable, Sendable {
     /// The dialog was cancelled (or timed out): "sudo: no password was provided".
@@ -59,6 +135,9 @@ public enum SudoOutcome: Equatable, Sendable {
     case sudoDisabled
     /// Needed sudo and no dialog could ask (no helper: the old message).
     case noPrompt
+    /// 0.8.4: brew.env sets another password helper (its path): Tankard
+    /// refused the step, or ran it without sudo and it needed sudo.
+    case foreignHelper(String)
 
     /// sudo 1.9's messages (verified on macOS 27 with `sudo -A`: a helper
     /// that exits 1 prints "no password was provided" then "a password is
@@ -81,6 +160,8 @@ public enum SudoOutcome: Equatable, Sendable {
         case .cancelled: return String(localized: "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:")
         case .wrongPassword: return String(localized: "sudo didn't accept the password. To try again, run the step again, or run this in Terminal:")
         case .sudoDisabled, .noPrompt: return String(localized: "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:")
+        case .foreignHelper(let helper):
+            return ForeignAskpass(helper: helper, source: "", unstoppable: false).message
         }
     }
 }

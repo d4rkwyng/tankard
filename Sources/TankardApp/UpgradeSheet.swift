@@ -217,7 +217,8 @@ struct LogView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(lines.enumerated()), id: \.offset) { i, line in
-                        LogLine(text: line, isCurrent: i == lines.count - 1, theme: theme)
+                        // 0.8.4: never a URL's user:password on screen.
+                        LogLine(text: line.contains("@") ? ProxySettings.maskText(line) : line, isCurrent: i == lines.count - 1, theme: theme)
                             .id(offset + i)
                     }
                 }

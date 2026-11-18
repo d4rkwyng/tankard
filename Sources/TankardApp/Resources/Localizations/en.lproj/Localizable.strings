@@ -835,12 +835,12 @@
 "Set by Tankard: it reads brew's output." = "Set by Tankard: it reads brew's output.";
 "Set in brew.env, so Uninstall may also remove other unused dependencies." = "Set in brew.env, so Uninstall may also remove other unused dependencies.";
 "Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "Set in brew.env, so brew uses this mirror; Discover and the tap index don't.";
+"Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal." = "Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal.";
 "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts.";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.";
 "Set in brew.env, so it overrides Intelbrew mode's value." = "Set in brew.env, so it overrides Intelbrew mode's value.";
 "Set in brew.env, so it overrides Tankard's self-updating apps setting." = "Set in brew.env, so it overrides Tankard's self-updating apps setting.";
 "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set.";
-"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "Set in brew.env, so password prompts go to this helper, not Tankard's dialog.";
 "Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "Set in brew.env: Tankard's download progress and Clean Up assume the default folders.";
 "Set in brew.env: it changes brew's output, which Tankard reads." = "Set in brew.env: it changes brew's output, which Tankard reads.";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "Set in brew.env: it moves brew's files from where Tankard looks.";
@@ -1156,6 +1156,7 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew won't uninstall a pinned formula. Unpin it first.";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew won't upgrade it, and Upgrade All leaves it out.";
 "brew's output" = "brew's output";
+"brew.env sets its own password helper (%@); run this step in Terminal:" = "brew.env sets its own password helper (%@); run this step in Terminal:";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env turns off brew's dependents check; automatic updates paused.";
 "cancelled" = "cancelled";
 "cask" = "cask";

@@ -219,7 +219,8 @@ public extension AppStore {
     func openHealth() {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
         let h = HealthStore(client: client, env: client.environment(for: detection),
-                            environment: EnvironmentPolicy.entries(sources: client.sources, intelbrew: detection, readOnly: true))
+                            environment: EnvironmentPolicy.entries(sources: client.sources, intelbrew: detection, readOnly: true,
+                                                                   ownAskpass: deps.askpassHelper))
         health = h
         toolSheet = .health
         Task { await h.load() }

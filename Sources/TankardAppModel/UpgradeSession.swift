@@ -156,6 +156,10 @@ public final class UpgradeSession: Identifiable {
     /// 0.8.3: finds the helper and hands it focus (AskpassFocus). nil: no
     /// watching (tests that don't ask, demo mode).
     @ObservationIgnored public var passwordFocus: AskpassFocus?
+    /// 0.8.4: brew.env's own password helper, when the session started with
+    /// one (ForeignAskpass): sudo-capable steps run without sudo or are
+    /// refused, and the sheet says why with the Terminal command.
+    @ObservationIgnored public var foreignAskpass: ForeignAskpass?
     @ObservationIgnored private var passwordTask: Task<Void, Never>?
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
@@ -401,6 +405,9 @@ public final class UpgradeSession: Identifiable {
             log.feed(header + "\n")
             logFile?.append(["", "=== \(ISO8601DateFormatter().string(from: Date())) \(header)"])
             // 0.8.3: say up front that a password may be asked for, and how.
+            if let f = foreignAskpass, AdminPassword.mayNeedSudo(items[i].command.arguments) {
+                note("brew.env sets its own password helper (\(f.helper), in \(f.source)). Tankard won't use its password dialog, and tells brew not to run sudo for this step (HOMEBREW_NO_SUDO).")
+            }
             if items[i].command.environment[Askpass.askpassKey] != nil {
                 note(AdminPassword.required(items[i].package)
                      ? "brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS)."
@@ -423,6 +430,7 @@ public final class UpgradeSession: Identifiable {
                 if SudoDetector.needsSudo(commandLines) {
                     sudoCommand = items[i].command.display
                     sudoOutcome = SudoOutcome.classify(commandLines) ?? .noPrompt
+                    if let f = foreignAskpass, sudoOutcome == .sudoDisabled { sudoOutcome = .foreignHelper(f.helper) }
                     switch sudoOutcome {
                     case .cancelled: note("The password dialog was cancelled; sudo didn't run.")
                     case .wrongPassword: note("sudo didn't accept the password.")
@@ -469,6 +477,11 @@ public final class UpgradeSession: Identifiable {
         case .failed(let message):
             flush()
             items[i].state = .failed(-1)
+            // 0.8.4: refused before it started: brew.env's own password helper.
+            if let f = foreignAskpass ?? Self.foreignHelper(in: message), message == f.message {
+                sudoCommand = items[i].command.display
+                sudoOutcome = .foreignHelper(f.helper)
+            }
             note("Couldn't run brew: \(message)")
             noteChainSkipped(after: i)
         }
@@ -614,6 +627,17 @@ public final class UpgradeSession: Identifiable {
         let rest = log.finish()
         commandLines += rest
         logFile?.append(rest)
+    }
+
+    /// The helper named in a refusal (a session that started before brew.env
+    /// got it), or nil.
+    nonisolated static func foreignHelper(in message: String) -> ForeignAskpass? {
+        let probe = ForeignAskpass(helper: "\u{1}", source: "", unstoppable: false).message
+        guard let mark = probe.range(of: "\u{1}") else { return nil }
+        let head = String(probe[..<mark.lowerBound]), tail = String(probe[mark.upperBound...])
+        guard message.hasPrefix(head), message.hasSuffix(tail), message.count > head.count + tail.count else { return nil }
+        let helper = String(message.dropFirst(head.count).dropLast(tail.count))
+        return ForeignAskpass(helper: helper, source: "", unstoppable: false)
     }
 
     private func note(_ s: String) {

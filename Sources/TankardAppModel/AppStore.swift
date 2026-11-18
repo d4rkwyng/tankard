@@ -112,6 +112,11 @@ public final class AppStore {
         public var askpassFocus: AskpassFocus?
         /// Screenshots only: act as if this cask installed the running app.
         public var selfCaskOverride: Package?
+        /// 0.8.4: the brew.env files as brew reads them now (the live app
+        /// re-reads them from disk; default: the client's, read at launch).
+        /// Checked for a foreign SUDO_ASKPASS (ForeignAskpass) when a sheet
+        /// starts and again right before each sudo-capable step.
+        public var brewEnvFiles: @Sendable (BrewClient) -> [(String, [String: String])] = { $0.sources.brewEnvFiles }
         /// 0.8.3: whether brew's Caskroom has a tankard cask (path given).
         public var selfCaskroomExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
 
@@ -160,6 +165,7 @@ public final class AppStore {
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             d.askpassHelper = AdminPassword.liveHelper()
+            d.brewEnvFiles = { EnvironmentSources.load(prefix: $0.installation.prefix, process: $0.sources.process).brewEnvFiles }
             d.updateFeed = .live()
             d.lockWait = .live
             let times = BuildTimeSource.live()
@@ -961,11 +967,13 @@ public final class AppStore {
         // where `brew update` runs.
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
         let brew = client.installation.brewPath
+        // 0.8.4: a password helper in brew.env that isn't Tankard's: no dialog.
+        let foreign = foreignAskpass(client)
         upgrade = UpgradeSession(
             packages: targets, intelbrewMode: detection.detected, action: action, queue: queue,
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
-                            askpass = deps.askpassHelper] p in
+                            askpass = deps.askpassHelper, foreign] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
@@ -976,7 +984,8 @@ public final class AppStore {
                 let display = BrewCommands.display(args, environment: extra)
                 // 0.8.3: a cask change may run sudo: Tankard's password dialog
                 // (not in the command shown or copied).
-                let password = AdminPassword.environment(helper: askpass, arguments: args, display: display)
+                let password = AdminPassword.environment(helper: askpass, arguments: args, display: display,
+                                                         foreign: foreign)
                 return QueuedCommand(executable: brew, arguments: args,
                                      environment: env.merging(extra) { $1 }.merging(password) { $1 },
                                      display: display)
@@ -984,6 +993,7 @@ public final class AppStore {
             logURL: deps.logURL,
             // 0.8: an uninstall with its dependencies: if one step fails, the rest are skipped.
             chainKey: action == .uninstall && targets.count > 1 ? { _ in "uninstall" } : nil,
+            precondition: foreignAskpassPrecondition(client, action: action, foreignAtStart: foreign),
             skipCheck: skipCheck,
             downloads: deps.downloadMonitor?(client, env),
             // 0.8.3: several packages: one `brew fetch` downloads them all first, in parallel.
@@ -997,7 +1007,33 @@ public final class AppStore {
             })
         upgrade?.isRetry = isRetry
         upgrade?.passwordFocus = deps.askpassFocus
+        upgrade?.foreignAskpass = foreign
         showUpgradeSheet = true
+    }
+
+    /// 0.8.4: brew.env's SUDO_ASKPASS, when it isn't Tankard's own helper
+    /// (read from disk now in the app). nil without a client.
+    public func foreignAskpass(_ client: BrewClient? = nil) -> ForeignAskpass? {
+        guard let client = client ?? (try? resolvedClient()) else { return nil }
+        return ForeignAskpass.detect(brewEnvFiles: deps.brewEnvFiles(client), own: deps.askpassHelper)
+    }
+
+    /// 0.8.4: each sudo-capable step re-reads brew.env right before it
+    /// starts and is refused when a foreign helper could get the password
+    /// (AdminPassword.refusal); the sheet then shows the Terminal command.
+    nonisolated func foreignAskpassPrecondition(_ client: BrewClient, action: SessionAction, foreignAtStart: ForeignAskpass?)
+        -> (Package) -> (@Sendable () -> String?)? {
+        let files = deps.brewEnvFiles, own = deps.askpassHelper
+        return { p in
+            let args = BrewCommands.arguments(action, for: p)
+            guard AdminPassword.mayNeedSudo(args) else { return nil }
+            // What the step's command carries (makeCommand builds it the same way).
+            let env = AdminPassword.environment(helper: own, arguments: args, display: "", foreign: foreignAtStart)
+            return {
+                let foreign = ForeignAskpass.detect(brewEnvFiles: files(client), own: own)
+                return AdminPassword.refusal(arguments: args, package: p, environment: env, foreign: foreign)
+            }
+        }
     }
 
     /// 0.8: Uninstall removes only the package, as its confirmation says

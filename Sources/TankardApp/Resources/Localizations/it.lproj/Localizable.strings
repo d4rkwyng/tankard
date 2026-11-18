@@ -835,12 +835,12 @@
 "Set by Tankard: it reads brew's output." = "Impostata da Tankard: legge l'output di brew.";
 "Set in brew.env, so Uninstall may also remove other unused dependencies." = "Impostato in brew.env: Disinstalla può rimuovere anche altre dipendenze inutilizzate.";
 "Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "Impostato in brew.env: brew usa questo mirror; Scopri e l'indice dei tap no.";
+"Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal." = "Impostato in brew.env: brew invierebbe le richieste di password a questo helper. Tankard non mostra la finestra della password e i passaggi che richiedono sudo vanno eseguiti nel Terminale.";
 "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "Impostato in brew.env, quindi vale anche per il brew di Tankard: cambia da dove brew prende il codice o di cosa si fida.";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "Impostata in brew.env, quindi vale anche per le installazioni da Tankard; i controlli di posizione di Adotta app presuppongono /Applications.";
 "Set in brew.env, so it overrides Intelbrew mode's value." = "Impostato in brew.env: sostituisce il valore della modalità Intelbrew.";
 "Set in brew.env, so it overrides Tankard's self-updating apps setting." = "Impostato in brew.env: sostituisce l'impostazione di Tankard per le app che si aggiornano da sole.";
 "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "Impostato in brew.env, quindi arriva al brew di Tankard: gli aggiornamenti automatici restano in pausa finché è impostato.";
-"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "Impostato in brew.env: le richieste di password vanno a questo helper, non alla finestra di Tankard.";
 "Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "Impostato in brew.env: l'avanzamento dei download e Pulisci di Tankard presuppongono le cartelle predefinite.";
 "Set in brew.env: it changes brew's output, which Tankard reads." = "Impostato in brew.env: cambia l'output di brew, che Tankard legge.";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "Impostato in brew.env: sposta i file di brew da dove Tankard li cerca.";
@@ -1156,6 +1156,7 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew non disinstalla una formula bloccata. Sbloccala prima.";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew non lo aggiorna, e Aggiorna tutto lo esclude.";
 "brew's output" = "output di brew";
+"brew.env sets its own password helper (%@); run this step in Terminal:" = "brew.env imposta un proprio helper per la password (%@); esegui questo passaggio nel Terminale:";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env disattiva il controllo dei dipendenti di brew; aggiornamenti automatici in pausa.";
 "cancelled" = "annullato";
 "cask" = "cask";
