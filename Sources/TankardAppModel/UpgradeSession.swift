@@ -186,6 +186,17 @@ public final class UpgradeSession: Identifiable {
     /// 0.8.4: the run is over and what is still installed is being read
     /// again; the sheet doesn't say "complete" before that has answered.
     public private(set) var checkingInstalled = false
+    /// 0.8.6 (VM test M1): reads the installed version of each package
+    /// (id → version) after an upgrade run with failed steps; nil: the
+    /// read failed. brew exits 1 for the whole command when a later part
+    /// fails (a dependent it upgrades next, refused over a pinned
+    /// dependency), after it has upgraded the package asked for.
+    @ObservationIgnored private let upgradeCheck: (@Sendable ([Package]) async -> [String: String]?)?
+    @ObservationIgnored private var upgradeChecked = false
+    /// The read is running: the run isn't finished until it answers.
+    public private(set) var checkingUpgraded = false
+    /// Steps brew exited non-zero for although the package was upgraded.
+    public private(set) var upgradedAnyway: Set<UUID> = []
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -195,8 +206,10 @@ public final class UpgradeSession: Identifiable {
          downloads: DownloadMonitor? = nil,
          prefetch: [PrefetchStep] = [],
          lockWait: BrewLockWait? = nil,
+         upgradeCheck: (@Sendable ([Package]) async -> [String: String]?)? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
+        self.upgradeCheck = upgradeCheck
         self.prefetch = prefetch
         let prefetchIDs = prefetch.map { _ in UUID() }
         self.prefetchIDs = prefetchIDs
@@ -451,6 +464,7 @@ public final class UpgradeSession: Identifiable {
             return String(localized: "Downloading \(d.name ?? c.package.name)…") + " " + d.detail
         }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
+        if checkingUpgraded { return String(localized: "Checking what brew upgraded…") }
         if isFinished {
             // 0.8.4: an uninstall counts packages (all of its steps done), not steps.
             let succeeded = action == .uninstall
@@ -651,6 +665,43 @@ public final class UpgradeSession: Identifiable {
              : "\(name) \(versions.joined(separator: ", ")) still installed: the uninstall didn't remove every version.")
     }
 
+    /// 0.8.6 (VM test M1): the steps brew exited non-zero for (it ran),
+    /// read again before the run counts as finished. true: the read started.
+    private func startUpgradeCheck() -> Bool {
+        guard action == .upgrade, !upgradeChecked, !checkingUpgraded, let check = upgradeCheck else { return false }
+        let failed = items.filter { if case .failed(let code) = $0.state { code > 0 } else { false } }
+        guard !failed.isEmpty else { return false }
+        checkingUpgraded = true
+        let packages = failed.map(\.package)
+        Task { @MainActor [weak self] in
+            let found = await check(packages)
+            self?.finishUpgradeCheck(found)
+        }
+        return true
+    }
+
+    private func finishUpgradeCheck(_ found: [String: String]?) {
+        upgradeChecked = true
+        checkingUpgraded = false
+        if let found {
+            for i in items.indices {
+                guard case .failed(let code) = items[i].state, code > 0,
+                      let now = found[items[i].package.id], !now.isEmpty else { continue }
+                let before = items[i].package.installedVersion
+                guard now != before, before.isEmpty || PkgVersion(parsing: now) > PkgVersion(parsing: before) else { continue }
+                items[i].state = .done
+                upgradedAnyway.insert(items[i].id)
+                failureKindByItem[items[i].id] = nil
+                appManagementBlocked.removeAll { $0 == items[i].id }
+                note("\(items[i].package.name) is now \(now): brew upgraded it, then exited with status \(code) over another package (the log above says which).")
+            }
+            failureKinds = items.compactMap { failureKindByItem[$0.id] }
+        } else {
+            note("Couldn't read the installed versions again; the results above are brew's exit codes.")
+        }
+        finishIfDone()
+    }
+
     /// Called from onFinish: the sheet waits for `finishInstalledCheck`.
     func beginInstalledCheck() { checkingInstalled = true }
 
@@ -668,6 +719,7 @@ public final class UpgradeSession: Identifiable {
 
     private func finishIfDone() {
         if !isFinished && items.allSatisfy({ $0.state.isTerminal }) && fetchStates.values.allSatisfy(\.isTerminal) {
+            if startUpgradeCheck() { return }
             isFinished = true
             logFile?.close()
             let done = onFinish

@@ -336,6 +336,8 @@ public final class AppStore {
     @ObservationIgnored var pendingQuiet: [UUID: ScheduledQuietReason] = [:]
     /// 0.8.5: History entries to mark as builds from source once they arrive.
     @ObservationIgnored var pendingBuilt: Set<UUID> = []
+    /// 0.8.6 (VM test M1): History entries to mark as upgraded once they arrive.
+    @ObservationIgnored var pendingUpgradedAnyway: Set<UUID> = []
     /// 0.8.6 (L7): the restore point saved before each upgrade session.
     @ObservationIgnored var sessionRestorePoints: [UUID: RestorePoint.ID] = [:]
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
@@ -888,6 +890,23 @@ public final class AppStore {
         }
     }
 
+    /// 0.8.6 (VM test M1): after an upgrade run with failed steps, the
+    /// installed version of each of those packages (a fresh `brew info
+    /// --json=v2 --installed`), so a step brew upgraded before it failed
+    /// over another package counts as upgraded. nil: the read failed.
+    nonisolated func upgradedVersionsCheck(_ client: BrewClient, env: [String: String], intelbrewMode: Bool)
+        -> @Sendable ([Package]) async -> [String: String]? {
+        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: intelbrewMode,
+                                          folderTime: client.caskFolderTime)
+        return { packages in
+            guard let info = try? await client.installedInfo(env: env) else { return nil }
+            let ids = Set(packages.map(\.id))
+            var found: [String: String] = [:]
+            for p in classifier.classify(info: info) where ids.contains(p.id) { found[p.id] = p.installedVersion }
+            return found
+        }
+    }
+
     /// 0.8: reads the installed packages again (`brew info --json=v2
     /// --installed`) and re-checks one orphan against them. A failed read
     /// keeps the dependency.
@@ -1301,6 +1320,7 @@ public final class AppStore {
                               display: BrewCommands.display(args, environment: concurrency))
             },
             lockWait: deps.lockWait,
+            upgradeCheck: action == .upgrade ? upgradedVersionsCheck(client, env: env, intelbrewMode: detection.detected) : nil,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -1384,6 +1404,8 @@ public final class AppStore {
         if session.action == .tap || session.action == .untap, let d = discover {
             Task { await d.reload() }
         }
+        // 0.8.6 (VM test M1): steps that upgraded although brew exited non-zero.
+        for id in session.upgradedAnyway where !history.markUpgradedAnyway(id) { pendingUpgradedAnyway.insert(id) }
         runJournalSessionFinished(session)
         recordBuilds(session)
         // 0.8.6 (walkthrough L7): a run that upgraded nothing (failed,

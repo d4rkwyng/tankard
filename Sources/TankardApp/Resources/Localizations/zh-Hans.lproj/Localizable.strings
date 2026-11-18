@@ -303,6 +303,7 @@
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
 "Checking for updates…" = "正在检查更新…";
+"Checking what brew upgraded…" = "正在检查 brew 升级了哪些软件包…";
 "Checking what can be removed…" = "正在检查可以移除的内容…";
 "Checking what is still installed…" = "正在检查仍已安装的内容…";
 "Checking…" = "正在检查…";
@@ -1395,6 +1396,7 @@
 "untapped" = "已取消 tap";
 "updated %@" = "已更新 %@";
 "upgraded" = "已升级";
+"upgraded (brew then exited %d over another package)" = "已升级（随后 brew 因另一个软件包以状态 %d 退出）";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "升级 %@ 需要从源码重新构建 %@；请手动升级";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "等待了另一个 Homebrew 命令";

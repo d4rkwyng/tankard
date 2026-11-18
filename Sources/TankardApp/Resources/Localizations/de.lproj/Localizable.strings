@@ -303,6 +303,7 @@
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
 "Checking for updates…" = "Suche Updates…";
+"Checking what brew upgraded…" = "Prüfe, was brew aktualisiert hat …";
 "Checking what can be removed…" = "Es wird geprüft, was entfernt werden kann…";
 "Checking what is still installed…" = "Prüfe, was noch installiert ist…";
 "Checking…" = "Wird geprüft…";
@@ -1395,6 +1396,7 @@
 "untapped" = "Tap entfernt";
 "updated %@" = "aktualisiert %@";
 "upgraded" = "upgegradet";
+"upgraded (brew then exited %d over another package)" = "aktualisiert (brew endete danach mit Status %d wegen eines anderen Pakets)";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@ zu upgraden würde einen Neubau von %@ aus dem Quellcode erfordern; manuell upgraden";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "auf anderen Homebrew-Befehl gewartet";

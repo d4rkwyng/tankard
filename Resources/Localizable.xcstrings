@@ -16097,6 +16097,58 @@
         }
       }
     },
+    "Checking what brew upgraded…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe, was brew aktualisiert hat …"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification de ce que brew a mis à jour…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobando qué ha actualizado brew…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewがアップグレードしたものを確認中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在检查 brew 升级了哪些软件包…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificando o que o brew atualizou…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifica di cosa ha aggiornato brew…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 업그레이드한 항목 확인 중…"
+          }
+        }
+      }
+    },
     "Checking what can be removed…": {
       "localizations": {
         "de": {
@@ -72877,6 +72929,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "업그레이드됨"
+          }
+        }
+      }
+    },
+    "upgraded (brew then exited %d over another package)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aktualisiert (brew endete danach mit Status %d wegen eines anderen Pakets)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mis à jour (brew s’est ensuite arrêté avec le code %d à cause d’un autre paquet)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "actualizado (brew terminó después con el código %d por otro paquete)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレード済み（その後、別のパッケージが原因でbrewが終了コード%dで終了）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已升级（随后 brew 因另一个软件包以状态 %d 退出）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "atualizado (depois o brew saiu com status %d por causa de outro pacote)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aggiornato (poi brew è uscito con stato %d per un altro pacchetto)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드됨 (이후 다른 패키지 때문에 brew가 상태 %d(으)로 종료됨)"
           }
         }
       }
