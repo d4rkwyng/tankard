@@ -961,7 +961,7 @@ public final class AppStore {
     /// ones already skipped, so the open-apps note and the password lock
     /// and order show first; it no longer starts at once.
     public func startUpgradeSkippingCompiles() {
-        guard !progressPanelHoldsActivity else { return }
+        guard !progressPanelBlocksNewRun() else { return }
         requestUpgradeInActivity(nil, skipCompiling: true)
     }
 
