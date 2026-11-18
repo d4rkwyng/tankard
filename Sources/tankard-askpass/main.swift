@@ -148,7 +148,7 @@ let panelWidth: CGFloat = 260
 let inset: CGFloat = 20
 let width = panelWidth - 2 * inset
 
-func centeredLabel(_ text: String, font: NSFont) -> NSTextField {
+@MainActor func centeredLabel(_ text: String, font: NSFont) -> NSTextField {
     let l = NSTextField(wrappingLabelWithString: text)
     l.font = font
     l.alignment = .center
