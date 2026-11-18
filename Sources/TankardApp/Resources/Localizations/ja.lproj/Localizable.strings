@@ -56,6 +56,7 @@
 "%@. Due now: runs when the Mac is on AC power and idle" = "%@。期限到来: MacがAC電源に接続され、アイドル状態のときに実行されます";
 "%@. Next run: %@" = "%@。次回の実行: %@";
 "%@: %@ %@." = "%@: %@ %@。";
+"%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: 別のアプリの可能性があるため、候補にしません。cask %@ のアプリIDは %@ ですが、このアプリのIDは %@ です。";
 "%@: upgrades will leave it out" = "%@: アップグレードの対象外になります";
 "%lld %@" = "%lld %@";
 "%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ はこのMac用のbottleがなく、ソースからコンパイルされます。時間がかかる場合があります。";
@@ -590,7 +591,6 @@
 "Let the current package finish, then skip the rest" = "現在のパッケージの完了を待ち、残りをスキップする";
 "License" = "ライセンス";
 "Light" = "ライト";
-"Likely match" = "一致の可能性大";
 "Lists what a Brewfile needs that this Mac doesn't have" = "Brewfileに必要で、このMacにないものを一覧表示します";
 "Loading Homebrew's catalog…" = "Homebrewのカタログを読み込み中…";
 "Loading formulae.brew.sh…" = "formulae.brew.sh を読み込み中…";
@@ -606,6 +606,9 @@
 "MB" = "MB";
 "Made by d4rkwyng" = "作者: d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "caskのpkgアーティファクトから判定しています。他のcaskもパスワードを要求する場合があります。";
+"Matched by app ID" = "アプリIDで一致";
+"Matched by name and website" = "名前とWebサイトで一致";
+"Matched by name only — check before adopting" = "名前のみで一致 — 引き継ぐ前に確認してください";
 "Medium" = "中";
 "Minor and patch only" = "マイナーとパッチのみ";
 "Missing dependencies" = "不足している依存関係";
@@ -613,7 +616,6 @@
 "More filters" = "その他のフィルタ";
 "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "その他のフィルタ: 脆弱性あり、ピン留め(brewがアップグレードしないパッケージ)、自分でインストール(依存関係ではなく自分でインストールしたパッケージ)、メモあり、非推奨";
 "Name" = "名前";
-"Name only" = "名前のみ";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "名前のみ: %@。一致しているのは名前だけなので、別のアプリかもしれません。その場合、brew upgrade はそれを置き換え、Cask をアンインストールすると削除されます。";
 "Needs update first" = "先に更新が必要";
 "Needs your password to upgrade" = "アップグレードにパスワードが必要です";
@@ -725,7 +727,6 @@
 "Online" = "オンライン";
 "Only available in Tankard.app." = "Tankard.appでのみ利用できます。";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "このバージョンがどうしても必要な場合のみ。Homebrewのパッケージ履歴をすべてダウンロードし、以後は古いバージョンを自分で管理することになります。";
-"Only the app's name matches. It may be a different app with the same name: check before adopting." = "アプリ名だけが一致しています。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "%@ が必要としていたものだけです。すでに使われていなかった依存関係はインストールされたままです。";
 "Open Homepage" = "ホームページを開く";
 "Open Notification Settings" = "通知設定を開く";
@@ -995,7 +996,6 @@
 "Stopping %@…" = "%@ を停止中…";
 "Stops by itself after 60 seconds." = "60秒後に自動的に停止します。";
 "Sunday" = "日曜日";
-"Sure match" = "確実に一致";
 "Swaps source build for bottle" = "ソースビルドをbottleに置き換えます";
 "Swaps source builds for Intelbrew bottles" = "ソースビルドをIntelbrewのbottleに置き換えます";
 "Swaps source builds for bottles" = "ソースビルドをbottleに置き換えます";
@@ -1056,9 +1056,11 @@
 "The Installed list, filtered to this tap (tap:%@)" = "このtapで絞り込んだインストール済みリスト (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URLは https://、http://、ssh://、git:// または file://、もしくは git@host:path 形式で、スペースを含められません。";
 "The app has no version brew can compare." = "このアプリには brew が比較できるバージョンがありません。";
-"The app's bundle id is one the cask names." = "アプリのバンドル ID が cask に記載されたものと一致します。";
+"The app's ID (its bundle identifier) is one the cask names." = "アプリのID(バンドル識別子)が cask に記載されたものと同じです。";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "この cask は常に最新バージョンをダウンロードするため、brew はダウンロード後に比較します。違いがあればアプリには手を付けません。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "この cask は %@ にインストールします。brew はその場所にあるアプリだけを引き継ぎます。";
+"The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "cask にアプリIDの記載がないため、アプリの名前しか比べられませんでした。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。";
+"The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask にアプリIDの記載はありません。アプリの名前が一致し、そのIDが cask のWebサイトの開発元を示しています。";
 "The cask says this app updates itself (auto_updates)." = "cask によると、このアプリは自己更新します（auto_updates）。";
 "The disk is full" = "ディスクがいっぱいです";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew がダウンロードしたファイルが想定と異なります。ダウンロードの中断や、前回の brew update 以降のパッケージ変更が主な原因です。再読み込み(brew update を実行)してから再試行してください。";
@@ -1080,7 +1082,6 @@
 "The upgrade finished with problems" = "アップグレードは問題ありで完了しました";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "アップグレードのウインドウが開いています。先に閉じるか、「Tankard で表示」をクリックしてください。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "この変数は先に解除されるため、このbrew updateでフォークが元に戻ることはありません。";
-"The vendor matches, but the cask doesn't name this exact bundle id." = "開発元は一致しますが、cask にはこのバンドル ID が記載されていません。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "それらのコマンドとライブラリはHomebrewのprefix内にありません。通常はインストールまたはアップグレードが中断されたことが原因です。";
 "There are broken links in Homebrew's folders" = "Homebrewのフォルダに壊れたリンクがあります";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "ダウンロードや展開に使える容量がありません。容量を空けて（クリーンアップが役立ちます）から再試行してください。";
@@ -1327,6 +1328,7 @@
 "no bottle" = "bottleなし";
 "no bottle, would compile from source" = "bottleなし、ソースからコンパイルされます";
 "no longer meets the criteria for casks" = "caskの基準を満たさなくなりました";
+"none" = "なし";
 "none (API mode)" = "なし（APIモード）";
 "none for this Mac" = "このMac向けはなし";
 "not installed" = "未インストール";

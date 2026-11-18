@@ -56,6 +56,7 @@
 "%@. Due now: runs when the Mac is on AC power and idle" = "%@. In scadenza: viene eseguito quando il Mac è alimentato e inattivo";
 "%@. Next run: %@" = "%@. Prossima esecuzione: %@";
 "%@: %@ %@." = "%@: %@ %@.";
+"%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: forse un’altra app, non proposta. Il cask %@ è per l’ID app %@; l’ID di questa app è %@.";
 "%@: upgrades will leave it out" = "%@: gli aggiornamenti lo escluderanno";
 "%lld %@" = "%lld %@";
 "%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ nessuna bottle per questo Mac e verranno compilati dai sorgenti, il che può richiedere molto tempo.";
@@ -590,7 +591,6 @@
 "Let the current package finish, then skip the rest" = "Lascia finire il pacchetto corrente, poi salta il resto";
 "License" = "Licenza";
 "Light" = "Chiaro";
-"Likely match" = "Probabile";
 "Lists what a Brewfile needs that this Mac doesn't have" = "Elenca ciò che serve a un Brewfile e che questo Mac non ha";
 "Loading Homebrew's catalog…" = "Caricamento del catalogo di Homebrew…";
 "Loading formulae.brew.sh…" = "Caricamento di formulae.brew.sh…";
@@ -606,6 +606,9 @@
 "MB" = "MB";
 "Made by d4rkwyng" = "Realizzato da d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Contrassegnato dall'artefatto pkg del cask. Altri cask potrebbero comunque chiedere una password.";
+"Matched by app ID" = "Trovata per ID app";
+"Matched by name and website" = "Trovata per nome e sito web";
+"Matched by name only — check before adopting" = "Trovata solo per nome — controlla prima di adottare";
 "Medium" = "Media";
 "Minor and patch only" = "Solo minori e patch";
 "Missing dependencies" = "Dipendenze mancanti";
@@ -613,7 +616,6 @@
 "More filters" = "Altri filtri";
 "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "Altri filtri: Vulnerabili, Bloccati (pacchetti che brew non aggiorna), Installati da te (pacchetti che hai installato tu, non quelli arrivati come dipendenze), Con note, Obsoleti";
 "Name" = "Nome";
-"Name only" = "Solo nome";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Solo nome: %@. Corrisponde solo il nome, quindi potrebbe essere un'altra app; in tal caso brew upgrade la sostituirebbe e disinstallare il cask la eliminerebbe.";
 "Needs update first" = "Da aggiornare";
 "Needs your password to upgrade" = "Serve la password per aggiornare";
@@ -725,7 +727,6 @@
 "Online" = "Online";
 "Only available in Tankard.app." = "Disponibile solo in Tankard.app.";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "Solo se ti serve davvero questa versione. Scarica l'intera cronologia dei pacchetti di Homebrew e da quel momento la vecchia versione è a tuo carico.";
-"Only the app's name matches. It may be a different app with the same name: check before adopting." = "Corrisponde solo il nome dell'app. Potrebbe essere un'altra app con lo stesso nome: controlla prima di adottare.";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "Solo ciò che serviva a %@. Le dipendenze già inutilizzate restano installate.";
 "Open Homepage" = "Apri la home page";
 "Open Notification Settings" = "Apri impostazioni notifiche";
@@ -995,7 +996,6 @@
 "Stopping %@…" = "Arresto di %@…";
 "Stops by itself after 60 seconds." = "Si arresta da solo dopo 60 secondi.";
 "Sunday" = "Domenica";
-"Sure match" = "Sicura";
 "Swaps source build for bottle" = "Sostituisce la compilazione da sorgente con la bottle";
 "Swaps source builds for Intelbrew bottles" = "Sostituisce le compilazioni da sorgente con le bottle di Intelbrew";
 "Swaps source builds for bottles" = "Sostituisce le compilazioni da sorgente con le bottle";
@@ -1056,9 +1056,11 @@
 "The Installed list, filtered to this tap (tap:%@)" = "L'elenco Installati, filtrato per questo tap (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "L'URL deve essere https://, http://, ssh://, git:// o file://, oppure git@host:path, senza spazi.";
 "The app has no version brew can compare." = "L'app non ha una versione che brew possa confrontare.";
-"The app's bundle id is one the cask names." = "Il bundle id dell'app è uno di quelli indicati dal cask.";
+"The app's ID (its bundle identifier) is one the cask names." = "L’ID dell’app (il suo identificatore di bundle) è uno di quelli indicati dal cask.";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "Il cask scarica sempre la versione più recente, quindi brew confronta dopo il download; se sono diverse, non tocca l'app.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "Il cask installa in %@; brew adotta solo un'app che si trova esattamente lì.";
+"The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "Il cask non indica alcun ID app, quindi si è potuto confrontare solo il nome. Potrebbe essere un’altra app con lo stesso nome: controlla prima di adottare.";
+"The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "Il cask non indica alcun ID app. Il nome dell’app corrisponde e il suo ID indica lo sviluppatore del sito web del cask.";
 "The cask says this app updates itself (auto_updates)." = "Il cask indica che questa app si aggiorna da sola (auto_updates).";
 "The disk is full" = "Il disco è pieno";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "Il file scaricato da brew non è quello atteso: spesso un download interrotto, o un pacchetto cambiato dall'ultimo brew update. Aggiorna l'elenco (esegue brew update), poi riprova.";
@@ -1080,7 +1082,6 @@
 "The upgrade finished with problems" = "L'aggiornamento è terminato con problemi";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "La finestra di aggiornamento è aperta. Chiudila prima, oppure fai clic su Mostra in Tankard.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Le variabili vengono prima rimosse, così questo brew update non rimette il fork.";
-"The vendor matches, but the cask doesn't name this exact bundle id." = "Lo sviluppatore corrisponde, ma il cask non indica questo esatto bundle id.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "I loro comandi e le loro librerie non sono nel prefisso di Homebrew. Di solito un'installazione o un aggiornamento è stato interrotto.";
 "There are broken links in Homebrew's folders" = "Ci sono collegamenti interrotti nelle cartelle di Homebrew";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "Non c'è spazio per scaricare o decomprimere. Libera dello spazio (Pulisci aiuta), poi riprova.";
@@ -1327,6 +1328,7 @@
 "no bottle" = "nessuna bottle";
 "no bottle, would compile from source" = "nessuna bottle, verrebbe compilato da sorgente";
 "no longer meets the criteria for casks" = "non soddisfa più i criteri per i cask";
+"none" = "nessuno";
 "none (API mode)" = "nessuno (modalità API)";
 "none for this Mac" = "nessuno per questo Mac";
 "not installed" = "non installato";

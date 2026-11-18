@@ -886,9 +886,18 @@ brew's variable for its `--no-quit` switch. The per-app choice is kept per cask 
 included) and forgotten when the cask is uninstalled through Tankard.
 
 **Adopt Apps (0.8).** Scans /Applications (and one folder below it) and ~/Applications,
-and matches against formulae.brew.sh's `cask.json` (Discover's cached copy). Sure match:
-the bundle id is one the cask names; likely: same vendor. For a cask whose app updates
-itself, only a sure match is ticked. For Needs update first with a sure match, the
+and matches against formulae.brew.sh's `cask.json` (Discover's cached copy). 0.8.6: a
+cask found by name, target path or suite folder that names app IDs (bundle-id-looking
+strings in `uninstall`/`zap`: quit, signal, launchctl, pkgutil, and path parts such as
+Containers/<id>, Group Containers/group.<id>, Preferences/<id>.plist) is a match only
+when one of them is the app's CFBundleIdentifier, or (for IDs of three labels or more)
+that ID with a prefix or suffix label (group.<id>, <TEAMID>.<id>, <id>.helper);
+otherwise it is left out (`AdoptRow.rejected`, shown under No cask). A same-vendor
+prefix no longer counts (copilot-money's Copilot.app is com.copilot.production; another
+Copilot.app is not it). "Matched by app ID" (high): the cask names the app's ID. "By
+name and website" (medium): the cask names no IDs and a label of the app's ID is the
+vendor of its homepage or URL. "By name only" (low): nothing else; never ticked by
+default. For a cask whose app updates itself, only an app-ID match is ticked. For Needs update first with a sure match, the
 `brew install --cask --force` command is shown to copy; Tankard never runs it. brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not
 available with `HOMEBREW_NO_INSTALL_FROM_API` set.

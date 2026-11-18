@@ -332,18 +332,25 @@ public struct AdoptRow: Sendable, Equatable, Identifiable {
     /// Per candidate (same order): confidence and verdict.
     public var confidence: [String: AdoptConfidence]
     public var verdicts: [String: AdoptVerdict]
+    /// 0.8.6: casks found by the app's name (or folder) that name app IDs,
+    /// none of them this app's: possibly a different app with the same
+    /// name, so not offered (copilot-money's Copilot.app vs another
+    /// Copilot). Shown under "No cask" with the reason.
+    public var rejected: [String]
 
     public var id: String { app.id }
     public var bestToken: String? { candidates.first }
     public var isAmbiguous: Bool { candidates.count > 1 }
 
     public init(app: InstalledApp, candidates: [String] = [], how: AdoptMatchKind? = nil,
-                confidence: [String: AdoptConfidence] = [:], verdicts: [String: AdoptVerdict] = [:]) {
+                confidence: [String: AdoptConfidence] = [:], verdicts: [String: AdoptVerdict] = [:],
+                rejected: [String] = []) {
         self.app = app
         self.candidates = candidates
         self.how = how
         self.confidence = confidence
         self.verdicts = verdicts
+        self.rejected = rejected
     }
 }
 
@@ -565,47 +572,78 @@ public enum AdoptMatcher {
             how = .bundleID; cands = t
         }
         guard let how else { return AdoptRow(app: a) }
-        let ordered = cands.compactMap { index.byToken[$0] }.sorted { rankKey($0, bid) > rankKey($1, bid) }
+        let all = cands.compactMap { index.byToken[$0] }
+        // 0.8.6: a cask that names app IDs must name this app's. The same
+        // file name is not enough (copilot-money installs a "Copilot.app"
+        // whose ID is com.copilot.production; Microsoft's Copilot.app is
+        // not it), and adopting a wrong match hands someone else's app to
+        // brew upgrade and uninstall.
+        let rejected = all.filter { idEvidence(app: a, cask: $0) == .mismatch }.map(\.token).sorted()
+        let ordered = all.filter { idEvidence(app: a, cask: $0) != .mismatch }.sorted { rankKey($0, bid) > rankKey($1, bid) }
+        guard !ordered.isEmpty else { return AdoptRow(app: a, rejected: rejected) }
         var conf: [String: AdoptConfidence] = [:]
         var verdicts: [String: AdoptVerdict] = [:]
         for c in ordered {
             conf[c.token] = confidence(app: a, cask: c, ambiguous: ordered.count > 1)
             verdicts[c.token] = verdict(app: a, cask: c, how: how)
         }
-        return AdoptRow(app: a, candidates: ordered.map(\.token), how: how, confidence: conf, verdicts: verdicts)
+        return AdoptRow(app: a, candidates: ordered.map(\.token), how: how, confidence: conf, verdicts: verdicts,
+                        rejected: rejected)
+    }
+
+    /// What the cask's app IDs say about this app.
+    public enum IDEvidence: Sendable, Equatable {
+        /// The cask names this app's ID.
+        case match
+        /// The cask names app IDs, none of them this app's (or the app has
+        /// no ID to compare).
+        case mismatch
+        /// The cask names no app IDs: only the name can be compared.
+        case none
+    }
+
+    /// 0.8.6. The IDs a cask names are the bundle-id-looking strings in its
+    /// `uninstall` and `zap` (quit, signal, launchctl, pkgutil, login items,
+    /// and path parts: Containers/<id>, Group Containers/group.<id>,
+    /// Application Scripts/<id>, Preferences/<id>.plist, Caches/<id>, ...;
+    /// `AdoptIndex.bundleIDHints`). The app's CFBundleIdentifier matches
+    /// one when it is equal, or (for an ID of three labels or more) when
+    /// the named one is the app's ID with a prefix or suffix label:
+    /// group.<id>, <TEAMID>.<id>, <id>.helper, <id>.ShipIt. Case is ignored.
+    public static func idEvidence(app: InstalledApp, cask c: AdoptCask) -> IDEvidence {
+        guard !c.bundleIDs.isEmpty else { return .none }
+        let bid = app.bundleID?.lowercased() ?? ""
+        guard !bid.isEmpty else { return .mismatch }
+        return names(bid, c.bundleIDs) ? .match : .mismatch
+    }
+
+    /// Whether `ids` (lower-cased) name the app ID `bid` (lower-cased).
+    static func names(_ bid: String, _ ids: Set<String>) -> Bool {
+        if ids.contains(bid) { return true }
+        guard bid.split(separator: ".").count >= 3 else { return false }
+        return ids.contains { $0.hasPrefix(bid + ".") || $0.hasSuffix("." + bid) }
     }
 
     /// Best first: bundle id corroborated, then the plain cask (not
     /// "@beta"), not disabled, shorter token, then by name.
     static func rankKey(_ c: AdoptCask, _ bid: String) -> (Int, Int, Int, Int, String) {
-        (bid.isEmpty || !c.bundleIDs.contains(bid) ? 0 : 1, c.isVariant ? 0 : 1, c.disabled ? 0 : 1, -c.token.count,
+        (bid.isEmpty || !names(bid, c.bundleIDs) ? 0 : 1, c.isVariant ? 0 : 1, c.disabled ? 0 : 1, -c.token.count,
          String(c.token.reversed()))
     }
 
-    /// high: the app's bundle id is one the cask names. medium: same vendor
-    /// prefix (org.scummvm.app vs org.scummvm.scummvm), or the cask names no
-    /// ids and a label of the bundle id is in its homepage or URL. low:
-    /// nothing corroborates the name (it may be a different product).
-    /// Several casks for one name keep their confidence: the user picks.
+    /// 0.8.6, the evidence (`row(for:)` has already left out casks whose
+    /// IDs don't match). high: the cask names the app's ID ("Matched by
+    /// app ID"). medium: the cask names no IDs, and a label of the app's ID
+    /// is the vendor of the cask's homepage or download URL ("Matched by
+    /// name and website"). low: the name and nothing else ("Matched by
+    /// name only"); never ticked by default. A cask that names other IDs
+    /// gets low here too, but `row(for:)` never offers it.
     public static func confidence(app: InstalledApp, cask c: AdoptCask, ambiguous: Bool) -> AdoptConfidence {
-        let bid = app.bundleID?.lowercased() ?? ""
-        if !bid.isEmpty, c.bundleIDs.contains(bid) { return .high }
-        var out: AdoptConfidence
-        let labels = bid.split(separator: ".").map(String.init)
-        // The vendor prefix: two labels (org.scummvm), or three under a
-        // code host's namespace (io.github.alice), where the first two are
-        // shared by everyone hosted there.
-        let n = AdoptVendor.isHostNamespace(labels) ? 3 : 2
-        if labels.count > n, c.bundleIDs.contains(where: { $0.split(separator: ".").prefix(n).map(String.init) == Array(labels.prefix(n)) }) {
-            out = .medium
-        } else if !c.bundleIDs.isEmpty {
-            out = .low
-        } else if vendorInWeb(bid, c.web) {
-            out = .medium
-        } else {
-            out = .low
+        switch idEvidence(app: app, cask: c) {
+        case .match: return .high
+        case .mismatch: return .low
+        case .none: return vendorInWeb(app.bundleID?.lowercased() ?? "", c.web) ? .medium : .low
         }
-        return out
     }
 
     /// A label of the bundle id ("saurik" in com.saurik.Impactor) that is

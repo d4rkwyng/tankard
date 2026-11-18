@@ -92,17 +92,17 @@ public extension AdoptBlock {
 public extension AdoptConfidence {
     var title: String {
         switch self {
-        case .high: return String(localized: "Sure match")
-        case .medium: return String(localized: "Likely match")
-        case .low: return String(localized: "Name only")
+        case .high: return String(localized: "Matched by app ID")
+        case .medium: return String(localized: "Matched by name and website")
+        case .low: return String(localized: "Matched by name only — check before adopting")
         }
     }
 
     var help: String {
         switch self {
-        case .high: return String(localized: "The app's bundle id is one the cask names.")
-        case .medium: return String(localized: "The vendor matches, but the cask doesn't name this exact bundle id.")
-        case .low: return String(localized: "Only the app's name matches. It may be a different app with the same name: check before adopting.")
+        case .high: return String(localized: "The app's ID (its bundle identifier) is one the cask names.")
+        case .medium: return String(localized: "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website.")
+        case .low: return String(localized: "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting.")
         }
     }
 }
@@ -211,6 +211,18 @@ public final class AdoptStore {
     public func confidence(_ row: AdoptRow) -> AdoptConfidence? { token(row).flatMap { row.confidence[$0] } }
     public func group(_ row: AdoptRow) -> AdoptGroup { AdoptGroup.of(verdict(row)) }
     public func policy(_ row: AdoptRow) -> SelfUpdatePolicy { policies[row.id] ?? .automatic }
+
+    /// 0.8.6: an app with the name of a cask whose app IDs aren't this
+    /// app's ("No cask" lists it with this line): "Copilot: possibly a
+    /// different app, not offered. The cask copilot-money is for the app ID
+    /// com.copilot.production; this app's ID is com.microsoft.copilot-mac."
+    public func differentAppNote(_ row: AdoptRow) -> String? {
+        guard let token = row.rejected.first else { return nil }
+        let ids = (index?.byToken[token]?.bundleIDs ?? []).sorted { ($0.count, $0) < ($1.count, $1) }
+        let caskID = ids.first ?? "?"
+        let own = row.app.bundleID ?? String(localized: "none")
+        return String(localized: "\(row.app.displayName): possibly a different app, not offered. The cask \(token) is for the app ID \(caskID); this app's ID is \(own).")
+    }
 
     /// Ticked by default: ready and not name-only. For a cask that updates
     /// itself only a sure match (the bundle id): brew adopts those without

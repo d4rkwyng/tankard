@@ -1,5 +1,5 @@
 {
- "_comment": "Demo fixture for Adopt Apps (0.8). casks: entries copied from formulae.brew.sh/api/cask.json on 2026-11-17. apps: illustrative; no real Mac's /Applications.",
+ "_comment": "Demo fixture for Adopt Apps (0.8). casks: entries copied from formulae.brew.sh/api/cask.json on 2026-11-17. apps: illustrative; no real Mac's /Applications. 0.8.6: copilot-money from `brew info --cask --json=v2` (2026-11-18) with an illustrative different Copilot.app (com.microsoft.copilot-mac), which must not match.",
  "apps": [
   {
    "path": "/Applications/Firefox.app",
@@ -141,6 +141,17 @@
    "shortVersion": "1.140.0",
    "bundleVersion": "1.140.0",
    "displayName": "Visual Studio Code",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Copilot.app",
+   "root": "/Applications",
+   "relativePath": "Copilot.app",
+   "bundleID": "com.microsoft.copilot-mac",
+   "shortVersion": "1.25",
+   "bundleVersion": "1.25",
+   "displayName": "Copilot",
    "hasMASReceipt": false,
    "isSymlink": false
   }
@@ -766,6 +777,41 @@
    "depends_on": {
     "macos": {}
    }
+  },
+  {
+   "token": "copilot-money",
+   "full_token": "copilot-money",
+   "tap": "homebrew/cask",
+   "name": [
+    "Copilot"
+   ],
+   "desc": "Track and budget money",
+   "homepage": "https://copilot.money/",
+   "url": "https://storage.googleapis.com/copilot-mac-releases/images/Copilot-6.8.2-340-69efc0f9.dmg",
+   "version": "6.8.2,340-69efc0f9",
+   "auto_updates": true,
+   "artifacts": [
+    {
+     "app": [
+      "Copilot.app"
+     ],
+     "target": "/Applications/Copilot.app"
+    },
+    {
+     "zap": [
+      {
+       "trash": [
+        "~/Library/Application Scripts/com.copilot.production*",
+        "~/Library/Application Scripts/group.com.copilot.production",
+        "~/Library/Containers/com.copilot.production",
+        "~/Library/Group Containers/group.com.copilot.production"
+       ]
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false
   }
  ]
 }

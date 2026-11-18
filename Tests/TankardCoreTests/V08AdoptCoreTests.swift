@@ -175,9 +175,9 @@ struct V08AdoptCoreTests {
         #expect(zm.how == .bundleID && zm.verdicts["zoom"] == .blocked(.pkg))
 
         // A different product with the same name: the cask names other ids.
+        // 0.8.6: not offered at all (V086AdoptIDMatchTests).
         let im = try row("/Applications/Impactor.app")
-        #expect(im.confidence["impactor"] == .low)
-        #expect(im.verdicts["impactor"] == .needsUpdate(installed: "0.9.56", cask: "2.7.2"))
+        #expect(im.candidates.isEmpty && im.rejected == ["impactor"])
 
         // ~/Applications: brew adopts only at the cask's target.
         let home = try row("/Users/you/Applications/Hidden Bar.app")
@@ -246,11 +246,15 @@ struct V08AdoptCoreTests {
         var named = bobs
         named.bundleIDs = ["io.github.bob.foo"]
         #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .low)
+        // 0.8.6: a same-vendor id that isn't the app's no longer counts
+        // (com.microsoft.copilot-mac vs another com.microsoft.* app).
         named.bundleIDs = ["io.github.alice.foohelper"]
-        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .medium)
-        // The plain vendor prefix still works (org.scummvm.app vs org.scummvm.scummvm).
+        #expect(AdoptMatcher.idEvidence(app: alice, cask: named) == .mismatch)
         let scumm = AdoptCask(token: "scummvm", version: "1", bundleIDs: ["org.scummvm.scummvm"])
-        #expect(AdoptMatcher.confidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm, ambiguous: false) == .medium)
+        #expect(AdoptMatcher.idEvidence(app: Self.app("ScummVM.app", "org.scummvm.app", "1"), cask: scumm) == .mismatch)
+        // The app's own id with a suffix label does (io.github.alice.foo.helper).
+        named.bundleIDs = ["io.github.alice.foo.helper"]
+        #expect(AdoptMatcher.confidence(app: alice, cask: named, ambiguous: false) == .high)
     }
 
     @Test func vendorIsTheHostOrTheCodeHostOwner() {

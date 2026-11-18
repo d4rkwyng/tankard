@@ -114,9 +114,18 @@ struct AdoptSheet: View {
             }
             Text(g.explanation).font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             if g == .noCask {
-                Text(rows.map(\.app.displayName).joined(separator: ", "))
-                    .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 2)
+                let plain = rows.filter { adopt.differentAppNote($0) == nil }
+                if !plain.isEmpty {
+                    Text(plain.map(\.app.displayName).joined(separator: ", "))
+                        .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 2)
+                }
+                // 0.8.6: same name as a cask, different app ID: not offered, and why.
+                ForEach(rows.filter { adopt.differentAppNote($0) != nil }) { r in
+                    Text(adopt.differentAppNote(r) ?? "")
+                        .font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             } else {
                 ForEach(rows) { r in row(r, g) }
             }

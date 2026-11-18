@@ -56,6 +56,7 @@
 "%@. Due now: runs when the Mac is on AC power and idle" = "%@。已到期：Mac 接通交流电且空闲时运行";
 "%@. Next run: %@" = "%@。下次运行：%@";
 "%@: %@ %@." = "%@：%@ %@。";
+"%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@:可能是另一个应用,未提供。cask %@ 对应的应用 ID 是 %@;此应用的 ID 是 %@。";
 "%@: upgrades will leave it out" = "%@：升级时会跳过它";
 "%lld %@" = "%lld %@";
 "%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ 没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。";
@@ -590,7 +591,6 @@
 "Let the current package finish, then skip the rest" = "让当前软件包完成，然后跳过其余的";
 "License" = "许可证";
 "Light" = "浅色";
-"Likely match" = "可能匹配";
 "Lists what a Brewfile needs that this Mac doesn't have" = "列出 Brewfile 需要但这台 Mac 上没有的内容";
 "Loading Homebrew's catalog…" = "正在载入 Homebrew 目录…";
 "Loading formulae.brew.sh…" = "正在载入 formulae.brew.sh…";
@@ -606,6 +606,9 @@
 "MB" = "MB";
 "Made by d4rkwyng" = "由 d4rkwyng 制作";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "根据 cask 的 pkg 项标记。其他 cask 仍可能要求输入密码。";
+"Matched by app ID" = "按应用 ID 匹配";
+"Matched by name and website" = "按名称和网站匹配";
+"Matched by name only — check before adopting" = "仅按名称匹配 — 接管前请核对";
 "Medium" = "中";
 "Minor and patch only" = "仅限次版本和补丁版本";
 "Missing dependencies" = "缺失的依赖项";
@@ -613,7 +616,6 @@
 "More filters" = "更多筛选";
 "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "更多筛选：存在漏洞、已固定（brew 不会升级的软件包）、你安装的（你自己安装的软件包，而不是作为依赖项装入的）、有说明、已弃用";
 "Name" = "名称";
-"Name only" = "仅名称";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "仅名称匹配：%@。只有名称一致，可能是另一个 App；若是如此，brew upgrade 会替换它，卸载该 Cask 会删除它。";
 "Needs update first" = "需先更新";
 "Needs your password to upgrade" = "升级需要你的密码";
@@ -725,7 +727,6 @@
 "Online" = "在线";
 "Only available in Tankard.app." = "仅在 Tankard.app 中可用。";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "仅在你确实需要这个版本时使用。它会下载 Homebrew 的完整软件包历史，此后旧版本需要你自行维护。";
-"Only the app's name matches. It may be a different app with the same name: check before adopting." = "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "仅限 %@ 所需的项。原本就未使用的依赖项仍保持安装。";
 "Open Homepage" = "打开主页";
 "Open Notification Settings" = "打开通知设置";
@@ -995,7 +996,6 @@
 "Stopping %@…" = "正在停止 %@…";
 "Stops by itself after 60 seconds." = "60 秒后自动停止。";
 "Sunday" = "星期日";
-"Sure match" = "确定匹配";
 "Swaps source build for bottle" = "将源码构建替换为 bottle";
 "Swaps source builds for Intelbrew bottles" = "将源码构建替换为 Intelbrew bottle";
 "Swaps source builds for bottles" = "将源码构建替换为 bottle";
@@ -1056,9 +1056,11 @@
 "The Installed list, filtered to this tap (tap:%@)" = "“已安装”列表，已按此 tap 过滤 (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL 必须是 https://、http://、ssh://、git:// 或 file://，或 git@host:path，且不含空格。";
 "The app has no version brew can compare." = "该 App 没有 brew 可比较的版本。";
-"The app's bundle id is one the cask names." = "该 App 的 bundle ID 是 cask 中列出的之一。";
+"The app's ID (its bundle identifier) is one the cask names." = "应用的 ID(其 Bundle 标识符)是 cask 列出的 ID 之一。";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "此 cask 总是下载最新版本，因此 brew 会在下载后比较；如果不同，就不会改动该 App。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "此 cask 安装到 %@；brew 只接管正好位于该位置的 App。";
+"The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "cask 未列出应用 ID,因此只能比较应用名称。它可能是同名的另一个应用:接管前请核对。";
+"The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask 未列出应用 ID。应用名称一致,且其 ID 指向 cask 网站的开发者。";
 "The cask says this app updates itself (auto_updates)." = "此 cask 声明该 App 会自行更新（auto_updates）。";
 "The disk is full" = "磁盘已满";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew 下载的文件不是预期的文件:通常是下载中断,或软件包在上次 brew update 后有变化。请刷新(会运行 brew update),然后重试。";
@@ -1080,7 +1082,6 @@
 "The upgrade finished with problems" = "升级已完成，但有问题";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "升级窗口已打开。请先关闭它，或点按“在 Tankard 中显示”。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "这些变量会先被取消设置，因此这次 brew update 不会把 fork 放回去。";
-"The vendor matches, but the cask doesn't name this exact bundle id." = "开发者匹配，但 cask 未列出这个确切的 bundle ID。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "它们的命令和库不在 Homebrew 的前缀中。通常是安装或升级被中断所致。";
 "There are broken links in Homebrew's folders" = "Homebrew 文件夹中有损坏的链接";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "没有剩余空间用于下载或解包。请释放一些空间（“清理”会有帮助），然后重试。";
@@ -1327,6 +1328,7 @@
 "no bottle" = "无 bottle";
 "no bottle, would compile from source" = "无 bottle，需要从源码编译";
 "no longer meets the criteria for casks" = "不再符合 cask 的收录标准";
+"none" = "无";
 "none (API mode)" = "无（API 模式）";
 "none for this Mac" = "没有适用于这台 Mac 的";
 "not installed" = "未安装";

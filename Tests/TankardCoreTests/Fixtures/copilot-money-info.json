@@ -1,0 +1,83 @@
+{
+  "formulae": [],
+  "casks": [
+    {
+      "token": "copilot-money",
+      "full_token": "copilot-money",
+      "old_tokens": [
+        "copilot"
+      ],
+      "tap": "homebrew/cask",
+      "name": [
+        "Copilot"
+      ],
+      "desc": "Track and budget money",
+      "homepage": "https://copilot.money/",
+      "url": "https://storage.googleapis.com/copilot-mac-releases/images/Copilot-6.8.2-340-69efc0f9.dmg",
+      "url_specs": {},
+      "version": "6.8.2,340-69efc0f9",
+      "autobump": true,
+      "no_autobump_message": null,
+      "skip_livecheck": false,
+      "installed": null,
+      "installed_time": null,
+      "bundle_version": null,
+      "bundle_short_version": null,
+      "pinned": false,
+      "pinned_version": null,
+      "outdated": false,
+      "sha256": "69efc0f91a7e16f4b4c6d468ac39e555b77f74e9e45d1c9116b48cd7bd602ce8",
+      "artifacts": [
+        {
+          "app": [
+            "Copilot.app"
+          ],
+          "target": "/Applications/Copilot.app"
+        },
+        {
+          "zap": [
+            {
+              "trash": [
+                "~/Library/Application Scripts/com.copilot.production*",
+                "~/Library/Application Scripts/group.com.copilot.production",
+                "~/Library/Containers/com.copilot.production",
+                "~/Library/Group Containers/group.com.copilot.production"
+              ]
+            }
+          ]
+        }
+      ],
+      "caveats": null,
+      "caveats_rosetta": null,
+      "depends_on": {
+        "macos": {
+          ">=": [
+            "14"
+          ]
+        }
+      },
+      "conflicts_with": null,
+      "container": null,
+      "rename": [],
+      "auto_updates": true,
+      "deprecated": false,
+      "deprecation_date": null,
+      "deprecation_reason": null,
+      "deprecation_replacement_formula": null,
+      "deprecation_replacement_cask": null,
+      "deprecate_args": null,
+      "disabled": false,
+      "disable_date": null,
+      "disable_reason": null,
+      "disable_replacement_formula": null,
+      "disable_replacement_cask": null,
+      "disable_args": null,
+      "tap_git_head": "b4480e7148e219ebe9eab4e28831faad614fc0ab",
+      "languages": [],
+      "ruby_source_path": "Casks/c/copilot-money.rb",
+      "ruby_source_checksum": {
+        "sha256": "68d2cf19c855f197bbede4c3e1082b4be23f03f83ef1a44dc01595562fce8ab2"
+      }
+    }
+  ]
+}

@@ -2965,6 +2965,58 @@
         }
       }
     },
+    "%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: möglicherweise eine andere App, nicht angeboten. Der Cask %@ ist für die App-ID %@; die ID dieser App ist %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : peut-être une autre app, non proposée. Le cask %@ est pour l’ID d’app %@ ; l’ID de cette app est %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: posiblemente otra app, no se ofrece. El cask %@ es para el ID de app %@; el ID de esta app es %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: 別のアプリの可能性があるため、候補にしません。cask %@ のアプリIDは %@ ですが、このアプリのIDは %@ です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:可能是另一个应用,未提供。cask %@ 对应的应用 ID 是 %@;此应用的 ID 是 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: talvez seja outro app, não oferecido. O cask %@ é para o ID de app %@; o ID deste app é %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: forse un’altra app, non proposta. Il cask %@ è per l’ID app %@; l’ID di questa app è %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: 다른 앱일 수 있어 제안하지 않습니다. cask %@의 앱 ID는 %@이고, 이 앱의 ID는 %@입니다."
+          }
+        }
+      }
+    },
     "%@: upgrades will leave it out": {
       "localizations": {
         "de": {
@@ -31021,58 +31073,6 @@
         }
       }
     },
-    "Likely match": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wahrscheinlich"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Probable"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Probable"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一致の可能性大"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "可能匹配"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Provável"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Probabile"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "유력한 일치"
-          }
-        }
-      }
-    },
     "Lists what a Brewfile needs that this Mac doesn't have": {
       "localizations": {
         "de": {
@@ -31853,6 +31853,162 @@
         }
       }
     },
+    "Matched by app ID": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über App-ID erkannt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouvée par ID d’app"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coincide por ID de app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリIDで一致"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按应用 ID 匹配"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrado pelo ID do app"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trovata per ID app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 ID로 일치"
+          }
+        }
+      }
+    },
+    "Matched by name and website": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über Name und Website erkannt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouvée par nom et site web"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coincide por nombre y sitio web"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前とWebサイトで一致"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按名称和网站匹配"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrado pelo nome e site"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trovata per nome e sito web"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름과 웹사이트로 일치"
+          }
+        }
+      }
+    },
+    "Matched by name only — check before adopting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur über den Namen erkannt – vor dem Übernehmen prüfen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouvée par le nom seul — vérifiez avant d’adopter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coincide solo por el nombre: compruébalo antes de adoptar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前のみで一致 — 引き継ぐ前に確認してください"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅按名称匹配 — 接管前请核对"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrado só pelo nome — confira antes de adotar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trovata solo per nome — controlla prima di adottare"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이름만 일치 — 가져오기 전에 확인하세요"
+          }
+        }
+      }
+    },
     "Medium": {
       "localizations": {
         "de": {
@@ -32213,58 +32369,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "이름"
-          }
-        }
-      }
-    },
-    "Name only": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Name"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nom seul"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo nombre"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "名前のみ"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅名称"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Só o nome"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo nome"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이름만 일치"
           }
         }
       }
@@ -38037,58 +38141,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Só se você realmente precisar desta versão. Isso baixa todo o histórico de pacotes do Homebrew, e a partir daí você mesmo cuida da versão antiga."
-          }
-        }
-      }
-    },
-    "Only the app's name matches. It may be a different app with the same name: check before adopting.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur der Name passt. Es kann eine andere App gleichen Namens sein – vor dem Übernehmen prüfen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seul le nom de l'app correspond. Il peut s'agir d'une autre app du même nom : vérifiez avant d'adopter."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo coincide el nombre de la app. Puede ser otra app con el mismo nombre: compruébalo antes de adoptar."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アプリ名だけが一致しています。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "只有 App 名称匹配，可能是同名的其他 App：接管前请先检查。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Só o nome do app confere. Pode ser outro app com o mesmo nome: verifique antes de adotar."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Corrisponde solo il nome dell'app. Potrebbe essere un'altra app con lo stesso nome: controlla prima di adottare."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "앱 이름만 일치합니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요."
           }
         }
       }
@@ -52081,58 +52133,6 @@
         }
       }
     },
-    "Sure match": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sicher"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sûre"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Segura"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "確実に一致"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "确定匹配"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Certa"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sicura"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "확실한 일치"
-          }
-        }
-      }
-    },
     "Swaps source build for bottle": {
       "localizations": {
         "de": {
@@ -55253,54 +55253,54 @@
         }
       }
     },
-    "The app's bundle id is one the cask names.": {
+    "The app's ID (its bundle identifier) is one the cask names.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Bundle-ID der App ist eine der im Cask genannten."
+            "value": "Die ID der App (ihr Bundle-Identifier) ist eine, die der Cask nennt."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L'identifiant de bundle de l'app figure parmi ceux du cask."
+            "value": "L’ID de l’app (son identifiant de bundle) est l’un de ceux que le cask nomme."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El bundle id de la app es uno de los que indica el cask."
+            "value": "El ID de la app (su identificador de paquete) es uno de los que nombra el cask."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アプリのバンドル ID が cask に記載されたものと一致します。"
+            "value": "アプリのID(バンドル識別子)が cask に記載されたものと同じです。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "该 App 的 bundle ID 是 cask 中列出的之一。"
+            "value": "应用的 ID(其 Bundle 标识符)是 cask 列出的 ID 之一。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O bundle id do app é um dos que o cask indica."
+            "value": "O ID do app (seu identificador de pacote) é um dos que o cask cita."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il bundle id dell'app è uno di quelli indicati dal cask."
+            "value": "L’ID dell’app (il suo identificatore di bundle) è uno di quelli indicati dal cask."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "앱의 번들 ID가 cask에 명시된 것 중 하나입니다."
+            "value": "앱의 ID(번들 식별자)가 cask에 적힌 ID와 같습니다."
           }
         }
       }
@@ -55405,6 +55405,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 cask는 %@에 설치합니다. brew는 정확히 그 위치에 있는 앱만 가져옵니다."
+          }
+        }
+      }
+    },
+    "The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Cask nennt keine App-ID, daher konnte nur der Name der App verglichen werden. Es kann eine andere App mit demselben Namen sein: vor dem Übernehmen prüfen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask ne nomme aucun ID d’app : seul le nom de l’app a pu être comparé. Ce peut être une autre app du même nom : vérifiez avant d’adopter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask no nombra ningún ID de app, así que solo se pudo comparar el nombre. Puede ser otra app con el mismo nombre: compruébalo antes de adoptar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask にアプリIDの記載がないため、アプリの名前しか比べられませんでした。同じ名前の別のアプリかもしれません。引き継ぐ前に確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask 未列出应用 ID,因此只能比较应用名称。它可能是同名的另一个应用:接管前请核对。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask não cita nenhum ID de app, então só o nome do app pôde ser comparado. Pode ser outro app com o mesmo nome: confira antes de adotar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask non indica alcun ID app, quindi si è potuto confrontare solo il nome. Potrebbe essere un’altra app con lo stesso nome: controlla prima di adottare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask에 앱 ID가 없어 앱 이름만 비교할 수 있었습니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요."
+          }
+        }
+      }
+    },
+    "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Cask nennt keine App-ID. Der Name der App stimmt, und ihre ID nennt den Entwickler der Website des Casks."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cask ne nomme aucun ID d’app. Le nom de l’app correspond, et son ID nomme le développeur du site web du cask."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El cask no nombra ningún ID de app. El nombre de la app coincide y su ID nombra al desarrollador del sitio web del cask."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask にアプリIDの記載はありません。アプリの名前が一致し、そのIDが cask のWebサイトの開発元を示しています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask 未列出应用 ID。应用名称一致,且其 ID 指向 cask 网站的开发者。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O cask não cita nenhum ID de app. O nome do app confere, e o ID dele cita o desenvolvedor do site do cask."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cask non indica alcun ID app. Il nome dell’app corrisponde e il suo ID indica lo sviluppatore del sito web del cask."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cask에 앱 ID가 없습니다. 앱 이름이 같고, 앱 ID가 cask 웹사이트의 개발자를 가리킵니다."
           }
         }
       }
@@ -56497,58 +56601,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다."
-          }
-        }
-      }
-    },
-    "The vendor matches, but the cask doesn't name this exact bundle id.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der Hersteller passt, aber das Cask nennt nicht genau diese Bundle-ID."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L'éditeur correspond, mais le cask ne nomme pas cet identifiant de bundle exact."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El desarrollador coincide, pero el cask no indica este bundle id exacto."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "開発元は一致しますが、cask にはこのバンドル ID が記載されていません。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "开发者匹配，但 cask 未列出这个确切的 bundle ID。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O desenvolvedor confere, mas o cask não indica este bundle id exato."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lo sviluppatore corrisponde, ma il cask non indica questo esatto bundle id."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다."
           }
         }
       }
@@ -69341,6 +69393,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "더 이상 cask 기준을 충족하지 않음"
+          }
+        }
+      }
+    },
+    "none": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "keine"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucun"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ninguno"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nenhum"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nessuno"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "없음"
           }
         }
       }

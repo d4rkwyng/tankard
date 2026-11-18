@@ -56,6 +56,7 @@
 "%@. Due now: runs when the Mac is on AC power and idle" = "%@. 실행 시점: Mac이 AC 전원에 연결되어 유휴 상태일 때 실행됩니다";
 "%@. Next run: %@" = "%@. 다음 실행: %@";
 "%@: %@ %@." = "%@: %@ %@.";
+"%@: possibly a different app, not offered. The cask %@ is for the app ID %@; this app's ID is %@." = "%@: 다른 앱일 수 있어 제안하지 않습니다. cask %@의 앱 ID는 %@이고, 이 앱의 ID는 %@입니다.";
 "%@: upgrades will leave it out" = "%@: 업그레이드에서 제외됩니다";
 "%lld %@" = "%lld %@";
 "%lld %@ no bottle for this Mac and will compile from source, which can take a long time." = "%lld %@ 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
@@ -590,7 +591,6 @@
 "Let the current package finish, then skip the rest" = "현재 패키지를 마친 후 나머지는 건너뛰기";
 "License" = "라이선스";
 "Light" = "라이트";
-"Likely match" = "유력한 일치";
 "Lists what a Brewfile needs that this Mac doesn't have" = "Brewfile에 필요하지만 이 Mac에 없는 항목 나열";
 "Loading Homebrew's catalog…" = "Homebrew 카탈로그 불러오는 중…";
 "Loading formulae.brew.sh…" = "formulae.brew.sh 불러오는 중…";
@@ -606,6 +606,9 @@
 "MB" = "MB";
 "Made by d4rkwyng" = "d4rkwyng 제작";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "cask의 pkg 아티팩트로 표시됩니다. 다른 cask도 암호를 요청할 수 있습니다.";
+"Matched by app ID" = "앱 ID로 일치";
+"Matched by name and website" = "이름과 웹사이트로 일치";
+"Matched by name only — check before adopting" = "이름만 일치 — 가져오기 전에 확인하세요";
 "Medium" = "보통";
 "Minor and patch only" = "마이너 및 패치만";
 "Missing dependencies" = "누락된 종속 항목";
@@ -613,7 +616,6 @@
 "More filters" = "필터 더 보기";
 "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated" = "필터 더 보기: 취약함, 고정됨(brew가 업그레이드하지 않는 패키지), 직접 설치함(의존성이 아니라 직접 설치한 패키지), 노트 있음, 지원 중단됨";
 "Name" = "이름";
-"Name only" = "이름만 일치";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
 "Needs your password to upgrade" = "업그레이드하려면 암호가 필요합니다";
@@ -725,7 +727,6 @@
 "Online" = "온라인";
 "Only available in Tankard.app." = "Tankard.app에서만 사용할 수 있습니다.";
 "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on." = "이 버전이 꼭 필요할 때만 사용하세요. Homebrew의 전체 패키지 기록을 다운로드하며, 이후 이전 버전은 직접 관리해야 합니다.";
-"Only the app's name matches. It may be a different app with the same name: check before adopting." = "앱 이름만 일치합니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요.";
 "Only what %@ needed. Dependencies that were already unused stay installed." = "%@에 필요했던 것만 해당됩니다. 이미 사용되지 않던 의존성은 그대로 설치되어 있습니다.";
 "Open Homepage" = "홈페이지 열기";
 "Open Notification Settings" = "알림 설정 열기";
@@ -995,7 +996,6 @@
 "Stopping %@…" = "%@ 중지 중…";
 "Stops by itself after 60 seconds." = "60초 후 자동으로 중지됩니다.";
 "Sunday" = "일요일";
-"Sure match" = "확실한 일치";
 "Swaps source build for bottle" = "소스 빌드를 bottle로 바꿉니다";
 "Swaps source builds for Intelbrew bottles" = "소스 빌드를 Intelbrew bottle로 바꿉니다";
 "Swaps source builds for bottles" = "소스 빌드를 bottle로 바꿉니다";
@@ -1056,9 +1056,11 @@
 "The Installed list, filtered to this tap (tap:%@)" = "이 tap으로 필터링한 설치됨 목록 (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL은 https://, http://, ssh://, git:// 또는 file://, 혹은 git@host:path 형식이어야 하며 공백이 없어야 합니다.";
 "The app has no version brew can compare." = "이 앱에는 brew가 비교할 수 있는 버전이 없습니다.";
-"The app's bundle id is one the cask names." = "앱의 번들 ID가 cask에 명시된 것 중 하나입니다.";
+"The app's ID (its bundle identifier) is one the cask names." = "앱의 ID(번들 식별자)가 cask에 적힌 ID와 같습니다.";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "이 cask는 항상 최신 버전을 다운로드하므로 brew는 다운로드 후 비교합니다. 다르면 앱을 건드리지 않습니다.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "이 cask는 %@에 설치합니다. brew는 정확히 그 위치에 있는 앱만 가져옵니다.";
+"The cask names no app ID, so only the app's name could be compared. It may be a different app with the same name: check before adopting." = "cask에 앱 ID가 없어 앱 이름만 비교할 수 있었습니다. 이름이 같은 다른 앱일 수 있으니 가져오기 전에 확인하세요.";
+"The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask에 앱 ID가 없습니다. 앱 이름이 같고, 앱 ID가 cask 웹사이트의 개발자를 가리킵니다.";
 "The cask says this app updates itself (auto_updates)." = "cask에 따르면 이 앱은 자체 업데이트합니다(auto_updates).";
 "The disk is full" = "디스크가 가득 찼습니다";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew가 받은 파일이 예상한 파일이 아닙니다. 대개 중단된 다운로드이거나 마지막 brew update 이후 바뀐 패키지입니다. 새로 고침(brew update 실행)한 뒤 다시 시도하세요.";
@@ -1080,7 +1082,6 @@
 "The upgrade finished with problems" = "업그레이드가 문제와 함께 끝났습니다";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "업그레이드 윈도우가 열려 있습니다. 먼저 닫거나 'Tankard에서 보기'를 클릭하세요.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "변수를 먼저 해제하므로 이 brew update가 fork를 되돌려 놓지 않습니다.";
-"The vendor matches, but the cask doesn't name this exact bundle id." = "개발자는 일치하지만 cask에 이 번들 ID가 정확히 명시되어 있지 않습니다.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "이들의 명령과 라이브러리가 Homebrew 접두사에 없습니다. 보통 설치나 업그레이드가 중단되었기 때문입니다.";
 "There are broken links in Homebrew's folders" = "Homebrew 폴더에 깨진 링크가 있습니다";
 "There's no space left to download or unpack. Free some space (Clean Up helps), then retry." = "다운로드하거나 압축을 풀 공간이 없습니다. 공간을 확보한 다음(정리가 도움이 됩니다) 다시 시도하세요.";
@@ -1327,6 +1328,7 @@
 "no bottle" = "bottle 없음";
 "no bottle, would compile from source" = "bottle 없음, 소스에서 컴파일해야 함";
 "no longer meets the criteria for casks" = "더 이상 cask 기준을 충족하지 않음";
+"none" = "없음";
 "none (API mode)" = "없음 (API 모드)";
 "none for this Mac" = "이 Mac용은 없음";
 "not installed" = "설치되지 않음";

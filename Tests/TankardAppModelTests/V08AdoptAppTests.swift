@@ -28,7 +28,8 @@ struct V08AdoptAppTests {
         #expect(names(.ready) == ["Firefox", "Hidden Bar", "LibreOffice", "Obsidian"])
         #expect(names(.needsUpdate) == ["GIMP", "Impactor"])
         #expect(names(.cantAdopt) == ["Inkscape", "KiCad", "zoom.us"])
-        #expect(names(.noCask) == ["Acme Widgets"])
+        // 0.8.6: Copilot has copilot-money's name but not its app ID: no cask.
+        #expect(names(.noCask) == ["Acme Widgets", "Copilot"])
         // Skipped before matching: VS Code (the demo has its cask), Things (App Store), Safari (Apple).
         #expect(a.scan.skipped.managed.map(\.displayName) == ["Visual Studio Code"])
         #expect(a.scan.skipped.appStore.map(\.displayName) == ["Things"])
