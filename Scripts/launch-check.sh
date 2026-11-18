@@ -16,6 +16,10 @@
 #   --allow-brew-update
 #                 let the app run its background `brew update` (0.8+); by
 #                 default the app is launched with HOMEBREW_NO_AUTO_UPDATE=1
+#   --log DIR     keep each run's stdout/stderr as DIR/run-N.log
+#
+# A run also fails when the app logs AppKit's "reentrant operation in its
+# NSTableView delegate" warning (0.8.4: it is to become an assert).
 #
 # It reads the real settings and the real brew state, and quits the app
 # afterwards; it never installs, upgrades or removes anything. A normal
@@ -45,6 +49,7 @@ RUNS=3
 LANG_ARGS=()
 BUILD=1
 ALLOW_UPDATE=0
+LOG_DIR=
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-build) BUILD=0 ;;
@@ -53,7 +58,8 @@ while [ $# -gt 0 ]; do
         --runs) RUNS=$2; shift ;;
         --lang) LANG_ARGS=(-AppleLanguages "($2)"); shift ;;
         --allow-brew-update) ALLOW_UPDATE=1 ;;
-        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
+        --log) LOG_DIR=$2; shift ;;
+        -h|--help) sed -n '2,29p' "$0"; exit 0 ;;
         *.app|*.app/) APP=${1%/}; BUILD=0 ;;
         *) echo "launch-check.sh: unknown option $1" >&2; exit 2 ;;
     esac
@@ -88,11 +94,16 @@ if pgrep -f "^$BIN_ABS" >/dev/null; then
     exit 1
 fi
 
+[ -n "$LOG_DIR" ] && mkdir -p "$LOG_DIR"
+TMP_LOG=$(mktemp -t tankard-launch-check)
+trap 'rm -f "$TMP_LOG"' EXIT
+REENTRANT="reentrant operation in its NSTableView delegate"
+
 failed=0
 for run in $(seq 1 "$RUNS"); do
     before=$(crash_reports)
     # A normal launch, window restoration included: that is what users get.
-    "${ENV_CLEAN[@]}" "$BIN_ABS" ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} >/dev/null 2>&1 &
+    "${ENV_CLEAN[@]}" "$BIN_ABS" ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} >"$TMP_LOG" 2>&1 &
     pid=$!
     alive=1
     for _ in $(seq 1 "$SECONDS_UP"); do
@@ -115,10 +126,12 @@ for run in $(seq 1 "$RUNS"); do
     # Crash reports are written a moment after the process dies.
     sleep 3
     new=$(reports_for "$pid" "$before" | tr '\n' ' ')
-    if [ $alive = 1 ] && [ -z "$new" ]; then
-        echo "launch-check: run $run/$RUNS OK (up ${SECONDS_UP}s, no crash report)"
+    [ -n "$LOG_DIR" ] && cp "$TMP_LOG" "$LOG_DIR/run-$run.log"
+    reentrant=$(grep -c "$REENTRANT" "$TMP_LOG" || true)
+    if [ $alive = 1 ] && [ -z "$new" ] && [ "$reentrant" = 0 ]; then
+        echo "launch-check: run $run/$RUNS OK (up ${SECONDS_UP}s, no crash report, no NSTableView reentrancy warning)"
     else
-        echo "launch-check: run $run/$RUNS FAILED ($status${new:+, new report: $new})" >&2
+        echo "launch-check: run $run/$RUNS FAILED ($status${new:+, new report: $new}$([ "$reentrant" != 0 ] && echo ", NSTableView reentrancy warning x$reentrant"))" >&2
         failed=1
     fi
 done

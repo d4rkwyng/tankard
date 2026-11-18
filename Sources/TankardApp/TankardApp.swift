@@ -339,18 +339,18 @@ struct HomebrewCommands: View {
         // Check: the toolbar's Refresh, and the scan on demand (0.6.1).
         Button("Refresh") { Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) } }
             .keyboardShortcut("r", modifiers: .command)
-            .disabled(store.isRefreshing || store.isUpgrading)
+            .disabled(store.isRefreshing || store.menuActionsBlocked)
         Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
-            .disabled(store.insights.scanState == .running || store.report == nil)
+            .disabled(store.insights.scanState == .running || store.report == nil || store.menuActionsBlocked)
         Divider()
         // Look: what brew says about this Mac, and what Tankard ran.
         HealthCommands(store: store)
         Divider()
         // Free space: old versions and caches, then unused dependencies.
         Button("Clean Up…") { store.openCleanup() }
-            .disabled(store.isBusy || store.report == nil)
+            .disabled(store.menuActionsBlocked || store.report == nil)
         Button("Remove Unused Dependencies…") { store.openAutoremove() }
-            .disabled(store.isBusy || store.report == nil)
+            .disabled(store.menuActionsBlocked || store.report == nil)
         Divider()
         // Manage: where packages come from, adopting apps, rolling back.
         TapsCommands(store: store)
@@ -360,10 +360,10 @@ struct HomebrewCommands: View {
         // Revert exists only in Intelbrew mode.
         if store.intelbrewMode {
             Button(HomebrewManagement.Kind.revert.title) { store.requestManagement(.revert) }
-                .disabled(store.isBusy || store.report == nil)
+                .disabled(store.menuActionsBlocked || store.report == nil)
         }
         Button(HomebrewManagement.Kind.uninstall.title) { store.requestManagement(.uninstall) }
-            .disabled(store.isBusy || store.report == nil)
+            .disabled(store.menuActionsBlocked || store.report == nil)
     }
 }
 

@@ -18,7 +18,7 @@ struct TapsCommands: View {
 
     var body: some View {
         Button("Taps…") { store.openTaps() }
-            .disabled(store.report == nil)
+            .disabled(store.report == nil || store.menuActionsBlocked)
     }
 }
 

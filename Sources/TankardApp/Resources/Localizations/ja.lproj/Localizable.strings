@@ -18,6 +18,7 @@
 "%@ %@ failed (exit %d)" = "%@ %@ が失敗しました(終了コード %d)";
 "%@ %@ needs administrator rights" = "%@ %@ には管理者権限が必要です";
 "%@ %@ so far" = "%@ %@ 受信済み";
+"%@ %@ still installed" = "%1$@ %2$@ はまだインストールされています";
 "%@ %@: %@" = "%@ %@: %@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld個のパッケージ";
@@ -275,6 +276,7 @@
 "Checked %@" = "%@を確認しました";
 "Checking Brewfile…" = "Brewfileを確認中…";
 "Checking for updates…" = "アップデートを確認中…";
+"Checking what is still installed…" = "まだインストールされているものを確認中…";
 "Checking…" = "確認中…";
 "Clean Up" = "クリーンアップ";
 "Clean Up…" = "クリーンアップ…";
@@ -374,6 +376,7 @@
 "Every brew command Tankard ran: when, the command, the result and how long it took." = "Tankardが実行したすべてのbrewコマンド: 日時、コマンド、結果、所要時間。";
 "Every day" = "毎日";
 "Every day at %@" = "毎日 %@";
+"Every installed version, one brew uninstall each" = "インストール済みの各バージョンを brew uninstall で1つずつ削除";
 "Every week" = "毎週";
 "Everything in this Brewfile is installed" = "このBrewfileの内容はすべてインストール済みです";
 "Everything is up to date" = "すべて最新です";
@@ -754,6 +757,8 @@
 "Removes %@ %@." = "%@ %@を削除します。";
 "Removes %@ %@. Its dependencies stay installed." = "%@ %@を削除します。その依存関係はインストールされたままです。";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "Homebrewと、それでインストールしたすべてのパッケージ（%lld個のformulaと%lld個のcask）を削除します。この操作は取り消せません。";
+"Removes all installed versions of %@ (%@)." = "%1$@ のインストール済みの全バージョン（%2$@）を削除します。";
+"Removes all installed versions of %@ (%@). Its dependencies stay installed." = "%1$@ のインストール済みの全バージョン（%2$@）を削除します。依存関係はそのまま残ります。";
 "Removes old versions, stale downloads and old logs" = "古いバージョン、不要なダウンロード、古いログを削除します";
 "Remove…" = "削除…";
 "Removing tap" = "tapを削除中";
@@ -1021,6 +1026,7 @@
 "Uninstall Homebrew?" = "Homebrewをアンインストールしますか？";
 "Uninstall Homebrew…" = "Homebrewをアンインストール…";
 "Uninstall again from the package's details; it asks first." = "パッケージの詳細からもう一度アンインストールしてください。先に確認があります。";
+"Uninstall incomplete" = "アンインストールが完了していません";
 "Uninstalling" = "アンインストール中";
 "Uninstall…" = "アンインストール…";
 "Uninstall… (needed by %@%@)" = "アンインストール…（%@%@が必要）";

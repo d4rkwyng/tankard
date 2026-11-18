@@ -47,10 +47,10 @@ struct BrewfileMenuItems: View {
     var body: some View {
         // Opening one before exporting, as File menus order Open and Export.
         Button("Check Brewfile…") { BrewfilePanels.check(store: store) }
-            .disabled(!store.canUseBrewfile)
+            .disabled(!store.canUseBrewfile || store.isSheetPresented)
             .help("Lists what a Brewfile needs that this Mac doesn't have (brew bundle check)")
         Button("Export Brewfile…") { BrewfilePanels.export(store: store) }
-            .disabled(!store.canUseBrewfile)
+            .disabled(!store.canUseBrewfile || store.isSheetPresented)
             .help(BrewfilePanels.leftOut)
     }
 }

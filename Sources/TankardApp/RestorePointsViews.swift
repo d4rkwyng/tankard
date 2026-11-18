@@ -12,7 +12,7 @@ struct RestorePointsMenuItem: View {
 
     var body: some View {
         Button("Restore Points…") { store.openRestorePoints() }
-            .disabled(store.report == nil)
+            .disabled(store.report == nil || store.menuActionsBlocked)
     }
 }
 

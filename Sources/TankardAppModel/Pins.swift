@@ -55,6 +55,21 @@ public extension AppStore {
     /// (0.5) an automatic update.
     var isBusy: Bool { isUpgrading || quickAction != nil || autoUpdate.isRunning || selfReplaced }
 
+    /// 0.8.4: a sheet is up in the main window (each `.sheet` ContentView,
+    /// DiscoverView and selfUpdateSheets attach), so it is modal and a menu
+    /// item that opens another sheet or starts brew must wait.
+    var isSheetPresented: Bool {
+        showUpgradeSheet || uninstallCandidate != nil || showCleanupSheet || managementSheet != nil
+            || brewfile.isPresented || showAutoUpdateLog || restorePoints.isShowing || toolSheet != nil
+            || insights.postInstallNotes != nil || showSelfUpdate || discover?.confirmInstall != nil
+    }
+
+    /// 0.8.4: the gate for the Homebrew and File menu items that start brew
+    /// or open a sheet: off while a run is going (its sheet shown or
+    /// hidden) or any sheet is up. The toolbar needs no such gate for
+    /// sheets: AppKit disables a window's toolbar while a sheet is up.
+    var menuActionsBlocked: Bool { isBusy || isSheetPresented }
+
     /// Upgrades that Upgrade all leaves out because they are pinned.
     var pinnedUpgrades: [Package] { packages.filter { $0.upgradeAvailable && $0.isHeld } }
 

@@ -482,6 +482,20 @@ struct PackageTable: View {
     // macro whose plugin (SwiftUIMacros) ships with Xcode, not the Command
     // Line Tools. The struct itself works the same way everywhere.
     private let sortState = State(initialValue: [KeyPathComparator(\Package.name, comparator: .localizedStandard)])
+    /// 0.8.4: the table shows all its rows (see `firstFill`).
+    private let filledState = State(initialValue: false)
+
+    /// 0.8.4: when the rows go from none to many (the first status read at
+    /// launch, a search that matched nothing), the table first gets one
+    /// screenful and the rest a moment later. SwiftUI inserts new rows into
+    /// the NSTableView in one beginUpdates/endUpdates; ~200 rows at once into
+    /// an empty table with automatic row heights (estimated at 24 pt, really
+    /// 30 and 43) made AppKit resize the table while it was still measuring
+    /// rows: "Application performed a reentrant operation in its NSTableView
+    /// delegate. This warning will become an assert in the future." on every
+    /// launch. A fresh table per fill (an .id) avoided it too, but measured
+    /// some one-line rows two lines high.
+    static let firstFill = 40
 
     var rows: [Package] {
         store.visiblePackages.sorted(using: sortState.wrappedValue)
@@ -497,7 +511,8 @@ struct PackageTable: View {
     var body: some View {
         let intelbrew = store.intelbrewMode
         let _ = store.buildTimesRevision
-        let shown = rows
+        let all = rows
+        let shown = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
         Table(shown, selection: $store.selection, sortOrder: sortState.projectedValue) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 VStack(alignment: .leading, spacing: 0) {
@@ -569,6 +584,16 @@ struct PackageTable: View {
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.
         .tableStyle(.inset(alternatesRowBackgrounds: false))
+        .task(id: all.isEmpty) {
+            if all.isEmpty {
+                if filledState.wrappedValue { filledState.wrappedValue = false }
+                return
+            }
+            guard !filledState.wrappedValue else { return }
+            // Cancelled (the rows went again): the next fill starts over.
+            guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
+            filledState.wrappedValue = true
+        }
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))

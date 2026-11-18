@@ -17,7 +17,7 @@ struct CheckForUpdatesMenuItem: View {
 
     var body: some View {
         Button("Check for Tankard Updates…") { store.checkForTankardUpdates() }
-            .disabled(!store.canCheckForTankardUpdates)
+            .disabled(!store.canCheckForTankardUpdates || store.isSheetPresented)
     }
 }
 

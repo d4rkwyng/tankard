@@ -18,6 +18,7 @@
 "%@ %@ failed (exit %d)" = "%@ %@ 失败（退出码 %d）";
 "%@ %@ needs administrator rights" = "%@ %@ 需要管理员权限";
 "%@ %@ so far" = "已下载 %@ %@";
+"%@ %@ still installed" = "%1$@ %2$@ 仍已安装";
 "%@ %@: %@" = "%@ %@：%@";
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld 个软件包";
@@ -275,6 +276,7 @@
 "Checked %@" = "已检查 %@";
 "Checking Brewfile…" = "正在检查 Brewfile…";
 "Checking for updates…" = "正在检查更新…";
+"Checking what is still installed…" = "正在检查仍已安装的内容…";
 "Checking…" = "正在检查…";
 "Clean Up" = "清理";
 "Clean Up…" = "清理…";
@@ -374,6 +376,7 @@
 "Every brew command Tankard ran: when, the command, the result and how long it took." = "Tankard 运行过的每条 brew 命令：时间、命令、结果和耗时。";
 "Every day" = "每天";
 "Every day at %@" = "每天 %@";
+"Every installed version, one brew uninstall each" = "每个已安装版本各运行一次 brew uninstall";
 "Every week" = "每周";
 "Everything in this Brewfile is installed" = "此 Brewfile 中的所有内容均已安装";
 "Everything is up to date" = "一切均为最新";
@@ -754,6 +757,8 @@
 "Removes %@ %@." = "移除 %@ %@。";
 "Removes %@ %@. Its dependencies stay installed." = "移除 %@ %@。其依赖项仍保持安装。";
 "Removes Homebrew and every package installed with it: %lld formulae and %lld casks. This can't be undone." = "移除 Homebrew 及用它安装的所有软件包：%lld 个 formula 和 %lld 个 cask。此操作无法撤销。";
+"Removes all installed versions of %@ (%@)." = "移除 %1$@ 的所有已安装版本（%2$@）。";
+"Removes all installed versions of %@ (%@). Its dependencies stay installed." = "移除 %1$@ 的所有已安装版本（%2$@）。其依赖项保持安装。";
 "Removes old versions, stale downloads and old logs" = "移除旧版本、过期的下载和旧日志";
 "Remove…" = "移除…";
 "Removing tap" = "正在移除 tap";
@@ -1021,6 +1026,7 @@
 "Uninstall Homebrew?" = "卸载 Homebrew？";
 "Uninstall Homebrew…" = "卸载 Homebrew…";
 "Uninstall again from the package's details; it asks first." = "请从软件包详情中再次卸载；会先询问。";
+"Uninstall incomplete" = "卸载未完成";
 "Uninstalling" = "正在卸载";
 "Uninstall…" = "卸载…";
 "Uninstall… (needed by %@%@)" = "卸载…（%@%@ 需要它）";

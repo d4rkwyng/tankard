@@ -18,7 +18,7 @@ struct AdoptMenuCommands: View {
 
     var body: some View {
         Button("Adopt Apps…") { store.openAdopt() }
-            .disabled(store.report == nil)
+            .disabled(store.report == nil || store.menuActionsBlocked)
     }
 }
 
