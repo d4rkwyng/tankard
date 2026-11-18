@@ -2,7 +2,7 @@
 # 0.8.3: the self-upgrade end to end, on this Mac's real brew and
 # /Applications, with two builds of this tree:
 #
-#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR [--phases ABC]
+#   Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out DIR [--phases ABC] [--appdir DIR]
 #
 # OLD and NEW: release builds (Scripts/bundle-app.sh) whose TankardVersion
 # and CFBundleShortVersionString differ, NEW the newer (semver: 0.8.3 and
@@ -26,6 +26,10 @@
 # (quarantine removed, as install_old does). Scripts/rc-selfupdate-signed.sh
 # uses it when OLD is a release whose relaunch passes the script
 # environment on (before 0.8.4), which phase A can't judge.
+# --appdir DIR: brew installs the cask's app there (brew --appdir) instead
+# of /Applications, e.g. a scratch folder, so nothing in /Applications is
+# touched while a Gatekeeper prompt might be pending. The checks below then
+# mean DIR/Tankard.app.
 #
 # Each phase: a 0.25 s process timeline, `log stream` of Tankard's
 # subsystem, the app's stderr, and no new Tankard .ips in
@@ -33,27 +37,28 @@
 # (net.mindtricks.tankard) is backed up first and must be byte-identical at
 # the end; if not, it is restored from the backup and the run FAILS
 # (isolation/real-defaults). Refuses to start if Tankard runs, if
-# /Applications/Tankard.app exists, or if the tap or a tankard cask exists.
-# Cleans up the cask, the tap, /Applications/Tankard.app and its processes.
+# /Applications/Tankard.app (or --appdir's) exists, or if the tap or a
+# tankard cask exists. Cleans up the cask, the tap, the app and its processes.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 # step_result, step_logged, relaunch_logged, ran_tankard_code, no_instance_yield
 # (0.8.4; `Scripts/e2e-selfupdate-checks.sh --self-test` checks them).
 source Scripts/e2e-selfupdate-checks.sh
 
-OLD= NEW= OUT= PHASES=ABC
+OLD= NEW= OUT= PHASES=ABC APPDIR=/Applications
 while [ $# -gt 0 ]; do
     case "$1" in
         --old) OLD=${2%/}; shift ;;
         --new) NEW=${2%/}; shift ;;
         --out) OUT=$2; shift ;;
         --phases) PHASES=$2; shift ;;
-        -h|--help) sed -n '2,37p' "$0"; exit 0 ;;
+        --appdir) APPDIR=${2%/}; shift ;;
+        -h|--help) sed -n '2,41p' "$0"; exit 0 ;;
         *) echo "e2e-selfupdate.sh: unknown option $1" >&2; exit 2 ;;
     esac
     shift
 done
-[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR [--phases ABC]" >&2; exit 2; }
+[ -d "$OLD" ] && [ -d "$NEW" ] && [ -n "$OUT" ] || { echo "usage: --old OLD.app --new NEW.app --out DIR [--phases ABC] [--appdir DIR]" >&2; exit 2; }
 [[ $PHASES =~ ^[ABC]+$ ]] || { echo "e2e-selfupdate.sh: --phases takes letters from ABC, got '$PHASES'" >&2; exit 2; }
 want() { [[ $PHASES == *$1* ]]; }
 mkdir -p "$OUT"; OUT=$(cd "$OUT" && pwd)
@@ -62,7 +67,12 @@ VOLD=$(plutil -extract CFBundleShortVersionString raw "$OLD/Contents/Info.plist"
 VNEW=$(plutil -extract CFBundleShortVersionString raw "$NEW/Contents/Info.plist")
 TAP=tankard-e2e-self/tap
 CASK=$TAP/tankard
-APP=/Applications/Tankard.app
+mkdir -p "$APPDIR" && APPDIR=$(cd "$APPDIR" && pwd) || { echo "e2e-selfupdate.sh: can't use --appdir $APPDIR" >&2; exit 2; }
+APP=$APPDIR/Tankard.app
+# Every install and upgrade of the cask goes to APPDIR (brew remembers it
+# for the uninstall, and for the old app's own upgrade in phase A).
+CASKARGS=(--appdir="$APPDIR")
+APP_RE=$(printf '%s' "$APP" | sed 's/[][\.*^$+?(){}|]/\\&/g')
 BREW=$(command -v brew)
 qbrew() { HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTOREMOVE=1 HOMEBREW_NO_ENV_HINTS=1 "$BREW" "$@"; }
 # No `brew ... | grep -q` under pipefail: grep quits at the first match,
@@ -75,7 +85,7 @@ record() { RESULTS+=("$1"); echo "==> $1" | tee -a "$OUT/summary.txt"; }
 now() { date +%H:%M:%S; }
 # Only the installed app's processes: other worktrees' builds (dist/, demo
 # and e2e runs of parallel work) are never counted or touched.
-pids() { pgrep -f '^/Applications/Tankard.app/Contents/MacOS/Tankard' | tr '\n' ' ' | sed 's/ $//'; }
+pids() { pgrep -f "^$APP_RE/Contents/MacOS/Tankard" | tr '\n' ' ' | sed 's/ $//'; }
 
 # MARK: preconditions (never touch what isn't ours)
 [ -z "$(pids)" ] || { echo "e2e-selfupdate.sh: Tankard is running (pids $(pids)); quit it first" >&2; exit 3; }
@@ -205,7 +215,7 @@ printf '{"tag_name":"v%s","body":"e2e build","html_url":"https://github.com/d4rk
 
 install_old() {
     write_cask old
-    qbrew install --cask "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
+    qbrew install --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
     # An ad-hoc signed test build: no quarantine, as a notarized release wouldn't need.
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VOLD" ]
@@ -213,7 +223,7 @@ install_old() {
 # --phases without A: B needs NEW installed (A would have left it there).
 install_new() {
     write_cask new
-    qbrew install --cask "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
+    qbrew install --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1 || { echo "install failed" >&2; return 1; }
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VNEW" ]
 }
@@ -243,7 +253,7 @@ one_new_running() {
         && [ "$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")" = "$VNEW" ]
 }
 # Crash reports since the start for the installed app (not other builds).
-ips_new() { find ~/Library/Logs/DiagnosticReports -name 'Tankard*.ips' -newer "$MARK" -exec grep -l 'Applications/Tankard.app' {} + 2>/dev/null | wc -l | tr -d ' '; }
+ips_new() { find ~/Library/Logs/DiagnosticReports -name 'Tankard*.ips' -newer "$MARK" -exec grep -lF "$APP" {} + 2>/dev/null | wc -l | tr -d ' '; }
 quit_all() { for p in $(pids); do kill "$p" 2>/dev/null; done; wait_for 10 test -z "$(pids)" >/dev/null; }
 
 script_env() { # dir
@@ -372,7 +382,7 @@ STEPS
     else
     echo "$(now) C: old pid $OLDPID has its sheet up (step 2: ok); brew upgrade to $VNEW (no quit), then open -n" | tee -a "$D/events.txt"
     write_cask new
-    HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 qbrew upgrade --cask "$CASK" >> "$OUT/brew.log" 2>&1
+    HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 qbrew upgrade --cask "${CASKARGS[@]}" "$CASK" >> "$OUT/brew.log" 2>&1
     xattr -dr com.apple.quarantine "$APP" 2>/dev/null
     open -n "$APP"
     echo "$(now) C: opened new; pids=[$(pids)]" | tee -a "$D/events.txt"
