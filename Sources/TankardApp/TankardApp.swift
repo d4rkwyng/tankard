@@ -152,6 +152,8 @@ struct TankardApp: App {
     private let notifier: SystemNotifier
     private let loginItem: LoginItem
     private let checker: BackgroundChecker
+    /// 0.8.5: the real app's sleep and network watch (kept alive here).
+    @MainActor private static var sleepWatch: SleepAndNetworkWatch?
 
     init() {
         let options = LaunchOptions.fromEnvironment()
@@ -223,6 +225,8 @@ struct TankardApp: App {
             store.autoUpdate.conditions = SystemConditions()
             // 0.8.3: re-read the real brew.env files at each check (the pause rule).
             store.autoUpdate.brewEnvFiles = { EnvironmentSources.load(prefix: $0.installation.prefix).brewEnvFiles }
+            // 0.8.5: no scheduled checks asleep or offline.
+            Self.sleepWatch = SleepAndNetworkWatch(store.system)
         }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.

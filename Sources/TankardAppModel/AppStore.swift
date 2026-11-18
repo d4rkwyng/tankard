@@ -90,6 +90,9 @@ public final class AppStore {
         /// 0.8, e2e only: the background update's interval in seconds instead
         /// of Settings' hours (Scripts/e2e.sh's background scenario).
         public var backgroundUpdateInterval: TimeInterval?
+        /// 0.8.5: a scheduled `brew update` (background update, the
+        /// notification check, auto-update's) is stopped after this long.
+        public var scheduledUpdateTimeout: TimeInterval = 15 * 60
         /// 0.8: download progress in the sheet: builds the watcher for a
         /// session's brew (nil: none, as in demo mode). `live()` sets
         /// `DownloadMonitor.live`.
@@ -275,6 +278,17 @@ public final class AppStore {
     @ObservationIgnored var lastBackgroundUpdateFailure: Date?
     /// 0.8: background `brew update`s this launch ran (the e2e harness counts them).
     @ObservationIgnored public internal(set) var backgroundUpdateRuns = 0
+    /// 0.8.5: how long after `lastBackgroundUpdateFailure` the next try waits
+    /// (ScheduledQuietReason.retryAfter; an hour for other failures).
+    @ObservationIgnored var backgroundFailureRetry: TimeInterval = BackgroundUpdatePolicy.failureRetry
+    /// 0.8.5: sleep and network, for scheduled checks (ScheduledChecks.swift).
+    @ObservationIgnored public let system: ScheduleConditions
+    /// 0.8.5: the queued id of the scheduled `brew update` running now.
+    @ObservationIgnored var scheduledUpdateCommand: UUID?
+    /// 0.8.5: History entries to mark quiet once they arrive from the queue.
+    @ObservationIgnored var pendingQuiet: [UUID: ScheduledQuietReason] = [:]
+    /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
+    @ObservationIgnored public internal(set) var lastScheduledUpdate: ScheduledUpdateResult?
 
     public var tab: MainTab = .installed
     public var filter: PackageFilter = .all
@@ -312,6 +326,7 @@ public final class AppStore {
             recorder.observe(id, command, event)
         })
         self.history = HistoryLog(url: deps.historyURL)
+        self.system = ScheduleConditions()
         // No settings (tests only; the app always passes them): a private
         // suite per store. One shared suite let concurrent tests see each
         // other's run journal and App Management retry (an interrupted-run
@@ -326,6 +341,7 @@ public final class AppStore {
         wireInsights()
         recorder.setSink { [weak self] e in self?.historyRecorded(e) }
         wireUpgradeRules()
+        system.onWillSleep = { [weak self] in self?.stopScheduledUpdate() }
     }
 
     // MARK: derived
@@ -459,6 +475,11 @@ public final class AppStore {
         /// when another read is running, which may have started before the
         /// update), but don't measure sizes again: an update installs nothing.
         case afterUpdate
+        /// 0.8.5: as `.manual`, for a scheduled check (the notification
+        /// check, auto-update): its `brew update` has a time limit, stops
+        /// when the Mac sleeps, and a "try later" failure (offline, brew
+        /// busy) is quiet: no error on screen, one quiet History line.
+        case scheduled
     }
 
     func refresh(_ kind: RefreshKind) async {
@@ -512,6 +533,11 @@ public final class AppStore {
         if kind == .manual {
             refreshPhase = String(localized: "Running brew update…")
             updateError = await runUpdate(client)
+        } else if kind == .scheduled {
+            refreshPhase = String(localized: "Running brew update…")
+            let r = await runScheduledUpdate(client)
+            lastScheduledUpdate = r
+            updateError = r.error
         }
 
         refreshPhase = String(localized: "Reading installed packages…")
@@ -558,16 +584,7 @@ public final class AppStore {
 
     /// `brew update` through the queue. nil on success.
     func runUpdate(_ client: BrewClient) async -> StoreError? {
-        let args = ["update"]
-        let detection: IntelbrewDetection
-        if let d = report?.intelbrew {
-            detection = d
-        } else {
-            detection = await client.detectIntelbrew()
-        }
-        let cmd = QueuedCommand(executable: client.installation.brewPath, arguments: args,
-                                environment: client.environment(for: detection, readOnly: false),
-                                display: BrewCommands.display(args))
+        let cmd = await updateCommand(client)
         let collector = OutputCollector()
         do {
             let code = try await queue.run(cmd) { collector.add($0) }
@@ -575,19 +592,35 @@ public final class AppStore {
                 settings.lastBrewUpdate = deps.now()
                 return nil
             }
-            let lines = collector.lines()
-            let tail = lines.suffix(6).joined(separator: "\n")
-            if SudoDetector.needsSudo(lines) {
-                return StoreError(title: String(localized: "brew update needs administrator rights"),
-                                  detail: String(localized: "Run this in Terminal:"), terminalCommand: cmd.display)
-            }
-            if let kind = BrewFailure.classify(lines) {
-                return StoreError(title: kind.title, detail: kind.explanation + "\n\n" + tail, terminalCommand: cmd.display)
-            }
-            return StoreError(title: String(localized: "brew update failed (exit \(code))"), detail: tail, terminalCommand: cmd.display)
+            return Self.updateError(code: code, lines: collector.lines(), display: cmd.display)
         } catch {
             return StoreError(title: String(localized: "brew update didn't run"), detail: String(describing: error))
         }
+    }
+
+    func updateCommand(_ client: BrewClient) async -> QueuedCommand {
+        let args = ["update"]
+        let detection: IntelbrewDetection
+        if let d = report?.intelbrew {
+            detection = d
+        } else {
+            detection = await client.detectIntelbrew()
+        }
+        return QueuedCommand(executable: client.installation.brewPath, arguments: args,
+                             environment: client.environment(for: detection, readOnly: false),
+                             display: BrewCommands.display(args))
+    }
+
+    static func updateError(code: Int32, lines: [String], display: String) -> StoreError {
+        let tail = lines.suffix(6).joined(separator: "\n")
+        if SudoDetector.needsSudo(lines) {
+            return StoreError(title: String(localized: "brew update needs administrator rights"),
+                              detail: String(localized: "Run this in Terminal:"), terminalCommand: display)
+        }
+        if let kind = BrewFailure.classify(lines) {
+            return StoreError(title: kind.title, detail: kind.explanation + "\n\n" + tail, terminalCommand: display)
+        }
+        return StoreError(title: String(localized: "brew update failed (exit \(code))"), detail: tail, terminalCommand: display)
     }
 
     /// After a failed status read: does `brew --version` run at all? A brew

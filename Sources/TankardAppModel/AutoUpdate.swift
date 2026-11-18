@@ -222,6 +222,12 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     /// unattended. Checked right before each such step; formulae are
     /// unaffected.
     case foreignAskpass(String?)
+    /// 0.8.5: the step ran past auto-update's time limit and was stopped
+    /// (brew undoes the unfinished step). The next run tries again.
+    case timedOut
+    /// 0.8.5: the Mac went to sleep during the step and it failed: not
+    /// counted as a failure. The next run tries again.
+    case slept
 
     public var text: String {
         switch self {
@@ -237,6 +243,8 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .appUpdatesItself: return String(localized: "set to update itself")
         case .needsPassword: return String(localized: "needs your administrator password; upgrade it by hand")
         case .homebrewBusy: return String(localized: "Homebrew was busy")
+        case .timedOut: return String(localized: "took too long and was stopped; the next automatic run tries again")
+        case .slept: return String(localized: "interrupted by sleep; the next automatic run tries again")
         case .quit: return String(localized: "Tankard quit; the next automatic run upgrades it")
         case .foreignAskpass(let helper?): return String(localized: "brew.env sets its own password helper (\(helper)); upgrade it in Terminal")
         case .foreignAskpass(nil): return String(localized: "brew.env clears HOMEBREW_NO_SUDO, so brew could ask for a password; upgrade it in Terminal")
@@ -756,8 +764,17 @@ public final class AutoUpdater {
         self.conditions = conditions
     }
 
+    /// 0.8.5: after a scheduled `brew update` that didn't finish (offline,
+    /// brew busy, slept), the slot waits at least this long before trying again.
+    public nonisolated static let quietRetry: TimeInterval = 15 * 60
+    /// 0.8.5: the open slot doesn't run before this (memory only).
+    @ObservationIgnored public internal(set) var retryNotBefore: Date?
+
     public func decide(store: AppStore, launchedAt: Date, now: Date) -> AutoUpdateDecision {
-        AutoUpdatePolicy.decide(enabled: settings.enabled, schedule: settings.schedule, since: settings.since,
+        if let r = retryNotBefore, r > now, settings.enabled, !rules.isSnoozed(now: now) {
+            return .waiting(.busy, retry: r.timeIntervalSince(now))
+        }
+        return AutoUpdatePolicy.decide(enabled: settings.enabled, schedule: settings.schedule, since: settings.since,
                                 lastRun: settings.lastRun, launchedAt: launchedAt, now: now,
                                 onAC: conditions.onACPower(), idle: conditions.idleSeconds(),
                                 busy: isRunning || store.isBusy || store.isRefreshing || store.homebrewState.needsWelcome,
@@ -843,7 +860,16 @@ public final class AutoUpdater {
 
         if !settings.dryRun {
             activity = String(localized: "Auto-update: brew update")
-            await store.refresh(manual: true)
+            // 0.8.5: a scheduled refresh (time limit, sleep, quiet failures).
+            await store.refresh(.scheduled)
+            if let quiet = store.lastScheduledUpdate?.quiet {
+                // Offline, brew busy, slept or too slow: the slot stays open
+                // and runs again once the wait below is over.
+                record.note = quiet.text
+                settings.lastRun = previousRun
+                retryNotBefore = now().addingTimeInterval(max(quiet.retryAfter, Self.quietRetry))
+                return finish(record, store: store, notifier: nil, now: now)
+            }
             if let e = store.error {
                 record.note = "\(e.title)" + (e.detail.isEmpty ? "" : ": \(e.detail.split(separator: "\n").last ?? "")")
                 return finish(record, store: store, notifier: notifier, now: now)
@@ -895,7 +921,13 @@ public final class AutoUpdater {
             step = AutoUpdateStep(name: p.name, index: n + 1, total: plan.run.count)
             let result = await runUpgrade(p, store: store, logFile: logFile, lockWait: lockWait)
             let (code, lines) = (result.code, result.lines)
-            if result.cancelled {
+            if result.timedOut {
+                logFile?.append(["tankard: stopped \(p.name): \(AutoUpdateSkip.timedOut.text)"])
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.timedOut.text))
+            } else if result.slept && code != 0 && !quitRequested {
+                logFile?.append(["tankard: skipped \(p.name): \(AutoUpdateSkip.slept.text)"])
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.slept.text))
+            } else if result.cancelled {
                 // Quit Now: brew stopped and undid the step (not a failure).
                 logFile?.append(["tankard: stopped \(p.name): Tankard is quitting"])
                 record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.quit.text))
@@ -1010,7 +1042,18 @@ public final class AutoUpdater {
         var waited = false
         /// Stopped (Quit Now) or cancelled before it ran.
         var cancelled = false
+        /// 0.8.5: stopped by the step time limit.
+        var timedOut = false
+        /// 0.8.5: the Mac slept while it ran.
+        var slept = false
     }
+
+    /// 0.8.5: an automatic upgrade step is stopped after this long (from
+    /// when brew starts; safe mode never compiles, so a step this long is
+    /// stuck, usually on a network that went away).
+    public nonisolated static let stepTimeout: TimeInterval = 60 * 60
+    /// Tests shorten it.
+    @ObservationIgnored public var stepTimeoutOverride: TimeInterval?
 
     /// `brew upgrade` for one package through the queue (the same strict
     /// FIFO as every other brew command), with safe mode's environment.
@@ -1037,10 +1080,14 @@ public final class AutoUpdater {
         stepCommand = id
         defer { stepCommand = nil }
         let name = p.name
+        let flags = ScheduledRunFlags()
+        let timeout = stepTimeoutOverride ?? Self.stepTimeout
+        let queue = store.queue
+        let sleeps = store.system.sleepCount
         let event: CommandEvent = await withCheckedContinuation { cont in
             store.queue.enqueue(cmd, id: id, lockWait: lockWait) { [weak self] event in
                 switch event {
-                case .started: break
+                case .started: flags.startTimer(timeout) { queue.cancel(id) }
                 case .output(let d): capture.add(d)
                 case .lockWait(let holder):
                     if let holder {
@@ -1054,6 +1101,7 @@ public final class AutoUpdater {
                         Task { @MainActor in self?.lockWaitChanged(waiting: false, for: name) }
                     }
                 case .finished, .cancelled, .failed, .skipped:
+                    flags.finish()
                     cont.resume(returning: event)
                 }
             }
@@ -1074,6 +1122,8 @@ public final class AutoUpdater {
             result = StepResult(code: -1, lines: lines)
         }
         result.waited = capture.waited
+        result.timedOut = flags.timedOut
+        result.slept = store.system.sleepCount != sleeps
         // A wait that ran out: the last attempt's output was the locked one.
         if result.waited, !result.cancelled, result.code != 0, lines.isEmpty { result.lines = capture.lockedLines }
         return result

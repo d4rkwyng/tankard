@@ -365,6 +365,15 @@ public final class BackgroundChecker {
     public func tick() async -> TimeInterval {
         // 0.8.3: the bundle was replaced; the relaunched app checks.
         if store.selfReplaced { return 300 }
+        // 0.8.5: nothing scheduled starts while the Mac sleeps (or is going
+        // to), while macOS says there is no network, or in the settle delay
+        // after a wake or the network coming back. Whatever is due then runs
+        // once (each policy runs a missed slot or interval once, not per miss).
+        let gate = store.system.gate(now: now())
+        if gate != .open {
+            LaunchTiming.note("scheduled checks wait: \(gate)")
+            return store.system.retry(now: now())
+        }
         var waits: [TimeInterval] = []
         if store.autoUpdate.settings.enabled {
             let (wait, ran) = await autoUpdateStep()
@@ -374,13 +383,17 @@ public final class BackgroundChecker {
             waits.append(wait)
         }
         if store.deps.backgroundUpdates {
-            let (wait, updated) = await backgroundUpdateStep()
+            let (wait, attempted, updated) = await backgroundUpdateStep()
             waits.append(wait)
             // That update was the notification check's brew update too.
             if updated, settings.notifyNewUpgrades {
                 settings.lastBackgroundCheck = now()
                 postIfNewUpgrades()
             }
+            // 0.8.5: it didn't finish (offline, brew busy, slept): no second
+            // `brew update` right behind it from the notification check
+            // (Derek's History: a lock failure 0.2 s after each network one).
+            if attempted && !updated { return waits.min() ?? 300 }
         }
         if settings.notifyNewUpgrades { waits.append(await notificationStep()) }
         return waits.min() ?? 300
@@ -388,17 +401,23 @@ public final class BackgroundChecker {
 
     /// 0.8: the throttled background `brew update`. Returns the wait and
     /// whether an update ran and the list was re-read.
-    private func backgroundUpdateStep() async -> (TimeInterval, Bool) {
+    private func backgroundUpdateStep() async -> (TimeInterval, attempted: Bool, updated: Bool) {
         let t = now()
         let decision = store.backgroundUpdateDecision(launchedAt: launchedAt, now: t)
         LaunchTiming.note("background update: \(decision)")
         switch decision {
-        case .off, .optedOut: return (300, false)
-        case .notDue(let next): return (max(1, next.timeIntervalSince(t)), false)
-        case .waiting(let retry): return (retry, false)
+        case .off, .optedOut: return (300, false, false)
+        case .notDue(let next): return (max(1, next.timeIntervalSince(t)), false, false)
+        case .waiting(let retry): return (retry, false, false)
         case .run:
             let ok = await store.runBackgroundUpdate()
-            return (store.deps.backgroundUpdateInterval ?? BackgroundSchedule(intervalHours: settings.checkIntervalHours).interval, ok)
+            if !ok, store.lastBackgroundUpdateFailure != nil {
+                // Look again when the retry is due (the policy has the time).
+                let next = store.backgroundUpdateDecision(launchedAt: launchedAt, now: now())
+                if case .notDue(let at) = next { return (max(5, at.timeIntervalSince(now())), true, false) }
+                return (BackgroundUpdatePolicy.busyRetry, true, false)
+            }
+            return (store.deps.backgroundUpdateInterval ?? BackgroundSchedule(intervalHours: settings.checkIntervalHours).interval, true, ok)
         }
     }
 
@@ -430,8 +449,10 @@ public final class BackgroundChecker {
 
     /// `brew update` (through the queue), re-read, compare, maybe notify.
     public func runCheck() async {
-        await store.refresh(manual: true)
+        // 0.8.5: a scheduled refresh: time limit, sleep, quiet "try later".
+        await store.refresh(.scheduled)
         settings.lastBackgroundCheck = now()
+        if store.lastScheduledUpdate?.quiet != nil { return } // keep the old baseline
         guard store.report != nil, store.error == nil else { return } // keep the old baseline on failure
         postIfNewUpgrades()
     }

@@ -1,6 +1,7 @@
 import AppKit
 import IOKit
 import IOKit.ps
+import Network
 import SwiftUI
 import TankardAppModel
 import TankardCore
@@ -40,6 +41,32 @@ final class SystemConditions: AutoUpdateConditions {
 
     func runningApps() -> [RunningApp] {
         NSWorkspace.shared.runningApplications.map { RunningApp(path: $0.bundleURL?.path, bundleID: $0.bundleIdentifier) }
+    }
+}
+
+/// 0.8.5: tells the store's ScheduleConditions when the Mac sleeps and
+/// wakes (NSWorkspace) and whether there is a network (NWPathMonitor), so
+/// scheduled checks don't start asleep or offline. Lives as long as the app.
+@MainActor
+final class SleepAndNetworkWatch {
+    private let monitor = NWPathMonitor()
+    private var observers: [NSObjectProtocol] = []
+
+    init(_ conditions: ScheduleConditions) {
+        let center = NSWorkspace.shared.notificationCenter
+        observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { conditions.willSleep() }
+        })
+        observers.append(center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { conditions.didWake(at: Date()) }
+        })
+        monitor.pathUpdateHandler = { path in
+            let ok = path.status == .satisfied
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { conditions.network(satisfied: ok, at: Date()) }
+            }
+        }
+        monitor.start(queue: DispatchQueue(label: "net.mindtricks.tankard.path"))
     }
 }
 
