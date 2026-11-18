@@ -24,7 +24,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Relaunch no longer carries debug settings over** to the new copy (demo, snapshot or script mode).
 
 ### For contributors
-- The tests delete the UserDefaults suites they create; a run used to leave about 240 plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
+- The tests delete the UserDefaults suites they create; a run used to leave a few hundred plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
 
 ## [0.8.3]
 
