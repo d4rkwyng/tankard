@@ -236,6 +236,16 @@ struct DiscoverTable: View {
             if discover.query.trimmingCharacters(in: .whitespaces).isEmpty {
                 ContentUnavailableView("Search Homebrew", systemImage: "magnifyingglass",
                                        description: Text("Type a name or a word from a description."))
+            } else if store.searchEmptyBecauseCasksOff {
+                ContentUnavailableView {
+                    Label(CasksBanner.noMatchesTitle, systemImage: "shippingbox")
+                } description: {
+                    Text(CasksBanner.noMatchesDetail(discover.query))
+                } actions: {
+                    Button("Turn On Apps…") { store.requestEnableCasks() }
+                        .disabled(store.isBusy)
+                        .help(String(localized: "Asks first, then turns apps on"))
+                }
             } else if discover.results.isEmpty && discover.resultsQuery == discover.query {
                 ContentUnavailableView("No matches", systemImage: "magnifyingglass",
                                        description: Text("Nothing matches “\(discover.query)”."))

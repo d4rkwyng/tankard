@@ -54,4 +54,34 @@ struct CasksBannerTests {
         let fresh = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0.01))
         #expect(!fresh.showsCasksBanner)
     }
+
+    /// Newbie review H1: searching for an app while apps are off says why
+    /// nothing matched and offers Turn On Apps…, even with the banner closed.
+    @Test func emptySearchWhileCasksAreOffExplainsIt() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0.01))
+        await store.start()
+        let d = try #require(store.openDiscover())
+        await d.activate()
+        store.hideCasksBanner()
+        d.query = "firefox"
+        await d.searchNow()
+        #expect(d.results.isEmpty)
+        #expect(store.searchEmptyBecauseCasksOff)
+        #expect(CasksBanner.noMatchesDetail("firefox").contains("firefox"))
+        // A search that finds formulae isn't affected.
+        d.query = "xz"
+        await d.searchNow()
+        #expect(!d.results.isEmpty)
+        #expect(!store.searchEmptyBecauseCasksOff)
+
+        // With casks on, an empty search is a plain "No matches".
+        let arm = AppStore(deps: Demo.dependencies(.arm64, pace: 0.01))
+        await arm.start()
+        let a = try #require(arm.openDiscover())
+        await a.activate()
+        a.query = "zzzz-nothing"
+        await a.searchNow()
+        #expect(a.results.isEmpty)
+        #expect(!arm.searchEmptyBecauseCasksOff)
+    }
 }
