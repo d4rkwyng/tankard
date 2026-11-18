@@ -1069,7 +1069,7 @@
 "Would remove 1 formula" = "1個のformulaが削除されます";
 "Writes a .command script with exactly these commands and opens it in Terminal" = "これらのコマンドそのままの.commandスクリプトを書き出し、ターミナルで開きます";
 "Writing Brewfile…" = "Brewfileを書き込み中…";
-"Wrong password, try again." = "パスワードが違います。もう一度入力してください。";
+"Wrong password, try again." = "パスワードが正しくありません";
 "Xcode is out of date" = "Xcodeが古くなっています";
 "Yes" = "はい";
 "You have Tankard %@." = "お使いのTankardは %@ です。";

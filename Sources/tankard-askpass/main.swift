@@ -138,60 +138,79 @@ if snapshotPath == nil && isatty(STDOUT_FILENO) == 1 {
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 
-let alert = NSAlert()
-alert.alertStyle = .warning
-alert.messageText = request.isRetry ? AskpassText.retryTitle : AskpassText.title
-alert.informativeText = AskpassText.body(request)
-alert.addButton(withTitle: AskpassText.ok)
-let cancelButton = alert.addButton(withTitle: AskpassText.cancel)
-cancelButton.keyEquivalent = "\u{1b}"
+// 0.8.4: a small panel laid out like a modern macOS alert: centered app
+// icon, bold centered title, two short centered lines, the secure field
+// (sudo's prompt as its placeholder, and as a label only when it isn't the
+// usual "Password:"), a collapsed "Details" with the brew command in small
+// monospaced text, then Cancel and OK side by side. Not NSAlert: with an
+// accessory view it left-aligns everything.
+let panelWidth: CGFloat = 260
+let inset: CGFloat = 20
+let width = panelWidth - 2 * inset
 
-// 0.8.4: compact. The secure field (sudo's prompt as its placeholder, and
-// as a label only when it isn't the usual "Password:"), then a collapsed
-// "Details" disclosure with the brew command in small monospaced text.
-let width: CGFloat = 260
+func centeredLabel(_ text: String, font: NSFont) -> NSTextField {
+    let l = NSTextField(wrappingLabelWithString: text)
+    l.font = font
+    l.alignment = .center
+    l.isSelectable = false
+    l.preferredMaxLayoutWidth = width
+    l.translatesAutoresizingMaskIntoConstraints = false
+    l.widthAnchor.constraint(equalToConstant: width).isActive = true
+    return l
+}
+
+let icon = NSImageView(image: NSApplication.shared.applicationIconImage)
+icon.imageScaling = .scaleProportionallyUpOrDown
+icon.translatesAutoresizingMaskIntoConstraints = false
+icon.widthAnchor.constraint(equalToConstant: 64).isActive = true
+icon.heightAnchor.constraint(equalToConstant: 64).isActive = true
+let titleLabel = centeredLabel(request.isRetry ? AskpassText.retryTitle : AskpassText.title, font: .boldSystemFont(ofSize: 13))
+let bodyLabel = centeredLabel(AskpassText.body(request), font: .systemFont(ofSize: NSFont.smallSystemFontSize))
+
 let field = NSSecureTextField(frame: .zero)
 field.placeholderString = AskpassText.promptLabel(request.prompt).trimmingCharacters(in: CharacterSet(charactersIn: ":： "))
+field.bezelStyle = .roundedBezel
 field.translatesAutoresizingMaskIntoConstraints = false
 field.widthAnchor.constraint(equalToConstant: width).isActive = true
-var rows: [NSView] = []
-if request.prompt != "Password:" {
-    let label = NSTextField(labelWithString: request.prompt)
-    label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
-    rows.append(label)
-}
-rows.append(field)
 
-/// Shows or hides the command, then lets the alert fit its new height.
-@MainActor final class DetailsToggle: NSObject {
-    let disclosure: NSButton
-    let command: NSTextField
-    let stack: NSStackView
-    init(disclosure: NSButton, command: NSTextField, stack: NSStackView) {
-        self.disclosure = disclosure
-        self.command = command
-        self.stack = stack
-    }
-    /// From the triangle (its state already flipped) or the "Details" word.
+/// The panel's buttons and the Details toggle.
+@MainActor final class Actions: NSObject {
+    var disclosure: NSButton?
+    var command: NSTextField?
+    @objc func ok(_ sender: Any?) { NSApplication.shared.stopModal(withCode: .OK) }
+    @objc func cancel(_ sender: Any?) { NSApplication.shared.stopModal(withCode: .cancel) }
+    /// From the triangle (its state already flipped) or the "Details" word:
+    /// show or hide the command, and grow or shrink the panel downwards.
     @objc func toggle(_ sender: NSButton) {
+        guard let disclosure, let command else { return }
         if sender !== disclosure { disclosure.state = disclosure.state == .on ? .off : .on }
         command.isHidden = disclosure.state != .on
-        stack.layoutSubtreeIfNeeded()
-        stack.setFrameSize(stack.fittingSize)
-        alert.layout()
+        fitPanel()
     }
 }
-var detailsToggle: DetailsToggle?
-let stack = NSStackView()
+let actions = Actions()
+// Return in the field is OK even before the panel is key (focus can arrive
+// late; see bringToFront), not only through the default button. Only on
+// Return: not when the field merely loses focus.
+field.target = actions
+field.action = #selector(Actions.ok(_:))
+field.cell?.sendsActionOnEndEditing = false
+
+var rows: [NSView] = [icon, titleLabel, bodyLabel]
+if request.prompt != "Password:" {
+    rows.append(centeredLabel(request.prompt, font: .systemFont(ofSize: NSFont.smallSystemFontSize)))
+}
+rows.append(field)
 if let commandText = AskpassText.command(request) {
-    let disclosure = NSButton(title: "", target: nil, action: nil)
+    let disclosure = NSButton(title: "", target: actions, action: #selector(Actions.toggle(_:)))
     disclosure.bezelStyle = .disclosure
     disclosure.setButtonType(.pushOnPushOff)
     disclosure.state = .off
-    let word = NSButton(title: AskpassText.details, target: nil, action: nil)
+    let word = NSButton(title: AskpassText.details, target: actions, action: #selector(Actions.toggle(_:)))
     word.isBordered = false
     word.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
     word.contentTintColor = .secondaryLabelColor
+    for b in [disclosure, word] { b.refusesFirstResponder = true }
     let header = NSStackView(views: [disclosure, word])
     header.orientation = .horizontal
     header.spacing = 2
@@ -203,25 +222,63 @@ if let commandText = AskpassText.command(request) {
     command.translatesAutoresizingMaskIntoConstraints = false
     command.widthAnchor.constraint(equalToConstant: width).isActive = true
     command.isHidden = true
-    let toggle = DetailsToggle(disclosure: disclosure, command: command, stack: stack)
-    for b in [disclosure, word] {
-        b.target = toggle
-        b.action = #selector(DetailsToggle.toggle(_:))
-        b.refusesFirstResponder = true
-    }
-    detailsToggle = toggle
+    actions.disclosure = disclosure
+    actions.command = command
     rows += [header, command]
 }
-for v in rows { stack.addArrangedSubview(v) }
+
+let cancelButton = NSButton(title: AskpassText.cancel, target: actions, action: #selector(Actions.cancel(_:)))
+cancelButton.keyEquivalent = "\u{1b}"
+let okButton = NSButton(title: AskpassText.ok, target: actions, action: #selector(Actions.ok(_:)))
+okButton.keyEquivalent = "\r"
+for b in [cancelButton, okButton] {
+    b.bezelStyle = .push
+    b.controlSize = .large
+    b.refusesFirstResponder = true
+}
+let buttons = NSStackView(views: [cancelButton, okButton])
+buttons.orientation = .horizontal
+buttons.distribution = .fillEqually
+buttons.spacing = 8
+buttons.translatesAutoresizingMaskIntoConstraints = false
+buttons.widthAnchor.constraint(equalToConstant: width).isActive = true
+rows.append(buttons)
+
+let stack = NSStackView(views: rows)
 stack.orientation = .vertical
-stack.alignment = .leading
-stack.spacing = 6
-stack.layoutSubtreeIfNeeded()
-stack.frame = NSRect(origin: .zero, size: NSSize(width: width, height: stack.fittingSize.height))
-alert.accessoryView = stack
-alert.layout()
-alert.window.initialFirstResponder = field
-alert.window.level = .modalPanel
+stack.alignment = .centerX
+stack.spacing = 10
+stack.setCustomSpacing(12, after: icon)
+stack.setCustomSpacing(6, after: titleLabel)
+stack.setCustomSpacing(14, after: bodyLabel)
+stack.setCustomSpacing(16, after: rows[rows.count - 2])
+stack.edgeInsets = NSEdgeInsets(top: inset, left: inset, bottom: inset - 4, right: inset)
+stack.detachesHiddenViews = true
+
+let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: panelWidth, height: 200),
+                    styleMask: [.titled, .fullSizeContentView], backing: .buffered, defer: false)
+panel.title = "Tankard"
+panel.titleVisibility = .hidden
+panel.titlebarAppearsTransparent = true
+panel.isMovableByWindowBackground = true
+for b in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] { panel.standardWindowButton(b)?.isHidden = true }
+panel.contentView = stack
+panel.defaultButtonCell = okButton.cell as? NSButtonCell
+panel.initialFirstResponder = field
+panel.level = .modalPanel
+panel.hidesOnDeactivate = false
+
+/// Height from the content (the title and body wrap in some languages);
+/// the top edge stays where it is.
+@MainActor func fitPanel() {
+    stack.layoutSubtreeIfNeeded()
+    let size = NSSize(width: panelWidth, height: stack.fittingSize.height)
+    var frame = panel.frameRect(forContentRect: NSRect(origin: .zero, size: size))
+    frame.origin = NSPoint(x: panel.frame.minX, y: panel.frame.maxY - frame.height)
+    panel.setFrame(frame, display: true)
+}
+fitPanel()
+panel.center()
 
 // Give up (as Cancel) after the timeout, or as soon as the sudo that asked
 // is gone (brew stopped from Tankard, or killed): no orphan dialog.
@@ -237,9 +294,9 @@ if let snapshotPath {
     // Debug only: picture of the empty dialog, then exit 1. Never reads
     // the field. TANKARD_ASKPASS_DETAILS=1 opens Details first, through the
     // same toggle a click uses.
-    if env[Askpass.detailsKey] == "1", let detailsToggle {
+    if env[Askpass.detailsKey] == "1", let disclosure = actions.disclosure {
         let open = Timer(timeInterval: 0.3, repeats: false) { _ in
-            MainActor.assumeIsolated { detailsToggle.disclosure.performClick(nil) }
+            MainActor.assumeIsolated { disclosure.performClick(nil) }
         }
         RunLoop.main.add(open, forMode: .modalPanel)
     }
@@ -250,7 +307,7 @@ if let snapshotPath {
 }
 
 @MainActor func snapshot(to path: String) {
-    if let view = alert.window.contentView,
+    if let view = panel.contentView,
        let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
         view.cacheDisplay(in: view.bounds, to: rep)
         try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
@@ -270,10 +327,10 @@ if let snapshotPath {
 // normal windows, and a click on it gives it focus.
 @MainActor func bringToFront() {
     NSApplication.shared.activate()
-    alert.window.level = .modalPanel
-    alert.window.makeKeyAndOrderFront(nil)
-    alert.window.orderFrontRegardless()
-    alert.window.makeFirstResponder(field)
+    panel.level = .modalPanel
+    panel.makeKeyAndOrderFront(nil)
+    panel.orderFrontRegardless()
+    panel.makeFirstResponder(field)
 }
 // Once right after runModal shows the window, and again a little later
 // (Tankard's yield can arrive after the first request).
@@ -286,9 +343,9 @@ for delay in [0.05, 0.6, 1.5] {
 
 app.finishLaunching()
 app.activate()
-let response = alert.runModal()
+let response = app.runModal(for: panel)
 watchdog.invalidate()
-guard snapshotPath == nil, response == .alertFirstButtonReturn else { exit(1) }
+guard snapshotPath == nil, response == .OK else { exit(1) }
 let ok = sendPassword(field.stringValue)
 field.stringValue = ""
 exit(ok ? 0 : 1)
