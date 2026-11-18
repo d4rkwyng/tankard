@@ -79,7 +79,9 @@ struct UpgradePlanView: View {
             // 0.8.3: say before starting that brew's sudo will ask.
             let password = plan.needingPassword
             if !password.isEmpty {
-                AdminPasswordNote(names: password.map(\.name), helper: store.deps.askpassHelper != nil)
+                AdminPasswordNote(names: password.map(\.name), helper: store.deps.askpassHelper != nil,
+                                  foreign: store.foreignAskpass(),
+                                  commands: password.map { BrewCommands.display(BrewCommands.arguments(.upgrade, for: $0)) })
                     .padding(.top, 12)
             }
 
@@ -153,6 +155,10 @@ struct AdminPasswordNote: View {
     var helper: Bool
     /// Uninstall: brew removes what the installer put in place.
     var uninstall = false
+    /// 0.8.4: brew.env sets another password helper: no dialog, these steps
+    /// are refused, and `commands` are shown for Terminal.
+    var foreign: ForeignAskpass? = nil
+    var commands: [String] = []
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -161,12 +167,19 @@ struct AdminPasswordNote: View {
                 Text(names.count == 1 ? String(localized: "\(names[0]) needs your administrator password")
                      : String(localized: "These need your administrator password: \(names.joined(separator: ", "))"))
                     .font(.system(size: 12, weight: .semibold))
-                Text((uninstall ? String(localized: "brew removes the installer's files with sudo.")
-                      : String(localized: "brew runs the installer with sudo.")) + " "
-                     + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
-                        : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal.")))
-                    .font(.system(size: 11)).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                if let foreign {
+                    Text(foreign.message)
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if !commands.isEmpty { CommandBox(command: commands.joined(separator: "\n")) }
+                } else {
+                    Text((uninstall ? String(localized: "brew removes the installer's files with sudo.")
+                          : String(localized: "brew runs the installer with sudo.")) + " "
+                         + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
+                            : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal.")))
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
         }
         .padding(8)

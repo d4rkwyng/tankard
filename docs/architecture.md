@@ -299,6 +299,39 @@ don't warn; `HOMEBREW_PREFIX`, `REPOSITORY`, `LIBRARY`, `BREW_FILE` and
 so `parseBrewEnv` skips them too, and it reads `SUDO_ASKPASS` and the lower-case proxies as
 bin/brew does.
 
+**A foreign `SUDO_ASKPASS` (0.8.4, `ForeignAskpass` in TankardAppModel).** A brew.env
+`SUDO_ASKPASS` that isn't Tankard's own helper (compared after resolving symlinks; empty is
+unset, as bin/brew drops empty values) would get the password at the moment Tankard says its
+own dialog will ask: the shape the askpass gate exists to stop. Checked on 7.0.14 with a
+throwaway XDG brew.env and a helper that only records the call and exits 1, running
+`SystemCommand.run(..., sudo: true)` through `brew ruby` with Tankard-like `env -i`:
+with no `HOMEBREW_NO_SUDO`, brew runs `/usr/bin/sudo -A -E -- ...` and the helper is
+called; with Tankard's own `SUDO_ASKPASS` in the environment the brew.env one still wins and
+is called; with `HOMEBREW_NO_SUDO=1` brew fails with "sudo is disabled by HOMEBREW_NO_SUDO."
+and the helper isn't called; with `HOMEBREW_NO_SUDO=` also in brew.env it is called again.
+So for a sudo-capable step (a cask install, upgrade, reinstall, uninstall, adopt, or a
+restore's cask step) Tankard never sets its own `SUDO_ASKPASS` and sets
+`HOMEBREW_NO_SUDO=1` instead (`AdminPassword.environment(..., foreign:)`). Each such step's
+queue precondition reads brew.env again right before it starts (`Dependencies.brewEnvFiles`,
+from disk in the app) and refuses it (`AdminPassword.refusal`) when brew could still run
+`sudo -A` with the helper: brew.env clears `HOMEBREW_NO_SUDO`, the step was built with
+Tankard's helper (the helper appeared after the sheet started), or the cask is known to run
+its installer with sudo (it would only fail). The sheet then shows "brew.env sets its own
+password helper (path); run this step in Terminal:" (`SudoOutcome.foreignHelper`) with the
+command, as does the plan's and the uninstall sheet's password note; a step that ran under
+`HOMEBREW_NO_SUDO` and needed sudo ends with the same message. Health keeps the
+`SUDO_ASKPASS` row's warning (none for Tankard's own path). What remains: brew.env written
+between the precondition and bin/brew reading it, a window of milliseconds that Tankard
+can't close, since brew.env always wins over the environment.
+
+**Proxy credentials stay in brew's environment.** The command shown, copied and recorded
+is built from the arguments and Tankard's own few extra variables, never the environment.
+brew's output is masked (`ProxySettings.maskText`) where Tankard keeps or shows it:
+`upgrade.log` (`LogFile.append`), History's output tail, the Auto-update log's failure line
+(and the notification built from it), the background update's os_log and log line, the
+sheet's live log, and Health's `brew config`/`brew doctor`. Tankard's other os_log lines
+carry counts and pids only, and its own process environment isn't changed.
+
 Mitigations, checked in 7.0.14's source: none of these has a command-line flag that beats
 the environment for the commands Tankard runs. `--greedy` is a plain switch with no
 negation (cmd/upgrade.rb, cmd/outdated.rb), `uninstall` has no autoremove flag, `--verbose`

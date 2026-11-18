@@ -77,7 +77,10 @@ public final class LogFile: @unchecked Sendable {
                 handle = try? FileHandle(forWritingTo: url)
                 _ = try? handle?.seekToEnd()
             }
-            try? handle?.write(contentsOf: Data((lines.joined(separator: "\n") + "\n").utf8))
+            // 0.8.4: never a URL's user:password (a proxy's, if brew, git or
+            // curl ever prints one).
+            let text = ProxySettings.maskText(lines.joined(separator: "\n"))
+            try? handle?.write(contentsOf: Data((text + "\n").utf8))
         }
     }
 

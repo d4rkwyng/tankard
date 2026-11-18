@@ -43658,6 +43658,58 @@
         }
       }
     },
+    "Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In brew.env gesetzt: brew schickt Passwortabfragen an dieses Programm. Tankard zeigt keinen Passwortdialog; Schritte mit sudo laufen im Terminal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini dans brew.env : brew enverrait les demandes de mot de passe à cet assistant. Tankard ne propose pas de fenêtre de mot de passe, et les étapes qui demandent sudo se font dans Terminal."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido en brew.env: brew enviaría las solicitudes de contraseña a este asistente. Tankard no ofrece diálogo de contraseña y los pasos que necesitan sudo se ejecutan en Terminal."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env で設定: brew はパスワードの入力をこのヘルパーに送ります。Tankard はパスワードダイアログを出さず、sudo が必要な手順はターミナルで実行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 brew.env 中设置：brew 会把密码请求交给此辅助程序。Tankard 不提供密码对话框，需要 sudo 的步骤请在“终端”中运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no brew.env: o brew enviaria os pedidos de senha para este auxiliar. O Tankard não oferece janela de senha, e as etapas que precisam de sudo rodam no Terminal."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato in brew.env: brew invierebbe le richieste di password a questo helper. Tankard non mostra la finestra della password e i passaggi che richiedono sudo vanno eseguiti nel Terminale."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env에 설정됨: brew가 암호 요청을 이 도우미로 보냅니다. Tankard는 암호 대화상자를 띄우지 않으며, sudo가 필요한 단계는 터미널에서 실행합니다."
+          }
+        }
+      }
+    },
     "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts.": {
       "localizations": {
         "de": {
@@ -43914,58 +43966,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew.env에 설정되어 Tankard의 brew에 전달됨: 설정되어 있는 동안 자동 업데이트가 일시 중지됩니다."
-          }
-        }
-      }
-    },
-    "Set in brew.env, so password prompts go to this helper, not Tankard's dialog.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In brew.env gesetzt: Passwortabfragen gehen an dieses Programm, nicht an Tankards Dialog."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Défini dans brew.env : les demandes de mot de passe vont à cet assistant, pas à la fenêtre de Tankard."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Definido en brew.env: las solicitudes de contraseña van a este asistente, no al diálogo de Tankard."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew.env で設定: パスワードの入力はこのヘルパーに送られ、Tankard のダイアログは使われません。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 brew.env 中设置：密码请求会交给此辅助程序，而不是 Tankard 的对话框。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Definido no brew.env: os pedidos de senha vão para este auxiliar, não para a janela do Tankard."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impostato in brew.env: le richieste di password vanno a questo helper, non alla finestra di Tankard."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew.env에 설정됨: 암호 요청이 Tankard 대화상자가 아닌 이 도우미로 갑니다."
           }
         }
       }
@@ -60086,6 +60086,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew의 출력"
+          }
+        }
+      }
+    },
+    "brew.env sets its own password helper (%@); run this step in Terminal:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env setzt ein eigenes Passwortprogramm (%@); führe diesen Schritt im Terminal aus:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env définit son propre assistant de mot de passe (%@) ; lancez cette étape dans Terminal :"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env define su propio asistente de contraseña (%@); ejecuta este paso en Terminal:"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env が独自のパスワードヘルパー（%@）を設定しています。この手順はターミナルで実行してください:"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env 设置了自己的密码辅助程序（%@）；请在“终端”中运行此步骤："
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew.env define seu próprio auxiliar de senha (%@); execute esta etapa no Terminal:"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env imposta un proprio helper per la password (%@); esegui questo passaggio nel Terminale:"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew.env가 자체 암호 도우미(%@)를 설정했습니다. 이 단계는 터미널에서 실행하세요:"
           }
         }
       }

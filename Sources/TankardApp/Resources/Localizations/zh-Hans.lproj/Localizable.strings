@@ -832,12 +832,12 @@
 "Set by Tankard: it reads brew's output." = "由 Tankard 设置：它需要读取 brew 的输出。";
 "Set in brew.env, so Uninstall may also remove other unused dependencies." = "在 brew.env 中设置：卸载时可能还会移除其他未使用的依赖项。";
 "Set in brew.env, so brew uses this mirror; Discover and the tap index don't." = "在 brew.env 中设置：brew 会使用此镜像；“探索”和 tap 索引不会。";
+"Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal." = "在 brew.env 中设置：brew 会把密码请求交给此辅助程序。Tankard 不提供密码对话框，需要 sudo 的步骤请在“终端”中运行。";
 "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts." = "在 brew.env 中设置，因此也适用于 Tankard 的 brew：它会改变 brew 获取代码的来源或信任的对象。";
 "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications." = "在 brew.env 中设置，因此也会作用于 Tankard 的安装；接管 App 的位置检查假定为 /Applications。";
 "Set in brew.env, so it overrides Intelbrew mode's value." = "在 brew.env 中设置：会覆盖 Intelbrew 模式的值。";
 "Set in brew.env, so it overrides Tankard's self-updating apps setting." = "在 brew.env 中设置：会覆盖 Tankard 的自动更新应用设置。";
 "Set in brew.env, so it reaches Tankard's brew: automatic updates pause while it is set." = "在 brew.env 中设置，因此会影响 Tankard 的 brew：设置期间自动更新会暂停。";
-"Set in brew.env, so password prompts go to this helper, not Tankard's dialog." = "在 brew.env 中设置：密码请求会交给此辅助程序，而不是 Tankard 的对话框。";
 "Set in brew.env: Tankard's download progress and Clean Up assume the default folders." = "在 brew.env 中设置：Tankard 的下载进度和清理功能假定使用默认文件夹。";
 "Set in brew.env: it changes brew's output, which Tankard reads." = "在 brew.env 中设置：会改变 Tankard 所读取的 brew 输出。";
 "Set in brew.env: it moves brew's files from where Tankard looks." = "在 brew.env 中设置：会把 brew 的文件移出 Tankard 查找的位置。";
@@ -1148,6 +1148,7 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew 不会卸载已固定的 formula。请先取消固定。";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew 不会升级它，“全部升级”也不包含它。";
 "brew's output" = "brew 的输出";
+"brew.env sets its own password helper (%@); run this step in Terminal:" = "brew.env 设置了自己的密码辅助程序（%@）；请在“终端”中运行此步骤：";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env 关闭了 brew 的依赖项检查；自动更新已暂停。";
 "cancelled" = "已取消";
 "cask" = "cask";

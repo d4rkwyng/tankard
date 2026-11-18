@@ -282,7 +282,7 @@ struct EnvironmentList: View {
         case .autoremove: return String(localized: "Set in brew.env, so Uninstall may also remove other unused dependencies.")
         case .output: return String(localized: "Set in brew.env: it changes brew's output, which Tankard reads.")
         case .caskOptions: return String(localized: "Set in brew.env, so it applies to Tankard's installs too; Adopt Apps' location checks assume /Applications.")
-        case .askpass: return String(localized: "Set in brew.env, so password prompts go to this helper, not Tankard's dialog.")
+        case .askpass: return String(localized: "Set in brew.env, so brew would send password prompts to this helper: Tankard offers no password dialog, and steps that need sudo run in Terminal.")
         case .location: return String(localized: "Set in brew.env: it moves brew's files from where Tankard looks.")
         case .defaultFolders: return String(localized: "Set in brew.env: Tankard's download progress and Clean Up assume the default folders.")
         case .trust: return String(localized: "Set in brew.env, so it applies to Tankard's brew: it changes where brew gets code from, or what it trusts.")

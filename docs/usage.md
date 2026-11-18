@@ -695,12 +695,21 @@ Health ▸ Environment warns about every brew.env setting that undoes one of Tan
   also remove every other unused dependency, not just what it lists;
 - `HOMEBREW_COLOR`, `HOMEBREW_VERBOSE`, `HOMEBREW_DEBUG`, or an empty `HOMEBREW_NO_COLOR`:
   they change brew's output, which Tankard reads;
-- `SUDO_ASKPASS`: password prompts go to that program instead of Tankard's dialog;
+- `SUDO_ASKPASS` set to anything but Tankard's own helper: brew would send the password
+  prompt to that program. Tankard then never offers its password dialog: a cask step runs
+  with `HOMEBREW_NO_SUDO=1` (brew stops before sudo, so that program never runs), and a
+  step known to need the password (a `.pkg` installer), or every cask step if brew.env also
+  sets `HOMEBREW_NO_SUDO=` empty, isn't run at all. The plan and the sheet say "brew.env
+  sets its own password helper (path); run this step in Terminal" and show the command;
 - `HOMEBREW_CELLAR`, `HOMEBREW_CACHE`, `HOMEBREW_LOGS`, mirrors, and settings that change
   where brew gets code from or what it trusts.
 
 brew has no command-line option that undoes these, so remove the line from brew.env if you
-want Tankard's behavior. Tokens in brew.env are fine and get no warning.
+want Tankard's behavior.
+
+A proxy's user name and password never appear in what Tankard shows or keeps: the commands
+shown and copied don't include the environment, and `upgrade.log`, History, the Auto-update
+log, the sheet's log and Health mask any `user:password@` in brew's output as `•••@`. Tokens in brew.env are fine and get no warning.
 
 **Which brew.env.** brew reads `$XDG_CONFIG_HOME/homebrew/brew.env` when
 `XDG_CONFIG_HOME` is set, otherwise `~/.homebrew/brew.env`. Tankard reads
