@@ -18,6 +18,8 @@ extension Theme {
 /// The table's ⚠ tag next to a vulnerable formula's name: "⚠ High · 3".
 struct VulnerabilityTag: View {
     var package: Package
+    /// 0.8.6: the symbol only (a narrow Package column).
+    var compact = false
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var scheme
     @Environment(\.backgroundProminence) private var prominence
@@ -28,7 +30,7 @@ struct VulnerabilityTag: View {
             let selected = prominence == .increased && !theme.isCustom
             HStack(spacing: 2) {
                 Image(systemName: "exclamationmark.triangle.fill").font(.system(size: 8.5))
-                Text(label)
+                if !compact { Text(label) }
             }
             .font(.system(size: 9.5, weight: .semibold))
             .foregroundStyle(selected ? Color.white : w.text)

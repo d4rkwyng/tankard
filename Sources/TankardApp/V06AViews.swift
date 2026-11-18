@@ -10,6 +10,8 @@ import TankardCore
 /// The list's "deprecated" / "disabled" tag next to a package's name.
 struct RetiredBadge: View {
     var package: Package
+    /// 0.8.6: the symbol only (a narrow Package column).
+    var compact = false
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var scheme
     @Environment(\.backgroundProminence) private var prominence
@@ -20,7 +22,7 @@ struct RetiredBadge: View {
             let selected = prominence == .increased && !theme.isCustom
             HStack(spacing: 2) {
                 Image(systemName: package.disabled ? "nosign" : "clock.badge.exclamationmark").font(.system(size: 8))
-                Text(label)
+                if !compact { Text(label) }
             }
             .font(.system(size: 9.5, weight: .semibold))
             .foregroundStyle(selected ? Color.white : w.text)
@@ -28,6 +30,8 @@ struct RetiredBadge: View {
             .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : w.tag))
             .fixedSize()
             .help(package.retiredDetail ?? label)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(label))
         }
     }
 }

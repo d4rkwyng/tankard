@@ -664,24 +664,43 @@ struct PackageNameCell: View {
     var body: some View {
         let p = package
         HStack(spacing: 4) {
-            Text(p.name).fontWeight(.medium).lineLimit(1).layoutPriority(2)
-            if p.kind == .formula && !p.requested {
-                Text("dep").font(.system(size: 9.5, weight: .medium)).foregroundStyle(.secondary)
-                    .padding(.horizontal, 4).padding(.vertical, 0.5)
-                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
-                    .fixedSize()
-                    .help("Installed as a dependency")
+            // 0.8.6: the name keeps its first NameFit.nameChars characters;
+            // the badges shrink to icons, then leave (the name's tooltip
+            // lists them), before it does (NameCellLayout).
+            NameCellLayout(nameMin: Self.nameMinWidth(p.name), spacing: 4) {
+                Text(p.name).fontWeight(.medium).lineLimit(1)
+                    .help(Self.badgeHelp(p) ?? "")
+                ViewThatFits(in: .horizontal) {
+                    NameBadges(package: p, compact: false)
+                    NameBadges(package: p, compact: true)
+                    Color.clear.frame(width: 0, height: 0)
+                }
+                note(p).frame(minWidth: 0, alignment: .leading).clipped()
             }
-            if p.pinned { PinnedBadge() }
-            RetiredBadge(package: p)
-            VulnerabilityTag(package: p)
-            note(p)
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
             // The trailing area: marks up to PackageRow.trailingBadge high,
             // one cluster in RowMark's order (0.8.6).
             TrailingRowMarks(store: store, package: p)
         }
         .frame(maxHeight: PackageRow.content)
+    }
+
+    /// The width of the name's first NameFit.nameChars characters (the
+    /// table's 13 pt, medium).
+    static func nameMinWidth(_ name: String) -> CGFloat {
+        let font = NSFont.systemFont(ofSize: NSFont.systemFontSize, weight: .medium)
+        return ceil((String(name.prefix(NameFit.nameChars)) as NSString).size(withAttributes: [.font: font]).width) + 1
+    }
+
+    /// The badges in words, for the name's tooltip (they may show as icons
+    /// or not at all). nil without badges.
+    static func badgeHelp(_ p: Package) -> String? {
+        var lines: [String] = []
+        if p.kind == .formula && !p.requested { lines.append(String(localized: "Installed as a dependency")) }
+        if p.pinned { lines.append(String(localized: "Pinned: upgrades leave it at this version")) }
+        if let r = p.retiredLabel { lines.append(r) }
+        if p.vulnerabilityBadge != nil { lines.append(VulnerabilityText.help(p)) }
+        return lines.isEmpty ? nil : ([p.name] + lines).joined(separator: "\n")
     }
 
     /// What was the second line: the compile warning, the bottle on offer,
@@ -711,6 +730,68 @@ struct PackageNameCell: View {
         let retired = [String(localized: "Disabled"), String(localized: "Deprecated")]
         let rest = sub.components(separatedBy: " · ").filter { !retired.contains($0) }
         return rest.isEmpty ? nil : rest.joined(separator: " · ")
+    }
+}
+
+/// 0.8.6: the name's badges, as words or (compact) as icons only.
+struct NameBadges: View {
+    var package: Package
+    var compact: Bool
+
+    var body: some View {
+        let p = package
+        HStack(spacing: 4) {
+            if p.kind == .formula && !p.requested && !compact {
+                Text("dep").font(.system(size: 9.5, weight: .medium)).foregroundStyle(.secondary)
+                    .padding(.horizontal, 4).padding(.vertical, 0.5)
+                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary, lineWidth: 0.5))
+                    .fixedSize()
+                    .help("Installed as a dependency")
+            }
+            if p.pinned { PinnedBadge(compact: compact) }
+            RetiredBadge(package: p, compact: compact)
+            VulnerabilityTag(package: p, compact: compact)
+        }
+        .fixedSize()
+    }
+}
+
+/// 0.8.6: lays out the Package cell's name, badges and note by
+/// `NameFit.allocate` (subviews in that order; the note may be absent).
+struct NameCellLayout: Layout {
+    var nameMin: CGFloat
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let ideal = subviews.map { $0.sizeThatFits(.unspecified) }
+        let height = min(ideal.map(\.height).max() ?? 0, PackageRow.content)
+        let width = proposal.width ?? ideal.map(\.width).reduce(0, +) + spacing * CGFloat(max(0, ideal.count - 1))
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count >= 2 else {
+            subviews.first?.place(at: CGPoint(x: bounds.minX, y: bounds.midY), anchor: .leading,
+                                  proposal: ProposedViewSize(width: bounds.width, height: bounds.height))
+            return
+        }
+        let nameIdeal = subviews[0].sizeThatFits(.unspecified).width
+        let noteIdeal = subviews.count > 2 ? subviews[2].sizeThatFits(.unspecified).width : 0
+        let a = NameFit.allocate(width: bounds.width, nameIdeal: nameIdeal, nameMin: nameMin, spacing: spacing,
+                                 noteIdeal: noteIdeal) { w in
+            subviews[1].sizeThatFits(ProposedViewSize(width: w, height: bounds.height)).width
+        }
+        var x = bounds.minX
+        subviews[0].place(at: CGPoint(x: x, y: bounds.midY), anchor: .leading,
+                          proposal: ProposedViewSize(width: a.name, height: bounds.height))
+        x += a.name + spacing
+        subviews[1].place(at: CGPoint(x: x, y: bounds.midY), anchor: .leading,
+                          proposal: ProposedViewSize(width: a.badges, height: bounds.height))
+        if a.badges > 0 { x += a.badges + spacing }
+        if subviews.count > 2 {
+            subviews[2].place(at: CGPoint(x: x, y: bounds.midY), anchor: .leading,
+                              proposal: ProposedViewSize(width: a.note, height: bounds.height))
+        }
     }
 }
 

@@ -10,6 +10,8 @@ import TankardCore
 
 /// "Pinned" next to a package's name in the table.
 struct PinnedBadge: View {
+    /// 0.8.6: the pin only (a narrow Package column).
+    var compact = false
     @Environment(\.backgroundProminence) private var prominence
     @Environment(\.theme) private var theme
 
@@ -18,13 +20,15 @@ struct PinnedBadge: View {
         let selected = prominence == .increased && !theme.isCustom
         HStack(spacing: 2) {
             Image(systemName: "pin.fill").font(.system(size: 8))
-            Text("pinned").font(.system(size: 9.5, weight: .semibold))
+            if !compact { Text("pinned").font(.system(size: 9.5, weight: .semibold)) }
         }
         .foregroundStyle(selected ? Color.white : p.foreground)
         .padding(.horizontal, 4).padding(.vertical, 0.5)
         .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : p.background))
         .fixedSize()
         .help("Pinned: upgrades leave it at this version")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("pinned"))
     }
 }
 
