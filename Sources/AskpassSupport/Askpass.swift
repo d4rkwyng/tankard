@@ -66,13 +66,25 @@ public enum Askpass {
 
     /// Single line, no control characters (a newline or escape can't fake a
     /// second paragraph or button text), at most `limit` characters.
+    /// 0.8.4: a longer text is cut after the last whole word that fits and
+    /// ends in " …" (a word of its own), so a package name is never cut in
+    /// half; only a single word longer than the limit is cut mid-word.
     public static func sanitize(_ s: String, limit: Int) -> String {
         let cleaned = String(String.UnicodeScalarView(s.unicodeScalars.map { scalar in
             CharacterSet.controlCharacters.contains(scalar) || CharacterSet.newlines.contains(scalar) ? " " : scalar
         }))
         let collapsed = cleaned.split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
-        return collapsed.count > limit ? String(collapsed.prefix(limit - 1)) + "…" : collapsed
+        guard collapsed.count > limit else { return collapsed }
+        // Room for " …"; the cut falls on a space within it.
+        let head = collapsed.prefix(max(limit - 1, 0))
+        if let space = head.lastIndex(of: " ") {
+            return collapsed[..<space].trimmingCharacters(in: .whitespaces) + " " + ellipsis
+        }
+        return String(collapsed.prefix(max(limit - 1, 0))) + ellipsis
     }
+
+    /// The mark a cut text ends with.
+    public static let ellipsis = "…"
 
     /// What the helper was asked, read from its argv and environment.
     public struct Request: Equatable, Sendable {
@@ -109,10 +121,14 @@ public enum Askpass {
         public var action: Action
         /// The package names, without a tap ("homebrew/cask/x" is "x").
         public var names: [String]
+        /// 0.8.4: the command was cut (it ends in "…"), so there are more
+        /// names than `names`; a name cut in half is left out.
+        public var isCut: Bool
 
-        public init(action: Action, names: [String]) {
+        public init(action: Action, names: [String], isCut: Bool = false) {
             self.action = action
             self.names = names
+            self.isCut = isCut
         }
     }
 
@@ -121,6 +137,13 @@ public enum Askpass {
     /// and package names. nil for anything else. Text only: nothing is run.
     public static func step(command: String) -> Step? {
         var words = command.split(separator: " ").map(String.init)
+        // 0.8.4: a cut command ("… a b …" or, for one overlong word, "ab…"):
+        // drop the mark and whatever word it ends.
+        var isCut = false
+        if let last = words.last, last.hasSuffix(ellipsis) {
+            words.removeLast()
+            isCut = true
+        }
         while let w = words.first, w.contains("="), !w.hasPrefix("-") { words.removeFirst() }
         guard words.count >= 3, words[0] == "brew" || words[0].hasSuffix("/brew"),
               let action = Step.Action(rawValue: words[1]) else { return nil }
@@ -128,7 +151,7 @@ public enum Askpass {
             let unquoted = word.count >= 2 && word.hasPrefix("'") && word.hasSuffix("'") ? String(word.dropFirst().dropLast()) : word
             return unquoted.split(separator: "/").last.map(String.init) ?? unquoted
         }.filter { !$0.isEmpty }
-        return names.isEmpty ? nil : Step(action: action, names: names)
+        return names.isEmpty ? nil : Step(action: action, names: names, isCut: isCut)
     }
 
     /// The helper inside an app bundle, when it is there and executable.
@@ -167,13 +190,28 @@ public enum AskpassText {
         guard let step = r.context.flatMap(Askpass.step(command:)) else {
             return String(localized: "For a brew step that needs administrator rights.")
         }
-        let names = step.names.joined(separator: ", ")
+        let names = nameList(step)
         switch step.action {
         case .install: return String(localized: "To install \(names).")
         case .reinstall: return String(localized: "To reinstall \(names).")
         case .upgrade: return String(localized: "To upgrade \(names).")
         case .uninstall: return String(localized: "To uninstall \(names).")
         }
+    }
+
+    /// 0.8.4: at most `maxNames` names in the line. More (or a cut command)
+    /// show the first `shownWhenMore` and a count: "xz, wget and 7 more", or
+    /// "xz, wget and more" when the command was cut and the count unknown.
+    public static let maxNames = 3
+    public static let shownWhenMore = 2
+
+    static func nameList(_ step: Askpass.Step) -> String {
+        if step.names.count <= maxNames && !step.isCut {
+            return step.names.joined(separator: ", ")
+        }
+        let shown = step.names.prefix(shownWhenMore).joined(separator: ", ")
+        if step.isCut { return String(localized: "\(shown) and more") }
+        return String(localized: "\(shown) and \(step.names.count - shownWhenMore) more")
     }
 
     /// The text under the title: two short lines.

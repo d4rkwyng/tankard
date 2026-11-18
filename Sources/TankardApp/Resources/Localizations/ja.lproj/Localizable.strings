@@ -22,6 +22,8 @@
 "%@ %@…" = "%@ %@…";
 "%@ %lld package" = "%@ %lld個のパッケージ";
 "%@ %lld packages" = "%@ %lld個のパッケージ";
+"%@ and %lld more" = "%@ ほか%lld件";
+"%@ and more" = "%@ など";
 "%@ can't be uninstalled" = "%@ はアンインストールできません";
 "%@ complete" = "%@ が完了しました";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ を開始できませんでした: %@ がまだ実行中です。終了してからもう一度お試しください。";
