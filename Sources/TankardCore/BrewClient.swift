@@ -232,7 +232,8 @@ public struct BrewClient: Sendable {
         let info = try infoResult.get().0
         let (fork, gitTime) = await forkTask
 
-        let classifier = StatusClassifier(platform: platform, intelbrewMode: detection.detected)
+        let classifier = StatusClassifier(platform: platform, intelbrewMode: detection.detected,
+                                          caskroom: installation.prefix + "/Caskroom")
         let packages = classifier.classify(info: info)
 
         if detection.detected && !fork.coreIsFork {

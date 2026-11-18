@@ -8,11 +8,16 @@ public struct StatusClassifier: Sendable {
     public var intelbrewMode: Bool
     /// 0.8.4: the zone brew read a cask's install time in (see `CaskInstallTime`).
     public var timeZone: TimeZone
+    /// 0.8.4: `<prefix>/Caskroom`, where the install folders' modification
+    /// times tell whether brew's `installed_time` needs the correction.
+    /// nil (tests, demo): no folder to read.
+    public var caskroom: String?
 
-    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current) {
+    public init(platform: BottlePlatform, intelbrewMode: Bool, timeZone: TimeZone = .current, caskroom: String? = nil) {
         self.platform = platform
         self.intelbrewMode = intelbrewMode
         self.timeZone = timeZone
+        self.caskroom = caskroom
     }
 
     public static func bottleOrigin(url: String?) -> BottleOrigin {
@@ -146,7 +151,11 @@ public struct StatusClassifier: Sendable {
             bottleTag: nil,
             bottleOrigin: nil,
             bottleURL: nil,
-            installedAt: c.installedTime.map { CaskInstallTime.date(brewInstalledTime: $0, timeZone: timeZone) },
+            installedAt: c.installedTime.map { t in
+                CaskInstallTime.date(brewInstalledTime: t,
+                                     folderTime: caskroom.flatMap { CaskInstallTime.folderTime(caskroom: $0, token: c.token, version: installed) },
+                                     timeZone: timeZone)
+            },
             upgradeAvailable: outdated,
             upgradeHasBottle: nil,
             autoUpdates: c.autoUpdates,
@@ -199,13 +208,42 @@ public struct StatusClassifier: Sendable {
 /// (cask/cask.rb `install_time`), which Ruby takes as local time. So
 /// `installed_time` is off by the UTC offset: 7 hours late in Arizona (an
 /// evening install shows the next day), early east of Greenwich. Formulae
-/// (the receipt's `time`) are right. Reading the brew value as local time
-/// gives back the UTC wall clock brew wrote: adding the offset in force at
-/// that instant undoes the error exactly, daylight saving included.
+/// (the receipt's `time`) are right. Adding the offset in force at that
+/// instant undoes it exactly, daylight saving included.
+///
+/// Self-checking, so a brew that fixes this isn't shifted twice: the
+/// folder's own modification time (`.metadata/<version>/<timestamp>`, set
+/// when brew made it; on this Mac it matched the name to the second on
+/// every cask, while the cask file inside was sometimes rewritten later)
+/// is the real install time. The correction applies when brew's value is
+/// off from it by the zone's offset (±1 min); brew's value is kept when it
+/// matches the folder, or when neither does (a folder copied or touched
+/// later). No folder time (not found, demo, tests): the correction applies,
+/// since every brew so far has the bug and the uncorrected value is wrong
+/// by hours for everyone off UTC.
 public enum CaskInstallTime {
-    public static func date(brewInstalledTime t: Double, timeZone: TimeZone = .current) -> Date {
+    static let tolerance: TimeInterval = 60
+
+    public static func date(brewInstalledTime t: Double, folderTime: Date? = nil, timeZone: TimeZone = .current) -> Date {
         let read = Date(timeIntervalSince1970: t)
-        return read.addingTimeInterval(TimeInterval(timeZone.secondsFromGMT(for: read)))
+        let offset = TimeInterval(timeZone.secondsFromGMT(for: read))
+        let corrected = read.addingTimeInterval(offset)
+        guard offset != 0 else { return read }
+        guard let folder = folderTime else { return corrected }
+        let toCorrected = abs(folder.timeIntervalSince(corrected))
+        let toRead = abs(folder.timeIntervalSince(read))
+        return toCorrected <= tolerance && toCorrected < toRead ? corrected : read
+    }
+
+    /// The modification time of the newest `<caskroom>/<token>/.metadata/<version>/<timestamp>`
+    /// folder (the one brew's `installed_time` comes from); nil when there is none.
+    public static func folderTime(caskroom: String, token: String, version: String) -> Date? {
+        let dir = "\(caskroom)/\(token)/.metadata/\(version)"
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else { return nil }
+        let stamps = names.filter { $0.wholeMatch(of: /[0-9]{14}\.[0-9]{3}/) != nil }
+        guard let newest = stamps.max() else { return nil }
+        let attrs = try? FileManager.default.attributesOfItem(atPath: dir + "/" + newest)
+        return attrs?[.modificationDate] as? Date
     }
 
     /// What brew reports for a cask installed at `date` (demo data, tests).

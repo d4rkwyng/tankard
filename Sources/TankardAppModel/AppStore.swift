@@ -684,7 +684,8 @@ public final class AppStore {
     func orphanRecheck() -> (@Sendable (Package) async -> String?)? {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
         let env = client.environment(for: detection)
-        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected)
+        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected,
+                                          caskroom: client.installation.prefix + "/Caskroom")
         return { orphan in
             do {
                 let live = classifier.classify(info: try await client.installedInfo(env: env))

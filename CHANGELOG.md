@@ -28,7 +28,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **No more orange "If brew needs sudo…" line on every cask upgrade.** The password note shows for casks that need it (the same rule as the plan and the dialog), or once brew's output says it runs sudo.
 - **Wording**: About no longer splits "BSD-2-Clause" across two lines; context-menu items that open a confirmation end in "…" and name the package ("Install node-red (compiles)…"), and Skip Version reads the same in the detail pane and the context menu.
 - **The menu-bar panel no longer leaves a gap** when rows disappear while it is open (an upgrade or install finished): it shrinks to its content, staying under the menu bar.
-- **A cask's "Installed on" date is no longer a day late in the evening** (west of Greenwich). brew reports a cask's install time as the UTC clock read as local time; Tankard now undoes that offset. Formula dates were already right.
+- **A cask's "Installed on" date is no longer a day late in the evening** (west of Greenwich). brew reports a cask's install time as the UTC clock read as local time; Tankard now undoes that offset, only when the cask's install folder shows brew's value is shifted (so a fixed brew isn't corrected twice). Formula dates were already right.
 
 ### For contributors
 - The tests delete the UserDefaults suites they create; a run used to leave a few hundred plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
