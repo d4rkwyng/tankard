@@ -62,6 +62,15 @@
 # OUT/<scenario>/state: the status and insights caches, Discover's
 # formulae.brew.sh cache (state/api), History, restore points, logs. Your
 # own settings, caches, History and restore points are not read or written.
+# 0.8.4: AppKit and SwiftUI keep their own keys in the app's domain (the
+# window frame, the menu-bar item's visibility, ...), not in that suite, so
+# the run launches a copy of the app re-signed ad hoc with a bundle
+# identifier of its own, net.mindtricks.tankard.e2e.app.<pid>: whatever
+# they write lands in that throwaway domain (deleted at the end, with the
+# copy). The run then checks that net.mindtricks.tankard (the plist's md5)
+# is unchanged and fails if not. --real-id runs the app as given instead
+# (its own signature and identity, e.g. for a notarized build's App
+# Management grant); the check still runs.
 #
 # One run at a time on this Mac: the scenarios share the real brew (and its
 # packages), so a run holds the lock /tmp/net.mindtricks.tankard.e2e.lock
@@ -99,9 +108,10 @@ while [ $# -gt 0 ]; do
         --app) APP=${2%/}; BUILD=0; shift ;;
         --out) OUT=$2; shift ;;
         --wait) WAIT_LOCK=1 ;;
+        --real-id) REAL_ID=1 ;;
         --list) printf '%s\n' "${ALL[@]}"; exit 0 ;;
         --steps) STEPS_HELP=1 ;;
-        -h|--help) sed -n '2,77p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,94p' "$0"; exit 0 ;;
         all) SCENARIOS+=("${ALL[@]}") ;;
         -*) echo "e2e.sh: unknown option $1" >&2; exit 2 ;;
         *) SCENARIOS+=("$1") ;;
@@ -180,6 +190,43 @@ delete_suite() {
 trap 'delete_suite; release_lock' EXIT
 trap 'delete_suite; release_lock; exit 130' INT TERM
 
+# 0.8.4: the app's own defaults domain. AppKit/SwiftUI write keys there that
+# no suite catches (NSWindow Frame main-AppWindow-1, NSStatusItem VisibleCC
+# Item-0); a re-signed copy with its own bundle identifier makes that domain
+# a throwaway one. The real domain is fingerprinted first and checked at the end.
+REAL_DOMAIN=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist" 2>/dev/null || echo net.mindtricks.tankard)
+REAL_PLIST=~/Library/Preferences/$REAL_DOMAIN.plist
+real_fingerprint() { if [ -f "$REAL_PLIST" ]; then /sbin/md5 -q "$REAL_PLIST"; else echo absent; fi; }
+real_keys() { defaults export "$REAL_DOMAIN" - 2>/dev/null | plutil -convert json -o - - 2>/dev/null \
+    | /usr/bin/python3 -c 'import json,sys; print("\n".join(sorted(json.load(sys.stdin))))' 2>/dev/null; }
+REAL_MD5=$(real_fingerprint)
+REAL_KEYS=$(real_keys)
+# Another Tankard (yours) may write its own domain meanwhile: then the
+# check can't tell, and says so.
+OTHER_TANKARD=$(pgrep -x Tankard | tr '\n' ' ')
+COPY_DIR= COPY_ID=
+delete_copy() {
+    [ -n "$COPY_ID" ] || return 0
+    defaults delete "$COPY_ID" >/dev/null 2>&1 || true
+    rm -f ~/Library/Preferences/"$COPY_ID".plist
+    rm -rf ~/Library/"Saved Application State"/"$COPY_ID".savedState
+    [ -d "$COPY_DIR/Tankard.app" ] && /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$COPY_DIR/Tankard.app" >/dev/null 2>&1
+    rm -rf "$COPY_DIR"
+}
+trap 'delete_suite; delete_copy; release_lock' EXIT
+trap 'delete_suite; delete_copy; release_lock; exit 130' INT TERM
+ORIG_BIN=$BIN
+if [ "${REAL_ID:-0}" != 1 ]; then
+    COPY_DIR=$(mktemp -d -t tankard-e2e-app)
+    COPY_ID=net.mindtricks.tankard.e2e.app.$$
+    ditto "$APP" "$COPY_DIR/Tankard.app" \
+        && /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $COPY_ID" "$COPY_DIR/Tankard.app/Contents/Info.plist" \
+        && codesign --force --deep --sign - "$COPY_DIR/Tankard.app" 2>/dev/null \
+        || { echo "e2e.sh: could not make the re-signed copy of $APP in $COPY_DIR" >&2; exit 1; }
+    BIN=$COPY_DIR/Tankard.app/Contents/MacOS/Tankard
+    echo "e2e.sh: running a copy with its own defaults domain ($COPY_ID); --real-id runs $APP as is"
+fi
+
 BREW=$(command -v brew || true)
 [ -n "$BREW" ] || { echo "e2e.sh: no brew on PATH" >&2; exit 1; }
 # The shell's own brew calls: never update, never clean up, never autoremove.
@@ -201,7 +248,7 @@ run_phase() {
     local dir="$OUT/$sc/$ph"
     mkdir -p "$dir"
     cat > "$dir/steps.txt"
-    if pgrep -f "^$BIN" >/dev/null; then
+    if pgrep -f "^$BIN" >/dev/null || pgrep -f "^$ORIG_BIN" >/dev/null; then
         record "$sc/$ph: FAIL (another $APP is running; quit it first)"
         return 1
     fi
@@ -823,6 +870,19 @@ for sc in "${SCENARIOS[@]}"; do
     fi
 done
 delete_suite
+delete_copy
+
+# The real domain: byte for byte what it was before the run.
+after_md5=$(real_fingerprint)
+if [ "$after_md5" = "$REAL_MD5" ]; then
+    record "isolation/real-defaults: PASS ($REAL_DOMAIN unchanged, md5 $REAL_MD5)"
+elif [ -n "$OTHER_TANKARD" ]; then
+    record "isolation/real-defaults: SKIP ($REAL_DOMAIN changed, but another Tankard was running: pid $OTHER_TANKARD)"
+else
+    record "isolation/real-defaults: FAIL ($REAL_DOMAIN changed: md5 $REAL_MD5 -> $after_md5)"
+    diff <(echo "$REAL_KEYS") <(real_keys) | sed 's/^/      keys /'
+    echo "      (keys unchanged above means a value changed; restore with defaults import from a backup)"
+fi
 
 echo
 echo "e2e summary ($OUT):"

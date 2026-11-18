@@ -25,6 +25,7 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### For contributors
 - The tests delete the UserDefaults suites they create; a run used to leave a few hundred plists in ~/Library/Preferences. The e2e and theme-geometry scripts no longer write the real settings domain, and `Scripts/e2e-selfupdate.sh` checks real evidence instead of passing on a pid count.
+- Script runs (`TANKARD_E2E=1`) no longer save the window frame into the real `net.mindtricks.tankard` domain when they resize the window. `Scripts/e2e.sh` runs a re-signed copy with a bundle identifier of its own (`net.mindtricks.tankard.e2e.app.<pid>`), so the keys AppKit keeps there (window frame, menu-bar item) land in a throwaway domain, and the run fails if the real domain's plist changed (`--real-id` runs the app as given).
 
 ## [0.8.3]
 

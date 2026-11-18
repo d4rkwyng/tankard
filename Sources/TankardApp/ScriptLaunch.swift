@@ -32,6 +32,14 @@ import TankardCore
 /// runs the REAL brew (or the demo's, with TANKARD_DEMO), so it really
 /// installs and removes what the script says. No background check and no
 /// auto-update run during it, unless TANKARD_E2E_BACKGROUND=1.
+///
+/// 0.8.4: AppKit and SwiftUI keep keys of their own in the app's defaults
+/// domain (its bundle identifier), not in the suite. The run turns off the
+/// main window's frame autosave and restoration before resizing it; still,
+/// a first ever launch saves a frame and the menu-bar item saves its
+/// visibility there. Scripts/e2e.sh therefore launches a re-signed copy
+/// with a bundle identifier of its own, so that domain is a throwaway one.
+/// A hand-run script launch of the real bundle should do the same.
 struct ScriptLaunch {
     static let defaultsSuite = AppManagement.e2eSuitePrefix
     /// Seconds; set by e2e.sh in the run's suite (`defaults write`).
@@ -104,8 +112,14 @@ struct ScriptLaunch {
         guard let text = try? String(contentsOfFile: scriptPath, encoding: .utf8) else { fail("can't read \(scriptPath)") }
         let steps: [ScriptStep]
         do { steps = try ScriptParser.parse(text) } catch { fail("\(scriptPath): \(error)\nsteps:\n\(ScriptRunner.help)") }
-        // One window size, so every PNG is comparable.
-        if let w = Self.mainWindow { w.setContentSize(NSSize(width: 1100, height: 680)) }
+        // One window size, so every PNG is comparable. 0.8.4: first stop
+        // AppKit saving the frame ("NSWindow Frame main-AppWindow-1") and
+        // the window's state: both go to the app's real defaults domain and
+        // Saved Application State, which a script run never writes.
+        if let w = Self.mainWindow {
+            Self.isolate(w)
+            w.setContentSize(NSSize(width: 1100, height: 680))
+        }
         let runner = ScriptRunner(store: store, steps: steps, outputDirectory: outputDirectory,
                                   scriptName: (scriptPath as NSString).lastPathComponent) { path in
             guard let w = Self.mainWindow else {
@@ -119,6 +133,13 @@ struct ScriptLaunch {
         if stay { return }
         // exit, not terminate: AppKit won't terminate with a sheet up.
         exit(summary.ok ? 0 : 1)
+    }
+
+    /// No frame autosave and no state restoration for this window.
+    @MainActor
+    static func isolate(_ w: NSWindow) {
+        w.setFrameAutosaveName("")
+        w.isRestorable = false
     }
 
     @MainActor
