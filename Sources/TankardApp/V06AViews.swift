@@ -508,18 +508,18 @@ struct HistoryRow: View {
 
 struct AutoremoveSheet: View {
     @Bindable var store: AppStore
-    var autoremove: AutoremoveStore
+    @Bindable var autoremove: AutoremoveStore
     @Environment(\.theme) private var theme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             SheetHeader(icon: "shippingbox.and.arrow.backward.fill", title: String(localized: "Remove Unused Dependencies"),
-                        subtitle: String(localized: "Formulae installed only as dependencies that nothing installed needs anymore."))
+                        subtitle: String(localized: "Packages Homebrew installed only because something else needed them, and nothing needs anymore."))
             switch autoremove.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text("Running \(autoremove.dryRunCommand)…").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Checking what can be removed…").font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, minHeight: 160)
             case .failed(let m):
@@ -530,44 +530,67 @@ struct AutoremoveSheet: View {
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(names.isEmpty ? Color.secondary : theme.accent)
                 if !names.isEmpty {
+                    Text("Untick any you want to keep. Tankard marks those as installed by you, so later clean-ups leave them (and what they need) too.")
+                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 3) {
-                            ForEach(names, id: \.self) { n in
-                                Text(n).font(.system(size: 12, design: .monospaced))
-                            }
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(names, id: \.self) { n in row(n) }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxHeight: 140)
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("To keep one, mark it as installed on request in Terminal first, then check again:")
-                            .font(.system(size: 11.5)).foregroundStyle(.secondary)
-                        CommandBox(command: AutoremovePlan.keepCommand(names[0]))
-                    }
+                    .frame(maxHeight: 170)
                 }
             }
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
-                CommandBox(command: autoremove.command)
-            }
+            CommandDetails(commands: commands)
             Spacer(minLength: 0)
             HStack {
-                Text("Preview from \(autoremove.dryRunCommand) (changes nothing).").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text("A preview: nothing is removed until you click Remove.").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
                 Button("Check Again") { Task { await autoremove.load() } }
                     .disabled(autoremove.phase == .running)
                 Button("Cancel") { store.closeToolSheet() }
                     .keyboardShortcut(.cancelAction)
-                Button("Remove") { store.startAutoremove() }
-                    .buttonStyle(.primaryAction)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(autoremove.phase != .ready || (autoremove.plan?.formulae.isEmpty ?? true) || store.isBusy)
+                // 0.8.5 (newbie review H3): no default button. Return
+                // doesn't remove anything.
+                Button(removeTitle, role: .destructive) { store.startAutoremove() }
+                    .disabled(autoremove.phase != .ready || autoremove.toRemove.isEmpty || store.isBusy)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 600, height: 460, alignment: .top)
+        .frame(width: 600, height: 500, alignment: .top)
         .background(theme.window ?? .clear)
+    }
+
+    private var removeTitle: String {
+        let n = autoremove.toRemove.count
+        let all = autoremove.plan?.formulae.count ?? 0
+        return n == all || n == 0 ? String(localized: "Remove") : String(localized: "Remove \(n)")
+    }
+
+    private var commands: [String] {
+        let keep = autoremove.toKeep
+        return (keep.isEmpty ? [] : [BrewCommands.display(AutoremovePlan.keepArguments(keep))]) + [autoremove.command]
+    }
+
+    @ViewBuilder
+    private func row(_ name: String) -> some View {
+        let p = store.autoremovePackage(name)
+        let shown = p?.name ?? (name.split(separator: "/").last.map(String.init) ?? name)
+        Toggle(isOn: Binding(get: { !autoremove.keep.contains(name) }, set: { autoremove.setKeep(name, !$0) })) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(shown).font(.system(size: 12, weight: .medium))
+                if let d = p?.desc, !d.isEmpty {
+                    Text(d).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
+                }
+                if AutoremovePlan.oftenUsedDirectly(name) {
+                    Label("You may use this one directly in Terminal. Untick it to keep it.", systemImage: "terminal")
+                        .font(.system(size: 11)).foregroundStyle(.orange)
+                }
+            }
+        }
+        .toggleStyle(.checkbox)
     }
 }
 

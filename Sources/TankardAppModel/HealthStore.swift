@@ -105,6 +105,18 @@ public final class AutoremoveStore {
     public private(set) var phase: Phase = .idle
     public private(set) var plan: AutoremovePlan?
     public private(set) var raw = ""
+    /// 0.8.5 (newbie review H3): the formulae the user unticked. Removing
+    /// the rest first marks these as installed by you (`brew tab`), so this
+    /// and every later autoremove leaves them.
+    public var keep: Set<String> = []
+
+    /// The ticked ones: what Remove removes (directly; brew decides again).
+    public var toRemove: [String] { (plan?.formulae ?? []).filter { !keep.contains($0) } }
+    public var toKeep: [String] { (plan?.formulae ?? []).filter { keep.contains($0) } }
+
+    public func setKeep(_ name: String, _ on: Bool) {
+        if on { keep.insert(name) } else { keep.remove(name) }
+    }
 
     @ObservationIgnored let client: BrewClient
     @ObservationIgnored let env: [String: String]
@@ -129,6 +141,7 @@ public final class AutoremoveStore {
                 return
             }
             plan = AutoremovePlan.parse(r.stdoutString)
+            keep.formIntersection(plan?.formulae ?? [])
             phase = .ready
         } catch {
             phase = .failed(String(describing: error))
@@ -237,9 +250,18 @@ public extension AppStore {
 
     /// The confirmed `brew autoremove`, through the queue and the live log.
     func startAutoremove() {
-        guard autoremove?.plan?.formulae.isEmpty == false else { return }
+        guard let a = autoremove, !a.toRemove.isEmpty else { return }
         toolSheet = nil
-        startSession(.autoremove, packages: [Package.command("brew autoremove")])
+        // 0.8.5: the unticked ones are marked as installed by you first.
+        let keep = a.toKeep
+        let rows = (keep.isEmpty ? [] : [Package.autoremoveKeep(keep)]) + [Package.command("brew autoremove")]
+        startSession(.autoremove, packages: rows)
+    }
+
+    /// The installed package an autoremove line names ("homebrew/core/m4"
+    /// or "libyaml"), for its description.
+    func autoremovePackage(_ name: String) -> Package? {
+        packages.first { $0.kind == .formula && ($0.fullName == name || $0.name == name) }
     }
 
     /// Closes a 0.6 sheet. Only a real change is written.

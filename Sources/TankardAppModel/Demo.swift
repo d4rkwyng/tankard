@@ -57,6 +57,8 @@ public enum Demo {
         let v04a: V04AState
         /// 0.6: `brew autoremove` ran (the dry run is empty after).
         let autoremoved = OSAllocatedUnfairLock(initialState: false)
+        /// 0.8.5: formulae marked installed on request (`brew tab`).
+        let autoremoveKept = OSAllocatedUnfairLock(initialState: Set<String>())
         /// 0.7: taps added, removed, trusted (Demo+Taps.swift).
         let taps = TapsDemoState()
 

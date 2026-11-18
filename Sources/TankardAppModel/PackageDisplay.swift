@@ -240,7 +240,7 @@ public enum BrewCommands {
         case .uninstall: return uninstallArguments(for: p)
         case .replaceBottle: return replaceWithBottleArguments(for: p)
         case .cleanup: return cleanupArguments
-        case .autoremove: return AutoremovePlan.runArguments
+        case .autoremove: return p.autoremoveKeptNames.map(AutoremovePlan.keepArguments) ?? AutoremovePlan.runArguments
         case .tap: return TapCommands.tap(p.fullName, url: p.desc)
         case .untap: return TapCommands.untap(p.fullName)
         // A restore's commands come from its plan (RestorePoints.swift).

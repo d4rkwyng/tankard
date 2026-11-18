@@ -458,4 +458,26 @@ public struct AutoremovePlan: Equatable, Sendable {
     public static func keepCommand(_ name: String) -> String {
         "brew tab --installed-on-request \(name)"
     }
+
+    /// 0.8.5: `brew tab --installed-on-request --formula a b`: marks them as
+    /// installed by you, which is brew's own way to keep a formula out of
+    /// every later `brew autoremove` (and what it needs with it).
+    public static func keepArguments(_ names: [String]) -> [String] {
+        ["tab", "--installed-on-request", "--formula"] + names
+    }
+
+    /// 0.8.5: formulae people often use directly in Terminal (python3, node,
+    /// ruby…) although Homebrew installed them only for something else.
+    /// Removing one breaks the command, so the sheet flags them.
+    public static func oftenUsedDirectly(_ name: String) -> Bool {
+        let short = name.split(separator: "/").last.map(String.init) ?? name
+        let base = short.split(separator: "@").first.map(String.init) ?? short
+        return directUseNames.contains(base)
+    }
+
+    static let directUseNames: Set<String> = [
+        "python", "node", "ruby", "perl", "php", "go", "rust", "openjdk", "lua", "deno", "bun",
+        "git", "curl", "wget", "sqlite", "postgresql", "mysql", "redis", "gcc", "llvm", "cmake",
+        "imagemagick", "ffmpeg", "pandoc", "jq", "yarn", "pnpm", "erlang", "elixir", "ghc", "dotnet",
+    ]
 }
