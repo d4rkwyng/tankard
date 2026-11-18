@@ -330,6 +330,7 @@
 "Deprecated" = "Veraltet";
 "Deprecated since %@" = "Veraltet seit %@";
 "Deprecated: it still installs, but Homebrew plans to disable it." = "Veraltet: wird noch installiert, aber Homebrew wird es deaktivieren.";
+"Details" = "Details";
 "Didn't run" = "Nicht ausgeführt";
 "Disabled" = "Deaktiviert";
 "Disabled in its tap: brew won't install it." = "In seinem Tap deaktiviert: brew installiert es nicht.";
@@ -386,10 +387,9 @@
 "Follows macOS." = "Folgt macOS.";
 "For 1 Day" = "Für 1 Tag";
 "For 1 Week" = "Für 1 Woche";
+"For a brew step that needs administrator rights." = "Für einen brew-Schritt mit Adminrechten.";
 "For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "brew lädt je App den Cask und trägt ihn als installiert ein. Die App bleibt, wo sie ist.";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "Für jede App lädt brew das Cask, prüft den Download gegen die vorhandene App und vermerkt das Cask dann als installiert. Die App bleibt, wo sie ist.";
-"For this step of %@: %@" = "Für diesen Schritt von %@: %@";
-"For this step: %@" = "Für diesen Schritt: %@";
 "Fork: behind (%@; %@ available)" = "Fork: im Rückstand (%@; %@ verfügbar)";
 "Fork: current (%@)" = "Fork: aktuell (%@)";
 "Fork: not on a release tag (%@)" = "Fork: nicht auf einem Release-Tag (%@)";
@@ -415,6 +415,7 @@
 "GitHub answered HTTP %lld." = "GitHub antwortete mit HTTP %lld.";
 "GitHub lists no release of Tankard." = "GitHub führt kein Release von Tankard.";
 "GitHub's answer couldn't be read." = "Die Antwort von GitHub war nicht lesbar.";
+"Goes only to sudo, never stored." = "Nur für sudo, wird nie gespeichert.";
 "HEAD build" = "HEAD-Build";
 "HEAD builds have no fixed version to go back to." = "HEAD-Builds haben keine feste Version, auf die man zurückgehen kann.";
 "Has Intel bottle" = "Hat Intel-Bottle";
@@ -908,7 +909,7 @@
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard zeigt jede neuere Version dieses Casks, upgradet es mit „Alle upgraden“ und Auto-Update und ersetzt die App wie brew.";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard sucht brew unter %@ oder TANKARD_BREW.";
 "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard braucht die App-Verwaltung. Erlaube sie in „Datenschutz & Sicherheit“ → „App-Verwaltung“, starte Tankard neu und versuche es erneut.";
-"Tankard needs your administrator password" = "Tankard braucht dein Admin-Passwort";
+"Tankard needs your password" = "Tankard braucht dein Passwort";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard führt nie sudo aus. Führe dies im Terminal aus:";
 "Tankard on GitHub" = "Tankard auf GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard steuert nur deine eigenen Dienste und führt nie sudo aus. Führe dies im Terminal aus:";
@@ -948,7 +949,6 @@
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "Die alte Version ist noch installiert. brew uninstall entfernt die neue, dann verknüpft brew link die alte.";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Die übrigen Apps werden geprüft: Passt ein Download nicht, bricht brew für die App ab und lässt sie unverändert.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "Passwortdialog abgebrochen, der Schritt lief nicht. Selbst ausführen im Terminal:";
-"The password was incorrect. Try again." = "Falsches Passwort. Versuche es erneut.";
 "The variables are unset first, so this brew update doesn't put the fork back." = "Die Variablen werden zuerst zurückgesetzt, damit dieses brew update den Fork nicht zurückbringt.";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "Der Hersteller passt, aber das Cask nennt nicht genau diese Bundle-ID.";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "Ihre Befehle und Bibliotheken liegen nicht im Homebrew-Präfix. Meist wurde eine Installation oder ein Upgrade unterbrochen.";
@@ -964,8 +964,11 @@
 "This macOS version isn't supported by Homebrew" = "Diese macOS-Version wird von Homebrew nicht unterstützt";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Taps, Formulae und Casks dieses Wiederherstellungspunkts als Brewfile (ohne Versionen: Brewfiles haben keine)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Dieser Schritt erfordert Administratorrechte, die Tankard nicht anfordern kann. Führe dies im Terminal aus:";
+"To install %@." = "Zum Installieren von %@.";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "Um eines zu behalten, markiere es zuerst im Terminal als auf Anfrage installiert und prüfe dann erneut:";
-"To run the installer for %@: %@" = "Für das Installationsprogramm von %@: %@";
+"To reinstall %@." = "Zum Neuinstallieren von %@.";
+"To uninstall %@." = "Zum Deinstallieren von %@.";
+"To upgrade %@." = "Zum Aktualisieren von %@.";
 "Top 200 results for “%@”" = "Top 200 Ergebnisse für „%@“";
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Schreibt testweise in eine Homebrew-App, wie Homebrew selbst, und entfernt es sofort";
 "Trust" = "Vertrauen";
@@ -1066,6 +1069,7 @@
 "Would remove 1 formula" = "Würde 1 Formula entfernen";
 "Writes a .command script with exactly these commands and opens it in Terminal" = "Schreibt ein .command-Skript mit genau diesen Befehlen und öffnet es im Terminal";
 "Writing Brewfile…" = "Brewfile wird geschrieben…";
+"Wrong password, try again." = "Falsches Passwort, bitte erneut.";
 "Xcode is out of date" = "Xcode ist veraltet";
 "Yes" = "Ja";
 "You have Tankard %@." = "Du hast Tankard %@.";
@@ -1083,7 +1087,6 @@
 "brew --version exited %d" = "brew --version beendet mit %d";
 "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew übernimmt nur genau die Version, die das Cask installiert. Aktualisiere die App mit ihrem eigenen Updater, dann „Neu prüfen“. Tankard ersetzt die App nicht für dich.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew erlaubt jeweils nur einen Befehl. Warte, bis der andere (im Terminal oder einer anderen App) fertig ist, und versuche es erneut.";
-"brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step." = "brew hat sudo für diesen Schritt um Adminrechte gebeten. Dein Passwort geht direkt an sudo; Tankard speichert es nicht. Abbrechen stoppt diesen Schritt.";
 "brew bundle check failed:\n" = "brew bundle check fehlgeschlagen:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle wurde nicht innerhalb von %lld Sekunden fertig, daher hat Tankard es gestoppt. Homebrew ist womöglich ausgelastet oder wartet auf das Netzwerk; versuche es gleich noch einmal.";
 "brew bundle dump failed:\n" = "brew bundle dump fehlgeschlagen:\n";
@@ -1102,7 +1105,6 @@
 "brew exited %lld" = "brew beendet mit %lld";
 "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt: brew lädt das Cask, vergleicht die Version der App (Kurzversion und Build) mit der installierten und vermerkt das Cask bei Übereinstimmung, ohne die App zu verschieben. Apps aus dem App Store und von Apple sowie Apps, die Homebrew schon verwaltet, werden nicht aufgeführt.";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install holt die Version, die Homebrew jetzt hat; sie kann neuer sein als %@.";
-"brew is running a step that needs administrator rights (sudo)." = "brew führt einen Schritt aus, der Adminrechte braucht (sudo).";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link verknüpft immer die neueste verbliebene Version, und das ist nicht die aus diesem Wiederherstellungspunkt.";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "brew link bräuchte für eine Keg-only-Formula --force und verknüpft sie dort, wo sie vorher nicht war.";
 "brew marks it incomplete" = "brew markiert es als unvollständig";

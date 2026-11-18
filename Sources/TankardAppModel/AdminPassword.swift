@@ -27,20 +27,15 @@ public enum AdminPassword {
         p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true)
     }
 
-    /// The sentence the dialog shows for this step (one line).
-    public static func context(_ p: Package?, display: String) -> String {
-        guard let p, !p.isCommandRow else { return String(localized: "For this step: \(display)") }
-        return required(p) ? String(localized: "To run the installer for \(p.name): \(display)")
-            : String(localized: "For this step of \(p.name): \(display)")
-    }
-
     /// The extra environment for one queued command: the helper and the
     /// dialog's context, only for a command that may run sudo and only
     /// when the helper exists. Not part of the command line shown or copied
-    /// (the Terminal fallback must not pop Tankard's dialog).
-    public static func environment(helper: String?, arguments: [String], package: Package?, display: String) -> [String: String] {
+    /// (the Terminal fallback must not pop Tankard's dialog). 0.8.4: the
+    /// context is the command as displayed; the dialog derives its words
+    /// ("To upgrade windows-app.") from it and shows it under Details.
+    public static func environment(helper: String?, arguments: [String], display: String) -> [String: String] {
         guard mayNeedSudo(arguments) else { return [:] }
-        return Askpass.environment(helper: helper, context: context(package, display: display))
+        return Askpass.environment(helper: helper, context: display)
     }
 
     /// Automatic updates never ask: brew is told not to run sudo at all

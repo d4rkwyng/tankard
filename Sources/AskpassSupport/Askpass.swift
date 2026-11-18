@@ -19,10 +19,13 @@ import Foundation
 public enum Askpass {
     /// The variable Homebrew reads; its value is the helper's path.
     public static let askpassKey = "SUDO_ASKPASS"
-    /// What the dialog says the step is for, in the user's language, set by
-    /// Tankard per command. A `HOMEBREW_` name because bin/brew drops every
-    /// other variable it doesn't know (it keeps `HOMEBREW_*`); sudo then
-    /// hands its own environment to the helper.
+    /// The brew command the password is for, as Tankard shows it
+    /// ("brew upgrade --cask windows-app"), set per command. 0.8.4: the
+    /// dialog derives its one-line purpose from it ("To upgrade
+    /// windows-app.") and shows the command itself under Details. A
+    /// `HOMEBREW_` name because bin/brew drops every other variable it
+    /// doesn't know (it keeps `HOMEBREW_*`); sudo then hands its own
+    /// environment to the helper.
     public static let contextKey = "HOMEBREW_TANKARD_ASKPASS_CONTEXT"
     /// Homebrew's switch that makes it never run sudo (env_config.rb). Set
     /// for automatic updates, which must never ask for a password.
@@ -38,6 +41,8 @@ public enum Askpass {
     public static let snapshotKey = "TANKARD_ASKPASS_SNAPSHOT"
     /// Test hook for the retry wording ("1": show it).
     public static let retryKey = "TANKARD_ASKPASS_RETRY"
+    /// Snapshot hook (0.8.4): "1" opens Details before the picture.
+    public static let detailsKey = "TANKARD_ASKPASS_DETAILS"
 
     public static let maxContextLength = 400
     public static let maxPromptLength = 120
@@ -98,6 +103,34 @@ public enum Askpass {
         return Request(prompt: prompt, context: context, isRetry: retry)
     }
 
+    /// What a brew command does, for the dialog's one line (0.8.4).
+    public struct Step: Equatable, Sendable {
+        public enum Action: String, Sendable { case install, reinstall, upgrade, uninstall }
+        public var action: Action
+        /// The package names, without a tap ("homebrew/cask/x" is "x").
+        public var names: [String]
+
+        public init(action: Action, names: [String]) {
+            self.action = action
+            self.names = names
+        }
+    }
+
+    /// Reads a command as Tankard displays it: optional `NAME=value`
+    /// settings, `brew` (or a path ending in /brew), the verb, then options
+    /// and package names. nil for anything else. Text only: nothing is run.
+    public static func step(command: String) -> Step? {
+        var words = command.split(separator: " ").map(String.init)
+        while let w = words.first, w.contains("="), !w.hasPrefix("-") { words.removeFirst() }
+        guard words.count >= 3, words[0] == "brew" || words[0].hasSuffix("/brew"),
+              let action = Step.Action(rawValue: words[1]) else { return nil }
+        let names = words.dropFirst(2).filter { !$0.hasPrefix("-") }.map { word -> String in
+            let unquoted = word.count >= 2 && word.hasPrefix("'") && word.hasSuffix("'") ? String(word.dropFirst().dropLast()) : word
+            return unquoted.split(separator: "/").last.map(String.init) ?? unquoted
+        }.filter { !$0.isEmpty }
+        return names.isEmpty ? nil : Step(action: action, names: names)
+    }
+
     /// The helper inside an app bundle, when it is there and executable.
     public static func helperPath(appBundle: URL, fileManager: FileManager = .default) -> String? {
         guard appBundle.pathExtension == "app" else { return nil }
@@ -109,14 +142,16 @@ public enum Askpass {
 /// The dialog's words. In the app's string catalog: the helper's main
 /// bundle is Tankard.app (it lives in Contents/MacOS), so it reads the same
 /// Localizable.strings as the app.
+///
+/// 0.8.4: short. A title, one line for what the password is for, one line
+/// on where it goes; the brew command itself under a collapsed Details.
 public enum AskpassText {
-    public static var title: String { String(localized: "Tankard needs your administrator password") }
-    public static var retryTitle: String { String(localized: "The password was incorrect. Try again.") }
-    /// Shown when no context came with the request.
-    public static var genericContext: String { String(localized: "brew is running a step that needs administrator rights (sudo).") }
-    public static var explanation: String {
-        String(localized: "brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step.")
-    }
+    public static var title: String { String(localized: "Tankard needs your password") }
+    public static var retryTitle: String { String(localized: "Wrong password, try again.") }
+    /// Where the password goes.
+    public static var promise: String { String(localized: "Goes only to sudo, never stored.") }
+    /// The disclosure that shows the command.
+    public static var details: String { String(localized: "Details") }
     public static var ok: String { String(localized: "OK") }
     public static var cancel: String { String(localized: "Cancel") }
     /// sudo's usual prompt in the user's language; any other prompt
@@ -125,15 +160,36 @@ public enum AskpassText {
         prompt == "Password:" ? String(localized: "Password:") : prompt
     }
 
-    /// The text under the title.
-    public static func body(_ r: Askpass.Request) -> String {
-        (r.context ?? genericContext) + "\n\n" + explanation
+    /// "To upgrade windows-app." from the command in the context; a
+    /// generic line when there is no context or it isn't a brew install,
+    /// reinstall, upgrade or uninstall.
+    public static func purpose(_ r: Askpass.Request) -> String {
+        guard let step = r.context.flatMap(Askpass.step(command:)) else {
+            return String(localized: "For a brew step that needs administrator rights.")
+        }
+        let names = step.names.joined(separator: ", ")
+        switch step.action {
+        case .install: return String(localized: "To install \(names).")
+        case .reinstall: return String(localized: "To reinstall \(names).")
+        case .upgrade: return String(localized: "To upgrade \(names).")
+        case .uninstall: return String(localized: "To uninstall \(names).")
+        }
     }
+
+    /// The text under the title: two short lines.
+    public static func body(_ r: Askpass.Request) -> String {
+        purpose(r) + "\n" + promise
+    }
+
+    /// What Details shows: the command, as Tankard displays it; nil without one.
+    public static func command(_ r: Askpass.Request) -> String? { r.context }
 
     /// The describe hook's output: every visible string, one per line.
     public static func describe(_ r: Askpass.Request) -> String {
-        [r.isRetry ? retryTitle : title, body(r), promptLabel(r.prompt) + " [secure text field]",
-         "[\(ok)] [\(cancel)]"].joined(separator: "\n") + "\n"
+        var lines = [r.isRetry ? retryTitle : title, body(r), promptLabel(r.prompt) + " [secure text field]"]
+        if let c = command(r) { lines.append("[▸ \(details)] \(c)") }
+        lines.append("[\(ok)] [\(cancel)]")
+        return lines.joined(separator: "\n") + "\n"
     }
 }
 

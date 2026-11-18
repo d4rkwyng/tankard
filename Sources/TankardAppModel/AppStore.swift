@@ -976,7 +976,7 @@ public final class AppStore {
                 let display = BrewCommands.display(args, environment: extra)
                 // 0.8.3: a cask change may run sudo: Tankard's password dialog
                 // (not in the command shown or copied).
-                let password = AdminPassword.environment(helper: askpass, arguments: args, package: p, display: display)
+                let password = AdminPassword.environment(helper: askpass, arguments: args, display: display)
                 return QueuedCommand(executable: brew, arguments: args,
                                      environment: env.merging(extra) { $1 }.merging(password) { $1 },
                                      display: display)
