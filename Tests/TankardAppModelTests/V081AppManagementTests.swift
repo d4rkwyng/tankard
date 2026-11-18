@@ -98,7 +98,7 @@ struct V081AppManagementTests {
         let e = CatalogEntry(kind: .cask, name: "anybar", fullName: "anybar", tap: "homebrew/cask", desc: nil, version: "1.0", bottle: .cask)
         store.startInstall(e)
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         #expect(s.blockedPackages.map(\.name) == ["anybar"])
         #expect(s.failureKinds == [.appManagement])
         let prompt = try #require(store.appManagementPrompt)
@@ -112,10 +112,13 @@ struct V081AppManagementTests {
         let relaunched = Flag()
         let store = await store(fail: true, settings: settings, relaunch: { relaunched.set(); return true })
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        let reads = store.refreshesCompleted
         store.startUpgrade([chrome])
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
-        #expect(await waitUntil { !store.isRefreshing })
+        #expect(await waitUntil { s.isFinished })
+        // The read the finished session starts (in a Task: right after
+        // isFinished, isRefreshing can still be false).
+        #expect(await waitUntil { store.refreshesCompleted > reads && !store.isRefreshing })
         #expect(store.appManagementPrompt?.reason == .blocked)
 
         store.appManagementDone()
@@ -128,6 +131,12 @@ struct V081AppManagementTests {
         let pending = try #require(AppManagementPendingRetry.decode(settings.appManagementPendingRetry))
         #expect(pending.sessionAction == .upgrade)
         #expect(pending.packages.map(\.name) == ["google-chrome"])
+        // A status read that ends in this (quitting) instance after the
+        // click leaves the operation for the next one (it used to take it).
+        await store.refresh(manual: false)
+        #expect(!store.resumeAppManagementRetry())
+        #expect(store.appManagementResume == nil)
+        #expect(settings.appManagementPendingRetry != nil)
 
         // The next launch (same defaults): offered, never run without a click (1).
         let next = await self.store(settings: settings)
@@ -204,7 +213,7 @@ struct V081AppManagementTests {
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         store.startUpgrade([chrome])
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         store.appManagementDone()
         store.appManagementContinue()
         #expect(store.upgrade !== s)
@@ -324,7 +333,7 @@ struct V081AppManagementTests {
         let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
         store.startUpgrade([chrome])
         let s = try #require(store.upgrade)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         store.appManagementDone()
         store.appManagementRelaunch()
         #expect(settings.appManagementPendingRetry == nil)
@@ -374,7 +383,7 @@ struct V081AppManagementTests {
         store.appManagementResumeConfirm()
         let s = try #require(store.upgrade)
         #expect(!s.isRetry)
-        #expect(await waitUntil(timeout: .seconds(10)) { s.isFinished })
+        #expect(await waitUntil { s.isFinished })
         #expect(store.appManagementPrompt?.reason == .blocked) // explained again, with its own relaunch offer
     }
 

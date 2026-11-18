@@ -175,6 +175,10 @@ public final class AppStore {
     /// Where `report` came from on screen: the disk cache or a live read.
     public private(set) var reportFromCache = false
     public private(set) var isRefreshing = false
+    /// How many status reads have ended (any outcome). Tests wait on it for
+    /// the read a finished session starts (in a Task, so `isRefreshing` is
+    /// still false right after `isFinished`).
+    @ObservationIgnored private(set) var refreshesCompleted = 0
     /// What a running refresh is doing ("Running brew update…").
     public private(set) var refreshPhase: String?
     public internal(set) var error: StoreError?
@@ -209,6 +213,8 @@ public final class AppStore {
     public private(set) var appManagementPrompt: AppManagementPrompt?
     /// 0.8.1: the "Run again" offer after a relaunch (waits for a click).
     public internal(set) var appManagementResume: AppManagementResume?
+    /// 0.8.3: "Relaunch Tankard" started the helper; this instance quits.
+    @ObservationIgnored private(set) var relaunching = false
     /// 0.3: the Cleanup sheet's state.
     public private(set) var cleanup: CleanupStore?
     public var showCleanupSheet = false
@@ -456,6 +462,7 @@ public final class AppStore {
         defer {
             isRefreshing = false
             refreshPhase = nil
+            refreshesCompleted += 1
         }
         let client: BrewClient
         do {
@@ -821,6 +828,7 @@ public final class AppStore {
         // nothing behind to offer at the next launch.
         settings.appManagementPendingRetry = nil
         if relaunch() {
+            relaunching = true
             settings.appManagementPendingRetry = pending?.encoded()
         } else {
             error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
@@ -846,7 +854,12 @@ public final class AppStore {
     /// the activity sheet offers "Run again" and waits for a click.
     @discardableResult
     func resumeAppManagementRetry() -> Bool {
-        guard let data = settings.appManagementPendingRetry else { return false }
+        // This instance is the one quitting for the relaunch: the saved
+        // operation is the next instance's. (A status read still running
+        // here when "Relaunch Tankard" was clicked used to end in the quit
+        // delay, take the offer and clear it, so the new instance offered
+        // nothing.)
+        guard !relaunching, let data = settings.appManagementPendingRetry else { return false }
         settings.appManagementPendingRetry = nil
         guard !isUpgrading, upgradePlan == nil, appManagementPrompt == nil,
               let pending = AppManagementPendingRetry.decode(data) else { return false }
