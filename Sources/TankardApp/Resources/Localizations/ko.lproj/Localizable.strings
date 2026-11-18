@@ -1220,6 +1220,7 @@
 "You have Tankard %@." = "현재 Tankard %@ 사용 중입니다.";
 "You may use this one directly in Terminal. Untick it to keep it." = "터미널에서 직접 사용할 수도 있습니다. 남기려면 체크를 해제하세요.";
 "Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "HOMEBREW_*, 프록시, XDG_CONFIG_HOME 설정과 Tankard가 brew를 실행할 때 각각을 어떻게 처리하는지.";
+"Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "정리할 때 남길 이전 버전은 Homebrew 설정(brew.env)에서 정합니다.";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Homebrew 설정에서 다른 암호 프로그램을 사용하므로, Tankard가 여기서 암호를 요청할 수 없습니다. 이 단계를 터미널에서 실행하세요:";
 "Your PATH finds other tools before Homebrew's" = "PATH에서 Homebrew의 도구보다 다른 도구가 먼저 발견됩니다";
 "a symlink to %@: that file is backed up and edited" = "%@에 대한 심볼릭 링크: 해당 파일이 백업된 후 편집됩니다";

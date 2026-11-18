@@ -1220,6 +1220,7 @@
 "You have Tankard %@." = "Hai Tankard %@.";
 "You may use this one directly in Terminal. Untick it to keep it." = "Potresti usarlo direttamente nel Terminale. Deselezionalo per tenerlo.";
 "Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "Le tue impostazioni HOMEBREW_*, proxy e XDG_CONFIG_HOME, e cosa fa Tankard con ciascuna quando esegue brew.";
+"Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "Le tue impostazioni di Homebrew (brew.env) decidono quali versioni precedenti la pulizia conserva.";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Le tue impostazioni di Homebrew usano un altro programma per la password, quindi Tankard non può chiederti la password qui. Esegui questo passaggio nel Terminale:";
 "Your PATH finds other tools before Homebrew's" = "Il tuo PATH trova altri strumenti prima di quelli di Homebrew";
 "a symlink to %@: that file is backed up and edited" = "un collegamento simbolico a %@: quel file viene salvato in backup e modificato";

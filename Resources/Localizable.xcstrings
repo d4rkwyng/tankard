@@ -63781,6 +63781,58 @@
         }
       }
     },
+    "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Homebrew-Einstellungen (brew.env) legen fest, welche alten Versionen „Aufräumen“ behält."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos réglages Homebrew (brew.env) décident des anciennes versions que le nettoyage conserve."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu configuración de Homebrew (brew.env) decide qué versiones anteriores conserva la limpieza."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリーンアップで残す古いバージョンは、Homebrew の設定（brew.env）で決まります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清理时保留哪些旧版本，由你的 Homebrew 设置（brew.env）决定。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suas configurações do Homebrew (brew.env) decidem quais versões antigas a limpeza mantém."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le tue impostazioni di Homebrew (brew.env) decidono quali versioni precedenti la pulizia conserva."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정리할 때 남길 이전 버전은 Homebrew 설정(brew.env)에서 정합니다."
+          }
+        }
+      }
+    },
     "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:": {
       "localizations": {
         "de": {

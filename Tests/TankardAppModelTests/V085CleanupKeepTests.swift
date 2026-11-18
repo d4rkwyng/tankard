@@ -79,6 +79,29 @@ struct V085CleanupKeepTests {
         #expect(session.items[0].command.display == "HOMEBREW_NO_CLEANUP_FORMULAE=\(name) brew cleanup")
         #expect(await waitUntil { session.isFinished })
     }
+
+    /// HK-47 review (0.8.5): brew.env's own HOMEBREW_NO_CLEANUP_FORMULAE
+    /// wins over the environment (bin/brew exports it over ours), so
+    /// Tankard's list would be silently replaced. The sheet doesn't claim
+    /// to keep anything then, and the command doesn't pretend to.
+    @Test func brewEnvsOwnListDecidesWhatIsKept() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0)
+        deps.brewEnvFiles = { _ in [("/usr/local/etc/homebrew/brew.env", ["HOMEBREW_NO_CLEANUP_FORMULAE": "foo"])] }
+        let store = AppStore(deps: deps)
+        await store.start()
+        store.restorePoints.settings.keepPreviousVersion = true
+        var report = try #require(store.report)
+        let i = try #require(report.packages.firstIndex { $0.kind == .formula })
+        report.packages[i].installedVersions = ["0.0.1", report.packages[i].installedVersion]
+        store.report = report
+        store.openCleanup()
+        let c = try #require(store.cleanup)
+        #expect(c.command == "brew cleanup")
+        #expect(c.keptNote?.contains("Keeps the old versions") != true)
+        #expect(c.keptNote == "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps.")
+        #expect(c.extraEnvironment.isEmpty && c.kept.isEmpty)
+        #expect(await waitUntil { c.phase == .ready && !c.measuringCache })
+    }
 }
 
 final class EnvRecordingCleanupRunner: CommandRunning, @unchecked Sendable {

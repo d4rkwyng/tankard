@@ -31,13 +31,21 @@ public final class CleanupStore {
     /// brew's own variable for "don't touch these formulae", on the dry run
     /// and on the real `brew cleanup` alike (so the preview is what runs).
     public let extraEnvironment: [String: String]
+    /// 0.8.5 (HK-47 review): brew.env sets HOMEBREW_NO_CLEANUP_FORMULAE
+    /// itself, and bin/brew exports it over Tankard's, so its list decides
+    /// what is kept. Tankard then adds nothing and says so (only when it
+    /// would have kept something).
+    public let brewEnvDecides: Bool
 
-    public init(client: BrewClient, env: [String: String], kept: [String] = [], keepPrevious: Bool = false) {
+    /// `brewEnvSetsKeep`: a brew.env file sets HOMEBREW_NO_CLEANUP_FORMULAE.
+    public init(client: BrewClient, env: [String: String], kept: [String] = [], keepPrevious: Bool = false,
+                brewEnvSetsKeep: Bool = false) {
         self.client = client
         self.env = env
-        self.kept = kept
+        self.kept = brewEnvSetsKeep ? [] : kept
         self.keepPrevious = keepPrevious
-        extraEnvironment = CleanupKeep.environment(kept, existing: env[CleanupKeep.key])
+        brewEnvDecides = brewEnvSetsKeep && !kept.isEmpty
+        extraEnvironment = CleanupKeep.environment(self.kept, existing: env[CleanupKeep.key])
     }
 
     /// `brew cleanup` exactly as it will run (copyable).
@@ -57,6 +65,9 @@ public final class CleanupStore {
 
     /// "Keeps the old versions of xz and 2 more for Restore Points …"
     public var keptNote: String? {
+        if brewEnvDecides {
+            return String(localized: "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps.")
+        }
         guard !kept.isEmpty else { return nil }
         let names = kept.prefix(3).joined(separator: ", ") + (kept.count > 3 ? String(localized: " and \(kept.count - 3) more") : "")
         return String(localized: "Keeps the old versions of \(names) for Restore Points, because “Keep the previous version after upgrades” is on.")

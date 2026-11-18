@@ -1220,6 +1220,7 @@
 "You have Tankard %@." = "你当前使用 Tankard %@。";
 "You may use this one directly in Terminal. Untick it to keep it." = "你可能会在“终端”中直接使用这一项。取消勾选即可保留它。";
 "Your HOMEBREW_*, proxy and XDG_CONFIG_HOME settings and what Tankard does with each when it runs brew." = "你的 HOMEBREW_*、代理和 XDG_CONFIG_HOME 设置，以及 Tankard 运行 brew 时如何处理每一项。";
+"Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "清理时保留哪些旧版本，由你的 Homebrew 设置（brew.env）决定。";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "你的 Homebrew 设置使用了其他密码程序，因此 Tankard 无法在这里询问你的密码。请在“终端”中运行此步骤：";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";

@@ -972,8 +972,11 @@ public final class AppStore {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
         // 0.8.5 (M1): the old versions kept for Restore Points stay.
         let keep = restorePoints.settings.keepPreviousVersion
+        // 0.8.5 (HK-47 review): brew.env's own list wins over Tankard's.
+        let brewEnvSets = EnvironmentSources.brewEnvSetting(CleanupKeep.key, files: deps.brewEnvFiles(client)) != nil
         let c = CleanupStore(client: client, env: client.environment(for: detection),
-                             kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep)
+                             kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep,
+                             brewEnvSetsKeep: brewEnvSets)
         cleanup = c
         showCleanupSheet = true
         Task { await c.load() }
