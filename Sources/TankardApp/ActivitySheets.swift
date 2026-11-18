@@ -483,7 +483,7 @@ struct CleanupSheet: View {
                 if cleanup.measuringCache {
                     ProgressView().controlSize(.mini)
                 } else if let b = cleanup.cacheBytes {
-                    Text(ByteCountFormatter.string(fromByteCount: b, countStyle: .file)).fontWeight(.semibold).monospacedDigit()
+                    Text(DiskSizes.format(b)).fontWeight(.semibold).monospacedDigit()
                 }
             }
             .font(.system(size: 12))
@@ -532,7 +532,7 @@ struct CleanupSheet: View {
     @ViewBuilder
     private func results(_ d: CleanupDryRun) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(d.items.isEmpty ? String(localized: "Nothing to clean up") : String(localized: "Would free about \(d.totalText)"))
+            Text(d.items.isEmpty ? String(localized: "Nothing to clean up") : String(localized: "Would free about \(d.totalDisplay)"))
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(d.items.isEmpty ? Color.secondary : theme.accent)
             if !d.items.isEmpty {
@@ -554,7 +554,7 @@ struct CleanupSheet: View {
                         HStack(spacing: 8) {
                             Text(AppPaths.tildePath(item.path)).lineLimit(1).truncationMode(.middle)
                             Spacer(minLength: 8)
-                            Text(item.sizeText ?? "").foregroundStyle(.secondary)
+                            Text(item.sizeDisplay ?? "").foregroundStyle(.secondary)
                         }
                         .font(.system(size: 11, design: .monospaced))
                     }
@@ -600,7 +600,7 @@ struct CleanupSheet: View {
     private func kindTotal(_ title: String, _ bytes: Int64) -> some View {
         HStack(spacing: 4) {
             Text(title).foregroundStyle(.secondary)
-            Text(CleanupDryRun.format(bytes: bytes)).fontWeight(.medium).monospacedDigit()
+            Text(DiskSizes.format(bytes)).fontWeight(.medium).monospacedDigit()
         }
     }
 }

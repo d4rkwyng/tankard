@@ -79,7 +79,9 @@ public struct DiskSizes: Codable, Sendable, Equatable {
     }
 
     /// Bytes as brew counts them, with a space: "867.1 KB", "34 MB", "1.2 GB".
-    public static func format(_ bytes: Int64) -> String {
+    /// 0.8.6 (UI details M6): the number in the locale's style ("77,3 MB"
+    /// in German), so every size in Tankard reads one way.
+    public static func format(_ bytes: Int64, locale: Locale = .current) -> String {
         var size = Double(bytes)
         var unit = "B"
         for next in ["KB", "MB", "GB", "TB"] {
@@ -89,6 +91,6 @@ public struct DiskSizes: Codable, Sendable, Equatable {
         }
         let rounded = (size * 10).rounded() / 10
         if rounded == rounded.rounded() { return "\(Int(rounded)) \(unit)" }
-        return String(format: "%.1f %@", rounded, unit)
+        return rounded.formatted(.number.precision(.fractionLength(1)).grouping(.never).locale(locale)) + " " + unit
     }
 }

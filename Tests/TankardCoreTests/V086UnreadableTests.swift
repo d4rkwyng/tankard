@@ -91,3 +91,22 @@ struct V086UnreadableTests {
         #expect(TapRemoval.check(tap, packages: []).isAllowed)
     }
 }
+
+// 0.8.6 (UI details M6): one size format, in the locale's style.
+struct V086SizeFormatTests {
+    @Test func sizesFollowTheLocale() {
+        #expect(DiskSizes.format(77_300_000, locale: Locale(identifier: "en_US")) == "77.3 MB")
+        #expect(DiskSizes.format(77_300_000, locale: Locale(identifier: "de_DE")) == "77,3 MB")
+        #expect(DiskSizes.format(34_000_000, locale: Locale(identifier: "de_DE")) == "34 MB")
+    }
+
+    @Test func cleanupShowsTankardsFormatNotBrews() {
+        let d = CleanupDryRun.parse("""
+        Would remove: /opt/homebrew/Cellar/xz/5.8.2 (102.8MB)
+        ==> This operation would free approximately 187.6MB of disk space.
+        """)
+        #expect(d.totalText == "187.6MB") // brew's own words, kept for the log
+        #expect(d.totalDisplay == DiskSizes.format(187_600_000))
+        #expect(d.items.first?.sizeDisplay == DiskSizes.format(102_800_000))
+    }
+}

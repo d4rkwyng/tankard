@@ -28,6 +28,9 @@ public struct CleanupDryRun: Sendable, Equatable {
         public var files: Int?
         public var kind: ItemKind
         public var id: String { path }
+        /// 0.8.6 (M6): the size as Tankard writes sizes; brew's text when
+        /// it couldn't be read as bytes.
+        public var sizeDisplay: String? { bytes.map { DiskSizes.format($0) } ?? sizeText }
     }
 
     /// Items in brew's order, each path once.
@@ -49,6 +52,11 @@ public struct CleanupDryRun: Sendable, Equatable {
     public var totalText: String {
         summaryText ?? CleanupDryRun.format(bytes: totalBytes)
     }
+
+    /// 0.8.6 (UI details M6): the total as Tankard writes sizes
+    /// (`DiskSizes.format`: a space, the locale's decimal mark), not
+    /// brew's "187.6MB".
+    public var totalDisplay: String { DiskSizes.format(totalBytes) }
 
     /// Whether `totalText` is brew's figure (true) or Tankard's sum.
     public var totalIsFromBrew: Bool { summaryText != nil }
