@@ -79,8 +79,16 @@ TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew 
                  (`brew outdated --greedy --cask`)
                  0.6: PackageLifecycle (deprecation/disable dates, reasons,
                  replacements), DoctorReport and its warning mapping,
-                 BrewFailure (brew's lock, network, disk full, permissions),
-                 AutoremovePlan (Health.swift)
+                 BrewFailure (brew's lock, network, disk full, permissions;
+                 0.8.3 checksum), AutoremovePlan (Health.swift)
+                 0.8.3: EnvironmentPolicy and CaskOptions (which HOMEBREW_* settings
+                 pass, see below), PastedCommand (a pasted `brew install x` searches
+                 for x)
+AskpassSupport   0.8.3: Askpass (the variable names, timeout), AskpassText (the
+                 dialog's wording), AskpassGate (who may ask); shared by the app and
+                 the helper
+tankard-askpass  0.8.3: the sudo password dialog, shipped as
+                 Contents/MacOS/tankard-askpass (see *sudo password dialog*)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
                    cache-first loading, errors that keep data, starting upgrades
@@ -142,6 +150,15 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    deprecated/disabled/keg-only display and Install replacement
   PackageDisplay   badge labels, sub-lines, release-page URLs, commands, summary text,
                    fork summary, sudo detection
+  AdminPassword    0.8.3: which commands get SUDO_ASKPASS, which casks need a password
+                   first, SudoOutcome, AskpassProcess/AskpassFocus (the dialog's focus)
+  Prefetch         0.8.3: the `brew fetch` before a multi-package run, FetchOutput
+  BrewLockWait     0.8.3: BrewLock (the lock file brew's message names) and the wait
+  QuitGuard        0.8.3: QuitPrompt/QuitChoice (quitting mid-run), RunJournal and
+                   InterruptedRunOffer (the run a quit interrupted)
+  SingleInstance   0.8.3: the launch-time guard against a second or stale copy, and
+                   RelaunchSequence (the self-upgrade and App Management relaunch)
+  NotificationRoute  0.8.3: what a click on a notification or its actions opens
 TankardApp       the SwiftUI views (App lifecycle), the menu-bar extra, Settings, About,
                  themes (Theme, Themed, PrimaryActionStyle), resources, snapshots
 ```
@@ -151,8 +168,9 @@ caller can run, so an actor method that starts brew and awaits it doesn't stop a
 brew from starting. `CommandQueue.enqueue` is synchronous (its order is the call order); it
 appends to an `AsyncStream` under a lock, and one worker task runs each command to the end
 before taking the next. Cancelling a waiting command skips it; cancelling the running one
-cancels its task, and the runner sends SIGTERM to brew's whole process group, then SIGKILL
-after 2 s.
+cancels its task, and the runner sends SIGINT (brew's Ctrl-C: it rolls back the unfinished
+step) to brew's whole process group, then SIGTERM after 15 s and SIGKILL after 15 s more.
+Before 0.8.3 it was SIGTERM, then SIGKILL after 2 s, which could cut brew's rollback short.
 
 Events from the queue arrive on background threads. Each upgrade session feeds them
 through its own `AsyncStream` to one main-actor consumer, so they are applied in order.
@@ -299,7 +317,8 @@ git is faster:
   group, then SIGKILL after 2 s.
 - `StreamingProcessRunner` (`StreamingCommandRunning`): the same rules, with stdout and
   stderr merged and handed over in chunks as they arrive, for `brew update` and
-  `brew upgrade`.
+  `brew upgrade`. Cancelling it (0.8.3) sends SIGINT first, then SIGTERM after 15 s and
+  SIGKILL after 15 s more, so brew can undo the step it was in.
 - Reads run concurrently. Mutating commands go through the app's strict FIFO
   `CommandQueue` (see the app's architecture).
 - `BrewClient.fileExists` is injectable, so tests and demo mode can claim a core tap.
@@ -525,7 +544,7 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
   `NSAlert` with an `NSSecureTextField` (no echo, no copy, secure keyboard entry while
   focused). OK writes the password plus a newline to stdout once and wipes that byte
   buffer; Cancel, a 5-minute timeout, or the calling sudo going away exit 1. Stop Now's
-  SIGTERM to brew's process group reaches sudo and the helper too (brew starts sudo without
+  signals to brew's process group (SIGINT, then SIGTERM) reach sudo and the helper too (brew starts sudo without
   a new process group: `pgroup: sudo? ? nil : true` in system_command.rb; sudo itself
   ignores SIGTERM while it waits for a password, the helper doesn't). It
   refuses to run with stdout on a terminal, writes nothing to disk, logs or defaults, and
@@ -596,6 +615,51 @@ Tankard watches brew's downloads folder. A bottle's size comes from the manifest
 already fetched; for a cask, one HEAD request to the cask's own URL from `brew info`.
 Without a size, the bytes so far and an indeterminate bar.
 
+**Parallel downloads (0.8.3, `Prefetch`).** brew 7's `brew fetch` puts every package it
+is given on its download queue, `HOMEBREW_DOWNLOAD_CONCURRENCY` at a time (default `auto`,
+twice the CPU cores), also without a terminal. Before an upgrade or install session
+(Upgrade All, a selection, a Brewfile's missing packages) and before an automatic run,
+Tankard queues one `brew fetch --formula` and one `brew fetch --cask` for each kind with
+at least two packages to download (the two flags can't be combined): formulae whose
+upgrade pours a bottle and aren't pinned, and casks other than `version :latest`. A
+formula that compiles is left to its own step. The user's `HOMEBREW_DOWNLOAD_CONCURRENCY`
+(brew.env, the environment or a shell profile) is passed on. Progress counts brew's
+"✔︎ Bottle x" / "✔︎ Cask x" / "✘ …" lines (or "Downloaded to:" with concurrency 1;
+`FetchOutput`). A download that fails fails no package: that package's own step
+downloads it again and fails with brew's own error if it still can't.
+
+**Stop Now, the lock wait and quitting (0.8.3).** Stop Now cancels the queue item, so the
+runner's SIGINT, SIGTERM, SIGKILL sequence applies (see *Why the queue isn't just an
+actor*); pressed before `posix_spawn` has returned, the stop starts as soon as brew's pid
+is known (before 0.8.3 it found no pid and the step ran to the end). It asks
+first ("Stop now?") while an upgrade, install, Replace with Bottle, restore or adopt step
+runs, but not while that step is downloading or waiting for the lock. A step whose output
+is brew's lock failure (`BrewFailure.locked`) waits instead of failing when the session
+has a `BrewLockWait`: `BrewLock` derives the lock file from brew's message
+(`<prefix>/var/homebrew/locks/<name>.formula|cask|download.lock`, or `update`), and
+`lsof -t` on it every 2 s says whether brew in Terminal still holds it, so Tankard never
+takes brew's lock itself. Free: the step runs again. After 15 minutes (or 30 lock failures
+for one step) it fails as locked. The rest of the queue waits behind it.
+Quitting mid-step doesn't leave brew finishing in the background: brew writes into
+Tankard's pipe, and once Tankard is gone its next write fails (EPIPE) and brew rolls the
+step back. So the quit alert (`QuitPrompt`) offers to wait for the current step or to
+stop it as Stop Now does (Quit Now waits up to 35 s for brew to wind down), never to
+abandon it. An upgrade session saves a `RunJournal` (the packages, in the settings'
+defaults) when it starts and clears it when the run ends in Tankard, even stopped; one
+left behind by a quit or a crash becomes "Upgrade the Remaining N Packages" at the next
+launch, for those still listed as upgrades, through the Upgrade button's path (the plan,
+pins and rules apply again).
+
+**One Tankard at a time (0.8.3, `SingleInstance`).** At launch Tankard looks at other
+running copies with its bundle id. Only copies from the same bundle path count, and
+demo, snapshot and script runs (read from that process's environment with
+`KERN_PROCARGS2`) never do. A copy launched after this app's executable was written to
+disk (the later of its mtime and ctime: unzip and brew's move keep the mtime) runs the
+same build, so this launch is the duplicate: it activates that copy and quits. Copies
+launched before it run a bundle brew has since replaced: they are asked to quit
+(`terminate`, never forced), and if one is still running after 5 s an alert says "An
+older copy of Tankard is still running" with **Show Older Copy**.
+
 **Background `brew update` (0.8).** Starts at least 3 seconds after launch, once the list
 is on screen. Due once per check interval (Settings ▸ General ▸ Check every), or
 `HOMEBREW_AUTO_UPDATE_SECS` when that is longer. Any `brew update` counts, including one
@@ -616,6 +680,10 @@ failed check. Under `swift run` (no app bundle) notifications are skipped. Since
 Refresh or Check Now the user asked for (`UserCheckFeedback`) also posts, when the setting
 is on and the window isn't in front; otherwise the status bar shows "N new upgrades" or
 "No new upgrades" for a few seconds. Upgrades reported this way aren't announced again.
+Since 0.8.3 upgrade notifications carry a category with **Upgrade All…** and **Later**
+actions; the delegate turns the response into a `NotificationRoute` (a click opens
+Installed ▸ Upgrades, Upgrade All… also opens the Upgrade All plan and never starts a run,
+Later does nothing, an automatic-update notification opens the Auto-update log).
 
 **Automatic updates (0.5).** AC power comes from IOKit's power source (a battery or UPS
 waits); idle time from IOKit's `HIDIdleTime`. Never in the first 5 minutes after launch.
@@ -631,6 +699,10 @@ cask upgrade runs with `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`. The log is
 `defaults write net.mindtricks.tankard autoUpdateDryRun -bool true` (plan and log, run no
 brew command) and `defaults write net.mindtricks.tankard autoUpdateOnly -array xz` (limit
 a run to the named packages; `defaults delete … autoUpdateOnly` removes the limit).
+Before the upgrades, one `brew fetch` per kind downloads them (see *Parallel downloads*).
+Every automatic command runs with `HOMEBREW_NO_SUDO=1` and no `SUDO_ASKPASS`, and a
+brew.env `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` pauses the runs (see *The user's
+settings*).
 
 **Vulnerability scan (0.4).** `brew vulns --json`, stdout only (brew prints its warnings on
 stderr). brew marks a scan incomplete (`"complete": false`) when it skipped any formula (no
@@ -727,7 +799,14 @@ rounded up; hours from 90 minutes; no data means no estimate, never zero.
 `api.github.com/repos/d4rkwyng/tankard/releases/latest` with a `Tankard/<version>`
 User-Agent. Not in demo mode. Upgrade with Homebrew runs `brew update`, then
 `brew upgrade --cask d4rkwyng/tap/tankard` through the queue with
-`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, so brew doesn't quit the app running it.
+`HOMEBREW_NO_UPGRADE_QUIT_CASKS=1`, so brew doesn't quit the app running it. **Relaunch**
+(0.8.3, `RelaunchSequence`) starts the same detached `/bin/sh` helper as the App
+Management relaunch (it waits for this pid to exit, then `open -n`s the bundle, and gives
+up after about 10 s), closes every sheet in the store's own state (AppKit refuses to
+terminate under a modal sheet), and terminates; if Tankard is still running 1.5 s later
+it tries once more, then gives up and says so, opening nothing. Before 0.8.3 Relaunch
+opened the new copy first, and NSWorkspace's completion handler, isolated to the main
+actor but called on LaunchServices' queue, crashed the old one (EXC_BREAKPOINT).
 
 **Clean up.** `brew cleanup -n` (dry run), `brew --cache` and `du -sk` on the cache. When
 brew prints no total (it exits with an error on a Mac whose core tap brew 7 calls
@@ -771,7 +850,11 @@ Not tested end to end.
 
 **Menu-bar icon.** A 16×16 pixel-art tankard drawn as a template image (`MenuBarIcon`),
 with a foam head only when upgrades are waiting; at most 8 upgrades listed, "99+"
-above 99. It reads the same store, cache and refresh as the window.
+above 99. It reads the same store, cache and refresh as the window. Since 0.8.3 a click on
+a line opens the window on it (`MenuBarDestination`): a package row selects it in
+Installed and scrolls to it (the search cleared, and a filter that would hide it reset to
+All), "N upgrades ready" and "and N more…" the
+Upgrades filter, the scan line the Vulnerable filter.
 
 ## Demo mode, screenshots and the layout check
 
@@ -825,6 +908,8 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_SNAPSHOT_VIEW=settings-upgrades` | 0.4: Settings → Upgrades. |
 | `TANKARD_DEMO_SHEET=taps` | 0.7, demo only: the Taps sheet. `TANKARD_DEMO_TAP_SELECT=<tap>` selects one, `TANKARD_DEMO_TAP_ADD=<user/repo>` opens Add's confirmation, `TANKARD_DEMO_TAP_SHOW=1` clicks Show Installed, `TANKARD_DEMO_TAP_REMOVE=1` asks to remove the selection. |
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
+| `TANKARD_SEARCH=<text>` | 0.8.3: type this into the Installed search on launch (any mode; a pasted `brew install x` or the "Search Discover for" empty state). |
+| `TANKARD_DEMO_PASSWORD=<cask>` | 0.8.3, demo only: that cask runs a `.pkg` installer, so the upgrade plan and the uninstall sheet show "needs your administrator password". The demo's brew is fake; the dialog never appears. |
 
 Demo runs and snapshot runs use throwaway settings, never the real UserDefaults. Demo
 Discover uses fixtures too: a slice of formulae.brew.sh (normal mode) and `brew info`
@@ -944,6 +1029,39 @@ Requested only, links, services through the queue, root services never reaching 
 brew's sudo message, the typed confirmations, the revert plan, and its `cp`/`sed` lines run
 for real on a temp file. The intel demo also lays the fresh receipts over its fixture, so
 its dependency views are realistic.
+
+**Scripted real runs.** `Scripts/e2e.sh SCENARIO...` (`--list`, `--steps`) drives the
+real app (no demo) against this Mac's real brew, with a step script per phase
+(`TANKARD_E2E=1` and `TANKARD_SCRIPT`; the vocabulary is in `ScriptRunner.swift`,
+`ScriptSteps*.swift`). Settings go to a throwaway defaults suite and Tankard's files to
+the run's output folder; it installs and removes only its own throwaway packages and taps,
+and skips a scenario whose package or tap you already have. 0.8.3 adds the `prefetch`
+scenario (two throwaway casks served by a throttled local HTTP server, upgraded through
+one `brew fetch --cask`). `Scripts/e2e-selfupdate.sh --old OLD.app --new NEW.app --out
+DIR` (0.8.3) runs the self-upgrade end to end on a throwaway tap
+(`tankard-e2e-self/tap`, never d4rkwyng/tap): Check for Tankard Updates, Upgrade with
+Homebrew and Relaunch with a sheet open, a same-build double launch, and a stale copy
+with a sheet open, each passing only with exactly one Tankard left (running NEW after an
+upgrade) and no new crash report. It refuses to start while Tankard runs or while
+`/Applications/Tankard.app`, its tap or a `tankard` cask exists, and removes all of them
+afterwards.
+Its script runs set `TANKARD_E2E_SELFUPDATE=1` (the single-instance guard and the
+relaunch treat the run as the real app) and `TANKARD_E2E_SELF_TAP` (the tap), with the
+steps `check-updates`, `upgrade-self`, `expect-quiet`, `open-sheet` and `relaunch`.
+
+**Opt-in real-brew checks (0.8.3)**, off unless the variable is set:
+`TANKARD_REAL_CANCEL_CASK=font-inter Scripts/test.sh --filter V083QueueRobustRealTests`
+(installs the cask and clicks Stop Now mid-download: nothing may be installed),
+`TANKARD_REAL_LOCK_FORMULA=<tap>/<name>` with the same filter (a second brew holds the
+lock on a throwaway outdated formula while Tankard upgrades it), and
+`TANKARD_REAL_ENV=1 Scripts/test.sh --filter EnvironmentRealCanary` (a temporary
+`~/.zshrc` with `HOMEBREW_NO_ANALYTICS` in a throwaway HOME reaches the real brew;
+read-only).
+
+**CI.** `.github/workflows/tests.yml` (0.8.3) runs `swift test` on `macos-15` for pushes
+to main and `release-*` branches, pull requests and manual runs, with a read-only token
+and no secrets. Changes to Markdown, `docs/` and LICENSE alone don't trigger it. The
+release workflow runs the tests again.
 
 ## Signing a release
 
