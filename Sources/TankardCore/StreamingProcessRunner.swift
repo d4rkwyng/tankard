@@ -33,10 +33,24 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
     /// 0.8.3: seconds between SIGINT and SIGTERM. A real `brew upgrade`
     /// interrupted mid-build took 11 s to roll back and exit.
     public var interruptGrace: Double
+    /// 0.8.6: sends a signal, `kill(2)`-style (a negative pid is a process
+    /// group). Injected so tests can see which signals Stop Now sends.
+    public var sendSignal: @Sendable (pid_t, Int32) -> Void
 
-    public init(killGrace: Double = 15, interruptGrace: Double? = nil) {
+    public init(killGrace: Double = 15, interruptGrace: Double? = nil,
+                sendSignal: @escaping @Sendable (pid_t, Int32) -> Void = { _ = kill($0, $1) }) {
         self.killGrace = killGrace
         self.interruptGrace = interruptGrace ?? killGrace
+        self.sendSignal = sendSignal
+    }
+
+    /// The child's pid; whether the task was cancelled; whether the child
+    /// has exited (set before it is reaped, under the same lock the stop's
+    /// signals are sent under, so no signal is sent once its pid is free).
+    struct RunState: Sendable {
+        var pid: pid_t?
+        var cancelled = false
+        var exited = false
     }
 
     public func stream(_ executable: String, _ arguments: [String], environment: [String: String],
@@ -45,20 +59,23 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
         // the two comes second starts the stop: a cancel that arrives before
         // posix_spawn has returned (Stop Now right after the step started)
         // used to find no pid and do nothing, and the child ran to the end.
-        let state = OSAllocatedUnfairLock<(pid: pid_t?, cancelled: Bool)>(initialState: (nil, false))
+        let state = OSAllocatedUnfairLock<RunState>(initialState: RunState())
         let grace = killGrace
         let interruptGrace = interruptGrace
+        let send = sendSignal
         let code: Int32 = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
-                        let c = try Self.spawnAndStream(executable, arguments, environment, output: output) { pid in
+                        let c = try Self.spawnAndStream(executable, arguments, environment, output: output, started: { pid in
                             let stopNow = state.withLock { s -> Bool in
                                 s.pid = pid
                                 return s.cancelled
                             }
-                            if stopNow { Self.stop(pid, interruptGrace: interruptGrace, killGrace: grace) }
-                        }
+                            if stopNow { Self.stop(pid, state: state, interruptGrace: interruptGrace, killGrace: grace, send: send) }
+                        }, exited: {
+                            state.withLock { $0.exited = true }
+                        })
                         continuation.resume(returning: c)
                     } catch {
                         continuation.resume(throwing: error)
@@ -70,7 +87,7 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
                 s.cancelled = true
                 return s.pid
             }
-            if let pid { Self.stop(pid, interruptGrace: interruptGrace, killGrace: grace) }
+            if let pid { Self.stop(pid, state: state, interruptGrace: interruptGrace, killGrace: grace, send: send) }
         }
         if Task.isCancelled { throw ProcessRunnerError.cancelled }
         return code
@@ -84,33 +101,88 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
     /// (sandbox.rb: `Process.setsid` in the forked child, a PTY as its
     /// terminal), so the SIGINT missed the build; brew waited for it, and
     /// Stop Now took ~16 s and ended in SIGTERM, cutting brew's rollback.
-    static func stop(_ pid: pid_t, interruptGrace: Double, killGrace: Double) {
-        signalTree(pid, SIGINT)
+    ///
+    /// 0.8.6 (HK-47 review): those groups are found once, at the SIGINT
+    /// (once brew has exited its build is launchd's child, and a later walk
+    /// from brew's pid misses it), each with one member and that member's
+    /// start time. Every later signal is sent under the run's lock and only
+    /// while the child has not exited (after it is reaped its pid can be
+    /// reused); an outside group is signalled only while its recorded member
+    /// is still the same process, in that group.
+    static func stop(_ pid: pid_t, state: OSAllocatedUnfairLock<RunState>,
+                     interruptGrace: Double, killGrace: Double,
+                     send: @escaping @Sendable (pid_t, Int32) -> Void) {
+        let groups: [OutsideGroup]? = state.withLock { s in
+            guard !s.exited else { return nil }
+            let groups = outsideGroups(pid)
+            send(-pid, SIGINT)
+            for g in groups { send(-g.pgid, SIGINT) }
+            return groups
+        }
+        guard let groups else { return }
         DispatchQueue.global().asyncAfter(deadline: .now() + interruptGrace) {
-            guard kill(-pid, 0) == 0 || !outsideGroups(pid).isEmpty else { return }
-            signalTree(pid, SIGTERM)
+            let going: Bool = state.withLock { s in
+                guard !s.exited else { return false }
+                let live = groups.filter { $0.isStillThere() }
+                guard kill(-pid, 0) == 0 || !live.isEmpty else { return false }
+                send(-pid, SIGTERM)
+                for g in live { send(-g.pgid, SIGTERM) }
+                return true
+            }
+            guard going else { return }
             DispatchQueue.global().asyncAfter(deadline: .now() + killGrace) {
-                signalTree(pid, SIGKILL)
+                state.withLock { s in
+                    guard !s.exited else { return }
+                    send(-pid, SIGKILL)
+                    for g in groups where g.isStillThere() { send(-g.pgid, SIGKILL) }
+                }
             }
         }
     }
 
-    /// `sig` to the child's group and to every other group its descendants
-    /// lead (found first, so none is missed when the parent exits).
-    static func signalTree(_ pid: pid_t, _ sig: Int32) {
-        let others = outsideGroups(pid)
-        kill(-pid, sig)
-        for g in others { kill(-g, sig) }
+    /// A process group one of the child's descendants leads or belongs to,
+    /// other than the child's own, with one member that identifies it later.
+    struct OutsideGroup: Sendable, Equatable {
+        var pgid: pid_t
+        var member: pid_t
+        var memberStart: ProcessStart
+
+        /// The member is the same process (same start time) and still in
+        /// the group: the group still exists, so its id has not been reused.
+        func isStillThere() -> Bool {
+            ProcessStart.of(member) == memberStart && getpgid(member) == pgid
+        }
     }
 
-    /// The process groups of `pid`'s descendants other than its own.
-    static func outsideGroups(_ pid: pid_t) -> [pid_t] {
-        var groups = Set<pid_t>()
+    /// A process's start time (libproc `PROC_PIDTBSDINFO`), which tells a
+    /// process from a later one given the same pid.
+    struct ProcessStart: Sendable, Equatable {
+        var sec: UInt64
+        var usec: UInt64
+
+        static func of(_ pid: pid_t) -> ProcessStart? {
+            var info = proc_bsdinfo()
+            let size = Int32(MemoryLayout<proc_bsdinfo>.size)
+            guard proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size else { return nil }
+            return ProcessStart(sec: info.pbi_start_tvsec, usec: info.pbi_start_tvusec)
+        }
+    }
+
+    /// The process groups of `pid`'s descendants other than its own, each
+    /// with a member (the leader, when it is one of the descendants).
+    static func outsideGroups(_ pid: pid_t) -> [OutsideGroup] {
+        var members: [pid_t: pid_t] = [:]
+        var order: [pid_t] = []
         for d in descendants(of: pid) {
             let g = getpgid(d)
-            if g > 1, g != pid { groups.insert(g) }
+            guard g > 1, g != pid else { continue }
+            if members[g] == nil { order.append(g) }
+            if members[g] == nil || d == g { members[g] = d }
         }
-        return Array(groups)
+        return order.compactMap { g in
+            guard let m = members[g], let start = ProcessStart.of(m) else { return nil }
+            return OutsideGroup(pgid: g, member: m, memberStart: start)
+        }
     }
 
     /// Every descendant of `pid` (libproc, breadth first, at most 4096).
@@ -130,7 +202,8 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
     }
 
     static func spawnAndStream(_ executable: String, _ arguments: [String], _ environment: [String: String],
-                               output: (Data) -> Void, started: (pid_t) -> Void) throws -> Int32 {
+                               output: (Data) -> Void, started: (pid_t) -> Void,
+                               exited: () -> Void = {}) throws -> Int32 {
         var fds: [Int32] = [0, 0]
         guard pipe(&fds) == 0 else { throw ProcessRunnerError.spawnFailed(executable, errno) }
 
@@ -189,6 +262,12 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
         }
         close(fds[0])
 
+        // 0.8.6: wait without reaping, mark the run exited (under the stop's
+        // lock), then reap: a stop timer either signals before this, while
+        // the pid is still the child's (a zombie keeps it), or not at all.
+        var info = siginfo_t()
+        while waitid(P_PID, id_t(pid), &info, WEXITED | WNOWAIT) == -1 && errno == EINTR {}
+        exited()
         var status: Int32 = 0
         while waitpid(pid, &status, 0) == -1 && errno == EINTR {}
         let low = status & 0x7f
