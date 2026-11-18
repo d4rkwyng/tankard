@@ -177,6 +177,7 @@
 "Add Tap…" = "Ajouter un tap…";
 "Add tap" = "Ajouter un tap";
 "Add tap?" = "Ajouter le tap ?";
+"Add the tap a package comes from" = "Ajouter le tap d’où vient un paquet";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Ajoutez d’abord les taps (Ajouter un tap…), puis vérifiez à nouveau le Brewfile pour installer le reste.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Ajouter, Retirer et Approuver passent par la file d’attente et l’historique de Tankard.";
 "Added (%lld)" = "Ajoutés (%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Rien d’installé n’en provient. brew supprime sa copie locale et cesse de lui faire confiance ; si vous l’ajoutez à nouveau plus tard, Tankard vous le redemandera.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Rien d’installé n’en provient. brew supprime sa copie locale ; vous pourrez l’ajouter à nouveau plus tard.";
 "Nothing matches" = "Aucun résultat";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Rien ne correspond à « %@ » dans le catalogue principal de Homebrew ni dans les taps que vous avez ajoutés. Un paquet d’un autre tap apparaît ici une fois ce tap ajouté (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Aucun résultat pour « %@ ».";
 "Nothing runs on its own after the relaunch." = "Rien ne se lance tout seul après la relance.";
 "Nothing to clean up" = "Rien à nettoyer";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "vous avez choisi d’ignorer %@";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "vos réglages Homebrew autorisent ici les demandes de mot de passe ; mettez-le à niveau manuellement";
 "your Homebrew settings use a different password program; upgrade it by hand" = "vos réglages Homebrew utilisent un autre programme de mot de passe ; mettez-le à niveau manuellement";
+"your taps (%@) · %@" = "vos taps (%@) · %@";
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ sur le disque";

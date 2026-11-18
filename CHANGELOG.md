@@ -10,6 +10,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Settings ▸ General ▸ Show the number of upgrades in the menu bar** (on by default). Off, the menu bar shows only the tankard, full when upgrades are ready; the number stays in its tooltip and in the menu.
 
 ### Changed
+- **Discover finds packages from your own taps.** It used to search only Homebrew's main catalog (formulae.brew.sh), so a formula from a tap you added, even one added in Tankard a moment before, was "No matches". The formulae and casks of every tap outside `homebrew/` are now read from the tap on this Mac (in the background, and again only when a tap changes) and searched with the rest; their versions come from brew when you look at them. An empty search says where it looked, with **Taps…** to add the tap a package comes from.
 - **The marks at the end of a row sit together.** The ⟳ for apps that update themselves moved from after the name to the end of the row, next to the password lock and the Electron ⓘ: always in that order, evenly spaced, the same size.
 - **Package names no longer collapse to "…" next to their badges.** The name keeps at least its first 12 characters (all of it when it fits); "dep", "pinned", "Deprecated" and "Vulnerable · 4" shrink to their icons in a narrow column, and leave when even those don't fit. The name's tooltip lists them.
 - **Tooltips come up faster**: after about a third of a second instead of 1.5 s, in Tankard only (set in memory at launch; nothing is written to your settings, and a delay you set yourself with `defaults write` still wins).

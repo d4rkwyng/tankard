@@ -177,6 +177,7 @@
 "Add Tap…" = "Add Tap…";
 "Add tap" = "Add tap";
 "Add tap?" = "Add tap?";
+"Add the tap a package comes from" = "Add the tap a package comes from";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Add the taps first (Add Tap…), then check the Brewfile again to install the rest.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Add, Remove and Trust go through Tankard's queue and History.";
 "Added (%lld)" = "Added (%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nothing installed comes from it. brew deletes its local copy; you can add it again later.";
 "Nothing matches" = "Nothing matches";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Nothing matches “%@”.";
 "Nothing runs on its own after the relaunch." = "Nothing runs on its own after the relaunch.";
 "Nothing to clean up" = "Nothing to clean up";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "you chose to skip %@";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "your Homebrew settings allow password prompts here; upgrade it by hand";
 "your Homebrew settings use a different password program; upgrade it by hand" = "your Homebrew settings use a different password program; upgrade it by hand";
+"your taps (%@) · %@" = "your taps (%@) · %@";
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ on disk";

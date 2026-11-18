@@ -78,6 +78,13 @@ public struct TapIndex: Sendable {
 /// from `brew info --json=v2` afterwards, for the rows being looked at.
 public struct TapIndexer: Sendable {
     public var tapsDirectory: URL
+    /// 0.8.6 (H1): only taps outside `homebrew/` (the user's own), for
+    /// normal-mode Discover, where formulae.brew.sh already covers
+    /// homebrew/core and homebrew/cask.
+    public var userTapsOnly = false
+    /// 0.8.6 (H1): stop reading after this many packages (a huge tap can't
+    /// stall Discover).
+    public var maxEntries = Int.max
 
     public init(repository: String) {
         tapsDirectory = URL(fileURLWithPath: repository).appendingPathComponent("Library/Taps", isDirectory: true)
@@ -96,10 +103,31 @@ public struct TapIndexer: Sendable {
             let userDir = tapsDirectory.appendingPathComponent(user, isDirectory: true)
             let repos = (try? fm.contentsOfDirectory(atPath: userDir.path)) ?? []
             for repo in repos.sorted() where repo.hasPrefix("homebrew-") {
+                if userTapsOnly && Self.isHomebrewTap(user) { continue }
                 out.append(("\(user)/\(repo.dropFirst("homebrew-".count))", userDir.appendingPathComponent(repo, isDirectory: true)))
             }
         }
         return out
+    }
+
+    /// homebrew/core, homebrew/cask and Homebrew's other own taps.
+    public static func isHomebrewTap(_ userOrTap: String) -> Bool {
+        let user = userOrTap.split(separator: "/").first.map(String.init) ?? userOrTap
+        return user.lowercased() == "homebrew"
+    }
+
+    /// 0.8.6 (H1): changes when a tap is added, removed or updated (each
+    /// checkout's directory and its git index, by modification time).
+    /// Cheap: a few stat calls per tap, no file read.
+    public func fingerprint() -> String {
+        let fm = FileManager.default
+        func mtime(_ path: String) -> String {
+            let d = (try? fm.attributesOfItem(atPath: path))?[.modificationDate] as? Date
+            return d.map { String($0.timeIntervalSince1970) } ?? "-"
+        }
+        return taps().map { tap, dir in
+            "\(tap)@\(mtime(dir.path)),\(mtime(dir.appendingPathComponent(".git/index").path)),\(mtime(dir.appendingPathComponent(".git/FETCH_HEAD").path))"
+        }.joined(separator: ";")
     }
 
     public func index() -> TapIndex {
@@ -107,6 +135,7 @@ public struct TapIndexer: Sendable {
         var entries: [TapIndexEntry] = []
         var names: [String] = []
         for (tap, dir) in taps() {
+            if entries.count >= maxEntries { break }
             names.append(tap)
             let aliases = Self.aliases(in: dir.appendingPathComponent("Aliases"))
             var formulaFiles = Self.rubyFiles(in: dir.appendingPathComponent("Formula"))
@@ -115,7 +144,7 @@ public struct TapIndexer: Sendable {
                 // Older third-party taps keep formulae at the top level.
                 formulaFiles = Self.rubyFiles(in: dir, recursive: false)
             }
-            for file in formulaFiles {
+            for file in formulaFiles where entries.count < maxEntries {
                 let name = file.deletingPathExtension().lastPathComponent
                 var head = Self.head(of: file)
                 if head.count == Self.headSize, head.range(of: Data("\n  bottle do".utf8)) == nil,
@@ -129,7 +158,7 @@ public struct TapIndexer: Sendable {
                                              bottle: scanned.bottle,
                                              dependencies: scanned.runtime, buildDependencies: scanned.build))
             }
-            for file in Self.rubyFiles(in: dir.appendingPathComponent("Casks")) {
+            for file in Self.rubyFiles(in: dir.appendingPathComponent("Casks")) where entries.count < maxEntries {
                 let head = Self.head(of: file)
                 entries.append(TapIndexEntry(kind: .cask, name: file.deletingPathExtension().lastPathComponent, tap: tap,
                                              desc: Self.argument("desc", in: head),

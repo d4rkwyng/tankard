@@ -177,6 +177,7 @@
 "Add Tap…" = "Añadir tap…";
 "Add tap" = "Añadir tap";
 "Add tap?" = "¿Añadir tap?";
+"Add the tap a package comes from" = "Añadir el tap del que procede un paquete";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Añade primero los taps (Añadir tap…) y vuelve a comprobar el Brewfile para instalar el resto.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Añadir, Quitar y Confiar pasan por la cola y el Historial de Tankard.";
 "Added (%lld)" = "Añadidos (%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nada de lo instalado viene de él. brew borra su copia local y deja de confiar en él; si lo vuelves a añadir más adelante, Tankard volverá a preguntar.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nada de lo instalado viene de él. brew borra su copia local; puedes volver a añadirlo más adelante.";
 "Nothing matches" = "Sin coincidencias";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Nada coincide con «%@» en el catálogo principal de Homebrew ni en los taps que has añadido. Un paquete de otro tap aparece aquí en cuanto añades ese tap (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Sin coincidencias para “%@”.";
 "Nothing runs on its own after the relaunch." = "Nada se ejecuta solo después de reiniciar.";
 "Nothing to clean up" = "Nada que limpiar";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "elegiste omitir %@";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "tus ajustes de Homebrew permiten pedir la contraseña aquí; actualízalo manualmente";
 "your Homebrew settings use a different password program; upgrade it by hand" = "tus ajustes de Homebrew usan otro programa de contraseñas; actualízalo manualmente";
+"your taps (%@) · %@" = "tus taps (%@) · %@";
 "~%@ h" = "~%@ h";
 "~%lld min" = "~%lld min";
 "· %@ on disk" = "· %@ en disco";

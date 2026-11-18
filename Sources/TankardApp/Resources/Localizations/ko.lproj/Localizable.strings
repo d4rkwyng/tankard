@@ -177,6 +177,7 @@
 "Add Tap…" = "tap 추가…";
 "Add tap" = "tap 추가";
 "Add tap?" = "tap을 추가할까요?";
+"Add the tap a package comes from" = "패키지가 있는 Tap을 추가합니다";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "먼저 tap을 추가한 다음(tap 추가…), Brewfile을 다시 확인해 나머지를 설치하세요.";
 "Add, Remove and Trust go through Tankard's queue and History." = "추가, 제거, 신뢰는 Tankard의 대기열과 기록을 거칩니다.";
 "Added (%lld)" = "추가됨(%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제하고 이 tap을 더 이상 신뢰하지 않습니다. 나중에 다시 추가하면 Tankard가 다시 묻습니다.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "설치된 항목 중 이 tap에서 온 것은 없습니다. brew가 로컬 사본을 삭제합니다. 나중에 다시 추가할 수 있습니다.";
 "Nothing matches" = "일치하는 항목 없음";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Homebrew 기본 카탈로그와 추가한 Tap에서 “%@”와 일치하는 항목이 없습니다. 다른 Tap의 패키지는 그 Tap을 추가하면 여기에 표시됩니다(Homebrew ▸ Tap…).";
 "Nothing matches “%@”." = "“%@”와(과) 일치하는 항목이 없습니다.";
 "Nothing runs on its own after the relaunch." = "다시 시작한 후 자동으로 실행되는 것은 없습니다.";
 "Nothing to clean up" = "정리할 항목 없음";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "%@ 건너뛰기를 선택했습니다";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "Homebrew 설정에서 여기서 암호를 묻도록 허용되어 있습니다. 직접 업그레이드하세요";
 "your Homebrew settings use a different password program; upgrade it by hand" = "Homebrew 설정에서 다른 암호 프로그램을 사용합니다. 직접 업그레이드하세요";
+"your taps (%@) · %@" = "추가한 Tap(%@) · %@";
 "~%@ h" = "~%@시간";
 "~%lld min" = "~%lld분";
 "· %@ on disk" = "· 디스크 %@";

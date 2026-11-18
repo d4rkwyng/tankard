@@ -177,6 +177,7 @@
 "Add Tap…" = "tapを追加…";
 "Add tap" = "tapを追加";
 "Add tap?" = "tapを追加しますか?";
+"Add the tap a package comes from" = "パッケージの提供元の Tap を追加します";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "まずtapを追加し（「tapを追加…」）、それからBrewfileをもう一度確認して残りをインストールしてください。";
 "Add, Remove and Trust go through Tankard's queue and History." = "追加、削除、信頼はTankardのキューと履歴を通じて行われます。";
 "Added (%lld)" = "追加済み(%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除し、このtapの信頼も解除します。後でもう一度追加すると、Tankardは再び確認します。";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除します。後でもう一度追加できます。";
 "Nothing matches" = "一致するものはありません";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Homebrew のメインカタログにも、追加した Tap にも「%@」に一致するものはありません。別の Tap のパッケージは、その Tap を追加するとここに表示されます（Homebrew ▸ Tap…）。";
 "Nothing matches “%@”." = "「%@」に一致するものはありません。";
 "Nothing runs on its own after the relaunch." = "再起動後に自動で実行されるものはありません。";
 "Nothing to clean up" = "クリーンアップするものはありません";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "%@のスキップを選択しました";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "Homebrewの設定でここでのパスワード入力が許可されています。手動でアップグレードしてください";
 "your Homebrew settings use a different password program; upgrade it by hand" = "Homebrewの設定で別のパスワードプログラムを使っています。手動でアップグレードしてください";
+"your taps (%@) · %@" = "追加した Tap（%@）· %@";
 "~%@ h" = "約%@時間";
 "~%lld min" = "約%lld分";
 "· %@ on disk" = "· ディスク上 %@";

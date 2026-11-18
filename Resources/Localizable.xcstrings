@@ -9545,6 +9545,58 @@
         }
       }
     },
+    "Add the tap a package comes from": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Tap hinzufügen, aus dem ein Paket stammt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter le tap d’où vient un paquet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir el tap del que procede un paquete"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パッケージの提供元の Tap を追加します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加软件包所在的 Tap"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar o tap de onde vem um pacote"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi il tap da cui proviene un pacchetto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "패키지가 있는 Tap을 추가합니다"
+          }
+        }
+      }
+    },
     "Add the taps first (Add Tap…), then check the Brewfile again to install the rest.": {
       "localizations": {
         "de": {
@@ -36841,6 +36893,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "일치하는 항목 없음"
+          }
+        }
+      }
+    },
+    "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts passt zu „%@“ im Hauptkatalog von Homebrew oder in den Taps, die du hinzugefügt hast. Ein Paket aus einem anderen Tap erscheint hier, sobald du diesen Tap hinzufügst (Homebrew ▸ Taps…)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne correspond à « %@ » dans le catalogue principal de Homebrew ni dans les taps que vous avez ajoutés. Un paquet d’un autre tap apparaît ici une fois ce tap ajouté (Homebrew ▸ Taps…)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada coincide con «%@» en el catálogo principal de Homebrew ni en los taps que has añadido. Un paquete de otro tap aparece aquí en cuanto añades ese tap (Homebrew ▸ Taps…)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew のメインカタログにも、追加した Tap にも「%@」に一致するものはありません。別の Tap のパッケージは、その Tap を追加するとここに表示されます（Homebrew ▸ Tap…）。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Homebrew 主目录和你添加的 Tap 中都没有与“%@”匹配的内容。其他 Tap 中的软件包会在你添加该 Tap 后显示在这里（Homebrew ▸ Tap…）。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada corresponde a “%@” no catálogo principal do Homebrew nem nos taps que você adicionou. Um pacote de outro tap aparece aqui depois que você adiciona esse tap (Homebrew ▸ Taps…)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun risultato per “%@” nel catalogo principale di Homebrew né nei tap che hai aggiunto. Un pacchetto di un altro tap compare qui dopo che aggiungi quel tap (Homebrew ▸ Tap…)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 기본 카탈로그와 추가한 Tap에서 “%@”와 일치하는 항목이 없습니다. 다른 Tap의 패키지는 그 Tap을 추가하면 여기에 표시됩니다(Homebrew ▸ Tap…)."
           }
         }
       }
@@ -71629,6 +71733,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "seus ajustes do Homebrew usam outro programa de senha; atualize-o manualmente"
+          }
+        }
+      }
+    },
+    "your taps (%@) · %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "deine Taps (%@) · %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vos taps (%@) · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tus taps (%@) · %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "追加した Tap（%@）· %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Tap（%@）· %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seus taps (%@) · %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "i tuoi tap (%@) · %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "추가한 Tap(%@) · %@"
           }
         }
       }

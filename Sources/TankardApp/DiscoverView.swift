@@ -268,8 +268,17 @@ struct DiscoverTable: View {
                         .help(String(localized: "Asks first, then turns apps on"))
                 }
             } else if discover.results.isEmpty && discover.resultsQuery == discover.query {
-                ContentUnavailableView("No matches", systemImage: "magnifyingglass",
-                                       description: Text("Nothing matches “\(discover.query)”."))
+                // 0.8.6 (H1): says where it looked, and how to add a tap.
+                ContentUnavailableView {
+                    Label("No matches", systemImage: "magnifyingglass")
+                } description: {
+                    Text(discover.noMatchesDetail(discover.query))
+                } actions: {
+                    if !discover.isLocalTaps {
+                        Button("Taps…") { store.openTaps() }
+                            .help(String(localized: "Add the tap a package comes from"))
+                    }
+                }
             }
         }
     }

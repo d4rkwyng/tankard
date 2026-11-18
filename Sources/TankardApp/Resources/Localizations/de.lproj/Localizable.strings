@@ -177,6 +177,7 @@
 "Add Tap…" = "Tap hinzufügen…";
 "Add tap" = "Tap hinzufügen";
 "Add tap?" = "Tap hinzufügen?";
+"Add the tap a package comes from" = "Den Tap hinzufügen, aus dem ein Paket stammt";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe die Brewfile dann erneut, um den Rest zu installieren.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Hinzufügen, Entfernen und Vertrauen laufen über die Warteschlange und den Verlauf von Tankard.";
 "Added (%lld)" = "Hinzugefügt (%lld)";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie und vertraut dem Tap nicht mehr; fügst du ihn später wieder hinzu, fragt Tankard erneut.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie; du kannst den Tap später wieder hinzufügen.";
 "Nothing matches" = "Keine Treffer";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Nichts passt zu „%@“ im Hauptkatalog von Homebrew oder in den Taps, die du hinzugefügt hast. Ein Paket aus einem anderen Tap erscheint hier, sobald du diesen Tap hinzufügst (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Keine Treffer für „%@“.";
 "Nothing runs on its own after the relaunch." = "Nach dem Neustart läuft nichts von selbst.";
 "Nothing to clean up" = "Nichts zu bereinigen";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "du hast gewählt, %@ zu überspringen";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "deine Homebrew-Einstellungen erlauben hier Passwortabfragen; upgrade es von Hand";
 "your Homebrew settings use a different password program; upgrade it by hand" = "deine Homebrew-Einstellungen nutzen ein anderes Passwortprogramm; upgrade es von Hand";
+"your taps (%@) · %@" = "deine Taps (%@) · %@";
 "~%@ h" = "~%@ Std.";
 "~%lld min" = "~%lld Min.";
 "· %@ on disk" = "· %@ auf dem Datenträger";

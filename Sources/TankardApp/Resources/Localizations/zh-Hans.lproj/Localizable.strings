@@ -177,6 +177,7 @@
 "Add Tap…" = "添加 Tap…";
 "Add tap" = "添加 tap";
 "Add tap?" = "添加 tap？";
+"Add the tap a package comes from" = "添加软件包所在的 Tap";
 "Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "请先添加这些 Tap（添加 Tap…），然后再次检查 Brewfile 以安装其余项目。";
 "Add, Remove and Trust go through Tankard's queue and History." = "“添加”“移除”和“信任”会经过 Tankard 的队列和历史记录。";
 "Added (%lld)" = "已添加（%lld）";
@@ -702,6 +703,7 @@
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "没有已安装的内容来自它。brew 会删除其本地副本并不再信任它；以后再次添加时，Tankard 会再次询问。";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "没有已安装的内容来自它。brew 会删除其本地副本；你以后可以再次添加。";
 "Nothing matches" = "没有匹配项";
+"Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "在 Homebrew 主目录和你添加的 Tap 中都没有与“%@”匹配的内容。其他 Tap 中的软件包会在你添加该 Tap 后显示在这里（Homebrew ▸ Tap…）。";
 "Nothing matches “%@”." = "没有与“%@”匹配的项目。";
 "Nothing runs on its own after the relaunch." = "重新启动后不会自动运行任何操作。";
 "Nothing to clean up" = "无需清理";
@@ -1371,6 +1373,7 @@
 "you chose to skip %@" = "你选择了跳过 %@";
 "your Homebrew settings allow password prompts here; upgrade it by hand" = "你的 Homebrew 设置允许在此处提示输入密码；请手动升级它";
 "your Homebrew settings use a different password program; upgrade it by hand" = "你的 Homebrew 设置使用了其他密码程序；请手动升级它";
+"your taps (%@) · %@" = "你的 Tap（%@）· %@";
 "~%@ h" = "约 %@ 小时";
 "~%lld min" = "约 %lld 分钟";
 "· %@ on disk" = "· 磁盘上 %@";

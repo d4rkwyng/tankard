@@ -266,6 +266,10 @@ font-inter… 25.4 of 33.7 MB (75%)".
 - The **Has bottle** filter (**Has Intel bottle** in Intelbrew mode) hides formulae that
   would compile. It is on by default in Intelbrew mode.
 - A package you already have offers **Show in Installed** instead.
+- **Your own taps are searched too.** Besides Homebrew's main catalog, Discover lists the
+  formulae and casks of every tap you added (anything outside `homebrew/`, read from the tap
+  on this Mac; nothing is sent anywhere). A package from a tap you haven't added can't be
+  found: add the tap first (**Homebrew ▸ Taps…**, or **Taps…** on an empty search).
 
 ## Uninstall a package
 

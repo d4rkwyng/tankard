@@ -147,12 +147,14 @@ public final class AppStore {
         }
 
         /// Intelbrew mode (or any brew told not to use the API) searches the
-        /// local taps; otherwise formulae.brew.sh.
+        /// local taps; otherwise formulae.brew.sh and the user's own taps.
         public static let liveCatalog: @Sendable (BrewClient, IntelbrewDetection) -> CatalogProviding = { client, detection in
             if detection.detected || client.sources.effective(Intelbrew.noAPIKey) != nil {
                 return TapCatalog(client: client, detection: detection)
             }
-            return APICatalog(fetcher: APIFetcher(), platform: client.platform)
+            // 0.8.6 (H1): plus the user's own taps.
+            return UserTapsCatalog(api: APICatalog(fetcher: APIFetcher(), platform: client.platform),
+                                   client: client, detection: detection)
         }
 
         /// The real thing: brew from its standard locations (or
