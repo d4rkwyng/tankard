@@ -37,10 +37,16 @@ public protocol CatalogProviding: Sendable {
     /// Install counts (0.8), or nil where there are none to show (the local
     /// taps: formulae.brew.sh's numbers describe upstream Homebrew).
     func analytics() async throws -> InstallAnalytics?
+    /// 0.8.6 (VM test M3): see the extension's default.
+    func changeKey() -> String?
 }
 
 public extension CatalogProviding {
     func analytics() async throws -> InstallAnalytics? { nil }
+    /// 0.8.6 (VM test M3): changes when what `load()` reads changes on
+    /// this Mac (a tap added or removed in Terminal); nil: only the TTL.
+    /// Cheap (a few stat calls), called on every Discover activation.
+    func changeKey() -> String? { nil }
 }
 
 // MARK: formulae.brew.sh
@@ -402,4 +408,7 @@ public final class UserTapsCatalog: CatalogProviding {
     }
 
     public func analytics() async throws -> InstallAnalytics? { try await api.analytics() }
+
+    /// 0.8.6 (VM test M3): the taps' fingerprint.
+    public func changeKey() -> String? { fingerprint() }
 }

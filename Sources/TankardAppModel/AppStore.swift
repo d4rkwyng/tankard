@@ -517,8 +517,18 @@ public final class AppStore {
             Task { await checkAgain() }
             return
         }
+        // 0.8.6 (VM test M3): a tap added or removed in Terminal (a few
+        // stat calls; Discover reloads only when its taps changed).
+        refreshDiscoverIfTapsChanged()
         guard !isRefreshing, !isUpgrading, !selfReplaced, isStale || homebrewChangedSinceRead else { return }
         Task { await refresh(manual: false) }
+    }
+
+    /// 0.8.6 (VM test M3): Discover, once opened, re-reads its taps when
+    /// they changed outside Tankard (window activation, Refresh).
+    func refreshDiscoverIfTapsChanged() {
+        guard let d = discover, d.phase == .ready else { return }
+        Task { await d.activate() }
     }
 
     /// The welcome screen's "Check again": look for brew afresh and read status.
@@ -529,6 +539,7 @@ public final class AppStore {
 
     /// `manual`: the refresh button. Runs `brew update` first.
     public func refresh(manual: Bool) async {
+        if manual { refreshDiscoverIfTapsChanged() }
         await refresh(manual ? .manual : .automatic)
     }
 

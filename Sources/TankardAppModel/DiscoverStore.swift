@@ -117,6 +117,8 @@ public final class DiscoverStore {
     @ObservationIgnored private var detailsTask: Task<Void, Never>?
     @ObservationIgnored private var analyticsTask: Task<Void, Never>?
     @ObservationIgnored private var analyticsLoadedAt: Date?
+    /// 0.8.6 (VM test M3): the provider's change key the catalog was read at.
+    @ObservationIgnored private var loadedKey: String?
     /// 30-day installs by id: search's tie-break within a relevance tier.
     @ObservationIgnored private var popularity: [String: Int] = [:]
     /// How many rows from the top get details right after a search.
@@ -161,7 +163,14 @@ public final class DiscoverStore {
             await running.value
             return
         }
-        if phase == .ready, let t = loadedAt, now().timeIntervalSince(t) < ttl { return }
+        if phase == .ready, let t = loadedAt, now().timeIntervalSince(t) < ttl {
+            // 0.8.6 (VM test M3): a tap added or removed outside Tankard.
+            let provider = self.provider
+            let key = await Task.detached(priority: .userInitiated) { provider.changeKey() }.value
+            guard let key, key != loadedKey, loadTask == nil else { return }
+            loadedAt = nil
+            return await activate()
+        }
         let task = Task { await performLoad() }
         loadTask = task
         await task.value
@@ -179,8 +188,10 @@ public final class DiscoverStore {
         if all.isEmpty { phase = .loading }
         let provider = self.provider
         do {
-            let load = try await Task.detached(priority: .userInitiated) { try await provider.load() }.value
+            // The key before the read: a change during it reloads next time.
+            let (key, load) = try await Task.detached(priority: .userInitiated) { (provider.changeKey(), try await provider.load()) }.value
             install(load)
+            loadedKey = key
             failureDetail = nil
             phase = .ready
             await runSearch()
