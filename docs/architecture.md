@@ -42,8 +42,13 @@ else `TankardVersion.source` (`Sources/TankardCore/Version.swift`, what `tankard
 prints). Inside Tankard.app, `TankardVersion.string` (About's fallback, the API User-Agent,
 the update check) is the Info.plist's version (0.8.4), so a build made with another
 `TANKARD_VERSION`, like the self-update e2e's `0.8.4-e2e.0`, is that version throughout;
-`release.sh` refuses a `TANKARD_VERSION` that differs from the source's, so a release
-says one version everywhere. `CFBundleVersion`
+`release.sh` refuses a `TANKARD_VERSION` that differs from the source's and, after
+bundling and before signing, reads the built app's version (`defaults read
+<app>/Contents/Info CFBundleShortVersionString`) and fails unless it equals
+`TankardVersion.source`, `TANKARD_VERSION` and, in CI, the tag's version (`$TAG` without
+its suffix). So a release says one version everywhere, the User-Agent included:
+formulae.brew.sh, api.github.com and the Intelbrew build-times download all send
+`TankardVersion.userAgent` (`Tankard/<TankardVersion.string>`). `CFBundleVersion`
 equals `CFBundleShortVersionString` (the script fails if they differ), so About shows
 "Version <x.y.z>" with no build number. Bundle id `net.mindtricks.tankard`, macOS 14 minimum, no App
 Sandbox (brew can't run inside one).
@@ -1168,8 +1173,12 @@ steps `check-updates`, `upgrade-self`, `expect-quiet`, `open-sheet` and `relaunc
 install and upgrade passes `--appdir`). B and C start the installed app as the real
 identity, so AppKit can write into the real `net.mindtricks.tankard` (the window frame):
 the run backs that domain up to `OUT/real-defaults-backup.plist` first and, if its md5
-changed, restores it (`defaults delete`, then `defaults import`, since import alone
-merges) and fails with `isolation/real-defaults: FAIL`.
+changed, restores it in full (`defaults delete`, then `defaults import`, since import
+alone merges), prints every changed key and fails with `isolation/real-defaults: FAIL`.
+One exception while OLD is older than 0.8.4: keys matching exactly `NSWindow Frame *`
+are labelled "known 0.8.3-as-old artifact" and don't count (0.8.3's window saves its
+frame there); any other changed key still fails. It is gated on OLD's version, so it
+ends by itself once OLD is 0.8.4 or later.
 
 **Opt-in real-brew checks (0.8.3)**, off unless the variable is set:
 `TANKARD_REAL_CANCEL_CASK=font-inter Scripts/test.sh --filter V083QueueRobustRealTests`

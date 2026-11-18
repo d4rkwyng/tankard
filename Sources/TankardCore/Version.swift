@@ -18,6 +18,11 @@ public enum TankardVersion {
         bundleIdentifier: Bundle.main.bundleIdentifier,
         shortVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String)
 
+    /// 0.8.4: the User-Agent of every request Tankard makes itself
+    /// (formulae.brew.sh, api.github.com, the Intelbrew build-times file):
+    /// the same version as the update check and About.
+    public static var userAgent: String { "Tankard/\(string)" }
+
     /// The rule behind `string`: Tankard's own bundle (net.mindtricks.tankard,
     /// or a copy re-signed as net.mindtricks.tankard.<suffix> by the e2e
     /// scripts) with a non-empty short version uses it.

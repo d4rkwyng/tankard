@@ -96,16 +96,22 @@ public struct UpdateFeed: Sendable {
         self.fetch = fetch
     }
 
-    /// The real request: ephemeral session (no cookies, no cache), no
-    /// credentials, only GitHub's required User-Agent and Accept headers.
-    public static func live() -> UpdateFeed {
+    /// live()'s session: ephemeral, no cache, TankardVersion.userAgent and
+    /// GitHub's Accept header.
+    public static func sessionConfiguration() -> URLSessionConfiguration {
         let c = URLSessionConfiguration.ephemeral
         c.urlCache = nil
         c.requestCachePolicy = .reloadIgnoringLocalCacheData
         c.timeoutIntervalForRequest = 20
         c.timeoutIntervalForResource = 30
-        c.httpAdditionalHeaders = ["User-Agent": "Tankard/\(TankardVersion.string)", "Accept": "application/vnd.github+json"]
-        let session = URLSession(configuration: c)
+        c.httpAdditionalHeaders = ["User-Agent": TankardVersion.userAgent, "Accept": "application/vnd.github+json"]
+        return c
+    }
+
+    /// The real request: ephemeral session (no cookies, no cache), no
+    /// credentials, only GitHub's required User-Agent and Accept headers.
+    public static func live() -> UpdateFeed {
+        let session = URLSession(configuration: sessionConfiguration())
         return UpdateFeed {
             let (data, response) = try await session.data(from: latestURL)
             return (data, (response as? HTTPURLResponse)?.statusCode ?? 0)
