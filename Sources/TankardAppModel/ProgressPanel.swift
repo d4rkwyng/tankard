@@ -122,6 +122,15 @@ public extension AppStore {
     /// activity.
     var windowBrewActionsBlocked: Bool { isUpgrading || progressPanelHoldsActivity }
 
+    /// 0.8.5 (HK-47 review): the progress panel holds the activity, so a
+    /// new run from anywhere else would replace it: says why (the busy
+    /// notice) and returns true.
+    func progressPanelBlocksNewRun() -> Bool {
+        guard progressPanelHoldsActivity else { return false }
+        if let note = windowBrewActionsNote { showBusyNotice(note) }
+        return true
+    }
+
     /// 0.8.5 (review): why the main window's brew buttons are off because
     /// of the progress panel, for their help; nil otherwise.
     var windowBrewActionsNote: String? {

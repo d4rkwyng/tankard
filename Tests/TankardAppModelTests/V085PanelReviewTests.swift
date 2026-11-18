@@ -113,6 +113,59 @@ struct V085PanelReviewTests {
         #expect(!store.progressPanelHoldsActivity)
     }
 
+    /// HK-47 review (0.8.5): a hidden menu-bar run that failed and hasn't
+    /// been read: the menus that start brew are off, and every other
+    /// entry point (Clean Up, Remove Unused, Restore, Taps, Brewfile,
+    /// Adopt, Turn On Apps) starts nothing and says why, so the failed
+    /// result isn't replaced and its notification still opens it.
+    @Test func aHiddenFailedRunBlocksEveryOtherEntryPoint() async throws {
+        let ps = try base.plain(await rig(), count: 2)
+        let hold = Latch()
+        let store = await rig(failing: [ps[0].name], hold: hold)
+        store.requestUpgradeFromMenuBar([ps[0]], windowInFront: false)
+        let session = try #require(store.upgrade)
+        store.closeProgressPanel()
+        store.answerProgressPanelHideQuestion(close: true)
+        hold.release()
+        #expect(await waitUntil { session.isFinished && !store.isRefreshing })
+        try await Task.sleep(for: .milliseconds(150))
+        #expect(store.progressPanelHoldsActivity && !store.showUpgradeSheet)
+        let note = try #require(store.windowBrewActionsNote)
+        #expect(store.menuActionsBlocked)
+        // Clean Up, Remove Unused (their sheets' buttons).
+        store.startCleanup()
+        #expect(store.upgrade === session)
+        #expect(store.busyNotice == note)
+        store.openAutoremove()
+        let a = try #require(store.autoremove)
+        #expect(await waitUntil { a.phase == .ready })
+        store.startAutoremove()
+        #expect(store.upgrade === session)
+        // Restore, Taps, Brewfile and Turn On Apps (an install or a tap), Adopt.
+        store.startCustomSession(.restore, packages: [Package.command("brew link xz")], intelbrewMode: false,
+                                 makeCommand: { _ in QueuedCommand(executable: "/usr/bin/true", arguments: [], environment: [:], display: "x") },
+                                 chainKey: nil)
+        #expect(store.upgrade === session)
+        for action in [SessionAction.tap, .untap, .install, .adopt] {
+            store.startSession(action, packages: [ps[1]])
+            #expect(store.upgrade === session, "\(action)")
+        }
+        store.requestEnableCasks()
+        store.confirmAddTap()
+        try await Task.sleep(for: .milliseconds(600))
+        #expect(store.upgrade === session)
+        #expect(!store.startAdopt([AdoptPlanItem(token: "firefox", qualifiedName: "homebrew/cask/firefox",
+                                                 appPath: "/Applications/Firefox.app", appVersion: nil,
+                                                 caskVersion: "1", autoUpdates: false, policy: .automatic)]))
+        #expect(store.upgrade === session && !store.showUpgradeSheet)
+        // Read (the status bar's button), then closed: free again.
+        store.showActivity(windowInFront: true)
+        store.closeUpgrade()
+        #expect(!store.menuActionsBlocked || store.isRefreshing)
+        store.startCleanup()
+        #expect(store.upgrade !== session && store.upgrade?.action == .cleanup)
+    }
+
     // MARK: 2. an open panel comes forward
 
     @Test func showingAnOpenPanelAsksForItToComeForward() async throws {

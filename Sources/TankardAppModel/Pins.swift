@@ -68,7 +68,9 @@ public extension AppStore {
     /// or open a sheet: off while a run is going (its sheet shown or
     /// hidden) or any sheet is up. The toolbar needs no such gate for
     /// sheets: AppKit disables a window's toolbar while a sheet is up.
-    var menuActionsBlocked: Bool { isBusy || isSheetPresented }
+    /// 0.8.5 (HK-47 review): and while the progress panel holds the
+    /// activity (a hidden, failed run nobody has read among them).
+    var menuActionsBlocked: Bool { isBusy || isSheetPresented || progressPanelHoldsActivity }
 
     /// Upgrades that Upgrade all leaves out because they are pinned.
     var pinnedUpgrades: [Package] { packages.filter { $0.upgradeAvailable && $0.isHeld } }

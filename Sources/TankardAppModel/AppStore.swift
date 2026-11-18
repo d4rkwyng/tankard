@@ -877,8 +877,9 @@ public final class AppStore {
     // MARK: upgrades
 
     /// Queues `brew upgrade` for each package, in order, and opens the sheet.
-    public func startUpgrade(_ packages: [Package]? = nil) {
-        startSession(.upgrade, packages: packages?.filter(\.isManualUpgradeTarget) ?? upgradable)
+    /// `fromActivity`: started from the activity itself (startSession).
+    public func startUpgrade(_ packages: [Package]? = nil, fromActivity: Bool = false) {
+        startSession(.upgrade, packages: packages?.filter(\.isManualUpgradeTarget) ?? upgradable, fromActivity: fromActivity)
     }
 
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
@@ -906,7 +907,7 @@ public final class AppStore {
             upgradePlan = plan
             showUpgradeSheet = true
         } else {
-            startUpgrade(targets)
+            startUpgrade(targets, fromActivity: true)
         }
     }
 
@@ -940,7 +941,7 @@ public final class AppStore {
             showUpgradeSheet = false
             return
         }
-        startSession(.upgrade, packages: run)
+        startSession(.upgrade, packages: run, fromActivity: true)
     }
 
     public func cancelUpgradePlan() {
@@ -961,8 +962,9 @@ public final class AppStore {
 
     /// `brew reinstall --force-bottle --formula <qualified>` for each
     /// eligible package, through the queue and the sheet.
-    public func startReplaceWithBottle(_ targets: [Package]? = nil) {
-        startSession(.replaceBottle, packages: (targets ?? bottleReplaceable).filter(BottleReplacement.isEligible))
+    public func startReplaceWithBottle(_ targets: [Package]? = nil, fromActivity: Bool = false) {
+        startSession(.replaceBottle, packages: (targets ?? bottleReplaceable).filter(BottleReplacement.isEligible),
+                     fromActivity: fromActivity)
     }
 
     // MARK: cleanup (0.3)
@@ -1028,7 +1030,7 @@ public final class AppStore {
             if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
             return
         }
-        startSession(p.action, packages: p.packages, isRetry: p.reason == .blocked, skipGate: true)
+        startSession(p.action, packages: p.packages, isRetry: p.reason == .blocked, skipGate: true, fromActivity: true)
     }
 
     /// 0.8.1: "Relaunch Tankard": keep the operation for the next launch
@@ -1119,7 +1121,7 @@ public final class AppStore {
         default:
             let run = r.packages.filter { !installedIDs.contains($0.id) }
             guard !run.isEmpty else { showUpgradeSheet = false; return }
-            startSession(r.action, packages: run)
+            startSession(r.action, packages: run, fromActivity: true)
             if r.action == .adopt, isUpgrading || appManagementPrompt != nil {
                 adopt.policiesToSave = r.policies.compactMapValues(SelfUpdatePolicy.init(rawValue:))
             }
@@ -1147,7 +1149,7 @@ public final class AppStore {
         settings.appManagementExplained = true
         appManagementPrompt = nil
         if p.reason == .firstUse, p.canRetry {
-            startSession(p.action, packages: p.packages, skipGate: true)
+            startSession(p.action, packages: p.packages, skipGate: true, fromActivity: true)
         } else if upgrade == nil {
             showUpgradeSheet = false
         }
@@ -1162,8 +1164,14 @@ public final class AppStore {
     // MARK: sessions
 
     /// One sheet run of `action` over `targets`, each a queued command.
+    /// `fromActivity`: started from the activity on screen (its plan, Retry,
+    /// the App Management pages), which may replace the run it shows.
     func startSession(_ action: SessionAction, packages targets: [Package], isRetry: Bool = false, skipGate: Bool = false,
-                      skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil) {
+                      skipCheck: ((Package) -> CommandQueue.SkipCheck?)? = nil, fromActivity: Bool = false) {
+        // 0.8.5 (HK-47 review): nothing else replaces the progress panel's
+        // run (a hidden, failed one nobody has read among them): Clean Up,
+        // Remove Unused, Taps, Brewfile, Adopt, Turn On Apps say why.
+        guard fromActivity || !progressPanelBlocksNewRun() else { return }
         // 0.5: an automatic run has the queue; its commands go first.
         guard !isUpgrading, !autoUpdate.isRunning, !selfReplaced, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
@@ -1276,7 +1284,7 @@ public final class AppStore {
     func startCustomSession(_ action: SessionAction, packages rows: [Package], intelbrewMode: Bool,
                             makeCommand: (Package) -> QueuedCommand, chainKey: ((Package) -> String?)?,
                             precondition: ((Package) -> (@Sendable () -> String?)?)? = nil) {
-        guard !isUpgrading, !autoUpdate.isRunning, !rows.isEmpty else { return }
+        guard !isUpgrading, !autoUpdate.isRunning, !rows.isEmpty, !progressPanelBlocksNewRun() else { return }
         upgrade = UpgradeSession(packages: rows, intelbrewMode: intelbrewMode, action: action, queue: queue,
                                  makeCommand: makeCommand, logURL: deps.logURL, chainKey: chainKey,
                                  precondition: precondition,

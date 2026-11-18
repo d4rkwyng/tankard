@@ -65,9 +65,9 @@ extension AppStore {
         case .install:
             let left = pkgs.filter { !installedIDs.contains($0.id) }
             guard !left.isEmpty else { return }
-            startSession(.install, packages: left)
+            startSession(.install, packages: left, fromActivity: true)
         case .replaceBottle:
-            startReplaceWithBottle(pkgs)
+            startReplaceWithBottle(pkgs, fromActivity: true)
         default:
             return
         }
