@@ -203,12 +203,23 @@ struct AdminPasswordNote: View {
                         .fixedSize(horizontal: false, vertical: true)
                     if !commands.isEmpty { CommandBox(command: commands.joined(separator: "\n")) }
                 } else {
-                    Text((uninstall ? String(localized: "brew removes the installer's files with sudo.")
-                          : String(localized: "brew runs the installer with sudo.")) + " "
-                         + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
-                            : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal.")))
+                    // 0.8.5 (final pass L2): plain words; brew, sudo and
+                    // the commands under Details.
+                    let text = AdminPassword.noteText(helper: helper, uninstall: uninstall)
+                    Text(text.plain)
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                    DisclosureGroup {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(text.details)
+                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if !commands.isEmpty { CommandBox(command: commands.joined(separator: "\n")) }
+                        }
+                        .padding(.top, 4)
+                    } label: {
+                        Text("Details").font(.system(size: 11.5)).foregroundStyle(.secondary)
+                    }
                 }
             }
         }

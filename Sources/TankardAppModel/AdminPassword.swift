@@ -30,6 +30,21 @@ public enum AdminPassword {
     /// 0.8.5: the row badge's tooltip.
     public static var badgeHelp: String { String(localized: "Needs your password to upgrade") }
 
+    /// 0.8.5 (final pass L2): the password box's words. `plain` is what
+    /// happens, without brew, sudo or Terminal; `details` (under Details)
+    /// says how. `helper` false: this build can't show the dialog (`swift
+    /// run`, demo), so the sheet will show the Terminal command.
+    public static func noteText(helper: Bool, uninstall: Bool) -> (plain: String, details: String) {
+        let plain = !helper ? String(localized: "Tankard can't ask for it here. Details says what to do instead.")
+            : uninstall ? String(localized: "Tankard will ask for it in a dialog while removing it. It never stores it.")
+            : String(localized: "Tankard will ask for it in a dialog when the upgrade gets there. It never stores it.")
+        let details = (uninstall ? String(localized: "brew removes the installer's files with sudo.")
+                       : String(localized: "brew runs the installer with sudo.")) + " "
+            + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
+               : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal."))
+        return (plain, details)
+    }
+
     /// 0.8.5: an upgrade run's order with the password casks last, so the
     /// password dialogs come together at the end instead of in the middle
     /// of the run (each cask's sudo may still ask on its own). Otherwise the

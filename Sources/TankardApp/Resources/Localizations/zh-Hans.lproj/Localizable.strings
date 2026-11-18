@@ -1010,6 +1010,7 @@
 "Tankard Updates" = "Tankard 更新";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard 会在对话框中询问密码，并只把它交给 sudo；从不存储。如果取消，表单会显示用于“终端”的命令。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard 无法在这里询问密码，因此表单会显示用于“终端”的命令。";
+"Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。";
@@ -1039,6 +1040,8 @@
 "Tankard upgraded %lld package" = "Tankard 已升级 %lld 个软件包";
 "Tankard upgraded %lld packages" = "Tankard 已升级 %lld 个软件包";
 "Tankard was upgraded" = "Tankard 已升级";
+"Tankard will ask for it in a dialog when the upgrade gets there. It never stores it." = "升级进行到这一步时，Tankard 会在对话框中询问密码。从不存储。";
+"Tankard will ask for it in a dialog while removing it. It never stores it." = "删除时，Tankard 会在对话框中询问密码。从不存储。";
 "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard 自己的下载（探索、安装次数、更新检查）使用“系统设置”中的代理，而不是这些。";
 "Tankard: upgrades ready" = "Tankard：升级已就绪";
 "Tap" = "Tap";

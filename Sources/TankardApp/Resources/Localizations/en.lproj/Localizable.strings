@@ -1010,6 +1010,7 @@
 "Tankard Updates" = "Tankard Updates";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard can't ask for it here, so the sheet will show the command for Terminal.";
+"Tankard can't ask for it here. Details says what to do instead." = "Tankard can't ask for it here. Details says what to do instead.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard couldn't load Homebrew's list of packages. Try again in a moment.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again.";
@@ -1039,6 +1040,8 @@
 "Tankard upgraded %lld package" = "Tankard upgraded %lld package";
 "Tankard upgraded %lld packages" = "Tankard upgraded %lld packages";
 "Tankard was upgraded" = "Tankard was upgraded";
+"Tankard will ask for it in a dialog when the upgrade gets there. It never stores it." = "Tankard will ask for it in a dialog when the upgrade gets there. It never stores it.";
+"Tankard will ask for it in a dialog while removing it. It never stores it." = "Tankard will ask for it in a dialog while removing it. It never stores it.";
 "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these.";
 "Tankard: upgrades ready" = "Tankard: upgrades ready";
 "Tap" = "Tap";

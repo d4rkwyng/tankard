@@ -52861,6 +52861,58 @@
         }
       }
     },
+    "Tankard can't ask for it here. Details says what to do instead.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard kann hier nicht danach fragen. Unter „Details“ steht, was stattdessen zu tun ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ne peut pas le demander ici. « Détails » indique quoi faire à la place."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no puede pedirla aquí. En Detalles se explica qué hacer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não pode pedi-la aqui. Em Detalhes você vê o que fazer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non può chiederla qui. In Dettagli trovi cosa fare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard는 여기서 암호를 물을 수 없습니다. 대신 할 일은 세부사항을 참고하세요."
+          }
+        }
+      }
+    },
     "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app.": {
       "localizations": {
         "de": {
@@ -54365,6 +54417,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 업그레이드됨"
+          }
+        }
+      }
+    },
+    "Tankard will ask for it in a dialog when the upgrade gets there. It never stores it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard fragt in einem Dialog danach, wenn die Aktualisierung so weit ist. Es wird nie gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard le demandera dans une fenêtre quand la mise à jour en sera là. Il ne le conserve jamais."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la pedirá en un cuadro de diálogo cuando la actualización llegue a ese punto. Nunca la guarda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレードがその段階に来たら、Tankardがダイアログでパスワードを尋ねます。保存することはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级进行到这一步时，Tankard 会在对话框中询问密码。从不存储。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard vai pedi-la em uma caixa de diálogo quando a atualização chegar lá. Nunca a guarda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la chiederà in una finestra quando l’aggiornamento arriva a quel punto. Non la memorizza mai."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드가 그 단계에 이르면 Tankard가 대화상자에서 암호를 묻습니다. 절대 저장하지 않습니다."
+          }
+        }
+      }
+    },
+    "Tankard will ask for it in a dialog while removing it. It never stores it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard fragt beim Entfernen in einem Dialog danach. Es wird nie gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard le demandera dans une fenêtre pendant la suppression. Il ne le conserve jamais."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la pedirá en un cuadro de diálogo durante la eliminación. Nunca la guarda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "削除中にTankardがダイアログでパスワードを尋ねます。保存することはありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除时，Tankard 会在对话框中询问密码。从不存储。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard vai pedi-la em uma caixa de diálogo durante a remoção. Nunca a guarda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard la chiederà in una finestra durante la rimozione. Non la memorizza mai."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제거하는 동안 Tankard가 대화상자에서 암호를 묻습니다. 절대 저장하지 않습니다."
           }
         }
       }

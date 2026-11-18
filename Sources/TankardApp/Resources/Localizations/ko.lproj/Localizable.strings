@@ -1010,6 +1010,7 @@
 "Tankard Updates" = "Tankard 업데이트";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard는 대화상자에서 암호를 묻고 sudo에만 전달하며, 절대 저장하지 않습니다. 취소하면 시트에 터미널용 명령이 표시됩니다.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "여기서는 암호를 물을 수 없으므로 시트에 터미널용 명령이 표시됩니다.";
+"Tankard can't ask for it here. Details says what to do instead." = "Tankard는 여기서 암호를 물을 수 없습니다. 대신 할 일은 세부사항을 참고하세요.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard는 각 앱의 버전을 Homebrew의 버전과 비교합니다. 일치하면 앱을 옮기지 않고 Homebrew가 업데이트를 맡습니다.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard가 Homebrew의 패키지 목록을 내려받기 위해 네트워크에 연결하지 못했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 다음 다시 시도하세요.";
@@ -1039,6 +1040,8 @@
 "Tankard upgraded %lld package" = "Tankard가 패키지 %lld개를 업그레이드함";
 "Tankard upgraded %lld packages" = "Tankard가 패키지 %lld개를 업그레이드함";
 "Tankard was upgraded" = "Tankard가 업그레이드됨";
+"Tankard will ask for it in a dialog when the upgrade gets there. It never stores it." = "업그레이드가 그 단계에 이르면 Tankard가 대화상자에서 암호를 묻습니다. 절대 저장하지 않습니다.";
+"Tankard will ask for it in a dialog while removing it. It never stores it." = "제거하는 동안 Tankard가 대화상자에서 암호를 묻습니다. 절대 저장하지 않습니다.";
 "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard 자체 다운로드(둘러보기, 설치 수, 업데이트 확인)는 이 값이 아닌 시스템 설정의 프록시를 사용합니다.";
 "Tankard: upgrades ready" = "Tankard: 업그레이드 준비됨";
 "Tap" = "Tap";

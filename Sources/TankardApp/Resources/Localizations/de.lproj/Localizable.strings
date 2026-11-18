@@ -1010,6 +1010,7 @@
 "Tankard Updates" = "Tankard-Updates";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard fragt in einem Dialog danach und gibt es nur an sudo weiter; es wird nie gespeichert. Bei Abbrechen zeigt das Fenster den Befehl fürs Terminal.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard kann hier nicht danach fragen; das Fenster zeigt dann den Befehl fürs Terminal.";
+"Tankard can't ask for it here. Details says what to do instead." = "Tankard kann hier nicht danach fragen. Unter „Details“ steht, was stattdessen zu tun ist.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard vergleicht die Version jeder App mit der von Homebrew. Stimmen sie überein, übernimmt Homebrew die Updates, ohne die App zu verschieben.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard konnte das Netzwerk nicht erreichen, um die Paketliste von Homebrew zu laden. Prüfe die Internetverbindung (oder ein VPN oder einen Proxy) und versuche es dann erneut.";
@@ -1039,6 +1040,8 @@
 "Tankard upgraded %lld package" = "Tankard hat %lld Paket aktualisiert";
 "Tankard upgraded %lld packages" = "Tankard hat %lld Pakete aktualisiert";
 "Tankard was upgraded" = "Tankard wurde aktualisiert";
+"Tankard will ask for it in a dialog when the upgrade gets there. It never stores it." = "Tankard fragt in einem Dialog danach, wenn die Aktualisierung so weit ist. Es wird nie gespeichert.";
+"Tankard will ask for it in a dialog while removing it. It never stores it." = "Tankard fragt beim Entfernen in einem Dialog danach. Es wird nie gespeichert.";
 "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankards eigene Downloads (Entdecken, Installationszahlen, Update-Prüfung) nutzen den Proxy der Systemeinstellungen.";
 "Tankard: upgrades ready" = "Tankard: Upgrades bereit";
 "Tap" = "Tap";

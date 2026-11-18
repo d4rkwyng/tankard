@@ -1010,6 +1010,7 @@
 "Tankard Updates" = "Tankardのアップデート";
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankardはダイアログでパスワードを尋ね、sudoにのみ渡します。保存することはありません。キャンセルすると、シートにターミナル用のコマンドが表示されます。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "ここではパスワードを尋ねられないため、シートにターミナル用のコマンドが表示されます。";
+"Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";
@@ -1039,6 +1040,8 @@
 "Tankard upgraded %lld package" = "Tankardが%lld個のパッケージをアップグレードしました";
 "Tankard upgraded %lld packages" = "Tankardが%lld個のパッケージをアップグレードしました";
 "Tankard was upgraded" = "Tankardがアップグレードされました";
+"Tankard will ask for it in a dialog when the upgrade gets there. It never stores it." = "アップグレードがその段階に来たら、Tankardがダイアログでパスワードを尋ねます。保存することはありません。";
+"Tankard will ask for it in a dialog while removing it. It never stores it." = "削除中にTankardがダイアログでパスワードを尋ねます。保存することはありません。";
 "Tankard's own downloads (Discover, install counts, update check) use the proxy in System Settings, not these." = "Tankard 自身のダウンロード（見つける、インストール数、アップデート確認）は、これらではなくシステム設定のプロキシを使います。";
 "Tankard: upgrades ready" = "Tankard: アップグレードの準備完了";
 "Tap" = "Tap";

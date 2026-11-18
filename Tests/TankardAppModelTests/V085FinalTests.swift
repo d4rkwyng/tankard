@@ -99,3 +99,24 @@ struct V085KeepOldVersionsBannerToneTests {
         #expect(!banner.contains(".red"))
     }
 }
+
+// L2: the password box says what happens in plain words; brew, sudo and
+// Terminal go under Details.
+struct V085PasswordNoteWordingTests {
+    @Test func plainWordsUpFrontTechnicalUnderDetails() {
+        for helper in [true, false] {
+            for uninstall in [true, false] {
+                let note = AdminPassword.noteText(helper: helper, uninstall: uninstall)
+                for word in ["brew", "sudo", "Terminal", "SUDO_ASKPASS"] {
+                    #expect(!note.plain.contains(word), "\(helper) \(uninstall): \(note.plain)")
+                }
+                #expect(note.details.contains("sudo"))
+            }
+        }
+        #expect(AdminPassword.noteText(helper: true, uninstall: false).plain
+                == "Tankard will ask for it in a dialog when the upgrade gets there. It never stores it.")
+        #expect(AdminPassword.noteText(helper: true, uninstall: true).plain
+                == "Tankard will ask for it in a dialog while removing it. It never stores it.")
+        #expect(AdminPassword.noteText(helper: false, uninstall: false).details.contains("Terminal"))
+    }
+}
