@@ -232,6 +232,7 @@ struct HomebrewManagementSheet: View {
             }
             .buttonStyle(.borderless)
             .help("Copy the commands")
+            .accessibilityLabel(Text("Copy the commands"))
         }
         .padding(8)
         .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))

@@ -187,10 +187,11 @@ struct V061SettingsHelpTests {
         #expect(SettingsHelp.safeMode.hasPrefix("Safe mode (always on):"))
     }
 
-    /// Keep the previous version's ⓘ: the text its tooltip had in 0.7, with
-    /// the env var it sets.
-    @Test func keepPreviousVersionExplainsTheEnvVar() {
-        #expect(SettingsHelp.keepPreviousVersion.hasPrefix("Off by default."))
-        #expect(SettingsHelp.keepPreviousVersion.contains(RollbackSettings.noInstallCleanupKey))
+    /// Keep the previous version's ⓘ: 0.8.5, plain words (the env var it
+    /// sets is in docs/usage.md's Settings reference, not the tooltip).
+    @Test func keepPreviousVersionExplainsInPlainWords() {
+        #expect(SettingsHelp.keepPreviousVersion.hasPrefix("Keeps the old version on disk"))
+        #expect(!SettingsHelp.keepPreviousVersion.contains(RollbackSettings.noInstallCleanupKey))
+        for text in SettingsHelp.all { #expect(!text.contains("HOMEBREW_"), "\(text)") }
     }
 }

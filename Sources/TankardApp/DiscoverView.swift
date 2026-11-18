@@ -242,6 +242,16 @@ struct DiscoverTable: View {
             if discover.query.trimmingCharacters(in: .whitespaces).isEmpty {
                 ContentUnavailableView("Search Homebrew", systemImage: "magnifyingglass",
                                        description: Text("Type a name or a word from a description."))
+            } else if store.searchEmptyBecauseCasksOff {
+                ContentUnavailableView {
+                    Label(CasksBanner.noMatchesTitle, systemImage: "shippingbox")
+                } description: {
+                    Text(CasksBanner.noMatchesDetail(discover.query))
+                } actions: {
+                    Button("Turn On Apps…") { store.requestEnableCasks() }
+                        .disabled(store.isBusy)
+                        .help(String(localized: "Asks first, then turns apps on"))
+                }
             } else if discover.results.isEmpty && discover.resultsQuery == discover.query {
                 ContentUnavailableView("No matches", systemImage: "magnifyingglass",
                                        description: Text("Nothing matches “\(discover.query)”."))
@@ -412,7 +422,7 @@ struct DiscoverDetail: View {
                     }
                     .buttonStyle(.primaryAction)
                     .disabled(store.windowBrewActionsBlocked || e.disabled)
-                    .help(store.isUpgrading ? String(localized: "Wait for the running brew to finish") : store.windowBrewActionsNote ?? e.installDisplay)
+                    .help(store.isUpgrading ? String(localized: "Wait for the running task to finish") : store.windowBrewActionsNote ?? String(localized: "Install \(e.name)"))
                 }
             }
         }

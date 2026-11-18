@@ -231,7 +231,7 @@ struct AdoptSheet: View {
             HStack {
                 Image(systemName: "info.circle").foregroundStyle(.secondary)
                     .accessibilityLabel(String(localized: "How adopting works"))
-                    .help("brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed.")
+                    .help("Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app.")
                 Text("Adopting runs through Tankard's queue and History.").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
                 Button("Scan Again") { Task { await adopt.load() } }

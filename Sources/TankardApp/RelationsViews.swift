@@ -24,7 +24,7 @@ struct PinnedBadge: View {
         .padding(.horizontal, 4).padding(.vertical, 0.5)
         .background(RoundedRectangle(cornerRadius: 3).fill(selected ? Color.white.opacity(0.16) : p.background))
         .fixedSize()
-        .help("Pinned: brew upgrade skips it, and Upgrade All leaves it out")
+        .help("Pinned: upgrades leave it at this version")
     }
 }
 
@@ -109,7 +109,7 @@ struct PinBox: View {
                 }
                 .controlSize(.small)
                 .disabled(busy)
-                .help("\(command): brew upgrade and Upgrade All will skip it")
+                .help("\(command): upgrades will leave it out")
                 // Wraps rather than truncating: a long version (or the
                 // narrow detail pane at 1040x620) cut the sentence off.
                 Text("Keeps \(p.installedVersion); upgrades skip it")
@@ -221,7 +221,7 @@ struct DependencyTreeView: View {
         } label: {
             Text("Dependency tree (\(root.children.count) direct, \(Set(allNames(root)).count) in all)")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
-                .help(Text(verbatim: "brew deps --tree --installed \(root.name)"))
+                .help(String(localized: "What \(root.name) needs, and what those need in turn"))
         }
     }
 

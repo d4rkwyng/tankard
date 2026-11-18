@@ -749,6 +749,16 @@ public final class AppStore {
     /// installed versions, "Removes all installed versions of xz (5.6.3,
     /// 5.8.1)." `dependenciesStay`: adds "Its dependencies stay installed."
     public nonisolated static func uninstallSummary(_ p: Package, dependenciesStay: Bool) -> String {
+        // 0.8.5 (newbie review M4): an app says what happens to the app
+        // and to its settings; casks have no dependencies to mention.
+        if p.kind == .cask {
+            let apps = (p.appPaths ?? []).map { (($0 as NSString).lastPathComponent as NSString).deletingPathExtension }
+            if apps.isEmpty {
+                return String(localized: "Removes \(p.name) \(p.installedVersion). Your settings and data for it stay on this Mac.")
+            }
+            let list = ListFormatter.localizedString(byJoining: apps)
+            return String(localized: "Deletes \(list) from Applications. Your settings and data for it stay on this Mac.")
+        }
         let versions = Set(p.installedVersions).sorted { PkgVersion(parsing: $0) < PkgVersion(parsing: $1) }
         if p.kind == .formula && versions.count > 1 {
             let list = versions.joined(separator: ", ")
@@ -873,13 +883,32 @@ public final class AppStore {
         guard !isUpgrading else { return }
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
-        let plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
+        // 0.8.5: and when brew would close an app that is open now.
+        plan.runningApps = runningCaskApps(targets)
         // 0.8.3: also when a cask's installer will ask for the password.
         if plan.needsConfirmation {
             upgradePlan = plan
             showUpgradeSheet = true
         } else {
             startUpgrade(targets)
+        }
+    }
+
+    /// 0.8.5 (newbie review H2): the casks among `targets` whose app is
+    /// running now, by installed path or the bundle id brew quits (the same
+    /// check automatic updates' safe mode uses). None when "Don't quit
+    /// running apps during upgrades" is on: brew then leaves them running.
+    func runningCaskApps(_ targets: [Package]) -> [RunningCaskApp] {
+        guard !insights.settings.dontQuitAppsDuringUpgrade else { return [] }
+        let casks = targets.filter { $0.kind == .cask }
+        guard !casks.isEmpty else { return [] }
+        let running = autoUpdate.conditions.runningApps()
+        guard !running.isEmpty else { return [] }
+        return casks.compactMap { p in
+            AutoUpdateSafeMode.runningApp(p, running: running).map {
+                RunningCaskApp(packageID: p.id, name: $0.hasSuffix(".app") ? String($0.dropLast(4)) : p.name)
+            }
         }
     }
 

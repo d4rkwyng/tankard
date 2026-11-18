@@ -361,6 +361,12 @@ public enum AboutInfo {
     /// The guide at the release tag `v<version>` for a release version
     /// ("0.8.4", "0.8.4-rc1"); main for anything else (a dev build, an
     /// empty or unknown version), where no tag can be assumed to exist.
+    /// 0.8.5: Help ▸ Homebrew Words Explained: the guide's glossary.
+    public static let glossaryAnchor = "glossary-homebrew-words-explained"
+    public static func glossary(version: String) -> URL {
+        URL(string: help(version: version).absoluteString + "#" + glossaryAnchor)!
+    }
+
     public static func help(version: String) -> URL {
         let ref = isReleaseVersion(version) ? "v" + version : "main"
         return URL(string: repository.absoluteString + "/blob/\(ref)/docs/usage.md")!

@@ -169,6 +169,24 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
+public extension Package {
+    /// 0.8.5: Remove Unused Dependencies' first step when some are kept:
+    /// `brew tab --installed-on-request` for those (their names in `desc`).
+    static let autoremoveKeepID = "command:keep"
+
+    static func autoremoveKeep(_ names: [String]) -> Package {
+        var p = command("brew tab --installed-on-request")
+        p.id = autoremoveKeepID
+        p.desc = names.joined(separator: " ")
+        return p
+    }
+
+    /// The names an `autoremoveKeep` row keeps.
+    var autoremoveKeptNames: [String]? {
+        id == Self.autoremoveKeepID ? (desc ?? "").split(separator: " ").map(String.init) : nil
+    }
+}
+
 public struct StatusSummary: Codable, Sendable, Equatable {
     public var installed: Int
     public var formulae: Int

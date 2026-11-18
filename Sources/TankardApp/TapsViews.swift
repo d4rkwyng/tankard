@@ -75,7 +75,7 @@ struct TapsSheet: View {
             addRow
             HStack {
                 Image(systemName: "info.circle").foregroundStyle(.secondary)
-                    .help("brew tap-info --installed --json. Official taps in API mode are read from Homebrew's API and aren't tapped. Trust is brew 7's (brew trust --tap): \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" Tankard never runs brew untap --force.")
+                    .help("Extra package catalogs added to Homebrew. Official ones are read online and don't need adding.")
                 Text("Add, Remove and Trust go through Tankard's queue and History.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
@@ -138,7 +138,7 @@ struct TapsSheet: View {
                     if !t.official, let trusted = t.trusted {
                         chip(trusted ? String(localized: "Trusted") : String(localized: "Not trusted"), trusted ? theme.accent : theme.warning(scheme).text)
                     }
-                    if !t.tapped { chip(String(localized: "API"), .secondary).help(String(localized: "Read from Homebrew's API; not tapped locally.")) }
+                    if !t.tapped { chip(String(localized: "Online"), .secondary).help(String(localized: "Read online from Homebrew; nothing to download.")) }
                     if t.isPrivate { chip(String(localized: "Private"), .secondary) }
                     Spacer()
                 }

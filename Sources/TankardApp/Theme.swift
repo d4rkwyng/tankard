@@ -371,10 +371,30 @@ struct CommandBox: View {
             }
             .buttonStyle(.borderless)
             .help("Copy command")
+            // 0.8.5: VoiceOver read the symbol's name, not what it does.
+            .accessibilityLabel(Text(copied ? "Copied" : "Copy command"))
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .background(RoundedRectangle(cornerRadius: 6).fill(theme.chip))
+    }
+}
+
+/// 0.8.5: the exact brew commands, folded under "Details" so a simple
+/// action leads with plain words. Still one click away, and copyable.
+struct CommandDetails: View {
+    var commands: [String]
+    var title: LocalizedStringKey = "Details"
+
+    var body: some View {
+        DisclosureGroup {
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(Array(commands.enumerated()), id: \.offset) { _, c in CommandBox(command: c) }
+            }
+            .padding(.top, 4)
+        } label: {
+            Text(title).font(.system(size: 11.5)).foregroundStyle(.secondary)
+        }
     }
 }
 

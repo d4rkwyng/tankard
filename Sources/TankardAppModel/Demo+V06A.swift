@@ -52,8 +52,17 @@ extension Demo {
     /// `brew autoremove`, scripted.
     static func v06aStream(_ variant: Variant, state: State, arguments: [String],
                            say: (String, Double) async throws -> Void) async throws -> Int32? {
+        // 0.8.5: Keep: `brew tab --installed-on-request --formula …`.
+        if arguments.starts(with: AutoremovePlan.keepArguments([])) {
+            let names = Array(arguments.dropFirst(AutoremovePlan.keepArguments([]).count))
+            for n in names { try await say("==> \(n) is now marked as installed on request.\n", 100) }
+            state.autoremoveKept.withLock { $0.formUnion(names) }
+            return 0
+        }
         guard arguments == AutoremovePlan.runArguments else { return nil }
-        let plan = AutoremovePlan.parse(fixtureText("demo-autoremove-n"))
+        var plan = AutoremovePlan.parse(fixtureText("demo-autoremove-n"))
+        let kept = state.autoremoveKept.withLock { $0 }
+        plan.formulae.removeAll { kept.contains($0) }
         try await say("==> Autoremoving \(plan.formulae.count) unneeded formulae:\n", 300)
         for f in plan.formulae { try await say(f + "\n", 100) }
         for f in plan.formulae { try await say("Uninstalling \(f)... (64 files, 2.1MB)\n", 500) }

@@ -561,7 +561,7 @@ public final class UpgradeSession: Identifiable {
                     if let f = foreignAskpass, sudoOutcome == .sudoDisabled { sudoOutcome = .foreignHelper(f.helper) }
                     switch sudoOutcome {
                     case .cancelled: note("The password dialog was cancelled; sudo didn't run.")
-                    case .wrongPassword: note("sudo didn't accept the password.")
+                    case .wrongPassword: note("macOS didn't accept the password.")
                     default: break
                     }
                 }
@@ -784,12 +784,10 @@ public final class UpgradeSession: Identifiable {
     /// The helper named in a refusal (a session that started before brew.env
     /// got it), or nil.
     nonisolated static func foreignHelper(in message: String) -> ForeignAskpass? {
-        let probe = ForeignAskpass(helper: "\u{1}", source: "", unstoppable: false).message
-        guard let mark = probe.range(of: "\u{1}") else { return nil }
-        let head = String(probe[..<mark.lowerBound]), tail = String(probe[mark.upperBound...])
-        guard message.hasPrefix(head), message.hasSuffix(tail), message.count > head.count + tail.count else { return nil }
-        let helper = String(message.dropFirst(head.count).dropLast(tail.count))
-        return ForeignAskpass(helper: helper, source: "", unstoppable: false)
+        // 0.8.5: the sentence no longer names the helper (plain words; the
+        // log's note does), so it is recognised whole.
+        let plain = ForeignAskpass(helper: "", source: "", unstoppable: false)
+        return message == plain.message ? plain : nil
     }
 
     private func note(_ s: String) {

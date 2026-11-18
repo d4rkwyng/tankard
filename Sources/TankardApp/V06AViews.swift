@@ -131,12 +131,12 @@ struct HealthSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             SheetHeader(icon: "stethoscope.circle.fill", title: String(localized: "Homebrew Health"),
-                        subtitle: String(localized: "brew doctor, brew config and brew missing. Read-only: Tankard changes nothing here."))
+                        subtitle: String(localized: "Homebrew's own check-up. Looking changes nothing."))
             switch health.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text("Running brew doctor…").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Running Homebrew's check-up…").font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, minHeight: 200)
             case .failed(let m):
@@ -149,7 +149,7 @@ struct HealthSheet: View {
             }
             Spacer(minLength: 0)
             HStack {
-                Text("Fix commands are shown, never run. Copy one into Terminal if you want it.")
+                Text("Where Tankard can fix something itself, there's a button. Terminal commands are under Details.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
                 Button("Check Again") { Task { await health.load() } }
@@ -169,12 +169,14 @@ struct HealthSheet: View {
     private var results: some View {
         if let d = health.doctor {
             Text(health.summary).font(.system(size: 16, weight: .bold))
-                .foregroundStyle(d.warnings.isEmpty ? theme.accent : theme.warning(scheme).text)
-            if d.maintainersNote {
-                Text("brew says these warnings are for Homebrew maintainers: if everything works, you can ignore them.")
+                .foregroundStyle(d.warnings.isEmpty ? theme.accent : health.onlyHarmless ? Color.primary : Color.orange)
+            // 0.8.5 (newbie review H5): lead with the reassurance.
+            if !d.warnings.isEmpty {
+                Text("Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew.")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            ForEach(d.warnings) { w in DoctorWarningCard(warning: w) }
+            ForEach(d.warnings) { w in DoctorWarningCard(warning: w, store: store) }
         }
         if !health.missing.isEmpty {
             Text("Missing dependencies").font(.system(size: 12, weight: .semibold))
@@ -345,20 +347,31 @@ struct EnvironmentList: View {
 
 struct DoctorWarningCard: View {
     var warning: DoctorWarning
+    var store: AppStore
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var scheme
     private let expanded = State(initialValue: false)
 
     var body: some View {
+        // 0.8.5 (newbie review H5): known harmless notes are neutral
+        // information; the rest (and unknown ones) yellow, never red.
+        let harmless = warning.isHarmless
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(theme.warning(scheme).text)
+                Image(systemName: harmless ? "info.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundStyle(harmless ? Color.secondary : Color.yellow)
                 Text(warning.title).font(.system(size: 12.5, weight: .semibold)).fixedSize(horizontal: false, vertical: true)
+                if harmless {
+                    Text("Usually harmless").font(.system(size: 10.5)).foregroundStyle(.secondary)
+                }
             }
             if let e = warning.explanation {
                 Text(e).font(.system(size: 11.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
-            if let cmd = warning.fixCommand {
+            if let action = warning.action {
+                actionButton(action)
+                if let cmd = warning.fixCommand { CommandDetails(commands: [cmd]) }
+            } else if let cmd = warning.fixCommand {
                 CommandBox(command: cmd)
             }
             DisclosureGroup("What brew printed", isExpanded: expanded.projectedValue) {
@@ -369,7 +382,26 @@ struct DoctorWarningCard: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 8).fill(theme.warning(scheme).tag))
+        .background(RoundedRectangle(cornerRadius: 8).fill(harmless ? theme.chip : Color.yellow.opacity(scheme == .dark ? 0.16 : 0.14)))
+    }
+
+    @ViewBuilder
+    private func actionButton(_ action: DoctorFixAction) -> some View {
+        switch action {
+        case .cleanUp:
+            Button("Clean Up…") { store.openCleanupFromHealth() }
+                .controlSize(.small)
+                .disabled(store.isBusy)
+                .help(String(localized: "Removes old versions and leftover downloads, after showing what goes"))
+        case .softwareUpdate:
+            Button("Open Software Update") {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.Software-Update-Settings.extension") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            .controlSize(.small)
+            .help(String(localized: "Opens System Settings, where macOS offers the Command Line Tools update"))
+        }
     }
 }
 
@@ -508,18 +540,18 @@ struct HistoryRow: View {
 
 struct AutoremoveSheet: View {
     @Bindable var store: AppStore
-    var autoremove: AutoremoveStore
+    @Bindable var autoremove: AutoremoveStore
     @Environment(\.theme) private var theme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             SheetHeader(icon: "shippingbox.and.arrow.backward.fill", title: String(localized: "Remove Unused Dependencies"),
-                        subtitle: String(localized: "Formulae installed only as dependencies that nothing installed needs anymore."))
+                        subtitle: String(localized: "Packages Homebrew installed only because something else needed them, and nothing needs anymore."))
             switch autoremove.phase {
             case .idle, .running:
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text("Running \(autoremove.dryRunCommand)…").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Checking what can be removed…").font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, minHeight: 160)
             case .failed(let m):
@@ -530,44 +562,67 @@ struct AutoremoveSheet: View {
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(names.isEmpty ? Color.secondary : theme.accent)
                 if !names.isEmpty {
+                    Text("Untick any you want to keep. Tankard marks those as installed by you, so later clean-ups leave them (and what they need) too.")
+                        .font(.system(size: 11.5)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 3) {
-                            ForEach(names, id: \.self) { n in
-                                Text(n).font(.system(size: 12, design: .monospaced))
-                            }
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(names, id: \.self) { n in row(n) }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxHeight: 140)
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("To keep one, mark it as installed on request in Terminal first, then check again:")
-                            .font(.system(size: 11.5)).foregroundStyle(.secondary)
-                        CommandBox(command: AutoremovePlan.keepCommand(names[0]))
-                    }
+                    .frame(maxHeight: 170)
                 }
             }
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Command").font(.system(size: 11)).foregroundStyle(.secondary)
-                CommandBox(command: autoremove.command)
-            }
+            CommandDetails(commands: commands)
             Spacer(minLength: 0)
             HStack {
-                Text("Preview from \(autoremove.dryRunCommand) (changes nothing).").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text("A preview: nothing is removed until you click Remove.").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
                 Button("Check Again") { Task { await autoremove.load() } }
                     .disabled(autoremove.phase == .running)
                 Button("Cancel") { store.closeToolSheet() }
                     .keyboardShortcut(.cancelAction)
-                Button("Remove") { store.startAutoremove() }
-                    .buttonStyle(.primaryAction)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(autoremove.phase != .ready || (autoremove.plan?.formulae.isEmpty ?? true) || store.isBusy)
+                // 0.8.5 (newbie review H3): no default button. Return
+                // doesn't remove anything.
+                Button(removeTitle, role: .destructive) { store.startAutoremove() }
+                    .disabled(autoremove.phase != .ready || autoremove.toRemove.isEmpty || store.isBusy)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .frame(width: 600, height: 460, alignment: .top)
+        .frame(width: 600, height: 500, alignment: .top)
         .background(theme.window ?? .clear)
+    }
+
+    private var removeTitle: String {
+        let n = autoremove.toRemove.count
+        let all = autoremove.plan?.formulae.count ?? 0
+        return n == all || n == 0 ? String(localized: "Remove") : String(localized: "Remove \(n)")
+    }
+
+    private var commands: [String] {
+        let keep = autoremove.toKeep
+        return (keep.isEmpty ? [] : [BrewCommands.display(AutoremovePlan.keepArguments(keep))]) + [autoremove.command]
+    }
+
+    @ViewBuilder
+    private func row(_ name: String) -> some View {
+        let p = store.autoremovePackage(name)
+        let shown = p?.name ?? (name.split(separator: "/").last.map(String.init) ?? name)
+        Toggle(isOn: Binding(get: { !autoremove.keep.contains(name) }, set: { autoremove.setKeep(name, !$0) })) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(shown).font(.system(size: 12, weight: .medium))
+                if let d = p?.desc, !d.isEmpty {
+                    Text(d).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
+                }
+                if AutoremovePlan.oftenUsedDirectly(name) {
+                    Label("You may use this one directly in Terminal. Untick it to keep it.", systemImage: "terminal")
+                        .font(.system(size: 11)).foregroundStyle(.orange)
+                }
+            }
+        }
+        .toggleStyle(.checkbox)
     }
 }
 

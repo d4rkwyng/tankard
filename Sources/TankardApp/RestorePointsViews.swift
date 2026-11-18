@@ -131,7 +131,7 @@ struct RestoreDiffView: View {
                         DiffSection(title: String(localized: "Removed (\(diff.removed.count))")) {
                             ForEach(diff.removed, id: \.id) { r in
                                 PlainDiffRow(name: r.name, detail: r.version, note: String(localized: "Reinstall"))
-                                    .help("brew install gets the version Homebrew has now, which may be newer than \(r.version).")
+                                    .help("Puts back the version Homebrew has now, which may be newer than \(r.version).")
                             }
                         }
                     }
@@ -173,7 +173,7 @@ struct RestoreDiffView: View {
                 Button("Restore…") { store.requestRestore(point, pinAfter: pinAfter) }
                     .buttonStyle(.primaryAction)
                     .disabled(plan.steps.isEmpty || store.isBusy)
-                    .help(plan.steps.isEmpty ? plan.nothingToRestoreReason : String(localized: "Shows the brew commands first"))
+                    .help(plan.steps.isEmpty ? plan.nothingToRestoreReason : String(localized: "Shows what will change first"))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -224,20 +224,20 @@ private struct UpgradedRow: View {
                 switch eligibility {
                 case .automatic:
                     Text("Can roll back").font(.system(size: 11, weight: .semibold)).foregroundStyle(theme.accent)
-                        .help("The old version is still installed. brew uninstall removes the new one, then brew link links the old one.")
+                        .help("The older version is still on this Mac, so Tankard can switch back to it.")
                 case .manual(let block):
                     Text(block.title).font(.system(size: 11)).foregroundStyle(theme.warning(scheme).text)
-                        .help("Can't roll back automatically. " + block.explanation(keepPrevious: keepPrevious))
+                        .help(String(localized: "Can't roll back automatically: \(block.explanation(keepPrevious: keepPrevious))"))
                 }
             }
             if case .manual(let block) = eligibility {
                 let cmds = RollbackPolicy.manualCommands(change, block: block)
                 if !cmds.isEmpty {
-                    VStack(alignment: .leading, spacing: 3) {
-                        ForEach(cmds, id: \.self) { CommandBox(command: $0) }
-                    }
+                    // 0.8.5: the Terminal route folded away (`brew tap
+                    // --force homebrew/core` is a large download).
+                    CommandDetails(commands: cmds, title: "Advanced: do it yourself in Terminal")
                         .help(block == .cleanedUp
-                              ? String(localized: "Run in Terminal if you need this version. brew version-install puts it in your own tap, and you maintain it from then on.")
+                              ? String(localized: "Only if you really need this version. It downloads Homebrew's full package history, and you look after the old version yourself from then on.")
                               : block.explanation(keepPrevious: keepPrevious))
                 }
             }
@@ -253,9 +253,9 @@ struct RestoreConfirmView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(plan.steps.count == 1 ? String(localized: "Run 1 brew command?") : String(localized: "Run \(plan.steps.count) brew commands?"))
+            Text(plan.confirmTitle)
                 .font(.system(size: 16, weight: .bold))
-            Text("One at a time through Tankard's queue. Each is recorded in History.")
+            Text("Tankard does these one at a time. Each is recorded in History.")
                 .font(.system(size: 11.5)).foregroundStyle(.secondary)
             if let notice = plan.notice {
                 // The plan changed since it was shown (an old keg was cleaned up).
@@ -263,9 +263,16 @@ struct RestoreConfirmView: View {
                     .font(.system(size: 11.5, weight: .medium)).foregroundStyle(theme.warning(scheme).text)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            // 0.8.5 (newbie review H4): what happens, in words; the
+            // brew commands under Details.
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
-                    ForEach(plan.steps) { s in CommandBox(command: s.display) }
+                    ForEach(Array(plan.summaryLines.enumerated()), id: \.offset) { _, line in
+                        Label(line, systemImage: "arrow.uturn.backward.circle")
+                            .font(.system(size: 12.5))
+                    }
+                    CommandDetails(commands: plan.steps.map(\.display), title: "Details: the brew commands")
+                        .padding(.top, 6)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

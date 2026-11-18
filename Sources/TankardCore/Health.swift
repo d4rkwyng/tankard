@@ -247,6 +247,11 @@ public struct DoctorWarning: Equatable, Sendable, Identifiable {
 
     /// A plain-English title (brew's headline when the kind isn't known).
     public var title: String { kind?.title ?? headline }
+    /// 0.8.5 (newbie review H5): a note that rarely matters in practice:
+    /// shown as neutral information, not a warning. Unknown ones aren't.
+    public var isHarmless: Bool { kind?.isHarmless ?? false }
+    /// 0.8.5: what Tankard can do about it itself, instead of a command.
+    public var action: DoctorFixAction? { kind?.action }
     public var explanation: String? { kind?.explanation }
 
     /// The command to fix it, shown and never run: the first indented
@@ -357,6 +362,27 @@ public enum DoctorWarningKind: String, Sendable, Equatable, CaseIterable {
         }
     }
 
+    /// 0.8.5: notes that don't stop anything from working for most people
+    /// (brew's own doctor text says "if everything works, ignore them").
+    public var isHarmless: Bool {
+        switch self {
+        case .strayFiles, .outdatedCLT, .outdatedXcode, .unsupportedMacOS, .brokenSymlinks,
+             .sbinNotInPath, .deprecatedDisabled, .untrustedTaps:
+            return true
+        case .pathOrder, .unlinkedKegs, .missingDependencies, .gitDirty, .notWritable:
+            return false
+        }
+    }
+
+    /// 0.8.5: Tankard's own button for it, where it has one.
+    public var action: DoctorFixAction? {
+        switch self {
+        case .brokenSymlinks: return .cleanUp
+        case .outdatedCLT: return .softwareUpdate
+        default: return nil
+        }
+    }
+
     /// A command when brew's block gives none.
     public var defaultCommand: String? {
         switch self {
@@ -366,6 +392,14 @@ public enum DoctorWarningKind: String, Sendable, Equatable, CaseIterable {
         default: return nil
         }
     }
+}
+
+/// 0.8.5: a button the Health sheet offers instead of a Terminal command.
+public enum DoctorFixAction: String, Sendable, Equatable {
+    /// Tankard's Clean Up… (the same `brew cleanup`).
+    case cleanUp
+    /// System Settings ▸ Software Update (the Command Line Tools update).
+    case softwareUpdate
 }
 
 public struct DoctorReport: Equatable, Sendable {
@@ -458,4 +492,26 @@ public struct AutoremovePlan: Equatable, Sendable {
     public static func keepCommand(_ name: String) -> String {
         "brew tab --installed-on-request \(name)"
     }
+
+    /// 0.8.5: `brew tab --installed-on-request --formula a b`: marks them as
+    /// installed by you, which is brew's own way to keep a formula out of
+    /// every later `brew autoremove` (and what it needs with it).
+    public static func keepArguments(_ names: [String]) -> [String] {
+        ["tab", "--installed-on-request", "--formula"] + names
+    }
+
+    /// 0.8.5: formulae people often use directly in Terminal (python3, node,
+    /// ruby…) although Homebrew installed them only for something else.
+    /// Removing one breaks the command, so the sheet flags them.
+    public static func oftenUsedDirectly(_ name: String) -> Bool {
+        let short = name.split(separator: "/").last.map(String.init) ?? name
+        let base = short.split(separator: "@").first.map(String.init) ?? short
+        return directUseNames.contains(base)
+    }
+
+    static let directUseNames: Set<String> = [
+        "python", "node", "ruby", "perl", "php", "go", "rust", "openjdk", "lua", "deno", "bun",
+        "git", "curl", "wget", "sqlite", "postgresql", "mysql", "redis", "gcc", "llvm", "cmake",
+        "imagemagick", "ffmpeg", "pandoc", "jq", "yarn", "pnpm", "erlang", "elixir", "ghc", "dotnet",
+    ]
 }

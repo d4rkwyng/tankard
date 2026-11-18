@@ -85,7 +85,7 @@ struct StatusBar: View {
             }
             let n = store.upgradable.count
             if let note = store.pinnedUpgradeNote {
-                Label(note, systemImage: "pin").lineLimit(1).help("Pinned packages aren't upgraded: brew upgrade skips them. Unpin one to include it.")
+                Label(note, systemImage: "pin").lineLimit(1).help("Pinned packages stay at their version. Unpin one to include it.")
             }
             Button {
                 store.requestUpgrade()
@@ -103,7 +103,7 @@ struct StatusBar: View {
             }
             .buttonStyle(.primaryAction)
             .disabled(n == 0 || store.windowBrewActionsBlocked || store.isRefreshing)
-            .help(n > 0 && store.windowBrewActionsNote != nil ? store.windowBrewActionsNote! : n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "brew upgrade the 1 outdated package, one at a time") : String(localized: "brew upgrade the \(n) outdated packages, one at a time")))
+            .help(n > 0 && store.windowBrewActionsNote != nil ? store.windowBrewActionsNote! : n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "Upgrade the 1 package that has a newer version") : String(localized: "Upgrade the \(n) packages that have a newer version, one at a time")))
         }
         .font(.system(size: 11.5))
         .foregroundStyle(.secondary)

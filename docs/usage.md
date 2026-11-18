@@ -28,6 +28,7 @@ use it. For what Tankard is, see the [README](../README.md). For how it is built
 - [What Tankard runs](#what-tankard-runs)
 - [App Management](#app-management)
 - [Troubleshooting](#troubleshooting)
+- [Glossary: Homebrew words explained](#glossary-homebrew-words-explained)
 
 ## Getting started
 
@@ -545,6 +546,26 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 | Scan for vulnerabilities when refreshing | off | Sends formula names and versions to OSV.dev. |
 | Show new vulnerabilities in the menu bar | off | A notice in the menu-bar icon. |
 
+**Technical details.** The settings' ⓘ notes are in plain words; this is what they do underneath:
+
+- **Check for new versions in the background** runs `brew update` at most once per check interval, waits while
+  brew is busy, and only logs a failure (offline). It is off, and grayed out, when `HOMEBREW_NO_AUTO_UPDATE` is
+  set in your shell profile or brew.env; Settings says which file.
+- **Notify me about new upgrades** uses the same background `brew update`. Refresh and Check Now post a
+  notification only when the Tankard window isn't in front.
+- **Include self-updating apps** lists casks with `auto_updates` or `version :latest`, as
+  `brew outdated --greedy` does.
+- **Don't quit running apps during upgrades** sets `HOMEBREW_NO_UPGRADE_QUIT_CASKS=1` for cask upgrades (it shows
+  in the command under **Details**). Without it, brew quits a running app before upgrading its cask and opens it
+  again afterwards, and Tankard's upgrade plan names the open apps before it starts.
+- **Keep the previous version after upgrades** runs Tankard's upgrades, installs and reinstalls (manual and
+  automatic) with `HOMEBREW_NO_INSTALL_CLEANUP=1`. brew's own periodic cleanup, run by brew outside Tankard, can
+  still remove old versions.
+- **Scan for vulnerabilities when refreshing** runs `brew vulns`; a scan that runs longer than a minute is
+  stopped. Casks aren't checked.
+- A brew.env `SUDO_ASKPASS` that points to another program, or one that clears `HOMEBREW_NO_SUDO`, makes Tankard
+  leave password steps to Terminal ("Your Homebrew settings use a different password program").
+
 **Appearance:** **Dark**, **Light**, **System** (the default, follows your Mac), **Tankard**
 (purple and amber) and **Dracula**.
 
@@ -745,8 +766,8 @@ list it read.
 
 ### "Homebrew not found"
 
-Tankard looks for brew at `/usr/local/bin/brew` and `/opt/homebrew/bin/brew`. Install
-Homebrew from the welcome screen, then click **Check Again**.
+Tankard looks for brew at `/usr/local/bin/brew` and `/opt/homebrew/bin/brew`, or at the path in the
+`TANKARD_BREW` environment variable. Install Homebrew from the welcome screen, then click **Check Again**.
 
 ### My `HOMEBREW_*` settings from `~/.zshrc`
 
@@ -855,3 +876,29 @@ Login Items**. A build you made yourself may be refused.
 
 **Help ▸ Report an Issue…**. **Homebrew ▸ History…** and
 `~/Library/Logs/Tankard/upgrade.log` show exactly what brew said.
+
+## Glossary: Homebrew words explained
+
+Help ▸ **Homebrew Words Explained** opens this section.
+
+| Word | In plain words |
+|---|---|
+| **Homebrew (brew)** | A free tool that installs and updates software on your Mac from one place. Tankard is a window onto it. |
+| **Package** | Anything Homebrew installs: a command-line tool, a library, an app or a font. |
+| **Formula** (plural *formulae*) | A recipe for a command-line tool or library, like `wget` or `python`. |
+| **Cask (app)** | A recipe for a regular Mac app (or font, driver, plug-in). Installing it puts the app in Applications. |
+| **Bottle** | A ready-made download of a formula, built for your kind of Mac. Installs in seconds. |
+| **Poured** | Installed from a bottle ("poured from a bottle"), not built on this Mac. |
+| **Built from source / compiles** | No bottle exists, so your Mac builds the program itself. It works, but can take minutes to hours. |
+| **Dependency (dep)** | A package another package needs to work. Homebrew installs it automatically. |
+| **Installed by you (on request)** | A package you asked for, as opposed to one pulled in as a dependency. |
+| **Unused dependency** | A dependency nothing needs any more. Safe to remove, unless you use it directly yourself (`python3`, `node`). |
+| **Tap** | A catalog of packages. Homebrew's own are built in; third-party taps are added by you and run their author's code. |
+| **Pinned** | Frozen at its current version, so upgrades skip it until you unpin it. |
+| **Keg** | One installed version of a formula, in its own folder. Keeping the previous keg is what makes undo possible. |
+| **Keg-only** | Installed but deliberately not linked, so typing its command in Terminal won't find it (usually to avoid clashing with macOS's own copy). |
+| **Linked** | A formula's commands are available in Terminal. "Not linked" means installed but hidden. |
+| **Updates itself** | An app with its own updater (Chrome, VS Code). By default Homebrew leaves updating it to the app. |
+| **Restore Point** | A record of what was installed, saved before each upgrade. Tankard can put removed packages back from it, and switch formulae back to an older version if that version is still on this Mac. |
+| **Administrator password (sudo)** | Some apps install with a system installer that needs your Mac login password, the same one you use to install any app. |
+| **Intelbrew** | A version of Homebrew that still provides bottles for Intel Macs. |

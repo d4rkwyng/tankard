@@ -52,7 +52,7 @@ struct VulnerableScanStatusTests {
         let failed = VulnerableScanStatus(state: .failed("network down"), scan: nil)
         #expect(failed.emptyTitle == "Scan failed")
         #expect(failed.emptyMessage(now: Date()) == "network down")
-        #expect(VulnerableScanStatus(state: .unsupported("no vulns"), scan: nil).line(now: Date()) == "No brew vulns")
+        #expect(VulnerableScanStatus(state: .unsupported("no vulns"), scan: nil).line(now: Date()) == "Security check not available")
     }
 
     /// The same rule as Homebrew ▸ Scan for Vulnerabilities.

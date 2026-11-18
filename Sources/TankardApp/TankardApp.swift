@@ -159,6 +159,11 @@ struct TankardApp: App {
         let options = LaunchOptions.fromEnvironment()
         self.options = options
         let env = ProcessInfo.processInfo.environment
+        // 0.8.5: demo, snapshot and script runs never save window frames
+        // into the real defaults domain (before any window exists).
+        if options.isDemo || options.snapshot != nil || options.script != nil {
+            WindowFrameIsolation.install()
+        }
         // 0.8.3: one Tankard at a time (a demo, snapshot or script run is a
         // dev instance tests run side by side: no guard, and never counted).
         // A same-build second launch quits here, before any window.
@@ -234,6 +239,14 @@ struct TankardApp: App {
             // 0.8.5: no scheduled checks asleep or offline.
             Self.sleepWatch = SleepAndNetworkWatch(store.system)
         }
+        // 0.8.5: TANKARD_DEMO_RUNNING_APPS=1: Google Chrome and Visual Studio
+        // Code count as open, so Upgrade shows the "will be closed" plan.
+        if options.demo != nil && ProcessInfo.processInfo.environment["TANKARD_DEMO_RUNNING_APPS"] == "1" {
+            store.autoUpdate.conditions = FixedConditions(ac: nil, idle: nil, apps: [
+                RunningApp(path: "/Applications/Google Chrome.app", bundleID: "com.google.Chrome"),
+                RunningApp(path: "/Applications/Visual Studio Code.app", bundleID: "com.microsoft.VSCode"),
+            ])
+        }
         // The demo's scan is a fixture (no network), so it shows what a scan
         // finds; a real session scans on refresh only once the user opts in.
         // TANKARD_DEMO_SCAN=off: no scan at all, to show "not scanned yet".
@@ -295,6 +308,9 @@ struct TankardApp: App {
             }
             CommandGroup(replacing: .help) {
                 Button("Tankard Help") { NSWorkspace.shared.open(AboutInfo.help) }
+                Button("Homebrew Words Explained") {
+                    NSWorkspace.shared.open(AboutInfo.glossary(version: TankardVersion.string))
+                }
                 Divider()
                 Button("Tankard on GitHub") { NSWorkspace.shared.open(AboutInfo.repository) }
                 Button("Report an Issue…") { NSWorkspace.shared.open(AboutInfo.newIssue) }

@@ -436,7 +436,7 @@ public enum AdoptUnavailable: Error, CustomStringConvertible {
     public var description: String {
         switch self {
         case .noAPI:
-            return String(localized: "Adopt Apps reads Homebrew's cask list from formulae.brew.sh, which Tankard doesn't use with this Homebrew (Intelbrew, or HOMEBREW_NO_INSTALL_FROM_API).")
+            return String(localized: "Adopt Apps needs Homebrew's online app list, which this Homebrew setup doesn't use.")
         }
     }
 }

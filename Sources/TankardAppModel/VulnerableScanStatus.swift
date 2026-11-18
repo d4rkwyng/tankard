@@ -45,7 +45,7 @@ public enum VulnerableScanStatus: Equatable, Sendable {
                 + " · " + updatedAgo(at, now: now)
         case .failed(_, let timedOut):
             return timedOut ? String(localized: "Scan timed out") : String(localized: "Scan failed")
-        case .unsupported: return String(localized: "No brew vulns")
+        case .unsupported: return String(localized: "Security check not available")
         }
     }
 
@@ -56,7 +56,7 @@ public enum VulnerableScanStatus: Equatable, Sendable {
         case .notScanned: return String(localized: "No scan yet")
         case .scanned: return String(localized: "No known vulnerabilities")
         case .failed(_, let timedOut): return timedOut ? String(localized: "Scan timed out") : String(localized: "Scan failed")
-        case .unsupported: return String(localized: "No brew vulns")
+        case .unsupported: return String(localized: "Security check not available")
         }
     }
 

@@ -75,9 +75,9 @@ struct ForeignAskpassDetectTests {
 
     @Test func message() {
         let f = ForeignAskpass(helper: "/x/pw", source: "~/.homebrew/brew.env", unstoppable: false)
-        #expect(f.message == "brew.env sets its own password helper (/x/pw); run this step in Terminal:")
+        #expect(f.message == "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:")
         #expect(SudoOutcome.foreignHelper("/x/pw").message == f.message)
-        #expect(UpgradeSession.foreignHelper(in: f.message)?.helper == "/x/pw")
+        #expect(UpgradeSession.foreignHelper(in: f.message) != nil)  // 0.8.5: the path is in the log, not the sentence
         #expect(UpgradeSession.foreignHelper(in: "Couldn't find keg") == nil)
     }
 }
@@ -155,7 +155,7 @@ struct ForeignAskpassSessionTests {
         #expect(upgrades(runner).isEmpty)   // brew never started
         #expect(session.items.first?.state == .failed(-1))
         #expect(session.sudoOutcome == .foreignHelper(Self.helper))
-        #expect(session.sudoOutcome?.message == "brew.env sets its own password helper (\(Self.helper)); run this step in Terminal:")
+        #expect(session.sudoOutcome?.message == "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:")
         #expect(session.sudoCommand == session.items.first?.command.display)
         #expect(session.sudoCommand?.hasPrefix("brew upgrade --cask") == true)
         #expect(session.items.first?.command.environment[Askpass.askpassKey] == nil)
@@ -212,7 +212,10 @@ struct ForeignAskpassSessionTests {
         await #expect(waitUntil { store.upgrade?.isFinished == true })
         #expect(!upgrades(runner).contains { $0.args.contains { $0.hasSuffix("google-chrome") } })
         #expect(session.items.first?.state == .done)
-        #expect(session.sudoOutcome == .foreignHelper(Self.helper))
+        // 0.8.5: the sentence no longer names the helper, so the outcome is
+        // recognised by its message (the log's note names the path).
+        if case .foreignHelper = session.sudoOutcome {} else { Issue.record("not a foreign-helper outcome: \(String(describing: session.sudoOutcome))") }
+        #expect(session.sudoOutcome?.message == ForeignAskpass(helper: Self.helper, source: "", unstoppable: false).message)
         #expect(session.sudoCommand == session.items.last?.command.display)
     }
 
@@ -374,7 +377,7 @@ extension AutoUpdateRunTests {
     }
 
     @Test func skipTexts() {
-        #expect(AutoUpdateSkip.foreignAskpass("/x").text.contains("brew.env sets its own password helper (/x)"))
-        #expect(AutoUpdateSkip.foreignAskpass(nil).text.contains("HOMEBREW_NO_SUDO"))
+        #expect(AutoUpdateSkip.foreignAskpass("/x").text.contains("different password program"))
+        #expect(AutoUpdateSkip.foreignAskpass(nil).text.contains("allow password prompts"))
     }
 }

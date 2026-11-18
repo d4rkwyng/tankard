@@ -108,7 +108,7 @@ struct V08AdoptAppTests {
         await store.start()
         store.openAdopt()
         #expect(await waitUntil { if case .failed = store.adopt.phase { true } else { false } })
-        if case .failed(let m) = store.adopt.phase { #expect(m.contains("formulae.brew.sh")) }
+        if case .failed(let m) = store.adopt.phase { #expect(m.contains("online app list")) }  // 0.8.5: plain words
     }
 
     // MARK: self-updating apps
