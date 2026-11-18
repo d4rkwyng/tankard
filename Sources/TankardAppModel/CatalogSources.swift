@@ -139,7 +139,7 @@ public struct APIFetcher: Sendable {
         c.urlCache = nil
         c.requestCachePolicy = .reloadIgnoringLocalCacheData
         c.timeoutIntervalForRequest = 60
-        c.httpAdditionalHeaders = ["User-Agent": "Tankard/\(TankardVersion.string)"]
+        c.httpAdditionalHeaders = ["User-Agent": TankardVersion.userAgent]
         return URLSession(configuration: c)
     }
 

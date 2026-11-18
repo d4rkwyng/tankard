@@ -122,6 +122,25 @@ if [ $DRY = 0 ] && [ $UNIVERSAL = 1 ]; then
         *) fail "expected a universal binary, got: $archs" ;;
     esac
 fi
+# 3b. The built artifact's version, before anything is signed: its
+#     Info.plist (what the app reports, TankardVersion.string) must equal
+#     TankardVersion.source and, in CI, the tag's version ($TAG without its
+#     suffix; release.yml also passes it as TANKARD_VERSION).
+if [ $DRY = 0 ]; then
+    BUILT=$(defaults read "$(pwd)/$APP/Contents/Info" CFBundleShortVersionString 2>/dev/null) \
+        || fail "can't read CFBundleShortVersionString from $APP/Contents/Info.plist"
+    WHY=()
+    [ "$BUILT" = "$SOURCE_VERSION" ] || WHY+=("TankardVersion.source is $SOURCE_VERSION")
+    if [ -n "${TANKARD_VERSION:-}" ] && [ "$BUILT" != "$TANKARD_VERSION" ]; then WHY+=("TANKARD_VERSION is $TANKARD_VERSION"); fi
+    if [ -n "${TAG:-}" ]; then
+        TAG_VERSION=${TAG#v}; TAG_VERSION=${TAG_VERSION%%-*}
+        [ "$BUILT" = "$TAG_VERSION" ] || WHY+=("tag $TAG is $TAG_VERSION")
+    fi
+    [ ${#WHY[@]} = 0 ] || fail "$APP is version $BUILT, but $(IFS=';'; echo "${WHY[*]}" | sed 's/;/, /g')"
+    echo "Built version: $BUILT (= TankardVersion.source${TANKARD_VERSION:+ = TANKARD_VERSION}${TAG:+ = tag $TAG})"
+else
+    echo "+ defaults read $(pwd)/$APP/Contents/Info CFBundleShortVersionString  # must equal $SOURCE_VERSION${TAG:+ and tag $TAG}"
+fi
 
 # 4. Sign: nested code first, then the app itself (no --deep: each piece
 #    gets its own explicit signature with the hardened runtime).

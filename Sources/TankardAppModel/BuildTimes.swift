@@ -92,15 +92,20 @@ public final class BuildTimeSource: BuildTimeEstimating, @unchecked Sendable {
         self.now = now
     }
 
-    /// The real thing: an ephemeral URLSession, the cache next to status.json.
-    public static func live() -> BuildTimeSource {
+    /// live()'s session: ephemeral, no cache, TankardVersion.userAgent.
+    public static func sessionConfiguration() -> URLSessionConfiguration {
         let c = URLSessionConfiguration.ephemeral
         c.urlCache = nil
         c.requestCachePolicy = .reloadIgnoringLocalCacheData
         c.timeoutIntervalForRequest = resourceTimeout
         c.timeoutIntervalForResource = resourceTimeout
-        c.httpAdditionalHeaders = ["User-Agent": "Tankard/\(TankardVersion.string)"]
-        let session = URLSession(configuration: c)
+        c.httpAdditionalHeaders = ["User-Agent": TankardVersion.userAgent]
+        return c
+    }
+
+    /// The real thing: an ephemeral URLSession, the cache next to status.json.
+    public static func live() -> BuildTimeSource {
+        let session = URLSession(configuration: sessionConfiguration())
         return BuildTimeSource(fetch: {
             let (data, response) = try await session.data(from: url)
             return (data, (response as? HTTPURLResponse)?.statusCode ?? 0)
