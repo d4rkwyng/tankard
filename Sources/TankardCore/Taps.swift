@@ -109,6 +109,17 @@ public enum TapCommands {
 
     public static func untap(_ name: String) -> [String] { ["untap", name] }
 
+    /// 0.8.5 (bug hunt L8): Remove runs `brew untrust --tap` before `brew
+    /// untap` for a third-party tap. brew's trust.json keeps a tap's remote
+    /// (and the formulae and casks installed from it) after `brew untap`,
+    /// so adding the same remote again later skipped the trust question.
+    /// After untap, `brew untrust --tap` can no longer find the tap ("Not
+    /// trusted tap", the entries stay), so it runs first; on a tap that
+    /// isn't trusted it still clears those entries and exits 0 (brew 7.0.14).
+    public static func remove(_ name: String, official: Bool) -> [[String]] {
+        official ? [untap(name)] : [trust(name, false), untap(name)]
+    }
+
     /// `brew trust --tap user/repo` / `brew untrust --tap user/repo`.
     public static func trust(_ name: String, _ trusted: Bool) -> [String] {
         [trusted ? "trust" : "untrust", "--tap", name]
