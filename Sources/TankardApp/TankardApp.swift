@@ -156,6 +156,8 @@ struct TankardApp: App {
     @MainActor private static var sleepWatch: SleepAndNetworkWatch?
 
     init() {
+        // 0.8.6: shorter tooltip delay, in memory only (ToolTipDelay).
+        ToolTipDelay.register()
         let options = LaunchOptions.fromEnvironment()
         self.options = options
         let env = ProcessInfo.processInfo.environment

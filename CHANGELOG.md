@@ -9,6 +9,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Changed
 - **The marks at the end of a row sit together.** The ⟳ for apps that update themselves moved from after the name to the end of the row, next to the password lock and the Electron ⓘ: always in that order, evenly spaced, the same size.
 - **Package names no longer collapse to "…" next to their badges.** The name keeps at least its first 12 characters (all of it when it fits); "dep", "pinned", "Deprecated" and "Vulnerable · 4" shrink to their icons in a narrow column, and leave when even those don't fit. The name's tooltip lists them.
+- **Tooltips come up faster**: after about a third of a second instead of 1.5 s, in Tankard only (set in memory at launch; nothing is written to your settings, and a delay you set yourself with `defaults write` still wins).
 
 ### Fixed
 - **Adopt Apps no longer matches a different app with the same name.** A "Copilot.app" that wasn't the one the copilot-money cask installs was offered for adopting as copilot-money. A cask that names app IDs (in what it quits, unloads or deletes, such as `~/Library/Containers/com.copilot.production`) now matches only an app with one of those IDs; any other app with the same name is listed under **No cask** as "possibly a different app, not offered", with both IDs. Each match says what matched: **Matched by app ID**, **Matched by name and website** or **Matched by name only — check before adopting** (never ticked for you).
