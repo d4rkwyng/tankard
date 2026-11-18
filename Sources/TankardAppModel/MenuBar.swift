@@ -123,6 +123,8 @@ public enum UpgradeNotificationDiff {
 
         public enum Kind: String, Sendable {
             case upgrades, autoUpdate
+            /// 0.8.5: a progress panel's upgrade finished (opens History).
+            case upgradeDone
         }
 
         /// "upgrades-<sha256 of the sorted keys>": the same set gives the

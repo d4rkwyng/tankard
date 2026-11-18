@@ -111,10 +111,19 @@ struct MenuBarContent: View {
 
             Divider()
             VStack(alignment: .leading, spacing: 1) {
-                MenuRow(title: String(localized: "Upgrade All"), systemImage: "arrow.up.circle", shortcut: nil,
-                        enabled: summary.count > 0 && !store.isUpgrading && !store.isRefreshing) {
-                    openMain()
-                    store.requestUpgrade()
+                if store.hasActivityToShow {
+                    // 0.8.5: a run (going, or finished and not closed) or a
+                    // plan: show it again (the panel, or the window's sheet).
+                    MenuRow(title: String(localized: "Show Upgrade Progress"), systemImage: "arrow.up.circle", shortcut: nil,
+                            enabled: true) {
+                        closePanel()
+                        if store.showActivity(windowInFront: MainWindowState.inFront) == .mainWindowSheet { openMain() }
+                    }
+                } else {
+                    MenuRow(title: String(localized: "Upgrade All"), systemImage: "arrow.up.circle", shortcut: nil,
+                            enabled: summary.count > 0 && !store.isUpgrading && !store.isRefreshing) {
+                        upgradeFromMenu(nil)
+                    }
                 }
                 MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
                 MenuRow(title: String(localized: "Check Now"), systemImage: "arrow.clockwise", shortcut: nil,
@@ -140,6 +149,26 @@ struct MenuBarContent: View {
 }
 
 extension MenuBarContent {
+    /// 0.8.5: Upgrade All (`nil`) and a row's Upgrade. The menu-bar panel
+    /// closes at once; the run shows in the progress panel, not the whole
+    /// main window, unless that window is already in front (then its
+    /// sheet, as before).
+    func upgradeFromMenu(_ packages: [Package]?) {
+        closePanel()
+        if store.requestUpgradeFromMenuBar(packages, windowInFront: MainWindowState.inFront) == .mainWindowSheet {
+            openMain()
+        }
+    }
+
+    /// Closes the menu-bar panel (SwiftUI's window-style extra has no
+    /// dismiss of its own here). Not in a snapshot, which has no extra.
+    func closePanel() {
+        if let w = PanelHeightSync.panelWindow, w.isVisible { w.close() }
+        for w in NSApp.windows where w.isVisible && String(describing: type(of: w)).contains("MenuBarExtra") {
+            w.close()
+        }
+    }
+
     /// Opens the main window (Dock icon first, as Open Tankard does), then
     /// shows `destination` in it.
     func show(_ destination: MenuBarDestination) {
@@ -156,8 +185,7 @@ extension MenuBarContent {
                                                          busy: store.isUpgrading || store.isRefreshing)) { action in
                 switch action {
                 case .upgrade:
-                    openMain()
-                    store.requestUpgrade([p])
+                    upgradeFromMenu([p])
                 case .copy(let s): ContextMenuActions.copy(s)
                 default: break
                 }
@@ -449,6 +477,8 @@ enum AboutPanel {
 /// main window, nor a titled one; a snapshot's window already fits.
 struct PanelHeightSync: NSViewRepresentable {
     var height: CGFloat
+    /// 0.8.5: the extra's window, as last seen (closed by a menu-bar Upgrade).
+    @MainActor static weak var panelWindow: NSWindow?
 
     func makeNSView(context: Context) -> NSView { NSView() }
 
@@ -456,8 +486,9 @@ struct PanelHeightSync: NSViewRepresentable {
         let height = height
         DispatchQueue.main.async { [weak view] in
             guard let w = view?.window, !w.styleMask.contains(.titled),
-                  w.identifier?.rawValue.hasPrefix("main") != true,
-                  let content = w.contentView,
+                  w.identifier?.rawValue.hasPrefix("main") != true else { return }
+            Self.panelWindow = w
+            guard let content = w.contentView,
                   let frame = MenuBarPanelFrame.shrunk(frame: w.frame, contentHeight: content.frame.height, fitting: height)
             else { return }
             w.setFrame(frame, display: true)

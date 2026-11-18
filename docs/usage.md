@@ -404,6 +404,22 @@ warning. Click "N upgrades ready" for the Upgrades list, or the finished scan's 
 ("Scanned 11 · found 2") for the Vulnerable list. **Upgrade All** is the only thing the menu
 runs itself.
 
+**Upgrade All** (and **Upgrade** in a row's right-click menu) closes the menu and shows the
+upgrade in a small window of its own, not the whole Tankard window: the packages, progress,
+brew's output, the compile plan when something builds from source, and **Stop**. A password
+dialog for a cask appears above it.
+
+- **Show in Tankard** opens the Tankard window with the same run in its sheet.
+- When everything upgraded, the window closes by itself after a moment (with a "Tankard
+  upgraded N packages" notification when notifications are on; click it for History).
+- When something failed or you stopped it, the window stays open with what went wrong,
+  **Retry** where it applies, and **Close**.
+- Closing it while brew runs only hides it: the run goes on, and **Show Upgrade Progress**
+  in the menu brings it back.
+- With the Tankard window already in front, Upgrade All opens the usual sheet on it.
+
+The Homebrew and File menus wait while this window is open, as they do for a sheet.
+
 With the icon on, closing the window keeps Tankard running. With **Hide Dock icon when the
 window is closed** on (the default), Tankard then also leaves the Dock and ⌘-Tab. Click
 **Open Tankard** to bring the window back.

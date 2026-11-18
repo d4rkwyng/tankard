@@ -6,6 +6,8 @@ struct UpgradeSheet: View {
     var session: UpgradeSession
     @Bindable var store: AppStore
     @Environment(\.theme) private var theme
+    /// 0.8.5: shown in the progress panel (a menu-bar Upgrade), not the sheet.
+    @Environment(\.inProgressPanel) private var inPanel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -120,7 +122,13 @@ struct UpgradeSheet: View {
                         }
                         .help("Run the failed steps again (the same checks as the Upgrade and Install buttons apply)")
                     }
-                    Button("Done") { store.closeUpgrade() }
+                    if inPanel {
+                        Button("Show in Tankard") { ProgressPanelController.showInTankard(store) }
+                            .help("Open the Tankard window with this run in it")
+                    }
+                    // 0.8.5: the panel stays up only when something went
+                    // wrong (a clean run closes it by itself): Close.
+                    Button(inPanel ? String(localized: "Close") : String(localized: "Done")) { store.closeUpgrade() }
                         .buttonStyle(.primaryAction)
                         .keyboardShortcut(.defaultAction)
                 } else {
@@ -135,8 +143,16 @@ struct UpgradeSheet: View {
                     }
                     .help("Stop the running brew (and everything it started) immediately")
                     .disabled(!session.canStopNow)
-                    Button("Hide") { store.showUpgradeSheet = false }
-                        .keyboardShortcut(.cancelAction)
+                    if inPanel {
+                        // 0.8.5: Esc and the close button hide the panel
+                        // (the menu-bar panel's Show Upgrade Progress
+                        // brings it back); this moves the run to the window.
+                        Button("Show in Tankard") { ProgressPanelController.showInTankard(store) }
+                            .help("Open the Tankard window with this run in it")
+                    } else {
+                        Button("Hide") { store.showUpgradeSheet = false }
+                            .keyboardShortcut(.cancelAction)
+                    }
                 }
             }
             .padding(.top, 14)

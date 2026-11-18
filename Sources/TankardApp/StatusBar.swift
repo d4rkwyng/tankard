@@ -57,9 +57,11 @@ struct StatusBar: View {
                 Text(notice).lineLimit(1).truncationMode(.middle).help(notice)
             }
             Spacer()
-            if let session = store.upgrade, !store.showUpgradeSheet {
+            // 0.8.5: also while it is in the progress panel: a click
+            // moves it to this window's sheet.
+            if let session = store.upgrade, !store.showsActivitySheet {
                 Button {
-                    store.showUpgradeSheet = true
+                    store.showActivity(windowInFront: true)
                 } label: {
                     if session.isFinished {
                         Label(session.title, systemImage: !session.hasProblems ? "checkmark.circle" : "exclamationmark.triangle")

@@ -679,6 +679,7 @@
 "Open Tankard at login" = "ログイン時にTankardを開く";
 "Open Terminal" = "ターミナルを開く";
 "Open in Terminal" = "ターミナルで開く";
+"Open the Tankard window with this run in it" = "この処理を Tankard のウインドウで開きます";
 "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here." = "ターミナルで開きました。コマンドをもう一度一覧表示し、Returnを待ちます。完了したら新しいターミナルウインドウを開き、ここで「更新」をクリックしてください。";
 "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard." = "ターミナルで開きました。Returnを待ってから、Homebrewのアンインストーラがもう一度確認します。完了したらTankardを終了してください。";
 "Opens Tankard when you log in, as a macOS login item." = "ログイン時にmacOSのログイン項目としてTankardを開きます。";
@@ -867,11 +868,13 @@
 "Show Older Copy" = "古いTankardを表示";
 "Show Tankard in the menu bar" = "メニューバーにTankardを表示";
 "Show Terminal Command" = "ターミナルコマンドを表示";
+"Show Upgrade Progress" = "アップグレードの進行状況を表示";
 "Show What Uses It" = "使用しているものを表示";
 "Show What Uses It (%lld)" = "使用しているものを表示 (%lld)";
 "Show all upgrades in Tankard" = "すべてのアップグレードをTankardで表示";
 "Show in Finder" = "Finderで表示";
 "Show in Installed" = "インストール済みで表示";
+"Show in Tankard" = "Tankard で表示";
 "Show new vulnerabilities in the menu bar" = "新しい脆弱性をメニューバーに表示";
 "Show the Auto-update log" = "自動アップデートのログを表示";
 "Show vulnerable packages in Tankard" = "脆弱性のあるパッケージをTankardで表示";

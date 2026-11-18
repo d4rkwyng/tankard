@@ -679,6 +679,7 @@
 "Open Tankard at login" = "Ouvrir Tankard à l’ouverture de session";
 "Open Terminal" = "Ouvrir Terminal";
 "Open in Terminal" = "Ouvrir dans Terminal";
+"Open the Tankard window with this run in it" = "Ouvrir la fenêtre de Tankard avec cette opération";
 "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here." = "Ouvert dans Terminal. Il liste de nouveau les commandes et attend Retour. Une fois terminé, ouvrez une nouvelle fenêtre de Terminal et cliquez sur Actualiser ici.";
 "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard." = "Ouvert dans Terminal. Il attend Retour, puis le programme de désinstallation de Homebrew demande une dernière confirmation. Une fois terminé, quittez Tankard.";
 "Opens Tankard when you log in, as a macOS login item." = "Ouvre Tankard à l’ouverture de session, comme élément d’ouverture macOS.";
@@ -867,11 +868,13 @@
 "Show Older Copy" = "Afficher l’ancienne copie";
 "Show Tankard in the menu bar" = "Afficher Tankard dans la barre des menus";
 "Show Terminal Command" = "Afficher la commande Terminal";
+"Show Upgrade Progress" = "Afficher la progression de la mise à jour";
 "Show What Uses It" = "Afficher ce qui l’utilise";
 "Show What Uses It (%lld)" = "Afficher ce qui l’utilise (%lld)";
 "Show all upgrades in Tankard" = "Afficher toutes les mises à niveau dans Tankard";
 "Show in Finder" = "Afficher dans le Finder";
 "Show in Installed" = "Afficher dans les installés";
+"Show in Tankard" = "Afficher dans Tankard";
 "Show new vulnerabilities in the menu bar" = "Afficher les nouvelles vulnérabilités dans la barre des menus";
 "Show the Auto-update log" = "Afficher le journal de mise à jour automatique";
 "Show vulnerable packages in Tankard" = "Afficher les paquets vulnérables dans Tankard";

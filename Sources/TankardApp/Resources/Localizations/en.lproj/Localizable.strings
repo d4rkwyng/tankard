@@ -679,6 +679,7 @@
 "Open Tankard at login" = "Open Tankard at login";
 "Open Terminal" = "Open Terminal";
 "Open in Terminal" = "Open in Terminal";
+"Open the Tankard window with this run in it" = "Open the Tankard window with this run in it";
 "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here." = "Opened in Terminal. It lists the commands again and waits for Return. When it finishes, open a new terminal window and click Refresh here.";
 "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard." = "Opened in Terminal. It waits for Return, then Homebrew's uninstaller asks once more. When it finishes, quit Tankard.";
 "Opens Tankard when you log in, as a macOS login item." = "Opens Tankard when you log in, as a macOS login item.";
@@ -867,11 +868,13 @@
 "Show Older Copy" = "Show Older Copy";
 "Show Tankard in the menu bar" = "Show Tankard in the menu bar";
 "Show Terminal Command" = "Show Terminal Command";
+"Show Upgrade Progress" = "Show Upgrade Progress";
 "Show What Uses It" = "Show What Uses It";
 "Show What Uses It (%lld)" = "Show What Uses It (%lld)";
 "Show all upgrades in Tankard" = "Show all upgrades in Tankard";
 "Show in Finder" = "Show in Finder";
 "Show in Installed" = "Show in Installed";
+"Show in Tankard" = "Show in Tankard";
 "Show new vulnerabilities in the menu bar" = "Show new vulnerabilities in the menu bar";
 "Show the Auto-update log" = "Show the Auto-update log";
 "Show vulnerable packages in Tankard" = "Show vulnerable packages in Tankard";

@@ -40,10 +40,13 @@ final class DockIconController {
 
     /// A window that keeps the Dock icon: a titled window that is visible or
     /// minimized (it lives in the Dock). The menu-bar panel and the status
-    /// item's window are not titled windows.
+    /// item's window are not titled windows; the progress panel is left out.
     static func counts(_ w: NSWindow) -> Bool {
         guard w.styleMask.contains(.titled), w.isVisible || w.isMiniaturized else { return false }
         if let p = w as? NSPanel, p.styleMask.contains(.nonactivatingPanel) { return false }
+        // 0.8.5: the menu-bar Upgrade's progress panel keeps Tankard as it
+        // was (menu-bar-only stays menu-bar-only).
+        if w.identifier?.rawValue == ProgressPanelController.identifier { return false }
         let cls = String(describing: type(of: w))
         return !cls.contains("MenuBarExtra") && !cls.contains("StatusBar")
     }
