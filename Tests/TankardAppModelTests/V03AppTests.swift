@@ -730,6 +730,19 @@ struct AboutTests {
         #expect(FileManager.default.fileExists(atPath: root.appendingPathComponent("docs/usage.md").path))
     }
 
+    /// 0.8.5: Help ▸ Homebrew Words Explained opens the guide's glossary,
+    /// whose heading makes that anchor on GitHub.
+    @Test func glossaryLinksToAHeadingInTheGuide() throws {
+        #expect(AboutInfo.glossary(version: "0.8.5").absoluteString
+                == "https://github.com/d4rkwyng/tankard/blob/v0.8.5/docs/usage.md#glossary-homebrew-words-explained")
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let guide = try String(contentsOf: root.appendingPathComponent("docs/usage.md"), encoding: .utf8)
+        #expect(guide.contains("\n## Glossary: Homebrew words explained\n"))
+        for word in ["Formula", "Cask (app)", "Bottle", "Tap", "Keg", "Pinned", "Poured", "Built from source", "Dependency", "Restore Point", "Intelbrew"] {
+            #expect(guide.contains("| **\(word)"), "\(word)")
+        }
+    }
+
     @Test func helpFallsBackToMainForADevOrUnknownVersion() {
         let base = "https://github.com/d4rkwyng/tankard/blob/"
         #expect(AboutInfo.help(version: "0.8.4").absoluteString == base + "v0.8.4/docs/usage.md")
