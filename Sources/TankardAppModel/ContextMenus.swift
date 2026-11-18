@@ -101,9 +101,11 @@ public enum ContextMenus {
                                          systemImage: "shippingbox.and.arrow.backward",
                                          action: .replaceWithBottle, isEnabled: !busy))
         }
-        actions.append(p.pinned
-            ? MenuItemModel(id: "unpin", title: String(localized: "Unpin"), systemImage: "pin.slash", action: .unpin, isEnabled: !busy)
-            : MenuItemModel(id: "pin", title: String(localized: "Pin"), systemImage: "pin", action: .pin, isEnabled: !busy))
+        if PinCommands.offered(for: p) {
+            actions.append(p.pinned
+                ? MenuItemModel(id: "unpin", title: String(localized: "Unpin"), systemImage: "pin.slash", action: .unpin, isEnabled: !busy)
+                : MenuItemModel(id: "pin", title: String(localized: "Pin"), systemImage: "pin", action: .pin, isEnabled: !busy))
+        }
         actions.append(MenuItemModel(id: "uninstall", title: uninstallTitle(dependents: dependents),
                                      systemImage: dependents.isEmpty ? "trash" : "lock",
                                      action: .uninstall, isEnabled: !busy && dependents.isEmpty,

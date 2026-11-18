@@ -43,8 +43,11 @@ struct PackageRelationsSection: View {
         if let store {
             let graph = store.dependencyGraph
             VStack(alignment: .leading, spacing: 12) {
-                PinBox(package: package, busy: store.isBusy, running: store.quickAction) { pin in
-                    store.setPinned(package, pin)
+                // 0.8.6 (VM test L2): not for a package brew can't read.
+                if PinCommands.offered(for: package) {
+                    PinBox(package: package, busy: store.isBusy, running: store.quickAction) { pin in
+                        store.setPinned(package, pin)
+                    }
                 }
                 let uses = graph.dependents(of: package)
                 let deps = graph.dependencies(of: package)

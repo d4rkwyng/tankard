@@ -17,6 +17,11 @@ public enum PinCommands {
     public static func display(pin: Bool, for p: Package) -> String {
         BrewCommands.display(arguments(pin: pin, for: p))
     }
+
+    /// 0.8.6 (VM test L2): Pin and Unpin are offered only for a package
+    /// brew can read: for one it can't (an untrusted tap), `brew pin`
+    /// fails with "Refusing to load formula…".
+    public static func offered(for p: Package) -> Bool { !p.isUnreadable }
 }
 
 /// What a queued one-off command (pin, unpin, a service action) did.
@@ -90,7 +95,7 @@ public extension AppStore {
 
     /// `brew pin` or `brew unpin` through the queue, then a re-read.
     func setPinned(_ p: Package, _ pinned: Bool) {
-        guard p.pinned != pinned, p.kind == .formula || p.kind == .cask else { return }
+        guard p.pinned != pinned, p.kind == .formula || p.kind == .cask, PinCommands.offered(for: p) else { return }
         let args = PinCommands.arguments(pin: pinned, for: p)
         Task {
             let r = await runQuick(args)

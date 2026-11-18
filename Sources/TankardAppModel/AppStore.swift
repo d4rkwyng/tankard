@@ -9,11 +9,16 @@ public struct StoreError: Equatable, Sendable {
     /// When brew needed sudo (or the app can't do the step itself): the
     /// command for the user to run in Terminal.
     public var terminalCommand: String?
+    /// 0.8.6 (VM test L2): reading brew's status failed (the status bar's
+    /// "Last refresh failed", the banner's "Showing the last data Tankard
+    /// read"); false for a failed action such as a pin.
+    public var fromRefresh: Bool
 
-    public init(title: String, detail: String, terminalCommand: String? = nil) {
+    public init(title: String, detail: String, terminalCommand: String? = nil, fromRefresh: Bool = false) {
         self.title = title
         self.detail = detail
         self.terminalCommand = terminalCommand
+        self.fromRefresh = fromRefresh
     }
 }
 
@@ -601,7 +606,7 @@ public final class AppStore {
         do {
             client = try resolvedClient()
         } catch {
-            self.error = StoreError(title: String(localized: "Homebrew not found"), detail: String(describing: error))
+            self.error = StoreError(title: String(localized: "Homebrew not found"), detail: String(describing: error), fromRefresh: true)
             if case BrewClientError.brewNotFound(let searched) = error {
                 homebrewState = .missing(searched: searched)
             } else {
@@ -641,7 +646,7 @@ public final class AppStore {
             LaunchTiming.mark("list (brew)", once: true)
             LaunchTiming.note("status read " + fresh.timingsMs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: " "))
             try? deps.cache?.save(fresh)
-            error = updateError
+            error = updateError.map(Self.refreshFailure)
             homebrewState = .ready
             startInsights(force: kind != .afterUpdate, measureSizes: false)
             // 0.8.1: relaunched for App Management: the operation it was for.
@@ -653,7 +658,7 @@ public final class AppStore {
             }
         } catch {
             // Keep what's on screen; say what went wrong.
-            self.error = updateError ?? StoreError(title: String(localized: "Refresh failed"), detail: String(describing: error))
+            self.error = Self.refreshFailure(updateError ?? StoreError(title: String(localized: "Refresh failed"), detail: String(describing: error)))
             if let broken = await Self.probeBroken(client) {
                 homebrewState = broken
             } else if homebrewState != .ready {
@@ -721,6 +726,13 @@ public final class AppStore {
     }
 
     public func dismissError() { error = nil }
+
+    /// 0.8.6 (VM test L2): an error from reading status (or its brew update).
+    nonisolated static func refreshFailure(_ e: StoreError) -> StoreError {
+        var e = e
+        e.fromRefresh = true
+        return e
+    }
 
     // MARK: Discover
 

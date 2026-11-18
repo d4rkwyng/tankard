@@ -36,7 +36,7 @@ struct StatusBar: View {
                     // 0.8.2: what the Refresh just found (UserCheckFeedback).
                     separator
                     Text(note).lineLimit(1).truncationMode(.tail).help(note)
-                } else if store.error != nil {
+                } else if store.error?.fromRefresh == true {
                     separator
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     Text("Last refresh failed")

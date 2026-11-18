@@ -438,7 +438,9 @@ struct ErrorBanner: View {
                     Text("Run this in Terminal:").font(.system(size: 11)).foregroundStyle(.secondary)
                     CommandBox(command: cmd).frame(maxWidth: 420)
                 }
-                Text("Showing the last data Tankard read.").font(.system(size: 11)).foregroundStyle(.tertiary)
+                if error.fromRefresh {
+                    Text("Showing the last data Tankard read.").font(.system(size: 11)).foregroundStyle(.tertiary)
+                }
             }
             Spacer()
             Button("Dismiss", action: dismiss).controlSize(.small)
