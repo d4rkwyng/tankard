@@ -50834,6 +50834,58 @@
         }
       }
     },
+    "The log below shows what brew printed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Protokoll unten zeigt, was brew ausgegeben hat"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le journal ci-dessous montre ce que brew a affiché"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El registro de abajo muestra lo que imprimió brew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brewの出力は下のログにあります"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下方日志显示了 brew 的输出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O registro abaixo mostra o que o brew exibiu"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il registro qui sotto mostra cosa ha stampato brew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 출력한 내용은 아래 로그에 있습니다"
+          }
+        }
+      }
+    },
     "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.": {
       "localizations": {
         "de": {

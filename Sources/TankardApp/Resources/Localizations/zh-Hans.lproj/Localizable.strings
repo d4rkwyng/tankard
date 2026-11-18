@@ -970,6 +970,7 @@
 "The last %lld automatic runs. brew's full output is in %@." = "最近 %lld 次自动运行。brew 的完整输出位于 %@。";
 "The last scan (%@) found none." = "上次扫描（%@）未发现任何漏洞。";
 "The last upgrade didn't finish" = "上次升级未完成";
+"The log below shows what brew printed" = "下方日志显示了 brew 的输出";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "菜单栏图标已关闭，因此关闭窗口时 Tankard 会退出，且届时不会运行任何任务。";
 "The official installer from brew.sh." = "来自 brew.sh 的官方安装程序。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "旧版本仍已安装。brew uninstall 会移除新版本，然后 brew link 会链接旧版本。";

@@ -970,6 +970,7 @@
 "The last %lld automatic runs. brew's full output is in %@." = "Die letzten %lld automatischen Läufe. Die vollständige Ausgabe von brew liegt in %@.";
 "The last scan (%@) found none." = "Der letzte Scan (%@) hat keine gefunden.";
 "The last upgrade didn't finish" = "Die letzte Aktualisierung wurde nicht fertig";
+"The log below shows what brew printed" = "Das Protokoll unten zeigt, was brew ausgegeben hat";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "Das Menüleistensymbol ist aus, daher beendet sich Tankard beim Schließen des Fensters, und nichts läuft dann.";
 "The official installer from brew.sh." = "Das offizielle Installationsprogramm von brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "Die alte Version ist noch installiert. brew uninstall entfernt die neue, dann verknüpft brew link die alte.";

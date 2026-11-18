@@ -970,6 +970,7 @@
 "The last %lld automatic runs. brew's full output is in %@." = "The last %lld automatic runs. brew's full output is in %@.";
 "The last scan (%@) found none." = "The last scan (%@) found none.";
 "The last upgrade didn't finish" = "The last upgrade didn't finish";
+"The log below shows what brew printed" = "The log below shows what brew printed";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.";
 "The official installer from brew.sh." = "The official installer from brew.sh.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "The old version is still installed. brew uninstall removes the new one, then brew link links the old one.";

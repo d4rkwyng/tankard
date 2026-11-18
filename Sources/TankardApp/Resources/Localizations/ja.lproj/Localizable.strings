@@ -970,6 +970,7 @@
 "The last %lld automatic runs. brew's full output is in %@." = "直近%lld回の自動実行。brewの完全な出力は%@にあります。";
 "The last scan (%@) found none." = "前回のスキャン（%@）では見つかりませんでした。";
 "The last upgrade didn't finish" = "前回のアップグレードは完了していません";
+"The log below shows what brew printed" = "brewの出力は下のログにあります";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "メニューバーアイコンがオフのため、ウインドウを閉じるとTankardは終了し、その間は何も実行されません。";
 "The official installer from brew.sh." = "brew.shの公式インストーラ。";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "古いバージョンはまだインストールされています。brew uninstallで新しい方を削除し、brew linkで古い方をリンクします。";

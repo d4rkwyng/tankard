@@ -295,10 +295,20 @@ public final class UpgradeSession: Identifiable {
             return intelbrewMode && ib == n ? String(localized: "Swaps source builds for Intelbrew bottles")
                 : (n == 1 ? String(localized: "Swaps source build for bottle") : String(localized: "Swaps source builds for bottles"))
         }
-        let formulae = items.map(\.package).filter { $0.kind == .formula }
+        // 0.8.4: once finished with failures, what was actually done, not
+        // the plan: a failed download said "1 build from source" although
+        // nothing was built. Nothing done: why, when brew's output says.
+        var packages = items.map(\.package)
+        if isFinished && !failedItems.isEmpty {
+            packages = items.filter { $0.state == .done }.map(\.package)
+            if packages.isEmpty {
+                return failureKinds.last?.title ?? String(localized: "The log below shows what brew printed")
+            }
+        }
+        let formulae = packages.filter { $0.kind == .formula }
         let bottles = formulae.filter { $0.upgradeHasBottle == true }
         let compiles = formulae.filter { $0.upgradeHasBottle != true }
-        let casks = items.count - formulae.count
+        let casks = packages.count - formulae.count
         var parts: [String] = []
         if !bottles.isEmpty && action == .install && intelbrewMode {
             // Installs know whose bottle it is (from the catalogue).

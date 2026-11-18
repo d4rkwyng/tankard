@@ -970,6 +970,7 @@
 "The last %lld automatic runs. brew's full output is in %@." = "최근 자동 실행 %lld건. brew의 전체 출력은 %@에 있습니다.";
 "The last scan (%@) found none." = "마지막 검사(%@)에서 발견되지 않았습니다.";
 "The last upgrade didn't finish" = "지난 업그레이드가 끝나지 않았습니다";
+"The log below shows what brew printed" = "brew가 출력한 내용은 아래 로그에 있습니다";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "이전 버전이 아직 설치되어 있습니다. brew uninstall이 새 버전을 제거한 다음 brew link가 이전 버전을 링크합니다.";
