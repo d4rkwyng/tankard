@@ -33,7 +33,7 @@ import TankardCore
 /// installs and removes what the script says. No background check and no
 /// auto-update run during it, unless TANKARD_E2E_BACKGROUND=1.
 struct ScriptLaunch {
-    static let defaultsSuite = "net.mindtricks.tankard.e2e"
+    static let defaultsSuite = AppManagement.e2eSuitePrefix
     /// Seconds; set by e2e.sh in the run's suite (`defaults write`).
     static let backgroundIntervalKey = "e2eBackgroundUpdateInterval"
 
@@ -62,9 +62,7 @@ struct ScriptLaunch {
     /// A per-run suite name, never the real settings' domain or anything
     /// outside the e2e prefix.
     static func suite(_ requested: String?) -> String {
-        guard let r = requested, r.hasPrefix(defaultsSuite + "."), r.count > defaultsSuite.count + 1,
-              r.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" || $0 == "_" }) else { return defaultsSuite }
-        return r
+        AppManagement.validE2ESuite(requested) ?? defaultsSuite
     }
 
     var defaults: UserDefaults { UserDefaults(suiteName: suiteName) ?? .standard }

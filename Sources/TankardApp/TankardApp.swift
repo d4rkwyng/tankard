@@ -438,6 +438,20 @@ enum Relauncher {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: c.executable)
         p.arguments = c.arguments
+        // 0.8.4: no TANKARD_* variable reaches the new copy (`open -n`
+        // passes the helper's environment on); an e2e run's copy gets an
+        // idle, isolated e2e identity instead (AppManagement.relaunchEnvironment).
+        let env = AppManagement.relaunchEnvironment(ProcessInfo.processInfo.environment)
+        if let note = env.note { log.notice("\(note, privacy: .public)") }
+        if let steps = env.scriptPath {
+            do {
+                try AppManagement.prepareRelaunchScript(env)
+                log.notice("relaunch: the new copy stays an idle e2e run (steps \(steps, privacy: .public))")
+            } catch {
+                log.error("relaunch: can't create \(steps, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            }
+        }
+        p.environment = env.environment
         do {
             try p.run()
         } catch {
