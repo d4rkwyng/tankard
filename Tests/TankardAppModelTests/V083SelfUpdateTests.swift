@@ -298,7 +298,8 @@ struct V083SelfUpdateTests {
         var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: FakeStreamRunner(log: log) { _, _ in 0 },
                                          cache: cache, logURL: nil)
         deps.bundlePath = app
-        deps.updateFeed = UpdateFeed { (Data(#"{"tag_name":"v0.8.4"}"#.utf8), 200) }
+        // A feed version far above TankardVersion.string, so a version bump never makes it "current".
+        deps.updateFeed = UpdateFeed { (Data(#"{"tag_name":"v99.0.0"}"#.utf8), 200) }
         deps.selfCaskroomExists = { path in path == intelInstall.prefix + "/Caskroom/tankard" }
         // A cache 10 minutes old, written before the tankard cask was installed.
         var old = try await client.status()
@@ -316,7 +317,7 @@ struct V083SelfUpdateTests {
         #expect(log.count("info") == reads + 1)
         #expect(store.tankardCask?.installedVersion == "0.8.3")
         guard case .available(let r)? = store.selfUpdate else { Issue.record("\(String(describing: store.selfUpdate))"); return }
-        #expect(r.version == "0.8.4")
+        #expect(r.version == "99.0.0")
 
         // A zip copy (no tankard in the Caskroom): no extra read.
         var zip = deps
