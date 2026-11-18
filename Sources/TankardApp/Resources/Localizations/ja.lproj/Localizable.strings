@@ -454,6 +454,7 @@
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew は %@ として記録します。自己更新するアプリについて brew はバージョンを比較しません。";
 "Homebrew still has it, but will disable it later." = "Homebrewにはまだありますが、後で無効化されます。";
 "Homebrew updates it" = "Homebrew が更新";
+"Homebrew was busy" = "Homebrew が使用中でした";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrewコントリビューター、BSD-2-Clause。";
 "Homebrew ▸ Health shows which folder isn't writable and how to fix it." = "Homebrew ▸ ヘルスチェックに、書き込めないフォルダと修正方法が表示されます。";
 "Homebrew's API (formulae.brew.sh)" = "HomebrewのAPI(formulae.brew.sh)";
@@ -708,6 +709,7 @@
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run." = "終了すると停止します。Homebrew は途中の手順を元に戻し、残りは実行されません。";
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time." = "終了すると停止します。Homebrew は途中の手順を元に戻し、残りは実行されません。次回、残りのアップグレードを提案します。";
 "Quitting now stops it: Homebrew undoes the unfinished step." = "終了すると停止します。Homebrew は途中の手順を元に戻します。";
+"Quitting now stops it: Homebrew undoes the unfinished step. The next automatic run upgrades what's left." = "終了すると停止します。Homebrew は途中の手順を元に戻します。残りは次回の自動実行でアップグレードされます。";
 "Read from Homebrew's API; not tapped locally." = "HomebrewのAPIから読み込み。ローカルではタップされていません。";
 "Reading installed packages…" = "インストール済みパッケージを読み込み中…";
 "Reading package details…" = "パッケージの詳細を読み込み中…";
@@ -904,6 +906,8 @@
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankardはダイアログでパスワードを尋ね、sudoにのみ渡します。保存することはありません。キャンセルすると、シートにターミナル用のコマンドが表示されます。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "ここではパスワードを尋ねられないため、シートにターミナル用のコマンドが表示されます。";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankardはこの MacのHomebrewのprefixをまだ読み込んでいません。先に更新してください。";
+"Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard は %@ を自動でアップグレード中です(%lld/%lld)。";
+"Tankard is upgrading %@ automatically." = "Tankard は %@ を自動でアップグレード中です。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。";
@@ -914,6 +918,8 @@
 "Tankard on GitHub" = "GitHubのTankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankardは自分のサービスのみを制御し、sudoは実行しません。ターミナルでこれを実行してください:";
 "Tankard quit after %lld of %lld. Still to upgrade: %@." = "Tankard は %lld/%lld の時点で終了しました。残りのアップグレード: %@。";
+"Tankard quit during the run" = "実行中に Tankard が終了しました";
+"Tankard quit; the next automatic run upgrades it" = "Tankard が終了しました。次回の自動実行でアップグレードされます";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOSがApp管理を適用できるようTankardを再起動しました。「もう一度実行」をクリックするまで何も実行されません。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」▸「一般」でオフにできます。";
 "Tankard update available" = "Tankardのアップデートがあります";
@@ -1215,6 +1221,7 @@
 "upgraded" = "アップグレード済み";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@のアップグレードには%@をソースから再ビルドする必要があります。手動でアップグレードしてください";
 "user/repo" = "user/repo";
+"waited for another Homebrew command" = "別の Homebrew コマンドを待機しました";
 "was built from a source file whose checksum changed upstream" = "上流でソースファイルのチェックサムが変更されたソースからビルドされました";
 "would overwrite or take over apps without confirmation" = "確認なしでアプリを上書きまたは引き継ぎます";
 "yesterday %@" = "昨日 %@";

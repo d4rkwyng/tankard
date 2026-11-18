@@ -23949,6 +23949,58 @@
         }
       }
     },
+    "Homebrew was busy": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew war beschäftigt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew était occupé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew estaba ocupado"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew が使用中でした"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 正忙"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew estava ocupado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew era occupato"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 사용 중이었습니다"
+          }
+        }
+      }
+    },
     "Homebrew © Homebrew contributors, BSD-2-Clause.": {
       "localizations": {
         "de": {
@@ -37157,6 +37209,58 @@
         }
       }
     },
+    "Quitting now stops it: Homebrew undoes the unfinished step. The next automatic run upgrades what's left.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden stoppt es: Homebrew macht den offenen Schritt rückgängig. Der nächste automatische Lauf aktualisiert den Rest."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter l'arrête : Homebrew annule l'étape en cours. La prochaine exécution automatique met à jour le reste."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir lo detiene: Homebrew deshace el paso sin terminar. La próxima ejecución automática actualiza el resto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了すると停止します。Homebrew は途中の手順を元に戻します。残りは次回の自動実行でアップグレードされます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出会停止它:Homebrew 撤销未完成的步骤。下次自动运行会升级剩余的软件包。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar interrompe: o Homebrew desfaz a etapa inacabada. A próxima execução automática atualiza o restante."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscire lo interrompe: Homebrew annulla il passaggio in corso. La prossima esecuzione automatica aggiorna il resto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료하면 중지됩니다. Homebrew가 끝나지 않은 단계를 되돌립니다. 나머지는 다음 자동 실행에서 업그레이드됩니다."
+          }
+        }
+      }
+    },
     "Read from Homebrew's API; not tapped locally.": {
       "localizations": {
         "de": {
@@ -47402,6 +47506,110 @@
         }
       }
     },
+    "Tankard is upgrading %@ automatically (%lld of %lld).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard aktualisiert %@ automatisch (%lld von %lld)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard met à jour %@ automatiquement (%lld sur %lld)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard está actualizando %@ automáticamente (%lld de %lld)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard は %@ を自動でアップグレード中です(%lld/%lld)。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 正在自动升级 %@(第 %lld 个,共 %lld 个)。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard está atualizando %@ automaticamente (%lld de %lld)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard sta aggiornando %@ automaticamente (%lld di %lld)."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %@을(를) 자동으로 업그레이드하고 있습니다(%lld/%lld)."
+          }
+        }
+      }
+    },
+    "Tankard is upgrading %@ automatically.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard aktualisiert %@ automatisch."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard met à jour %@ automatiquement."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard está actualizando %@ automáticamente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard は %@ を自動でアップグレード中です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 正在自动升级 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard está atualizando %@ automaticamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard sta aggiornando %@ automaticamente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %@을(를) 자동으로 업그레이드하고 있습니다."
+          }
+        }
+      }
+    },
     "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard.": {
       "localizations": {
         "de": {
@@ -47918,6 +48126,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 %lld/%lld 시점에 종료되었습니다. 남은 업그레이드: %@."
+          }
+        }
+      }
+    },
+    "Tankard quit during the run": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard wurde während des Laufs beendet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a été quitté pendant l'exécution"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard se cerró durante la ejecución"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実行中に Tankard が終了しました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 在运行期间退出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard foi encerrado durante a execução"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard è stato chiuso durante l'esecuzione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실행 중에 Tankard가 종료되었습니다"
+          }
+        }
+      }
+    },
+    "Tankard quit; the next automatic run upgrades it": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard beendet; der nächste automatische Lauf aktualisiert es"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a été quitté ; la prochaine exécution automatique le met à jour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard se cerró; la próxima ejecución automática lo actualiza"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard が終了しました。次回の自動実行でアップグレードされます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 已退出;下次自动运行会升级它"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard foi encerrado; a próxima execução automática o atualiza"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard è stato chiuso; la prossima esecuzione automatica lo aggiorna"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 종료되었습니다. 다음 자동 실행에서 업그레이드됩니다"
           }
         }
       }
@@ -63570,6 +63882,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "user/repo"
+          }
+        }
+      }
+    },
+    "waited for another Homebrew command": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "auf anderen Homebrew-Befehl gewartet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a attendu une autre commande Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "esperó a otro comando de Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の Homebrew コマンドを待機しました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待了另一个 Homebrew 命令"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aguardou outro comando do Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ha atteso un altro comando Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 Homebrew 명령을 기다렸습니다"
           }
         }
       }

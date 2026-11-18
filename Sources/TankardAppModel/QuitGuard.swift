@@ -17,6 +17,15 @@ import TankardCore
 // upgradable are offered: "Upgrade the remaining N packages", through
 // requestUpgrade (the compile plan, pins and rules apply again). A run that
 // ends in Tankard, even stopped, clears it.
+//
+// 0.8.4: an automatic run (AutoUpdate.swift) asks the same way while it is
+// on an upgrade step. It writes no run journal and the next launch offers
+// nothing: the automatic run is unattended, so a sheet at the next launch
+// would ask about a run nobody started. Its own log records the stop
+// (each step not run: "Tankard quit; the next automatic run upgrades it"),
+// and the interrupted slot opens again, so the scheduler runs it at the
+// next launch once its conditions hold (startup delay, AC power, idle),
+// with a fresh brew update and safe-mode plan.
 
 /// The upgrade run a quit interrupted (JSON in the settings' defaults).
 public struct RunJournal: Codable, Equatable, Sendable {
@@ -52,7 +61,13 @@ public struct QuitPrompt: Equatable, Sendable {
     public var total: Int
 
     public var isUpgrade: Bool
+    /// 0.8.4: an automatic update's step.
+    public var isAutomatic = false
     public var message: String {
+        if isAutomatic {
+            return total > 1 ? String(localized: "Tankard is upgrading \(name) automatically (\(index) of \(total)).")
+                : String(localized: "Tankard is upgrading \(name) automatically.")
+        }
         if isUpgrade {
             return total > 1 ? String(localized: "Homebrew is still upgrading \(name) (\(index) of \(total)).")
                 : String(localized: "Homebrew is still upgrading \(name).")
@@ -61,7 +76,8 @@ public struct QuitPrompt: Equatable, Sendable {
             : String(localized: "Homebrew is still working on \(name).")
     }
     public var detail: String {
-        total > 1 && isUpgrade ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time.")
+        isAutomatic ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step. The next automatic run upgrades what's left.")
+            : total > 1 && isUpgrade ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time.")
             : total > 1 ? String(localized: "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run.")
             : String(localized: "Quitting now stops it: Homebrew undoes the unfinished step.")
     }
@@ -75,8 +91,12 @@ public enum QuitChoice: Sendable {
 }
 
 extension AppStore {
-    /// Non-nil when quitting would interrupt brew: the sheet's run is going.
+    /// Non-nil when quitting would interrupt brew: the sheet's run is going,
+    /// or (0.8.4) an automatic run is on an upgrade step.
     public var quitPrompt: QuitPrompt? {
+        if autoUpdate.isRunning, !autoUpdate.quitRequested, let step = autoUpdate.step {
+            return QuitPrompt(name: step.name, index: step.index, total: step.total, isUpgrade: true, isAutomatic: true)
+        }
         guard let s = upgrade, !s.isFinished else { return nil }
         let c = s.current ?? s.items.first { $0.state == .waiting }
         guard let c else { return nil }
@@ -89,13 +109,25 @@ extension AppStore {
     /// `stopLimit` to wind down (its own SIGTERM/SIGKILL steps are within it).
     public func prepareToQuit(_ choice: QuitChoice, stopLimit: Duration = .seconds(35),
                               done: @escaping @MainActor () -> Void) {
+        let deadline: ContinuousClock.Instant? = choice == .now ? .now + stopLimit : nil
+        // 0.8.4: an automatic run: no journal (see the top of this file).
+        if autoUpdate.isRunning, autoUpdate.step != nil {
+            autoUpdate.stopForQuit(choice, queue: queue)
+            Task { @MainActor in
+                while self.autoUpdate.isRunning {
+                    if let deadline, ContinuousClock.now > deadline { break }
+                    try? await Task.sleep(for: .milliseconds(100))
+                }
+                done()
+            }
+            return
+        }
         guard let s = upgrade, !s.isFinished else { done(); return }
         quittingMidRun = true
         switch choice {
         case .afterCurrent: s.stopAfterCurrent()
         case .now: s.stopNow()
         }
-        let deadline: ContinuousClock.Instant? = choice == .now ? .now + stopLimit : nil
         Task { @MainActor in
             while !s.isFinished {
                 if let deadline, ContinuousClock.now > deadline { break }

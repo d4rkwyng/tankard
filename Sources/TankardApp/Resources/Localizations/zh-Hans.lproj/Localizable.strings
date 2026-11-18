@@ -454,6 +454,7 @@
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew 记录的版本为 %@；对于自行更新的 App，brew 不比较版本。";
 "Homebrew still has it, but will disable it later." = "Homebrew 仍保留它，但之后会将其停用。";
 "Homebrew updates it" = "由 Homebrew 更新";
+"Homebrew was busy" = "Homebrew 正忙";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © Homebrew 贡献者，BSD-2-Clause。";
 "Homebrew ▸ Health shows which folder isn't writable and how to fix it." = "Homebrew ▸ 健康状况会显示哪个文件夹不可写以及如何修复。";
 "Homebrew's API (formulae.brew.sh)" = "Homebrew 的 API（formulae.brew.sh）";
@@ -708,6 +709,7 @@
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run." = "退出会停止它:Homebrew 撤销未完成的步骤,其余的不会运行。";
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time." = "退出会停止它:Homebrew 撤销未完成的步骤,其余的不会运行。下次 Tankard 会提议升级剩下的。";
 "Quitting now stops it: Homebrew undoes the unfinished step." = "退出会停止它:Homebrew 撤销未完成的步骤。";
+"Quitting now stops it: Homebrew undoes the unfinished step. The next automatic run upgrades what's left." = "退出会停止它:Homebrew 撤销未完成的步骤。下次自动运行会升级剩余的软件包。";
 "Read from Homebrew's API; not tapped locally." = "读取自 Homebrew 的 API；未在本地添加 tap。";
 "Reading installed packages…" = "正在读取已安装的软件包…";
 "Reading package details…" = "正在读取软件包详情…";
@@ -904,6 +906,8 @@
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard 会在对话框中询问密码，并只把它交给 sudo；从不存储。如果取消，表单会显示用于“终端”的命令。";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard 无法在这里询问密码，因此表单会显示用于“终端”的命令。";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard 尚未读取这台 Mac 的 Homebrew 前缀。请先刷新。";
+"Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard 正在自动升级 %@(第 %lld 个,共 %lld 个)。";
+"Tankard is upgrading %@ automatically." = "Tankard 正在自动升级 %@。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
@@ -914,6 +918,8 @@
 "Tankard on GitHub" = "GitHub 上的 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard 只控制你自己的服务，从不运行 sudo。请在“终端”中运行：";
 "Tankard quit after %lld of %lld. Still to upgrade: %@." = "Tankard 在第 %lld 个(共 %lld 个)后退出。仍需升级:%@。";
+"Tankard quit during the run" = "Tankard 在运行期间退出";
+"Tankard quit; the next automatic run upgrades it" = "Tankard 已退出;下次自动运行会升级它";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard 已重新启动，以便 macOS 应用“App 管理”。在你点按“再次运行”之前不会运行任何操作。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”▸“通用”中关闭。";
 "Tankard update available" = "Tankard 有可用更新";
@@ -1215,6 +1221,7 @@
 "upgraded" = "已升级";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "升级 %@ 需要从源码重新构建 %@；请手动升级";
 "user/repo" = "user/repo";
+"waited for another Homebrew command" = "等待了另一个 Homebrew 命令";
 "was built from a source file whose checksum changed upstream" = "由上游已更改校验和的源文件构建";
 "would overwrite or take over apps without confirmation" = "会在未确认的情况下覆盖或接管 App";
 "yesterday %@" = "昨天 %@";

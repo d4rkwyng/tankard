@@ -210,6 +210,12 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
     /// 0.8.3: a pkg (or sudo installer) cask: brew would ask for the
     /// administrator password, and an automatic run never asks.
     case needsPassword
+    /// 0.8.4: another brew (Terminal's) held brew's lock longer than the
+    /// lock wait allows. Not a failure: the next run tries again.
+    case homebrewBusy
+    /// 0.8.4: Tankard quit (through the quit guard) before this step ran or
+    /// finished. The interrupted slot runs again at the next launch.
+    case quit
 
     public var text: String {
         switch self {
@@ -224,6 +230,8 @@ public enum AutoUpdateSkip: Equatable, Sendable, Codable {
         case .versionSkipped(let v): return String(localized: "you chose to skip \(v)")
         case .appUpdatesItself: return String(localized: "set to update itself")
         case .needsPassword: return String(localized: "needs your administrator password; upgrade it by hand")
+        case .homebrewBusy: return String(localized: "Homebrew was busy")
+        case .quit: return String(localized: "Tankard quit; the next automatic run upgrades it")
         case .bumpRule(let a, let b, let bump):
             if bump == VersionBump.unknown.title {
                 return String(localized: "\(a) → \(b): versions can't be compared, so only \"All versions\" upgrades it; upgrade by hand")
@@ -715,6 +723,13 @@ public final class AutoUpdater {
     public private(set) var isRunning = false
     /// "Auto-update: brew upgrade --formula homebrew/core/xz" while it runs.
     public private(set) var activity: String?
+    /// 0.8.4: the upgrade step the run is on (the quit guard's alert), nil
+    /// outside the upgrade steps (brew update, the downloads, the re-read).
+    public private(set) var step: AutoUpdateStep?
+    /// 0.8.4: the quit guard stopped the run (QuitGuard.swift).
+    @ObservationIgnored public private(set) var quitRequested = false
+    /// The queued id of the running upgrade step (Quit Now cancels it).
+    @ObservationIgnored private var stepCommand: UUID?
     /// 0.8.3: why automatic runs are paused (brew.env turns off brew's
     /// installed-dependents check), or nil. Updated by `checkPause` (each
     /// background tick and at the start of a run); Settings and the menu
@@ -779,12 +794,17 @@ public final class AutoUpdater {
     public func run(store: AppStore, notifier: UpgradeNotifying?, now: @escaping () -> Date = { Date() }) async -> AutoUpdateRun? {
         guard !isRunning else { return nil }
         isRunning = true
+        quitRequested = false
         defer {
             isRunning = false
             activity = nil
+            step = nil
+            stepCommand = nil
         }
         let started = now()
-        // Recorded first, so a slot never runs twice, even if this one fails.
+        // Recorded first, so a slot never runs twice, even if this one fails
+        // (0.8.4: unless Tankard quits mid-run: see `stopForQuit`).
+        let previousRun = settings.lastRun
         settings.lastRun = started
         var record = AutoUpdateRun(startedAt: started, dryRun: settings.dryRun)
 
@@ -829,16 +849,33 @@ public final class AutoUpdater {
         if !plan.run.isEmpty { store.saveRestorePoint(.autoUpdate, upgrading: plan.run) }
         // 0.8.3: the downloads first, in parallel (quietly: the log only).
         await prefetch(plan.run, store: store, logFile: logFile)
-        for p in plan.run {
+        // 0.8.4: a step that finds brew's lock held waits for it, as the
+        // sheet's steps do; after one wait runs out, the rest don't wait again
+        // (whatever holds it is long-running: one bounded wait per run).
+        var lockWait = store.deps.lockWait
+        for (n, p) in plan.run.enumerated() {
             guard settings.enabled else {
                 record.note = String(localized: "Stopped: auto-update was turned off during the run")
                 break
             }
-            let item = AutoUpdateRun.Item(name: p.name, isCask: p.kind == .cask, detail: Self.versions(p))
+            guard !quitRequested else { break }
+            var item = AutoUpdateRun.Item(name: p.name, isCask: p.kind == .cask, detail: Self.versions(p))
             activity = String(localized: "Auto-update: upgrading \(p.name)")
-            let (code, lines) = await runUpgrade(p, store: store, logFile: logFile)
-            if code == 0 {
+            step = AutoUpdateStep(name: p.name, index: n + 1, total: plan.run.count)
+            let result = await runUpgrade(p, store: store, logFile: logFile, lockWait: lockWait)
+            let (code, lines) = (result.code, result.lines)
+            if result.cancelled {
+                // Quit Now: brew stopped and undid the step (not a failure).
+                logFile?.append(["tankard: stopped \(p.name): Tankard is quitting"])
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.quit.text))
+            } else if code == 0 {
+                if result.waited { item.detail += " · " + String(localized: "waited for another Homebrew command") }
                 record.upgraded.append(item)
+            } else if BrewFailure.classify(lines) == .locked {
+                // The lock wait ran out (or there was none): skipped, not failed.
+                if result.waited { lockWait = nil }
+                logFile?.append(["tankard: skipped \(p.name): \(AutoUpdateSkip.homebrewBusy.text)"])
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.homebrewBusy.text))
             } else {
                 let tail = lines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
                 var why = SudoDetector.needsSudo(lines) ? String(localized: "needs administrator rights") : String(localized: "brew exited \(Int(code))") + (tail.isEmpty ? "" : ": \(tail)")
@@ -852,6 +889,26 @@ public final class AutoUpdater {
                 }
                 record.failed.append(.init(name: p.name, isCask: p.kind == .cask, detail: why))
             }
+        }
+        step = nil
+        if quitRequested {
+            // 0.8.4: quit mid-run. The steps not run are logged, the slot is
+            // opened again (lastRun back to the run before), and the next
+            // launch's scheduler runs it once its conditions hold, with a
+            // fresh brew update and plan. No prompt at the next launch, no
+            // re-read and no notification now: Tankard is quitting.
+            let done = Set((record.upgraded + record.failed + record.skipped).map(\.name))
+            for p in plan.run where !done.contains(p.name) {
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.quit.text))
+            }
+            // Stop After Current on the last step left nothing undone: the slot ran.
+            if record.skipped.contains(where: { $0.detail == AutoUpdateSkip.quit.text }) {
+                record.note = String(localized: "Tankard quit during the run")
+                logFile?.append(["tankard: Tankard quit during the run; the rest wait for the next automatic run"])
+                settings.lastRun = previousRun
+            }
+            logFile?.close()
+            return finish(record, store: store, notifier: nil, now: now)
         }
         logFile?.close()
         // Reconcile with what brew now says: an upgrade that "succeeded" but
@@ -904,11 +961,31 @@ public final class AutoUpdater {
         }
     }
 
+    /// 0.8.4: the quit guard's choice for a running automatic run. After
+    /// Current: no step starts after the running one. Now: the running step
+    /// is stopped too (its process group, as the sheet's Stop Now).
+    public func stopForQuit(_ choice: QuitChoice, queue: CommandQueue) {
+        guard isRunning else { return }
+        quitRequested = true
+        if choice == .now, let id = stepCommand { queue.cancel(id) }
+    }
+
+    struct StepResult {
+        var code: Int32
+        var lines: [String]
+        /// It waited for brew's lock at least once.
+        var waited = false
+        /// Stopped (Quit Now) or cancelled before it ran.
+        var cancelled = false
+    }
+
     /// `brew upgrade` for one package through the queue (the same strict
     /// FIFO as every other brew command), with safe mode's environment.
-    private func runUpgrade(_ p: Package, store: AppStore, logFile: LogFile?) async -> (Int32, [String]) {
+    /// 0.8.4: with `lockWait`, a lock failure waits and runs again, as in
+    /// the sheet; the wait goes to upgrade.log.
+    private func runUpgrade(_ p: Package, store: AppStore, logFile: LogFile?, lockWait: BrewLockWait?) async -> StepResult {
         guard let client = try? store.resolvedClient(), let detection = store.report?.intelbrew else {
-            return (-1, ["brew not found"])
+            return StepResult(code: -1, lines: ["brew not found"])
         }
         let args = BrewCommands.upgradeArguments(for: p)
         let keep = RollbackSettings.extraEnvironment(.upgrade, p, keep: store.restorePoints.settings.keepPreviousVersion)
@@ -922,18 +999,89 @@ public final class AutoUpdater {
                                     $0.key == InsightSettings.noQuitKey || $0.key == RollbackSettings.noInstallCleanupKey
                                 }))
         logFile?.append(["$ \(cmd.display)"])
-        let collector = OutputCollector()
-        do {
-            let code = try await store.queue.run(cmd) { data in
-                collector.add(data)
+        let capture = StepCapture()
+        let id = UUID()
+        stepCommand = id
+        defer { stepCommand = nil }
+        let name = p.name
+        let event: CommandEvent = await withCheckedContinuation { cont in
+            store.queue.enqueue(cmd, id: id, lockWait: lockWait) { [weak self] event in
+                switch event {
+                case .started: break
+                case .output(let d): capture.add(d)
+                case .lockWait(let holder):
+                    if let holder {
+                        // The locked attempt's output, then the wait.
+                        logFile?.append(capture.restart())
+                        logFile?.append([holder.isEmpty ? "tankard: another Homebrew command holds brew's lock; waiting for it"
+                                         : "tankard: another Homebrew command holds brew's lock (pid \(holder)); waiting for it"])
+                        Task { @MainActor in self?.lockWaitChanged(waiting: true, for: name) }
+                    } else {
+                        logFile?.append(["tankard: brew's lock is free: running it again", "$ \(cmd.display)"])
+                        Task { @MainActor in self?.lockWaitChanged(waiting: false, for: name) }
+                    }
+                case .finished, .cancelled, .failed, .skipped:
+                    cont.resume(returning: event)
+                }
             }
-            let lines = collector.lines()
-            logFile?.append(lines)
+        }
+        let lines = capture.finish()
+        logFile?.append(lines)
+        var result: StepResult
+        switch event {
+        case .finished(let code):
             if code != 0 { logFile?.append(["tankard: brew exited with status \(code)"]) }
-            return (code, lines)
-        } catch {
-            logFile?.append(["tankard: could not run brew: \(error)"])
-            return (-1, ["Couldn't run brew: \(error)"])
+            result = StepResult(code: code, lines: lines)
+        case .cancelled, .skipped:
+            result = StepResult(code: -1, lines: lines, cancelled: true)
+        case .failed(let message):
+            logFile?.append(["tankard: could not run brew: \(message)"])
+            result = StepResult(code: -1, lines: ["Couldn't run brew: \(message)"])
+        default:
+            result = StepResult(code: -1, lines: lines)
+        }
+        result.waited = capture.waited
+        // A wait that ran out: the last attempt's output was the locked one.
+        if result.waited, !result.cancelled, result.code != 0, lines.isEmpty { result.lines = capture.lockedLines }
+        return result
+    }
+
+    private func lockWaitChanged(waiting: Bool, for name: String) {
+        guard isRunning, step?.name == name else { return }
+        activity = waiting ? String(localized: "Waiting for another Homebrew command to finish…")
+            : String(localized: "Auto-update: upgrading \(name)")
+    }
+}
+
+/// 0.8.4: where an automatic run is: "xz, 3 of 7".
+public struct AutoUpdateStep: Equatable, Sendable {
+    public var name: String
+    public var index: Int
+    public var total: Int
+}
+
+/// One automatic step's output, attempt by attempt (fed from the queue's thread).
+final class StepCapture: @unchecked Sendable {
+    private let lock = NSLock()
+    private var collector = OutputCollector()
+    private var _waited = false
+    private var _locked: [String] = []
+
+    func add(_ d: Data) { lock.withLock { collector }.add(d) }
+
+    /// The attempt that found the lock: its lines (kept to classify a wait
+    /// that runs out); the next attempt starts over.
+    func restart() -> [String] {
+        lock.withLock {
+            let lines = collector.lines()
+            collector = OutputCollector()
+            _waited = true
+            _locked = lines
+            return lines
         }
     }
+
+    func finish() -> [String] { lock.withLock { collector }.lines() }
+    var waited: Bool { lock.withLock { _waited } }
+    var lockedLines: [String] { lock.withLock { _locked } }
 }

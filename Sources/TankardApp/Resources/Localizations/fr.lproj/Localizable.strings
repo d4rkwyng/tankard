@@ -454,6 +454,7 @@
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew l'enregistre comme %@ ; brew ne compare pas les versions des apps qui se mettent à jour seules.";
 "Homebrew still has it, but will disable it later." = "Homebrew l’a encore, mais le désactivera plus tard.";
 "Homebrew updates it" = "Homebrew";
+"Homebrew was busy" = "Homebrew était occupé";
 "Homebrew © Homebrew contributors, BSD-2-Clause." = "Homebrew © contributeurs Homebrew, BSD-2-Clause.";
 "Homebrew ▸ Health shows which folder isn't writable and how to fix it." = "Homebrew ▸ État de santé indique quel dossier n'est pas modifiable et comment corriger.";
 "Homebrew's API (formulae.brew.sh)" = "API de Homebrew (formulae.brew.sh)";
@@ -708,6 +709,7 @@
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run." = "Quitter l'arrête : Homebrew annule l'étape en cours, et le reste ne sera pas exécuté.";
 "Quitting now stops it: Homebrew undoes the unfinished step, and the rest won't run. Tankard offers to upgrade what's left next time." = "Quitter l'arrête : Homebrew annule l'étape en cours, et le reste ne sera pas exécuté. Tankard proposera de mettre à jour le reste la prochaine fois.";
 "Quitting now stops it: Homebrew undoes the unfinished step." = "Quitter l'arrête : Homebrew annule l'étape en cours.";
+"Quitting now stops it: Homebrew undoes the unfinished step. The next automatic run upgrades what's left." = "Quitter l'arrête : Homebrew annule l'étape en cours. La prochaine exécution automatique met à jour le reste.";
 "Read from Homebrew's API; not tapped locally." = "Lu depuis l’API de Homebrew ; pas de tap local.";
 "Reading installed packages…" = "Lecture des paquets installés…";
 "Reading package details…" = "Lecture des détails du paquet…";
@@ -904,6 +906,8 @@
 "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal." = "Tankard le demande dans une fenêtre et le transmet uniquement à sudo ; il ne le conserve jamais. Si vous annulez, la feuille affiche la commande pour Terminal.";
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard ne peut pas le demander ici ; la feuille affichera donc la commande pour Terminal.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard n’a pas encore lu le préfixe Homebrew de ce Mac. Actualisez d’abord.";
+"Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard met à jour %@ automatiquement (%lld sur %lld).";
+"Tankard is upgrading %@ automatically." = "Tankard met à jour %@ automatiquement.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard n’est jamais mis à niveau automatiquement : utilisez brew upgrade --cask tankard.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard exclut les mises à niveau de cette app de Tout mettre à niveau, des compteurs et de la mise à jour auto. Son propre outil de mise à jour la garde à jour. brew upgrade dans Terminal peut toujours la mettre à niveau.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard liste chaque nouvelle version de ce cask, le met à niveau avec Tout mettre à niveau et la mise à jour auto, et remplace l'app comme le fait brew.";
@@ -914,6 +918,8 @@
 "Tankard on GitHub" = "Tankard sur GitHub";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard ne contrôle que vos propres services et n’exécute jamais sudo. Exécutez ceci dans Terminal :";
 "Tankard quit after %lld of %lld. Still to upgrade: %@." = "Tankard a quitté après %lld sur %lld. Reste à mettre à jour : %@.";
+"Tankard quit during the run" = "Tankard a été quitté pendant l'exécution";
+"Tankard quit; the next automatic run upgrades it" = "Tankard a été quitté ; la prochaine exécution automatique le met à jour";
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard a été relancé pour que macOS applique Gestion des apps. Rien ne s’exécute avant que vous cliquiez sur Relancer.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard exécute brew update en arrière-plan pour garder les chiffres à jour. Réglages ▸ Général permet de le désactiver.";
 "Tankard update available" = "Mise à jour de Tankard disponible";
@@ -1215,6 +1221,7 @@
 "upgraded" = "mis à niveau";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "la mise à niveau de %@ nécessiterait de recompiler %@ depuis les sources ; mettez à niveau à la main";
 "user/repo" = "user/repo";
+"waited for another Homebrew command" = "a attendu une autre commande Homebrew";
 "was built from a source file whose checksum changed upstream" = "a été compilé à partir d’un fichier source dont la somme de contrôle a changé en amont";
 "would overwrite or take over apps without confirmation" = "écraserait ou reprendrait des apps sans confirmation";
 "yesterday %@" = "hier %@";
