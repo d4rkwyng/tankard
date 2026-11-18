@@ -1156,7 +1156,9 @@
 "brew won't uninstall a pinned formula. Unpin it first." = "brew no desinstalará una formula fijada. Desfíjala primero.";
 "brew won't upgrade it, and Upgrade All leaves it out." = "brew no la actualizará, y Actualizar todo la deja fuera.";
 "brew's output" = "salida de brew";
+"brew.env clears HOMEBREW_NO_SUDO, so brew could ask for a password; upgrade it in Terminal" = "brew.env vacía HOMEBREW_NO_SUDO, así que brew podría pedir una contraseña; actualízalo en Terminal";
 "brew.env sets its own password helper (%@); run this step in Terminal:" = "brew.env define su propio asistente de contraseña (%@); ejecuta este paso en Terminal:";
+"brew.env sets its own password helper (%@); upgrade it in Terminal" = "brew.env define su propio asistente de contraseña (%@); actualízalo en Terminal";
 "brew.env turns off brew's dependents check; automatic updates paused." = "brew.env desactiva la comprobación de dependientes de brew; actualizaciones automáticas en pausa.";
 "cancelled" = "cancelado";
 "cask" = "cask";

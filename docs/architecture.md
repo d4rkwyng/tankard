@@ -320,7 +320,12 @@ its installer with sudo (it would only fail). The sheet then shows "brew.env set
 password helper (path); run this step in Terminal:" (`SudoOutcome.foreignHelper`) with the
 command, as does the plan's and the uninstall sheet's password note; a step that ran under
 `HOMEBREW_NO_SUDO` and needed sudo ends with the same message. Health keeps the
-`SUDO_ASKPASS` row's warning (none for Tankard's own path). What remains: brew.env written
+`SUDO_ASKPASS` row's warning (none for Tankard's own path). Automatic updates already run
+with `HOMEBREW_NO_SUDO=1` and no `SUDO_ASKPASS`; on top of that, right before each
+sudo-capable cask step an automatic run reads brew.env again (`AutoUpdater.brewEnvFiles`) and
+skips the step, recorded as skipped with the reason (`AutoUpdateSkip.foreignAskpass`), when
+brew.env sets a foreign helper or clears `HOMEBREW_NO_SUDO`, either one alone. Formula
+steps are unaffected. What remains: brew.env written
 between the precondition and bin/brew reading it, a window of milliseconds that Tankard
 can't close, since brew.env always wins over the environment.
 
