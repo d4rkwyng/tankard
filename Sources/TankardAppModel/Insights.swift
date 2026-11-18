@@ -322,6 +322,9 @@ public final class InsightsStore {
     /// self-updating apps" off ("Homebrew updates it").
     @ObservationIgnored public var keepSelfUpdating: (Package) -> Bool = { _ in false }
 
+    /// 0.8.6 (UI M7): what is installed, for the scan's count.
+    @ObservationIgnored public var installedPackages: () -> [Package] = { [] }
+
     /// 0.6: laid over after the insights (skipped versions).
     @ObservationIgnored public var extraDecoration: ((StatusReport) -> StatusReport)?
 
@@ -436,7 +439,8 @@ public final class InsightsStore {
 
     func scanFinished(_ scan: VulnerabilityScan) {
         vulnerabilityScan = scan
-        scanEnded(.idle, outcome: .done(checked: scan.checked, found: scan.vulnerableCount, complete: scan.complete))
+        scanEnded(.idle, outcome: .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()),
+                                        complete: scan.complete))
         if settings.notifyNewVulnerabilities, settings.seenVulnerabilities == nil {
             // First scan after turning the notice on: the baseline.
             settings.seenVulnerabilities = VulnerabilityNotice.keys(scan)

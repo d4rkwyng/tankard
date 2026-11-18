@@ -48025,54 +48025,54 @@
         }
       }
     },
-    "Scanned %lld · found %lld": {
+    "Scanned %lld · %lld vulnerable": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld gescannt · %lld gefunden"
+            "value": "%lld gescannt · %lld verwundbar"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Analysés : %lld · trouvés : %lld"
+            "value": "Analysés : %lld · vulnérables : %lld"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Analizados %lld · encontradas %lld"
+            "value": "Analizados %lld · %lld vulnerables"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スキャン %lld · 検出 %lld"
+            "value": "スキャン %lld · 脆弱性あり %lld"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已扫描 %lld · 发现 %lld"
+            "value": "已扫描 %lld · %lld 个有漏洞"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verificados %lld · encontrados %lld"
+            "value": "Verificados %lld · %lld vulneráveis"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scansionati %lld · trovati %lld"
+            "value": "Scansionati %lld · %lld vulnerabili"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "검사 %lld · 발견 %lld"
+            "value": "검사 %lld · 취약 %lld"
           }
         }
       }

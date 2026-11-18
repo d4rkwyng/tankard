@@ -917,7 +917,7 @@
 "Scan timed out" = "Scansione scaduta";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "Scansione scaduta: brew vulns è rimasto in esecuzione per più di un minuto ed è stato interrotto. L'ultimo risultato, se presente, viene conservato.";
 "Scanned %@" = "Scansionato %@";
-"Scanned %lld · found %lld" = "Scansionati %lld · trovati %lld";
+"Scanned %lld · %lld vulnerable" = "Scansionati %lld · %lld vulnerabili";
 "Scanning %lld formulae…" = "Scansione di %lld formulae…";
 "Scanning %lld formula…" = "Scansione di %lld formula…";
 "Scanning…" = "Scansione in corso…";

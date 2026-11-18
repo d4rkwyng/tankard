@@ -917,7 +917,7 @@
 "Scan timed out" = "검사 시간 초과";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "검사 시간 초과: brew vulns가 1분 넘게 실행되어 중단되었습니다. 마지막 결과가 있으면 유지됩니다.";
 "Scanned %@" = "%@에 검사함";
-"Scanned %lld · found %lld" = "검사 %lld · 발견 %lld";
+"Scanned %lld · %lld vulnerable" = "검사 %lld · 취약 %lld";
 "Scanning %lld formulae…" = "formulae %lld개 검사 중…";
 "Scanning %lld formula…" = "formula %lld개 검사 중…";
 "Scanning…" = "검사 중…";

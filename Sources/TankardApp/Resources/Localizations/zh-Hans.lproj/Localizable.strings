@@ -917,7 +917,7 @@
 "Scan timed out" = "扫描超时";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "扫描超时：brew vulns 运行超过一分钟而被停止。如有上次的结果，会予以保留。";
 "Scanned %@" = "已扫描 %@";
-"Scanned %lld · found %lld" = "已扫描 %lld · 发现 %lld";
+"Scanned %lld · %lld vulnerable" = "已扫描 %lld · %lld 个有漏洞";
 "Scanning %lld formulae…" = "正在扫描 %lld 个 formula…";
 "Scanning %lld formula…" = "正在扫描 %lld 个 formula…";
 "Scanning…" = "正在扫描…";

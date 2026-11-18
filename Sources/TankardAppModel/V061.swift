@@ -83,13 +83,25 @@ public enum ScanProgressText {
         return "\(s / 60):" + String(format: "%02d", s % 60)
     }
 
-    /// "Scanned 42 · found 2", "… · partial scan", "Scan stopped".
+    /// "Scanned 42 · 2 vulnerable", "… · partial scan", "Scan stopped".
+    /// 0.8.6 (UI details M7): says what was found, counted like the
+    /// Vulnerable filter (`VulnerabilityCount.installed`).
     public static func outcome(_ o: ScanOutcome) -> String {
         switch o {
         case .done(let checked, let found, let complete):
-            return String(localized: "Scanned \(checked) · found \(found)") + (complete ? "" : String(localized: " · partial scan"))
+            return String(localized: "Scanned \(checked) · \(found) vulnerable") + (complete ? "" : String(localized: " · partial scan"))
         case .stopped: return String(localized: "Scan stopped")
         case .timedOut: return String(localized: "Scan timed out")
         }
+    }
+}
+
+/// 0.8.6 (UI details M7): the scan's count as the Vulnerable filter counts
+/// it: installed packages at the version brew checked. brew's findings can
+/// name a formula upgraded since ("found 13" beside "1 vulnerable").
+public enum VulnerabilityCount {
+    public static func installed(_ scan: VulnerabilityScan, packages: [Package]) -> Int {
+        guard !packages.isEmpty else { return scan.vulnerableCount }
+        return packages.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.count
     }
 }

@@ -917,7 +917,7 @@
 "Scan timed out" = "スキャンがタイムアウトしました";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "スキャンがタイムアウトしました: brew vulnsが1分以上実行されたため停止されました。前回の結果がある場合は保持されます。";
 "Scanned %@" = "%@をスキャン済み";
-"Scanned %lld · found %lld" = "スキャン %lld · 検出 %lld";
+"Scanned %lld · %lld vulnerable" = "スキャン %lld · 脆弱性あり %lld";
 "Scanning %lld formulae…" = "%lld個のformulaをスキャン中…";
 "Scanning %lld formula…" = "%lld個のformulaをスキャン中…";
 "Scanning…" = "スキャン中…";

@@ -917,7 +917,7 @@
 "Scan timed out" = "El análisis agotó el tiempo";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "El análisis agotó el tiempo: brew vulns se ejecutó más de un minuto y se detuvo. Se conserva el último resultado, si lo hay.";
 "Scanned %@" = "Analizado %@";
-"Scanned %lld · found %lld" = "Analizados %lld · encontradas %lld";
+"Scanned %lld · %lld vulnerable" = "Analizados %lld · %lld vulnerables";
 "Scanning %lld formulae…" = "Analizando %lld formulae…";
 "Scanning %lld formula…" = "Analizando %lld formula…";
 "Scanning…" = "Analizando…";

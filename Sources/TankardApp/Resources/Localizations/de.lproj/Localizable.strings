@@ -917,7 +917,7 @@
 "Scan timed out" = "Zeitüberschreitung beim Scan";
 "Scan timed out: brew vulns ran for more than a minute and was stopped. The last result, if any, is kept." = "Zeitüberschreitung beim Scan: brew vulns lief länger als eine Minute und wurde gestoppt. Das letzte Ergebnis, falls vorhanden, bleibt erhalten.";
 "Scanned %@" = "%@ gescannt";
-"Scanned %lld · found %lld" = "%lld gescannt · %lld gefunden";
+"Scanned %lld · %lld vulnerable" = "%lld gescannt · %lld verwundbar";
 "Scanning %lld formulae…" = "%lld Formulae werden gescannt…";
 "Scanning %lld formula…" = "%lld Formula wird gescannt…";
 "Scanning…" = "Wird gescannt…";
