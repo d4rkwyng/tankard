@@ -41,7 +41,11 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
 
     public func stream(_ executable: String, _ arguments: [String], environment: [String: String],
                        output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
-        let pidBox = OSAllocatedUnfairLock<pid_t?>(initialState: nil)
+        // The child's pid, and whether the task was cancelled. Whichever of
+        // the two comes second starts the stop: a cancel that arrives before
+        // posix_spawn has returned (Stop Now right after the step started)
+        // used to find no pid and do nothing, and the child ran to the end.
+        let state = OSAllocatedUnfairLock<(pid: pid_t?, cancelled: Bool)>(initialState: (nil, false))
         let grace = killGrace
         let interruptGrace = interruptGrace
         let code: Int32 = try await withTaskCancellationHandler {
@@ -49,7 +53,11 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         let c = try Self.spawnAndStream(executable, arguments, environment, output: output) { pid in
-                            pidBox.withLock { $0 = pid }
+                            let stopNow = state.withLock { s -> Bool in
+                                s.pid = pid
+                                return s.cancelled
+                            }
+                            if stopNow { Self.stop(pid, interruptGrace: interruptGrace, killGrace: grace) }
                         }
                         continuation.resume(returning: c)
                     } catch {
@@ -58,18 +66,27 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
                 }
             }
         } onCancel: {
-            guard let pid = pidBox.withLock({ $0 }) else { return }
-            kill(-pid, SIGINT)
-            DispatchQueue.global().asyncAfter(deadline: .now() + interruptGrace) {
-                guard kill(-pid, 0) == 0 else { return }
-                kill(-pid, SIGTERM)
-                DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
-                    if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
-                }
+            let pid = state.withLock { s -> pid_t? in
+                s.cancelled = true
+                return s.pid
             }
+            if let pid { Self.stop(pid, interruptGrace: interruptGrace, killGrace: grace) }
         }
         if Task.isCancelled { throw ProcessRunnerError.cancelled }
         return code
+    }
+
+    /// SIGINT to the group; SIGTERM after `interruptGrace` s if anything is
+    /// still running; SIGKILL after `killGrace` more.
+    static func stop(_ pid: pid_t, interruptGrace: Double, killGrace: Double) {
+        kill(-pid, SIGINT)
+        DispatchQueue.global().asyncAfter(deadline: .now() + interruptGrace) {
+            guard kill(-pid, 0) == 0 else { return }
+            kill(-pid, SIGTERM)
+            DispatchQueue.global().asyncAfter(deadline: .now() + killGrace) {
+                if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+            }
+        }
     }
 
     static func spawnAndStream(_ executable: String, _ arguments: [String], _ environment: [String: String],

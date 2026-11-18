@@ -177,39 +177,120 @@ struct SpawnDescriptorTests {
 // 0.8.3: Stop Now interrupts brew like Ctrl-C first (SIGINT, which brew
 // rolls back from), and only then SIGTERM, then SIGKILL.
 struct StreamingStopSignalTests {
-    func run(_ script: String, interruptGrace: Double, marker: URL) async throws -> (Duration, String) {
-        let runner = StreamingProcessRunner(killGrace: 0.5, interruptGrace: interruptGrace)
-        let started = ContinuousClock.now
+    /// Output collected from a background thread.
+    final class Output: @unchecked Sendable {
+        private let lock = NSLock()
+        private var data = Data()
+        func add(_ d: Data) { lock.withLock { data.append(d) } }
+        var text: String { lock.withLock { String(decoding: data, as: UTF8.self) } }
+    }
+
+    struct Stopped {
+        /// From the cancel (Stop Now) to the stream's end.
+        var elapsed: Duration
+        /// What the child's traps wrote, in order.
+        var marker: String
+        /// The shell's pid (its `READY <pid>` line).
+        var pid: pid_t
+        var threwCancelled: Bool
+    }
+
+    /// Runs `traps`, then a loop, under /bin/sh; cancels once the shell says
+    /// READY, which it prints after its traps are set (cancelling after a
+    /// fixed 300 ms raced the shell's startup on a loaded CI runner: SIGINT
+    /// arrived before the trap and killed it silently). `echo` is a builtin
+    /// writing straight to the file or pipe: nothing is buffered.
+    func run(_ traps: String, interruptGrace: Double, killGrace: Double = 0.5) async throws -> Stopped {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let m = dir.appendingPathComponent("m").path
+        let script = traps.replacingOccurrences(of: "$M", with: "'\(m)'") + "; echo READY $$; while :; do sleep 0.05; done"
+        let runner = StreamingProcessRunner(killGrace: killGrace, interruptGrace: interruptGrace)
+        let out = Output()
         let task = Task {
-            try await runner.stream("/bin/sh", ["-c", script], environment: [:]) { _ in }
+            try await runner.stream("/bin/sh", ["-c", script], environment: [:]) { out.add($0) }
         }
-        // Give the shell time to set its traps.
-        try await Task.sleep(for: .milliseconds(300))
+        let deadline = ContinuousClock.now + .seconds(30)
+        while !out.text.contains("\n"), ContinuousClock.now < deadline {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        let ready = out.text.split(separator: "\n").first ?? ""
+        #expect(ready.hasPrefix("READY "), "the shell never got its traps set")
+        let pid = pid_t(ready.dropFirst("READY ".count)) ?? 0
+        let cancelled = ContinuousClock.now
         task.cancel()
-        _ = try? await task.value
-        let elapsed = ContinuousClock.now - started
-        try await Task.sleep(for: .milliseconds(100))
-        return (elapsed, (try? String(contentsOf: marker, encoding: .utf8)) ?? "")
+        var threw = false
+        do { _ = try await task.value } catch ProcessRunnerError.cancelled { threw = true }
+        let elapsed = ContinuousClock.now - cancelled
+        return Stopped(elapsed: elapsed, marker: (try? String(contentsOfFile: m, encoding: .utf8)) ?? "",
+                       pid: pid, threwCancelled: threw)
+    }
+
+    /// Nothing of the shell's group is left (the leader was reaped by the
+    /// runner; `sleep` children went with the group's signal).
+    /// (Polled: an orphaned child's zombie is reaped by launchd, not at once.)
+    func gone(_ pid: pid_t) async -> Bool {
+        guard pid > 0 else { return false }
+        let deadline = ContinuousClock.now + .seconds(10)
+        while kill(-pid, 0) == 0 || kill(pid, 0) == 0 {
+            if ContinuousClock.now > deadline { return false }
+            try? await Task.sleep(for: .milliseconds(20))
+        }
+        return true
     }
 
     @Test func sigintFirst() async throws {
-        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: dir) }
-        let m = dir.appendingPathComponent("m")
-        let (elapsed, got) = try await run("trap 'echo INT >> \(m.path); exit 130' INT; trap 'echo TERM >> \(m.path); exit 143' TERM; while :; do sleep 0.05; done",
-                                           interruptGrace: 5, marker: m)
-        #expect(got == "INT\n")
-        #expect(elapsed < .seconds(3), "a process that handles SIGINT isn't made to wait for the grace period")
+        let r = try await run("trap 'echo INT >> $M; exit 130' INT; trap 'echo TERM >> $M; exit 143' TERM",
+                              interruptGrace: 20)
+        #expect(r.marker == "INT\n")
+        #expect(r.threwCancelled)
+        #expect(r.elapsed < .seconds(10), "a process that handles SIGINT isn't made to wait for the grace period")
+        #expect(await gone(r.pid))
     }
 
     @Test func sigtermWhenSigintIsIgnored() async throws {
-        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: dir) }
-        let m = dir.appendingPathComponent("m")
-        let (_, got) = try await run("trap '' INT; trap 'echo TERM >> \(m.path); exit 143' TERM; while :; do sleep 0.05; done",
-                                     interruptGrace: 0.4, marker: m)
-        #expect(got == "TERM\n")
+        let r = try await run("trap '' INT; trap 'echo TERM >> $M; exit 143' TERM", interruptGrace: 0.4)
+        #expect(r.marker == "TERM\n")
+        #expect(r.threwCancelled)
+        #expect(r.elapsed >= .milliseconds(400), "SIGTERM only after the interrupt grace")
+        #expect(await gone(r.pid))
+    }
+
+    /// The whole escalation, in order: a child that survives SIGINT and
+    /// SIGTERM (it notes each and keeps going) is ended by SIGKILL, and
+    /// only after both graces.
+    @Test func sigintThenSigtermThenSigkill() async throws {
+        let r = try await run("trap 'echo INT >> $M' INT; trap 'echo TERM >> $M' TERM", interruptGrace: 0.4, killGrace: 0.5)
+        #expect(r.marker == "INT\nTERM\n")
+        #expect(r.threwCancelled)
+        #expect(r.elapsed >= .milliseconds(900), "SIGKILL only after both graces")
+        #expect(await gone(r.pid))
+    }
+
+    /// A child that ignores both SIGINT and SIGTERM: SIGKILL still ends it.
+    @Test func sigkillWhenSigintAndSigtermAreIgnored() async throws {
+        let r = try await run("trap '' INT TERM", interruptGrace: 0.4, killGrace: 0.5)
+        #expect(r.marker == "")
+        #expect(r.threwCancelled)
+        #expect(r.elapsed >= .milliseconds(900), "SIGKILL only after both graces")
+        #expect(await gone(r.pid))
+    }
+
+    /// Stop Now before posix_spawn returned: the child is still stopped
+    /// (the cancel used to find no pid and do nothing; the child ran on).
+    @Test func cancelBeforeTheChildStartedStillStopsIt() async throws {
+        let runner = StreamingProcessRunner(killGrace: 0.5, interruptGrace: 0.5)
+        let started = ContinuousClock.now
+        let task = Task {
+            // Already cancelled when stream is called: its cancel handler
+            // runs at once, before there is any pid.
+            withUnsafeCurrentTask { $0?.cancel() }
+            return try await runner.stream("/bin/sh", ["-c", "sleep 60"], environment: [:]) { _ in }
+        }
+        var threw = false
+        do { _ = try await task.value } catch ProcessRunnerError.cancelled { threw = true }
+        #expect(threw)
+        #expect(ContinuousClock.now - started < .seconds(20))
     }
 }
