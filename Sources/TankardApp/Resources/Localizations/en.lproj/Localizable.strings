@@ -294,6 +294,7 @@
 "Check Brewfile…" = "Check Brewfile…";
 "Check Homebrew for new versions and reload the list (⌘R)" = "Check Homebrew for new versions and reload the list (⌘R)";
 "Check Now" = "Check Now";
+"Check Now (it runs brew update) to get the current download address, then upgrade again." = "Check Now (it runs brew update) to get the current download address, then upgrade again.";
 "Check a Brewfile" = "Check a Brewfile";
 "Check every" = "Check every";
 "Check for Tankard Updates…" = "Check for Tankard Updates…";
@@ -583,6 +584,7 @@
 "It was stopped." = "It was stopped.";
 "It's pinned. Unpin it first." = "It's pinned. Unpin it first.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
+"Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.";
 "KB" = "KB";
 "Keep Old Versions" = "Keep Old Versions";
 "Keep Open" = "Keep Open";
@@ -653,6 +655,7 @@
 "No Intelbrew bottle yet." = "No Intelbrew bottle yet.";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple.";
 "No automatic runs yet." = "No automatic runs yet.";
+"No bottle" = "No bottle";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "No bottle for this Mac yet. Reinstalling or upgrading compiles from source.";
 "No bottle for this Mac." = "No bottle for this Mac.";
 "No bottle for this Mac; reinstalling compiles" = "No bottle for this Mac; reinstalling compiles";
@@ -1084,6 +1087,7 @@
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces.";
 "The app has no version brew can compare." = "The app has no version brew can compare.";
 "The app's ID (its bundle identifier) is one the cask names." = "The app's ID (its bundle identifier) is one the cask names.";
+"The build from source failed" = "The build from source failed";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "The cask installs to %@; brew adopts only an app at that exact place.";
 "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting.";
@@ -1091,6 +1095,7 @@
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website.";
 "The cask says this app updates itself (auto_updates)." = "The cask says this app updates itself (auto_updates).";
 "The disk is full" = "The disk is full";
+"The download isn't on the server" = "The download isn't on the server";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again.";
 "The last %lld are kept in Application Support." = "The last %lld are kept in Application Support.";
@@ -1098,6 +1103,7 @@
 "The last scan (%@) found none." = "The last scan (%@) found none.";
 "The last upgrade didn't finish" = "The last upgrade didn't finish";
 "The log below shows what brew printed" = "The log below shows what brew printed";
+"The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then." = "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then.";
 "The official installer from brew.sh." = "The official installer from brew.sh.";
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "The old versions were removed by cleanup, so nothing here can be rolled back.";
@@ -1106,6 +1112,7 @@
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard).";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:";
+"The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.";
 "The upgrade finished" = "The upgrade finished";
 "The upgrade finished with problems" = "The upgrade finished with problems";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "The upgrade window is open. Close it, or click Show in Tankard, first.";
@@ -1275,6 +1282,7 @@
 "brew can't update or install while it can't write there." = "brew can't update or install while it can't write there.";
 "brew cleanup -n exited %d." = "brew cleanup -n exited %d.";
 "brew clones %@ and reads its formulae and casks." = "brew clones %@ and reads its formulae and casks.";
+"brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build." = "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.";
 "brew doctor (raw output)" = "brew doctor (raw output)";
 "brew doctor found nothing to fix." = "brew doctor found nothing to fix.";
 "brew doctor printed no warnings." = "brew doctor printed no warnings.";

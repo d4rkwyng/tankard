@@ -294,6 +294,7 @@
 "Check Brewfile…" = "Verificar um Brewfile…";
 "Check Homebrew for new versions and reload the list (⌘R)" = "Verificar novas versões no Homebrew e recarregar a lista (⌘R)";
 "Check Now" = "Verificar agora";
+"Check Now (it runs brew update) to get the current download address, then upgrade again." = "“Verificar agora” (executa brew update) obtém o endereço de download atual; depois, atualize de novo.";
 "Check a Brewfile" = "Verificar um Brewfile";
 "Check every" = "Verificar a cada";
 "Check for Tankard Updates…" = "Buscar Atualizações do Tankard…";
@@ -583,6 +584,7 @@
 "It was stopped." = "Foi interrompido.";
 "It's pinned. Unpin it first." = "Está fixado. Desafixe primeiro.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Suas dependências permanecem instaladas (brew autoremove remove as não usadas)";
+"Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "O tap dele não tem bottle para este Mac, então reinstalar ou atualizar o compila do código-fonte.";
 "KB" = "KB";
 "Keep Old Versions" = "Manter versões antigas";
 "Keep Open" = "Manter aberta";
@@ -653,6 +655,7 @@
 "No Intelbrew bottle yet." = "Ainda sem bottle do Intelbrew.";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "Nenhum app para adotar: tudo em Aplicativos vem do Homebrew, da App Store ou da Apple.";
 "No automatic runs yet." = "Ainda sem execuções automáticas.";
+"No bottle" = "Sem bottle";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "Ainda sem bottle para este Mac. Reinstalar ou atualizar compila do código-fonte.";
 "No bottle for this Mac." = "Sem bottle para este Mac.";
 "No bottle for this Mac; reinstalling compiles" = "Sem bottle para este Mac; reinstalar compila";
@@ -1084,6 +1087,7 @@
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "A URL deve ser https://, http://, ssh://, git:// ou file://, ou git@host:path, sem espaços.";
 "The app has no version brew can compare." = "O app não tem uma versão que o brew possa comparar.";
 "The app's ID (its bundle identifier) is one the cask names." = "O ID do app (seu identificador de pacote) é um dos que o cask cita.";
+"The build from source failed" = "A compilação do código-fonte falhou";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "O cask sempre baixa a versão mais recente, então o brew compara depois de baixar; se forem diferentes, ele não mexe no app.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "O cask instala em %@; o brew só adota um app exatamente nesse local.";
 "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "O cask cita um ID de app do mesmo desenvolvedor, mas não o ID exato deste app: confira antes de adotar.";
@@ -1091,6 +1095,7 @@
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "O cask não cita nenhum ID de app. O nome do app confere, e o ID dele cita o desenvolvedor do site do cask.";
 "The cask says this app updates itself (auto_updates)." = "O cask diz que este app se atualiza sozinho (auto_updates).";
 "The disk is full" = "O disco está cheio";
+"The download isn't on the server" = "O download não está no servidor";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "O arquivo baixado pelo brew não é o esperado: muitas vezes um download interrompido, ou um pacote que mudou desde o último brew update. Atualize a lista (executa brew update) e tente de novo.";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "O instalador pede sua senha e roda no Terminal. Quando terminar, volte e clique em Verificar novamente.";
 "The last %lld are kept in Application Support." = "Os últimos %lld são mantidos em Application Support.";
@@ -1098,6 +1103,7 @@
 "The last scan (%@) found none." = "A última verificação (%@) não encontrou nenhuma.";
 "The last upgrade didn't finish" = "A última atualização não terminou";
 "The log below shows what brew printed" = "O registro abaixo mostra o que o brew exibiu";
+"The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then." = "O registro mostra onde a compilação parou. Uma versão posterior pode compilar; “Pular versão” o deixa fora de Atualizar tudo até lá.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "O ícone da barra de menus está desativado, então o Tankard encerra ao fechar a janela e nada é executado depois.";
 "The official installer from brew.sh." = "O instalador oficial de brew.sh.";
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "As versões antigas foram removidas pela limpeza, então nada aqui pode ser revertido.";
@@ -1106,6 +1112,7 @@
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "A versão mais antiga foi removida por uma limpeza (Limpar do Tankard, ou o Homebrew fora do Tankard).";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "Os outros apps são verificados: se um download não conferir, o brew para naquele app e o deixa como estava.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "A caixa de senha foi cancelada, então esta etapa não foi executada. Para executá-la você mesmo, use o Terminal:";
+"The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "O servidor respondeu 404 (não encontrado) para o download do pacote. Tentar o mesmo endereço de novo falha do mesmo jeito; o brew update pode trazer um novo.";
 "The upgrade finished" = "A atualização terminou";
 "The upgrade finished with problems" = "A atualização terminou com problemas";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "A janela de atualização está aberta. Feche-a primeiro ou clique em Mostrar no Tankard.";
@@ -1275,6 +1282,7 @@
 "brew can't update or install while it can't write there." = "O brew não consegue atualizar nem instalar enquanto não puder gravar lá.";
 "brew cleanup -n exited %d." = "brew cleanup -n terminou com %d.";
 "brew clones %@ and reads its formulae and casks." = "O brew clona %@ e lê suas formulae e casks.";
+"brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build." = "O brew não conseguiu compilá-lo neste Mac. O registro abaixo mostra onde parou; uma versão mais nova após o brew update pode compilar.";
 "brew doctor (raw output)" = "brew doctor (saída bruta)";
 "brew doctor found nothing to fix." = "O brew doctor não encontrou nada para corrigir.";
 "brew doctor printed no warnings." = "O brew doctor não imprimiu avisos.";

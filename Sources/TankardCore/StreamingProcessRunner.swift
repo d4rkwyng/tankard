@@ -78,15 +78,55 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
 
     /// SIGINT to the group; SIGTERM after `interruptGrace` s if anything is
     /// still running; SIGKILL after `killGrace` more.
+    ///
+    /// 0.8.6 (walkthrough L6): and to the process groups of descendants that
+    /// left the group. brew's sandboxed build runs in a session of its own
+    /// (sandbox.rb: `Process.setsid` in the forked child, a PTY as its
+    /// terminal), so the SIGINT missed the build; brew waited for it, and
+    /// Stop Now took ~16 s and ended in SIGTERM, cutting brew's rollback.
     static func stop(_ pid: pid_t, interruptGrace: Double, killGrace: Double) {
-        kill(-pid, SIGINT)
+        signalTree(pid, SIGINT)
         DispatchQueue.global().asyncAfter(deadline: .now() + interruptGrace) {
-            guard kill(-pid, 0) == 0 else { return }
-            kill(-pid, SIGTERM)
+            guard kill(-pid, 0) == 0 || !outsideGroups(pid).isEmpty else { return }
+            signalTree(pid, SIGTERM)
             DispatchQueue.global().asyncAfter(deadline: .now() + killGrace) {
-                if kill(-pid, 0) == 0 { kill(-pid, SIGKILL) }
+                signalTree(pid, SIGKILL)
             }
         }
+    }
+
+    /// `sig` to the child's group and to every other group its descendants
+    /// lead (found first, so none is missed when the parent exits).
+    static func signalTree(_ pid: pid_t, _ sig: Int32) {
+        let others = outsideGroups(pid)
+        kill(-pid, sig)
+        for g in others { kill(-g, sig) }
+    }
+
+    /// The process groups of `pid`'s descendants other than its own.
+    static func outsideGroups(_ pid: pid_t) -> [pid_t] {
+        var groups = Set<pid_t>()
+        for d in descendants(of: pid) {
+            let g = getpgid(d)
+            if g > 1, g != pid { groups.insert(g) }
+        }
+        return Array(groups)
+    }
+
+    /// Every descendant of `pid` (libproc, breadth first, at most 4096).
+    static func descendants(of pid: pid_t) -> [pid_t] {
+        var out: [pid_t] = []
+        var queue = [pid]
+        while let p = queue.first, out.count < 4096 {
+            queue.removeFirst()
+            var buffer = [pid_t](repeating: 0, count: 256)
+            let n = buffer.withUnsafeMutableBytes { proc_listchildpids(p, $0.baseAddress, Int32($0.count)) }
+            guard n > 0 else { continue }
+            let kids = buffer.prefix(Int(n)).filter { $0 > 0 }
+            out += kids
+            queue += kids
+        }
+        return out
     }
 
     static func spawnAndStream(_ executable: String, _ arguments: [String], _ environment: [String: String],

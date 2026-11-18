@@ -110,3 +110,33 @@ struct V086SizeFormatTests {
         #expect(d.items.first?.sizeDisplay == DiskSizes.format(102_800_000))
     }
 }
+
+final class TextSink: @unchecked Sendable {
+    private let lock = NSLock()
+    private var data = Data()
+    func add(_ d: Data) { lock.withLock { data.append(d) } }
+    var text: String { lock.withLock { String(decoding: data, as: UTF8.self) } }
+}
+
+// 0.8.6 (walkthrough L6): Stop Now on a source build took ~16 s and ended in
+// SIGTERM: brew's sandboxed build runs in its own session (sandbox.rb
+// `Process.setsid`), which the SIGINT to brew's process group missed.
+struct V086StopTreeTests {
+    @Test func stopReachesAChildInItsOwnSession() async throws {
+        // A parent and a child that calls setsid(), both sleeping; the child
+        // keeps the output pipe open, so the stream ends only when it exits.
+        let script = "use POSIX; $| = 1; my $p = fork(); if ($p == 0) { POSIX::setsid(); sleep 25; exit 0 } print \"started\\n\"; sleep 25;"
+        let runner = StreamingProcessRunner(killGrace: 30, interruptGrace: 30)
+        let sink = TextSink()
+        let clock = ContinuousClock()
+        let t0 = clock.now
+        let task = Task {
+            try await runner.stream("/usr/bin/perl", ["-e", script], environment: [:]) { sink.add($0) }
+        }
+        while !sink.text.contains("started") && clock.now - t0 < .seconds(10) { try await Task.sleep(for: .milliseconds(50)) }
+        try await Task.sleep(for: .milliseconds(200))
+        task.cancel()
+        _ = try? await task.value
+        #expect(clock.now - t0 < .seconds(8), "the setsid child must get the interrupt too")
+    }
+}

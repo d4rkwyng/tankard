@@ -110,6 +110,8 @@ public final class UpgradeSession: Identifiable {
     public private(set) var appManagementBlocked: [UUID] = []
     /// 0.6: recognised failures (brew's lock, network, disk, permissions), in order.
     public private(set) var failureKinds: [BrewFailureKind] = []
+    /// 0.8.6 (L1): each failed step's recognised failure.
+    public private(set) var failureKindByItem: [UUID: BrewFailureKind] = [:]
     /// 0.3: this run is the one retry after the App Management sheet.
     public var isRetry = false
     public private(set) var stopRequested = false
@@ -597,6 +599,7 @@ public final class UpgradeSession: Identifiable {
                 // 0.6: say why in words when brew's output shows it; the raw log stays above.
                 if let kind = BrewFailure.classify(commandLines) {
                     failureKinds.append(kind)
+                    failureKindByItem[items[i].id] = kind
                     note("\(kind.title). \(kind.explanation)")
                 }
                 note("brew exited with status \(code)")

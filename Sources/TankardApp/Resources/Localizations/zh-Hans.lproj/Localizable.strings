@@ -294,6 +294,7 @@
 "Check Brewfile…" = "检查 Brewfile…";
 "Check Homebrew for new versions and reload the list (⌘R)" = "向 Homebrew 检查新版本并重新载入列表 (⌘R)";
 "Check Now" = "立即检查";
+"Check Now (it runs brew update) to get the current download address, then upgrade again." = "点按“立即检查”（会运行 brew update）获取当前的下载地址，然后再次升级。";
 "Check a Brewfile" = "检查 Brewfile";
 "Check every" = "检查间隔";
 "Check for Tankard Updates…" = "检查 Tankard 更新…";
@@ -583,6 +584,7 @@
 "It was stopped." = "已被停止。";
 "It's pinned. Unpin it first." = "它已固定。请先取消固定。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
+"Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "它的 Tap 没有适用于这台 Mac 的 bottle，因此重新安装或升级都会从源码构建。";
 "KB" = "KB";
 "Keep Old Versions" = "保留旧版本";
 "Keep Open" = "保持打开";
@@ -653,6 +655,7 @@
 "No Intelbrew bottle yet." = "暂无 Intelbrew bottle。";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "没有可接管的 App：“应用程序”中的所有内容都来自 Homebrew、App Store 或 Apple。";
 "No automatic runs yet." = "尚无自动运行记录。";
+"No bottle" = "无 bottle";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "这台 Mac 暂无 bottle。重新安装或升级会从源码编译。";
 "No bottle for this Mac." = "这台 Mac 没有 bottle。";
 "No bottle for this Mac; reinstalling compiles" = "这台 Mac 没有 bottle；重新安装会编译";
@@ -1084,6 +1087,7 @@
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL 必须是 https://、http://、ssh://、git:// 或 file://，或 git@host:path，且不含空格。";
 "The app has no version brew can compare." = "该 App 没有 brew 可比较的版本。";
 "The app's ID (its bundle identifier) is one the cask names." = "应用的 ID(其 Bundle 标识符)是 cask 列出的 ID 之一。";
+"The build from source failed" = "从源码构建失败";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "此 cask 总是下载最新版本，因此 brew 会在下载后比较；如果不同，就不会改动该 App。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "此 cask 安装到 %@；brew 只接管正好位于该位置的 App。";
 "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "cask 列出了同一开发者的应用 ID,但不是此应用的确切 ID:接管前请核对。";
@@ -1091,6 +1095,7 @@
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask 未列出应用 ID。应用名称一致,且其 ID 指向 cask 网站的开发者。";
 "The cask says this app updates itself (auto_updates)." = "此 cask 声明该 App 会自行更新（auto_updates）。";
 "The disk is full" = "磁盘已满";
+"The download isn't on the server" = "服务器上没有该下载";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew 下载的文件不是预期的文件:通常是下载中断,或软件包在上次 brew update 后有变化。请刷新(会运行 brew update),然后重试。";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "安装程序会要求输入密码并在“终端”中运行。完成后，请回来点按“再次检查”。";
 "The last %lld are kept in Application Support." = "最近 %lld 个保存在 Application Support 中。";
@@ -1098,6 +1103,7 @@
 "The last scan (%@) found none." = "上次扫描（%@）未发现任何漏洞。";
 "The last upgrade didn't finish" = "上次升级未完成";
 "The log below shows what brew printed" = "下方日志显示了 brew 的输出";
+"The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then." = "日志显示了构建停止的位置。后续版本或许能构建成功；在此之前，“跳过此版本”可让它不进入“全部升级”。";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "菜单栏图标已关闭，因此关闭窗口时 Tankard 会退出，且届时不会运行任何任务。";
 "The official installer from brew.sh." = "来自 brew.sh 的官方安装程序。";
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "旧版本已被清理删除，因此这里没有可回滚的内容。";
@@ -1106,6 +1112,7 @@
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "旧版本已被清理移除（Tankard 的“清理”，或在 Tankard 之外运行的 Homebrew）。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”：";
+"The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "服务器对该软件包的下载返回了 404（未找到）。用同一地址重试会以同样方式失败；brew update 可能会带来新的地址。";
 "The upgrade finished" = "升级已完成";
 "The upgrade finished with problems" = "升级已完成，但有问题";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "升级窗口已打开。请先关闭它，或点按“在 Tankard 中显示”。";
@@ -1275,6 +1282,7 @@
 "brew can't update or install while it can't write there." = "当 brew 无法写入那里时，就无法更新或安装。";
 "brew cleanup -n exited %d." = "brew cleanup -n 已退出，代码 %d。";
 "brew clones %@ and reads its formulae and casks." = "brew 会克隆 %@ 并读取其中的 formula 和 cask。";
+"brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build." = "brew 无法在这台 Mac 上构建它。下方日志显示了停止的位置；brew update 之后的新版本或许能构建成功。";
 "brew doctor (raw output)" = "brew doctor（原始输出）";
 "brew doctor found nothing to fix." = "brew doctor 未发现需要修复的问题。";
 "brew doctor printed no warnings." = "brew doctor 未输出任何警告。";

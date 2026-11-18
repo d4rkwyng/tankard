@@ -261,7 +261,7 @@ struct PackageDetail: View {
                 Text("Installed version is newer than the tap's \(p.currentVersion ?? "?"). brew won't downgrade it.")
             case .noBottle:
                 Image(systemName: "exclamationmark.circle").foregroundStyle(theme.badge(.noBottle).dot)
-                Text("No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
+                Text(p.noBottleDetail)
             case .cask:
                 // 0.8.4: from the cask's artifacts (a font isn't an app).
                 let contents = CaskContents(p)

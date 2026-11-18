@@ -336,6 +336,8 @@ public final class AppStore {
     @ObservationIgnored var pendingQuiet: [UUID: ScheduledQuietReason] = [:]
     /// 0.8.5: History entries to mark as builds from source once they arrive.
     @ObservationIgnored var pendingBuilt: Set<UUID> = []
+    /// 0.8.6 (L7): the restore point saved before each upgrade session.
+    @ObservationIgnored var sessionRestorePoints: [UUID: RestorePoint.ID] = [:]
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
     @ObservationIgnored public internal(set) var lastScheduledUpdate: ScheduledUpdateResult?
 
@@ -1251,7 +1253,7 @@ public final class AppStore {
             return
         }
         // 0.7: a restore point before every upgrade session.
-        if action == .upgrade { saveRestorePoint(.upgrade, upgrading: targets) }
+        let sessionPoint = action == .upgrade ? saveRestorePoint(.upgrade, upgrading: targets) : nil
         if action == .upgrade { saveRunJournal(targets) }
         var env = client.environment(for: detection, readOnly: false)
         // Upgrade to exactly what the list shows; the refresh button is
@@ -1303,6 +1305,8 @@ public final class AppStore {
                 self?.sessionFinished(session)
             })
         upgrade?.isRetry = isRetry
+        // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
+        if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
         upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
         // 0.8.5: time so far and an estimate for builds from source.
@@ -1382,6 +1386,12 @@ public final class AppStore {
         }
         runJournalSessionFinished(session)
         recordBuilds(session)
+        // 0.8.6 (walkthrough L7): a run that upgraded nothing (failed,
+        // stopped first, or already done elsewhere) keeps no restore point:
+        // eight small runs left eight points, most identical.
+        if let point = sessionRestorePoints.removeValue(forKey: session.id), session.succeededCount == 0 {
+            restorePoints.delete(point)
+        }
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
         // offer. The new instance reads status, shows notes and prompts.

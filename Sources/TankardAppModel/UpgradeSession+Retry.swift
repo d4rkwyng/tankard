@@ -23,6 +23,8 @@ extension UpgradeSession {
         case .diskFull: return String(localized: "Free up some space (Clean Up helps), then retry.")
         case .permissions: return String(localized: "Homebrew ▸ Health shows which folder isn't writable and how to fix it.")
         case .checksum: return String(localized: "Refresh (it runs brew update), then retry.")
+        case .notFound: return String(localized: "Check Now (it runs brew update) to get the current download address, then upgrade again.")
+        case .buildFailed: return String(localized: "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.")
         case .appManagement: return nil
         }
     }
@@ -39,7 +41,8 @@ extension UpgradeSession {
     /// blocked: the App Management explainer has its own retry).
     public var retryableItems: [Item] {
         guard isFinished, Self.retriesInSheet(action) else { return [] }
-        return failedItems.filter { !appManagementBlocked.contains($0.id) }
+        // 0.8.6 (L1): not a 404: the same address fails the same way.
+        return failedItems.filter { !appManagementBlocked.contains($0.id) && failureKindByItem[$0.id] != .notFound }
     }
 }
 

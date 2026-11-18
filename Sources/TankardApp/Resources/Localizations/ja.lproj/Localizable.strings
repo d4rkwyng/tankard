@@ -294,6 +294,7 @@
 "Check Brewfile…" = "Brewfileを確認…";
 "Check Homebrew for new versions and reload the list (⌘R)" = "Homebrewで新しいバージョンを確認し、一覧を再読み込みします(⌘R)";
 "Check Now" = "今すぐ確認";
+"Check Now (it runs brew update) to get the current download address, then upgrade again." = "「今すぐ確認」（brew update を実行）で最新のダウンロード先を取得してから、もう一度アップグレードしてください。";
 "Check a Brewfile" = "Brewfileを確認";
 "Check every" = "確認間隔";
 "Check for Tankard Updates…" = "Tankardのアップデートを確認…";
@@ -583,6 +584,7 @@
 "It was stopped." = "停止されました。";
 "It's pinned. Unpin it first." = "ピン留めされています。先にピン留めを解除してください。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
+"Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "この Tap にはこの Mac 用の bottle がないため、再インストールやアップグレードではソースからビルドします。";
 "KB" = "KB";
 "Keep Old Versions" = "古いバージョンを残す";
 "Keep Open" = "開いたままにする";
@@ -653,6 +655,7 @@
 "No Intelbrew bottle yet." = "Intelbrew bottleはまだありません。";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "引き継ぐアプリはありません。アプリケーション内はすべて Homebrew、App Store、または Apple のものです。";
 "No automatic runs yet." = "自動実行はまだありません。";
+"No bottle" = "Bottle なし";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "このMac用のbottleはまだありません。再インストールまたはアップグレードするとソースからコンパイルされます。";
 "No bottle for this Mac." = "このMac用のbottleがありません。";
 "No bottle for this Mac; reinstalling compiles" = "このMac用のbottleがありません。再インストールするとコンパイルされます";
@@ -1084,6 +1087,7 @@
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URLは https://、http://、ssh://、git:// または file://、もしくは git@host:path 形式で、スペースを含められません。";
 "The app has no version brew can compare." = "このアプリには brew が比較できるバージョンがありません。";
 "The app's ID (its bundle identifier) is one the cask names." = "アプリのID(バンドル識別子)が cask に記載されたものと同じです。";
+"The build from source failed" = "ソースからのビルドに失敗しました";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "この cask は常に最新バージョンをダウンロードするため、brew はダウンロード後に比較します。違いがあればアプリには手を付けません。";
 "The cask installs to %@; brew adopts only an app at that exact place." = "この cask は %@ にインストールします。brew はその場所にあるアプリだけを引き継ぎます。";
 "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "cask には同じ開発元のアプリIDがありますが、このアプリのIDそのものではありません。引き継ぐ前に確認してください。";
@@ -1091,6 +1095,7 @@
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask にアプリIDの記載はありません。アプリの名前が一致し、そのIDが cask のWebサイトの開発元を示しています。";
 "The cask says this app updates itself (auto_updates)." = "cask によると、このアプリは自己更新します（auto_updates）。";
 "The disk is full" = "ディスクがいっぱいです";
+"The download isn't on the server" = "ダウンロードがサーバ上にありません";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew がダウンロードしたファイルが想定と異なります。ダウンロードの中断や、前回の brew update 以降のパッケージ変更が主な原因です。再読み込み(brew update を実行)してから再試行してください。";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "インストーラがパスワードを求め、ターミナルで実行されます。完了したら戻って「もう一度確認」をクリックしてください。";
 "The last %lld are kept in Application Support." = "直近%lld件がApplication Supportに保持されます。";
@@ -1098,6 +1103,7 @@
 "The last scan (%@) found none." = "前回のスキャン（%@）では見つかりませんでした。";
 "The last upgrade didn't finish" = "前回のアップグレードは完了していません";
 "The log below shows what brew printed" = "brewの出力は下のログにあります";
+"The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then." = "ログにビルドが止まった箇所が表示されます。後のバージョンならビルドできるかもしれません。それまでは「バージョンをスキップ」で「すべてアップグレード」から外せます。";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "メニューバーアイコンがオフのため、ウインドウを閉じるとTankardは終了し、その間は何も実行されません。";
 "The official installer from brew.sh." = "brew.shの公式インストーラ。";
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "古いバージョンはクリーンアップで削除されたため、ここでは何も元に戻せません。";
@@ -1106,6 +1112,7 @@
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "古いバージョンはクリーンアップで削除されました(Tankardの「クリーンアップ」、またはTankard外のHomebrewによるもの)。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "その他のアプリは確認されます。ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "パスワードダイアログがキャンセルされたため、このステップは実行されませんでした。自分で実行するには、ターミナルを使用してください:";
+"The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "パッケージのダウンロードに対してサーバが 404（見つかりません）を返しました。同じアドレスで再試行しても同じく失敗します。brew update で新しいアドレスが得られることがあります。";
 "The upgrade finished" = "アップグレードが完了しました";
 "The upgrade finished with problems" = "アップグレードは問題ありで完了しました";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "アップグレードのウインドウが開いています。先に閉じるか、「Tankard で表示」をクリックしてください。";
@@ -1275,6 +1282,7 @@
 "brew can't update or install while it can't write there." = "brewは、そこに書き込めない間は更新やインストールができません。";
 "brew cleanup -n exited %d." = "brew cleanup -nが%dで終了しました。";
 "brew clones %@ and reads its formulae and casks." = "brewは%@をクローンし、そのformulaとcaskを読み込みます。";
+"brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build." = "brew はこの Mac でビルドできませんでした。止まった箇所は下のログに表示されます。brew update 後の新しいバージョンならビルドできるかもしれません。";
 "brew doctor (raw output)" = "brew doctor（生の出力）";
 "brew doctor found nothing to fix." = "brew doctorで修正が必要な点は見つかりませんでした。";
 "brew doctor printed no warnings." = "brew doctorは警告を出力しませんでした。";

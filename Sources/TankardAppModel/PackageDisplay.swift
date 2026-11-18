@@ -138,9 +138,24 @@ public extension Package {
             }
         case .source: return String(localized: "Built from source")
         case .newer: return intelbrewMode ? String(localized: "Newer than Intelbrew") : String(localized: "Newer than tap")
-        case .noBottle: return String(localized: "No bottle yet")
+        case .noBottle: return isThirdPartyTap ? String(localized: "No bottle") : String(localized: "No bottle yet")
         case .cask: return String(localized: "Cask")
         }
+    }
+
+    /// 0.8.6 (walkthrough L8): from a tap outside Homebrew's own (and not
+    /// Intelbrew's). Such taps rarely build bottles, so "yet" promised
+    /// one that may never come.
+    var isThirdPartyTap: Bool {
+        guard let tap, !tap.isEmpty else { return false }
+        return !TapIndexer.isHomebrewTap(tap) && !tap.lowercased().hasPrefix("d4rkwyng/")
+    }
+
+    /// The detail pane's line for a formula with no bottle.
+    var noBottleDetail: String {
+        isThirdPartyTap
+            ? String(localized: "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.")
+            : String(localized: "No bottle for this Mac yet. Reinstalling or upgrading compiles from source.")
     }
 
     /// A short second line under the name, only when it says something the

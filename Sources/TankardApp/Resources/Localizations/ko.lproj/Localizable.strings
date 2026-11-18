@@ -294,6 +294,7 @@
 "Check Brewfile…" = "Brewfile 확인…";
 "Check Homebrew for new versions and reload the list (⌘R)" = "Homebrew에서 새 버전을 확인하고 목록을 다시 불러오기(⌘R)";
 "Check Now" = "지금 확인";
+"Check Now (it runs brew update) to get the current download address, then upgrade again." = "‘지금 확인’(brew update 실행)으로 현재 다운로드 주소를 받은 다음 다시 업그레이드하세요.";
 "Check a Brewfile" = "Brewfile 확인";
 "Check every" = "확인 주기";
 "Check for Tankard Updates…" = "Tankard 업데이트 확인…";
@@ -583,6 +584,7 @@
 "It was stopped." = "중지되었습니다.";
 "It's pinned. Unpin it first." = "고정되어 있습니다. 먼저 고정을 해제하세요.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
+"Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "이 Tap에는 이 Mac용 bottle이 없어 다시 설치하거나 업그레이드하면 소스에서 빌드합니다.";
 "KB" = "KB";
 "Keep Old Versions" = "이전 버전 유지";
 "Keep Open" = "열어 두기";
@@ -653,6 +655,7 @@
 "No Intelbrew bottle yet." = "아직 Intelbrew bottle이 없습니다.";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "가져올 앱이 없습니다. 응용 프로그램의 모든 항목이 Homebrew, App Store 또는 Apple에서 왔습니다.";
 "No automatic runs yet." = "아직 자동 실행 기록이 없습니다.";
+"No bottle" = "bottle 없음";
 "No bottle for this Mac yet. Reinstalling or upgrading compiles from source." = "아직 이 Mac용 bottle이 없습니다. 재설치나 업그레이드 시 소스에서 컴파일됩니다.";
 "No bottle for this Mac." = "이 Mac용 bottle이 없습니다.";
 "No bottle for this Mac; reinstalling compiles" = "이 Mac용 bottle 없음; 재설치하면 컴파일";
@@ -1084,6 +1087,7 @@
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL은 https://, http://, ssh://, git:// 또는 file://, 혹은 git@host:path 형식이어야 하며 공백이 없어야 합니다.";
 "The app has no version brew can compare." = "이 앱에는 brew가 비교할 수 있는 버전이 없습니다.";
 "The app's ID (its bundle identifier) is one the cask names." = "앱의 ID(번들 식별자)가 cask에 적힌 ID와 같습니다.";
+"The build from source failed" = "소스에서 빌드하지 못했습니다";
 "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone." = "이 cask는 항상 최신 버전을 다운로드하므로 brew는 다운로드 후 비교합니다. 다르면 앱을 건드리지 않습니다.";
 "The cask installs to %@; brew adopts only an app at that exact place." = "이 cask는 %@에 설치합니다. brew는 정확히 그 위치에 있는 앱만 가져옵니다.";
 "The cask names an app ID from the same developer, but not this app's exact ID: check before adopting." = "cask에 같은 개발자의 앱 ID가 있지만 이 앱의 ID와 정확히 같지는 않습니다. 가져오기 전에 확인하세요.";
@@ -1091,6 +1095,7 @@
 "The cask names no app ID. The app's name matches, and its ID names the developer of the cask's website." = "cask에 앱 ID가 없습니다. 앱 이름이 같고, 앱 ID가 cask 웹사이트의 개발자를 가리킵니다.";
 "The cask says this app updates itself (auto_updates)." = "cask에 따르면 이 앱은 자체 업데이트합니다(auto_updates).";
 "The disk is full" = "디스크가 가득 찼습니다";
+"The download isn't on the server" = "서버에 다운로드 파일이 없습니다";
 "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry." = "brew가 받은 파일이 예상한 파일이 아닙니다. 대개 중단된 다운로드이거나 마지막 brew update 이후 바뀐 패키지입니다. 새로 고침(brew update 실행)한 뒤 다시 시도하세요.";
 "The installer asks for your password and runs in Terminal. When it finishes, come back and click Check Again." = "설치 프로그램이 암호를 요청하며 터미널에서 실행됩니다. 끝나면 돌아와서 다시 확인을 클릭하세요.";
 "The last %lld are kept in Application Support." = "최근 %lld개는 Application Support에 보관됩니다.";
@@ -1098,6 +1103,7 @@
 "The last scan (%@) found none." = "마지막 검사(%@)에서 발견되지 않았습니다.";
 "The last upgrade didn't finish" = "지난 업그레이드가 끝나지 않았습니다";
 "The log below shows what brew printed" = "brew가 출력한 내용은 아래 로그에 있습니다";
+"The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then." = "로그에 빌드가 멈춘 위치가 표시됩니다. 이후 버전은 빌드될 수 있으며, 그때까지 ‘버전 건너뛰기’로 ‘모두 업그레이드’에서 뺄 수 있습니다.";
 "The menu-bar icon is off, so Tankard quits when you close its window, and nothing runs then." = "메뉴 막대 아이콘이 꺼져 있어 윈도우를 닫으면 Tankard가 종료되며, 그 후에는 아무것도 실행되지 않습니다.";
 "The official installer from brew.sh." = "brew.sh의 공식 설치 프로그램입니다.";
 "The old versions were removed by cleanup, so nothing here can be rolled back." = "이전 버전이 정리로 삭제되어 여기서는 되돌릴 수 있는 항목이 없습니다.";
@@ -1106,6 +1112,7 @@
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "이전 버전은 정리로 제거되었습니다(Tankard의 정리 또는 Tankard 밖의 Homebrew).";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:";
+"The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "패키지 다운로드에 대해 서버가 404(찾을 수 없음)로 응답했습니다. 같은 주소로 다시 시도해도 똑같이 실패합니다. brew update로 새 주소를 받을 수 있습니다.";
 "The upgrade finished" = "업그레이드가 끝났습니다";
 "The upgrade finished with problems" = "업그레이드가 문제와 함께 끝났습니다";
 "The upgrade window is open. Close it, or click Show in Tankard, first." = "업그레이드 윈도우가 열려 있습니다. 먼저 닫거나 'Tankard에서 보기'를 클릭하세요.";
@@ -1275,6 +1282,7 @@
 "brew can't update or install while it can't write there." = "brew는 해당 위치에 쓸 수 없으면 업데이트하거나 설치할 수 없습니다.";
 "brew cleanup -n exited %d." = "brew cleanup -n이 %d(으)로 종료됨.";
 "brew clones %@ and reads its formulae and casks." = "brew가 %@을(를) 클론하고 해당 formulae와 cask를 읽습니다.";
+"brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build." = "brew가 이 Mac에서 빌드하지 못했습니다. 아래 로그에 멈춘 위치가 표시됩니다. brew update 후 새 버전은 빌드될 수 있습니다.";
 "brew doctor (raw output)" = "brew doctor (원본 출력)";
 "brew doctor found nothing to fix." = "brew doctor에서 수정할 항목이 없습니다.";
 "brew doctor printed no warnings." = "brew doctor가 경고를 출력하지 않았습니다.";

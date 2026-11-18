@@ -15629,6 +15629,58 @@
         }
       }
     },
+    "Check Now (it runs brew update) to get the current download address, then upgrade again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Jetzt prüfen“ (führt brew update aus) holt die aktuelle Download-Adresse; danach erneut aktualisieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Vérifier maintenant » (qui lance brew update) récupère l’adresse de téléchargement actuelle ; mettez ensuite à jour de nouveau."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Comprobar ahora» (ejecuta brew update) obtiene la dirección de descarga actual; después, actualiza de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「今すぐ確認」（brew update を実行）で最新のダウンロード先を取得してから、もう一度アップグレードしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按“立即检查”（会运行 brew update）获取当前的下载地址，然后再次升级。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Verificar agora” (executa brew update) obtém o endereço de download atual; depois, atualize de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Controlla ora” (esegue brew update) recupera l’indirizzo di download attuale; poi aggiorna di nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘지금 확인’(brew update 실행)으로 현재 다운로드 주소를 받은 다음 다시 업그레이드하세요."
+          }
+        }
+      }
+    },
     "Check a Brewfile": {
       "localizations": {
         "de": {
@@ -30657,6 +30709,58 @@
         }
       }
     },
+    "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sein Tap hat keine Bottle für diesen Mac; Neuinstallieren oder Aktualisieren kompiliert es aus dem Quellcode."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son tap n’a pas de bottle pour ce Mac : le réinstaller ou le mettre à jour le compile depuis les sources."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Su tap no tiene bottle para este Mac, así que reinstalarlo o actualizarlo lo compila desde el código fuente."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この Tap にはこの Mac 用の bottle がないため、再インストールやアップグレードではソースからビルドします。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它的 Tap 没有适用于这台 Mac 的 bottle，因此重新安装或升级都会从源码构建。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O tap dele não tem bottle para este Mac, então reinstalar ou atualizar o compila do código-fonte."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il suo tap non ha una bottle per questo Mac, quindi reinstallarlo o aggiornarlo lo compila dai sorgenti."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Tap에는 이 Mac용 bottle이 없어 다시 설치하거나 업그레이드하면 소스에서 빌드합니다."
+          }
+        }
+      }
+    },
     "KB": {
       "localizations": {
         "de": {
@@ -34293,6 +34397,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "아직 자동 실행 기록이 없습니다."
+          }
+        }
+      }
+    },
+    "No bottle": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Bottle"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de bottle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin bottle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottle なし"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无 bottle"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem bottle"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna bottle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottle 없음"
           }
         }
       }
@@ -56709,6 +56865,58 @@
         }
       }
     },
+    "The build from source failed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Kompilieren aus dem Quellcode ist fehlgeschlagen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilation depuis les sources a échoué"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilación desde el código fuente falló"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからのビルドに失敗しました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从源码构建失败"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A compilação do código-fonte falhou"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compilazione dai sorgenti non è riuscita"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드하지 못했습니다"
+          }
+        }
+      }
+    },
     "The cask always downloads the newest version, so brew compares after downloading; if they differ, it leaves the app alone.": {
       "localizations": {
         "de": {
@@ -57073,6 +57281,58 @@
         }
       }
     },
+    "The download isn't on the server": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Download ist nicht auf dem Server"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le téléchargement n’est pas sur le serveur"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La descarga no está en el servidor"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードがサーバ上にありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务器上没有该下载"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O download não está no servidor"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il download non è sul server"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서버에 다운로드 파일이 없습니다"
+          }
+        }
+      }
+    },
     "The file brew downloaded isn't the one it expected: often an interrupted download, or a package that changed since brew last updated. Refresh (it runs brew update), then retry.": {
       "localizations": {
         "de": {
@@ -57433,6 +57693,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 출력한 내용은 아래 로그에 있습니다"
+          }
+        }
+      }
+    },
+    "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Protokoll zeigt, wo das Kompilieren abbrach. Eine spätere Version lässt sich vielleicht kompilieren; „Version überspringen“ hält es bis dahin aus „Alle aktualisieren“ heraus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le journal montre où la compilation s’est arrêtée. Une version ultérieure compilera peut-être ; « Ignorer la version » l’exclut de « Tout mettre à jour » d’ici là."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El registro muestra dónde se detuvo la compilación. Puede que una versión posterior compile; «Omitir versión» la deja fuera de Actualizar todo hasta entonces."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ログにビルドが止まった箇所が表示されます。後のバージョンならビルドできるかもしれません。それまでは「バージョンをスキップ」で「すべてアップグレード」から外せます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日志显示了构建停止的位置。后续版本或许能构建成功；在此之前，“跳过此版本”可让它不进入“全部升级”。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O registro mostra onde a compilação parou. Uma versão posterior pode compilar; “Pular versão” o deixa fora de Atualizar tudo até lá."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il registro mostra dove si è fermata la compilazione. Una versione successiva potrebbe compilare; “Salta versione” lo tiene fuori da Aggiorna tutto fino ad allora."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그에 빌드가 멈춘 위치가 표시됩니다. 이후 버전은 빌드될 수 있으며, 그때까지 ‘버전 건너뛰기’로 ‘모두 업그레이드’에서 뺄 수 있습니다."
           }
         }
       }
@@ -57849,6 +58161,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:"
+          }
+        }
+      }
+    },
+    "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Server antwortete beim Download des Pakets mit 404 (nicht gefunden). Dieselbe Adresse schlägt erneut genauso fehl; brew update bringt vielleicht eine neue."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur a répondu 404 (introuvable) pour le téléchargement du paquet. Réessayer la même adresse échouera de la même façon ; brew update peut en fournir une nouvelle."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El servidor respondió 404 (no encontrado) a la descarga del paquete. Volver a intentar la misma dirección falla igual; brew update puede traer una nueva."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パッケージのダウンロードに対してサーバが 404（見つかりません）を返しました。同じアドレスで再試行しても同じく失敗します。brew update で新しいアドレスが得られることがあります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务器对该软件包的下载返回了 404（未找到）。用同一地址重试会以同样方式失败；brew update 可能会带来新的地址。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O servidor respondeu 404 (não encontrado) para o download do pacote. Tentar o mesmo endereço de novo falha do mesmo jeito; o brew update pode trazer um novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il server ha risposto 404 (non trovato) per il download del pacchetto. Riprovare lo stesso indirizzo fallisce allo stesso modo; brew update potrebbe portarne uno nuovo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "패키지 다운로드에 대해 서버가 404(찾을 수 없음)로 응답했습니다. 같은 주소로 다시 시도해도 똑같이 실패합니다. brew update로 새 주소를 받을 수 있습니다."
           }
         }
       }
@@ -66637,6 +67001,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew가 %@을(를) 클론하고 해당 formulae와 cask를 읽습니다."
+          }
+        }
+      }
+    },
+    "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew konnte es auf diesem Mac nicht kompilieren. Das Protokoll unten zeigt, wo es abbrach; eine neuere Version nach brew update lässt sich vielleicht kompilieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew n’a pas pu le compiler sur ce Mac. Le journal ci-dessous montre où il s’est arrêté ; une version plus récente après brew update compilera peut-être."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew no pudo compilarlo en este Mac. El registro de abajo muestra dónde se detuvo; puede que una versión más nueva tras brew update compile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew はこの Mac でビルドできませんでした。止まった箇所は下のログに表示されます。brew update 後の新しいバージョンならビルドできるかもしれません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew 无法在这台 Mac 上构建它。下方日志显示了停止的位置；brew update 之后的新版本或许能构建成功。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O brew não conseguiu compilá-lo neste Mac. O registro abaixo mostra onde parou; uma versão mais nova após o brew update pode compilar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew non è riuscito a compilarlo su questo Mac. Il registro qui sotto mostra dove si è fermato; una versione più recente dopo brew update potrebbe compilare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "brew가 이 Mac에서 빌드하지 못했습니다. 아래 로그에 멈춘 위치가 표시됩니다. brew update 후 새 버전은 빌드될 수 있습니다."
           }
         }
       }
