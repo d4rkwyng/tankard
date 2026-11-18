@@ -10,7 +10,8 @@ import TankardCore
 public enum BuildProgress {
     /// The step builds `p` from source, as the plan says (no bottle).
     public static func buildsFromSource(_ p: Package, action: SessionAction) -> Bool {
-        guard p.kind == .formula else { return false }
+        // 0.8.6 (VM test L3): a ready-made download builds nothing.
+        guard p.kind == .formula, p.prebuiltDownload != true else { return false }
         switch action {
         case .upgrade, .install: return p.upgradeHasBottle != true
         default: return false

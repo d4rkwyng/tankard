@@ -122,6 +122,8 @@
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld paquets n’ont pas de bottle pour ce Mac et seront compilés depuis les sources, ce qui peut prendre beaucoup de temps.";
 "%lld pinned upgrade not included (%@)" = "%lld mise à niveau épinglée non incluse (%@)";
 "%lld pinned upgrades not included (%@)" = "%lld mises à niveau épinglées non incluses (%@)";
+"%lld ready-made program" = "%lld programme prêt à l’emploi";
+"%lld ready-made programs" = "%lld programmes prêts à l’emploi";
 "%lld result for “%@”" = "%lld résultat pour « %@ »";
 "%lld results for “%@”" = "%lld résultats pour « %@ »";
 "%lld running" = "%lld en cours";
@@ -400,6 +402,7 @@
 "Downloading %@…" = "Téléchargement de %@…";
 "Downloading %lld of %lld" = "Téléchargement %lld sur %lld";
 "Downloads" = "Téléchargements";
+"Downloads a ready-made program" = "Télécharge un programme prêt à l’emploi";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Couleurs Dracula (draculatheme.com, MIT)";
 "Dry run: %lld would upgrade" = "Essai à blanc : %lld seraient mis à niveau";

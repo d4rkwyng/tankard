@@ -13,6 +13,9 @@ public enum CatalogBottle: String, Codable, Sendable {
     case cask
     /// Not known yet (Intelbrew mode, before `brew info` has answered).
     case unknown
+    /// 0.8.6 (VM test L3): a tap formula with no bottle that downloads a
+    /// ready-made program for macOS (a release binary), so nothing compiles.
+    case prebuilt
 }
 
 /// One formula or cask Discover can show and install.
@@ -53,6 +56,9 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     public var installsPkg: Bool?
     /// 0.8.3: an installer script brew runs with sudo.
     public var sudoInstaller: Bool?
+    /// 0.8.6 (VM test L4): brew refused to read it: its tap isn't trusted
+    /// (installing it by its full name trusts the formula).
+    public var untrustedTap = false
 
     // Lower-cased once, for search.
     var keyName: String
@@ -104,6 +110,11 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
         // there are any; keep the scanned ones if it gave none.
         if e.buildDependencies.isEmpty { e.buildDependencies = buildDependencies }
         if e.otherNames.isEmpty { e.otherNames = otherNames; e.keyOther = keyOther }
+        // 0.8.6 (VM test L3): brew info has no bottle for it either; the
+        // tap file showed a ready-made download, and its version.
+        if bottle == .prebuilt, e.bottle == .fromSource { e.bottle = .prebuilt }
+        if e.version == nil { e.version = version }
+        e.untrustedTap = untrustedTap || e.untrustedTap
         e.keyDesc = (e.desc ?? "").lowercased()
         return e
     }
@@ -121,7 +132,7 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
                 upgradeHasBottle: kind == .formula ? (bottle == .forThisMac || bottle == .intelbrew) : nil,
                 autoUpdates: nil, dependencies: dependencies, caskDependencies: caskDependencies,
                 homepage: homepage, appPaths: appPaths, suitePaths: suitePaths, installsPkg: installsPkg,
-                sudoInstaller: sudoInstaller)
+                sudoInstaller: sudoInstaller, prebuiltDownload: bottle == .prebuilt ? true : nil)
     }
 }
 
@@ -280,7 +291,7 @@ public enum CatalogSearch {
     /// 0 pours a bottle (or is a cask), 1 not known yet, 2 compiles.
     static func bottleRank(_ e: CatalogEntry) -> Int {
         switch e.bottle {
-        case .forThisMac, .intelbrew, .cask: return 0
+        case .forThisMac, .intelbrew, .cask, .prebuilt: return 0
         case .unknown: return 1
         case .fromSource: return 2
         }

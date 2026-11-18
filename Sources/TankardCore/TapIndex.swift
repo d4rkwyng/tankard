@@ -16,6 +16,12 @@ public struct TapIndexEntry: Sendable, Equatable {
     /// Formulae (0.3): `depends_on` names for macOS (runtime, and build-only).
     public var dependencies: [String]
     public var buildDependencies: [String]
+    /// 0.8.6 (VM test L3): no bottle block, but a ready-made macOS download
+    /// (`TapIndexer.prebuiltDownload`).
+    public var prebuilt = false
+    /// 0.8.6 (VM test L3): the file's literal `version "…"`, if it has one
+    /// (brew info can't answer for an untrusted tap).
+    public var version: String?
 
     public init(kind: PackageKind, name: String, tap: String, desc: String?, otherNames: [String] = [],
                 bottle: BrewInfoJSON.BottleSpec? = nil, dependencies: [String] = [], buildDependencies: [String] = []) {
@@ -35,7 +41,7 @@ public struct TapIndexEntry: Sendable, Equatable {
     }
 
     public func catalogEntry() -> CatalogEntry {
-        CatalogEntry(kind: kind, name: name, fullName: fullName, tap: tap, desc: desc,
+        CatalogEntry(kind: kind, name: name, fullName: fullName, tap: tap, desc: desc, version: version,
                      dependencies: dependencies, buildDependencies: buildDependencies, otherNames: otherNames,
                      bottle: kind == .cask ? .cask : .unknown, detailsLoaded: false)
     }
@@ -46,7 +52,7 @@ public struct TapIndexEntry: Sendable, Equatable {
         var e = catalogEntry()
         guard kind == .formula, let spec = bottle else { return e }
         let (badge, tag, url) = builder.bottle(spec: spec)
-        e.bottle = badge
+        e.bottle = badge == .fromSource && prebuilt ? .prebuilt : badge
         e.bottleTag = tag
         e.bottleURL = url
         return e
@@ -152,11 +158,18 @@ public struct TapIndexer: Sendable {
                     head = whole // a long formula: the bottle block may come later
                 }
                 let scanned = FormulaScanner.scan(head, tap: tap)
-                entries.append(TapIndexEntry(kind: .formula, name: name, tap: tap,
-                                             desc: Self.argument("desc", in: head),
-                                             otherNames: aliases[name] ?? [],
-                                             bottle: scanned.bottle,
-                                             dependencies: scanned.runtime, buildDependencies: scanned.build))
+                var entry = TapIndexEntry(kind: .formula, name: name, tap: tap,
+                                          desc: Self.argument("desc", in: head),
+                                          otherNames: aliases[name] ?? [],
+                                          bottle: scanned.bottle,
+                                          dependencies: scanned.runtime, buildDependencies: scanned.build)
+                // 0.8.6 (VM test L3): only for third-party taps (homebrew/core
+                // has bottles, and this costs a scan per formula).
+                if !Self.isHomebrewTap(tap), scanned.bottle.files.isEmpty {
+                    entry.prebuilt = Self.prebuiltDownload(head)
+                    entry.version = Self.argument("version", in: head)
+                }
+                entries.append(entry)
             }
             for file in Self.rubyFiles(in: dir.appendingPathComponent("Casks")) where entries.count < maxEntries {
                 let head = Self.head(of: file)
@@ -166,6 +179,26 @@ public struct TapIndexer: Sendable {
             }
         }
         return TapIndex(entries: entries, taps: names, seconds: Date().timeIntervalSince(start))
+    }
+
+    /// 0.8.6 (VM test L3): a formula with no bottle block that downloads a
+    /// ready-made program for macOS (GoReleaser-style taps): a `url` whose
+    /// file name names macOS or a Mac CPU (darwin, macos, arm64, amd64…),
+    /// no build-only dependency, and no `system` call (nothing is built).
+    /// Conservative: anything else stays "compiles".
+    public static func prebuiltDownload(_ data: Data) -> Bool {
+        let text = String(decoding: data, as: UTF8.self)
+        if text.contains("\n  bottle do") || text.contains("=> :build") { return false }
+        var sawBinaryURL = false
+        for raw in text.split(separator: "\n", omittingEmptySubsequences: true) {
+            let line = raw.drop { $0 == " " || $0 == "\t" }
+            if line.hasPrefix("system ") || line.hasPrefix("system(") { return false }
+            guard line.hasPrefix("url "), let url = rubyStringArgument("url", in: String(line)) else { continue }
+            let file = (url.split(separator: "/").last.map(String.init) ?? url).lowercased()
+            if ["darwin", "macos", "mac_os", "osx", "apple", "arm64", "aarch64", "x86_64", "amd64", "universal"]
+                .contains(where: { file.contains($0) }) { sawBinaryURL = true }
+        }
+        return sawBinaryURL
     }
 
     static func rubyFiles(in dir: URL, recursive: Bool = true) -> [URL] {

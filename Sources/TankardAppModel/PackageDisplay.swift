@@ -499,7 +499,7 @@ public extension CatalogEntry {
     /// Discover's bottle badge colour.
     var badgeKind: BadgeKind {
         switch bottle {
-        case .forThisMac, .intelbrew: return .bottle
+        case .forThisMac, .intelbrew, .prebuilt: return .bottle
         case .fromSource: return .source
         case .cask: return .cask
         case .unknown: return .noBottle
@@ -513,6 +513,7 @@ public extension CatalogEntry {
         case .intelbrew: return String(localized: "Intelbrew bottle ✓")
         case .fromSource: return CompileWarning(context: .install).label
         case .cask: return String(localized: "Cask")
+        case .prebuilt: return String(localized: "Downloads a ready-made program")
         case .unknown: return detailsLoaded ? String(localized: "Unknown") : String(localized: "Checking…")
         }
     }

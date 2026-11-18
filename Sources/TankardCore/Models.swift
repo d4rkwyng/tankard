@@ -157,6 +157,9 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// and Tankard found it in the Cellar or Caskroom instead. brew's
     /// reason, or "" when brew gave none. nil for every readable package.
     public var unreadable: String? = nil
+    /// 0.8.6 (VM test L3): an install from a tap formula that downloads a
+    /// ready-made program (no bottle, nothing compiles).
+    public var prebuiltDownload: Bool? = nil
 
     public var isDependency: Bool { !requested }
 

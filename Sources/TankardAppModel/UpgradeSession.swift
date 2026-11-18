@@ -413,10 +413,12 @@ public final class UpgradeSession: Identifiable {
                 return failureKinds.last?.title ?? String(localized: "The log below shows what brew printed")
             }
         }
-        let formulae = packages.filter { $0.kind == .formula }
+        // 0.8.6 (VM test L3): a tap formula's ready-made download isn't a build.
+        let readyMade = packages.filter { $0.kind == .formula && $0.prebuiltDownload == true }.count
+        let formulae = packages.filter { $0.kind == .formula && $0.prebuiltDownload != true }
         let bottles = formulae.filter { $0.upgradeHasBottle == true }
         let compiles = formulae.filter { $0.upgradeHasBottle != true }
-        let casks = packages.count - formulae.count
+        let casks = packages.filter { $0.kind == .cask }.count
         var parts: [String] = []
         if !bottles.isEmpty && action == .install && intelbrewMode {
             // Installs know whose bottle it is (from the catalogue).
@@ -431,6 +433,9 @@ public final class UpgradeSession: Identifiable {
         if !compiles.isEmpty {
             let names = compiles.count <= 3 ? " (\(compiles.map(\.name).joined(separator: ", ")))" : ""
             parts.append((compiles.count == 1 ? String(localized: "\(compiles.count) build from source") : String(localized: "\(compiles.count) builds from source")) + names)
+        }
+        if readyMade > 0 {
+            parts.append(readyMade == 1 ? String(localized: "\(readyMade) ready-made program") : String(localized: "\(readyMade) ready-made programs"))
         }
         if casks > 0 { parts.append(casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")) }
         if already > 0 { parts.append(String(localized: "\(already) already up to date")) }

@@ -122,6 +122,8 @@
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
 "%lld pinned upgrade not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld pinned upgrades not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
+"%lld ready-made program" = "미리 빌드된 프로그램 %lld개";
+"%lld ready-made programs" = "미리 빌드된 프로그램 %lld개";
 "%lld result for “%@”" = "“%2$@” 결과 %1$lld개";
 "%lld results for “%@”" = "“%2$@” 결과 %1$lld개";
 "%lld running" = "실행 중 %lld개";
@@ -400,6 +402,7 @@
 "Downloading %@…" = "%@ 다운로드 중…";
 "Downloading %lld of %lld" = "다운로드 중 %lld/%lld";
 "Downloads" = "다운로드";
+"Downloads a ready-made program" = "미리 빌드된 프로그램을 내려받음";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Dracula 색상(draculatheme.com, MIT)";
 "Dry run: %lld would upgrade" = "시험 실행: %lld개 업그레이드 예정";

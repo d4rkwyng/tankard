@@ -94,7 +94,7 @@ public struct CompileClassifier: Sendable {
     /// What `brew install` would do for a Discover entry.
     public func installMethod(_ e: CatalogEntry) -> BuildMethod {
         switch e.bottle {
-        case .cask: return .notApplicable
+        case .cask, .prebuilt: return .notApplicable
         case .unknown: return .unknown
         case .fromSource: return .compile
         case .intelbrew: return .bottle(.intelbrew)

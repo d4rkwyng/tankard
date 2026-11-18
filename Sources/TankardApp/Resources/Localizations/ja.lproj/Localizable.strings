@@ -122,6 +122,8 @@
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。";
 "%lld pinned upgrade not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
+"%lld ready-made program" = "ビルド済みプログラム%lld個";
+"%lld ready-made programs" = "ビルド済みプログラム%lld個";
 "%lld result for “%@”" = "「%2$@」の結果: %1$lld件";
 "%lld results for “%@”" = "「%2$@」の結果: %1$lld件";
 "%lld running" = "%lld個が実行中";
@@ -400,6 +402,7 @@
 "Downloading %@…" = "%@をダウンロード中…";
 "Downloading %lld of %lld" = "ダウンロード中 %lld / %lld";
 "Downloads" = "ダウンロード";
+"Downloads a ready-made program" = "ビルド済みのプログラムをダウンロード";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Draculaカラー(draculatheme.com、MIT)";
 "Dry run: %lld would upgrade" = "ドライラン: %lld個がアップグレード対象";

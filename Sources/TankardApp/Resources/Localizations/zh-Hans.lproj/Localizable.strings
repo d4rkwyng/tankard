@@ -122,6 +122,8 @@
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。";
 "%lld pinned upgrade not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld pinned upgrades not included (%@)" = "%lld 个已固定的升级未包含（%@）";
+"%lld ready-made program" = "%lld 个现成程序";
+"%lld ready-made programs" = "%lld 个现成程序";
 "%lld result for “%@”" = "%lld 个“%@”的结果";
 "%lld results for “%@”" = "%lld 个“%@”的结果";
 "%lld running" = "%lld 个正在运行";
@@ -400,6 +402,7 @@
 "Downloading %@…" = "正在下载 %@…";
 "Downloading %lld of %lld" = "正在下载 %lld / %lld";
 "Downloads" = "下载";
+"Downloads a ready-made program" = "下载现成的程序";
 "Dracula" = "Dracula";
 "Dracula colors (draculatheme.com, MIT)" = "Dracula 配色（draculatheme.com，MIT）";
 "Dry run: %lld would upgrade" = "试运行：%lld 个将升级";
