@@ -20,7 +20,6 @@ struct RestorePointsSheet: View {
     @Bindable var store: AppStore
     var points: RestorePointStore
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var scheme
     // `State(...)`, not `@State`: see CommandBox (the macro needs Xcode).
     private let pinAfterState = State(initialValue: true)
 
@@ -42,10 +41,11 @@ struct RestorePointsSheet: View {
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
             }
-            // 0.8.5: say up front why upgrades can't be rolled back.
+            // 0.8.5: say up front why upgrades can't be rolled back. Advice,
+            // not an error: a neutral info icon (final pass L1).
             if points.showsKeepOldVersionsBanner {
                 HStack(spacing: 10) {
-                    Image(systemName: "info.circle.fill").foregroundStyle(theme.warning(scheme).text)
+                    Image(systemName: "info.circle").foregroundStyle(.secondary)
                     Text("Rolling back needs the old version, and Tankard isn't keeping old versions after upgrades.")
                         .font(.system(size: 12))
                         .fixedSize(horizontal: false, vertical: true)

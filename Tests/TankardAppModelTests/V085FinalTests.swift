@@ -77,3 +77,25 @@ struct V085SkipCompilesPlanTests {
         #expect(button.help.contains(compiling[0].name))
     }
 }
+
+// L1: the Restore Points "Keep Old Versions" banner is advice, so it uses
+// the neutral info look (like Health's "Usually harmless" cards), not the
+// vulnerability warning colour. A view can't be inspected from here, so
+// this reads the banner's source.
+struct V085KeepOldVersionsBannerToneTests {
+    static func bannerSource() throws -> String {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let src = try String(contentsOf: root.appendingPathComponent("Sources/TankardApp/RestorePointsViews.swift"), encoding: .utf8)
+        let start = try #require(src.range(of: "if points.showsKeepOldVersionsBanner {"))
+        let end = try #require(src.range(of: "Button(\"Keep Old Versions\")", range: start.upperBound..<src.endIndex))
+        return String(src[start.lowerBound..<end.lowerBound])
+    }
+
+    @Test func bannerIconIsNeutralInfo() throws {
+        let banner = try Self.bannerSource()
+        #expect(banner.contains("Image(systemName: \"info.circle\")"))
+        #expect(banner.contains(".foregroundStyle(.secondary)"))
+        #expect(!banner.contains("warning("))
+        #expect(!banner.contains(".red"))
+    }
+}
