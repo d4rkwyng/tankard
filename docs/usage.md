@@ -362,9 +362,12 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
 
 - **Homebrew ▸ Health…** runs `brew doctor`, `brew config` and `brew missing`. Known
   warnings are explained in plain English, with the command that fixes them. Tankard shows
-  the command; it never runs it. **Environment** lists your `HOMEBREW_*` settings: where
-  each comes from, whether Tankard's brew gets it, and why not when it doesn't. See
-  [Your HOMEBREW_* settings](#my-homebrew_-settings-from-zshrc).
+  the command; it never runs it. **Environment** lists your `HOMEBREW_*` settings, proxy
+  variables and `XDG_CONFIG_HOME`: where each comes from, whether Tankard's brew gets it,
+  and why not when it doesn't. A proxy's user name and password show as `•••`
+  (`http://•••@proxy:8080`), here and in the `brew config` output. A brew.env setting that
+  overrides one of Tankard's gets a warning sign and the reason, and the section opens by
+  itself. See [Your HOMEBREW_* settings](#my-homebrew_-settings-from-zshrc).
 - **Homebrew ▸ History…** lists every brew command Tankard ran (the last 500), with its
   result. Failed ones have **Retry**.
 - **Homebrew ▸ Clean Up…** shows what `brew cleanup` would remove and how much space it
@@ -516,6 +519,15 @@ brew's own requests:
   set in a shell profile are not applied by Tankard yet, and Discover still reads
   formulae.brew.sh. Set them in a brew.env file and brew uses them; Tankard's own catalog
   downloads don't.
+- **Proxies:** `http_proxy`, `https_proxy`, `all_proxy`, `no_proxy` (and `ftp_proxy`, and
+  the upper-case `HTTPS_PROXY`, `ALL_PROXY`, `FTP_PROXY`) set in your shell profile or in
+  Tankard's own environment are passed to brew, so brew's downloads, `brew update` and git
+  go through your proxy as they do in Terminal. brew itself ignores the upper-case
+  `HTTP_PROXY` and `NO_PROXY`, so Tankard doesn't pass them either; use the lower-case
+  names. A brew.env file can set the lower-case ones too.
+- **Tankard's own requests** (Discover's catalog and install counts, cask download sizes,
+  Check for Tankard Updates…) use the proxy in **System Settings ▸ Network ▸ Details… ▸
+  Proxies**, like other Mac apps, not the shell variables above.
 
 Links (homepages, release pages) open only when you click them.
 
@@ -660,7 +672,7 @@ Not passed from a shell profile:
   `HOMEBREW_NO_VERIFY_ATTESTATIONS` and the like (Intelbrew mode sets its own remotes);
 - `HOMEBREW_CACHE` and `HOMEBREW_LOGS` (download progress and Clean Up assume the default
   folders);
-- mirrors (`*_DOMAIN`), tokens, proxies, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
+- mirrors (`*_DOMAIN`), tokens, and `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`;
 - settings Tankard controls: color, verbose and debug output, and the greedy-upgrade
   switches (Tankard's self-updating apps setting decides those);
 - any `HOMEBREW_*` name not on Tankard's list.
@@ -671,7 +683,30 @@ Tankard passes. So a `HOMEBREW_CASK_OPTS` with `--appdir` there applies to Tanka
 installs too; Health ▸ Environment warns about it, because Adopt Apps' location checks
 assume `/Applications`. A brew.env that sets `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK`
 pauses automatic updates (their safe mode relies on that check); Settings and the menu bar
-say so. Manual upgrades still run. Details are in
+say so. Manual upgrades still run.
+
+Health ▸ Environment warns about every brew.env setting that undoes one of Tankard's:
+
+- `HOMEBREW_UPGRADE_GREEDY`, `HOMEBREW_UPGRADE_GREEDY_CASKS` or
+  `HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS`: they override the self-updating apps setting;
+- in Intelbrew mode, a `HOMEBREW_CORE_GIT_REMOTE` or `HOMEBREW_BREW_GIT_REMOTE` that isn't
+  the fork, or an empty `HOMEBREW_NO_INSTALL_FROM_API`;
+- `HOMEBREW_NO_AUTOREMOVE` set to `0` (or empty, `false`, `no`, `off`): Uninstall would
+  also remove every other unused dependency, not just what it lists;
+- `HOMEBREW_COLOR`, `HOMEBREW_VERBOSE`, `HOMEBREW_DEBUG`, or an empty `HOMEBREW_NO_COLOR`:
+  they change brew's output, which Tankard reads;
+- `SUDO_ASKPASS`: password prompts go to that program instead of Tankard's dialog;
+- `HOMEBREW_CELLAR`, `HOMEBREW_CACHE`, `HOMEBREW_LOGS`, mirrors, and settings that change
+  where brew gets code from or what it trusts.
+
+brew has no command-line option that undoes these, so remove the line from brew.env if you
+want Tankard's behavior. Tokens in brew.env are fine and get no warning.
+
+**Which brew.env.** brew reads `$XDG_CONFIG_HOME/homebrew/brew.env` when
+`XDG_CONFIG_HOME` is set, otherwise `~/.homebrew/brew.env`. Tankard reads
+`XDG_CONFIG_HOME` (and `HOMEBREW_XDG_CONFIG_HOME`) from its environment or your shell
+profile (`export XDG_CONFIG_HOME="$HOME/.config"` and `~/.config` work), passes it to brew,
+and shows the same file brew reads. Details are in
 [architecture.md](architecture.md#intelbrew-detection-and-brews-environment).
 
 ### "Check for new versions in the background" is grayed out

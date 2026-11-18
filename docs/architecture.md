@@ -218,6 +218,7 @@ directly to `posix_spawn` with no shell in between:
 | `HOMEBREW_COLOR`, `HOMEBREW_VERBOSE`, `HOMEBREW_VERBOSE_USING_DOTS`, `HOMEBREW_DEBUG` | never (Tankard reads brew's output) |
 | `HOMEBREW_UPGRADE_GREEDY`, `HOMEBREW_UPGRADE_GREEDY_CASKS`, `HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS` | never (the self-updating apps setting decides) |
 | the user's allowed `HOMEBREW_*` settings (0.8.3) | from this process's environment, else the last shell startup file that sets them |
+| the proxy variables bin/brew keeps, `XDG_CONFIG_HOME`, `HOMEBREW_XDG_CONFIG_HOME` (0.8.4) | the same way |
 
 **The user's settings (0.8.3, `EnvironmentPolicy` in TankardCore).** Before 0.8.3 no
 `HOMEBREW_*` export from a shell profile reached brew apart from the Intelbrew three, so
@@ -259,14 +260,76 @@ blank, `0`, `false`, `no`, `off` and `nil` mean unset). When it is set, every au
 is skipped: an upgrade.log line, an Auto-update log entry, the menu-bar note and the
 Settings status say why. Manual upgrades are unaffected.
 
-Proxy variables (`http_proxy` and the rest) in shell profiles aren't read yet; bin/brew
-honours them from brew.env.
+**Proxies (0.8.4, `ProxySettings`).** bin/brew filters its environment with `env -i` and
+keeps `http_proxy`, `https_proxy`, `ftp_proxy`, `no_proxy`, `all_proxy`, `HTTPS_PROXY`,
+`FTP_PROXY` and `ALL_PROXY` (7.0.14 `ENV_VAR_NAMES`); it drops `HTTP_PROXY` (curl ignores it
+too) and `NO_PROXY`. Tankard reads all ten from its environment and the shell startup files
+(precedence as for `HOMEBREW_*`: the environment first, then the last file; empty means
+unset) and passes the eight bin/brew keeps; the other two show in Health as dropped by brew.
+`EnvFileParser.parseShell` reads them, plus one expansion: a proxy set to another proxy
+assigned earlier in the same file (`export https_proxy=$http_proxy`). The git probes get the
+proxies too (`git ls-remote` for the fork status). Health masks a proxy URL's user:password
+(`http://•••@proxy:8080`, `ProxySettings.mask`) and the same in the `brew config` and
+`brew doctor` text it shows (`maskText`: brew config prints proxy values as they are);
+Tankard never logs the environment it passes. Checked on 7.0.14 with a throwaway HOME
+(`EnvironmentRealCanary`): a profile's `http_proxy=http://u:p@127.0.0.1:9` gives
+`brew config` `http_proxy: http://u:p@127.0.0.1:9`.
+
+Tankard's own URLSession requests (Discover's catalog and install counts, the cask size
+probe, the update check) don't use these. URLSession follows the system proxy settings
+(System Settings, PAC files included), which is what users expect from a Mac app, and a
+shell-profile proxy is meant for command-line tools. Copying it into URLSession would also
+mean handling credentials and `no_proxy` matching ourselves.
+
+**brew.env conflicts (0.8.4, `EnvironmentPolicy.brewEnvConflict`).** Every brew.env
+setting (as brew reads it: the last file wins) that undoes a value Tankard forces, or one it
+denies from the shell, gets a warning in Health ▸ Environment with its reason:
+`NO_INSTALLED_DEPENDENTS_CHECK` on (automatic updates pause, as in 0.8.3); the greedy
+switches on; in Intelbrew mode a core or brew remote that normalises to something other than
+the fork, or an empty `NO_INSTALL_FROM_API`; `NO_AUTOREMOVE` off (Tankard's uninstall sets
+it to 1 so only the listed dependencies go); `COLOR`, `VERBOSE`, `VERBOSE_USING_DOTS`,
+`DEBUG` on, or `NO_COLOR`/`NO_ENV_HINTS` emptied; `CASK_OPTS` with options Tankard would
+drop; `SUDO_ASKPASS` (bin/brew takes it from brew.env, over Tankard's askpass); `CELLAR`;
+`CACHE`/`LOGS`; the trust settings and other remotes (a fork remote outside Intelbrew mode
+doesn't warn: it is how Intelbrew is configured); and mirrors. On or off follows
+env_config.rb: `boolean: true` settings are off for `0`, `false`, `no`, `off`, `nil`;
+`boolean: :set` ones are on for any non-empty value (so `HOMEBREW_VERBOSE=0` is on). Tokens
+don't warn; `HOMEBREW_PREFIX`, `REPOSITORY`, `LIBRARY`, `BREW_FILE` and
+`USER_CONFIG_HOME` aren't read from brew.env at all (bin/brew's `BIN_BREW_EXPORTED_VARS`),
+so `parseBrewEnv` skips them too, and it reads `SUDO_ASKPASS` and the lower-case proxies as
+bin/brew does.
+
+Mitigations, checked in 7.0.14's source: none of these has a command-line flag that beats
+the environment for the commands Tankard runs. `--greedy` is a plain switch with no
+negation (cmd/upgrade.rb, cmd/outdated.rb), `uninstall` has no autoremove flag, `--verbose`
+and `--debug` can't be turned off, and utils/tty.sh colours shell-side output whenever
+`HOMEBREW_COLOR` is set, whatever `HOMEBREW_NO_COLOR` says. The one exception is
+`CASK_OPTS`: explicit `--appdir=`-style and `--[no-]binaries` flags beat it
+(cask/config.rb's `explicit` over `env`). Tankard doesn't pass them, since forcing
+`/Applications` would silently undo a choice the user made deliberately in brew.env; it
+warns instead. No variable stops bin/brew reading brew.env (`HOMEBREW_USER_CONFIG_HOME` is
+one it won't take), and pointing `XDG_CONFIG_HOME` somewhere empty would hide the user's
+file without saying so.
+
+**Which user brew.env (0.8.4).** bin/brew takes the user file from `XDG_CONFIG_HOME`, else
+`HOMEBREW_XDG_CONFIG_HOME`, else `~/.homebrew`. Before 0.8.4 Tankard looked it up with its
+own `XDG_CONFIG_HOME` but never passed that to brew, so a terminal launch could show one
+file while brew read another, and a profile's `XDG_CONFIG_HOME` was never seen at all. Now
+both come from one place: `EnvironmentSources.configHomeEnvironment()` (the same pass-through
+as the allowed settings), which `BrewEnvironment.build` hands to brew and `load` uses to
+pick the brew.env it reads, so Intelbrew detection, the auto-update pause check and Health
+read the file brew reads. `parseShell` expands a leading `$HOME`, `${HOME}` or `~` in
+`XDG_CONFIG_HOME` (only there); anything else that needs the shell is skipped. bin/brew
+passes the value on to Ruby as `HOMEBREW_XDG_CONFIG_HOME` (and `HOMEBREW_USER_CONFIG_HOME`),
+so the other files brew keeps in that folder (`trust.json` for `brew trust`, the global
+Brewfile, the livecheck watchlist) are now the ones Terminal's brew uses too. The git probes
+see it, as git in Terminal does.
 
 **brew.env files** are read by `bin/brew` itself and exported over the top of the
 environment Tankard passes, so anything there applies no matter who starts brew (and can
 override Tankard's own values): `/etc/homebrew/brew.env`, `<prefix>/etc/homebrew/brew.env`,
 then `~/.homebrew/brew.env` (or `$XDG_CONFIG_HOME/homebrew/brew.env`). Tankard doesn't copy
-them in, it only lists them in Health ▸ Environment.
+them in, it only lists them in Health ▸ Environment (with the warnings above).
 
 **Mirrors and Tankard's own requests.** Discover and the tap index still fetch
 formulae.brew.sh and ghcr.io directly, even with `HOMEBREW_API_DOMAIN` set; following it is
