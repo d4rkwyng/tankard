@@ -574,8 +574,12 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
   `.modalPanel`, `makeKeyAndOrderFront`, `orderFrontRegardless()` (the fallback when focus
   never comes: in front of other apps' windows, a click focuses it), and makes the secure
   field first responder.
-- *Context.* `HOMEBREW_TANKARD_ASKPASS_CONTEXT`, set per command by Tankard (already
-  localized), cleaned to one line of at most 400 characters with no control characters.
+- *Context.* `HOMEBREW_TANKARD_ASKPASS_CONTEXT`, set per command by Tankard to the command
+  as displayed (`brew upgrade --cask windows-app`), cleaned to one line of at most 400
+  characters with no control characters. 0.8.4: the dialog is short: "Tankard needs your
+  password", one line derived from the command (`Askpass.step`: "To upgrade windows-app.",
+  generic when it isn't a brew install/reinstall/upgrade/uninstall), "Goes only to sudo,
+  never stored.", the field, and the command under a collapsed Details disclosure.
   A `HOMEBREW_` name because `bin/brew` drops other unknown variables; verified to reach the
   helper through `brew` → `sudo -A` on brew 7.0.14. The context is not secret.
 - *Retry wording.* sudo calls the helper again after a wrong password, from the same sudo
@@ -607,7 +611,8 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
 - *Debug hooks* (never set by Tankard, and only after the gate allows the request):
   `TANKARD_ASKPASS_DESCRIBE=1` prints the dialog's text to stderr and exits 1;
   `TANKARD_ASKPASS_SNAPSHOT=<png>` draws the empty dialog to a PNG and exits 1;
-  `TANKARD_ASKPASS_RETRY=1` shows the retry wording. None reads a password. bin/brew drops
+  `TANKARD_ASKPASS_RETRY=1` shows the retry wording; `TANKARD_ASKPASS_DETAILS=1` opens
+  Details before the snapshot. None reads a password. bin/brew drops
   these names, so in practice they work only in a test harness that is itself under Tankard.
 
 **Download progress (0.8.1).** brew prints no progress when it isn't in a terminal, so

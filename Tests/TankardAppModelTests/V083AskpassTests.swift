@@ -17,9 +17,9 @@ struct AskpassSupportTests {
     @Test func environmentOnlyWithAHelper() {
         #expect(Askpass.environment(helper: nil, context: "x").isEmpty)
         #expect(Askpass.environment(helper: "", context: "x").isEmpty)
-        let env = Askpass.environment(helper: "/Applications/Tankard.app/Contents/MacOS/tankard-askpass", context: "To run the installer for windows-app: brew upgrade --cask windows-app")
+        let env = Askpass.environment(helper: "/Applications/Tankard.app/Contents/MacOS/tankard-askpass", context: "brew upgrade --cask windows-app")
         #expect(env == ["SUDO_ASKPASS": "/Applications/Tankard.app/Contents/MacOS/tankard-askpass",
-                        "HOMEBREW_TANKARD_ASKPASS_CONTEXT": "To run the installer for windows-app: brew upgrade --cask windows-app"])
+                        "HOMEBREW_TANKARD_ASKPASS_CONTEXT": "brew upgrade --cask windows-app"])
         // bin/brew keeps SUDO_ASKPASS and HOMEBREW_*; any other name would be dropped.
         #expect(Askpass.contextKey.hasPrefix("HOMEBREW_"))
     }
@@ -34,9 +34,9 @@ struct AskpassSupportTests {
 
     @Test func requestFromArgvAndEnvironment() {
         let r = Askpass.request(arguments: ["tankard-askpass", "Password:"],
-                                environment: [Askpass.contextKey: "For this step of iterm2: brew upgrade --cask iterm2"],
+                                environment: [Askpass.contextKey: "brew upgrade --cask iterm2"],
                                 parentAge: 0.2)
-        #expect(r == Askpass.Request(prompt: "Password:", context: "For this step of iterm2: brew upgrade --cask iterm2", isRetry: false))
+        #expect(r == Askpass.Request(prompt: "Password:", context: "brew upgrade --cask iterm2", isRetry: false))
         // HOMEBREW_SUDO_THROUGH_SUDO_USER: brew's own prompt is kept.
         #expect(Askpass.request(arguments: ["a", "Password for derek:"], environment: [:]).prompt == "Password for derek:")
         // No prompt, no context: defaults, never a crash.
@@ -55,14 +55,38 @@ struct AskpassSupportTests {
         #expect(Askpass.request(arguments: ["a"], environment: [Askpass.retryKey: "1"]).isRetry)
     }
 
-    @Test func dialogTextNamesTheStep() {
-        let r = Askpass.Request(prompt: "Password:", context: "To run the installer for windows-app: brew upgrade --cask windows-app", isRetry: false)
+    /// 0.8.4: short. Title, "To <action> <name>.", where the password
+    /// goes; the command only under Details.
+    @Test func dialogTextIsShortAndNamesTheStep() {
+        let r = Askpass.Request(prompt: "Password:", context: "brew upgrade --cask homebrew/cask/windows-app", isRetry: false)
+        #expect(AskpassText.title == "Tankard needs your password")
+        #expect(AskpassText.body(r) == "To upgrade windows-app.\nGoes only to sudo, never stored.")
+        #expect(AskpassText.command(r) == "brew upgrade --cask homebrew/cask/windows-app")
         let text = AskpassText.describe(r)
-        #expect(text.contains("Tankard needs your administrator password"))
-        #expect(text.contains("windows-app: brew upgrade --cask windows-app"))
+        #expect(text.hasPrefix("Tankard needs your password\nTo upgrade windows-app.\n"))
+        #expect(text.contains("[▸ Details] brew upgrade --cask homebrew/cask/windows-app"))
         #expect(text.contains("[Cancel]"))
-        #expect(AskpassText.describe(Askpass.Request(prompt: "Password:", context: nil, isRetry: true))
-            .hasPrefix("The password was incorrect. Try again."))
+        let retry = Askpass.Request(prompt: "Password:", context: nil, isRetry: true)
+        #expect(AskpassText.describe(retry).hasPrefix("Wrong password, try again.\n"))
+        #expect(AskpassText.purpose(retry) == "For a brew step that needs administrator rights.")
+        #expect(!AskpassText.describe(retry).contains("Details"))
+    }
+
+    @Test func purposeFollowsTheAction() {
+        func purpose(_ c: String?) -> String { AskpassText.purpose(Askpass.Request(prompt: "Password:", context: c, isRetry: false)) }
+        #expect(purpose("brew install --cask windows-app") == "To install windows-app.")
+        #expect(purpose("brew install --cask --adopt homebrew/cask/iterm2") == "To install iterm2.")
+        #expect(purpose("brew reinstall --cask x") == "To reinstall x.")
+        #expect(purpose("brew uninstall --cask --zap x") == "To uninstall x.")
+        #expect(purpose("HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_UPGRADE_QUIT_CASKS=1 brew upgrade --cask a b")
+                == "To upgrade a, b.")
+        #expect(purpose("/opt/homebrew/bin/brew upgrade --cask a") == "To upgrade a.")
+        // Anything else: the generic line, never the raw text as a sentence.
+        for c in ["brew update", "brew upgrade --cask", "sudo rm -rf /", "To run the installer for x: brew upgrade x", "", nil] as [String?] {
+            #expect(purpose(c) == "For a brew step that needs administrator rights.", "\(c ?? "nil")")
+        }
+        #expect(Askpass.step(command: "brew upgrade --cask homebrew/cask/windows-app")
+                == Askpass.Step(action: .upgrade, names: ["windows-app"]))
     }
 
     @Test func helperPathOnlyInsideAnAppAndExecutable() throws {
@@ -101,7 +125,7 @@ struct AskpassHelperProcessTests {
         let helper = try #require(builtHelper())
         let r = try await ProcessRunner().run(helper, ["Password:"], environment: [
             Askpass.describeKey: "1",
-            Askpass.contextKey: "To run the installer for windows-app: brew upgrade --cask windows-app",
+            Askpass.contextKey: "brew upgrade --cask windows-app",
         ])
         #expect(r.exitCode == 1)
         #expect(r.stdout.isEmpty)
@@ -190,7 +214,7 @@ struct AdminPasswordTests {
                      ["tap", "a/b"], ["info", "--json=v2", "--installed"], ["outdated", "--cask"],
                      ["pin", "xz"], ["services", "stop", "x"], ["reinstall", "--force-bottle", "--formula", "vim"]] {
             #expect(!AdminPassword.mayNeedSudo(args), "\(args)")
-            #expect(AdminPassword.environment(helper: Self.helper, arguments: args, package: nil, display: "brew").isEmpty)
+            #expect(AdminPassword.environment(helper: Self.helper, arguments: args, display: "brew").isEmpty)
         }
     }
 
@@ -205,10 +229,6 @@ struct AdminPasswordTests {
         var f = pkg("xz")
         f.installsPkg = true // never for a formula
         #expect(!AdminPassword.required(f))
-        #expect(AdminPassword.context(p, display: "brew upgrade --cask windows-app")
-                == "To run the installer for windows-app: brew upgrade --cask windows-app")
-        #expect(AdminPassword.context(pkg("iterm2", kind: .cask), display: "brew upgrade --cask iterm2")
-                == "For this step of iterm2: brew upgrade --cask iterm2")
     }
 
     func store(helper: String? = Self.helper, runner: StreamingCommandRunning? = nil) async -> AppStore {
@@ -228,7 +248,8 @@ struct AdminPasswordTests {
         store.startUpgrade([chrome])
         let cmd = try #require(store.upgrade?.items.first?.command)
         #expect(cmd.environment["SUDO_ASKPASS"] == Self.helper)
-        #expect(cmd.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == "For this step of google-chrome: \(cmd.display)")
+        // 0.8.4: the command as shown; the dialog words it ("To upgrade google-chrome.").
+        #expect(cmd.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == cmd.display)
         // Not in what is shown or copied for Terminal.
         #expect(!cmd.display.contains("SUDO_ASKPASS"))
         #expect(cmd.display.hasPrefix("brew upgrade --cask"))
@@ -262,7 +283,7 @@ struct AdminPasswordTests {
         #expect(store.upgrade == nil)
         store.confirmUpgradePlan()
         let cmd = try #require(store.upgrade?.items.first?.command)
-        #expect(cmd.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == "To run the installer for google-chrome: \(cmd.display)")
+        #expect(cmd.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == cmd.display)
     }
 
     @Test func restoreCaskStepsGetItFormulaStepsDoNot() {
@@ -271,7 +292,7 @@ struct AdminPasswordTests {
         let c = AppStore.restoreCommand(cask, brew: "/opt/homebrew/bin/brew", base: [:], askpass: Self.helper)
         let f = AppStore.restoreCommand(formula, brew: "/opt/homebrew/bin/brew", base: [:], askpass: Self.helper)
         #expect(c.environment["SUDO_ASKPASS"] == Self.helper)
-        #expect(c.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == "For this step: brew reinstall --cask windows-app")
+        #expect(c.environment["HOMEBREW_TANKARD_ASKPASS_CONTEXT"] == "brew reinstall --cask windows-app")
         #expect(f.environment["SUDO_ASKPASS"] == nil)
     }
 

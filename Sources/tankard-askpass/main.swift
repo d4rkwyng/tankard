@@ -146,17 +146,78 @@ alert.addButton(withTitle: AskpassText.ok)
 let cancelButton = alert.addButton(withTitle: AskpassText.cancel)
 cancelButton.keyEquivalent = "\u{1b}"
 
-let label = NSTextField(labelWithString: AskpassText.promptLabel(request.prompt))
-label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+// 0.8.4: compact. The secure field (sudo's prompt as its placeholder, and
+// as a label only when it isn't the usual "Password:"), then a collapsed
+// "Details" disclosure with the brew command in small monospaced text.
+let width: CGFloat = 260
 let field = NSSecureTextField(frame: .zero)
 field.placeholderString = AskpassText.promptLabel(request.prompt).trimmingCharacters(in: CharacterSet(charactersIn: ":： "))
-let stack = NSStackView(views: [label, field])
+field.translatesAutoresizingMaskIntoConstraints = false
+field.widthAnchor.constraint(equalToConstant: width).isActive = true
+var rows: [NSView] = []
+if request.prompt != "Password:" {
+    let label = NSTextField(labelWithString: request.prompt)
+    label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+    rows.append(label)
+}
+rows.append(field)
+
+/// Shows or hides the command, then lets the alert fit its new height.
+@MainActor final class DetailsToggle: NSObject {
+    let disclosure: NSButton
+    let command: NSTextField
+    let stack: NSStackView
+    init(disclosure: NSButton, command: NSTextField, stack: NSStackView) {
+        self.disclosure = disclosure
+        self.command = command
+        self.stack = stack
+    }
+    /// From the triangle (its state already flipped) or the "Details" word.
+    @objc func toggle(_ sender: NSButton) {
+        if sender !== disclosure { disclosure.state = disclosure.state == .on ? .off : .on }
+        command.isHidden = disclosure.state != .on
+        stack.layoutSubtreeIfNeeded()
+        stack.setFrameSize(stack.fittingSize)
+        alert.layout()
+    }
+}
+var detailsToggle: DetailsToggle?
+let stack = NSStackView()
+if let commandText = AskpassText.command(request) {
+    let disclosure = NSButton(title: "", target: nil, action: nil)
+    disclosure.bezelStyle = .disclosure
+    disclosure.setButtonType(.pushOnPushOff)
+    disclosure.state = .off
+    let word = NSButton(title: AskpassText.details, target: nil, action: nil)
+    word.isBordered = false
+    word.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+    word.contentTintColor = .secondaryLabelColor
+    let header = NSStackView(views: [disclosure, word])
+    header.orientation = .horizontal
+    header.spacing = 2
+    let command = NSTextField(wrappingLabelWithString: commandText)
+    command.font = .monospacedSystemFont(ofSize: NSFont.smallSystemFontSize - 1, weight: .regular)
+    command.textColor = .secondaryLabelColor
+    command.isSelectable = true
+    command.preferredMaxLayoutWidth = width
+    command.translatesAutoresizingMaskIntoConstraints = false
+    command.widthAnchor.constraint(equalToConstant: width).isActive = true
+    command.isHidden = true
+    let toggle = DetailsToggle(disclosure: disclosure, command: command, stack: stack)
+    for b in [disclosure, word] {
+        b.target = toggle
+        b.action = #selector(DetailsToggle.toggle(_:))
+        b.refusesFirstResponder = true
+    }
+    detailsToggle = toggle
+    rows += [header, command]
+}
+for v in rows { stack.addArrangedSubview(v) }
 stack.orientation = .vertical
 stack.alignment = .leading
-stack.spacing = 4
-stack.frame = NSRect(x: 0, y: 0, width: 280, height: 44)
-field.translatesAutoresizingMaskIntoConstraints = false
-field.widthAnchor.constraint(equalToConstant: 280).isActive = true
+stack.spacing = 6
+stack.layoutSubtreeIfNeeded()
+stack.frame = NSRect(origin: .zero, size: NSSize(width: width, height: stack.fittingSize.height))
 alert.accessoryView = stack
 alert.layout()
 alert.window.initialFirstResponder = field
@@ -174,7 +235,14 @@ RunLoop.main.add(watchdog, forMode: .common)
 
 if let snapshotPath {
     // Debug only: picture of the empty dialog, then exit 1. Never reads
-    // the field.
+    // the field. TANKARD_ASKPASS_DETAILS=1 opens Details first, through the
+    // same toggle a click uses.
+    if env[Askpass.detailsKey] == "1", let detailsToggle {
+        let open = Timer(timeInterval: 0.3, repeats: false) { _ in
+            MainActor.assumeIsolated { detailsToggle.disclosure.performClick(nil) }
+        }
+        RunLoop.main.add(open, forMode: .modalPanel)
+    }
     let shot = Timer(timeInterval: 0.6, repeats: false) { _ in
         MainActor.assumeIsolated { snapshot(to: snapshotPath) }
     }

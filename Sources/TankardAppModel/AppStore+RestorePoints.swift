@@ -71,7 +71,7 @@ extension AppStore {
         var env = base
         env["HOMEBREW_NO_AUTO_UPDATE"] = "1"
         // 0.8.3: a cask reinstall or uninstall may run sudo: the password dialog.
-        let password = AdminPassword.environment(helper: askpass, arguments: step.arguments, package: nil, display: step.display)
+        let password = AdminPassword.environment(helper: askpass, arguments: step.arguments, display: step.display)
         return QueuedCommand(executable: brew, arguments: step.arguments,
                              environment: env.merging(step.environment) { $1 }.merging(password) { $1 },
                              display: step.display)

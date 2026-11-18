@@ -17501,6 +17501,58 @@
         }
       }
     },
+    "Details": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "詳細"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详细信息"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalhes"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dettagli"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세부사항"
+          }
+        }
+      }
+    },
     "Didn't run": {
       "localizations": {
         "de": {
@@ -20413,6 +20465,58 @@
         }
       }
     },
+    "For a brew step that needs administrator rights.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für einen brew-Schritt mit Adminrechten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour une étape de brew qui exige des droits d’administrateur."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para un paso de brew que requiere permisos de administrador."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理者権限が必要なbrewの手順のため。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于需要管理员权限的 brew 步骤。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para uma etapa do brew que exige direitos de administrador."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per un passaggio di brew che richiede i diritti di amministratore."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "관리자 권한이 필요한 brew 단계를 위해."
+          }
+        }
+      }
+    },
     "For each app, brew downloads the cask and records it as installed. The app itself stays where it is.": {
       "localizations": {
         "de": {
@@ -20513,110 +20617,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew는 앱마다 cask를 다운로드하고, 다운로드를 기존 앱과 대조한 뒤 cask를 설치됨으로 기록합니다. 앱 자체는 그대로 있습니다."
-          }
-        }
-      }
-    },
-    "For this step of %@: %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für diesen Schritt von %@: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour cette étape de %@ : %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para este paso de %@: %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@のこのステップ: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "用于 %@ 的这一步：%@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para esta etapa de %@: %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Per questo passaggio di %@: %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@의 이 단계: %@"
-          }
-        }
-      }
-    },
-    "For this step: %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für diesen Schritt: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour cette étape : %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para este paso: %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "このステップ: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "用于这一步：%@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para esta etapa: %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Per questo passaggio: %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 단계: %@"
           }
         }
       }
@@ -21917,6 +21917,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "GitHub 응답을 읽을 수 없습니다."
+          }
+        }
+      }
+    },
+    "Goes only to sudo, never stored.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur für sudo, wird nie gespeichert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transmis uniquement à sudo, jamais enregistré."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo va a sudo, nunca se guarda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudoにのみ渡され、保存されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅交给 sudo，从不保存。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vai só para o sudo, nunca é guardada."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Va solo a sudo, mai salvata."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sudo에만 전달되며 저장되지 않습니다."
           }
         }
       }
@@ -44906,58 +44958,6 @@
         }
       }
     },
-    "Skip packages that would compile (%lld with bottles)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pakete überspringen, die kompiliert würden (%lld mit Bottles)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorer les paquets qui seraient compilés (%lld avec bottles)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Omitir paquetes que se compilarían (%lld con bottles)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "コンパイルが必要なパッケージをスキップ（bottleあり: %lld）"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跳过需要编译的软件包（%lld 个有 bottle）"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorar pacotes que seriam compilados (%lld com bottles)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Salta i pacchetti che verrebbero compilati (%lld con bottle)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "컴파일이 필요한 패키지 건너뛰기 (bottle 있음 %lld개)"
-          }
-        }
-      }
-    },
     "Skipped: would compile": {
       "localizations": {
         "de": {
@@ -47870,54 +47870,54 @@
         }
       }
     },
-    "Tankard needs your administrator password": {
+    "Tankard needs your password": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard braucht dein Admin-Passwort"
+            "value": "Tankard braucht dein Passwort"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard a besoin de votre mot de passe administrateur"
+            "value": "Tankard a besoin de votre mot de passe"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard necesita tu contraseña de administrador"
+            "value": "Tankard necesita tu contraseña"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankardには管理者パスワードが必要です"
+            "value": "Tankardにパスワードが必要です"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard 需要你的管理员密码"
+            "value": "Tankard 需要你的密码"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Tankard precisa da sua senha de administrador"
+            "value": "O Tankard precisa da sua senha"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard richiede la password di amministratore"
+            "value": "Tankard ha bisogno della tua password"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard에 관리자 암호가 필요합니다"
+            "value": "Tankard에 암호가 필요합니다"
           }
         }
       }
@@ -50054,58 +50054,6 @@
         }
       }
     },
-    "The password was incorrect. Try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Falsches Passwort. Versuche es erneut."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mot de passe incorrect. Réessayez."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La contraseña no es correcta. Inténtalo de nuevo."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "パスワードが正しくありません。もう一度お試しください。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "密码不正确。请再试一次。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Senha incorreta. Tente novamente."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Password errata. Riprova."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "암호가 올바르지 않습니다. 다시 시도하세요."
-          }
-        }
-      }
-    },
     "The variables are unset first, so this brew update doesn't put the fork back.": {
       "localizations": {
         "de": {
@@ -50886,6 +50834,58 @@
         }
       }
     },
+    "To install %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Installieren von %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour installer %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para instalar %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@をインストールするため。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于安装 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para instalar %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per installare %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 설치를 위해."
+          }
+        }
+      }
+    },
     "To keep one, mark it as installed on request in Terminal first, then check again:": {
       "localizations": {
         "de": {
@@ -50938,54 +50938,158 @@
         }
       }
     },
-    "To run the installer for %@: %@": {
+    "To reinstall %@.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Für das Installationsprogramm von %@: %@"
+            "value": "Zum Neuinstallieren von %@."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pour exécuter le programme d’installation de %@ : %@"
+            "value": "Pour réinstaller %@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Para ejecutar el instalador de %@: %@"
+            "value": "Para reinstalar %@."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@のインストーラを実行するため: %@"
+            "value": "%@を再インストールするため。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "为运行 %@ 的安装器：%@"
+            "value": "用于重新安装 %@。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Para executar o instalador de %@: %@"
+            "value": "Para reinstalar %@."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Per eseguire il programma di installazione di %@: %@"
+            "value": "Per reinstallare %@."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@의 설치 프로그램 실행: %@"
+            "value": "%@ 재설치를 위해."
+          }
+        }
+      }
+    },
+    "To uninstall %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Deinstallieren von %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour désinstaller %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para desinstalar %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@をアンインストールするため。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于卸载 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para desinstalar %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per disinstallare %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 제거를 위해."
+          }
+        }
+      }
+    },
+    "To upgrade %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Aktualisieren von %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour mettre à jour %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para actualizar %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@をアップグレードするため。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于升级 %@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para atualizar %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per aggiornare %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 업그레이드를 위해."
           }
         }
       }
@@ -53482,6 +53586,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "패키지 %lld개를 업그레이드할까요?"
+          }
+        }
+      }
+    },
+    "Upgrade %lld with bottles": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mit Bottles aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour %lld avec bottles"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar %lld con bottles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottleありの%lld件をアップグレード"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级 %lld 个有 bottle 的"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar %lld com bottles"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna %lld con bottle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bottle 있는 %lld개 업그레이드"
           }
         }
       }
@@ -56138,6 +56294,58 @@
         }
       }
     },
+    "Wrong password, try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsches Passwort, bitte erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mot de passe incorrect, réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña incorrecta, inténtalo de nuevo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードが違います。もう一度入力してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码错误，请重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha incorreta, tente de novo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password errata, riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호가 틀렸습니다. 다시 시도하세요."
+          }
+        }
+      }
+    },
     "Xcode is out of date": {
       "localizations": {
         "de": {
@@ -57018,58 +57226,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew는 한 번에 하나의 명령만 허용합니다. 다른 명령(터미널 또는 다른 앱)이 끝날 때까지 기다린 후 다시 시도하세요."
-          }
-        }
-      }
-    },
-    "brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew hat sudo für diesen Schritt um Adminrechte gebeten. Dein Passwort geht direkt an sudo; Tankard speichert es nicht. Abbrechen stoppt diesen Schritt."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew a demandé à sudo des droits d’administrateur pour cette étape. Votre mot de passe va directement à sudo ; Tankard ne le conserve pas. Annuler arrête cette étape."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew pidió a sudo permisos de administrador para este paso. Tu contraseña va directamente a sudo; Tankard no la guarda. Cancelar detiene este paso."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brewがこのステップのためにsudoで管理者権限を要求しました。パスワードはsudoに直接渡され、Tankardは保存しません。キャンセルするとこのステップを中止します。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew 为这一步向 sudo 请求管理员权限。你的密码直接交给 sudo；Tankard 不会存储。取消会停止这一步。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O brew pediu ao sudo direitos de administrador para esta etapa. Sua senha vai direto para o sudo; o Tankard não a guarda. Cancelar interrompe esta etapa."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew ha chiesto a sudo i diritti di amministratore per questo passaggio. La password va direttamente a sudo; Tankard non la memorizza. Annulla interrompe questo passaggio."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew가 이 단계를 위해 sudo에 관리자 권한을 요청했습니다. 암호는 sudo로 바로 전달되며 Tankard는 저장하지 않습니다. 취소하면 이 단계가 중단됩니다."
           }
         }
       }
@@ -58006,58 +58162,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew install은 Homebrew에 현재 있는 버전을 받으며, %@보다 새 버전일 수 있습니다."
-          }
-        }
-      }
-    },
-    "brew is running a step that needs administrator rights (sudo).": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew führt einen Schritt aus, der Adminrechte braucht (sudo)."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew exécute une étape qui nécessite des droits d’administrateur (sudo)."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew está ejecutando un paso que necesita permisos de administrador (sudo)."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brewが管理者権限(sudo)の必要なステップを実行しています。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew 正在运行一个需要管理员权限 (sudo) 的步骤。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O brew está executando uma etapa que precisa de direitos de administrador (sudo)."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew sta eseguendo un passaggio che richiede i diritti di amministratore (sudo)."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "brew가 관리자 권한(sudo)이 필요한 단계를 실행 중입니다."
           }
         }
       }

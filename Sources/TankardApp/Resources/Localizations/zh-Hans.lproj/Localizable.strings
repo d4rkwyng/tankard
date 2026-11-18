@@ -330,6 +330,7 @@
 "Deprecated" = "已弃用";
 "Deprecated since %@" = "自 %@ 起弃用";
 "Deprecated: it still installs, but Homebrew plans to disable it." = "已弃用：仍可安装，但 Homebrew 计划将其停用。";
+"Details" = "详细信息";
 "Didn't run" = "未运行";
 "Disabled" = "已停用";
 "Disabled in its tap: brew won't install it." = "在其 tap 中已停用：brew 不会安装它。";
@@ -386,10 +387,9 @@
 "Follows macOS." = "跟随 macOS。";
 "For 1 Day" = "1 天";
 "For 1 Week" = "1 周";
+"For a brew step that needs administrator rights." = "用于需要管理员权限的 brew 步骤。";
 "For each app, brew downloads the cask and records it as installed. The app itself stays where it is." = "对于每个 App，brew 会下载 Cask 并将其记录为已安装。App 本身保持原位。";
 "For each app, brew downloads the cask, checks the download against the app that is there, and then records the cask as installed. The app itself stays where it is." = "对每个 App，brew 会下载 cask，将下载内容与现有 App 比对，然后将 cask 记录为已安装。App 本身保留在原位置。";
-"For this step of %@: %@" = "用于 %@ 的这一步：%@";
-"For this step: %@" = "用于这一步：%@";
 "Fork: behind (%@; %@ available)" = "分支：落后（%@；可用 %@）";
 "Fork: current (%@)" = "分支：最新（%@）";
 "Fork: not on a release tag (%@)" = "分支：不在发布标签上（%@）";
@@ -415,6 +415,7 @@
 "GitHub answered HTTP %lld." = "GitHub 返回 HTTP %lld。";
 "GitHub lists no release of Tankard." = "GitHub 上没有 Tankard 的发行版本。";
 "GitHub's answer couldn't be read." = "无法读取 GitHub 的响应。";
+"Goes only to sudo, never stored." = "仅交给 sudo，从不保存。";
 "HEAD build" = "HEAD 构建";
 "HEAD builds have no fixed version to go back to." = "HEAD 构建没有可回退的固定版本。";
 "Has Intel bottle" = "有 Intel bottle";
@@ -856,7 +857,6 @@
 "Skip This Version" = "跳过此版本";
 "Skip Version %@" = "跳过版本 %@";
 "Skip packages that would compile (%@)" = "跳过需要编译的软件包 (%@)";
-"Skip packages that would compile (%lld with bottles)" = "跳过需要编译的软件包（%lld 个有 bottle）";
 "Skipped: would compile" = "已跳过：需要编译";
 "Skipping %@" = "正在跳过 %@";
 "Snooze" = "稍后提醒";
@@ -913,7 +913,7 @@
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
 "Tankard looks for brew at %@, or TANKARD_BREW." = "Tankard 会在 %@ 或 TANKARD_BREW 中查找 brew。";
 "Tankard needs App Management permission. Allow it in System Settings → Privacy & Security → App Management, relaunch Tankard, then try again." = "Tankard 需要“App 管理”权限。请在“系统设置”→“隐私与安全性”→“App 管理”中允许，重新启动 Tankard，然后重试。";
-"Tankard needs your administrator password" = "Tankard 需要你的管理员密码";
+"Tankard needs your password" = "Tankard 需要你的密码";
 "Tankard never runs sudo. Run this in Terminal:" = "Tankard 从不运行 sudo。请在“终端”中运行：";
 "Tankard on GitHub" = "GitHub 上的 Tankard";
 "Tankard only controls your own services and never runs sudo. Run this in Terminal:" = "Tankard 只控制你自己的服务，从不运行 sudo。请在“终端”中运行：";
@@ -955,7 +955,6 @@
 "The old version is still installed. brew uninstall removes the new one, then brew link links the old one." = "旧版本仍已安装。brew uninstall 会移除新版本，然后 brew link 会链接旧版本。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”：";
-"The password was incorrect. Try again." = "密码不正确。请再试一次。";
 "The variables are unset first, so this brew update doesn't put the fork back." = "这些变量会先被取消设置，因此这次 brew update 不会把 fork 放回去。";
 "The vendor matches, but the cask doesn't name this exact bundle id." = "开发者匹配，但 cask 未列出这个确切的 bundle ID。";
 "Their commands and libraries aren't in Homebrew's prefix. Usually an install or upgrade was interrupted." = "它们的命令和库不在 Homebrew 的前缀中。通常是安装或升级被中断所致。";
@@ -971,8 +970,11 @@
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";
+"To install %@." = "用于安装 %@。";
 "To keep one, mark it as installed on request in Terminal first, then check again:" = "若要保留某项，请先在“终端”中将其标记为按需安装，然后再次检查：";
-"To run the installer for %@: %@" = "为运行 %@ 的安装器：%@";
+"To reinstall %@." = "用于重新安装 %@。";
+"To uninstall %@." = "用于卸载 %@。";
+"To upgrade %@." = "用于升级 %@。";
 "Top 200 results for “%@”" = "“%@”的前 200 条结果";
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "像 Homebrew 一样，在 Homebrew 安装的 App 中尝试一次无害写入，并立即移除";
 "Trust" = "信任";
@@ -1021,6 +1023,7 @@
 "Upgrade %lld" = "升级 %lld";
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
+"Upgrade %lld with bottles" = "升级 %lld 个有 bottle 的";
 "Upgrade 1 package?" = "升级 1 个软件包？";
 "Upgrade All" = "全部升级";
 "Upgrade All…" = "全部升级…";
@@ -1072,6 +1075,7 @@
 "Would remove 1 formula" = "将移除 1 个 formula";
 "Writes a .command script with exactly these commands and opens it in Terminal" = "写入一个包含这些命令的 .command 脚本，并在“终端”中打开";
 "Writing Brewfile…" = "正在写入 Brewfile…";
+"Wrong password, try again." = "密码错误，请重试。";
 "Xcode is out of date" = "Xcode 已过期";
 "Yes" = "是";
 "You have Tankard %@." = "你当前使用 Tankard %@。";
@@ -1089,7 +1093,6 @@
 "brew --version exited %d" = "brew --version 已退出，代码 %d";
 "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew 只接管与 cask 安装版本完全相同的版本。请先用 App 自带的更新程序更新，然后点按“重新扫描”。Tankard 不会替你替换该 App。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew 一次只允许运行一条命令。请等另一条命令（在“终端”或其他 App 中）完成后再重试。";
-"brew asked sudo for administrator rights for this step. Your password goes straight to sudo; Tankard doesn't store it. Cancel stops this step." = "brew 为这一步向 sudo 请求管理员权限。你的密码直接交给 sudo；Tankard 不会存储。取消会停止这一步。";
 "brew bundle check failed:\n" = "brew bundle check 失败：\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle 未在 %lld 秒内完成，因此 Tankard 已将其停止。Homebrew 可能正忙或在等待网络；请稍后再试。";
 "brew bundle dump failed:\n" = "brew bundle dump 失败：\n";
@@ -1108,7 +1111,6 @@
 "brew exited %lld" = "brew 已退出，代码 %lld";
 "brew install --cask --adopt: brew downloads the cask, compares the app's version (short version and build) with the one already installed and, when they match, records the cask without moving the app. Apps from the App Store and Apple, and apps Homebrew already manages, aren't listed." = "brew install --cask --adopt：brew 会下载 cask，将 App 的版本（短版本号和构建号）与已安装的版本比较，一致时记录该 cask 而不移动 App。来自 App Store 和 Apple 的 App，以及 Homebrew 已管理的 App，不会列出。";
 "brew install gets the version Homebrew has now, which may be newer than %@." = "brew install 会获取 Homebrew 当前的版本，可能比 %@ 更新。";
-"brew is running a step that needs administrator rights (sudo)." = "brew 正在运行一个需要管理员权限 (sudo) 的步骤。";
 "brew link always links the newest version left, which isn't the one in this restore point." = "brew link 总是链接剩余的最新版本，而不是此恢复点中的版本。";
 "brew link would need --force for a keg-only formula, which links it where it wasn't before." = "对于 keg-only formula，brew link 需要 --force，这会把它链接到此前未链接的位置。";
 "brew marks it incomplete" = "brew 将其标记为不完整";
