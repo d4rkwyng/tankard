@@ -164,9 +164,12 @@ final class ScheduledRunFlags: @unchecked Sendable {
     private var timer: Task<Void, Never>?
 
     /// Starts the limit (when brew starts, not while it waits in the queue).
+    /// 0.8.5 (HK-47 review): on the suspending clock, which stops while the
+    /// Mac sleeps: a night asleep mid-step no longer uses up the limit and
+    /// stops a nearly finished brew on the wake.
     func startTimer(_ seconds: TimeInterval, onTimeout: @escaping @Sendable () -> Void) {
         let t = Task {
-            try? await Task.sleep(for: .seconds(seconds))
+            try? await Task.sleep(for: .seconds(seconds), tolerance: nil, clock: .suspending)
             guard !Task.isCancelled, self.markTimedOut() else { return }
             onTimeout()
         }

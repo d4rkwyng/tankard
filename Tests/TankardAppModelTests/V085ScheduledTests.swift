@@ -278,3 +278,35 @@ struct ScheduledAutoUpdateTests {
         }
     }
 }
+
+// HK-47 review (0.8.5), item 3: a step the Mac slept through is "interrupted
+// by sleep", even when its time limit fired too (on the wake), never "took
+// too long".
+@MainActor
+struct ScheduledStepSleepTests {
+    let base = ParallelLoadTests()
+
+    @Test func aStepTheMacSleptThroughIsSleepNotTooLong() async throws {
+        let r = try await base.rig(stream: { args, out in
+            if args.first == "upgrade" { try await Task.sleep(for: .seconds(60)) }
+            out(Data("ok\n".utf8))
+            return 0
+        })
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        r.store.autoUpdate.settings.enabled = true
+        r.store.autoUpdate.stepTimeoutOverride = 0.5
+        let run = Task { await r.store.autoUpdate.run(store: r.store, notifier: nil) }
+        #expect(await waitUntil { r.stream.count("upgrade") == 1 })
+        r.store.system.willSleep()
+        r.store.system.didWake(at: Date())
+        // The limit fires (as it would right after the wake), stopping brew.
+        let record = try #require(await run.value)
+        let qualified = try #require(r.stream.calls.first { $0.first == "upgrade" }?.last)
+        let name = String(qualified.split(separator: "/").last ?? "")
+        let first = try #require(record.skipped.first { $0.name == name })
+        #expect(first.detail == AutoUpdateSkip.slept.text)
+    }
+}
+// END ITEM 3

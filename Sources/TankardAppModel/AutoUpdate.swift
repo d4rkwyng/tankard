@@ -932,12 +932,14 @@ public final class AutoUpdater {
             step = AutoUpdateStep(name: p.name, index: n + 1, total: plan.run.count)
             let result = await runUpgrade(p, store: store, logFile: logFile, lockWait: lockWait)
             let (code, lines) = (result.code, result.lines)
-            if result.timedOut {
-                logFile?.append(["tankard: stopped \(p.name): \(AutoUpdateSkip.timedOut.text)"])
-                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.timedOut.text))
-            } else if result.slept && code != 0 && !quitRequested {
+            // 0.8.5 (HK-47 review): sleep first: a step the Mac slept
+            // through was interrupted by sleep, even if the limit fired too.
+            if result.slept && code != 0 && !quitRequested {
                 logFile?.append(["tankard: skipped \(p.name): \(AutoUpdateSkip.slept.text)"])
                 record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.slept.text))
+            } else if result.timedOut {
+                logFile?.append(["tankard: stopped \(p.name): \(AutoUpdateSkip.timedOut.text)"])
+                record.skipped.append(.init(name: p.name, isCask: p.kind == .cask, detail: AutoUpdateSkip.timedOut.text))
             } else if result.cancelled {
                 // Quit Now: brew stopped and undid the step (not a failure).
                 logFile?.append(["tankard: stopped \(p.name): Tankard is quitting"])
