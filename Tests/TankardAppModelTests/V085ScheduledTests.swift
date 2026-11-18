@@ -310,3 +310,21 @@ struct ScheduledStepSleepTests {
     }
 }
 // END ITEM 3
+
+// HK-47 review (0.8.5), item 5: a scheduled refresh that can't even find
+// brew doesn't leave the last scheduled check's quiet result behind (auto-
+// update read it and postponed itself again and again).
+@MainActor
+struct ScheduledRefreshResultTests {
+    @Test func aScheduledRefreshWithoutBrewForgetsTheLastResult() async throws {
+        let deps = AppStore.Dependencies(makeClient: { throw BrewClientError.brewNotFound(searched: ["/opt/homebrew/bin/brew"]) },
+                                         streamRunner: FakeStreamRunner(log: CallLog()) { _, _ in 0 },
+                                         cache: nil, logURL: nil)
+        let store = AppStore(deps: deps, settings: testSettings())
+        store.lastScheduledUpdate = ScheduledUpdateResult(quiet: .offline)
+        await store.refresh(.scheduled)
+        #expect(store.lastScheduledUpdate == nil)
+        #expect(store.error?.title == "Homebrew not found")
+    }
+}
+// END ITEM 5

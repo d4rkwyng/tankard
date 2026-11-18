@@ -519,6 +519,9 @@ public final class AppStore {
     }
 
     func refresh(_ kind: RefreshKind) async {
+        // 0.8.5 (HK-47 review): a scheduled refresh's caller reads this
+        // run's result, never the last one's (brew not found returns early).
+        if kind == .scheduled { lastScheduledUpdate = nil }
         // 0.8.3: the bundle was replaced: the new instance reads status.
         if selfReplaced { return }
         if let running = refreshTask {
