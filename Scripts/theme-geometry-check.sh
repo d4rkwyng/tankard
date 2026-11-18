@@ -18,8 +18,12 @@
 # ad hoc (the code is unchanged; a hardened-runtime signature would refuse
 # the probe), and Scripts/theme-probe.m is loaded into it to click the
 # Settings radio buttons and record the window. Needs a GUI login session
-# (works with the screen locked) and clang. The app's defaults are backed
-# up first and restored afterwards; Tankard must not be running.
+# (works with the screen locked) and clang. Tankard must not be running.
+# Your settings are only read: the copy gets its own bundle identifier,
+# net.mindtricks.tankard.e2e.theme.<pid>, so its UserDefaults are a domain
+# of its own (seeded from yours, so onboarding, columns etc. match, and
+# deleted at exit). Before 0.8.4 the check wrote net.mindtricks.tankard
+# itself and imported a backup at the end.
 #
 #   WORK=<dir>   working directory (default: a new mktemp -d); kept when set
 #   KEEP=1       keep the default working directory too (dumps and PNGs)
@@ -35,9 +39,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 APP=${1:-dist/Tankard.app}
 [ -x "$APP/Contents/MacOS/Tankard" ] || { echo "no app at $APP" >&2; exit 1; }
-# Another Tankard would share (and change) the defaults this check sets.
+# Another Tankard would run brew and change the data the window shows.
 if [ "${ALLOW_RUNNING:-0}" != 1 ] && pgrep -x Tankard >/dev/null; then echo "Tankard is running: quit it first ($(pgrep -x Tankard | tr '\n' ' '))" >&2; exit 1; fi
-DOMAIN=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")
+REAL_DOMAIN=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")
+DOMAIN=net.mindtricks.tankard.e2e.theme.$$
 START=${START:-20}
 
 if [ -n "${WORK:-}" ]; then mkdir -p "$WORK"; KEEP=1; else WORK=$(mktemp -d); fi
@@ -45,20 +50,23 @@ OUT="$WORK/out"
 rm -rf "$OUT" "$WORK/Tankard.app"
 mkdir -p "$OUT"
 
-# Defaults: back up, and restore whatever happens.
-BACKUP="$WORK/defaults-backup.plist"
-had_defaults=0
-if defaults export "$DOMAIN" "$BACKUP" 2>/dev/null; then had_defaults=1; fi
+# Defaults: the copy's own domain, seeded from yours (read only), deleted
+# whatever happens.
 pid=
 cleanup() {
     [ -n "$pid" ] && kill "$pid" 2>/dev/null || true
     defaults delete "$DOMAIN" >/dev/null 2>&1 || true
-    [ "$had_defaults" = 1 ] && defaults import "$DOMAIN" "$BACKUP"
+    rm -f ~/Library/Preferences/"$DOMAIN".plist
     if [ "${KEEP:-0}" = 1 ]; then echo "kept: $WORK"; else rm -rf "$WORK"; fi
 }
 trap cleanup EXIT
+trap 'exit 130' INT TERM
+if defaults export "$REAL_DOMAIN" "$WORK/defaults-seed.plist" 2>/dev/null; then
+    defaults import "$DOMAIN" "$WORK/defaults-seed.plist"
+fi
 
 ditto "$APP" "$WORK/Tankard.app"
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $DOMAIN" "$WORK/Tankard.app/Contents/Info.plist"
 codesign --force --deep --sign - "$WORK/Tankard.app" 2>/dev/null
 clang -dynamiclib -fobjc-arc -Wno-arc-retain-cycles -framework AppKit -o "$WORK/theme-probe.dylib" Scripts/theme-probe.m
 BIN="$WORK/Tankard.app/Contents/MacOS/Tankard"

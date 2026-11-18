@@ -1015,7 +1015,9 @@ Appearance radio buttons. Every visible text, image, control, toolbar item and c
 keep its place and size in all five themes, launched in each and through a chain of
 switches, in every frame drawn after a click as well as once settled; and after each
 switch every visible row's background (at the top, 40 rows down, and back) must match a
-fresh launch in that theme. It backs up and restores the app's defaults.
+fresh launch in that theme. The copy gets its own bundle identifier
+(`net.mindtricks.tankard.e2e.theme.<pid>`), so its settings are a domain of its own, seeded
+from yours and deleted at exit; your `net.mindtricks.tankard` is only read.
 
 `Scripts/launch-check.sh [APP]` launches the app for real (no demo, no snapshot, no
 `TANKARD_*` variables, real settings and real brew, read-only) several times and fails

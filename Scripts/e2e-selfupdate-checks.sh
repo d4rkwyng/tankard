@@ -41,6 +41,31 @@ print("ok")
 PY
 }
 
+# step_logged APPLOG INDEX TEXT: the same verdict from the app's stderr
+# ("e2e: step N (line L): TEXT" then "e2e:   -> PASS"). Phase A uses this:
+# its app.log is the old pid's own, while results.jsonl is recreated (0
+# bytes) when the relaunched copy starts, because it inherits the script
+# environment through the relaunch helper (0.8.3 rc1 and the two earlier
+# runs all ended with an empty results.jsonl, mtime = the new pid's start).
+step_logged() {
+    local log=$1 index=$2 text=$3
+    [ -f "$log" ] || { echo "missing (no $log)"; return 1; }
+    awk -v want="e2e: step $index (line " -v text="$text" '
+        found == 0 && index($0, want) == 1 {
+            rest = substr($0, length(want) + 1); sub(/^[0-9]+\): /, "", rest)
+            if (rest == text) { found = 1; next }
+            print "wrong step: " rest; bad = 1; exit
+        }
+        found == 1 && /^e2e:   -> / { v = substr($0, 11); found = 2; exit }
+        END {
+            if (bad) exit 1
+            if (found == 0) { print "missing"; exit 1 }
+            if (found == 1) { print "no verdict (the app stopped in the step)"; exit 1 }
+            if (v == "PASS") { print "ok"; exit 0 }
+            print (v == "SKIPPED" ? "skipped" : "failed: " substr(v, 7)); exit 1
+        }' "$log"
+}
+
 # relaunch_logged LOGSTREAM OLDPID: the relaunch helper started for OLDPID,
 # OLDPID logged its terminate, and neither gave-up line is there.
 relaunch_logged() {
@@ -110,6 +135,26 @@ J
     expect 1 "other step at that index" step_result "$t/results.jsonl" 1 "open-sheet history"
     expect 0 "passed step 5" step_result "$t/results.jsonl" 5 "open-sheet history"
     expect 1 "no results file" step_result "$t/none.jsonl" 1 "expect-ready"
+
+    cat > "$t/app.log" <<'A'
+2026-11-17 16:46:33.315 Tankard[40919:14233415] ApplePersistenceIgnoreState: Existing state will not be touched.
+e2e: step 1 (line 1): expect-ready
+snapshot: wrote /x/01-expect-ready.png (2200x1360)
+e2e:   -> PASS
+e2e: step 2 (line 2): check-updates 0.8.4-e2e.1 brew
+e2e:   -> FAIL: check failed: Tankard 0.8.4-e2e.1 offered
+e2e: step 3 (line 3): upgrade-self 0.8.4-e2e.1
+e2e:   -> SKIPPED
+e2e: step 5 (line 5): open-sheet history
+e2e: step 6 (line 6): relaunch
+A
+    expect 0 "logged pass" step_logged "$t/app.log" 1 "expect-ready"
+    expect 1 "logged fail" step_logged "$t/app.log" 2 "check-updates 0.8.4-e2e.1 brew"
+    expect 1 "logged skip" step_logged "$t/app.log" 3 "upgrade-self 0.8.4-e2e.1"
+    expect 1 "logged missing" step_logged "$t/app.log" 4 "expect-quiet 5"
+    expect 1 "logged no verdict" step_logged "$t/app.log" 5 "open-sheet history"
+    expect 1 "logged other step" step_logged "$t/app.log" 1 "open-sheet history"
+    expect 1 "step 1 is not step 10" step_logged "$t/app.log" 10 "expect-ready"
 
     cat > "$t/good.txt" <<'L'
 Filtering the log data using "subsystem == "net.mindtricks.tankard""
