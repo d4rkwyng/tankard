@@ -165,6 +165,8 @@ struct PackageDetail: View {
 
                 CaveatsSection(package: p, prefix: prefix)
 
+                ElectronDetailSection(package: p)
+
                 PackageRelationsSection(package: p)
 
                 if p.upgradeAvailable {

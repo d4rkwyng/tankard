@@ -278,6 +278,9 @@
 "Checking for updates…" = "Ricerca aggiornamenti…";
 "Checking what is still installed…" = "Controllo di ciò che è ancora installato…";
 "Checking…" = "Controllo…";
+"Chromium version: %@" = "Versione di Chromium: %@";
+"Chromium version: reading…" = "Versione di Chromium: lettura…";
+"Chromium version: unknown" = "Versione di Chromium: sconosciuta";
 "Clean Up" = "Pulisci";
 "Clean Up…" = "Pulisci…";
 "Clean up" = "Pulisci";
@@ -368,6 +371,8 @@
 "Each file is backed up first, next to itself (….%@). These lines are removed:" = "Ogni file viene prima salvato in copia, accanto a sé stesso (….%@). Queste righe vengono rimosse:";
 "Each runs as its own brew upgrade, one at a time." = "Ognuno viene eseguito come brew upgrade a sé, uno alla volta.";
 "Edits in Homebrew's checkout can stop brew update. Resetting it discards them." = "Le modifiche nel checkout di Homebrew possono bloccare brew update. Ripristinarlo le scarta.";
+"Electron app" = "App Electron";
+"Electron app: may draw incorrectly on this Mac's graphics card" = "App Electron: potrebbe essere visualizzata male con la scheda grafica di questo Mac";
 "Environment" = "Ambiente";
 "Error" = "Errore";
 "Error (exit %lld)" = "Errore (uscita %lld)";
@@ -993,6 +998,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "Corrispondono a un cask, ma brew install --adopt non le prenderebbe in carico.";
 "These need your administrator password: %@" = "Richiedono la password di amministratore: %@";
 "Third-party" = "Di terze parti";
+"This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Questa app è fatta con Electron. Con la scheda grafica di questo Mac e un macOS più recente installato con OpenCore Legacy Patcher, le app di questo tipo potrebbero essere visualizzate male: finestre vuote, nere o che sfarfallano, o testo illeggibile. Tankard non modifica l’app.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Questo brew non ha `brew vulns` (è nuovo in Homebrew 7). Esegui `brew update` per ottenerlo.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Questo cask esegue un pacchetto di installazione, che ignora --adopt: brew rieseguirebbe il programma di installazione, con la tua password.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "È un link simbolico, non l'app stessa. Tankard non adotta i link.";

@@ -1042,6 +1042,8 @@ TANKARD_DEMO=1 dist/Tankard.app/Contents/MacOS/Tankard     # same, from a termin
 | `TANKARD_BREW=<path>` | Use this brew instead of `/usr/local/bin/brew` or `/opt/homebrew/bin/brew`. |
 | `TANKARD_SEARCH=<text>` | 0.8.3: type this into the Installed search on launch (any mode; a pasted `brew install x` or the "Search Discover for" empty state). |
 | `TANKARD_DEMO_PASSWORD=<cask>` | 0.8.3, demo only: that cask runs a `.pkg` installer, so the upgrade plan and the uninstall sheet show "needs your administrator password". The demo's brew is fake; the dialog never appears. |
+| `TANKARD_DEMO_ELECTRON=1` | 0.8.5, demo only: act as a Mac Pro 6,1 on macOS 15 (`ElectronGPUProbe.demo`): with `TANKARD_DEMO=arm64`, Visual Studio Code and LM Studio show the Electron mark and detail section. Nothing is read from this Mac. |
+| `TANKARD_DEMO_ROWS=<n>` | 0.8.5, demo only: n more installed formulae (`demo-row-001`…), for a list as long as a real one: with the script steps `filter`/`search`/`search-burst`, the NSTableView reentrancy check runs in demo mode. |
 
 Demo runs and snapshot runs use throwaway settings, never the real UserDefaults. Demo
 Discover uses fixtures too: a slice of formulae.brew.sh (normal mode) and `brew info`

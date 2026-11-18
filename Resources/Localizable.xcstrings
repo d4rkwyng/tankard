@@ -14797,6 +14797,162 @@
         }
       }
     },
+    "Chromium version: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium-Version: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version de Chromium : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión de Chromium: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromiumのバージョン: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 版本：%@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão do Chromium: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione di Chromium: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 버전: %@"
+          }
+        }
+      }
+    },
+    "Chromium version: reading…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium-Version: wird gelesen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version de Chromium : lecture…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión de Chromium: leyendo…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromiumのバージョン: 読み込み中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 版本：正在读取…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão do Chromium: lendo…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione di Chromium: lettura…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 버전: 읽는 중…"
+          }
+        }
+      }
+    },
+    "Chromium version: unknown": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium-Version: unbekannt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version de Chromium : inconnue"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión de Chromium: desconocida"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromiumのバージョン: 不明"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 版本：未知"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão do Chromium: desconhecida"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versione di Chromium: sconosciuta"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chromium 버전: 알 수 없음"
+          }
+        }
+      }
+    },
     "Clean Up": {
       "localizations": {
         "de": {
@@ -19473,6 +19629,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew 체크아웃을 편집하면 brew update가 중단될 수 있습니다. 재설정하면 편집 내용이 삭제됩니다."
+          }
+        }
+      }
+    },
+    "Electron app": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron-App"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App de Electron"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electronアプリ"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron App"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron 앱"
+          }
+        }
+      }
+    },
+    "Electron app: may draw incorrectly on this Mac's graphics card": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron-App: wird auf der Grafikkarte dieses Macs eventuell falsch angezeigt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron : peut mal s’afficher avec la carte graphique de ce Mac"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App de Electron: puede verse mal con la tarjeta gráfica de este Mac"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electronアプリ: このMacのグラフィックカードでは正しく表示されないことがあります"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron App：在这台 Mac 的显卡上可能显示不正常"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron: pode aparecer errado com a placa de vídeo deste Mac"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Electron: potrebbe essere visualizzata male con la scheda grafica di questo Mac"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electron 앱: 이 Mac의 그래픽 카드에서 제대로 표시되지 않을 수 있음"
           }
         }
       }
@@ -52026,6 +52286,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "서드파티"
+          }
+        }
+      }
+    },
+    "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese App ist mit Electron gebaut. Auf der Grafikkarte dieses Macs, mit einem neueren macOS über OpenCore Legacy Patcher, werden solche Apps eventuell falsch angezeigt: leere, schwarze oder flackernde Fenster oder verzerrter Text. Tankard verändert die App nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette app est faite avec Electron. Avec la carte graphique de ce Mac et un macOS plus récent installé par OpenCore Legacy Patcher, les apps de ce type peuvent mal s’afficher : fenêtres vides, noires ou qui clignotent, ou texte illisible. Tankard ne modifie pas l’app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta app está hecha con Electron. Con la tarjeta gráfica de este Mac y un macOS más reciente instalado con OpenCore Legacy Patcher, las apps como esta pueden verse mal: ventanas en blanco, negras o que parpadean, o texto ilegible. Tankard no modifica la app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリはElectronで作られています。このMacのグラフィックカードでOpenCore Legacy Patcherで入れた新しいmacOSを使っている場合、このようなアプリは正しく表示されないことがあります（ウインドウが白い・黒い・ちらつく、文字が崩れるなど）。Tankardはアプリを変更しません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 App 基于 Electron 构建。在这台 Mac 的显卡上，若使用 OpenCore Legacy Patcher 安装的较新 macOS，这类 App 可能显示不正常：窗口空白、发黑或闪烁，或文字错乱。Tankard 不会修改此 App。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este app é feito com Electron. Com a placa de vídeo deste Mac e um macOS mais novo instalado pelo OpenCore Legacy Patcher, apps assim podem aparecer errado: janelas em branco, pretas ou piscando, ou texto embaralhado. O Tankard não altera o app."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa app è fatta con Electron. Con la scheda grafica di questo Mac e un macOS più recente installato con OpenCore Legacy Patcher, le app di questo tipo potrebbero essere visualizzate male: finestre vuote, nere o che sfarfallano, o testo illeggibile. Tankard non modifica l’app."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱은 Electron으로 만들어졌습니다. 이 Mac의 그래픽 카드에서 OpenCore Legacy Patcher로 설치한 최신 macOS를 사용하면 이런 앱이 제대로 표시되지 않을 수 있습니다(빈 창, 검은 창, 깜박이는 창 또는 깨진 글자). Tankard는 앱을 변경하지 않습니다."
           }
         }
       }

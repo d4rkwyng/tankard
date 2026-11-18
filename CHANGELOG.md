@@ -6,8 +6,15 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.5] (unreleased)
 
+### Added
+- **Electron apps on a Mac Pro (Late 2013).** On a Mac Pro 6,1 running macOS 13 or later (through OpenCore Legacy Patcher), installed apps built with Electron get an orange ⓘ in the list ("Electron app: may draw incorrectly on this Mac's graphics card"), and their details say why and show the app's Chromium version. Information only: Tankard doesn't change the app. Nothing is checked on any other Mac, and the Chromium version is read only when you open the app's details.
+
 ### Changed
+- **Every row in Installed and Discover is one line, 30 points high.** What used to be a second line (a compile warning, a bottle on offer, a note such as "Tap has 1.5.7", Discover's description) now follows the name, cut short in a narrow column, with all of it in the tooltip.
 - **Upgrade All in the menu-bar panel no longer opens the whole Tankard window.** The menu closes and the upgrade shows in a small window of its own, in the middle of the screen: the same list, progress, log, compile plan and Stop buttons as the sheet, plus **Show in Tankard** to move the run (the same one, nothing restarts) into the main window. A run that finishes cleanly closes it after a moment, with a "Tankard upgraded N packages" notification when notifications are on; a failure or a stop keeps it open with **Close**. The same goes for a row's Upgrade. With the Tankard window already in front, the sheet opens on it as before. Closing the small window while brew runs only hides it; **Show Upgrade Progress** in the menu-bar panel brings it back.
+
+### Fixed
+- **No more AppKit warning when the list changes a lot** ("Application performed a reentrant operation in its NSTableView delegate."), logged on every switch from a filter back to All (Upgrades → All), on clearing a search in a long list, and on some Discover searches. Rows of different heights made AppKit resize the table while it was still measuring rows; with one row height it measures none.
 
 ## [0.8.4]
 

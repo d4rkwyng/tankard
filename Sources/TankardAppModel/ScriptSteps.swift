@@ -61,8 +61,9 @@ extension ScriptRunner {
             if t == .services { c.store.openServices() }
         },
         // 0.8.4: the list jumps a user makes (Upgrades → All, clearing a
-        // search), for the NSTableView reentrancy check (RowStaging). Script
-        // mode only, like every step.
+        // search), for the NSTableView reentrancy check (0.8.5: fixed row
+        // heights, PackageRow in ContentView.swift). Script mode only, like
+        // every step.
         "filter": ScriptStepDef("filter <all|upgrades|source|newer|bottleAvailable|pinned|leaves|vulnerable|hasNotes|deprecated>  (Installed's filter, as clicking it)") { c in
             let name = try c.arg(0, "filter")
             guard let f = PackageFilter.allCases.first(where: { $0.rawValue.lowercased() == name.lowercased() }) else {
@@ -70,7 +71,7 @@ extension ScriptRunner {
             }
             c.store.tab = .installed
             c.store.filter = f
-            try await Task.sleep(for: .milliseconds(400)) // the table's second step (RowStaging.delay)
+            try await Task.sleep(for: .milliseconds(400)) // time for the table to settle (and PackageTable's first fill)
             c.check("filter \(f.rawValue): \(c.store.visiblePackages.count) rows", c.store.filter == f)
         },
         "search": ScriptStepDef("search <text>|-  (types into Installed's search field; - clears it)") { c in

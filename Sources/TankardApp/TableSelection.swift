@@ -30,6 +30,10 @@ struct TableSelectionStyler: NSViewRepresentable {
     /// false: stripes only; the selection and the header stay the
     /// system's in every theme (Services).
     var paintsSelection = true
+    /// 0.8.5: the rows are all the table's row height, none measured (the
+    /// package lists; see PackageRow). SwiftUI sets the height itself
+    /// (`defaultMinListRowHeight`), but not this.
+    var fixedRowHeights = false
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -47,6 +51,7 @@ struct TableSelectionStyler: NSViewRepresentable {
         let c = context.coordinator
         c.palette = palette
         c.paintsSelection = paintsSelection
+        c.fixedRowHeights = fixedRowHeights
         DispatchQueue.main.async { [weak view] in
             guard let view else { return }
             if c.table == nil { c.attach(Self.findTable(near: view)) }
@@ -88,6 +93,7 @@ struct TableSelectionStyler: NSViewRepresentable {
         weak var table: NSTableView?
         var palette: TankardColors?
         var paintsSelection = true
+        var fixedRowHeights = false
         /// Whether the selection and header are painted here (a palette
         /// theme on a table that wants it).
         var tankard: Bool { palette != nil && paintsSelection }
@@ -113,6 +119,7 @@ struct TableSelectionStyler: NSViewRepresentable {
 
         func apply() {
             guard let t = table else { return }
+            if fixedRowHeights && t.usesAutomaticRowHeights { t.usesAutomaticRowHeights = false }
             let highlight: NSTableView.SelectionHighlightStyle = tankard ? .none : .regular
             if t.selectionHighlightStyle != highlight { t.selectionHighlightStyle = highlight }
             styleHeader(t)

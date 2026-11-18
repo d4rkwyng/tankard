@@ -128,23 +128,26 @@ struct DiscoverTable: View {
         let installed = store.installedIDs
         Table(discover.results, selection: $discover.selection) {
             TableColumn("Package") { (e: CatalogEntry) in
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 5) {
-                        Text(e.name).fontWeight(.medium).lineLimit(1).layoutPriority(1)
-                        if installed.contains(e.id) {
-                            InstalledMark()
-                        }
-                        if e.disabled || e.deprecated {
-                            Text(e.disabled ? String(localized: "disabled") : String(localized: "deprecated")).font(.system(size: 9.5)).foregroundStyle(.orange)
-                        }
+                // 0.8.5: one line (the rows are PackageRow.height); the
+                // description after the name, the whole of it in the tooltip
+                // and the detail.
+                HStack(spacing: 5) {
+                    Text(e.name).fontWeight(.medium).lineLimit(1).layoutPriority(2)
+                    if installed.contains(e.id) {
+                        InstalledMark()
+                    }
+                    if e.disabled || e.deprecated {
+                        Text(e.disabled ? String(localized: "disabled") : String(localized: "deprecated")).font(.system(size: 9.5)).foregroundStyle(.orange)
+                            .fixedSize()
                     }
                     if let d = e.desc {
                         Text(d).font(.system(size: 10.5)).foregroundStyle(.secondary)
-                            .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                            .lineLimit(1)
                             .help(d)
                     }
+                    Spacer(minLength: 0)
                 }
-                .padding(.vertical, 3)
+                .frame(maxHeight: PackageRow.content)
                 .onAppear { discover.needDetails([e.id]) }
             }
             .width(min: 180, ideal: 300)
@@ -171,9 +174,12 @@ struct DiscoverTable: View {
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.
         .tableStyle(.inset(alternatesRowBackgrounds: false))
+        // 0.8.5: the table's own row height (SwiftUI sets the NSTableView's
+        // from it): the same as every row's (PackageRow).
+        .environment(\.defaultMinListRowHeight, PackageRow.height)
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
-        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
         .overlay { overlay }
     }
 

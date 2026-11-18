@@ -169,7 +169,8 @@ struct TankardApp: App {
         } else {
             deps = options.demo.map {
                 Demo.dependencies($0, pace: options.demoPace, failAppManagement: options.demoAppManagement == "fail",
-                                  pinned: V04ALaunch.demoPinned(), replaced: V04ALaunch.demoReplaced())
+                                  pinned: V04ALaunch.demoPinned(), replaced: V04ALaunch.demoReplaced(),
+                                  extraRows: min(max(Int(env["TANKARD_DEMO_ROWS"] ?? "") ?? 0, 0), 2000))
             } ?? options.script.map { $0.dependencies(.live()) } ?? .live()
             if options.demo != nil { AppStore.profileReader = Demo.demoProfile }
         }
@@ -201,6 +202,10 @@ struct TankardApp: App {
         if options.demo != nil, env["TANKARD_DEMO_PASSWORD"].map({ !$0.isEmpty }) == true {
             deps.askpassHelper = AdminPassword.liveHelper()
         }
+        // 0.8.5, demo only: TANKARD_DEMO_ELECTRON=1: act as a Mac Pro 6,1 on
+        // macOS 15 with two Electron casks (arm64 demo: Visual Studio Code,
+        // LM Studio). Nothing is read from this Mac.
+        if options.demo != nil, env["TANKARD_DEMO_ELECTRON"] == "1" { deps.electronGPU = .demo() }
         if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
             deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
         }

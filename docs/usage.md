@@ -95,6 +95,20 @@ Other marks: `dep` means it was installed as a dependency. A blue "pinned" tag m
 upgrades skip it. ⚠ means it has known vulnerabilities. ⟳ next to a cask means the app
 updates itself.
 
+Each package is one line. A note after the name says what matters about it now: an
+orange hammer when its upgrade compiles from source, a green box when a bottle could
+replace a source build, or a short note such as "Tap has 1.5.7". In a narrow column the
+words are cut short; hover over them for all of it.
+
+**Mac Pro (Late 2013) on a newer macOS.** On a Mac Pro 6,1 running macOS 13 or later
+through OpenCore Legacy Patcher, apps built with Electron (Visual Studio Code, Slack,
+Discord and many more) can draw incorrectly on its AMD FirePro graphics: blank, black or
+flickering windows, or garbled text. Tankard marks such installed apps with an orange ⓘ,
+and the app's details explain it and show its Chromium version. Tankard only tells you; it
+doesn't change the app. It checks for the Electron framework inside each installed cask's
+app (`Contents/Frameworks/Electron Framework.framework`) and reads the Chromium version
+from it only when you open that app's details. On any other Mac it checks nothing.
+
 ## Upgrade packages
 
 **Upgrade everything:** click the green **Upgrade N** in the status bar, or **Upgrade All**
