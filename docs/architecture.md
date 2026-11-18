@@ -169,6 +169,13 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
   SingleInstance   0.8.3: the launch-time guard against a second or stale copy, and
                    RelaunchSequence (the self-upgrade and App Management relaunch)
   NotificationRoute  0.8.3: what a click on a notification or its actions opens
+  ScheduledChecks  0.8.5: ScheduleConditions (sleep via NSWorkspace, network via
+                   NWPathMonitor, a 30 s settle delay after either comes back) gate every
+                   BackgroundChecker tick; the scheduled `brew update` (time limit, stopped
+                   on willSleep) and its quiet History line (ScheduledQuietReason)
+  BuildProgress    0.8.5: the sheet's "Building from source… N min so far" and this Mac's
+                   estimate (History entries marked builtFromSource)
+  CasksBanner      0.8.5: Discover's "Apps (casks) are turned off" (no homebrew/cask tap)
 TankardApp       the SwiftUI views (App lifecycle), the menu-bar extra, Settings, About,
                  themes (Theme, Themed, PrimaryActionStyle), resources, snapshots
 ```

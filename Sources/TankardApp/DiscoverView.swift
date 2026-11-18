@@ -52,7 +52,7 @@ struct CasksOffBanner: View {
             Button("Turn On Apps…") { store.requestEnableCasks() }
                 .controlSize(.small)
                 .disabled(store.isBusy)
-                .help(String(localized: "Runs brew tap homebrew/cask, after asking"))
+                .help(String(localized: "Asks first, then turns apps on"))
             Button {
                 store.hideCasksBanner()
             } label: {

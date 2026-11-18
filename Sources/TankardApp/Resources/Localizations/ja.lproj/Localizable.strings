@@ -89,6 +89,8 @@
 "%lld from an untrusted tap" = "%lld個が信頼されていないtapから";
 "%lld from source" = "%lld個がソースから";
 "%lld from the App Store" = "%lld個は App Store から";
+"%lld h" = "%lld時間";
+"%lld h %lld min" = "%lld時間%lld分";
 "%lld h ago" = "%lld時間前";
 "%lld hours" = "%lld時間";
 "%lld installed" = "%lld個がインストール済み";
@@ -130,6 +132,7 @@
 "%lld with bottles" = "%lld個がbottleあり";
 "%lld with no source repository brew can match" = "%lld個はbrewが照合できるソースリポジトリがありません";
 "%lld would compile from source: no bottle for this Mac. That can take a long time." = "%lld個はソースからコンパイルされます: このMac用のbottleがありません。時間がかかる場合があります。";
+"(%lld times)" = "（%lld回）";
 "(Tankard's sum: brew printed no total)" = "(Tankardによる合計: brewは合計を出力しませんでした)";
 "+%lld dependencies also compile: %@" = "+%lld個の依存関係もコンパイルされます: %@";
 "+%lld more" = "+%lld個";
@@ -211,10 +214,12 @@
 "App Store apps" = "App Storeのアプリ";
 "App updates itself" = "アプリが更新";
 "Appearance" = "外観";
+"Apps (casks) are turned off" = "App（cask）はオフです";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "自己更新するアプリは引き続き自分で更新します。各アプリを誰が更新するかの選択は、引き継ぎと一緒に保存されます。";
 "Apps you installed yourself that Homebrew can manage: %lld" = "自分でインストールしたアプリのうちHomebrewで管理できるもの: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "自分でインストールしたアプリのうち、Homebrew の cask でもインストールされるもの。引き継ぐと、再インストールせずに brew で更新できます。";
 "Asking brew info…" = "brew info を問い合わせ中…";
+"Asks first, then turns apps on" = "確認してから App をオンにします";
 "Auto-update" = "自動アップデート";
 "Auto-update didn't run" = "自動アップデートは実行されませんでした";
 "Auto-update failed" = "自動アップデートに失敗しました";
@@ -242,6 +247,8 @@
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "bottleのみ: bottleのないformula、またはアップグレードするとbottleのない依存先もアップグレードされるformulaはスキップされます。また、アップグレードによってbottleのないインストール済みの依存元をbrewがアップグレードまたは再ビルドすることになるformulaもスキップされます。これらは「アップグレード」に残るので、手動でアップグレードしてください。";
 "Brewfile" = "Brewfile";
 "Brewfile saved" = "Brewfileを保存しました";
+"Building from source… %@ so far" = "ソースからビルド中… これまで %@";
+"Building from source… %@ so far (last time on this Mac: about %@)" = "ソースからビルド中… これまで %@（このMacでの前回: 約 %@）";
 "Built from source" = "ソースからビルド";
 "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same." = "ソースからビルドされていますが、%@ にはこのMac用のbottleがあります(%@)。置き換えるとbottleが展開されます。バージョンは変わりません。";
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "ソースからビルドされていますが、%@ にはこのMac用のbottleがあります。置き換えるとbottleが展開されます。バージョンは変わりません。";
@@ -435,6 +442,7 @@
 "Hide" = "非表示";
 "Hide Dock icon when the window is closed" = "ウインドウを閉じたらDockアイコンを隠す";
 "Hide Terminal Command" = "ターミナルコマンドを隠す";
+"Hide this message" = "このメッセージを隠す";
 "High" = "高";
 "History" = "履歴";
 "History…" = "履歴…";
@@ -518,6 +526,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrewの行はシェルプロファイル(%@)に残ります。後で手動で削除するか、先に「標準のHomebrewに戻す」を使ってください。";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "%@ のHomebrewファイルと、/Applications にcaskとしてインストールされたアプリを含め、インストール済みのすべてのformulaとcaskを削除します。このMac上の別のHomebrew(別のプレフィックス)には手を触れません。パスワードを求められる場合があります。";
 "It took %@; expect longer on an older Mac." = "%@かかりました。古いMacではもっとかかります。";
+"It was stopped." = "停止されました。";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
 "KB" = "KB";
 "Keep Running" = "続行";
@@ -830,6 +839,10 @@
 "Scanning %lld formula…" = "%lld個のformulaをスキャン中…";
 "Scanning…" = "スキャン中…";
 "Scheduled" = "スケジュール済み";
+"Scheduled check didn't run: another Homebrew command was running. Will retry." = "予定されたチェックは実行されませんでした: 別の Homebrew コマンドが実行中でした。あとで再試行します。";
+"Scheduled check didn't run: offline. Will retry." = "予定されたチェックは実行されませんでした: オフラインです。あとで再試行します。";
+"Scheduled check interrupted by sleep. Will retry." = "予定されたチェックはスリープで中断されました。あとで再試行します。";
+"Scheduled check took too long and was stopped. Will retry." = "予定されたチェックは時間がかかりすぎたため停止されました。あとで再試行します。";
 "Search %@ packages" = "%@個のパッケージを検索";
 "Search Discover for “%@”" = "「%@」を「見つける」で検索";
 "Search Homebrew" = "Homebrewを検索";
@@ -993,6 +1006,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "cask と一致しますが、brew install --adopt では引き継げません。";
 "These need your administrator password: %@" = "管理者パスワードが必要です: %@";
 "Third-party" = "サードパーティ";
+"This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "この Homebrew はコマンドラインツールをインストールできますが、Firefox や VLC のような App はインストールできません。App をオンにするには、約 620 MB の 1 回限りのダウンロードが必要です。";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "このbrewには `brew vulns` がありません（Homebrew 7で追加）。`brew update` で入手してください。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "この cask はインストーラパッケージを実行し、--adopt を無視します。brew はパスワードを使ってインストーラを再実行することになります。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "これはアプリ本体ではなくシンボリックリンクです。Tankard はリンクを引き継ぎません。";
@@ -1013,6 +1027,7 @@
 "Trust…" = "信頼…";
 "Try Again" = "もう一度試す";
 "Try another filter." = "別のフィルタを試してください。";
+"Turn On Apps…" = "App をオンにする…";
 "Turn automatic updates back on now" = "自動アップデートを今すぐ再びオンにする";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Tankardをオンにします。一覧にない場合は、+をクリックしてアプリケーションからTankardを選んでください。";
 "Turn on notifications in Settings ▸ General" = "通知は「設定」▸「一般」でオンにできます";
@@ -1202,6 +1217,7 @@
 "has an archived upstream repository" = "上流リポジトリがアーカイブされています";
 "has no license" = "ライセンスがありません";
 "installed" = "インストール済み";
+"interrupted by sleep; the next automatic run tries again" = "スリープで中断されました。次の自動実行で再試行します";
 "is a versioned formula" = "バージョン付きformulaです";
 "is deprecated upstream" = "上流で非推奨です";
 "is discontinued upstream" = "上流で終了しています";
@@ -1251,6 +1267,8 @@
 "tapped" = "タップ済み";
 "today %@" = "今日 %@";
 "tomorrow %@" = "明日 %@";
+"took too long and was stopped; the next automatic run tries again" = "時間がかかりすぎたため停止されました。次の自動実行で再試行します";
+"under a minute" = "1分未満";
 "uninstalled" = "アンインストール済み";
 "untapped" = "タップ解除済み";
 "updated %@" = "%@に更新";

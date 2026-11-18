@@ -4681,6 +4681,110 @@
         }
       }
     },
+    "%lld h": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Std."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld時間"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 小时"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld시간"
+          }
+        }
+      }
+    },
+    "%lld h %lld min": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Std. %lld Min."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h %lld min"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h %lld min"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld時間%lld分"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 小时 %lld 分钟"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h %lld min"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h %lld min"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld시간 %lld분"
+          }
+        }
+      }
+    },
     "%lld h ago": {
       "localizations": {
         "de": {
@@ -7097,6 +7201,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "소스에서 컴파일될 항목 %lld개: 이 Mac용 bottle이 없습니다. 오래 걸릴 수 있습니다."
+          }
+        }
+      }
+    },
+    "(%lld times)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld-mal)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld fois)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld veces)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（%lld回）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（%lld 次）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld vezes)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld volte)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%lld회)"
           }
         }
       }
@@ -11313,6 +11469,58 @@
         }
       }
     },
+    "Apps (casks) are turned off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps (Casks) sind ausgeschaltet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les apps (casks) sont désactivées"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las apps (casks) están desactivadas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App（cask）はオフです"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用（cask）已关闭"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os apps (casks) estão desativados"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le app (cask) sono disattivate"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱(cask)이 꺼져 있습니다"
+          }
+        }
+      }
+    },
     "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption.": {
       "localizations": {
         "de": {
@@ -11517,6 +11725,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "brew info 요청 중…"
+          }
+        }
+      }
+    },
+    "Asks first, then turns apps on": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt zuerst, dann werden Apps eingeschaltet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demande d’abord, puis active les apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pregunta primero y luego activa las apps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認してから App をオンにします"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先询问，然后开启应用"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunta primeiro e depois ativa os apps"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chiede prima, poi attiva le app"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 확인한 다음 앱을 켭니다"
           }
         }
       }
@@ -12921,6 +13181,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "Brewfile 저장됨"
+          }
+        }
+      }
+    },
+    "Building from source… %@ so far": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird aus dem Quellcode gebaut… bisher %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilation depuis les sources… %@ jusqu’ici"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilando desde el código fuente… %@ hasta ahora"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからビルド中… これまで %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在从源代码构建… 已用 %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilando a partir do código-fonte… %@ até agora"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilazione dai sorgenti… finora %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드하는 중… 지금까지 %@"
+          }
+        }
+      }
+    },
+    "Building from source… %@ so far (last time on this Mac: about %@)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird aus dem Quellcode gebaut… bisher %@ (letztes Mal auf diesem Mac: etwa %@)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilation depuis les sources… %@ jusqu’ici (dernière fois sur ce Mac : environ %@)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilando desde el código fuente… %@ hasta ahora (la última vez en este Mac: unos %@)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからビルド中… これまで %@（このMacでの前回: 約 %@）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在从源代码构建… 已用 %@（上次在这台 Mac 上：约 %@）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilando a partir do código-fonte… %@ até agora (da última vez neste Mac: cerca de %@)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilazione dai sorgenti… finora %@ (l’ultima volta su questo Mac: circa %@)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드하는 중… 지금까지 %@(이 Mac에서 지난번: 약 %@)"
           }
         }
       }
@@ -22961,6 +23325,58 @@
         }
       }
     },
+    "Hide this message": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Meldung ausblenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer ce message"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar este mensaje"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このメッセージを隠す"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐藏此消息"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar esta mensagem"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nascondi questo messaggio"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 메시지 숨기기"
+          }
+        }
+      }
+    },
     "High": {
       "localizations": {
         "de": {
@@ -27273,6 +27689,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 걸렸습니다. 오래된 Mac에서는 더 오래 걸립니다."
+          }
+        }
+      }
+    },
+    "It was stopped.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er wurde gestoppt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elle a été arrêtée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se detuvo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止されました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已被停止。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foi interrompido."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È stato interrotto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중지되었습니다."
           }
         }
       }
@@ -43501,6 +43969,214 @@
         }
       }
     },
+    "Scheduled check didn't run: another Homebrew command was running. Will retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplante Prüfung lief nicht: Ein anderer Homebrew-Befehl lief. Wird erneut versucht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La vérification planifiée n’a pas eu lieu : une autre commande Homebrew était en cours. Nouvel essai plus tard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La comprobación programada no se ejecutó: había otro comando de Homebrew en marcha. Se reintentará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されたチェックは実行されませんでした: 別の Homebrew コマンドが実行中でした。あとで再試行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划的检查未运行：另一个 Homebrew 命令正在运行。稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A verificação agendada não foi executada: outro comando do Homebrew estava em execução. Será tentada novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il controllo programmato non è stato eseguito: era in corso un altro comando Homebrew. Verrà ritentato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약된 확인이 실행되지 않았습니다: 다른 Homebrew 명령이 실행 중이었습니다. 다시 시도합니다."
+          }
+        }
+      }
+    },
+    "Scheduled check didn't run: offline. Will retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplante Prüfung lief nicht: offline. Wird erneut versucht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La vérification planifiée n’a pas eu lieu : hors ligne. Nouvel essai plus tard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La comprobación programada no se ejecutó: sin conexión. Se reintentará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されたチェックは実行されませんでした: オフラインです。あとで再試行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划的检查未运行：离线。稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A verificação agendada não foi executada: sem conexão. Será tentada novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il controllo programmato non è stato eseguito: offline. Verrà ritentato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약된 확인이 실행되지 않았습니다: 오프라인입니다. 다시 시도합니다."
+          }
+        }
+      }
+    },
+    "Scheduled check interrupted by sleep. Will retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplante Prüfung durch Ruhezustand unterbrochen. Wird erneut versucht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification planifiée interrompue par la mise en veille. Nouvel essai plus tard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La comprobación programada se interrumpió por el reposo. Se reintentará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されたチェックはスリープで中断されました。あとで再試行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划的检查因睡眠而中断。稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A verificação agendada foi interrompida pelo repouso. Será tentada novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il controllo programmato è stato interrotto dallo stop. Verrà ritentato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약된 확인이 잠자기로 중단되었습니다. 다시 시도합니다."
+          }
+        }
+      }
+    },
+    "Scheduled check took too long and was stopped. Will retry.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplante Prüfung dauerte zu lange und wurde gestoppt. Wird erneut versucht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La vérification planifiée a pris trop de temps et a été arrêtée. Nouvel essai plus tard."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La comprobación programada tardó demasiado y se detuvo. Se reintentará."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されたチェックは時間がかかりすぎたため停止されました。あとで再試行します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划的检查耗时过长，已停止。稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A verificação agendada demorou demais e foi interrompida. Será tentada novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il controllo programmato ha richiesto troppo tempo ed è stato interrotto. Verrà ritentato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예약된 확인이 너무 오래 걸려 중지되었습니다. 다시 시도합니다."
+          }
+        }
+      }
+    },
     "Search %@ packages": {
       "localizations": {
         "de": {
@@ -52030,6 +52706,58 @@
         }
       }
     },
+    "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Homebrew kann Befehlszeilenwerkzeuge installieren, aber keine Apps wie Firefox oder VLC. Apps einzuschalten ist ein einmaliger Download von etwa 620 MB."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce Homebrew peut installer des outils en ligne de commande, mais pas des apps comme Firefox ou VLC. Activer les apps demande un téléchargement unique d’environ 620 Mo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Homebrew puede instalar herramientas de línea de comandos, pero no apps como Firefox o VLC. Activar las apps es una descarga única de unos 620 MB."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この Homebrew はコマンドラインツールをインストールできますが、Firefox や VLC のような App はインストールできません。App をオンにするには、約 620 MB の 1 回限りのダウンロードが必要です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Homebrew 可以安装命令行工具，但不能安装 Firefox 或 VLC 等应用。开启应用需要一次性下载约 620 MB。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Homebrew pode instalar ferramentas de linha de comando, mas não apps como Firefox ou VLC. Ativar os apps é um download único de cerca de 620 MB."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo Homebrew può installare strumenti da riga di comando, ma non app come Firefox o VLC. Attivare le app richiede un unico download di circa 620 MB."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Homebrew는 명령줄 도구는 설치할 수 있지만 Firefox나 VLC 같은 앱은 설치할 수 없습니다. 앱을 켜려면 약 620MB를 한 번 다운로드해야 합니다."
+          }
+        }
+      }
+    },
     "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it.": {
       "localizations": {
         "de": {
@@ -53066,6 +53794,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "다른 필터를 사용해 보세요."
+          }
+        }
+      }
+    },
+    "Turn On Apps…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps einschalten…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer les apps…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activar apps…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App をオンにする…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开启应用…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativar apps…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiva le app…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 켜기…"
           }
         }
       }
@@ -62898,6 +63678,58 @@
         }
       }
     },
+    "interrupted by sleep; the next automatic run tries again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "durch Ruhezustand unterbrochen; der nächste automatische Lauf versucht es erneut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "interrompu par la mise en veille ; la prochaine exécution automatique réessaiera"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "interrumpido por el reposo; la próxima ejecución automática lo reintentará"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スリープで中断されました。次の自動実行で再試行します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "因睡眠而中断；下次自动运行时会重试"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "interrompido pelo repouso; a próxima execução automática tentará novamente"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "interrotto dallo stop; la prossima esecuzione automatica riproverà"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잠자기로 중단됨. 다음 자동 실행에서 다시 시도합니다"
+          }
+        }
+      }
+    },
     "is a versioned formula": {
       "localizations": {
         "de": {
@@ -65442,6 +66274,110 @@
           "stringUnit": {
             "state": "translated",
             "value": "내일 %@"
+          }
+        }
+      }
+    },
+    "took too long and was stopped; the next automatic run tries again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dauerte zu lange und wurde gestoppt; der nächste automatische Lauf versucht es erneut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a pris trop de temps et a été arrêté ; la prochaine exécution automatique réessaiera"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tardó demasiado y se detuvo; la próxima ejecución automática lo reintentará"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時間がかかりすぎたため停止されました。次の自動実行で再試行します"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "耗时过长，已停止；下次自动运行时会重试"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "demorou demais e foi interrompido; a próxima execução automática tentará novamente"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ha richiesto troppo tempo ed è stato interrotto; la prossima esecuzione automatica riproverà"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "너무 오래 걸려 중지됨. 다음 자동 실행에서 다시 시도합니다"
+          }
+        }
+      }
+    },
+    "under a minute": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "weniger als eine Minute"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moins d’une minute"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "menos de un minuto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1分未満"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不到一分钟"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "menos de um minuto"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "meno di un minuto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1분 미만"
           }
         }
       }

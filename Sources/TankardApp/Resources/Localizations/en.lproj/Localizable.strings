@@ -89,6 +89,8 @@
 "%lld from an untrusted tap" = "%lld from an untrusted tap";
 "%lld from source" = "%lld from source";
 "%lld from the App Store" = "%lld from the App Store";
+"%lld h" = "%lld h";
+"%lld h %lld min" = "%lld h %lld min";
 "%lld h ago" = "%lld h ago";
 "%lld hours" = "%lld hours";
 "%lld installed" = "%lld installed";
@@ -130,6 +132,7 @@
 "%lld with bottles" = "%lld with bottles";
 "%lld with no source repository brew can match" = "%lld with no source repository brew can match";
 "%lld would compile from source: no bottle for this Mac. That can take a long time." = "%lld would compile from source: no bottle for this Mac. That can take a long time.";
+"(%lld times)" = "(%lld times)";
 "(Tankard's sum: brew printed no total)" = "(Tankard's sum: brew printed no total)";
 "+%lld dependencies also compile: %@" = "+%lld dependencies also compile: %@";
 "+%lld more" = "+%lld more";
@@ -211,10 +214,12 @@
 "App Store apps" = "App Store apps";
 "App updates itself" = "App updates itself";
 "Appearance" = "Appearance";
+"Apps (casks) are turned off" = "Apps (casks) are turned off";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption.";
 "Apps you installed yourself that Homebrew can manage: %lld" = "Apps you installed yourself that Homebrew can manage: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling.";
 "Asking brew info…" = "Asking brew info…";
+"Asks first, then turns apps on" = "Asks first, then turns apps on";
 "Auto-update" = "Auto-update";
 "Auto-update didn't run" = "Auto-update didn't run";
 "Auto-update failed" = "Auto-update failed";
@@ -242,6 +247,8 @@
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand.";
 "Brewfile" = "Brewfile";
 "Brewfile saved" = "Brewfile saved";
+"Building from source… %@ so far" = "Building from source… %@ so far";
+"Building from source… %@ so far (last time on this Mac: about %@)" = "Building from source… %@ so far (last time on this Mac: about %@)";
 "Built from source" = "Built from source";
 "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same." = "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same.";
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same.";
@@ -435,6 +442,7 @@
 "Hide" = "Hide";
 "Hide Dock icon when the window is closed" = "Hide Dock icon when the window is closed";
 "Hide Terminal Command" = "Hide Terminal Command";
+"Hide this message" = "Hide this message";
 "High" = "High";
 "History" = "History";
 "History…" = "History…";
@@ -518,6 +526,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first.";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password.";
 "It took %@; expect longer on an older Mac." = "It took %@; expect longer on an older Mac.";
+"It was stopped." = "It was stopped.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
 "KB" = "KB";
 "Keep Running" = "Keep Running";
@@ -830,6 +839,10 @@
 "Scanning %lld formula…" = "Scanning %lld formula…";
 "Scanning…" = "Scanning…";
 "Scheduled" = "Scheduled";
+"Scheduled check didn't run: another Homebrew command was running. Will retry." = "Scheduled check didn't run: another Homebrew command was running. Will retry.";
+"Scheduled check didn't run: offline. Will retry." = "Scheduled check didn't run: offline. Will retry.";
+"Scheduled check interrupted by sleep. Will retry." = "Scheduled check interrupted by sleep. Will retry.";
+"Scheduled check took too long and was stopped. Will retry." = "Scheduled check took too long and was stopped. Will retry.";
 "Search %@ packages" = "Search %@ packages";
 "Search Discover for “%@”" = "Search Discover for “%@”";
 "Search Homebrew" = "Search Homebrew";
@@ -993,6 +1006,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "These match a cask, but brew install --adopt wouldn't take them over.";
 "These need your administrator password: %@" = "These need your administrator password: %@";
 "Third-party" = "Third-party";
+"This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "This is a symbolic link, not the app itself. Tankard doesn't adopt links.";
@@ -1013,6 +1027,7 @@
 "Trust…" = "Trust…";
 "Try Again" = "Try Again";
 "Try another filter." = "Try another filter.";
+"Turn On Apps…" = "Turn On Apps…";
 "Turn automatic updates back on now" = "Turn automatic updates back on now";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications.";
 "Turn on notifications in Settings ▸ General" = "Turn on notifications in Settings ▸ General";
@@ -1202,6 +1217,7 @@
 "has an archived upstream repository" = "has an archived upstream repository";
 "has no license" = "has no license";
 "installed" = "installed";
+"interrupted by sleep; the next automatic run tries again" = "interrupted by sleep; the next automatic run tries again";
 "is a versioned formula" = "is a versioned formula";
 "is deprecated upstream" = "is deprecated upstream";
 "is discontinued upstream" = "is discontinued upstream";
@@ -1251,6 +1267,8 @@
 "tapped" = "tapped";
 "today %@" = "today %@";
 "tomorrow %@" = "tomorrow %@";
+"took too long and was stopped; the next automatic run tries again" = "took too long and was stopped; the next automatic run tries again";
+"under a minute" = "under a minute";
 "uninstalled" = "uninstalled";
 "untapped" = "untapped";
 "updated %@" = "updated %@";

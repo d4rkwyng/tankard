@@ -89,6 +89,8 @@
 "%lld from an untrusted tap" = "%lld aus nicht vertrauenswürdigem Tap";
 "%lld from source" = "%lld aus Quellcode";
 "%lld from the App Store" = "%lld aus dem App Store";
+"%lld h" = "%lld Std.";
+"%lld h %lld min" = "%lld Std. %lld Min.";
 "%lld h ago" = "vor %lld Std.";
 "%lld hours" = "%lld Stunden";
 "%lld installed" = "%lld installiert";
@@ -130,6 +132,7 @@
 "%lld with bottles" = "%lld mit Bottles";
 "%lld with no source repository brew can match" = "%lld ohne Quell-Repository, das brew zuordnen kann";
 "%lld would compile from source: no bottle for this Mac. That can take a long time." = "%lld Pakete würden aus Quellcode kompiliert: keine Bottle für diesen Mac. Das kann lange dauern.";
+"(%lld times)" = "(%lld-mal)";
 "(Tankard's sum: brew printed no total)" = "(Summe von Tankard: brew gab keine Gesamtzahl aus)";
 "+%lld dependencies also compile: %@" = "+%lld Abhängigkeiten werden ebenfalls kompiliert: %@";
 "+%lld more" = "+%lld weitere";
@@ -211,10 +214,12 @@
 "App Store apps" = "App-Store-Apps";
 "App updates itself" = "App selbst";
 "Appearance" = "Erscheinungsbild";
+"Apps (casks) are turned off" = "Apps (Casks) sind ausgeschaltet";
 "Apps that update themselves keep doing so. Your choice of who updates each one is saved with the adoption." = "Selbstaktualisierende Apps aktualisieren sich weiter selbst. Wer welche App aktualisiert, wird mit der Übernahme gespeichert.";
 "Apps you installed yourself that Homebrew can manage: %lld" = "Selbst installierte Apps, die Homebrew verwalten kann: %lld";
 "Apps you installed yourself that a Homebrew cask also installs. Adopting lets brew update them, without reinstalling." = "Selbst installierte Apps, die auch ein Homebrew-Cask installiert. Nach der Übernahme aktualisiert brew sie, ohne Neuinstallation.";
 "Asking brew info…" = "brew info wird abgefragt…";
+"Asks first, then turns apps on" = "Fragt zuerst, dann werden Apps eingeschaltet";
 "Auto-update" = "Auto-Update";
 "Auto-update didn't run" = "Auto-Update wurde nicht ausgeführt";
 "Auto-update failed" = "Auto-Update fehlgeschlagen";
@@ -242,6 +247,8 @@
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "Nur Bottles: Eine Formula ohne Bottle oder eine, deren Upgrade auch eine Abhängigkeit ohne Bottle aktualisieren würde, wird übersprungen. Ebenso eine Formula, deren Upgrade dazu führen würde, dass brew ein installiertes abhängiges Paket ohne Bottle aktualisiert oder neu baut: Sie bleibt unter „Upgrades“ zur manuellen Aktualisierung.";
 "Brewfile" = "Brewfile";
 "Brewfile saved" = "Brewfile gespeichert";
+"Building from source… %@ so far" = "Wird aus dem Quellcode gebaut… bisher %@";
+"Building from source… %@ so far (last time on this Mac: about %@)" = "Wird aus dem Quellcode gebaut… bisher %@ (letztes Mal auf diesem Mac: etwa %@)";
 "Built from source" = "Aus Quellcode";
 "Built from source, but %@ has a bottle for this Mac (%@). Replacing it pours the bottle instead; the version stays the same." = "Aus Quellcode gebaut, aber %@ hat eine Bottle für diesen Mac (%@). Beim Ersetzen wird stattdessen die Bottle eingespielt; die Version bleibt gleich.";
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "Aus Quellcode gebaut, aber %@ hat eine Bottle für diesen Mac. Beim Ersetzen wird stattdessen die Bottle eingespielt; die Version bleibt gleich.";
@@ -435,6 +442,7 @@
 "Hide" = "Ausblenden";
 "Hide Dock icon when the window is closed" = "Dock-Symbol ohne Fenster ausblenden";
 "Hide Terminal Command" = "Terminal-Befehl ausblenden";
+"Hide this message" = "Diese Meldung ausblenden";
 "High" = "Hoch";
 "History" = "Verlauf";
 "History…" = "Verlauf…";
@@ -518,6 +526,7 @@
 "Intelbrew's lines stay in your shell profile (%@); remove them by hand afterwards, or use Revert to Standard Homebrew first." = "Die Zeilen von Intelbrew bleiben in deinem Shell-Profil (%@); entferne sie danach von Hand oder nutze zuerst „Zu Standard-Homebrew zurückkehren“.";
 "It deletes %@'s Homebrew files and every installed formula and cask, including apps installed as casks in /Applications. Another Homebrew on this Mac (in a different prefix) is left alone. It may ask for your password." = "Es löscht die Homebrew-Dateien von %@ und jede installierte Formula und jeden Cask, einschließlich als Casks installierter Apps in /Applications. Ein anderes Homebrew auf diesem Mac (in einem anderen Präfix) bleibt unberührt. Es fragt eventuell nach deinem Passwort.";
 "It took %@; expect longer on an older Mac." = "Das dauerte %@; auf einem älteren Mac länger.";
+"It was stopped." = "Er wurde gestoppt.";
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Seine Abhängigkeiten bleiben installiert (brew autoremove entfernt ungenutzte)";
 "KB" = "KB";
 "Keep Running" = "Weiterlaufen";
@@ -830,6 +839,10 @@
 "Scanning %lld formula…" = "%lld Formula wird gescannt…";
 "Scanning…" = "Wird gescannt…";
 "Scheduled" = "Geplant";
+"Scheduled check didn't run: another Homebrew command was running. Will retry." = "Geplante Prüfung lief nicht: Ein anderer Homebrew-Befehl lief. Wird erneut versucht.";
+"Scheduled check didn't run: offline. Will retry." = "Geplante Prüfung lief nicht: offline. Wird erneut versucht.";
+"Scheduled check interrupted by sleep. Will retry." = "Geplante Prüfung durch Ruhezustand unterbrochen. Wird erneut versucht.";
+"Scheduled check took too long and was stopped. Will retry." = "Geplante Prüfung dauerte zu lange und wurde gestoppt. Wird erneut versucht.";
 "Search %@ packages" = "%@ Pakete durchsuchen";
 "Search Discover for “%@”" = "„%@“ in Entdecken suchen";
 "Search Homebrew" = "Homebrew durchsuchen";
@@ -993,6 +1006,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "Diese passen zu einem Cask, aber brew install --adopt würde sie nicht übernehmen.";
 "These need your administrator password: %@" = "Brauchen dein Admin-Passwort: %@";
 "Third-party" = "Drittanbieter";
+"This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Dieses Homebrew kann Befehlszeilenwerkzeuge installieren, aber keine Apps wie Firefox oder VLC. Apps einzuschalten ist ein einmaliger Download von etwa 620 MB.";
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Dieses brew hat kein `brew vulns` (neu in Homebrew 7). Führe `brew update` aus, um es zu erhalten.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Dieses Cask führt ein Installationspaket aus, das --adopt ignoriert: brew würde das Installationsprogramm erneut ausführen, mit deinem Passwort.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Ein symbolischer Link, nicht die App selbst. Tankard übernimmt keine Links.";
@@ -1013,6 +1027,7 @@
 "Trust…" = "Vertrauen…";
 "Try Again" = "Erneut versuchen";
 "Try another filter." = "Versuche einen anderen Filter.";
+"Turn On Apps…" = "Apps einschalten…";
 "Turn automatic updates back on now" = "Automatische Updates jetzt wieder einschalten";
 "Turn on Tankard. If it isn't listed, click + and choose Tankard in Applications." = "Schalte Tankard ein. Falls es nicht aufgeführt ist, klicke auf + und wähle Tankard im Ordner „Programme“.";
 "Turn on notifications in Settings ▸ General" = "Mitteilungen: Einstellungen ▸ Allgemein";
@@ -1202,6 +1217,7 @@
 "has an archived upstream repository" = "hat ein archiviertes Upstream-Repository";
 "has no license" = "hat keine Lizenz";
 "installed" = "installiert";
+"interrupted by sleep; the next automatic run tries again" = "durch Ruhezustand unterbrochen; der nächste automatische Lauf versucht es erneut";
 "is a versioned formula" = "ist eine versionierte Formula";
 "is deprecated upstream" = "ist upstream veraltet";
 "is discontinued upstream" = "wird upstream nicht mehr weitergeführt";
@@ -1251,6 +1267,8 @@
 "tapped" = "getappt";
 "today %@" = "heute %@";
 "tomorrow %@" = "morgen %@";
+"took too long and was stopped; the next automatic run tries again" = "dauerte zu lange und wurde gestoppt; der nächste automatische Lauf versucht es erneut";
+"under a minute" = "weniger als eine Minute";
 "uninstalled" = "deinstalliert";
 "untapped" = "Tap entfernt";
 "updated %@" = "aktualisiert %@";
