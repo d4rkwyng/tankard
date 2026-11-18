@@ -27,6 +27,13 @@ public enum AdminPassword {
         p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true)
     }
 
+    /// 0.8.4: brew's output says it is about to run sudo: "Running
+    /// installer for x with `sudo` (which may request your password)", or
+    /// a `/usr/bin/sudo` command line (uninstall's pkgutil, launchctl, rm).
+    public static func announcesSudo<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
+        lines.contains { $0.contains("with `sudo`") || $0.contains("/usr/bin/sudo ") || $0.contains("which may request your password") }
+    }
+
     /// The extra environment for one queued command: the helper and the
     /// dialog's context, only for a command that may run sudo and only
     /// when the helper exists. Not part of the command line shown or copied

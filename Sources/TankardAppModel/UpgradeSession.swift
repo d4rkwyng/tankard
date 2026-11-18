@@ -136,6 +136,8 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var onFinish: (@MainActor (UpgradeSession) -> Void)?
     /// Finished lines of the running command (for sudo detection).
     @ObservationIgnored private var commandLines: [String] = []
+    /// 0.8.4: the running step's password note is in the log.
+    @ObservationIgnored private var passwordNoted = false
     @ObservationIgnored private var consumer: Task<Void, Never>?
     /// 0.7: steps sharing a key run as a chain: when one fails, the rest of
     /// its chain still waiting is skipped (a restore's link after a failed
@@ -418,15 +420,23 @@ public final class UpgradeSession: Identifiable {
             if let f = foreignAskpass, AdminPassword.mayNeedSudo(items[i].command.arguments) {
                 note("brew.env sets its own password helper (\(f.helper), in \(f.source)). Tankard won't use its password dialog, and tells brew not to run sudo for this step (HOMEBREW_NO_SUDO).")
             }
-            if items[i].command.environment[Askpass.askpassKey] != nil {
-                note(AdminPassword.required(items[i].package)
-                     ? "brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS)."
-                     : "If brew needs sudo for this step, Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+            // 0.8.4: only for a cask that needs it (the plan's and the
+            // dialog's rule, AdminPassword.required); every cask step used to
+            // get an orange "If brew needs sudo…" line. Any other step gets
+            // the note only once brew says it runs sudo (below).
+            passwordNoted = false
+            if items[i].command.environment[Askpass.askpassKey] != nil, AdminPassword.required(items[i].package) {
+                note("brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+                passwordNoted = true
             }
         case .output(let data):
             let lines = log.feed(data)
             commandLines += lines
             logFile?.append(lines)
+            if !passwordNoted, items[i].command.environment[Askpass.askpassKey] != nil, AdminPassword.announcesSudo(lines) {
+                note("brew runs sudo for this step: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+                passwordNoted = true
+            }
         case .finished(let code):
             flush()
             lockWait = nil
