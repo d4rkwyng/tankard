@@ -276,14 +276,17 @@ public struct BrewClient: Sendable {
 
 extension BrewClient {
     /// Asks brew why it can't read each package (`brew info --json=v2`
-    /// on the name, which fails with the reason), at most `limit` of them.
+    /// on the full name, which fails with the reason), at most `limit` of them.
     func withUnreadableReasons(_ rows: [Package], env: [String: String], limit: Int = 5) async -> [Package] {
         guard !rows.isEmpty else { return rows }
         var out: [Package?] = rows
         await withTaskGroup(of: (Int, ProcessResult?).self) { group in
             for (i, p) in rows.enumerated().prefix(limit) {
                 group.addTask {
-                    let args = ["info", "--json=v2", p.kind == .cask ? "--cask" : "--formula", p.name]
+                    // 0.8.6 (HK-47 review): by full name: the bare name can
+                    // resolve to a core formula of the same name, which brew
+                    // reads fine (exit 0), and the row would be dropped.
+                    let args = ["info", "--json=v2", p.kind == .cask ? "--cask" : "--formula", p.fullName.isEmpty ? p.name : p.fullName]
                     return (i, try? await runner.run(installation.brewPath, args, environment: env))
                 }
             }

@@ -61,7 +61,7 @@ struct V086UnreadableTests {
         let runner = FakeRunner { exe, args in
             guard exe.hasSuffix("brew") else { return failed }
             if args == ["info", "--json=v2", "--installed"] { return ok(infoData) }
-            if args.last == "obsidian-cli" {
+            if args.last == "yakitrak/yakitrak/obsidian-cli" {
                 return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: Refusing to load formula yakitrak/yakitrak/notesmd-cli from untrusted tap yakitrak/yakitrak.\n".utf8))
             }
             if args.last == "tailscale" { return ok("{}") } // brew can read it after all
@@ -77,7 +77,33 @@ struct V086UnreadableTests {
         #expect(o.unreadableDetail?.contains("Installed from yakitrak/yakitrak.") == true)
         #expect(report.packages["tailscale"] == nil)
         #expect(report.summary.installed == 21)
-        #expect(runner.calls.contains { $0.arguments == ["info", "--json=v2", "--formula", "obsidian-cli"] })
+        #expect(runner.calls.contains { $0.arguments == ["info", "--json=v2", "--formula", "yakitrak/yakitrak/obsidian-cli"] })
+    }
+
+    /// 0.8.6 (HK-47 review, item 5): the reason is asked for by full name.
+    /// By the bare name, brew resolves a core formula of the same name,
+    /// exits 0, and the unreadable row was dropped again.
+    @Test func theReasonIsAskedForByFullName() async throws {
+        let root = try prefix()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let infoData = try Fixture.data("sonoma-intelbrew-info")
+        let runner = FakeRunner { exe, args in
+            guard exe.hasSuffix("brew") else { return failed }
+            if args == ["info", "--json=v2", "--installed"] { return ok(infoData) }
+            // homebrew/core has a formula of the same name.
+            if args.last == "obsidian-cli" { return ok("{}") }
+            if args.last == "yakitrak/yakitrak/obsidian-cli" {
+                return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: Refusing to load formula yakitrak/yakitrak/obsidian-cli from untrusted tap yakitrak/yakitrak.\n".utf8))
+            }
+            return failed
+        }
+        var c = BrewClient(installation: Self.install, platform: .intelSonoma, runner: runner,
+                           sources: EnvironmentSources(process: ["HOME": "/Users/x"]))
+        let cellar = root.appendingPathComponent("Cellar").path, caskroom = root.appendingPathComponent("Caskroom").path
+        c.unreadableScan = { UnreadableKegs.find(cellar: cellar, caskroom: caskroom, info: $0) }
+        let report = try await c.status()
+        let o = try #require(report.packages["obsidian-cli"])
+        #expect(o.unreadable == "Refusing to load formula yakitrak/yakitrak/obsidian-cli from untrusted tap yakitrak/yakitrak.")
     }
 
     @Test func aTapWithAnUnreadablePackageCantBeRemoved() throws {
