@@ -67,7 +67,7 @@ struct V085ReleaseNotesTests {
     @Test func v088ShowsEveryChange() throws {
         let s = ReleaseNotesSummary.make(try releaseBody("0.8.8"))
         #expect(s.items.first == .heading("Highlights"))
-        #expect(s.bullets.count == 9)
+        #expect(s.bullets.count == 10)
         #expect(s.more == 0)
         let headings = s.items.compactMap { item -> String? in
             if case .heading(let h) = item { return h }

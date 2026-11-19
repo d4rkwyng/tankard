@@ -47,6 +47,19 @@ struct UpgradeSheet: View {
                     }
                 }
             }
+            // 0.8.8: a download that hasn't moved for a while (offline).
+            if session.current != nil, !session.isFinished {
+                TimelineView(.periodic(from: .now, by: 5)) { context in
+                    if let hint = session.networkHint(at: context.date) {
+                        Label(hint, systemImage: "wifi.exclamationmark")
+                            .font(.system(size: 11.5))
+                            .foregroundStyle(.orange)
+                            .lineLimit(2)
+                            .help(hint)
+                            .padding(.bottom, 6)
+                    }
+                }
+            }
             // 0.8: while brew downloads, the bar is the download's (no total:
             // an indeterminate bar); the count stays on the right.
             Group {
