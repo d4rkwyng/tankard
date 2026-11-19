@@ -2,9 +2,15 @@ import Foundation
 import TankardCore
 
 // v0.6 (part B): Brewfile export, check and restore through `brew bundle`.
-// A Brewfile is Ruby: Tankard never evaluates or parses its source. What
-// is in it comes from `brew bundle list --file=… --<kind>`, and what is
-// missing from `brew bundle check --file=… --verbose --no-upgrade`.
+// A Brewfile is a Ruby program, and `brew bundle` (check, list, install)
+// runs it: Homebrew::Bundle loads the file with `instance_eval`, so any code
+// in it runs as the user the moment brew reads it. Tankard itself never
+// evaluates it. 0.8.8 (security review #2): Check Brewfile… first shows
+// `BrewfileStaticReader`'s preview, which reads only plain literal lines and
+// runs nothing; brew bundle check runs only after the user confirms that
+// it will run the file's code. What is missing comes from `brew bundle
+// check --file=… --verbose --no-upgrade`, and an export's counts from
+// `brew bundle list --file=… --<kind>` on the file brew itself just wrote.
 // Flags checked with `brew bundle <sub> --help` on brew 7.0.14.
 
 public enum BrewfileKind: String, CaseIterable, Sendable, Codable {

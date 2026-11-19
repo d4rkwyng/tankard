@@ -6,9 +6,12 @@ import TankardCore
 // then counts the file with `brew bundle list`; Check runs `brew bundle
 // check`; the restore plan reads the missing formulae and casks with one
 // `brew info --json=v2` call each. All of it is read-only apart from the
-// file dump writes. Nothing here runs a shell. The one look at the
-// Brewfile's own text is for missing taps' URLs (0.8.5, BrewfileTapScanner),
-// which no brew bundle subcommand prints.
+// file dump writes. Nothing here runs a shell. But `brew bundle check`
+// runs the Brewfile's Ruby: 0.8.8 (security review #2) Check first shows
+// the static preview (BrewfileStaticReader, nothing run), then asks before
+// brew reads the file. The other looks at the Brewfile's own text are for
+// missing taps' URLs (0.8.5, BrewfileTapScanner), which no brew bundle
+// subcommand prints.
 
 /// What an exported Brewfile holds, from `brew bundle list` per kind.
 public struct BrewfileSummary: Equatable, Sendable {
@@ -114,6 +117,10 @@ func withBrewfileTimeout<T: Sendable>(_ timeout: Duration, _ op: @escaping @Send
 public final class BrewfileStore {
     public enum Page: Equatable, Sendable {
         case idle
+        /// 0.8.8: the file's plain lines, read without running anything.
+        case preview(BrewfilePreview)
+        /// 0.8.8: "A Brewfile is a Ruby program…", before brew bundle check.
+        case confirmRun(BrewfilePreview)
         case running(String)
         case exported(BrewfileSummary)
         case checked(BrewfileCheckResult)
@@ -132,6 +139,8 @@ public final class BrewfileStore {
     @ObservationIgnored public var platform: BottlePlatform?
     /// 0.8.5 (M3): reads the Brewfile's text (taps' URLs).
     @ObservationIgnored public var readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
+    /// 0.8.8: whether macOS marked the file as downloaded.
+    @ObservationIgnored public var quarantined: @Sendable (String) -> Bool = { BrewfileStaticReader.isQuarantined($0) }
     @ObservationIgnored public var timeout: Duration = .seconds(60)
     @ObservationIgnored private var task: Task<Void, Never>?
 
@@ -189,7 +198,44 @@ public final class BrewfileStore {
         }
     }
 
+    /// 0.8.8: Check Brewfile…'s first page: the plain lines, nothing run.
+    public func preview(path: String) {
+        task?.cancel()
+        task = nil
+        let size = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? Int) ?? nil
+        guard size.map({ $0 <= BrewfileStaticReader.maxBytes }) ?? true, let text = readFile(path) else {
+            set(.failed(String(localized: "Tankard couldn't read this file as a Brewfile.")))
+            return
+        }
+        set(.preview(BrewfileStaticReader.preview(path: path, text: text, quarantined: quarantined(path))))
+    }
+
+    /// 0.8.8: from the preview to the "it runs the file's code" question.
+    public func requestBrewCheck() {
+        guard case .preview(let p) = page else { return }
+        set(.confirmRun(p))
+    }
+
+    /// 0.8.8: back from that question to the preview.
+    public func cancelBrewCheck() {
+        guard case .confirmRun(let p) = page else { return }
+        set(.preview(p))
+    }
+
+    /// The confirmation's words. `quarantined`: the louder warning first.
+    public static func runWarning(quarantined: Bool) -> [String] {
+        var out: [String] = []
+        if quarantined {
+            out.append(String(localized: "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it."))
+        }
+        out.append(String(localized: "A Brewfile is a Ruby program. Checking or installing it with brew bundle runs the code in it, with your permissions, before Tankard shows anything."))
+        out.append(String(localized: "Continue only if you trust whoever wrote this file."))
+        return out
+    }
+
     /// Check: what the Brewfile at `path` needs that this Mac lacks.
+    /// Runs the Brewfile (brew bundle check): only after `confirmRun`, or
+    /// for the demo's fixture.
     public func check(path: String) {
         let timeout = self.timeout
         start(String(localized: "Checking Brewfile…")) { run in

