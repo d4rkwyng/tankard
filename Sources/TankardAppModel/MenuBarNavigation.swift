@@ -70,3 +70,15 @@ extension AppStore {
         revealRequest &+= 1
     }
 }
+
+/// 0.8.8 (gauntlet 3, B1): the segmented controls' arrow keys. The control
+/// is one keyboard stop; Left and Right select the neighbouring segment and
+/// stop at the ends (no wrap, as NSSegmentedControl). nil when `current`
+/// isn't one of `options`: then the first (Right) or last (Left) one.
+public enum SegmentedStep {
+    public static func move<T: Equatable>(from current: T, in options: [T], by delta: Int) -> T? {
+        guard !options.isEmpty, delta != 0 else { return nil }
+        guard let i = options.firstIndex(of: current) else { return delta > 0 ? options.first : options.last }
+        return options[min(max(i + delta, 0), options.count - 1)]
+    }
+}

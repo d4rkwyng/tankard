@@ -499,6 +499,15 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
     /// selected or not (a heavier selected label would widen it).
     static var font: Font { .system(size: 13) }
 
+    /// 0.8.8 (gauntlet 3, B1): the whole control is one keyboard stop.
+    /// Each segment used to be a focusable button of its own, so with Full
+    /// Keyboard Access on, a window opened from the menu bar put the focus
+    /// ring on the first segment ("All"), where it read as the selection
+    /// while the list showed Upgrades; clicks never move that ring, so the
+    /// control looked stuck on All. Now Tab reaches the control once (one
+    /// ring around all of it), and the arrow keys change the selection.
+    @FocusState private var focused: Bool
+
     var body: some View {
         HStack(spacing: 2) {
             ForEach(options) { option in
@@ -517,14 +526,38 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }
         .padding(2)
         .background(RoundedRectangle(cornerRadius: 7).fill(theme.segmentTrack))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(Color(nsColor: .keyboardFocusIndicatorColor), lineWidth: 3)
+                .padding(-3)
+                .opacity(focused ? 1 : 0)
+                .allowsHitTesting(false)
+        }
         .fixedSize()
+        // Only keyboard navigation focuses it (a click selects a segment
+        // without drawing a ring).
+        .focusable(interactions: .activate)
+        .focusEffectDisabled()
+        .focused($focused)
+        .onMoveCommand { direction in
+            switch direction {
+            case .left: step(-1)
+            case .right: step(1)
+            default: break
+            }
+        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(title)
+    }
+
+    private func step(_ delta: Int) {
+        if let next = SegmentedStep.move(from: selection, in: options, by: delta), next != selection { selection = next }
     }
 }
 
