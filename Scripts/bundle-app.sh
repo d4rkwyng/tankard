@@ -43,9 +43,13 @@ VERSION=${TANKARD_VERSION:-$SOURCE_VERSION}
 # "Version 0.3.0" with no "(N)" build number after it.
 BUILD=$VERSION
 
-# 0.8.3: the sudo password helper (Sources/tankard-askpass) goes next to
-# the app's binary as Contents/MacOS/tankard-askpass.
+# 0.8.3: the sudo password helper (Sources/tankard-askpass). 0.8.8
+# (gauntlet 3, B4): an app of its own, Contents/Helpers/TankardPassword.app,
+# with an Info.plist that keeps it out of the Dock (LSUIElement) and its own
+# bundle id; in Contents/MacOS it ran as Tankard and each dialog added a
+# Tankard icon to the Dock.
 HELPER=tankard-askpass
+HELPER_APP_NAME=TankardPassword.app
 LIPO_FROM=()
 HELPER_LIPO_FROM=()
 if [ $UNIVERSAL = 1 ]; then
@@ -81,12 +85,17 @@ if [ ${#LIPO_FROM[@]} -gt 0 ]; then
 else
     cp "$BIN/TankardApp" "$APP/Contents/MacOS/Tankard"
 fi
+HELPER_APP="$APP/Contents/Helpers/$HELPER_APP_NAME"
+HELPER_BIN="$HELPER_APP/Contents/MacOS/$HELPER"
+mkdir -p "$HELPER_APP/Contents/MacOS" "$HELPER_APP/Contents/Resources"
 if [ ${#HELPER_LIPO_FROM[@]} -gt 0 ]; then
-    lipo -create "${HELPER_LIPO_FROM[@]}" -output "$APP/Contents/MacOS/$HELPER"
+    lipo -create "${HELPER_LIPO_FROM[@]}" -output "$HELPER_BIN"
 else
-    cp "$BIN/$HELPER" "$APP/Contents/MacOS/$HELPER"
+    cp "$BIN/$HELPER" "$HELPER_BIN"
 fi
-chmod 755 "$APP/Contents/MacOS/$HELPER"
+chmod 755 "$HELPER_BIN"
+# The dialog shows Tankard's icon.
+cp Resources/AppIcon.icns "$HELPER_APP/Contents/Resources/AppIcon.icns"
 # SwiftPM resource bundles (logo, demo data). The app looks for them in
 # Contents/Resources; Bundle.main.bundleURL (the .app root) would break the
 # code signature's sealing rules.
@@ -107,6 +116,8 @@ LPROJ_FROM=$(find "$BIN/tankard_TankardApp.bundle" -maxdepth 3 -name 'en.lproj' 
 LOCALIZATIONS=""
 for d in "$(dirname "$LPROJ_FROM")"/*.lproj; do
     cp -R "$d" "$APP/Contents/Resources/"
+    # The password dialog's words, in the helper's own bundle (0.8.8).
+    cp -R "$d" "$HELPER_APP/Contents/Resources/"
     LOCALIZATIONS="$LOCALIZATIONS        <string>$(basename "$d" .lproj)</string>
 "
 done
@@ -151,6 +162,49 @@ $LOCALIZATIONS    </array>
 </plist>
 PLIST
 plutil -lint "$APP/Contents/Info.plist" >/dev/null
+
+# 0.8.8: the password helper's own Info.plist. LSUIElement: never in the
+# Dock or the app switcher; its own bundle id (the one release.sh signs it
+# with), so macOS doesn't take it for a second Tankard.
+cat > "$HELPER_APP/Contents/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>net.mindtricks.tankard.askpass</string>
+    <key>CFBundleName</key>
+    <string>Tankard</string>
+    <key>CFBundleDisplayName</key>
+    <string>Tankard</string>
+    <key>CFBundleExecutable</key>
+    <string>$HELPER</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$VERSION</string>
+    <key>CFBundleVersion</key>
+    <string>$BUILD</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+$LOCALIZATIONS    </array>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>
+PLIST
+plutil -lint "$HELPER_APP/Contents/Info.plist" >/dev/null
+printf 'APPL????' > "$HELPER_APP/Contents/PkgInfo"
 SHORT=$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")
 LONG=$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")
 [ "$SHORT" = "$LONG" ] || { echo "bundle-app.sh: CFBundleVersion ($LONG) must equal CFBundleShortVersionString ($SHORT)" >&2; exit 1; }
@@ -163,6 +217,6 @@ if [ "$SIGN" = adhoc ]; then
     codesign --verify --deep --strict "$APP"
 fi
 
-[ "$(lipo -archs "$APP/Contents/MacOS/$HELPER")" = "$(lipo -archs "$APP/Contents/MacOS/Tankard")" ] \
+[ "$(lipo -archs "$HELPER_BIN")" = "$(lipo -archs "$APP/Contents/MacOS/Tankard")" ] \
     || { echo "bundle-app.sh: $HELPER and Tankard have different architectures" >&2; exit 1; }
 echo "==> $APP ($VERSION): $(lipo -archs "$APP/Contents/MacOS/Tankard"), signing: $SIGN"

@@ -143,7 +143,8 @@ struct AskpassSupportTests {
     @Test func helperPathOnlyInsideAnAppAndExecutable() throws {
         let dir = try tempDir()
         let app = dir.appendingPathComponent("Tankard.app")
-        let macOS = app.appendingPathComponent("Contents/MacOS")
+        // 0.8.8: an app of its own in Contents/Helpers.
+        let macOS = app.appendingPathComponent("Contents/Helpers/TankardPassword.app/Contents/MacOS")
         try FileManager.default.createDirectory(at: macOS, withIntermediateDirectories: true)
         let helper = macOS.appendingPathComponent("tankard-askpass")
         #expect(Askpass.helperPath(appBundle: app) == nil)
@@ -186,7 +187,7 @@ struct AskpassHelperProcessTests {
 }
 
 struct AskpassGateTests {
-    static let helper = "/Applications/Tankard.app/Contents/MacOS/tankard-askpass"
+    static let helper = "/Applications/Tankard.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass"
     static let tankard = "/Applications/Tankard.app/Contents/MacOS/Tankard"
     static let ruby = "/opt/homebrew/Library/Homebrew/vendor/portable-ruby/current/bin/ruby"
 

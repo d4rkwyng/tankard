@@ -111,7 +111,7 @@ public final class AppStore {
         public var lockWait: BrewLockWait?
         /// The running app, to tell a cask install from a zip download.
         public var bundlePath: String = Bundle.main.bundlePath
-        /// 0.8.3: the sudo password dialog (Tankard.app/Contents/MacOS/
+        /// 0.8.3: the sudo password dialog (0.8.8: Tankard.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/
         /// tankard-askpass), set as SUDO_ASKPASS for cask changes. nil: none
         /// (tests, `swift run`, demo mode); brew's sudo then fails as before
         /// and the sheet offers the Terminal command.

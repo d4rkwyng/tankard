@@ -12,8 +12,8 @@ import Foundation
 /// reads the password from the helper's stdout. Exiting non-zero (Cancel)
 /// makes sudo fail ("no password was provided").
 ///
-/// The helper is `Tankard.app/Contents/MacOS/tankard-askpass`
-/// (Sources/tankard-askpass). This file holds what it and the app share:
+/// The helper is `Tankard.app/Contents/Helpers/TankardPassword.app`
+/// (Sources/tankard-askpass; before 0.8.8 `Contents/MacOS/tankard-askpass`). This file holds what it and the app share:
 /// the variable names, reading the request, and the dialog's words. No
 /// password ever passes through here.
 public enum Askpass {
@@ -30,8 +30,16 @@ public enum Askpass {
     /// Homebrew's switch that makes it never run sudo (env_config.rb). Set
     /// for automatic updates, which must never ask for a password.
     public static let noSudoKey = "HOMEBREW_NO_SUDO"
-    /// The helper's file name inside Tankard.app/Contents/MacOS.
+    /// The helper's executable name.
     public static let helperName = "tankard-askpass"
+    /// 0.8.8 (gauntlet 3, B4): the helper is an app of its own inside
+    /// Tankard.app, with its own Info.plist: `LSUIElement` (never a Dock
+    /// icon) and its own bundle id. In Contents/MacOS it ran under
+    /// Tankard's Info.plist and bundle id, and each dialog (one per sudo)
+    /// left another Tankard icon in the Dock.
+    public static let helperAppName = "TankardPassword.app"
+    /// Where the helper's executable is, relative to Tankard.app.
+    public static let helperRelativePath = "Contents/Helpers/\(helperAppName)/Contents/MacOS/\(helperName)"
 
     /// Debug hooks of the helper (never set by Tankard):
     /// - describe: write the dialog's text to stderr and exit 1, no window;
@@ -157,14 +165,14 @@ public enum Askpass {
     /// The helper inside an app bundle, when it is there and executable.
     public static func helperPath(appBundle: URL, fileManager: FileManager = .default) -> String? {
         guard appBundle.pathExtension == "app" else { return nil }
-        let path = appBundle.appendingPathComponent("Contents/MacOS/\(helperName)").path
+        let path = appBundle.appendingPathComponent(helperRelativePath).path
         return fileManager.isExecutableFile(atPath: path) ? path : nil
     }
 }
 
-/// The dialog's words. In the app's string catalog: the helper's main
-/// bundle is Tankard.app (it lives in Contents/MacOS), so it reads the same
-/// Localizable.strings as the app.
+/// The dialog's words. In the app's string catalog: bundle-app.sh copies
+/// the app's .lproj folders into the helper's own bundle (0.8.8), so it
+/// reads the same Localizable.strings as the app.
 ///
 /// 0.8.4: short. A title, one line for what the password is for, one line
 /// on where it goes; the brew command itself under a collapsed Details.
@@ -246,7 +254,9 @@ public enum AskpassText {
 ///    `maxAncestors` steps, it finds the Tankard executable of the helper's
 ///    own bundle: `<bundle>/Contents/MacOS/Tankard`, from the helper's own
 ///    kernel path (so a symlink to the helper resolves to the real one),
-///    and the helper must itself sit at `<bundle>.app/Contents/MacOS/tankard-askpass`.
+///    and the helper must itself sit at
+///    `<bundle>.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass`
+///    (0.8.8; before, `<bundle>.app/Contents/MacOS/tankard-askpass`).
 ///    A helper copied elsewhere has no Tankard of its own above it.
 /// 3. when the helper is signed with a Team ID (a Developer ID release),
 ///    that Tankard process is validly signed by the same team. This stops a
@@ -258,7 +268,7 @@ public enum AskpassText {
 public enum AskpassGate {
     public static let sudoPath = "/usr/bin/sudo"
     public static let maxAncestors = 10
-    static let helperSuffix = ".app/Contents/MacOS/" + Askpass.helperName
+    static let helperSuffix = ".app/" + Askpass.helperRelativePath
 
     public enum Decision: Equatable, Sendable {
         case allow
@@ -269,7 +279,7 @@ public enum AskpassGate {
     /// own resolved path; nil when the helper isn't inside an app bundle.
     public static func expectedTankard(helperPath: String) -> String? {
         guard helperPath.hasPrefix("/"), helperPath.hasSuffix(helperSuffix) else { return nil }
-        return String(helperPath.dropLast(Askpass.helperName.count)) + "Tankard"
+        return String(helperPath.dropLast(Askpass.helperRelativePath.count)) + "Contents/MacOS/Tankard"
     }
 
     /// - parentPath: the parent process's resolved executable path (nil: unknown).

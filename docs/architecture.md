@@ -97,8 +97,8 @@ TankardCore      (step 1) brew JSON, status classification, versions, Intelbrew 
 AskpassSupport   0.8.3: Askpass (the variable names, timeout), AskpassText (the
                  dialog's wording), AskpassGate (who may ask); shared by the app and
                  the helper
-tankard-askpass  0.8.3: the sudo password dialog, shipped as
-                 Contents/MacOS/tankard-askpass (see *sudo password dialog*)
+tankard-askpass  0.8.3: the sudo password dialog, shipped as (0.8.8)
+                 Contents/Helpers/TankardPassword.app (see *sudo password dialog*)
 TankardAppModel  no SwiftUI; everything the app does, tested on its own
   AppStore         @Observable @MainActor: report, filter, search, selection, refresh,
                    cache-first loading, errors that keep data, starting upgrades
@@ -657,8 +657,11 @@ the askpass program as the user (not root), with its prompt as argv[1], and read
 password from its stdout; a non-zero exit makes sudo fail with "no password was provided".
 
 - *Helper.* `Sources/tankard-askpass` (AppKit, links only `AskpassSupport`), shipped as
-  `Tankard.app/Contents/MacOS/tankard-askpass`. Living in Contents/MacOS makes Tankard.app
-  its main bundle, so the dialog gets Tankard's icon and Localizable.strings. It is a small
+  `Tankard.app/Contents/Helpers/TankardPassword.app` (0.8.8; before, as
+  `Contents/MacOS/tankard-askpass`, where it ran under Tankard's own Info.plist and bundle
+  id and every dialog added a Tankard icon to the Dock). Its own Info.plist has
+  `LSUIElement` and the bundle id `net.mindtricks.tankard.askpass`; bundle-app.sh copies
+  Tankard's icon and .lproj folders into it, so the dialog keeps Tankard's icon and words. It is a small
   `NSPanel` laid out like a modern alert (0.8.4: centered icon, title and text; NSAlert
   left-aligns everything once it has an accessory view), run with `runModal(for:)`, with an
   `NSSecureTextField` (no echo, no copy, secure keyboard entry while

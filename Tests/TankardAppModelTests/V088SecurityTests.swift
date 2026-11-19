@@ -391,7 +391,7 @@ struct V088AskpassTicketTests {
     }
 
     @Test func gateRefusesWithoutAMatchingTicketAndKeepsTheOtherChecks() {
-        let helper = "/Applications/Tankard.app/Contents/MacOS/tankard-askpass"
+        let helper = "/Applications/Tankard.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass"
         let tankard = "/Applications/Tankard.app/Contents/MacOS/Tankard"
         let ok = AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/bin/bash", tankard], helperPath: helper,
                                     helperTeam: "T", tankardTeam: "T", ticketMatched: true)

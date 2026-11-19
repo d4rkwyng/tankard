@@ -199,3 +199,40 @@ extension AdminPasswordTests {
         #expect(session.items.allSatisfy { session.sudoSkippedLine($0) == nil })
     }
 }
+
+// MARK: B4: the password helper is an app of its own (never in the Dock)
+
+struct V088HelperAppTests {
+    static let nested = "/Applications/Tankard.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass"
+    static let tankard = "/Applications/Tankard.app/Contents/MacOS/Tankard"
+
+    @Test func theNestedHelperAnswersOnlyToItsOwnTankard() {
+        #expect(AskpassGate.expectedTankard(helperPath: Self.nested) == Self.tankard)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/bin/bash", Self.tankard],
+                                   helperPath: Self.nested) == .allow)
+        // Another copy's Tankard, a helper app elsewhere, a lookalike folder.
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/tmp/Tankard.app/Contents/MacOS/Tankard"],
+                                   helperPath: Self.nested) != .allow)
+        #expect(AskpassGate.expectedTankard(helperPath: "/tmp/TankardPassword.app/Contents/MacOS/tankard-askpass") == nil)
+        #expect(AskpassGate.expectedTankard(helperPath: "/x/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass") == nil)
+        // The old place (Contents/MacOS) is no longer the helper's.
+        #expect(AskpassGate.expectedTankard(helperPath: "/Applications/Tankard.app/Contents/MacOS/tankard-askpass") == nil)
+    }
+
+    @Test func theAppUsesTheNestedHelper() throws {
+        let base = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-ha-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: base) }
+        let app = base.appendingPathComponent("Tankard.app")
+        #expect(Askpass.helperPath(appBundle: app) == nil)
+        func make(_ relative: String) throws {
+            let url = app.appendingPathComponent(relative)
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data().write(to: url)
+            chmod(url.path, 0o755)
+        }
+        try make("Contents/MacOS/tankard-askpass")
+        #expect(Askpass.helperPath(appBundle: app) == nil)
+        try make(Askpass.helperRelativePath)
+        #expect(Askpass.helperPath(appBundle: app) == app.appendingPathComponent(Askpass.helperRelativePath).path)
+    }
+}

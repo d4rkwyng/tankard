@@ -713,7 +713,8 @@ app always includes these.
 
 Cask installs, upgrades, reinstalls, adopts and uninstalls (and a restore's cask steps) also
 start with `SUDO_ASKPASS` set to Tankard's password dialog,
-`Tankard.app/Contents/MacOS/tankard-askpass`, and `HOMEBREW_TANKARD_ASKPASS_CONTEXT` set to
+`Tankard.app/Contents/Helpers/TankardPassword.app/Contents/MacOS/tankard-askpass` (an app of
+its own that never shows in the Dock), and `HOMEBREW_TANKARD_ASKPASS_CONTEXT` set to
 the command, which the dialog names in one line ("To upgrade windows-app.") and shows in full
 under Details. Homebrew then runs `sudo -A`, which asks the dialog instead
 of a terminal. These two are left out of the command shown, because the copy you paste into

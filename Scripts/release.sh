@@ -150,11 +150,12 @@ if [ $DRY = 0 ]; then
         run "${SIGN[@]}" "$f"
     done < <(find "$APP/Contents" \( -name '*.dylib' -o -name '*.framework' -o -name '*.xpc' -o -name '*.appex' \) -print0)
 fi
-# 0.8.3: the sudo password helper, a second executable in Contents/MacOS:
-# its own Developer ID signature with the hardened runtime and a secure
-# timestamp (notarization requires both), before the app is sealed.
-HELPER="$APP/Contents/MacOS/tankard-askpass"
-[ $DRY = 1 ] || [ -x "$HELPER" ] || fail "missing $HELPER (bundle-app.sh builds it)"
+# 0.8.3: the sudo password helper: its own Developer ID signature with the
+# hardened runtime and a secure timestamp (notarization requires both),
+# before the app is sealed. 0.8.8: an app of its own in Contents/Helpers
+# (TankardPassword.app; its Info.plist has the same bundle id).
+HELPER="$APP/Contents/Helpers/TankardPassword.app"
+[ $DRY = 1 ] || [ -x "$HELPER/Contents/MacOS/tankard-askpass" ] || fail "missing $HELPER (bundle-app.sh builds it)"
 run "${SIGN[@]}" --identifier net.mindtricks.tankard.askpass "$HELPER"
 run "${SIGN[@]}" "$APP"
 run codesign --verify --strict --deep --verbose=2 "$APP"

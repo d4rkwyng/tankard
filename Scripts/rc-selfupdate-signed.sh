@@ -134,7 +134,9 @@ spctl_notarized() { # app
     grep -q ': accepted$' <<<"$out" && grep -qx 'source=Notarized Developer ID' <<<"$out"
 }
 helper_signed() { # app: the 0.8.3 sudo helper, own Developer ID signature
-    local h="$1/Contents/MacOS/tankard-askpass" out
+    # 0.8.8: an app of its own in Contents/Helpers; before, in Contents/MacOS.
+    local h="$1/Contents/Helpers/TankardPassword.app" out
+    [ -e "$h" ] || h="$1/Contents/MacOS/tankard-askpass"
     [ -e "$h" ] || { echo "no tankard-askpass (a build before 0.8.3)"; return 0; }
     out=$(codesign -dv --verbose=4 "$h" 2>&1)
     printf '%s\n' "$out" | grep -E '^(Identifier|Authority|Timestamp|TeamIdentifier|CodeDirectory)'
@@ -246,7 +248,7 @@ else
     if [ -n "${TANKARD_SIGN_ID:-}" ]; then
         # As release.sh: the helper first (its own identifier), then the app.
         SIGN=(codesign --force --options runtime --timestamp -s "$TANKARD_SIGN_ID")
-        "${SIGN[@]}" --identifier net.mindtricks.tankard.askpass "$OUT/old-a/Tankard.app/Contents/MacOS/tankard-askpass" \
+        "${SIGN[@]}" --identifier net.mindtricks.tankard.askpass "$OUT/old-a/Tankard.app/Contents/Helpers/TankardPassword.app" \
             && "${SIGN[@]}" "$OUT/old-a/Tankard.app" || fail "signing $OUT/old-a/Tankard.app with $TANKARD_SIGN_ID"
     fi
     Scripts/e2e-selfupdate.sh --old "$OUT/old-a/Tankard.app" --new "$NEWAPP" --out "$OUT/e2e-A" --phases A ${APPDIR_ARGS[@]+"${APPDIR_ARGS[@]}"} || RESULT=1
