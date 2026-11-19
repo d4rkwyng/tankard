@@ -213,6 +213,12 @@ public final class AppStore {
     /// What a running refresh is doing ("Running brew update…").
     public private(set) var refreshPhase: String?
     public internal(set) var error: StoreError?
+    /// 0.8.8 (gauntlet 26, P3): the last `brew update` failure, until the
+    /// next update (manual, scheduled or background) or Dismiss. A read
+    /// that runs no update (window to the front, after an install) used to
+    /// clear it, so the status bar said "Updated just now" alone while the
+    /// catalog was still the old one.
+    var updateFailure: StoreError?
     public private(set) var upgrade: UpgradeSession?
     /// The activity (plan, session, App Management pages) is showing:
     /// the main window's sheet, or (0.8.5) the progress panel a menu-bar
@@ -646,6 +652,11 @@ public final class AppStore {
             lastScheduledUpdate = r
             updateError = r.error
         }
+        switch kind {
+        case .manual, .scheduled: updateFailure = updateError
+        case .afterUpdate: updateFailure = nil
+        case .automatic: break
+        }
 
         refreshPhase = String(localized: "Reading installed packages…")
         // 0.8: detection first (it decides brew's environment), then
@@ -667,7 +678,7 @@ public final class AppStore {
             LaunchTiming.mark("list (brew)", once: true)
             LaunchTiming.note("status read " + fresh.timingsMs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: " "))
             try? deps.cache?.save(fresh)
-            error = updateError.map(Self.refreshFailure)
+            error = updateFailure.map(Self.refreshFailure)
             homebrewState = .ready
             startInsights(force: kind != .afterUpdate, measureSizes: false)
             // 0.8.1: relaunched for App Management: the operation it was
@@ -719,7 +730,7 @@ public final class AppStore {
     }
 
     static func updateError(code: Int32, lines: [String], display: String) -> StoreError {
-        let tail = lines.suffix(6).joined(separator: "\n")
+        let tail = BrewOutputTail.lines(lines, limit: 6).joined(separator: "\n")
         if SudoDetector.needsSudo(lines) {
             return StoreError(title: String(localized: "brew update needs administrator rights"),
                               detail: String(localized: "Run this in Terminal:"), terminalCommand: display)
@@ -746,7 +757,10 @@ public final class AppStore {
         }
     }
 
-    public func dismissError() { error = nil }
+    public func dismissError() {
+        error = nil
+        updateFailure = nil
+    }
 
     /// 0.8.6 (VM test L2): an error from reading status (or its brew update).
     nonisolated static func refreshFailure(_ e: StoreError) -> StoreError {

@@ -47,7 +47,7 @@ struct StatusBar: View {
             }
             // Vulnerability scan progress lives here (not in the filter row,
             // where it squeezed the summary).
-            if store.insights.scanState == .running || store.insights.scanOutcome != nil {
+            if store.insights.scanState == .running || store.insights.shownScanOutcome != nil {
                 if store.report != nil || store.refreshPhase != nil { separator }
                 ScanProgressView(store: store)
             }

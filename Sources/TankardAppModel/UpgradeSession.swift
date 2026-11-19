@@ -156,6 +156,9 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var onFinish: (@MainActor (UpgradeSession) -> Void)?
     /// Finished lines of the running command (for sudo detection).
     @ObservationIgnored private var commandLines: [String] = []
+    /// 0.8.8: when the running step last printed a line or its download
+    /// moved (`networkHint`).
+    @ObservationIgnored public private(set) var lastActivityAt: Date?
     /// 0.8.4: the running step's password note is in the log.
     @ObservationIgnored private var passwordNoted = false
     @ObservationIgnored private var consumer: Task<Void, Never>?
@@ -378,12 +381,21 @@ public final class UpgradeSession: Identifiable {
         zip(prefetchIDs, prefetch).first { fetchStates[$0.0] == .running }?.1.command
     }
 
+    /// 0.8.8: finished, the only failure a cancelled password dialog, and
+    /// no step done.
+    public var passwordCancelledOnly: Bool {
+        isFinished && sudoOutcome == .cancelled && failedItems.count == 1 && !items.contains { $0.state == .done }
+    }
+
     /// "Upgrading 5 packages" / "Installing xz"
     public var title: String {
         let verb = action.verb
         if isFinished {
             if stopRequested && items.contains(where: { $0.state == .cancelled }) { return String(localized: "\(verb) stopped") }
             if checkingInstalled { return String(localized: "Checking what is still installed…") }
+            // 0.8.8 (gauntlet 26, P6): the password dialog was cancelled and
+            // nothing else was done: that is a cancel, not a problem.
+            if passwordCancelledOnly { return String(localized: "\(verb) cancelled") }
             // 0.8.6 (UI M5): the same phrase as the progress window's title.
             if !failedItems.isEmpty { return String(localized: "\(verb) finished with problems") }
             if !stillInstalled.isEmpty { return String(localized: "Uninstall incomplete") }
@@ -438,6 +450,7 @@ public final class UpgradeSession: Identifiable {
         if isFinished && !failedItems.isEmpty {
             packages = items.filter { $0.state == .done && !doneElsewhere.contains($0.id) }.map(\.package)
             if packages.isEmpty {
+                if passwordCancelledOnly { return String(localized: "The password dialog was cancelled, so brew didn't run the step that needed it.") }
                 return failureKinds.last?.title ?? String(localized: "The log below shows what brew printed")
             }
         }
@@ -467,7 +480,12 @@ public final class UpgradeSession: Identifiable {
         }
         if casks > 0 { parts.append(casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")) }
         if already > 0 { parts.append(String(localized: "\(already) already up to date")) }
-        return parts.joined(separator: " · ")
+        let line = parts.joined(separator: " · ")
+        // 0.8.8 (gauntlet 15): with failures, the line is what was done,
+        // which read as the whole run ("1 cask" under a Brewfile install of
+        // a cask and a formula). Say so.
+        if isFinished && !failedItems.isEmpty && !line.isEmpty { return String(localized: "Done: \(line)") }
+        return line
     }
 
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
@@ -524,6 +542,22 @@ public final class UpgradeSession: Identifiable {
         return String(localized: "Waiting for brew…")
     }
 
+    /// 0.8.8 (gauntlet 15): offline, `brew install` sat at "Downloading
+    /// bottle manifests" and 0% for about five minutes while brew retried,
+    /// with nothing on screen saying why. After `networkHintAfter` seconds
+    /// with no output and no download progress during a download, this
+    /// says so; nil otherwise.
+    public func networkHint(at date: Date) -> String? {
+        guard !isFinished, current != nil, lockWait == nil, !stoppingNow,
+              let last = lastActivityAt, date.timeIntervalSince(last) >= Self.networkHintAfter else { return nil }
+        let line = commandLines.last { !$0.trimmingCharacters(in: .whitespaces).isEmpty } ?? ""
+        guard download != nil || line.hasPrefix("==> Downloading") || line.hasPrefix("==> Fetching") else { return nil }
+        return String(localized: "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now.")
+    }
+
+    /// Seconds without progress before `networkHint` speaks.
+    public static let networkHintAfter: TimeInterval = 30
+
     /// "2 of 5"
     public var countLine: String {
         let n = current.map { c in (items.firstIndex { $0.id == c.id } ?? 0) + 1 } ?? completedCount
@@ -568,6 +602,7 @@ public final class UpgradeSession: Identifiable {
         case .started:
             items[i].state = .running
             itemStartedAt[itemID] = now()
+            lastActivityAt = now()
             watchDownloads(of: items[i].package)
             if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
             commandLines = []
@@ -591,6 +626,7 @@ public final class UpgradeSession: Identifiable {
             let lines = log.feed(data)
             commandLines += lines
             logFile?.append(lines)
+            lastActivityAt = now()
             // 0.8.5: "==> Pouring xz--5.8.1…": a bottle after all, no build.
             if compilingItems.contains(itemID), !pouringItems.contains(itemID),
                lines.contains(where: { $0.hasPrefix("==> Pouring ") }) {
@@ -874,7 +910,10 @@ public final class UpgradeSession: Identifiable {
 
     private func showDownload(_ p: DownloadProgress?) {
         if p != nil { downloadObservations += 1 }
-        if download != p { download = p }
+        if download != p {
+            download = p
+            lastActivityAt = now()
+        }
     }
 
     /// 0.8.3: while a command that may run sudo is running, look for the

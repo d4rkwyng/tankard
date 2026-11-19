@@ -161,7 +161,7 @@ struct ScanProgressView: View {
             .foregroundStyle(.secondary)
             .lineLimit(1)
             .fixedSize()
-        } else if showOutcome, let o = insights.scanOutcome {
+        } else if showOutcome, let o = insights.shownScanOutcome {
             Text(ScanProgressText.outcome(o))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
@@ -510,7 +510,7 @@ struct UpgradeSettings: View {
                             .help(String(localized: "Checks for known security problems once now.") + " " + InsightSettings.scanPrivacyNote)
                     }
                     ScanProgressView(store: store)
-                    if store.insights.scanState != .running, store.insights.scanOutcome == nil,
+                    if store.insights.scanState != .running, store.insights.shownScanOutcome == nil,
                        let scan = store.insights.vulnerabilityScan {
                         Text("Vulnerabilities: " + VulnerabilityText.scanLine(scan))
                             .font(.system(size: 11)).foregroundStyle(.secondary)

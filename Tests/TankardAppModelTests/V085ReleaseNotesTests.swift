@@ -63,13 +63,13 @@ struct V085ReleaseNotesTests {
         ])
     }
 
-    /// 0.8.8: three Highlights and nine fixes, all shown (12, the most
-    /// the summary lists).
+    /// 0.8.8: four Highlights and fourteen fixes; the summary lists the
+    /// first 12 and says how many more.
     @Test func v088ShowsEveryChange() throws {
         let s = ReleaseNotesSummary.make(try releaseBody("0.8.8"))
         #expect(s.items.first == .heading("Highlights"))
         #expect(s.bullets.count == 12)
-        #expect(s.more == 0)
+        #expect(s.more == 6)
         let headings = s.items.compactMap { item -> String? in
             if case .heading(let h) = item { return h }
             return nil
@@ -86,7 +86,7 @@ struct V085ReleaseNotesTests {
         let lines = shown.split(separator: "\n").map(String.init)
         #expect(lines.first == "Tankard v0.8.8 for macOS 14 Sonoma and later.")
         #expect(lines.contains("Highlights"))
-        #expect(lines.filter { $0.hasPrefix("- ") }.count == 3, "\(shown)")
+        #expect(lines.filter { $0.hasPrefix("- ") }.count == 4, "\(shown)")
         for line in lines { #expect(line.count < 80, "\(line)") }
     }
 

@@ -158,10 +158,19 @@ struct DiscoverTable: View {
     @Bindable var store: AppStore
     @Bindable var discover: DiscoverStore
     @Environment(\.theme) private var theme
+    /// 0.8.8: no rows until the table measures none (RowHeightGate).
+    private let gateState = State(initialValue: RowHeightGate())
+
+    /// The selection, kept while the table holds its rows back.
+    private var selection: Binding<CatalogEntry.ID?> {
+        Binding(get: { discover.selection },
+                set: { v in if gateState.wrappedValue.ready { discover.selection = v } })
+    }
 
     var body: some View {
         let installed = store.installedIDs
-        Table(discover.results, selection: $discover.selection) {
+        let shown = gateState.wrappedValue.rows(discover.results)
+        Table(shown, selection: selection) {
             TableColumn("Package") { (e: CatalogEntry) in
                 // 0.8.5: one line (the rows are PackageRow.height); the
                 // description after the name, the whole of it in the tooltip
@@ -181,6 +190,10 @@ struct DiscoverTable: View {
                             .help(d)
                     }
                     Spacer(minLength: 0)
+                    if AdminPassword.required(e) {
+                        PasswordLockBadge(size: 11, help: AdminPassword.installBadgeHelp)
+                            .frame(width: PackageRow.trailingBadge, height: PackageRow.trailingBadge)
+                    }
                 }
                 .frame(maxHeight: PackageRow.content)
                 .onAppear { discover.needDetails([e.id]) }
@@ -214,8 +227,14 @@ struct DiscoverTable: View {
         .environment(\.defaultMinListRowHeight, PackageRow.height)
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
-        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
-        .background(TableTypeSelect(names: discover.results.map(\.name)))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true,
+                                         onRowHeights: { fixed in
+                                             var g = gateState.wrappedValue
+                                             g.report(fixed)
+                                             if g != gateState.wrappedValue { gateState.wrappedValue = g }
+                                         }))
+        .background(TableTypeSelect(names: shown.map(\.name)))
+        .id(gateState.wrappedValue.generation)
         .overlay { overlay }
     }
 
@@ -223,6 +242,7 @@ struct DiscoverTable: View {
         var h = Hasher()
         h.combine(discover.selection)
         h.combine(discover.results.map(\.id))
+        h.combine(gateState.wrappedValue.ready)
         return h.finalize()
     }
 

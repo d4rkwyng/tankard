@@ -8,8 +8,9 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Highlights
 - No blank package rows on macOS 15 after a search that matched nothing
+- Quit and Relaunch Tankard work while a sheet is open
+- The menu-bar panel closes after each action; a package row opens it
 - Upgrade All counts packages it upgraded as dependencies
-- The dependency tree opens from its label, not only its arrow
 
 ### Fixed
 - **Blank package rows on macOS 15: the fix 0.8.7 began is completed.** In Installed, a search that matched nothing ("Not installed") and was then cleared or changed left the rows with only their badge, upgrade arrow and size, with no name or versions, until a switch to Discover and back. 0.8.7 changed a list to fixed row heights once its rows went to none; the rows it had already drawn were made for the other kind, and macOS 15 then gave every row's cells no width. A list now settles its row heights once, when it first appears, and keeps them.
@@ -21,6 +22,11 @@ are its section below (`Scripts/changelog-section.sh`).
 - **The menu-bar panel closes after Open Tankard, Check Now and a click on a package.** It stayed open over the window, so a click on a package seemed to do nothing. A package opens the Upgrades list with it selected, like "and N more…"; Upgrade All and Check Now now sit together, Open Tankard below them; and the new version is always shown whole (a long old version is shortened in the middle instead of the line running off the panel).
 - **A run's sheet fits the window.** A finished 15-step Restore was taller than the window, its Done button below the edge. Past five rows the package chips scroll, and the log shortens in a small window.
 - **"Another Homebrew run was installing it".** Installing a package in Tankard while Terminal's brew installed the same one failed with brew's "Bottle destination already exists" and no explanation. Tankard now says another Homebrew run was probably installing it, and to retry once it has finished.
+- **No more AppKit warning when a list changes a lot** ("Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."). In Installed, widening or narrowing a search, going from Upgrades back to All or sorting by size logged it, up to a dozen times a session; a future macOS may turn it into a crash. A list that already had rows when it first appeared measured each row's height, and macOS re-entered its own row-height bookkeeping while the rows changed. Installed and Discover now hold their rows back for a moment when they appear, until the list is set to its fixed row height, so no list measures its rows any more; the blank-rows fix above still holds.
+- **A failed refresh says what failed, and keeps saying it.** Offline, the banner quoted Homebrew's analytics notice and its request for donations (with a stray control character) instead of the lines that failed ("Fetching /opt/homebrew failed!", "Failed to download …"); it now quotes those. A later read that ran no `brew update` (the window coming to the front) also cleared "Last refresh failed", so the status bar went back to "Updated just now" alone while the catalog was still the old one; the failure now stays until the next update or Dismiss.
+- **The vulnerability scan's line stays after a relaunch.** "Scanned 55 · 2 vulnerable" left the status bar after a relaunch or a refresh, though the packages were still marked vulnerable; the status bar now shows the last saved scan.
+- **Run sheets say what happened.** Cancelling the password dialog gave "Install finished with problems" and "The log below shows what brew printed"; it now says **Install cancelled** and that brew didn't run the step that needed the password. After a run with failures, the line under the title lists only what was done, which read like the whole run ("1 cask" for a Brewfile with a cask and a formula); it now says "Done: 1 cask". An install that can't reach the network, where brew sits at "Downloading bottle manifests" and retries for minutes, now says so after 30 seconds without progress.
+- **Lists: the down arrow, the lock in Discover, stripes in full screen.** The down arrow in the search field now moves into the list, selecting the first row when none is. Discover shows the lock Installed shows for casks whose installer needs your password (zoom, for one). In full screen the row stripes stopped after the Available column; they now span the row.
 
 ## [0.8.7]
 

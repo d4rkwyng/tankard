@@ -503,6 +503,8 @@ struct PackageTable: View {
     private let sortState = State(initialValue: [KeyPathComparator(\Package.name, comparator: .localizedStandard)])
     /// 0.8.4: the table shows all its rows (see `firstFill`).
     private let filledState = State(initialValue: false)
+    /// 0.8.8: no rows until the table measures none (RowHeightGate).
+    private let gateState = State(initialValue: RowHeightGate())
 
     /// 0.8.4: when the rows go from none to many (the first status read at
     /// launch, a search that matched nothing), the table first gets one
@@ -515,7 +517,9 @@ struct PackageTable: View {
     /// launch. A fresh table per fill (an .id) avoided it too, but measured
     /// some one-line rows two lines high. 0.8.5: the rows have one fixed
     /// height now (PackageRow), which fixes the cause for every big change,
-    /// not only the first fill; this staging is kept as it was.
+    /// not only the first fill; this staging is kept as it was. 0.8.8: only
+    /// for a table that was switched to them, which `gateState` now makes
+    /// sure of (a table made with rows kept measuring them).
     static let firstFill = 40
 
     var rows: [Package] {
@@ -526,15 +530,24 @@ struct PackageTable: View {
         var h = Hasher()
         h.combine(store.selection)
         h.combine(rows.map(\.id))
+        h.combine(gateState.wrappedValue.ready)
         return h.finalize()
+    }
+
+    /// The selection, kept while the table holds its rows back (an empty
+    /// table must not clear it).
+    private var selection: Binding<Package.ID?> {
+        Binding(get: { store.selection },
+                set: { v in if gateState.wrappedValue.ready { store.selection = v } })
     }
 
     var body: some View {
         let intelbrew = store.intelbrewMode
         let _ = store.buildTimesRevision
         let all = rows
-        let shown = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
-        Table(shown, selection: $store.selection, sortOrder: sortState.projectedValue) {
+        let staged = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
+        let shown = gateState.wrappedValue.rows(staged)
+        Table(shown, selection: selection, sortOrder: sortState.projectedValue) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 PackageNameCell(store: store, package: p, intelbrew: intelbrew)
             }
@@ -582,9 +595,15 @@ struct PackageTable: View {
         }
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
-        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
+        .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true,
+                                         onRowHeights: { fixed in
+                                             var g = gateState.wrappedValue
+                                             g.report(fixed)
+                                             if g != gateState.wrappedValue { gateState.wrappedValue = g }
+                                         }))
         .background(TableRevealer(request: store.revealRequest, row: shown.firstIndex { $0.id == store.selection }))
         .background(TableTypeSelect(names: shown.map(\.name)))
+        .id(gateState.wrappedValue.generation)
         .overlay {
             if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
                 VulnerableEmptyState(store: store)

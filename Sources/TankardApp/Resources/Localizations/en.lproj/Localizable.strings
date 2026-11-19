@@ -24,6 +24,7 @@
 "%@ and %lld more" = "%@ and %lld more";
 "%@ and more" = "%@ and more";
 "%@ can't be uninstalled" = "%@ can't be uninstalled";
+"%@ cancelled" = "%@ cancelled";
 "%@ complete" = "%@ complete";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ didn't start: %@ is still running. Try again when it finishes.";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again.";
@@ -278,6 +279,7 @@
 "Built from the latest source" = "Built from the latest source";
 "Can roll back" = "Can roll back";
 "Can't adopt" = "Can't adopt";
+"Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now.";
 "Can't roll back automatically: %@" = "Can't roll back automatically: %@";
 "Can't uninstall: needed by %lld installed packages" = "Can't uninstall: needed by %lld installed packages";
 "Can't uninstall: needed by 1 installed package" = "Can't uninstall: needed by 1 installed package";
@@ -400,6 +402,7 @@
 "Don't Skip %@" = "Don't Skip %@";
 "Don't quit running apps during upgrades" = "Don't quit running apps during upgrades";
 "Done" = "Done";
+"Done: %@" = "Done: %@";
 "Download" = "Download";
 "Download cache" = "Download cache";
 "Downloading %@…" = "Downloading %@…";
@@ -648,6 +651,7 @@
 "Name" = "Name";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it.";
 "Needs update first" = "Needs update first";
+"Needs your password to install" = "Needs your password to install";
 "Needs your password to upgrade" = "Needs your password to upgrade";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time).";
 "New vulnerabilities" = "New vulnerabilities";
@@ -1123,6 +1127,7 @@
 "The older version was removed after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "The older version was removed after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time.";
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard).";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was.";
+"The password dialog was cancelled, so brew didn't run the step that needed it." = "The password dialog was cancelled, so brew didn't run the step that needed it.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:";
 "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.";
 "The upgrade finished" = "The upgrade finished";

@@ -24,6 +24,7 @@
 "%@ and %lld more" = "%@ 외 %lld개";
 "%@ and more" = "%@ 등";
 "%@ can't be uninstalled" = "%@을(를) 제거할 수 없음";
+"%@ cancelled" = "%@ 취소됨";
 "%@ complete" = "%@ 완료";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ 시작되지 않음: %@이(가) 아직 실행 중입니다. 끝난 후 다시 시도하세요.";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ 시작되지 않음: Homebrew가 아직 준비되지 않았습니다. 새로 고친 후 다시 시도하세요.";
@@ -278,6 +279,7 @@
 "Built from the latest source" = "최신 소스에서 빌드됨";
 "Can roll back" = "되돌릴 수 있음";
 "Can't adopt" = "가져올 수 없음";
+"Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "아직 네트워크에 연결할 수 없습니다. brew가 계속 다시 시도합니다. 연결을 확인하거나 지금 중지를 사용하세요.";
 "Can't roll back automatically: %@" = "자동으로 되돌릴 수 없음: %@";
 "Can't uninstall: needed by %lld installed packages" = "제거할 수 없음: 설치된 패키지 %lld개가 필요로 함";
 "Can't uninstall: needed by 1 installed package" = "제거할 수 없음: 설치된 패키지 1개가 필요로 함";
@@ -400,6 +402,7 @@
 "Don't Skip %@" = "%@ 건너뛰지 않기";
 "Don't quit running apps during upgrades" = "업그레이드 중 실행 중인 앱을 종료하지 않음";
 "Done" = "완료";
+"Done: %@" = "완료: %@";
 "Download" = "다운로드";
 "Download cache" = "다운로드 캐시";
 "Downloading %@…" = "%@ 다운로드 중…";
@@ -648,6 +651,7 @@
 "Name" = "이름";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "이름만 일치: %@. 이름만 같으므로 다른 앱일 수 있습니다. 그렇다면 brew upgrade가 앱을 교체하고 Cask를 제거하면 앱이 삭제됩니다.";
 "Needs update first" = "먼저 업데이트";
+"Needs your password to install" = "설치하려면 암호가 필요합니다";
 "Needs your password to upgrade" = "업그레이드하려면 암호가 필요합니다";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "앱을 종료하지 않습니다: 앱이 실행 중인 cask는 \"실행 중인 앱 종료 안 함\"이 켜져 있지 않으면 건너뜁니다(켜져 있으면 업그레이드되고 새 버전은 다음에 열립니다).";
 "New vulnerabilities" = "새 취약점";
@@ -1123,6 +1127,7 @@
 "The older version was removed after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "이전 버전은 업그레이드 후 제거되었습니다. 다음에 남기려면 \"업그레이드 후 이전 버전 유지\"를 켜세요.";
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "이전 버전은 정리로 제거되었습니다(Tankard의 정리 또는 Tankard 밖의 Homebrew).";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다.";
+"The password dialog was cancelled, so brew didn't run the step that needed it." = "암호 대화상자가 취소되어 brew가 암호가 필요한 단계를 실행하지 않았습니다.";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "암호 대화상자가 취소되어 이 단계가 실행되지 않았습니다. 직접 실행하려면 터미널을 사용하세요:";
 "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "패키지 다운로드에 대해 서버가 404(찾을 수 없음)로 응답했습니다. 같은 주소로 다시 시도해도 똑같이 실패합니다. brew update로 새 주소를 받을 수 있습니다.";
 "The upgrade finished" = "업그레이드가 끝났습니다";
