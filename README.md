@@ -44,40 +44,17 @@ Or download `Tankard.zip` from [Releases](https://github.com/d4rkwyng/tankard/re
 unzip it and move Tankard.app to Applications. Releases are signed and notarized. No
 Homebrew yet? Tankard's welcome screen shows how to install it.
 
-## What Tankard changes
+## What Tankard changes, and privacy
 
-Reading status never changes anything. Packages change only when you click, or when you
-turn on automatic updates. Every button shows the brew command it runs; commands run one at
-a time, never through a shell. Tankard never runs sudo itself: a cask installer's password
-goes from a Tankard dialog straight to sudo, is never stored, and automatic updates skip
-those casks. On its own, Tankard only runs a background `brew update`, which upgrades
-nothing; Settings ▸ General turns it off. Full list: [What Tankard runs](docs/usage.md#what-tankard-runs).
-
-## Privacy
-
-No telemetry, no account. Tankard itself downloads Homebrew's public catalog and install
-counts (whole files, so the site never learns which packages you look at), checks a cask's
-download size, fetches Intelbrew build times in Intelbrew mode, and asks GitHub for a new
-release only when you choose **Check for Tankard Updates…**. brew's own requests happen as
-in Terminal; `brew vulns` sends formula names and versions to OSV.dev only when you scan
-(or on every refresh, if you opt in). `HOMEBREW_NO_ANALYTICS` in your shell profile or
-brew.env applies to the brew Tankard runs. Details: [Privacy and network](docs/usage.md#privacy-and-network).
+- Packages change only when you click (or turn on automatic updates); on its own Tankard only runs `brew update`. Every button shows the brew command it runs.
+- Passwords for cask installers go straight to sudo and are never stored.
+- No telemetry, no account. [What Tankard runs](docs/usage.md#what-tankard-runs) · [Privacy and network](docs/usage.md#privacy-and-network)
 
 ## Build from source
 
-Needs Swift 6.0 or later; the Command Line Tools are enough (`xcode-select --install`).
+`Scripts/test.sh` runs the tests; `Scripts/bundle-app.sh --universal` builds `dist/Tankard.app` (Swift 6, Command Line Tools). More in [architecture.md](docs/architecture.md) and [CHANGELOG.md](CHANGELOG.md).
 
-```sh
-Scripts/test.sh                    # unit tests
-Scripts/bundle-app.sh --universal  # dist/Tankard.app, ad-hoc signed, Intel + Apple silicon
-open dist/Tankard.app
-```
-
-More: [architecture.md](docs/architecture.md). What changed: [CHANGELOG.md](CHANGELOG.md).
-
-## Built with Claude
-
-Claude Code agents wrote Tankard under Derek's direction, with review, tests and a real signed-app launch check before each release ([write-up](https://mindtricks.io/blog/20261117-intelbrew-tankard)).
+Built with Claude Code under Derek's direction ([write-up](https://mindtricks.io/blog/20261117-intelbrew-tankard)).
 
 ## License
 
