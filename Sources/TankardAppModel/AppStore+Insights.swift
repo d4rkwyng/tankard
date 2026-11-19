@@ -37,8 +37,23 @@ extension AppStore {
     /// (0.8: beside the status read) or nothing changed on disk.
     func startInsights(force: Bool, measureSizes: Bool = true) {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
-        insights.refresh(client: client, env: client.environment(for: detection), force: force, formulae: formulaCount,
+        let env = client.environment(for: detection)
+        insights.refresh(client: client, env: env, force: force, formulae: formulaCount,
                          measureSizes: measureSizes)
+        // 0.8.8 (gauntlet 3, B10): sizes measured before packages the list
+        // now has (installed in Terminal since): measure again, once, so
+        // their Size isn't "–" until the next Refresh (~130 rows were).
+        if insights.sizesState != .running, let report, Self.sizesIncomplete(report: report, sizes: insights.sizes) {
+            insights.measureSizes(client: client, env: env)
+        }
+    }
+
+    /// 0.8.8: the sizes are older than the list and miss some of its
+    /// (readable) packages. Once measured after the list, never again for
+    /// it (a package brew gives no size for doesn't cause a loop).
+    nonisolated static func sizesIncomplete(report: StatusReport, sizes: DiskSizes?) -> Bool {
+        guard let sizes, sizes.measuredAt < report.generatedAt else { return false }
+        return report.packages.contains { $0.unreadable == nil && sizes.bytes(for: $0) == nil }
     }
 
     /// "Scan now": `brew vulns --json`, whatever the setting.

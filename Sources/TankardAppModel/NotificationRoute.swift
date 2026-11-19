@@ -115,6 +115,8 @@ extension AppStore {
 /// 0.8.6 (UI L10): the Homebrew menu's Upgrade item.
 public enum UpgradeMenu {
     public static func selectedTitle(_ p: Package?) -> String {
-        p.map { String(localized: "Upgrade \($0.name)") } ?? String(localized: "Upgrade Selected")
+        // 0.8.8 (gauntlet 3, B10): one package is selected at a time, so
+        // not "Upgrade Selected" (it read as a multi-selection command).
+        p.map { String(localized: "Upgrade \($0.name)") } ?? String(localized: "Upgrade Package")
     }
 }

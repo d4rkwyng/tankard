@@ -380,7 +380,11 @@ public final class AppStore {
     @ObservationIgnored public internal(set) var lastScheduledUpdate: ScheduledUpdateResult?
 
     public var tab: MainTab = .installed
-    public var filter: PackageFilter = .all
+    public var filter: PackageFilter = .all {
+        // 0.8.8 (gauntlet 3, B10): the detail pane showed a package the
+        // new filter hides; the selection goes with it.
+        didSet { if filter != oldValue { dropSelectionHiddenByFilter() } }
+    }
     public var search = ""
     public var selection: Package.ID?
     /// 0.8.3: bumped when something asks the Installed table to scroll its
@@ -502,6 +506,14 @@ public final class AppStore {
         d.query = term
         tab = .discover
         return d
+    }
+
+    /// 0.8.8: a selected package the filter now hides is deselected. A
+    /// selection not in the list yet (Show in Installed right after an
+    /// install) stays: it shows when the read lands.
+    func dropSelectionHiddenByFilter() {
+        guard let s = selection, let p = packages.first(where: { $0.id == s }), !filter.includes(p) else { return }
+        selection = nil
     }
 
     public var selectedPackage: Package? {

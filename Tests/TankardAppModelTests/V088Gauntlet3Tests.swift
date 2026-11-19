@@ -332,3 +332,54 @@ struct V088RefreshRecoveryTests {
         #expect(store.packages.allSatisfy { $0.unreadable == nil })
     }
 }
+
+// MARK: B10: polish
+
+@MainActor
+struct V088PolishTests {
+    @Test func aFilterThatHidesTheSelectionClearsTheDetailPane() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let current = try #require(store.packages.first { !$0.upgradeAvailable })
+        let outdated = try #require(store.packages.first { $0.isUpgradeTarget })
+        store.selection = current.id
+        store.filter = .upgrades
+        #expect(store.selection == nil)
+        #expect(store.selectedPackage == nil)
+        // A package the new filter still shows stays selected.
+        store.filter = .all
+        store.selection = outdated.id
+        store.filter = .upgrades
+        #expect(store.selection == outdated.id)
+        // Not in the list yet (Show in Installed after an install): kept.
+        let missing = Package.ID("formula:not-read-yet")
+        store.selection = missing
+        store.filter = .all
+        store.filter = .upgrades
+        #expect(store.selection == missing)
+    }
+
+    @Test func sizesOlderThanTheListAndMissingPackagesAreMeasuredAgain() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        var report = try #require(store.report)
+        let t = Date(timeIntervalSince1970: 1_790_000_000)
+        report.generatedAt = t
+        let all = DiskSizes(formulae: Dictionary(uniqueKeysWithValues: report.packages.filter { $0.kind == .formula }.map { ($0.fullName, Int64(1)) }),
+                            casks: Dictionary(uniqueKeysWithValues: report.packages.filter { $0.kind == .cask }.map { ($0.fullName, Int64(1)) }),
+                            measuredAt: t.addingTimeInterval(-60))
+        #expect(!AppStore.sizesIncomplete(report: report, sizes: all))
+        var some = all
+        some.formulae = Dictionary(uniqueKeysWithValues: some.formulae.prefix(1).map { ($0.key, $0.value) })
+        #expect(AppStore.sizesIncomplete(report: report, sizes: some))
+        // Measured after the list: not again (brew gave no size for some).
+        some.measuredAt = t.addingTimeInterval(1)
+        #expect(!AppStore.sizesIncomplete(report: report, sizes: some))
+        #expect(!AppStore.sizesIncomplete(report: report, sizes: nil))
+    }
+
+    @Test func theMenuItemNamesTheOnePackage() {
+        #expect(UpgradeMenu.selectedTitle(nil) == "Upgrade Package")
+        #expect(UpgradeMenu.selectedTitle(pkg("wget")) == "Upgrade wget")
+    }
+}

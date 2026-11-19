@@ -69,7 +69,7 @@ struct V086UpgradeMenuTests {
         let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
         await store.start()
         #expect(store.selectedUpgradeTarget == nil)
-        #expect(UpgradeMenu.selectedTitle(nil) == "Upgrade Selected")
+        #expect(UpgradeMenu.selectedTitle(nil) == "Upgrade Package")
         let p = try #require(store.upgradable.first)
         store.selection = p.id
         #expect(store.selectedUpgradeTarget?.id == p.id)

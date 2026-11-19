@@ -94,10 +94,10 @@ struct MenuBarNavigationTests {
     }
 
     /// A package gone since the panel was drawn: the Upgrades list, the
-    /// selection left alone, no scroll.
+    /// selection left alone (0.8.8: one the Upgrades list shows), no scroll.
     @Test func missingPackageShowsUpgrades() async throws {
         let store = await demoStore()
-        let kept = try #require(store.packages.first?.id)
+        let kept = try #require(store.packages.first { $0.upgradeAvailable }?.id)
         store.selection = kept
         store.tab = .discover
         let before = store.revealRequest
@@ -108,19 +108,26 @@ struct MenuBarNavigationTests {
         #expect(store.revealRequest == before)
     }
 
-    /// "N upgrades ready": Installed, Upgrades, no search; the selection stays.
+    /// "N upgrades ready": Installed, Upgrades, no search; the selection
+    /// stays when Upgrades shows it (0.8.8, gauntlet 3 B10: else it goes,
+    /// so the detail pane never shows a package the list hides).
     @Test func headerShowsUpgrades() async throws {
         let store = await demoStore()
         store.moreFilterSelection = .pinned
         store.search = "curl"
         store.tab = .services
-        let kept = store.packages.first?.id
+        let kept = store.packages.first { $0.upgradeAvailable }?.id
         store.selection = kept
         store.showFromMenuBar(.upgrades)
         #expect(store.tab == .installed)
         #expect(store.filter == .upgrades)
         #expect(store.search.isEmpty)
         #expect(store.selection == kept)
+        let hidden = try #require(store.packages.first { !$0.upgradeAvailable })
+        store.filter = .all
+        store.selection = hidden.id
+        store.showFromMenuBar(.upgrades)
+        #expect(store.selection == nil)
         #expect(Set(store.visiblePackages.map(\.id)) == Set(store.packages.filter(\.upgradeAvailable).map(\.id)))
     }
 
