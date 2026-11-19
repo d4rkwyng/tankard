@@ -10,14 +10,12 @@ import Security
 /// layout script runs. A release is Developer ID signed (Scripts/release.sh),
 /// so `open --env TANKARD_BREW=…` from another process does nothing there.
 ///
-/// A signed build honours them only when an administrator has created
-/// `markerPath` (owned by root, not writable by anyone else, in root-owned
-/// folders): the notarized release-candidate e2e
-/// (Scripts/rc-selfupdate-signed.sh) needs that, and creating the file
-/// takes an administrator password, which same-user code doesn't have.
+/// A build with a Team ID (or one whose signature can't be read) never
+/// honours them: there is no override. (An administrator marker file was
+/// considered for the signed release-candidate e2e and dropped in review:
+/// it would have unlocked TANKARD_BREW in a signed build.)
 public enum TestHooks {
     public static let prefix = "TANKARD_"
-    public static let markerPath = "/Library/Application Support/Tankard/allow-test-hooks"
 
     /// How the running code is signed.
     public enum Signing: Equatable, Sendable {
@@ -28,51 +26,16 @@ public enum TestHooks {
         case unknown
     }
 
-    public static func allowed(signing: Signing, markerTrusted: Bool) -> Bool {
+    public static func allowed(signing: Signing) -> Bool {
         switch signing {
         case .unsigned, .adhoc: return true
-        case .team, .unknown: return markerTrusted
+        case .team, .unknown: return false
         }
     }
 
     /// `env` without any `TANKARD_*` variable when the hooks are off.
     public static func filtered(_ env: [String: String], allowed: Bool) -> [String: String] {
         allowed ? env : env.filter { !$0.key.hasPrefix(prefix) }
-    }
-
-    /// What `lstat` says about one path.
-    public struct FileFacts: Equatable, Sendable {
-        public enum Kind: Sendable { case file, directory, other }
-        public var kind: Kind
-        public var uid: uid_t
-        public var mode: mode_t
-        public init(kind: Kind, uid: uid_t, mode: mode_t) {
-            self.kind = kind
-            self.uid = uid
-            self.mode = mode
-        }
-    }
-
-    /// The marker counts only when it and every folder above it (up to
-    /// /Library) are root's and writable by no one else, and it is a plain
-    /// file (no symlink: `lstat`).
-    public static func markerTrusted(path: String = markerPath, lstat facts: (String) -> FileFacts?) -> Bool {
-        func rootOnly(_ f: FileFacts) -> Bool { f.uid == 0 && f.mode & 0o022 == 0 }
-        guard let m = facts(path), m.kind == .file, rootOnly(m) else { return false }
-        var dir = (path as NSString).deletingLastPathComponent
-        while dir != "/" && !dir.isEmpty {
-            guard let d = facts(dir), d.kind == .directory, rootOnly(d) else { return false }
-            dir = (dir as NSString).deletingLastPathComponent
-        }
-        return true
-    }
-
-    public static func liveFacts(_ path: String) -> FileFacts? {
-        var st = stat()
-        guard lstat(path, &st) == 0 else { return nil }
-        let type = st.st_mode & S_IFMT
-        let kind: FileFacts.Kind = type == S_IFREG ? .file : type == S_IFDIR ? .directory : .other
-        return FileFacts(kind: kind, uid: st.st_uid, mode: st.st_mode & 0o7777)
     }
 
     /// The running code's own signature.
@@ -98,8 +61,7 @@ public enum TestHooks {
     }
 
     /// Decided once per process.
-    public static let liveAllowed: Bool = allowed(signing: ownSigning(),
-                                                  markerTrusted: markerTrusted(lstat: liveFacts))
+    public static let liveAllowed: Bool = allowed(signing: ownSigning())
 
     /// Removes every `TANKARD_*` variable from this process's environment
     /// when the hooks are off. Called first thing at launch, so no later

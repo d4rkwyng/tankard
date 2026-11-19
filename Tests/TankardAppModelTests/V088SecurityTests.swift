@@ -11,13 +11,12 @@ import TankardCore
 /// #1: the TANKARD_* test switches are inert in a Developer ID build.
 struct V088TestHooksTests {
     @Test func onlyBuildsWithoutATeamIDHonourTheSwitches() {
-        #expect(TestHooks.allowed(signing: .adhoc, markerTrusted: false))
-        #expect(TestHooks.allowed(signing: .unsigned, markerTrusted: false))
-        #expect(!TestHooks.allowed(signing: .team("ABCDE12345"), markerTrusted: false))
+        #expect(TestHooks.allowed(signing: .adhoc))
+        #expect(TestHooks.allowed(signing: .unsigned))
+        // No override of any kind for a Developer ID build.
+        #expect(!TestHooks.allowed(signing: .team("ABCDE12345")))
         // A signature that can't be read counts as a release (fails closed).
-        #expect(!TestHooks.allowed(signing: .unknown, markerTrusted: false))
-        // The release-candidate e2e: an administrator's marker file.
-        #expect(TestHooks.allowed(signing: .team("ABCDE12345"), markerTrusted: true))
+        #expect(!TestHooks.allowed(signing: .unknown))
     }
 
     @Test func signingKindFromTheSignatureInformation() {
@@ -39,26 +38,6 @@ struct V088TestHooksTests {
         let release = TestHooks.filtered(env, allowed: false)
         #expect(release == ["HOME": "/Users/x", "HOMEBREW_TANKARD_ASKPASS_CONTEXT": "brew upgrade --cask x"])
         #expect(TestHooks.filtered(env, allowed: true) == env)
-    }
-
-    @Test func markerMustBeRootsAndUnwritableByOthersAllTheWayUp() {
-        let marker = TestHooks.markerPath
-        let rootDir = TestHooks.FileFacts(kind: .directory, uid: 0, mode: 0o755)
-        let rootFile = TestHooks.FileFacts(kind: .file, uid: 0, mode: 0o644)
-        func check(_ overrides: [String: TestHooks.FileFacts?]) -> Bool {
-            TestHooks.markerTrusted(path: marker) { path in
-                if let o = overrides[path] { return o }
-                return path == marker ? rootFile : rootDir
-            }
-        }
-        #expect(check([:]))
-        #expect(!check([marker: nil]))
-        #expect(!check([marker: .init(kind: .file, uid: 501, mode: 0o644)]))
-        #expect(!check([marker: .init(kind: .file, uid: 0, mode: 0o666)]))
-        #expect(!check([marker: .init(kind: .other, uid: 0, mode: 0o755)])) // a symlink
-        #expect(!check(["/Library/Application Support/Tankard": .init(kind: .directory, uid: 501, mode: 0o755)]))
-        #expect(!check(["/Library/Application Support": .init(kind: .directory, uid: 0, mode: 0o777)]))
-        #expect(!check(["/Library": .init(kind: .other, uid: 0, mode: 0o755)]))
     }
 
     @Test func appRunsOnlyAStandardBrew() async throws {
