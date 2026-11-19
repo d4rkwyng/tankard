@@ -63,6 +63,42 @@ struct V085ReleaseNotesTests {
         ])
     }
 
+    /// 0.8.7: four Highlights and seven changes, under the 12 the summary
+    /// shows, so all of them show and there is no "and N more".
+    @Test func v087ShowsEveryChange() throws {
+        let s = ReleaseNotesSummary.make(try releaseBody("0.8.7"))
+        #expect(s.bullets.count == 11)
+        #expect(s.more == 0)
+        let headings = s.items.compactMap { item -> String? in
+            if case .heading(let h) = item { return h }
+            return nil
+        }
+        #expect(headings == ["Highlights", "Added", "Fixed"])
+        for line in s.plainText.split(separator: "\n") {
+            #expect(line.count <= 140, "\(line)")
+            #expect(!line.contains("**") && !line.contains("`"), "\(line)")
+        }
+        #expect(!s.plainText.contains("native Homebrew app"))
+        #expect(!s.plainText.contains("Install or upgrade"))
+    }
+
+    @Test func v087StartsWithHighlights() throws {
+        let s = ReleaseNotesSummary.make(try releaseBody("0.8.7"))
+        #expect(s.items.first == .heading("Highlights"))
+        #expect(s.items.dropFirst().prefix(4).allSatisfy { if case .bullet = $0 { true } else { false } })
+        #expect(s.items[5] == .heading("Added"))
+    }
+
+    @Test func oldAppShowsV087AsAList() throws {
+        let shown = Self.excerpt084(try releaseBody("0.8.7"))
+        let lines = shown.split(separator: "\n").map(String.init)
+        #expect(lines.first == "Tankard v0.8.7 for macOS 14 Sonoma and later.")
+        #expect(lines.contains("Highlights"))
+        let bullets = lines.filter { $0.hasPrefix("- ") }
+        #expect(bullets.count == 4, "\(shown)")
+        for line in lines { #expect(line.count < 80, "\(line)") }
+    }
+
     @Test func v086StartsWithHighlights() throws {
         let s = ReleaseNotesSummary.make(try releaseBody("0.8.6"))
         #expect(s.items.first == .heading("Highlights"))

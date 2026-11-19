@@ -4,10 +4,16 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [Unreleased]
+## [0.8.7]
+
+### Highlights
+- Typing a letter in a package list jumps to the package with that name
+- Show in Installed shows the package, even when a search would hide it
+- Trust Tap… for a third-party tap that Homebrew won't read until you trust it
+- No blank rows on macOS 15, and no needless brew read at launch on macOS 26
 
 ### Added
-- **Trust Tap…** next to "This tap isn't trusted yet" (in the details of a package brew can't read, and under a run that failed for it): after the same confirmation as in Taps, it runs `brew trust --tap <tap>` and reads the list again.
+- **Trust Tap…** next to "This tap isn't trusted yet" (in the details of a package brew can't read, and under a run that failed for it). After the same confirmation as in Taps, which says that a tap's formulae and casks are its author's Ruby code and to trust only taps whose author you trust, it runs `brew trust --tap <tap>` and reads the list again (and the Taps list, if Tankard had read it).
 
 ### Fixed
 - **Typing a letter in a package list selects the package whose name starts with it.** In Installed (every filter and search) and in Discover, typing jumped to some other row: the Mac matched the letters against other words in the row, such as a note ("No bottle: will compile from source" for "b"), not the name. Tankard now matches the names shown, ignoring case, and letters typed in quick succession narrow the search ("lu" selects lua).
