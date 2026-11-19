@@ -10,8 +10,8 @@ are its section below (`Scripts/changelog-section.sh`).
 - Adopt Apps matches apps by their ID and picks ESR, beta or older casks
 - Discover now finds formulae and casks from the taps you added yourself
 - Packages that brew can't read show up with the reason, not vanishing
-- Self-updating apps stay out of Upgrade All unless you choose to include
-- Stop Now ends builds from source at once, and every sheet fits the window
+- Self-updating apps stay out of Upgrade All unless you include them
+- Stop Now also stops builds from source, and every sheet fits the window
 - New ⌘U and ⇧⌘U shortcuts to upgrade, faster tooltips, counts that agree
 
 ### Added
