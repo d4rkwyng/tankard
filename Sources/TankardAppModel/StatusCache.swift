@@ -20,11 +20,13 @@ public struct StatusCache: Sendable {
     /// nil when missing, unreadable, or from another schema version. Also
     /// nil for a report written before Tankard 0.2 (no dependency lists):
     /// uninstall's dependents check needs them, so that cache is re-read.
+    /// 0.8.6: a row brew can't read has no dependency list by nature (and
+    /// can't be removed from Tankard), so it doesn't void the cache.
     public func load() -> StatusReport? {
         guard let data = try? Data(contentsOf: url),
               let report = try? StatusReport.jsonDecoder().decode(StatusReport.self, from: data),
               report.schemaVersion == StatusReport.currentSchemaVersion,
-              report.packages.allSatisfy({ $0.dependencies != nil }) else { return nil }
+              report.packages.allSatisfy({ $0.dependencies != nil || $0.unreadable != nil }) else { return nil }
         return report
     }
 
