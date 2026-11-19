@@ -161,6 +161,13 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored public private(set) var lastActivityAt: Date?
     /// 0.8.4: the running step's password note is in the log.
     @ObservationIgnored private var passwordNoted = false
+    /// 0.8.8 (gauntlet 3, B2): `AskpassCancels.count` when the step started.
+    @ObservationIgnored private var cancelsAtStart = 0
+    /// 0.8.8 (gauntlet 3, B2): steps brew finished (exit 0) although the
+    /// password dialog was cancelled during them: brew skipped what needed
+    /// sudo. The value: the launchctl services brew was removing (empty
+    /// when its output named none).
+    public private(set) var sudoSkipped: [UUID: [String]] = [:]
     @ObservationIgnored private var consumer: Task<Void, Never>?
     /// 0.7: steps sharing a key run as a chain: when one fails, the rest of
     /// its chain still waiting is skipped (a restore's link after a failed
@@ -605,6 +612,7 @@ public final class UpgradeSession: Identifiable {
             lastActivityAt = now()
             watchDownloads(of: items[i].package)
             if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
+            cancelsAtStart = passwordFocus?.cancelCount() ?? 0
             commandLines = []
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
@@ -619,7 +627,9 @@ public final class UpgradeSession: Identifiable {
             // the note only once brew says it runs sudo (below).
             passwordNoted = false
             if items[i].command.environment[Askpass.askpassKey] != nil, AdminPassword.required(items[i].package) {
-                note("brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
+                note(AdminPassword.onlyRemovalNeedsSudo(items[i].package)
+                     ? "brew removes this cask's background service or system files with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS)."
+                     : "brew runs this installer with sudo: Tankard will ask for your administrator password in a dialog (SUDO_ASKPASS).")
                 passwordNoted = true
             }
         case .output(let data):
@@ -644,6 +654,17 @@ public final class UpgradeSession: Identifiable {
             items[i].state = code == 0 && !refused ? .done : .failed(code)
             if refused {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
+            }
+            // 0.8.8 (gauntlet 3, B2): done, but the password was cancelled on
+            // the way: brew went on without what needed sudo (hiddenbar's
+            // launchctl service stays). Not a plain ✓.
+            if code == 0, !refused, items[i].command.environment[Askpass.askpassKey] != nil,
+               let focus = passwordFocus, focus.cancelCount() > cancelsAtStart {
+                let services = Self.launchctlServices(commandLines)
+                sudoSkipped[items[i].id] = services
+                note(services.isEmpty
+                     ? "The password dialog was cancelled, so brew skipped the part of this step that needed sudo."
+                     : "The password dialog was cancelled, so brew couldn't remove the background service \(services.joined(separator: ", ")); it may still be installed.")
             }
             if code == 0, !refused, action == .upgrade || action == .install, BrewRefusal.alreadyInstalled(commandLines) {
                 let name = items[i].package.name
@@ -740,6 +761,34 @@ public final class UpgradeSession: Identifiable {
             noteChainSkipped(after: i)
         }
         finishIfDone()
+    }
+
+    /// 0.8.8: "==> Removing launchctl service com.x.Helper" lines' service names.
+    nonisolated static func launchctlServices(_ lines: [String]) -> [String] {
+        let prefix = "==> Removing launchctl service "
+        var out: [String] = []
+        for line in lines where line.hasPrefix(prefix) {
+            let name = line.dropFirst(prefix.count).trimmingCharacters(in: .whitespaces)
+            if !name.isEmpty, !out.contains(name) { out.append(name) }
+        }
+        return out
+    }
+
+    /// 0.8.8 (gauntlet 3, B2): the sheet's line for a step brew finished
+    /// without its sudo part; nil for any other step.
+    public func sudoSkippedLine(_ item: Item) -> String? {
+        guard let services = sudoSkipped[item.id] else { return nil }
+        let name = item.package.name
+        let verb: String
+        switch action {
+        case .uninstall: verb = String(localized: "\(name) uninstalled")
+        case .install: verb = String(localized: "\(name) installed")
+        default: verb = String(localized: "\(name) upgraded")
+        }
+        if services.isEmpty {
+            return String(localized: "\(verb), but brew skipped a step that needed your password (the password dialog was cancelled).")
+        }
+        return String(localized: "\(verb), but brew couldn't remove its background service (\(services.joined(separator: ", "))) because the password dialog was cancelled.")
     }
 
     // MARK: what an uninstall left (0.8.4)

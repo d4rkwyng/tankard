@@ -143,6 +143,13 @@ public struct Package: Codable, Sendable, Identifiable, Equatable {
     /// a change needs the administrator password. nil for formulae, when
     /// brew gave no artifacts, and in older reports.
     public var sudoInstaller: Bool? = nil
+    /// 0.8.8 (gauntlet 3, B2), casks: its `uninstall` stanza has a step brew
+    /// runs with sudo (`CaskUninstallSudo`): a launchctl service, a pkg
+    /// receipt, a kernel extension, or files in a system folder. An upgrade
+    /// runs the old version's uninstall, so it asks for the password too
+    /// (hiddenbar: brew's `sudo launchctl list`). nil for formulae, when brew
+    /// gave no artifacts, and in older reports.
+    public var sudoUninstall: Bool? = nil
     /// 0.8.4, casks: the kinds of `artifacts` stanza it has ("app",
     /// "font", "binary", "pkg", …; not uninstall/zap/flight blocks), for
     /// the detail pane's "installs …" line (`CaskContents`). nil for

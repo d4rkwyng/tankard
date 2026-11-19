@@ -179,7 +179,10 @@ public final class AppStore {
                 makeClient: { try BrewClient.locate(override: override, standardOnly: true) },
                 // 0.8.8 (security review #3): a step that may need sudo gets
                 // the password helper's ticket for its brew process.
-                streamRunner: StreamingProcessRunner(onSpawn: { pid, env in AskpassTicket.issue(pid: pid, environment: env) }),
+                // 0.8.8 (gauntlet 3, B2): and counts the steps whose dialog was cancelled.
+                streamRunner: StreamingProcessRunner(onSpawn: { pid, env in
+                    AskpassTicket.issue(pid: pid, environment: env, cancelled: { AskpassCancels.record() })
+                }),
                 cache: StatusCache(url: StatusCache.defaultURL),
                 logURL: AppPaths.upgradeLog
             )

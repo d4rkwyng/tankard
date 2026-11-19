@@ -226,6 +226,9 @@ public struct BrewInfoJSON: Decodable, Sendable {
         /// 0.8.3: an `installer` stanza whose script brew runs with sudo.
         /// nil when brew gave no artifacts.
         public var sudoInstaller: Bool?
+        /// 0.8.8 (gauntlet 3, B2): an `uninstall` step brew runs with sudo
+        /// (`CaskUninstallSudo`). nil when brew gave no artifacts.
+        public var sudoUninstall: Bool?
         /// 0.8: what "Adopt Apps" needs from `artifacts`: each app's and
         /// suite's installed target, whether a pkg runs, and every string
         /// in the `uninstall` and `zap` stanzas (where bundle ids are). nil
@@ -330,6 +333,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 quitBundleIDs = list.flatMap(\.quit)
                 installsPkg = list.contains(where: \.pkg)
                 sudoInstaller = list.contains(where: \.sudoInstaller)
+                sudoUninstall = list.contains(where: \.sudoUninstall)
                 artifactKinds = CaskContents.kinds(list.flatMap(\.keys))
                 ownership = CaskAppOwnership(names: name ?? [], receiptIDs: list.flatMap(\.pkgutil),
                                              deletePaths: list.flatMap(\.delete),
@@ -356,6 +360,8 @@ public struct BrewInfoJSON: Decodable, Sendable {
             /// (cask/artifact/installer.rb: `requires_sudo?` is `args[:sudo] == true`;
             /// the older `{"script": "path", "sudo": true}` form too).
             var sudoInstaller = false
+            /// 0.8.8: `uninstall` has a step brew runs with sudo.
+            var sudoUninstall = false
             var apps: [AdoptArtifacts.App] = []
             var suites: [String] = []
             var idStrings: [String] = []
@@ -405,8 +411,21 @@ public struct BrewInfoJSON: Decodable, Sendable {
                 var pkgutil: [String] = []
                 var delete: [String] = []
                 var ownIDs: [String] = []
+                var sudo = false
                 init(from decoder: Decoder) throws {
                     guard let c = try? decoder.container(keyedBy: Key.self) else { return }
+                    var directives: [String: [String]] = [:]
+                    for k in c.allKeys {
+                        directives[k.stringValue] = (try? c.decode(JSONStrings.self, forKey: k))?.strings ?? []
+                    }
+                    var scriptSudo = false
+                    for k in ["script", "early_script"] {
+                        if let script = try? c.nestedContainer(keyedBy: Key.self, forKey: Key(stringValue: k)),
+                           (try? script.decodeIfPresent(Bool.self, forKey: Key(stringValue: "sudo"))) == true {
+                            scriptSudo = true
+                        }
+                    }
+                    sudo = scriptSudo || CaskUninstallSudo.mayNeedSudo(directives)
                     for k in ["quit", "launchctl", "signal", "pkgutil", "login_item"] {
                         if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) { ownIDs += all.strings }
                     }
@@ -458,6 +477,7 @@ public struct BrewInfoJSON: Decodable, Sendable {
                     pkgutil = u.flatMap(\.pkgutil)
                     delete = u.flatMap(\.delete)
                     ownIDStrings = u.flatMap(\.ownIDs)
+                    sudoUninstall = u.contains(where: \.sudo)
                 }
                 for k in ["uninstall", "zap"] {
                     if let all = try? c.decodeIfPresent(JSONStrings.self, forKey: Key(stringValue: k)) {
@@ -573,5 +593,42 @@ public struct BrewOutdatedJSON: Decodable, Sendable {
         let c = try decoder.container(keyedBy: K.self)
         formulae = try c.decodeIfPresent([Entry].self, forKey: .formulae) ?? []
         casks = try c.decodeIfPresent([Entry].self, forKey: .casks) ?? []
+    }
+}
+
+/// 0.8.8 (gauntlet 3, B2): which `uninstall` directives make brew run sudo
+/// (Homebrew's cask/artifact/abstract_uninstall.rb). An upgrade runs the old
+/// version's uninstall too, so these casks may ask for the administrator
+/// password beyond the ones with a `pkg` or a sudo `installer`:
+/// - `launchctl`: brew lists each service with and without sudo
+///   (`sudo launchctl list <id>`) and removes it with sudo when it is a
+///   system service (hiddenbar asked three times);
+/// - `pkgutil`: brew forgets the receipts and removes their files with sudo;
+/// - `kext`: kextunload and removal, with sudo;
+/// - `delete`, `rmdir`, `trash` of system paths (/Library, /usr, /private,
+///   /etc, /opt outside Homebrew, /System): brew retries with sudo when
+///   the user can't remove them;
+/// - `script`/`early_script` with `sudo: true` (checked by the caller).
+/// `quit`, `signal` and `login_item` don't use sudo.
+public enum CaskUninstallSudo {
+    static let sudoDirectives: Set<String> = ["launchctl", "pkgutil", "kext"]
+    static let pathDirectives: Set<String> = ["delete", "rmdir", "trash"]
+    static let systemPrefixes = ["/Library/", "/usr/", "/private/", "/etc/", "/System/", "/var/", "/opt/"]
+    static let homebrewPrefixes = ["/opt/homebrew/", "/usr/local/"]
+
+    /// `directives`: each key of one `uninstall` entry with every string in
+    /// its value.
+    public static func mayNeedSudo(_ directives: [String: [String]]) -> Bool {
+        for (key, values) in directives {
+            if sudoDirectives.contains(key), values.contains(where: { !$0.isEmpty }) { return true }
+            if pathDirectives.contains(key), values.contains(where: isSystemPath) { return true }
+        }
+        return false
+    }
+
+    static func isSystemPath(_ path: String) -> Bool {
+        guard path.hasPrefix("/") else { return false }
+        if homebrewPrefixes.contains(where: path.hasPrefix) { return false }
+        return systemPrefixes.contains(where: path.hasPrefix)
     }
 }

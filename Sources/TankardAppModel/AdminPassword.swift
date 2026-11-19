@@ -1,6 +1,7 @@
 import AskpassSupport
 import Darwin
 import Foundation
+import os
 import TankardCore
 
 /// 0.8.3: when brew's sudo may ask for the administrator password, and how
@@ -22,9 +23,18 @@ public enum AdminPassword {
 
     /// The cask runs an installer package (`pkg`) or an `installer` script
     /// with `sudo: true`: brew will ask for the password. Known from
-    /// `brew info`'s artifacts; false when brew gave none.
+    /// `brew info`'s artifacts; false when brew gave none. 0.8.8 (gauntlet
+    /// 3, B2): or its `uninstall` stanza has a step brew runs with sudo (a
+    /// launchctl service, a pkg receipt, system files: `CaskUninstallSudo`),
+    /// which an upgrade runs for the old version too; hiddenbar asked
+    /// without warning.
     public static func required(_ p: Package) -> Bool {
-        p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true)
+        p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true || p.sudoUninstall == true)
+    }
+
+    /// 0.8.8: only the uninstall stanza needs sudo (no pkg, no sudo installer).
+    public static func onlyRemovalNeedsSudo(_ p: Package) -> Bool {
+        p.kind == .cask && p.sudoUninstall == true && p.installsPkg != true && p.sudoInstaller != true
     }
 
     /// 0.8.8 (gauntlet 26, P5): the same rule for a Discover row, once its
@@ -43,11 +53,15 @@ public enum AdminPassword {
     /// happens, without brew, sudo or Terminal; `details` (under Details)
     /// says how. `helper` false: this build can't show the dialog (`swift
     /// run`, demo), so the sheet will show the Terminal command.
-    public static func noteText(helper: Bool, uninstall: Bool) -> (plain: String, details: String) {
+    /// 0.8.8: `removal`: brew needs sudo to remove the old version's
+    /// background service or system files (CaskUninstallSudo), not (only)
+    /// to run an installer.
+    public static func noteText(helper: Bool, uninstall: Bool, removal: Bool = false) -> (plain: String, details: String) {
         let plain = !helper ? String(localized: "Tankard can't ask for it here. Details says what to do instead.")
             : uninstall ? String(localized: "Tankard will ask for it in a dialog while removing it. It never stores it.")
             : String(localized: "Tankard will ask for it in a dialog when the upgrade gets there. It never stores it.")
         let details = (uninstall ? String(localized: "brew removes the installer's files with sudo.")
+                       : removal ? String(localized: "brew removes the old version's background service or system files with sudo.")
                        : String(localized: "brew runs the installer with sudo.")) + " "
             + (helper ? String(localized: "Tankard asks for the password in a dialog and passes it only to sudo; it never stores it. If you cancel, the sheet shows the command for Terminal.")
                : String(localized: "Tankard can't ask for it here, so the sheet will show the command for Terminal."))
@@ -249,12 +263,16 @@ public struct AskpassFocus: Sendable {
     /// Called on the main actor, once per helper process.
     public var yield: @MainActor @Sendable (pid_t) -> Void
     public var interval: Duration
+    /// 0.8.8 (gauntlet 3, B2): how many steps' dialogs have been cancelled
+    /// so far (`AskpassCancels`); a step compares it before and after.
+    public var cancelCount: @Sendable () -> Int
 
     public init(find: @escaping @Sendable () -> pid_t?, yield: @escaping @MainActor @Sendable (pid_t) -> Void,
-                interval: Duration = .milliseconds(400)) {
+                interval: Duration = .milliseconds(400), cancelCount: @escaping @Sendable () -> Int = { AskpassCancels.count }) {
         self.find = find
         self.yield = yield
         self.interval = interval
+        self.cancelCount = cancelCount
     }
 
     /// The real lookup: a process running exactly `helper` (kernel path)
@@ -263,6 +281,16 @@ public struct AskpassFocus: Sendable {
     public static func liveFind(helper: String, tankard: pid_t = getpid()) -> @Sendable () -> pid_t? {
         { AskpassProcess.find(helperPath: helper, below: tankard) }
     }
+}
+
+/// 0.8.8 (gauntlet 3, B2): the steps whose password dialog was cancelled,
+/// counted when their brew exits (the helper's mark, AskpassTicket). brew
+/// hides the sudo's own "no password was provided" for some steps
+/// (launchctl), so the output alone can't tell.
+public enum AskpassCancels {
+    private static let lock = OSAllocatedUnfairLock(initialState: 0)
+    public static var count: Int { lock.withLock { $0 } }
+    public static func record() { lock.withLock { $0 += 1 } }
 }
 
 public enum AskpassProcess {

@@ -74,8 +74,61 @@ public enum AskpassTicket {
     /// time, as read now) a ticketed brew? A pid whose start time can't be
     /// read never matches.
     public static func matches(tickets: [Ticket], ancestors: [(pid: Int32, start: ProcessStart?)]) -> Bool {
+        matching(tickets: tickets, ancestors: ancestors) != nil
+    }
+
+    /// The ticket that matched (the nearest ticketed ancestor), or nil.
+    public static func matching(tickets: [Ticket], ancestors: [(pid: Int32, start: ProcessStart?)]) -> Ticket? {
         let set = Set(tickets)
-        return ancestors.contains { a in a.start.map { set.contains(Ticket(pid: a.pid, start: $0)) } ?? false }
+        for a in ancestors {
+            if let start = a.start, set.contains(Ticket(pid: a.pid, start: start)) { return Ticket(pid: a.pid, start: start) }
+        }
+        return nil
+    }
+
+    // MARK: 0.8.8 (gauntlet 3, B2): the first Cancel is final for the step
+
+    /// brew runs sudo more than once for one step (hiddenbar's launchctl
+    /// service: `sudo launchctl list`, then the removal), and each sudo ran
+    /// the dialog again, so one Cancel took three. When the user cancels,
+    /// the helper leaves a mark next to the step's ticket; while it is
+    /// there, the helper refuses at once, without a dialog, for that same
+    /// brew process (pid and start time). The app removes the mark with the
+    /// ticket when brew exits, and learns from it that the dialog was
+    /// cancelled (brew hides the sudo's own messages for some steps).
+    static let cancelMagic = "tankard-askpass-cancelled 1"
+
+    public static func cancelPath(_ t: Ticket, in dir: String) -> String { dir + "/\(t.pid).cancelled" }
+
+    /// The helper, after Cancel: the mark (0600, created exclusively, never
+    /// through a symlink). An existing mark is left as it is. Only in a
+    /// folder `read` would accept.
+    @discardableResult
+    public static func markCancelled(_ t: Ticket, in dir: String) -> Bool {
+        var st = stat()
+        guard lstat(dir, &st) == 0, st.st_mode & S_IFMT == S_IFDIR, st.st_uid == getuid(), st.st_mode & 0o077 == 0 else { return false }
+        let fd = open(cancelPath(t, in: dir), O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o600)
+        guard fd >= 0 else { return errno == EEXIST }
+        defer { close(fd) }
+        let bytes = Array("\(cancelMagic) \(t.pid) \(t.start.sec) \(t.start.usec)\n".utf8)
+        return bytes.withUnsafeBytes { Darwin.write(fd, $0.baseAddress, $0.count) } == bytes.count
+    }
+
+    /// Whether `t`'s step was cancelled: a mark naming exactly this process,
+    /// a plain 0600 file of this user's in a 0700 folder of this user's.
+    public static func isCancelled(_ t: Ticket, in dir: String) -> Bool {
+        var st = stat()
+        guard lstat(dir, &st) == 0, st.st_mode & S_IFMT == S_IFDIR, st.st_uid == getuid(), st.st_mode & 0o077 == 0 else { return false }
+        let path = cancelPath(t, in: dir)
+        guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_uid == getuid(),
+              st.st_mode & 0o077 == 0, st.st_size < 256 else { return false }
+        let fd = open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+        guard fd >= 0 else { return false }
+        var buf = [UInt8](repeating: 0, count: 256)
+        let n = buf.withUnsafeMutableBytes { Darwin.read(fd, $0.baseAddress, $0.count) }
+        close(fd)
+        guard n > 0, let text = String(bytes: buf[0..<n], encoding: .utf8) else { return false }
+        return text.trimmingCharacters(in: .whitespacesAndNewlines) == "\(cancelMagic) \(t.pid) \(t.start.sec) \(t.start.usec)"
     }
 
     public static func processStart(_ pid: Int32) -> ProcessStart? {
@@ -90,12 +143,21 @@ public enum AskpassTicket {
     /// For a step whose environment has SUDO_ASKPASS: writes `pid`'s ticket
     /// and returns what removes it (call it when brew exits). nil otherwise,
     /// or when the ticket couldn't be written (the helper then refuses).
+    /// 0.8.8: `cancelled` is called first when the step's dialog was
+    /// cancelled (the helper's mark), and the mark goes with the ticket.
     public static func issue(pid: Int32, environment: [String: String],
-                             directory dir: String? = liveHome().map(directory(home:))) -> (@Sendable () -> Void)? {
+                             directory dir: String? = liveHome().map(directory(home:)),
+                             cancelled: (@Sendable () -> Void)? = nil) -> (@Sendable () -> Void)? {
         guard let dir, let helper = environment[Askpass.askpassKey], !helper.isEmpty,
               let start = processStart(pid) else { return nil }
-        guard let path = write(Ticket(pid: pid, start: start), in: dir) else { return nil }
-        return { unlink(path) }
+        let ticket = Ticket(pid: pid, start: start)
+        guard let path = write(ticket, in: dir) else { return nil }
+        let mark = cancelPath(ticket, in: dir)
+        return {
+            if isCancelled(ticket, in: dir) { cancelled?() }
+            unlink(mark)
+            unlink(path)
+        }
     }
 
     /// Writes the ticket file (0600, created exclusively, never through a
@@ -103,9 +165,13 @@ public enum AskpassTicket {
     /// that have gone are removed first. Returns the file's path.
     public static func write(_ t: Ticket, in dir: String, isAlive: (Ticket) -> Bool = { processStart($0.pid) == $0.start }) -> String? {
         guard prepareDirectory(dir) else { return nil }
-        for (path, old) in readAll(in: dir) where !isAlive(old) { unlink(path) }
+        for (path, old) in readAll(in: dir) where !isAlive(old) {
+            unlink(cancelPath(old, in: dir))
+            unlink(path)
+        }
         let path = dir + "/\(t.pid)"
         unlink(path) // a stale ticket of an earlier process with this pid
+        unlink(cancelPath(t, in: dir)) // and its cancel mark
         let fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o600)
         guard fd >= 0 else { return nil }
         defer { close(fd) }
@@ -142,7 +208,7 @@ public enum AskpassTicket {
     static func readAll(in dir: String) -> [(String, Ticket)] {
         guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else { return [] }
         var out: [(String, Ticket)] = []
-        for name in names.sorted().prefix(maxTickets) {
+        for name in names.filter({ !$0.hasSuffix(".cancelled") }).sorted().prefix(maxTickets) {
             let path = dir + "/" + name
             var st = stat()
             guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_uid == getuid(),

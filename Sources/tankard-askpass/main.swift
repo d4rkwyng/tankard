@@ -118,15 +118,23 @@ let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard
     .flatMap { runningTeamID($0.pid) }
 // 0.8.8 (security review #3): one of the ancestors must be the brew run
 // Tankard ticketed for this step (AskpassTicket), same pid and start time.
-let tickets = AskpassTicket.liveHome().map { AskpassTicket.read(in: AskpassTicket.directory(home: $0)) } ?? []
-let ticketMatched = AskpassTicket.matches(tickets: tickets,
-                                          ancestors: above.map { (pid: $0.pid, start: AskpassTicket.processStart($0.pid)) })
+let ticketDir = AskpassTicket.liveHome().map { AskpassTicket.directory(home: $0) }
+let tickets = ticketDir.map { AskpassTicket.read(in: $0) } ?? []
+let matchedTicket = AskpassTicket.matching(tickets: tickets,
+                                           ancestors: above.map { (pid: $0.pid, start: AskpassTicket.processStart($0.pid)) })
+let ticketMatched = matchedTicket != nil
 let decision = AskpassGate.decide(parentPath: parentPath, ancestorPaths: above.map(\.path), helperPath: helperPath,
                                   helperTeam: helperTeam, tankardTeam: tankardTeam, ticketMatched: ticketMatched)
 // The parent must still be the one checked (not exited and replaced).
 guard decision == .allow, getppid() == ppid else {
     if case .deny(let why) = decision { fail("refused: \(why). Only Tankard's own brew commands can use this dialog.") }
     fail("refused: the calling sudo went away.")
+}
+
+// 0.8.8 (gauntlet 3, B2): the user already cancelled this step's dialog:
+// no dialog again for its next sudo (brew runs several for one step).
+if let matchedTicket, let ticketDir, AskpassTicket.isCancelled(matchedTicket, in: ticketDir) {
+    fail("the password dialog was already cancelled for this step.")
 }
 
 let request = Askpass.request(arguments: CommandLine.arguments, environment: env, parentAge: parentAge(ppid))
@@ -355,6 +363,10 @@ app.finishLaunching()
 app.activate()
 let response = app.runModal(for: panel)
 watchdog.invalidate()
+// 0.8.8: Cancel (or the timeout) is final for the step: mark its ticket.
+if snapshotPath == nil, response != .OK, let matchedTicket, let ticketDir {
+    AskpassTicket.markCancelled(matchedTicket, in: ticketDir)
+}
 guard snapshotPath == nil, response == .OK else { exit(1) }
 let ok = sendPassword(field.stringValue)
 field.stringValue = ""

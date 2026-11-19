@@ -81,7 +81,8 @@ struct UpgradeSheet: View {
             ScrollView(.vertical) {
                 FlowLayout(spacing: 6) {
                     ForEach(session.items) { item in
-                        Chip(item: item, action: session.action, title: session.chipName(item))
+                        Chip(item: item, action: session.action, title: session.chipName(item),
+                             incomplete: session.sudoSkipped[item.id] != nil)
                             .contextMenu {
                                 // 0.8.3: one failed step again.
                                 if session.retryableItems.contains(where: { $0.id == item.id }) {
@@ -130,6 +131,25 @@ struct UpgradeSheet: View {
                     }
                 }
                 .padding(8)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.10)))
+                .padding(.bottom, 8)
+            }
+
+            // 0.8.8 (gauntlet 3, B2): done, but without the part that needed
+            // the password (hiddenbar's background service stays).
+            let skipped = session.items.compactMap { session.sudoSkippedLine($0) }
+            if !skipped.isEmpty {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(skipped, id: \.self) { line in
+                            Text(line).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.10)))
                 .padding(.bottom, 8)
             }
@@ -228,6 +248,9 @@ struct Chip: View {
     /// 0.8.5: the session's name for the step ("xz 5.8.3" for one
     /// version of several); nil: the package's name.
     var title: String? = nil
+    /// 0.8.8 (gauntlet 3, B2): done, but brew skipped the part that needed
+    /// the password: a warning mark, not a ✓.
+    var incomplete = false
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -235,14 +258,21 @@ struct Chip: View {
         let name = (title ?? item.package.name) + (compiles ? String(localized: " · source") : "")
         HStack(spacing: 4) {
             switch item.state {
+            case .done where incomplete:
+                Image(systemName: "exclamationmark").font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.orange)
+                    .accessibilityLabel(Text("Done, with a step skipped"))
             case .done:
                 Image(systemName: "checkmark").font(.system(size: 9, weight: .bold))
+                    .accessibilityLabel(Text("Done"))
             case .running:
                 ProgressView().controlSize(.mini).scaleEffect(0.7).frame(width: 11, height: 11)
             case .failed:
                 Image(systemName: "xmark").font(.system(size: 9, weight: .bold))
+                    .accessibilityLabel(Text("Failed"))
             case .cancelled, .skipped:
                 Image(systemName: "minus").font(.system(size: 9, weight: .bold))
+                    .accessibilityLabel(Text("Not run"))
             case .waiting:
                 EmptyView()
             }

@@ -94,6 +94,7 @@ struct UpgradePlanView: View {
             let password = plan.needingPassword
             if !password.isEmpty {
                 AdminPasswordNote(names: password.map(\.name), helper: store.deps.askpassHelper != nil,
+                                  removal: password.allSatisfy(AdminPassword.onlyRemovalNeedsSudo),
                                   foreign: store.foreignAskpass(),
                                   commands: password.map { BrewCommands.display(BrewCommands.arguments(.upgrade, for: $0)) })
                     .padding(.top, 12)
@@ -187,6 +188,9 @@ struct AdminPasswordNote: View {
     var helper: Bool
     /// Uninstall: brew removes what the installer put in place.
     var uninstall = false
+    /// 0.8.8: every one needs it only to remove a background service or
+    /// system files (hiddenbar's launchctl service).
+    var removal = false
     /// 0.8.4: brew.env sets another password helper: no dialog, these steps
     /// are refused, and `commands` are shown for Terminal.
     var foreign: ForeignAskpass? = nil
@@ -207,7 +211,7 @@ struct AdminPasswordNote: View {
                 } else {
                     // 0.8.5 (final pass L2): plain words; brew, sudo and
                     // the commands under Details.
-                    let text = AdminPassword.noteText(helper: helper, uninstall: uninstall)
+                    let text = AdminPassword.noteText(helper: helper, uninstall: uninstall, removal: removal)
                     Text(text.plain)
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
