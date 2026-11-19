@@ -4,10 +4,10 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [Unreleased]
+## [0.8.8]
 
 ### Fixed
-- **Package rows no longer draw blank on macOS 15, after a search that found nothing either.** In Installed, a search that matched nothing ("Not installed") and was then cleared or changed left the rows with only their badge, upgrade arrow and size, with no name or versions, until a switch to Discover and back. 0.8.7 changed a list to fixed row heights once its rows went to none; the rows it had already drawn were made for the other kind, and macOS 15 then gave every row's cells no width. A list now settles its row heights once, when it first appears, and keeps them.
+- **Blank package rows on macOS 15: the fix 0.8.7 began is completed.** In Installed, a search that matched nothing ("Not installed") and was then cleared or changed left the rows with only their badge, upgrade arrow and size, with no name or versions, until a switch to Discover and back. 0.8.7 changed a list to fixed row heights once its rows went to none; the rows it had already drawn were made for the other kind, and macOS 15 then gave every row's cells no width. A list now settles its row heights once, when it first appears, and keeps them.
 - **Upgrade All counts what it upgraded along the way.** When upgrading one package made brew upgrade others as its dependencies or dependents (aws-c-auth bringing s2n, aws-c-http and awscli up to date), the later steps for those packages found them already installed and said another Homebrew command had done it; the summary read "7 upgraded, 7 already up to date" for a run that upgraded all 14. Those steps now count as upgraded by the run, and the log says which earlier step upgraded them.
 
 ## [0.8.7]
@@ -16,7 +16,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - Typing a letter in a package list jumps to the package with that name
 - Show in Installed shows the package, even when a search would hide it
 - Trust Tap… for a third-party tap that Homebrew won't read until you trust it
-- No blank rows on macOS 15, and no needless brew read at launch on macOS 26
+- Fewer blank rows on macOS 15; no needless brew read at launch on macOS 26
 
 ### Added
 - **Trust Tap…** next to "This tap isn't trusted yet" (in the details of a package brew can't read, and under a run that failed for it). After the same confirmation as in Taps, which says that a tap's formulae and casks are its author's Ruby code and to trust only taps whose author you trust, it runs `brew trust --tap <tap>` and reads the list again (and the Taps list, if Tankard had read it).
@@ -27,7 +27,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Show in Installed shows the package in the list.** After a search in Installed (say "aws-c-auth"), installing something in Discover and clicking **Show in Installed** showed it in the details, but the list kept the old search and the package wasn't in it. Show in Installed now clears a search, and then a filter, that would hide the package, selects it and scrolls to it. The dependency links in the details do the same, and now scroll too.
 - **The focus ring around "Details" sits on it.** In the Uninstall confirmation (and the other sheets with the commands under Details), the keyboard focus ring was drawn 20 points to the left, across the sheet's edge. Details is now drawn by Tankard, and its ring follows it.
 - **"This tap isn't trusted yet", with the command that fixes it.** Homebrew 7 won't read a formula or cask from a third-party tap you haven't trusted ("Refusing to load … from untrusted tap …"). A run that failed for that said only "The log below shows what brew printed", and a banner (Pin, say) offered the command that had just failed. They now say **This tap isn't trusted yet** and give `brew trust --tap <tap>`. The details of a package that "can't be read" for that reason say so too, with the command. The list itself was never affected: brew still lists everything else.
-- **Package rows no longer draw blank on macOS 15.** After a search or a tab switch, a row in Installed or Discover could show only its badge and size, with no name or versions, until the next search or a relaunch. Tankard switched the list to fixed row heights at a moment when macOS 15 then gave the row's cells no width; it now does so only while the list is empty.
+- **Package rows draw blank on macOS 15 in fewer cases.** After a tab switch with a search active, a row in Installed or Discover could show only its badge and size, with no name or versions, until the next search or a relaunch. Tankard switched the list to fixed row heights at a moment when macOS 15 then gave the row's cells no width; it now does so only while the list is empty. That fixed the tab switch, but not a search that found nothing and was then cleared or changed, which still left blank rows; 0.8.8 completes the fix.
 
 ## [0.8.6]
 
