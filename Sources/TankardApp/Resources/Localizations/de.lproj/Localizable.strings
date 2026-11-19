@@ -448,6 +448,7 @@
 "Failed: " = "Fehlgeschlagen: ";
 "Files Homebrew didn't install are in its folders" = "Dateien, die Homebrew nicht installiert hat, liegen in seinen Ordnern";
 "Filter" = "Filter";
+"Find" = "Suchen";
 "Find it again in the menu bar." = "Du findest es in der Menüleiste wieder.";
 "Fixed in %@" = "Behoben in %@";
 "Fixed upstream in commit %@" = "Upstream in Commit %@ behoben";
@@ -1414,6 +1415,7 @@
 "upgraded" = "upgegradet";
 "upgraded (brew then exited %d over another package)" = "aktualisiert (brew endete danach mit Status %d wegen eines anderen Pakets)";
 "upgraded (brew then exited %d)" = "aktualisiert (brew endete danach mit Status %d)";
+"upgraded earlier in this run" = "bereits früher in diesem Durchlauf aktualisiert";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@ zu upgraden würde einen Neubau von %@ aus dem Quellcode erfordern; manuell upgraden";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "auf anderen Homebrew-Befehl gewartet";

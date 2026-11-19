@@ -236,6 +236,52 @@ func applyAppearance(_ t: AppTheme) {
     case false?: NSApp.appearance = NSAppearance(named: .aqua)
     case nil: NSApp.appearance = nil
     }
+    SearchFieldTextColor.refreshSoon()
+}
+
+/// 0.8.8 (final gauntlet, bug 2, macOS 15): after a theme switch (Dracula,
+/// then System), the toolbar search field kept the text colour it had
+/// resolved for the old appearance, pale on white, until a tab switch
+/// rebuilt it. Once the new appearance has reached the windows, each
+/// search field's text is set again with the dynamic control text colour
+/// (and the field editor's, while it is being typed in).
+@MainActor
+enum SearchFieldTextColor {
+    static func refreshSoon() {
+        for delay in [0.1, 0.5] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                MainActor.assumeIsolated { refresh() }
+            }
+        }
+    }
+
+    static func refresh() {
+        for window in NSApp.windows {
+            guard let root = window.contentView?.superview ?? window.contentView else { continue }
+            for field in searchFields(in: root) { refresh(field) }
+        }
+    }
+
+    private static func refresh(_ field: NSSearchField) {
+        field.textColor = .controlTextColor
+        if let editor = field.currentEditor() as? NSTextView {
+            editor.textColor = .controlTextColor
+            editor.typingAttributes[.foregroundColor] = NSColor.controlTextColor
+            editor.needsDisplay = true
+        } else {
+            // The cell keeps an attributed copy with the old colour: set
+            // the same text again so it is drawn with the new one.
+            let text = field.stringValue
+            field.stringValue = ""
+            field.stringValue = text
+        }
+        field.needsDisplay = true
+    }
+
+    static func searchFields(in view: NSView) -> [NSSearchField] {
+        if let f = view as? NSSearchField { return [f] }
+        return view.subviews.flatMap { searchFields(in: $0) }
+    }
 }
 
 /// The coloured capsule in the Source column.
@@ -564,5 +610,25 @@ extension View {
                 .opacity(0)
                 .accessibilityHidden(true)
         )
+    }
+}
+
+/// 0.8.8 (final gauntlet): Edit ▸ Find (⌘F): the main window's toolbar
+/// search field (it searches the tab on screen) takes the keyboard focus,
+/// its text selected, as in Finder and Mail.
+@MainActor
+enum SearchFieldFocus {
+    static func focus() {
+        let windows = [NSApp.keyWindow, NSApp.mainWindow].compactMap { $0 } + NSApp.windows.filter(\.isVisible)
+        for window in windows {
+            guard let root = window.contentView?.superview ?? window.contentView,
+                  window.attachedSheet == nil,
+                  let field = SearchFieldTextColor.searchFields(in: root).first(where: { !$0.isHiddenOrHasHiddenAncestor }) else { continue }
+            window.makeKeyAndOrderFront(nil)
+            window.makeFirstResponder(field)
+            field.currentEditor()?.selectAll(nil)
+            return
+        }
+        NSSound.beep()
     }
 }

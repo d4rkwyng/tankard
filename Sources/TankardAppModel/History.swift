@@ -69,6 +69,11 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     public var upgradedDespiteExit: Bool?
     /// 0.8.6 (HK-47 review): and brew's error named another package.
     public var exitOverAnotherPackage: Bool?
+    /// 0.8.8 (final gauntlet): brew found it already installed because an
+    /// earlier step of the same Upgrade All upgraded it (as a dependency
+    /// or dependent); the value is that step's package
+    /// (UpgradeSession.doneByEarlierStep).
+    public var upgradedEarlierBy: String?
 
     public init(id: UUID = UUID(), startedAt: Date, duration: TimeInterval, command: String, arguments: [String],
                 outcome: Outcome, exitCode: Int32? = nil, origin: Origin = .user, failure: String? = nil,
@@ -88,6 +93,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id, startedAt, duration, command, arguments, outcome, exitCode, origin, failure, outputTail
         case quietReason, quietCount, quietSince, builtFromSource, upgradedDespiteExit, exitOverAnotherPackage
+        case upgradedEarlierBy
     }
 
     /// 0.8.5 (M2): the fields this entry can't do without must be there;
@@ -111,6 +117,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         builtFromSource = try? c.decodeIfPresent(Bool.self, forKey: .builtFromSource)
         upgradedDespiteExit = try? c.decodeIfPresent(Bool.self, forKey: .upgradedDespiteExit)
         exitOverAnotherPackage = try? c.decodeIfPresent(Bool.self, forKey: .exitOverAnotherPackage)
+        upgradedEarlierBy = try? c.decodeIfPresent(String.self, forKey: .upgradedEarlierBy)
     }
 
     public var category: HistoryCategory { HistoryCategory(arguments: arguments) }
@@ -160,6 +167,8 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
                 ? String(localized: "upgraded (brew then exited \(code) over another package)")
                 : String(localized: "upgraded (brew then exited \(code))")
         }
+        // 0.8.8: as the run's log says ("Already upgraded by this run").
+        if outcome == .noChange, upgradedEarlierBy != nil { return String(localized: "upgraded earlier in this run") }
         switch outcome {
         case .succeeded: return String(localized: "succeeded")
         case .noChange: return String(localized: "no change (already up to date)")
@@ -484,6 +493,7 @@ public extension AppStore {
         if let other = pendingUpgradedAnyway.removeValue(forKey: e.id) {
             history.markUpgradedAnyway(e.id, overAnotherPackage: other)
         }
+        if let by = pendingUpgradedEarlier.removeValue(forKey: e.id) { history.markUpgradedEarlier(e.id, by: by) }
     }
 
     /// Runs a failed entry's brew arguments again through the queue (a
@@ -529,6 +539,17 @@ public extension HistoryLog {
         e.upgradedDespiteExit = true
         e.exitOverAnotherPackage = overAnotherPackage
         e.failure = nil
+        replace(removing: [id], with: e)
+        return true
+    }
+
+    /// 0.8.8 (final gauntlet): an Upgrade All step brew found already
+    /// installed because the run's earlier step for `by` upgraded it.
+    /// false: no such entry (yet).
+    @discardableResult
+    func markUpgradedEarlier(_ id: UUID, by: String) -> Bool {
+        guard var e = entries.first(where: { $0.id == id }), e.outcome == .noChange else { return false }
+        e.upgradedEarlierBy = by
         replace(removing: [id], with: e)
         return true
     }

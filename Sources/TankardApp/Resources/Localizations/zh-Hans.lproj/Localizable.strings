@@ -448,6 +448,7 @@
 "Failed: " = "失败： ";
 "Files Homebrew didn't install are in its folders" = "并非由 Homebrew 安装的文件位于其文件夹中";
 "Filter" = "筛选";
+"Find" = "查找";
 "Find it again in the menu bar." = "可以在菜单栏中再次找到它。";
 "Fixed in %@" = "已在 %@ 中修复";
 "Fixed upstream in commit %@" = "已在上游提交 %@ 中修复";
@@ -1414,6 +1415,7 @@
 "upgraded" = "已升级";
 "upgraded (brew then exited %d over another package)" = "已升级（随后 brew 因另一个软件包以状态 %d 退出）";
 "upgraded (brew then exited %d)" = "已升级（随后 brew 以状态 %d 退出）";
+"upgraded earlier in this run" = "已在本次运行的较早步骤中升级";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "升级 %@ 需要从源码重新构建 %@；请手动升级";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "等待了另一个 Homebrew 命令";

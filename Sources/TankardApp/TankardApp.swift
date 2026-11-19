@@ -300,6 +300,13 @@ struct TankardApp: App {
             CommandGroup(replacing: .newItem) {
                 BrewfileMenuItems(store: store)
             }
+            // 0.8.8 (final gauntlet): Edit ▸ Find (⌘F) puts the cursor in
+            // the toolbar's search field (the list on screen).
+            CommandGroup(after: .pasteboard) {
+                Divider()
+                Button("Find") { SearchFieldFocus.focus() }
+                    .keyboardShortcut("f")
+            }
             // View: only what changes how the window shows content (the
             // tabs). Actions that run brew are in the Homebrew menu.
             CommandGroup(before: .toolbar) {
@@ -634,6 +641,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Under `swift run` there is no bundle to say "regular app".
         NSApp.setActivationPolicy(.regular)
         MainActor.assumeIsolated { applyAppearance(Self.initialTheme) }
+        // 0.8.8 (final gauntlet, bug 1): the quit Apple Event (the Dock's
+        // Quit, AppleScript, logout, restart, shutdown) takes ⌘Q's path
+        // (QuitGuard.handleQuitEvent). AppKit's own handler, installed
+        // before this, refused it while a sheet was up.
+        NSAppleEventManager.shared().setEventHandler(
+            self, andSelector: #selector(handleQuitEvent(_:withReplyEvent:)),
+            forEventClass: AEEventClass(kCoreEventClass), andEventID: AEEventID(kAEQuitApplication))
+    }
+
+    @objc func handleQuitEvent(_ event: NSAppleEventDescriptor, withReplyEvent reply: NSAppleEventDescriptor) {
+        let reason = event.attributeDescriptor(forKeyword: AEKeyword(kAEQuitReason))
+        let code = reason.map { $0.enumCodeValue != 0 ? $0.enumCodeValue : $0.typeCodeValue }
+        MainActor.assumeIsolated { QuitGuard.handleQuitEvent(reasonCode: code) }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {

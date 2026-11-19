@@ -26,22 +26,66 @@ enum QuitGuard {
     /// nothing. With brew running, the guard asks here (`AppStore.quitStep`);
     /// then, or with nothing running, every sheet is closed in the store
     /// (so SwiftUI doesn't put it back) and in AppKit, and Tankard quits.
-    static func quitFromMenu() {
-        guard let store, !exempt else {
-            closeSheetsAndTerminate()
-            return
+    static func quitFromMenu() { quit(.menu) }
+
+    /// 0.8.8 (final gauntlet, bug 1): every quit, from the menu or from
+    /// outside (the quit Apple Event: the Dock, AppleScript, a logout,
+    /// restart or shutdown; `handleQuitEvent`), decided here
+    /// (QuitDecision). `decided(true)`: Tankard is quitting now (after the
+    /// run, when the question was asked); `decided(false)`: Keep Running.
+    static func quit(_ source: QuitSource, decided: @escaping @MainActor (Bool) -> Void = { _ in }) {
+        let sheetOpen = NSApp.windows.contains { $0.attachedSheet != nil }
+        let step = exempt ? nil : store?.quitStep
+        let decision = QuitDecision.decide(source, step: step, sheetOpen: sheetOpen)
+        let from: String
+        switch source {
+        case .menu: from = "menu"
+        case .appleEvent(let reason): from = "quit event (\(reason.logName))"
         }
-        switch store.quitStep {
-        case .ask(let prompt):
-            quitLog.notice("quit from menu: brew is running, asking first")
-            guard let choice = ask(prompt) else { return }
+        switch decision {
+        case .ask(let prompt, let bringForward):
+            quitLog.notice("quit from \(from, privacy: .public): brew is running, asking first")
+            if bringForward { NSApp.activate(ignoringOtherApps: true) }
+            guard let store, let choice = ask(prompt) else {
+                quitLog.notice("quit from \(from, privacy: .public): Keep Running")
+                decided(false)
+                return
+            }
             exempt = true
             store.prepareToQuit(choice) {
-                quitLog.notice("quit from menu: the run has ended, quitting")
+                quitLog.notice("quit from \(from, privacy: .public): the run has ended, quitting")
+                decided(true)
                 closeSheetsAndTerminate()
             }
         case .closeSheetsAndQuit:
+            quitLog.notice("quit from \(from, privacy: .public): sheet open \(sheetOpen, privacy: .public)")
+            decided(true)
             closeSheetsAndTerminate()
+        }
+    }
+
+    /// 0.8.8: the quit Apple Event (kCoreEventClass/kAEQuitApplication),
+    /// installed by AppDelegate.applicationWillFinishLaunching in place of
+    /// AppKit's, which refused under a sheet (-128, "App termination
+    /// blocked by modal sheet"). The event is suspended while Tankard
+    /// decides, so the sender (AppleScript, loginwindow) hears back only
+    /// then: no error once Tankard is quitting, -128 after Keep Running,
+    /// as AppKit answers a cancelled quit.
+    static func handleQuitEvent(reasonCode: UInt32?) {
+        let manager = NSAppleEventManager.shared()
+        nonisolated(unsafe) let suspension = manager.suspendCurrentAppleEvent()
+        let reason = QuitEventReason(code: reasonCode)
+        // Out of the event handler before any alert or terminate.
+        Task { @MainActor in
+            quit(.appleEvent(reason)) { quitting in
+                guard let suspension else { return }
+                if !quitting {
+                    manager.replyAppleEvent(forSuspensionID: suspension)
+                        .setParam(NSAppleEventDescriptor(int32: QuitDecision.cancelledReplyError),
+                                  forKeyword: AEKeyword(keyErrorNumber))
+                }
+                manager.resume(withSuspensionID: suspension)
+            }
         }
     }
 
@@ -49,7 +93,7 @@ enum QuitGuard {
     /// next turns of the run loop, and once more if a sheet still refused
     /// it (the relaunch's sequence, with no helper).
     private static func closeSheetsAndTerminate() {
-        quitLog.notice("quit from menu: closing sheets first")
+        quitLog.notice("quit: closing sheets first")
         _ = RelaunchSequence(
             startHelper: { true },
             closeSheets: Relauncher.closeSheets,
@@ -64,7 +108,7 @@ enum QuitGuard {
                 }
             },
             gaveUp: {
-                quitLog.error("quit from menu: still running after two terminate attempts")
+                quitLog.error("quit: still running after two terminate attempts")
                 exempt = false
                 store?.terminationCancelled()
             }).run()

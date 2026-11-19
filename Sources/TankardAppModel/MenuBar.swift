@@ -229,6 +229,7 @@ public final class AppSettings {
         static let notifyHintShown = "notifyHintShown"
         static let casksBannerHidden = "casksBannerHidden"
         static let showMenuBarCount = "showMenuBarCount"
+        static let lastUpdateFailure = "lastUpdateFailure"
     }
 
     @ObservationIgnored public let defaults: UserDefaults
@@ -311,8 +312,15 @@ public final class AppSettings {
         didSet { if showMenuBarCount != oldValue { defaults.set(showMenuBarCount, forKey: Key.showMenuBarCount) } }
     }
 
+    /// 0.8.8: the last `brew update` failure (`UpdateFailureRecord`, JSON),
+    /// until the next update or Dismiss.
+    public var lastUpdateFailure: Data? {
+        didSet { if lastUpdateFailure != oldValue { defaults.set(lastUpdateFailure, forKey: Key.lastUpdateFailure) } }
+    }
+
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        lastUpdateFailure = defaults.data(forKey: Key.lastUpdateFailure)
         showMenuBarCount = defaults.object(forKey: Key.showMenuBarCount) as? Bool ?? true
         _showMenuBarIcon = defaults.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
         notifyNewUpgrades = defaults.bool(forKey: Key.notifyNewUpgrades)

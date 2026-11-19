@@ -3,7 +3,7 @@ import Observation
 import TankardCore
 
 /// A problem to show without throwing away the data on screen.
-public struct StoreError: Equatable, Sendable {
+public struct StoreError: Equatable, Sendable, Codable {
     public var title: String
     public var detail: String
     /// When brew needed sudo (or the app can't do the step itself): the
@@ -218,7 +218,11 @@ public final class AppStore {
     /// that runs no update (window to the front, after an install) used to
     /// clear it, so the status bar said "Updated just now" alone while the
     /// catalog was still the old one.
-    var updateFailure: StoreError?
+    /// 0.8.8 (final gauntlet, bug 3): saved in the settings, so a relaunch
+    /// keeps it too (`UpdateFailureRecord`).
+    @ObservationIgnored var updateFailure: StoreError? {
+        didSet { settings.lastUpdateFailure = updateFailure.flatMap { UpdateFailureRecord(error: $0, at: deps.now()).encoded() } }
+    }
     public private(set) var upgrade: UpgradeSession?
     /// The activity (plan, session, App Management pages) is showing:
     /// the main window's sheet, or (0.8.5) the progress panel a menu-bar
@@ -352,6 +356,9 @@ public final class AppStore {
     /// 0.8.6 (VM test M1): History entries to mark as upgraded once they arrive.
     /// History entry id → whether brew's error named another package.
     @ObservationIgnored var pendingUpgradedAnyway: [UUID: Bool] = [:]
+    /// 0.8.8: History entries to mark "upgraded earlier in this run" once
+    /// they arrive (entry id → the earlier step's package).
+    @ObservationIgnored var pendingUpgradedEarlier: [UUID: String] = [:]
     /// 0.8.6 (L7): the restore point saved before each upgrade session.
     @ObservationIgnored var sessionRestorePoints: [UUID: RestorePoint.ID] = [:]
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
@@ -408,6 +415,9 @@ public final class AppStore {
                                       cache: deps.insightsCache, ttl: deps.ttl, now: deps.now)
         self.autoUpdate = AutoUpdater(settings: AutoUpdateSettings(defaults: self.settings.defaults, now: deps.now),
                                       log: AutoUpdateLog(url: deps.autoUpdateLogURL))
+        // 0.8.8: the last brew update's failure, unless an update has
+        // succeeded since (a background check's, outside this store).
+        updateFailure = UpdateFailureRecord.load(self.settings)
         wireInsights()
         recorder.setSink { [weak self] e in self?.historyRecorded(e) }
         wireUpgradeRules()
@@ -510,6 +520,9 @@ public final class AppStore {
             report = insights.decorate(cached)
             reportFromCache = true
             LaunchTiming.mark("list (cache)", once: true)
+            // 0.8.8 (final gauntlet, bug 3): the saved list comes with the
+            // failure saved with it, until the next update or Dismiss.
+            if error == nil, let failure = updateFailure { error = Self.refreshFailure(failure) }
         }
         // 0.8.6 (M4): also when brew changed something since the cached
         // read (Terminal), or an interrupted run waits to be offered.
@@ -1554,6 +1567,10 @@ public final class AppStore {
         for id in session.upgradedAnyway {
             let other = session.upgradedOverAnotherPackage.contains(id)
             if !history.markUpgradedAnyway(id, overAnotherPackage: other) { pendingUpgradedAnyway[id] = other }
+        }
+        // 0.8.8: steps an earlier step of the run had already upgraded.
+        for (id, by) in session.doneByEarlierStep where !history.markUpgradedEarlier(id, by: by) {
+            pendingUpgradedEarlier[id] = by
         }
         runJournalSessionFinished(session)
         recordBuilds(session)

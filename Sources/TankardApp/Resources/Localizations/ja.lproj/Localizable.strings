@@ -448,6 +448,7 @@
 "Failed: " = "失敗: ";
 "Files Homebrew didn't install are in its folders" = "Homebrewがインストールしていないファイルがそのフォルダ内にあります";
 "Filter" = "フィルタ";
+"Find" = "検索";
 "Find it again in the menu bar." = "メニューバーからもう一度開けます。";
 "Fixed in %@" = "%@で修正";
 "Fixed upstream in commit %@" = "アップストリームのコミット %@ で修正";
@@ -1414,6 +1415,7 @@
 "upgraded" = "アップグレード済み";
 "upgraded (brew then exited %d over another package)" = "アップグレード済み（その後、別のパッケージが原因でbrewが終了コード%dで終了）";
 "upgraded (brew then exited %d)" = "アップグレード済み（その後brewが終了コード%dで終了）";
+"upgraded earlier in this run" = "この実行の前のステップでアップグレード済み";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@のアップグレードには%@をソースから再ビルドする必要があります。手動でアップグレードしてください";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "別の Homebrew コマンドを待機しました";

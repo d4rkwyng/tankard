@@ -99,3 +99,58 @@ enum V088Fixture {
 
     """
 }
+
+// 0.8.8 (final gauntlet): History said "no change (already up to date)" for
+// the steps the run log says an earlier step upgraded.
+@MainActor
+struct V088UpgradedEarlierHistoryTests {
+    func entry(_ id: UUID, _ name: String, outcome: HistoryEntry.Outcome) -> HistoryEntry {
+        HistoryEntry(id: id, startedAt: Date(), duration: 1, command: "brew upgrade \(name)",
+                     arguments: ["upgrade", name], outcome: outcome, exitCode: 0)
+    }
+
+    @Test func historySaysUpgradedEarlierInThisRun() throws {
+        let log = HistoryLog(url: nil)
+        let id = UUID(), other = UUID()
+        log.record(entry(id, "s2n", outcome: .noChange))
+        log.record(entry(other, "lz4", outcome: .noChange))
+        #expect(log.markUpgradedEarlier(id, by: "aws-c-auth"))
+        let e = try #require(log.entries.first { $0.id == id })
+        #expect(e.resultText == "upgraded earlier in this run")
+        #expect(e.upgradedEarlierBy == "aws-c-auth")
+        #expect(!e.isFailure)
+        // Done elsewhere (Terminal): still "no change".
+        #expect(log.entries.first { $0.id == other }?.resultText == "no change (already up to date)")
+        // No such entry, or one that did change something: not marked.
+        #expect(!log.markUpgradedEarlier(UUID(), by: "x"))
+        let ok = UUID()
+        log.record(entry(ok, "cmake", outcome: .succeeded))
+        #expect(!log.markUpgradedEarlier(ok, by: "x"))
+        // Saved and read back.
+        let data = try JSONEncoder().encode(e)
+        #expect(try JSONDecoder().decode(HistoryEntry.self, from: data).upgradedEarlierBy == "aws-c-auth")
+    }
+
+    /// The store marks a run's dependency-satisfied steps when it ends.
+    @Test func anUpgradeAllRunMarksItsHistory() async throws {
+        let dir = try tempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        var deps = Demo.dependencies(.arm64, pace: 0.01)
+        deps.appManagementGate = false
+        deps.historyURL = dir.appendingPathComponent("history.json")
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "upgrade" { out(Data(V088UpgradedByEarlierStepTests.brew(args.last ?? "").utf8)) }
+            return 0
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        let names = ["aws-c-auth", "s2n", "cmake"]
+        store.startUpgrade(names.map { var p = Package.command($0); p.upgradeAvailable = true; p.upgradeHasBottle = true; return p })
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+        #expect(await waitUntil { store.history.entries.contains { $0.upgradedEarlierBy != nil } })
+        let s2n = try #require(store.history.entries.first { $0.arguments.last == "s2n" })
+        #expect(s2n.resultText == "upgraded earlier in this run")
+        #expect(store.history.entries.first { $0.arguments.last == "cmake" }?.resultText == "succeeded")
+    }
+}

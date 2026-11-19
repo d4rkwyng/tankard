@@ -448,6 +448,7 @@
 "Failed: " = "실패: ";
 "Files Homebrew didn't install are in its folders" = "Homebrew가 설치하지 않은 파일이 해당 폴더에 있음";
 "Filter" = "필터";
+"Find" = "찾기";
 "Find it again in the menu bar." = "메뉴 막대에서 다시 찾을 수 있습니다.";
 "Fixed in %@" = "%@에서 수정됨";
 "Fixed upstream in commit %@" = "upstream 커밋 %@에서 수정됨";
@@ -1414,6 +1415,7 @@
 "upgraded" = "업그레이드됨";
 "upgraded (brew then exited %d over another package)" = "업그레이드됨 (이후 다른 패키지 때문에 brew가 상태 %d(으)로 종료됨)";
 "upgraded (brew then exited %d)" = "업그레이드됨 (이후 brew가 상태 %d(으)로 종료됨)";
+"upgraded earlier in this run" = "이번 실행의 앞 단계에서 업그레이드됨";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@을(를) 업그레이드하려면 %@을(를) 소스에서 다시 빌드해야 하므로, 직접 업그레이드하세요";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "다른 Homebrew 명령을 기다렸습니다";
