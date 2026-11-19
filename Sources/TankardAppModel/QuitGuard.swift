@@ -147,6 +147,9 @@ extension AppStore {
 
     /// A run ended in Tankard: clear the journal, unless it ended because
     /// Tankard is quitting (then it keeps the packages not upgraded).
+    /// 0.8.6 (HK-47 review): also when its steps have all run and the
+    /// check of what brew upgraded starts (⌘Q doesn't ask during it); the
+    /// end of the run settles it again.
     func runJournalSessionFinished(_ session: UpgradeSession) {
         guard session.action == .upgrade else { return }
         guard quittingMidRun else {

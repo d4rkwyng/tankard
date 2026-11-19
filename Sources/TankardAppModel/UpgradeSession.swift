@@ -195,6 +195,10 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var upgradeChecked = false
     /// The read is running: the run isn't finished until it answers.
     public private(set) var checkingUpgraded = false
+    /// 0.8.6 (HK-47 review): called when that read starts. Every step has
+    /// run by then and no quit prompt stops a ⌘Q, so the app settles the
+    /// run journal here rather than only at the end.
+    @ObservationIgnored var onUpgradeCheckStarted: (@MainActor (UpgradeSession) -> Void)?
     /// Steps brew exited non-zero for although the package was upgraded.
     public private(set) var upgradedAnyway: Set<UUID> = []
     /// 0.8.6 (HK-47 review): those of them whose output names another
@@ -683,6 +687,7 @@ public final class UpgradeSession: Identifiable {
         let failed = items.filter { if case .failed(let code) = $0.state { code > 0 } else { false } }
         guard !failed.isEmpty else { return false }
         checkingUpgraded = true
+        onUpgradeCheckStarted?(self)
         let packages = failed.map(\.package)
         Task { @MainActor [weak self] in
             let found = await check(packages)

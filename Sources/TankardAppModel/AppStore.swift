@@ -1380,6 +1380,9 @@ public final class AppStore {
                 self?.sessionFinished(session)
             })
         upgrade?.isRetry = isRetry
+        // 0.8.6 (HK-47 review): ⌘Q during "Checking what brew upgraded…"
+        // quits without a prompt; the journal mustn't still list every target.
+        upgrade?.onUpgradeCheckStarted = { [weak self] session in self?.runJournalSessionFinished(session) }
         // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
         if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
         upgrade?.passwordFocus = deps.askpassFocus
