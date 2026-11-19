@@ -58,12 +58,47 @@ struct V086WalkLowsTests {
         #expect(await waitUntil { store.restorePoints.points.count == before })
     }
 
-    /// 0.8.6 (HK-47 review): brew poured a dependency, then the package
-    /// asked for failed: the dependency changed, so the point stays
-    /// (succeededCount was 0, and the point used to be deleted).
-    @Test func aFailedRunThatPouredADependencyKeepsItsRestorePoint() async throws {
+    /// What `brew info --installed` answers once `after` is set (the run
+    /// has started): as it was, with a version changed, or a failure.
+    final class ReadAfterRun: CommandRunning, @unchecked Sendable {
+        enum Mode { case same, changed, fails }
+        let inner: CommandRunning
+        let mode: Mode
+        private let lock = NSLock()
+        private var _after = false
+        var after: Bool {
+            get { lock.withLock { _after } }
+            set { lock.withLock { _after = newValue } }
+        }
+        init(_ inner: CommandRunning, mode: Mode) { self.inner = inner; self.mode = mode }
+        func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
+            let r = try await inner.run(executable, arguments, environment: environment)
+            guard after, arguments.contains("--installed"), mode != .same else { return r }
+            if mode == .fails { return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: read failed\n".utf8)) }
+            // A dependency poured: the first formula's keg is a new version.
+            guard var json = try JSONSerialization.jsonObject(with: r.stdout) as? [String: Any],
+                  var formulae = json["formulae"] as? [[String: Any]], var f = formulae.first,
+                  var kegs = f["installed"] as? [[String: Any]], !kegs.isEmpty else { return r }
+            kegs[0]["version"] = "99.0"
+            f["installed"] = kegs
+            formulae[0] = f
+            json["formulae"] = formulae
+            return ProcessResult(exitCode: 0, stdout: try JSONSerialization.data(withJSONObject: json), stderr: r.stderr)
+        }
+    }
+
+    /// A run whose steps all fail (exit 1) or, with `stop`, is stopped
+    /// mid-step; the read after it answers as `mode` says. Returns whether
+    /// the run's restore point is still there once everything has settled.
+    func pointKept(_ mode: ReadAfterRun.Mode, stop: Bool = false) async throws -> Bool {
         var deps = Demo.dependencies(.intelbrew, pace: 0)
+        var client = try deps.makeClient()
+        let reads = ReadAfterRun(client.runner, mode: mode)
+        client.runner = reads
+        let fixed = client
+        deps.makeClient = { fixed }
         deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if stop { try await Task.sleep(for: .seconds(30)) }
             out(Data("==> Upgrading \(args.last ?? "")\n==> Installing \(args.last ?? "") dependency: libdep\n==> Pouring libdep--2.0.sonoma.bottle.tar.gz\nError: An exception occurred within a child process:\n".utf8))
             return 1
         }
@@ -72,34 +107,42 @@ struct V086WalkLowsTests {
         let before = store.restorePoints.points.count
         let p = try #require(store.upgradable.first { store.deps.classifier.upgradeWarning($0) == nil })
         store.startUpgrade([p])
+        reads.after = true
         let s = try #require(store.upgrade)
+        #expect(store.restorePoints.points.count == before + 1)
+        if stop {
+            #expect(await waitUntil { s.current != nil })
+            s.stopNow()
+        }
         #expect(await waitUntil { s.isFinished })
         #expect(s.succeededCount == 0)
-        // Give a deletion every chance to happen (it would follow a read).
+        // Give a deletion every chance to happen (it follows a read).
         #expect(await waitUntil { store.refreshesCompleted >= 2 && !store.isRefreshing })
         try await Task.sleep(for: .milliseconds(300))
-        #expect(store.restorePoints.points.count == before + 1)
+        return store.restorePoints.points.count == before + 1
     }
 
-    /// A stopped run keeps its point too.
-    @Test func aStoppedRunKeepsItsRestorePoint() async throws {
-        var deps = Demo.dependencies(.intelbrew, pace: 0)
-        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in
-            try await Task.sleep(for: .seconds(30))
-            return 0
-        }
-        let store = AppStore(deps: deps, settings: testSettings())
-        await store.start()
-        let before = store.restorePoints.points.count
-        let p = try #require(store.upgradable.first { store.deps.classifier.upgradeWarning($0) == nil })
-        store.startUpgrade([p])
-        let s = try #require(store.upgrade)
-        #expect(await waitUntil { s.current != nil })
-        s.stopNow()
-        #expect(await waitUntil { s.isFinished })
-        #expect(await waitUntil { store.refreshesCompleted >= 2 && !store.isRefreshing })
-        try await Task.sleep(for: .milliseconds(300))
-        #expect(store.restorePoints.points.count == before + 1)
+    /// 0.8.6 (HK-47 review): brew poured a dependency, then the package
+    /// asked for failed: the read shows the change, so the point stays
+    /// (succeededCount was 0, and the point used to be deleted).
+    @Test func aFailedRunThatPouredADependencyKeepsItsRestorePoint() async throws {
+        #expect(try await pointKept(.changed))
+    }
+
+    /// A stopped run that changed something keeps its point too.
+    @Test func aStoppedRunThatChangedSomethingKeepsItsRestorePoint() async throws {
+        #expect(try await pointKept(.changed, stop: true))
+    }
+
+    /// HK-47's call: a failed run after which a fresh read provably matches
+    /// the point changed nothing: the point goes.
+    @Test func aFailedRunThatChangedNothingDropsItsRestorePoint() async throws {
+        #expect(try await !pointKept(.same))
+    }
+
+    /// The read after the run failed: nothing is proven, the point stays.
+    @Test func aFailedReadKeepsTheRestorePoint() async throws {
+        #expect(try await pointKept(.fails))
     }
 
     @Test func tapFormulaeAreNotPromisedABottle() {

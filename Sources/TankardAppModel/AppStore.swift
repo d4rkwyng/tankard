@@ -930,12 +930,12 @@ public final class AppStore {
     }
 
     /// 0.8.6 (HK-47 review): deletes the restore point saved before
-    /// `session` only when every step finished cleanly (no step failed,
-    /// was stopped or didn't run), none upgraded anything, and a fresh
-    /// `brew info --installed` read matches the point. A failed read keeps it.
+    /// `session` only when a fresh `brew info --installed` read matches the
+    /// point, whatever the run's result (a failed or stopped run that poured
+    /// a dependency shows up in the read). A run that upgraded something
+    /// keeps it without a read; a failed read keeps it.
     func dropRestorePointIfUnchanged(_ pointID: RestorePoint.ID, after session: UpgradeSession) {
-        let clean = session.items.allSatisfy { $0.state == .done }
-        guard clean, session.succeededCount == 0,
+        guard session.succeededCount == 0,
               let point = restorePoints.points.first(where: { $0.id == pointID }),
               let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
         let env = client.environment(for: detection)
@@ -1473,8 +1473,7 @@ public final class AppStore {
         // restore point: eight small runs left eight points, most identical.
         // HK-47 review: "upgraded nothing" isn't "changed nothing" (brew may
         // have poured dependencies before the package failed or was
-        // stopped), so a failed or stopped run always keeps its point, and
-        // a clean one drops it only when a fresh read matches the point.
+        // stopped), so the point goes only when a fresh read matches it.
         if let pointID = sessionRestorePoints.removeValue(forKey: session.id) {
             dropRestorePointIfUnchanged(pointID, after: session)
         }
