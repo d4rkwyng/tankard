@@ -103,7 +103,7 @@ struct V086PrebuiltTapTests {
 
     @Test func untrustedTapInstallSaysItTrustsTheTap() {
         var e = CatalogEntry(kind: .formula, name: "sonoscli", fullName: "steipete/tap/sonoscli", tap: "steipete/tap", desc: nil, bottle: .prebuilt)
-        #expect(DiscoverTrust.note(e, untrustedTaps: ["steipete/tap"]) == "Installing this trusts the tap steipete/tap for this formula.")
+        #expect(DiscoverTrust.note(e, untrustedTaps: ["steipete/tap"]) == "Installing runs code from the tap steipete/tap and trusts it for this formula.")
         #expect(DiscoverTrust.note(e, untrustedTaps: ["Steipete/Tap"]) != nil)
         #expect(DiscoverTrust.note(e, untrustedTaps: []) == nil)
         e.untrustedTap = true
@@ -111,6 +111,15 @@ struct V086PrebuiltTapTests {
         // A cask from a tap: the same.
         let core = CatalogEntry(kind: .formula, name: "xz", fullName: "xz", tap: "homebrew/core", desc: nil, bottle: .forThisMac)
         #expect(DiscoverTrust.note(core, untrustedTaps: ["homebrew/core"]) == nil)
+    }
+
+    /// 0.8.6 (HK-47 review, item 6): brew 7.0.14's `brew install --cask
+    /// user/tap/token` trusts the cask too (install.rb calls
+    /// Trust.trust_fully_qualified_items!: "Trusted cask user/tap/token"),
+    /// so a cask gets the note, worded for a cask.
+    @Test func aCaskFromAnUntrustedTapSaysCask() {
+        let e = CatalogEntry(kind: .cask, name: "thing", fullName: "steipete/tap/thing", tap: "steipete/tap", desc: nil, bottle: .forThisMac)
+        #expect(DiscoverTrust.note(e, untrustedTaps: ["steipete/tap"]) == "Installing runs code from the tap steipete/tap and trusts it for this cask.")
     }
 
     @Test func brewsRefusalNamesTheUntrustedTap() {

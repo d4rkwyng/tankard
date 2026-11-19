@@ -566,7 +566,8 @@
 "Installed version is newer than the tap's %@. brew won't downgrade it." = "La version installée est plus récente que celle du tap (%@). brew ne la rétrogradera pas.";
 "Installing" = "Installation";
 "Installing compiles from source, which can take a long time on older Macs." = "L’installation compile depuis les sources, ce qui peut prendre beaucoup de temps sur les Mac plus anciens.";
-"Installing this trusts the tap %@ for this formula." = "L’installation fait confiance au tap %@ pour cette formule.";
+"Installing runs code from the tap %@ and trusts it for this cask." = "L’installation exécute du code du tap %@ et lui fait confiance pour ce cask.";
+"Installing runs code from the tap %@ and trusts it for this formula." = "L’installation exécute du code du tap %@ et lui fait confiance pour cette formule.";
 "Installs" = "Installations";
 "Installs each missing package, one at a time. Add any extra catalogs (taps) first with Add Tap…." = "Installe chaque paquet manquant, un à la fois. Ajoutez d’abord les catalogues supplémentaires (taps) avec « Ajouter un tap… ».";
 "Installs, upgrades, pins and more appear here." = "Les installations, mises à niveau, épinglages et plus apparaissent ici.";

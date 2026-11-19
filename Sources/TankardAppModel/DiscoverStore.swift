@@ -401,12 +401,18 @@ public final class DiscoverStore {
 /// full name makes brew trust that formula ("==> Trusted formula
 /// steipete/tap/sonoscli"); Discover says so before the click.
 public enum DiscoverTrust {
-    /// "Installing this trusts the tap steipete/tap for this formula.", or
-    /// nil when its tap isn't known to be untrusted (or is Homebrew's own).
+    /// "Installing runs code from the tap steipete/tap and trusts it for
+    /// this formula.", or nil when its tap isn't known to be untrusted (or
+    /// is Homebrew's own). 0.8.6 (HK-47 review): casks too, in their own
+    /// words: brew 7.0.14's `brew install --cask user/tap/token` trusts the
+    /// cask the same way (install.rb, Trust.trust_fully_qualified_items!:
+    /// "Trusted cask user/tap/token").
     public static func note(_ e: CatalogEntry, untrustedTaps: Set<String>) -> String? {
         guard let tap = e.tap, !TapIndexer.isHomebrewTap(tap) else { return nil }
         guard e.untrustedTap || untrustedTaps.contains(where: { $0.lowercased() == tap.lowercased() }) else { return nil }
-        return String(localized: "Installing this trusts the tap \(tap) for this formula.")
+        return e.kind == .cask
+            ? String(localized: "Installing runs code from the tap \(tap) and trusts it for this cask.")
+            : String(localized: "Installing runs code from the tap \(tap) and trusts it for this formula.")
     }
 
     /// The taps in brew's "Refusing to load formula x from untrusted tap
@@ -432,7 +438,7 @@ public enum DiscoverTrust {
 }
 
 public extension AppStore {
-    /// 0.8.6 (VM test L4): Discover's "Installing this trusts the tap…".
+    /// 0.8.6 (VM test L4): Discover's "Installing runs code from the tap…".
     func discoverTrustNote(_ e: CatalogEntry) -> String? {
         DiscoverTrust.note(e, untrustedTaps: DiscoverTrust.untrustedTaps(packages: packages, taps: taps.taps))
     }

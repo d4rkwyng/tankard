@@ -29773,54 +29773,106 @@
         }
       }
     },
-    "Installing this trusts the tap %@ for this formula.": {
+    "Installing runs code from the tap %@ and trusts it for this cask.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bei der Installation vertraut Homebrew dem Tap %@ für diese Formel."
+            "value": "Die Installation führt Code aus dem Tap %@ aus und vertraut ihm für dieses Cask."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’installation fait confiance au tap %@ pour cette formule."
+            "value": "L’installation exécute du code du tap %@ et lui fait confiance pour ce cask."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Al instalarla, Homebrew confiará en el tap %@ para esta fórmula."
+            "value": "La instalación ejecuta código del tap %@ y confía en él para este cask."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "インストールすると、このformulaについてtap %@ が信頼されます。"
+            "value": "インストールすると tap %@ のコードが実行され、この cask についてその tap が信頼されます。"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "安装时，Homebrew 会为此 formula 信任 tap %@。"
+            "value": "安装会运行来自 tap %@ 的代码，并为此 cask 信任该 tap。"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ao instalar, o Homebrew passa a confiar no tap %@ para esta fórmula."
+            "value": "A instalação executa código do tap %@ e passa a confiar nele para este cask."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Installandola, Homebrew considera attendibile il tap %@ per questa formula."
+            "value": "L’installazione esegue codice dal tap %@ e lo considera attendibile per questo cask."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "설치하면 이 포뮬러에 대해 탭 %@을(를) 신뢰하게 됩니다."
+            "value": "설치하면 탭 %@의 코드가 실행되고, 이 cask에 대해 그 탭을 신뢰하게 됩니다."
+          }
+        }
+      }
+    },
+    "Installing runs code from the tap %@ and trusts it for this formula.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Installation führt Code aus dem Tap %@ aus und vertraut ihm für diese Formel."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’installation exécute du code du tap %@ et lui fait confiance pour cette formule."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La instalación ejecuta código del tap %@ y confía en él para esta fórmula."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールすると tap %@ のコードが実行され、このformulaについてその tap が信頼されます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装会运行来自 tap %@ 的代码，并为此 formula 信任该 tap。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A instalação executa código do tap %@ e passa a confiar nele para esta fórmula."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’installazione esegue codice dal tap %@ e lo considera attendibile per questa formula."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치하면 탭 %@의 코드가 실행되고, 이 포뮬러에 대해 그 탭을 신뢰하게 됩니다."
           }
         }
       }
