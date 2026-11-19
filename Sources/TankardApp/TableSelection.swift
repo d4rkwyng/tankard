@@ -348,6 +348,8 @@ struct TableTypeSelect: NSViewRepresentable {
         nonisolated(unsafe) private var monitor: Any?
 
         func attach(_ t: NSTableView) {
+            // A rebuilt table attaches again: drop the old monitor first.
+            detach()
             table = t
             t.allowsTypeSelect = false
             monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in

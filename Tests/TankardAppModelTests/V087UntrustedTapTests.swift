@@ -38,6 +38,13 @@ struct V087UntrustedTapTests {
         #expect(BrewFailure.classify(["Error: No available formula with the name \"nope\"."]) == nil)
     }
 
+    @Test func aTapNameNeverStartsWithADash() {
+        // It goes into argv after --tap, so it must not read as an option.
+        #expect(UntrustedTapRefusal.parse("Refusing to load formula -x/y/z from untrusted tap -x/y.") == nil)
+        #expect(UntrustedTapRefusal.parse("Refusing to load formula x/-y/z from untrusted tap x/-y.") == nil)
+        #expect(UntrustedTapRefusal.parse("Refusing to load formula x/y/z from untrusted tap x/y.")?.tap == "x/y")
+    }
+
     @Test func classifiedAsUntrustedTapNotABuildFailure() {
         #expect(BrewFailure.classify(Self.formulaError) == .untrustedTap)
         #expect(BrewFailure.classify(["Error: An exception occurred within a child process:"] + Self.caskError) == .untrustedTap)

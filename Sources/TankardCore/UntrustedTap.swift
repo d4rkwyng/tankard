@@ -33,7 +33,7 @@ public struct UntrustedTapRefusal: Equatable, Sendable {
     public var trustCommand: String { "brew " + trustArguments.joined(separator: " ") }
 
     nonisolated(unsafe) private static let pattern = try! NSRegularExpression(
-        pattern: #"Refusing to load (formula|cask|command) (\S+) from untrusted tap ([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?)\.?(?:\s|$)"#)
+        pattern: #"Refusing to load (formula|cask|command) (\S+) from untrusted tap ([A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*?)\.?(?:\s|$)"#)
 
     /// The first refusal in brew's output; nil when there is none.
     public static func parse(_ text: String) -> UntrustedTapRefusal? {
