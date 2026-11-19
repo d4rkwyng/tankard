@@ -270,6 +270,16 @@ public final class InsightsStore {
     public private(set) var scanFormulaCount = 0
     /// 0.6.1: how the last scan this session ended (nil: none yet, or it failed).
     public private(set) var scanOutcome: ScanOutcome?
+    /// 0.8.8 (gauntlet 26, P4): how the last scan ended, for the status
+    /// line: this session's outcome, else the saved scan's ("Scanned 55 ·
+    /// 2 vulnerable"), which a relaunch used to drop from the status bar
+    /// while the list still marked the packages. nil while a scan runs,
+    /// after a failed one, and before any scan.
+    public var shownScanOutcome: ScanOutcome? {
+        if let scanOutcome { return scanOutcome }
+        guard scanState == .idle, let scan = vulnerabilityScan else { return nil }
+        return .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()), complete: scan.complete)
+    }
     /// The post-install notes sheet.
     public var postInstallNotes: PostInstallNotes?
     /// Notes waiting for the activity sheet to close.
