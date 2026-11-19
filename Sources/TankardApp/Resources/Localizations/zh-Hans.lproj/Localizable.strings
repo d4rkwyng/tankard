@@ -24,6 +24,7 @@
 "%@ and %lld more" = "%@ 及另外 %lld 个";
 "%@ and more" = "%@ 等";
 "%@ can't be uninstalled" = "无法卸载 %@";
+"%@ cancelled" = "%@ 已取消";
 "%@ complete" = "%@ 已完成";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ 未启动：%@ 仍在运行。请在其完成后重试。";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ 未启动：Homebrew 尚未就绪。请刷新后重试。";
@@ -276,6 +277,7 @@
 "Built from the latest source" = "从最新源码构建";
 "Can roll back" = "可回滚";
 "Can't adopt" = "无法接管";
+"Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "暂时无法连接网络：brew 会继续重试。请检查网络连接，或使用“立即停止”。";
 "Can't roll back automatically: %@" = "无法自动回滚：%@";
 "Can't uninstall: needed by %lld installed packages" = "无法卸载：%lld 个已安装的软件包需要它";
 "Can't uninstall: needed by 1 installed package" = "无法卸载：1 个已安装的软件包需要它";
@@ -398,6 +400,7 @@
 "Don't Skip %@" = "不再跳过 %@";
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
 "Done" = "完成";
+"Done: %@" = "已完成：%@";
 "Download" = "下载";
 "Download cache" = "下载缓存";
 "Downloading %@…" = "正在下载 %@…";
@@ -646,6 +649,7 @@
 "Name" = "名称";
 "Name only: %@. Nothing but the name matches, so it may be a different app; if it is, brew upgrade would replace it and uninstalling the cask would delete it." = "仅名称匹配：%@。只有名称一致，可能是另一个 App；若是如此，brew upgrade 会替换它，卸载该 Cask 会删除它。";
 "Needs update first" = "需先更新";
+"Needs your password to install" = "安装需要你的密码";
 "Needs your password to upgrade" = "升级需要你的密码";
 "Never quits an app: a cask whose app is running is skipped, unless \"Don't quit running apps\" is on (then it upgrades and the new version opens next time)." = "绝不退出 App：正在运行的 cask 会被跳过，除非开启了“不退出正在运行的 App”（此时会升级，新版本在下次打开时生效）。";
 "New vulnerabilities" = "新漏洞";
@@ -1121,6 +1125,7 @@
 "The older version was removed after the upgrade. Turn on \"Keep the previous version after upgrades\" to keep it next time." = "旧版本在升级后已被移除。开启“升级后保留上一个版本”，下次即可保留。";
 "The older version was removed by a clean-up (Tankard's Clean Up, or Homebrew outside Tankard)." = "旧版本已被清理移除（Tankard 的“清理”，或在 Tankard 之外运行的 Homebrew）。";
 "The other apps are checked: if a download doesn't match, brew stops for that app and leaves it as it was." = "其他 App 会被检查：如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
+"The password dialog was cancelled, so brew didn't run the step that needed it." = "密码对话框已取消，所以 brew 没有运行需要密码的那一步。";
 "The password dialog was cancelled, so this step didn't run. To run it yourself, use Terminal:" = "密码对话框已取消，所以这一步没有运行。要自己运行，请使用“终端”：";
 "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one." = "服务器对该软件包的下载返回了 404（未找到）。用同一地址重试会以同样方式失败；brew update 可能会带来新的地址。";
 "The upgrade finished" = "升级已完成";

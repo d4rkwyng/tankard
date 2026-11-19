@@ -1301,6 +1301,58 @@
         }
       }
     },
+    "%@ cancelled": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ abgebrochen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ annulé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ cancelado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ annullato"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ cancelado"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ はキャンセルされました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 취소됨"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已取消"
+          }
+        }
+      }
+    },
     "%@ complete": {
       "localizations": {
         "de": {
@@ -14693,6 +14745,58 @@
         }
       }
     },
+    "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerk noch nicht erreichbar: brew versucht es weiter. Prüfe die Verbindung oder wähle „Sofort stoppen“."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le réseau est encore injoignable : brew continue d’essayer. Vérifiez la connexion, ou utilisez Arrêter maintenant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no se puede acceder a la red: brew sigue reintentando. Comprueba la conexión o usa Detener ahora."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La rete non è ancora raggiungibile: brew continua a riprovare. Controlla la connessione o usa Arresta subito."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A rede ainda não está acessível: o brew continua tentando. Verifique a conexão ou use Parar Agora."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだネットワークに接続できません。brewは再試行を続けています。接続を確認するか、「今すぐ停止」を使ってください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 네트워크에 연결할 수 없습니다. brew가 계속 다시 시도합니다. 연결을 확인하거나 지금 중지를 사용하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时无法连接网络：brew 会继续重试。请检查网络连接，或使用“立即停止”。"
+          }
+        }
+      }
+    },
     "Can't roll back automatically: %@": {
       "localizations": {
         "de": {
@@ -21033,6 +21137,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "완료"
+          }
+        }
+      }
+    },
+    "Done: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erledigt: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait : %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hecho: %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fatto: %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feito: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成：%@"
           }
         }
       }
@@ -33929,6 +34085,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "먼저 업데이트"
+          }
+        }
+      }
+    },
+    "Needs your password to install": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Braucht dein Passwort für die Installation"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessite votre mot de passe pour l’installation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Necesita tu contraseña para instalar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serve la password per installare"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Precisa da sua senha para instalar"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールにパスワードが必要です"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치하려면 암호가 필요합니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装需要你的密码"
           }
         }
       }
@@ -58629,6 +58837,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "나머지 앱은 확인됩니다. 다운로드가 일치하지 않으면 brew는 해당 앱을 중단하고 그대로 둡니다."
+          }
+        }
+      }
+    },
+    "The password dialog was cancelled, so brew didn't run the step that needed it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwortdialog abgebrochen, brew hat den Schritt, der es brauchte, nicht ausgeführt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La fenêtre du mot de passe a été annulée : brew n’a pas exécuté l’étape qui en avait besoin."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se canceló el cuadro de la contraseña, así que brew no ejecutó el paso que la necesitaba."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La finestra della password è stata annullata, quindi brew non ha eseguito il passaggio che la richiedeva."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A caixa de senha foi cancelada, então o brew não executou a etapa que precisava dela."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードダイアログがキャンセルされたため、brewはそれを必要とするステップを実行しませんでした。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호 대화상자가 취소되어 brew가 암호가 필요한 단계를 실행하지 않았습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码对话框已取消，所以 brew 没有运行需要密码的那一步。"
           }
         }
       }
