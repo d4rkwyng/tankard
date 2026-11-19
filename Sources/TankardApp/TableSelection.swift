@@ -94,8 +94,10 @@ struct TableSelectionStyler: NSViewRepresentable {
         var palette: TankardColors?
         var paintsSelection = true
         var fixedRowHeights = false
-        /// 0.8.8: whether this table's row heights were decided (`apply`).
-        private var rowHeightsDecided = false
+        /// 0.8.8: the table whose row heights were decided (`apply`). Kept
+        /// per table, not per coordinator: SwiftUI can give this coordinator
+        /// a new NSTableView (a rebuilt list), and that table decides anew.
+        private weak var rowHeightsDecidedFor: NSTableView?
         /// Whether the selection and header are painted here (a palette
         /// theme on a table that wants it).
         var tankard: Bool { palette != nil && paintsSelection }
@@ -138,8 +140,8 @@ struct TableSelectionStyler: NSViewRepresentable {
             // shown with an empty search) makes frame-laid cells and is
             // fine; a table made with rows keeps automatic heights for
             // good (its rows still measure 30 pt, PackageRow).
-            if fixedRowHeights && !rowHeightsDecided {
-                rowHeightsDecided = true
+            if fixedRowHeights && rowHeightsDecidedFor !== t {
+                rowHeightsDecidedFor = t
                 if t.usesAutomaticRowHeights && t.numberOfRows == 0 { t.usesAutomaticRowHeights = false }
             }
             let highlight: NSTableView.SelectionHighlightStyle = tankard ? .none : .regular
