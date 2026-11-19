@@ -49,8 +49,10 @@ struct V086UserTapsDiscoverTests {
     func catalog(_ indexer: TapIndexing, runner: CommandRunning = CatalogInfoRunner(), key: @escaping @Sendable () -> String = { UUID().uuidString }) -> UserTapsCatalog {
         let client = makeClient(runner, intelbrew: false)
         let detection = IntelbrewDetector.detect(coreOrigin: nil, sources: client.sources)
+        // Its own index cache: the app's is one per process, which tests
+        // running at the same time would replace under it.
         return UserTapsCatalog(api: FixedAPICatalog(entries: Self.api), client: client, detection: detection,
-                               indexer: indexer, fingerprint: key)
+                               indexer: indexer, fingerprint: key, indexCache: UserTapsCatalog.IndexCache(initialState: nil))
     }
 
     @Test func aFormulaFromAnAddedTapIsFound() async throws {
@@ -75,7 +77,6 @@ struct V086UserTapsDiscoverTests {
     }
 
     @Test func theTapsAreReadOncePerFingerprint() async throws {
-        UserTapsCatalog.cache.withLock { $0 = nil }
         let indexer = CountingIndexer(Self.mine)
         let key = OSAllocatedUnfairLock(initialState: "a")
         let c = catalog(indexer, key: { key.withLock { $0 } })
@@ -85,7 +86,6 @@ struct V086UserTapsDiscoverTests {
         key.withLock { $0 = "b" } // a tap was added or updated
         _ = try await c.load()
         #expect(indexer.lock.withLock { indexer.count } == 2)
-        UserTapsCatalog.cache.withLock { $0 = nil }
     }
 
     @Test func noUserTapsLeavesTheAPILoadAlone() async throws {

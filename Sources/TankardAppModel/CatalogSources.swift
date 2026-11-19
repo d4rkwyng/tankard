@@ -374,8 +374,18 @@ public final class UserTapsCatalog: CatalogProviding {
 
     public static let maxEntries = 20_000
 
-    public init(api: CatalogProviding, client: BrewClient, detection: IntelbrewDetection,
-                indexer: TapIndexing? = nil, fingerprint: (@Sendable () -> String)? = nil) {
+    public convenience init(api: CatalogProviding, client: BrewClient, detection: IntelbrewDetection,
+                            indexer: TapIndexing? = nil, fingerprint: (@Sendable () -> String)? = nil) {
+        self.init(api: api, client: client, detection: detection, indexer: indexer, fingerprint: fingerprint,
+                  indexCache: Self.cache)
+    }
+
+    /// `indexCache`: where the last index is kept; the app's is the one per
+    /// process (`cache`). Tests pass their own, so concurrent tests don't
+    /// replace each other's entry.
+    init(api: CatalogProviding, client: BrewClient, detection: IntelbrewDetection,
+         indexer: TapIndexing?, fingerprint: (@Sendable () -> String)?, indexCache: IndexCache) {
+        self.indexCache = indexCache
         self.api = api
         var live = TapIndexer(repository: client.installation.repository)
         live.userTapsOnly = true
@@ -391,13 +401,15 @@ public final class UserTapsCatalog: CatalogProviding {
 
     /// The last index, by fingerprint (one per process: Discover is made
     /// again when it reopens).
-    static let cache = OSAllocatedUnfairLock<(key: String, index: TapIndex)?>(initialState: nil)
+    typealias IndexCache = OSAllocatedUnfairLock<(key: String, index: TapIndex)?>
+    static let cache = IndexCache(initialState: nil)
+    let indexCache: IndexCache
 
     func userTapsIndex() -> TapIndex {
         let key = fingerprint()
-        if let hit = Self.cache.withLock({ $0 }), hit.key == key { return hit.index }
+        if let hit = indexCache.withLock({ $0 }), hit.key == key { return hit.index }
         let index = taps.indexer.index()
-        Self.cache.withLock { $0 = (key, index) }
+        indexCache.withLock { $0 = (key, index) }
         return index
     }
 

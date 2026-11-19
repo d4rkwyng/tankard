@@ -11,7 +11,8 @@ import os
 @MainActor
 @Suite(.serialized)
 struct V086DiscoverTapChangeTests {
-    /// Unique per test: UserTapsCatalog keeps one index per process, by key.
+    /// Unique per test (and each catalog has its own index cache: the app's
+    /// is one per process).
     final class Key: @unchecked Sendable {
         let lock = OSAllocatedUnfairLock(initialState: UUID().uuidString)
         var value: String { get { lock.withLock { $0 } } set { lock.withLock { $0 = newValue } } }
@@ -21,7 +22,8 @@ struct V086DiscoverTapChangeTests {
         let client = makeClient(CatalogInfoRunner(), intelbrew: false)
         let detection = IntelbrewDetector.detect(coreOrigin: nil, sources: client.sources)
         return UserTapsCatalog(api: FixedAPICatalog(entries: V086UserTapsDiscoverTests.api), client: client,
-                               detection: detection, indexer: indexer, fingerprint: { key.value })
+                               detection: detection, indexer: indexer, fingerprint: { key.value },
+                               indexCache: UserTapsCatalog.IndexCache(initialState: nil))
     }
 
     @Test func aTapAddedInTerminalIsFoundOnTheNextActivate() async throws {
