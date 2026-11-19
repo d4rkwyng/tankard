@@ -1,3 +1,4 @@
+import AskpassSupport
 import Foundation
 import Observation
 import TankardCore
@@ -176,7 +177,9 @@ public final class AppStore {
             let override = environment["TANKARD_BREW"].flatMap { $0.isEmpty ? nil : $0 }
             var d = Dependencies(
                 makeClient: { try BrewClient.locate(override: override, standardOnly: true) },
-                streamRunner: StreamingProcessRunner(),
+                // 0.8.8 (security review #3): a step that may need sudo gets
+                // the password helper's ticket for its brew process.
+                streamRunner: StreamingProcessRunner(onSpawn: { pid, env in AskpassTicket.issue(pid: pid, environment: env) }),
                 cache: StatusCache(url: StatusCache.defaultURL),
                 logURL: AppPaths.upgradeLog
             )

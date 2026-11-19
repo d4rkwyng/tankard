@@ -278,8 +278,13 @@ public enum AskpassGate {
     /// - helperPath: the helper's own resolved path.
     /// - helperTeam / tankardTeam: Team IDs (nil: none, or the Tankard
     ///   process's signature didn't check out).
+    /// - ticketMatched: 0.8.8 (security review #3): one of sudo's ancestors
+    ///   is a brew Tankard started for a step that may need a password
+    ///   (`AskpassTicket.matches`). The helper always passes it; the default
+    ///   is for tests of the other checks.
     public static func decide(parentPath: String?, ancestorPaths: [String?], helperPath: String,
-                              helperTeam: String? = nil, tankardTeam: String? = nil) -> Decision {
+                              helperTeam: String? = nil, tankardTeam: String? = nil,
+                              ticketMatched: Bool = true) -> Decision {
         guard parentPath == sudoPath else {
             return .deny("parent is not \(sudoPath) (\(parentPath ?? "unknown"))")
         }
@@ -291,6 +296,9 @@ public enum AskpassGate {
         }
         if let helperTeam, helperTeam != tankardTeam {
             return .deny("Tankard process is not signed by team \(helperTeam)")
+        }
+        guard ticketMatched else {
+            return .deny("this sudo doesn't come from a Tankard step that may need a password (no matching ticket in \(AskpassTicket.directory(home: "~")))")
         }
         return .allow
     }

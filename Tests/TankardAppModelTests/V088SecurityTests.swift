@@ -354,3 +354,110 @@ struct V088TerminalScriptTests {
         #expect(try String(contentsOf: target, encoding: .utf8) == "untouched")
     }
 }
+
+/// #3: the password dialog only for the brew Tankard ticketed for a step
+/// that may need sudo.
+struct V088AskpassTicketTests {
+    typealias T = AskpassTicket
+    static let start = T.ProcessStart(sec: 1_790_000_000, usec: 123_456)
+
+    func tempDir() throws -> String {
+        let d = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-tk-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: d, withIntermediateDirectories: true)
+        return d.path
+    }
+
+    @Test func ticketTextRoundTripsAndRejectsJunk() {
+        let t = T.Ticket(pid: 4242, start: Self.start)
+        #expect(T.decode(T.encode(t)) == t)
+        for bad in ["", "4242 1 2", "tankard-askpass-ticket 1 4242 1", "tankard-askpass-ticket 2 4242 1 2",
+                    "tankard-askpass-ticket 1 1 1 2", "tankard-askpass-ticket 1 -5 1 2",
+                    "tankard-askpass-ticket 1 4242 1 1000000", "tankard-askpass-ticket 1 4242 x 2"] {
+            #expect(T.decode(bad) == nil, "\(bad)")
+        }
+    }
+
+    @Test func onlyTheExactProcessAboveSudoMatches() {
+        let tickets = [T.Ticket(pid: 500, start: Self.start)]
+        // sudo's parent chain: a formula's ruby (600), then the ticketed brew (500), then Tankard (400).
+        #expect(T.matches(tickets: tickets, ancestors: [(pid: Int32(600), start: .init(sec: 1, usec: 1)), (pid: Int32(500), start: Self.start), (pid: Int32(400), start: .init(sec: 1, usec: 0))]))
+        // Same pid, another process (pid reused): no.
+        let reused = T.ProcessStart(sec: Self.start.sec, usec: 0)
+        #expect(!T.matches(tickets: tickets, ancestors: [(pid: Int32(500), start: reused)]))
+        // Start time unreadable: no.
+        #expect(!T.matches(tickets: tickets, ancestors: [(pid: Int32(500), start: nil)]))
+        // No ticket (a formula-only step, an auto-update): no.
+        #expect(!T.matches(tickets: [], ancestors: [(pid: Int32(500), start: Self.start)]))
+    }
+
+    @Test func gateRefusesWithoutAMatchingTicketAndKeepsTheOtherChecks() {
+        let helper = "/Applications/Tankard.app/Contents/MacOS/tankard-askpass"
+        let tankard = "/Applications/Tankard.app/Contents/MacOS/Tankard"
+        let ok = AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/bin/bash", tankard], helperPath: helper,
+                                    helperTeam: "T", tankardTeam: "T", ticketMatched: true)
+        #expect(ok == .allow)
+        let noTicket = AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: ["/bin/bash", tankard], helperPath: helper,
+                                          helperTeam: "T", tankardTeam: "T", ticketMatched: false)
+        guard case .deny(let why) = noTicket else { Issue.record("allowed without a ticket"); return }
+        #expect(why.contains("ticket"))
+        // A ticket doesn't excuse the earlier checks.
+        #expect(AskpassGate.decide(parentPath: "/tmp/sudo", ancestorPaths: [tankard], helperPath: helper,
+                                   ticketMatched: true) != .allow)
+        #expect(AskpassGate.decide(parentPath: "/usr/bin/sudo", ancestorPaths: [tankard], helperPath: helper,
+                                   helperTeam: "T", tankardTeam: "X", ticketMatched: true) != .allow)
+    }
+
+    @Test func ticketFileIsPrivateAndPrunesStaleOnes() throws {
+        let base = try tempDir()
+        defer { try? FileManager.default.removeItem(atPath: base) }
+        let dir = base + "/askpass-tickets"
+        let gone = T.Ticket(pid: 999_999, start: Self.start)
+        let gonePath = try #require(T.write(gone, in: dir, isAlive: { _ in true }))
+        let t = T.Ticket(pid: 4242, start: Self.start)
+        let path = try #require(T.write(t, in: dir, isAlive: { $0 != gone }))
+        #expect(!FileManager.default.fileExists(atPath: gonePath))
+        let fileMode = try FileManager.default.attributesOfItem(atPath: path)[.posixPermissions] as? Int
+        let dirMode = try FileManager.default.attributesOfItem(atPath: dir)[.posixPermissions] as? Int
+        #expect(fileMode == 0o600 && dirMode == 0o700)
+        #expect(T.read(in: dir) == [t])
+    }
+
+    @Test func helperIgnoresTicketsOthersCouldHavePlanted() throws {
+        let base = try tempDir()
+        defer { try? FileManager.default.removeItem(atPath: base) }
+        let dir = base + "/askpass-tickets"
+        let t = T.Ticket(pid: 4242, start: Self.start)
+        _ = try #require(T.write(t, in: dir, isAlive: { _ in true }))
+        // A readable ticket (0644) and a symlinked one are not read.
+        let loose = dir + "/5000"
+        try T.encode(T.Ticket(pid: 5000, start: Self.start)).write(toFile: loose, atomically: false, encoding: .utf8)
+        chmod(loose, 0o644)
+        let elsewhere = base + "/planted"
+        try T.encode(T.Ticket(pid: 6000, start: Self.start)).write(toFile: elsewhere, atomically: false, encoding: .utf8)
+        chmod(elsewhere, 0o600)
+        try FileManager.default.createSymbolicLink(atPath: dir + "/6000", withDestinationPath: elsewhere)
+        #expect(T.read(in: dir) == [t])
+        // A folder others can enter: nothing is read.
+        chmod(dir, 0o755)
+        #expect(T.read(in: dir).isEmpty)
+        // A symlinked folder: nothing is read.
+        chmod(dir, 0o700)
+        try FileManager.default.createSymbolicLink(atPath: base + "/link", withDestinationPath: dir)
+        #expect(T.read(in: base + "/link").isEmpty)
+    }
+
+    @Test func issuedOnlyForASudoStepAndRemovedAfter() throws {
+        let base = try tempDir()
+        defer { try? FileManager.default.removeItem(atPath: base) }
+        let dir = base + "/askpass-tickets"
+        let me = getpid()
+        #expect(T.issue(pid: me, environment: ["HOMEBREW_NO_SUDO": "1"], directory: dir) == nil)
+        #expect(T.read(in: dir).isEmpty)
+        let revoke = try #require(T.issue(pid: me, environment: [Askpass.askpassKey: "/x/tankard-askpass"], directory: dir))
+        let start = try #require(T.processStart(me))
+        #expect(T.read(in: dir) == [T.Ticket(pid: me, start: start)])
+        #expect(T.matches(tickets: T.read(in: dir), ancestors: [(pid: me, start: T.processStart(me))]))
+        revoke()
+        #expect(T.read(in: dir).isEmpty)
+    }
+}

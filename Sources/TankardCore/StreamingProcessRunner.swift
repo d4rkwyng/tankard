@@ -36,12 +36,19 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
     /// 0.8.6: sends a signal, `kill(2)`-style (a negative pid is a process
     /// group). Injected so tests can see which signals Stop Now sends.
     public var sendSignal: @Sendable (pid_t, Int32) -> Void
+    /// 0.8.8 (security review #3): called with the child's pid and
+    /// environment right after it is spawned; what it returns is called once
+    /// the child has exited. The app issues the password helper's ticket
+    /// here (AskpassTicket) for a step that may need sudo.
+    public var onSpawn: (@Sendable (pid_t, [String: String]) -> (@Sendable () -> Void)?)?
 
     public init(killGrace: Double = 15, interruptGrace: Double? = nil,
-                sendSignal: @escaping @Sendable (pid_t, Int32) -> Void = { _ = kill($0, $1) }) {
+                sendSignal: @escaping @Sendable (pid_t, Int32) -> Void = { _ = kill($0, $1) },
+                onSpawn: (@Sendable (pid_t, [String: String]) -> (@Sendable () -> Void)?)? = nil) {
         self.killGrace = killGrace
         self.interruptGrace = interruptGrace ?? killGrace
         self.sendSignal = sendSignal
+        self.onSpawn = onSpawn
     }
 
     /// The child's pid; whether the task was cancelled; whether the child
@@ -63,11 +70,14 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
         let grace = killGrace
         let interruptGrace = interruptGrace
         let send = sendSignal
+        let onSpawn = onSpawn
+        let afterExit = OSAllocatedUnfairLock<(@Sendable () -> Void)?>(initialState: nil)
         let code: Int32 = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         let c = try Self.spawnAndStream(executable, arguments, environment, output: output, started: { pid in
+                            if let cleanup = onSpawn?(pid, environment) { afterExit.withLock { $0 = cleanup } }
                             let stopNow = state.withLock { s -> Bool in
                                 s.pid = pid
                                 return s.cancelled
@@ -75,6 +85,7 @@ public struct StreamingProcessRunner: StreamingCommandRunning {
                             if stopNow { Self.stop(pid, state: state, interruptGrace: interruptGrace, killGrace: grace, send: send) }
                         }, exited: {
                             state.withLock { $0.exited = true }
+                            afterExit.withLock { c -> (@Sendable () -> Void)? in defer { c = nil }; return c }?()
                         })
                         continuation.resume(returning: c)
                     } catch {

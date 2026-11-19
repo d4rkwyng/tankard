@@ -35,3 +35,32 @@ struct V088SecurityCoreTests {
         }
     }
 }
+
+/// #3: the streaming runner reports the child it spawned, and runs the
+/// cleanup once that child has exited.
+struct V088SpawnHookTests {
+    final class Seen: @unchecked Sendable {
+        let lock = NSLock()
+        var pid: pid_t = 0
+        var env: [String: String] = [:]
+        var cleaned = 0
+        var aliveAtCleanup = true
+    }
+
+    @Test func onSpawnGetsThePidAndCleanupFollowsExit() async throws {
+        let seen = Seen()
+        let runner = StreamingProcessRunner(onSpawn: { pid, env in
+            seen.lock.withLock { seen.pid = pid; seen.env = env }
+            return {
+                seen.lock.withLock { seen.cleaned += 1 }
+            }
+        })
+        let code = try await runner.stream("/bin/echo", ["hi"], environment: ["SUDO_ASKPASS": "/x"], output: { _ in })
+        #expect(code == 0)
+        seen.lock.withLock {
+            #expect(seen.pid > 1)
+            #expect(seen.env == ["SUDO_ASKPASS": "/x"])
+            #expect(seen.cleaned == 1)
+        }
+    }
+}
