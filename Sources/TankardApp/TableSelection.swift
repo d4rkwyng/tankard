@@ -94,6 +94,8 @@ struct TableSelectionStyler: NSViewRepresentable {
         var palette: TankardColors?
         var paintsSelection = true
         var fixedRowHeights = false
+        /// 0.8.8: whether this table's row heights were decided (`apply`).
+        private var rowHeightsDecided = false
         /// Whether the selection and header are painted here (a palette
         /// theme on a table that wants it).
         var tankard: Bool { palette != nil && paintsSelection }
@@ -119,19 +121,27 @@ struct TableSelectionStyler: NSViewRepresentable {
 
         func apply() {
             guard let t = table else { return }
-            // 0.8.7 (B1): only while the table has no rows. Turned off on a
-            // table SwiftUI had already filled (a list made again with rows
-            // in it: a tab switch, or a search that brought it back), macOS
-            // 15 left those rows' cell views zero points wide, laid out by
-            // constraints that no longer gave them their column's width
-            // (seen in the VM: every cell 0×30 at its column's x; setting
-            // the frames or reloadData didn't hold). Text that fills its
-            // cell drew nothing; the fixed-size badge, size and marks
-            // overflowed and drew. A table made with rows keeps automatic
-            // heights (its rows still measure 30 pt, PackageRow) until its
-            // rows next go to none, which every search that matches
-            // nothing, and the launch, does.
-            if fixedRowHeights && t.usesAutomaticRowHeights && t.numberOfRows == 0 { t.usesAutomaticRowHeights = false }
+            // 0.8.8 (B1 again): decided once per table, when it is first
+            // found, and only switched while it has never had a row.
+            // SwiftUI fills a table with automatic row heights with cell
+            // views laid out by constraints (translatesAutoresizingMask-
+            // IntoConstraints false) and keeps reusing them. Once the table
+            // stops using automatic row heights, AppKit no longer sizes
+            // those cells: every cell it shows, reused or not, is 0×30 at
+            // its column's x (seen on macOS 15 with a debug dump), so text
+            // that fills its cell draws nothing and only the fixed-size
+            // badge, size and marks overflow and draw. 0.8.7 switched a
+            // table with rows only when its rows next went to none (a
+            // search matching nothing), which still left the cells it had
+            // made under automatic heights: clearing the search gave blank
+            // rows. A table switched before its first row (launch, a tab
+            // shown with an empty search) makes frame-laid cells and is
+            // fine; a table made with rows keeps automatic heights for
+            // good (its rows still measure 30 pt, PackageRow).
+            if fixedRowHeights && !rowHeightsDecided {
+                rowHeightsDecided = true
+                if t.usesAutomaticRowHeights && t.numberOfRows == 0 { t.usesAutomaticRowHeights = false }
+            }
             let highlight: NSTableView.SelectionHighlightStyle = tankard ? .none : .regular
             if t.selectionHighlightStyle != highlight { t.selectionHighlightStyle = highlight }
             styleHeader(t)
@@ -391,3 +401,4 @@ struct TableTypeSelect: NSViewRepresentable {
         }
     }
 }
+
