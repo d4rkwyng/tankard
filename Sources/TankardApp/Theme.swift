@@ -397,6 +397,37 @@ struct CommandDetails: View {
         } label: {
             Text(title).font(.system(size: 11.5)).foregroundStyle(.secondary)
         }
+        .disclosureGroupStyle(CommandDisclosureStyle())
+    }
+}
+
+/// 0.8.7: CommandDetails' disclosure, drawn in SwiftUI. The system style's
+/// focus ring (an AppKit disclosure button) was drawn 20 points to the
+/// left of the triangle and its label, the sheet's padding, so in the
+/// Uninstall confirmation it sat over the sheet's left edge (macOS 15 and
+/// 26). A plain button's focus ring follows its own frame.
+struct CommandDisclosureStyle: DisclosureGroupStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.15)) { configuration.isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(configuration.isExpanded ? 90 : 0))
+                        .frame(width: 10)
+                    configuration.label
+                }
+                .padding(.vertical, 1)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            if configuration.isExpanded {
+                configuration.content
+            }
+        }
     }
 }
 
