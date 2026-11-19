@@ -152,6 +152,11 @@ struct TableSelectionStyler: NSViewRepresentable {
                 clip.postsBoundsChangedNotifications = true
                 observers.append(nc.addObserver(forName: NSView.boundsDidChangeNotification, object: clip, queue: .main, using: refresh))
             }
+            // 0.8.8 (gauntlet 26, P7): a wider table (full screen) has
+            // wider rows; their stripes and selection were painted at the
+            // old width and stopped after the Available column.
+            t.postsFrameChangedNotifications = true
+            observers.append(nc.addObserver(forName: NSView.frameDidChangeNotification, object: t, queue: .main, using: refresh))
             observers.append(nc.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main, using: refresh))
             observers.append(nc.addObserver(forName: NSWindow.didResignKeyNotification, object: nil, queue: .main, using: refresh))
         }
@@ -435,8 +440,28 @@ struct TableTypeSelect: NSViewRepresentable {
             monitor = nil
         }
 
-        /// true: the key was type-select's.
+        /// 0.8.8 (gauntlet 15): the down arrow in the toolbar's search
+        /// field moves into the results, as in Finder and Mail: the list
+        /// takes the keyboard focus and, when nothing is selected, its
+        /// first row. (It did nothing: the field kept the key.)
+        private func moveFromSearchField(_ event: NSEvent) -> Bool {
+            guard event.keyCode == 125, // down arrow
+                  event.modifierFlags.intersection([.command, .control, .option, .shift]).isEmpty,
+                  let t = table, let w = t.window, event.window === w, !t.isHiddenOrHasHiddenAncestor,
+                  let editor = w.firstResponder as? NSTextView, editor.isFieldEditor,
+                  editor.delegate is NSSearchField,
+                  t.numberOfRows > 0 else { return false }
+            w.makeFirstResponder(t)
+            if t.selectedRow < 0 {
+                t.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
+            }
+            t.scrollRowToVisible(max(t.selectedRow, 0))
+            return true
+        }
+
+        /// true: the key was type-select's (or the search field's down arrow).
         private func handle(_ event: NSEvent) -> Bool {
+            if moveFromSearchField(event) { return true }
             guard let t = table, let w = t.window, event.window === w, w.firstResponder === t else { return false }
             guard event.modifierFlags.intersection([.command, .control, .option, .function]).isEmpty,
                   let chars = event.characters,

@@ -190,6 +190,10 @@ struct DiscoverTable: View {
                             .help(d)
                     }
                     Spacer(minLength: 0)
+                    if AdminPassword.required(e) {
+                        PasswordLockBadge(size: 11, help: AdminPassword.installBadgeHelp)
+                            .frame(width: PackageRow.trailingBadge, height: PackageRow.trailingBadge)
+                    }
                 }
                 .frame(maxHeight: PackageRow.content)
                 .onAppear { discover.needDetails([e.id]) }

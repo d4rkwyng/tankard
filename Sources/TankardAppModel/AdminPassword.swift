@@ -27,6 +27,15 @@ public enum AdminPassword {
         p.kind == .cask && (p.installsPkg == true || p.sudoInstaller == true)
     }
 
+    /// 0.8.8 (gauntlet 26, P5): the same rule for a Discover row, once its
+    /// details are in (Installed showed the lock for zoom, Discover didn't).
+    public static func required(_ e: CatalogEntry) -> Bool {
+        e.kind == .cask && (e.installsPkg == true || e.sudoInstaller == true)
+    }
+
+    /// 0.8.8: the Discover row badge's tooltip.
+    public static var installBadgeHelp: String { String(localized: "Needs your password to install") }
+
     /// 0.8.5: the row badge's tooltip.
     public static var badgeHelp: String { String(localized: "Needs your password to upgrade") }
 

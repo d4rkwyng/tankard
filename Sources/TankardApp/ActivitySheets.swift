@@ -164,6 +164,7 @@ struct PlanRow: View {
 /// package list, the upgrade plan and the run's chips.
 struct PasswordLockBadge: View {
     var size: CGFloat = 9.5
+    var help: String = AdminPassword.badgeHelp
     @Environment(\.backgroundProminence) private var prominence
     @Environment(\.theme) private var theme
 
@@ -173,8 +174,8 @@ struct PasswordLockBadge: View {
             .font(.system(size: size))
             .foregroundStyle(selected ? Color.white : Color.orange)
             .fixedSize()
-            .help(AdminPassword.badgeHelp)
-            .accessibilityLabel(Text(AdminPassword.badgeHelp))
+            .help(help)
+            .accessibilityLabel(Text(help))
     }
 }
 
