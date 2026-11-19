@@ -4,11 +4,19 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.8.6] (unreleased)
+## [0.8.6]
+
+### Highlights
+- Adopt Apps matches apps by their ID and picks ESR, beta or older casks
+- Discover now finds formulae and casks from the taps you added yourself
+- Packages that brew can't read show up with the reason, not vanishing
+- Self-updating apps stay out of Upgrade All unless you choose to include
+- Stop Now ends builds from source at once, and every sheet fits the window
+- New ⌘U and ⇧⌘U shortcuts to upgrade, faster tooltips, counts that agree
 
 ### Added
-- **Homebrew ▸ Upgrade All…** (⇧⌘U), which shows the plan first, and **Homebrew ▸ Upgrade <name>** (⌘U) for the package selected in Installed. Upgrading had no menu command or shortcut.
 - **Settings ▸ General ▸ Show the number of upgrades in the menu bar** (on by default). Off, the menu bar shows only the tankard, full when upgrades are ready; the number stays in its tooltip and in the menu.
+- **Homebrew ▸ Upgrade All…** (⇧⌘U), which shows the plan first, and **Homebrew ▸ Upgrade <name>** (⌘U) for the package selected in Installed. Upgrading had no menu command or shortcut.
 
 ### Changed
 - **Sheets fit the window.** Adopt Apps (620 points tall), Taps, Health, History, Restore Points, Clean Up and Remove Unused had fixed heights, taller than a small window, so their buttons could end up below its edge (Adopt's, even at the default size). Each is now its usual height when there is room and shorter when there isn't: the list scrolls, the buttons stay.

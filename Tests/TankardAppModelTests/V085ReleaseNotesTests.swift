@@ -33,7 +33,7 @@ func releaseBody(_ version: String) throws -> String {
 }
 
 struct V085ReleaseNotesTests {
-    @Test(arguments: ["0.8.4", "0.8.5"])
+    @Test(arguments: ["0.8.4", "0.8.5", "0.8.6"])
     func realReleaseNotesAreAShortList(version: String) throws {
         let s = ReleaseNotesSummary.make(try releaseBody(version))
         #expect(s.bullets.count == 12)
@@ -61,6 +61,23 @@ struct V085ReleaseNotesTests {
             .bullet("Your shell profile's proxy settings reach brew (http_proxy, https_proxy, all_proxy, no_proxy and the forms brew keeps)"),
             .bullet("Health warns about brew.env settings that override Tankard, one row each with the reason: the dependents check, the…"),
         ])
+    }
+
+    @Test func v086StartsWithHighlights() throws {
+        let s = ReleaseNotesSummary.make(try releaseBody("0.8.6"))
+        #expect(s.items.first == .heading("Highlights"))
+        #expect(s.items.dropFirst().prefix(6).allSatisfy { if case .bullet = $0 { true } else { false } })
+        #expect(s.items[7] == .heading("Added"))
+    }
+
+    @Test func oldAppShowsV086AsAList() throws {
+        let shown = Self.excerpt084(try releaseBody("0.8.6"))
+        let lines = shown.split(separator: "\n").map(String.init)
+        #expect(lines.first == "Tankard v0.8.6 for macOS 14 Sonoma and later.")
+        #expect(lines.contains("Highlights"))
+        let bullets = lines.filter { $0.hasPrefix("- ") }
+        #expect((4...6).contains(bullets.count), "\(shown)")
+        for line in lines { #expect(line.count < 80, "\(line)") }
     }
 
     @Test func v085StartsWithHighlights() throws {
