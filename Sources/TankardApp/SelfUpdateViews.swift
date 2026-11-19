@@ -68,7 +68,7 @@ struct SelfUpdateSheet: View {
                 HStack(alignment: .firstTextBaseline) {
                     Text("Release notes").font(.system(size: 11)).foregroundStyle(.secondary)
                     Spacer()
-                    Button("Full Release Notes") { NSWorkspace.shared.open(r.url) }
+                    Button("Full Release Notes") { if WebURL.isWeb(r.url) { NSWorkspace.shared.open(r.url) } }
                         .buttonStyle(.link)
                         .font(.system(size: 11))
                         .help(r.url.absoluteString)
@@ -118,7 +118,7 @@ struct SelfUpdateSheet: View {
                         .disabled(store.isBusy)
                 } else {
                     Button("Download") {
-                        NSWorkspace.shared.open(r.url)
+                        if WebURL.isWeb(r.url) { NSWorkspace.shared.open(r.url) }
                         store.closeSelfUpdate()
                     }
                     .keyboardShortcut(.defaultAction)

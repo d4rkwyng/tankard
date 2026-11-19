@@ -1,4 +1,5 @@
 import AppKit
+import AskpassSupport
 import os
 import SwiftUI
 import TankardAppModel
@@ -156,6 +157,9 @@ struct TankardApp: App {
     @MainActor private static var sleepWatch: SleepAndNetworkWatch?
 
     init() {
+        // 0.8.8 (security review #1): a Developer ID build ignores every
+        // TANKARD_* switch (TestHooks); before anything reads one.
+        TestHooks.sanitizeProcessEnvironment()
         // 0.8.6: shorter tooltip delay, in memory only (ToolTipDelay).
         ToolTipDelay.register()
         let options = LaunchOptions.fromEnvironment()

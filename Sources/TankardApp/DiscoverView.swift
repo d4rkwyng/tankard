@@ -143,7 +143,9 @@ struct NoticeBanner: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: systemImage).foregroundStyle(tint)
-            Text(LocalizedStringKey(text)) // renders the `code` span
+            // 0.8.8 (security review #8): plain text, never Markdown (no
+            // live links); only `code` spans are styled (NoticeText).
+            Text(NoticeText.attributed(text))
                 .font(.system(size: 12))
                 .textSelection(.enabled)
             Spacer()
@@ -393,7 +395,8 @@ struct DiscoverDetail: View {
             InstallCountsView(counts: discover.installCounts(e.id), phase: discover.analyticsPhase,
                               endDate: discover.analytics?.endDate)
 
-            if let home = e.homepage, let url = URL(string: home) {
+            // 0.8.8 (security review #4): http(s) only, as the context menu.
+            if let home = e.homepage, let url = WebURL.from(home) {
                 Link(destination: url) {
                     HStack(spacing: 3) {
                         Text(url.host ?? home).lineLimit(1).truncationMode(.middle)

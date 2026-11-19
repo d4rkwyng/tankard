@@ -102,7 +102,9 @@ func sendPassword(_ password: String) -> Bool {
     return true
 }
 
-let env = ProcessInfo.processInfo.environment
+// 0.8.8 (security review #1): the TANKARD_ASKPASS_* debug hooks only in a
+// build without a Team ID (TestHooks).
+let env = TestHooks.filtered(ProcessInfo.processInfo.environment, allowed: TestHooks.liveAllowed)
 let ppid = getppid()
 
 // The gate (AskpassGate): before anything is drawn or read, including the
@@ -114,8 +116,13 @@ let helperTeam = ownTeamID()
 let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard(helperPath: helperPath)
     .flatMap { expected in above.first { $0.path == expected } }
     .flatMap { runningTeamID($0.pid) }
+// 0.8.8 (security review #3): one of the ancestors must be the brew run
+// Tankard ticketed for this step (AskpassTicket), same pid and start time.
+let tickets = AskpassTicket.liveHome().map { AskpassTicket.read(in: AskpassTicket.directory(home: $0)) } ?? []
+let ticketMatched = AskpassTicket.matches(tickets: tickets,
+                                          ancestors: above.map { (pid: $0.pid, start: AskpassTicket.processStart($0.pid)) })
 let decision = AskpassGate.decide(parentPath: parentPath, ancestorPaths: above.map(\.path), helperPath: helperPath,
-                                  helperTeam: helperTeam, tankardTeam: tankardTeam)
+                                  helperTeam: helperTeam, tankardTeam: tankardTeam, ticketMatched: ticketMatched)
 // The parent must still be the one checked (not exited and replaced).
 guard decision == .allow, getppid() == ppid else {
     if case .deny(let why) = decision { fail("refused: \(why). Only Tankard's own brew commands can use this dialog.") }

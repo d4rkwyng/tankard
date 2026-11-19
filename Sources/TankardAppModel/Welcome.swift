@@ -93,13 +93,11 @@ public enum HomebrewInstaller: String, Sendable, CaseIterable, Identifiable {
         """
     }
 
-    /// Writes the script to `directory/tankard-install-<id>.command`,
-    /// executable, and returns its URL.
+    /// Writes the script to `tankard-install-<id>.command` in a new 0700
+    /// folder in `directory`, mode 0700, and returns its URL (0.8.8, security
+    /// review #10: TerminalScript's unique, exclusively created file).
     public func writeScript(in directory: URL = FileManager.default.temporaryDirectory) throws -> URL {
-        let url = directory.appendingPathComponent("tankard-install-\(rawValue).command")
-        try Data(script.utf8).write(to: url, options: .atomic)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
-        return url
+        try TerminalScript.writeUnique(script, fileName: "tankard-install-\(rawValue).command", in: directory)
     }
 }
 

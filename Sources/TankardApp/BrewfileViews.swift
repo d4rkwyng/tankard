@@ -5,8 +5,10 @@ import TankardCore
 
 // v0.6 (part B): Export Brewfile… and Check Brewfile… (File menu),
 // and the sheet that shows the export summary, the check result and the
-// restore plan. Tankard never runs a shell for the user and never reads
-// or evaluates the Brewfile itself: brew bundle does.
+// restore plan. Tankard never runs a shell for the user and never
+// evaluates the Brewfile itself. 0.8.8 (security review #2): Check shows
+// the file's plain lines first (BrewfileStaticReader, nothing run) and
+// asks before brew bundle check, which runs the file as Ruby.
 //
 //   TANKARD_DEMO_BREWFILE=export|check|plan   demo only: run that step on
 //                                             a demo path (no panel)
@@ -35,7 +37,7 @@ enum BrewfilePanels {
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
         guard panel.runModal() == .OK, let url = panel.url else { return }
-        store.checkBrewfile(at: url.path)
+        store.previewBrewfile(at: url.path)
     }
 }
 
@@ -48,7 +50,7 @@ struct BrewfileMenuItems: View {
         // Opening one before exporting, as File menus order Open and Export.
         Button("Check Brewfile…") { BrewfilePanels.check(store: store) }
             .disabled(!store.canUseBrewfile || store.isSheetPresented)
-            .help("Lists what a Brewfile needs that this Mac doesn't have")
+            .help("Shows what a Brewfile lists, without running it")
         Button("Export Brewfile…") { BrewfilePanels.export(store: store) }
             .disabled(!store.canUseBrewfile || store.isSheetPresented)
             .help(BrewfilePanels.leftOut)
@@ -71,6 +73,10 @@ struct BrewfileSheet: View {
             switch brewfile.page {
             case .idle:
                 EmptyView()
+            case .preview(let p):
+                preview(p)
+            case .confirmRun(let p):
+                confirmRun(p)
             case .running(let label):
                 running(label)
             case .planning:
@@ -190,6 +196,77 @@ struct BrewfileSheet: View {
                         .keyboardShortcut(.defaultAction)
                         .help("What installing the missing items would do, before anything runs")
                 }
+            }
+        }
+    }
+
+    /// 0.8.8: the plain lines, read without running the file.
+    private func preview(_ p: BrewfilePreview) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            header("doc.text.magnifyingglass", theme.accent, String(localized: "What this Brewfile lists"), p.path)
+            Text("Read from the file's text. Nothing in it has run.")
+                .font(.system(size: 11.5)).foregroundStyle(.secondary)
+            if p.quarantined {
+                Label("Downloaded from the internet", systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 11.5, weight: .semibold)).foregroundStyle(.orange)
+            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(Self.groups.filter { $0.0 != nil }, id: \.1) { kind, title in
+                        let names = p.names(kind)
+                        if !names.isEmpty {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(verbatim: "\(title) (\(names.count))").font(.system(size: 12, weight: .semibold))
+                                ForEach(Array(names.enumerated()), id: \.offset) { _, n in
+                                    Text(verbatim: n).font(.system(size: 11.5, design: .monospaced)).textSelection(.enabled)
+                                }
+                            }
+                        }
+                    }
+                    if !p.notRead.isEmpty {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(verbatim: String(localized: "Not read: needs brew to evaluate") + " (\(p.notRead.count))")
+                                .font(.system(size: 12, weight: .semibold))
+                            ForEach(p.notRead) { line in
+                                Text(verbatim: "\(line.number): \(line.text)")
+                                    .font(.system(size: 11.5, design: .monospaced)).foregroundStyle(.secondary)
+                                    .lineLimit(1).truncationMode(.tail).textSelection(.enabled)
+                            }
+                        }
+                    }
+                    if p.entries.isEmpty && p.notRead.isEmpty {
+                        Text("No packages listed.").font(.system(size: 12)).foregroundStyle(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(height: min(CGFloat(p.entries.count + p.notRead.count) * 19 + 5 * 30, 300))
+            HStack {
+                Spacer()
+                Button("Close") { brewfile.dismiss() }.keyboardShortcut(.cancelAction)
+                Button("Check with brew…") { brewfile.requestBrewCheck() }
+                    .disabled(!store.canUseBrewfile)
+                    .help("Runs brew bundle check, which runs this file's code, after you confirm")
+            }
+        }
+    }
+
+    /// 0.8.8: before brew bundle check runs the file.
+    private func confirmRun(_ p: BrewfilePreview) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            header(p.quarantined ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill",
+                   p.quarantined ? .red : .orange, String(localized: "Run this Brewfile's code?"), p.path)
+            ForEach(Array(BrewfileStore.runWarning(quarantined: p.quarantined).enumerated()), id: \.offset) { i, text in
+                Text(verbatim: text)
+                    .font(.system(size: 12, weight: p.quarantined && i == 0 ? .semibold : .regular))
+                    .foregroundStyle(p.quarantined && i == 0 ? Color.red : Color.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            HStack {
+                Spacer()
+                Button("Back") { brewfile.cancelBrewCheck() }.keyboardShortcut(.cancelAction)
+                Button("Run brew bundle check") { store.confirmBrewfileCheck() }
+                    .disabled(!store.canUseBrewfile)
             }
         }
     }

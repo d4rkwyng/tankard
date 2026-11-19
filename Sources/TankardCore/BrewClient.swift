@@ -65,8 +65,10 @@ public struct BrewClient: Sendable {
     }
 
     /// Locates brew (override path, else the standard locations).
-    public static func locate(override: String? = nil) throws -> BrewClient {
-        guard let installation = BrewInstallation.locate(override: override) else {
+    /// `standardOnly` (the app, 0.8.8): an override that isn't one of
+    /// `BrewInstallation.candidates` finds nothing.
+    public static func locate(override: String? = nil, standardOnly: Bool = false) throws -> BrewClient {
+        guard let installation = BrewInstallation.locate(override: override, standardOnly: standardOnly) else {
             let searched = override.map { [$0] } ?? BrewInstallation.candidates
             throw BrewClientError.brewNotFound(searched: searched)
         }
@@ -87,11 +89,21 @@ public struct BrewClient: Sendable {
     }
 
     func git(_ repo: String, _ args: String...) async -> String? {
+        await git(repo, args)
+    }
+
+    func git(_ repo: String, _ args: [String]) async -> String? {
         guard let r = try? await runner.run(gitPath, ["-C", repo] + args, environment: gitEnv), r.exitCode == 0 else {
             return nil
         }
         let s = r.stdoutString.trimmingCharacters(in: .whitespacesAndNewlines)
         return s.isEmpty ? nil : s
+    }
+
+    /// 0.8.8 (security review #7): the origin comes from the repo's
+    /// .git/config; `--` keeps a value like `--upload-pack=…` a repository.
+    public static func lsRemoteTagsArguments(_ origin: String) -> [String] {
+        ["ls-remote", "--tags", "--", origin]
     }
 
     /// homebrew/core's configured origin URL, or nil in API mode.
@@ -162,7 +174,7 @@ public struct BrewClient: Sendable {
         status.brewTag = await brewTag
 
         if checkRemote, let origin = status.brewOrigin,
-           let out = await git(repo, "ls-remote", "--tags", origin) {
+           let out = await git(repo, Self.lsRemoteTagsArguments(origin)) {
             let names = out.split(separator: "\n").compactMap { line -> String? in
                 guard let ref = line.split(separator: "\t").last else { return nil }
                 return ref.replacingOccurrences(of: "refs/tags/", with: "").replacingOccurrences(of: "^{}", with: "")
@@ -207,8 +219,10 @@ public struct BrewClient: Sendable {
         try await brewJSON(BrewInfoJSON.self, Self.infoArguments(names, kind: kind), env: env).0
     }
 
+    /// 0.8.8 (security review #5): `--` before the names, so a name from a
+    /// Brewfile can never be read as an option.
     public static func infoArguments(_ names: [String], kind: PackageKind) -> [String] {
-        ["info", "--json=v2", kind == .cask ? "--cask" : "--formula"] + names
+        ["info", "--json=v2", kind == .cask ? "--cask" : "--formula", "--"] + names
     }
 
     public func outdated(env: [String: String]) async throws -> BrewOutdatedJSON {
@@ -286,7 +300,7 @@ extension BrewClient {
                     // 0.8.6 (HK-47 review): by full name: the bare name can
                     // resolve to a core formula of the same name, which brew
                     // reads fine (exit 0), and the row would be dropped.
-                    let args = ["info", "--json=v2", p.kind == .cask ? "--cask" : "--formula", p.fullName.isEmpty ? p.name : p.fullName]
+                    let args = Self.infoArguments([p.fullName.isEmpty ? p.name : p.fullName], kind: p.kind) // 0.8.8 (#5): with --
                     return (i, try? await runner.run(installation.brewPath, args, environment: env))
                 }
             }

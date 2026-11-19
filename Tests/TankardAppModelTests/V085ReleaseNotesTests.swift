@@ -63,18 +63,23 @@ struct V085ReleaseNotesTests {
         ])
     }
 
-    /// 0.8.8: four Highlights and seventeen fixes; the summary lists the
-    /// first 12 and says how many more.
+    /// 0.8.8: four Highlights, seventeen fixes and six Security changes;
+    /// the summary lists the first 12 and says how many more.
     @Test func v088ShowsEveryChange() throws {
         let s = ReleaseNotesSummary.make(try releaseBody("0.8.8"))
         #expect(s.items.first == .heading("Highlights"))
         #expect(s.bullets.count == 12)
-        #expect(s.more == 9)
+        #expect(s.more == 15)
+        // The 12 shown end in Fixed, so the Security heading isn't shown;
+        // the full list has it.
         let headings = s.items.compactMap { item -> String? in
             if case .heading(let h) = item { return h }
             return nil
         }
         #expect(headings == ["Highlights", "Fixed"])
+        let all = ReleaseNotesSummary.make(try releaseBody("0.8.8"), limit: 1000)
+        #expect(all.bullets.count == 24)
+        #expect(all.items.contains(.heading("Security")))
         for line in s.plainText.split(separator: "\n") {
             #expect(line.count <= 140, "\(line)")
             #expect(!line.contains("**") && !line.contains("`"), "\(line)")

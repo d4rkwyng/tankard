@@ -224,7 +224,7 @@ final class CatalogInfoRunner: CommandRunning, @unchecked Sendable {
         guard executable.hasSuffix("brew") else { return ProcessResult(exitCode: 128, stdout: Data(), stderr: Data()) }
         log.add(arguments)
         var out: [Any] = []
-        for q in arguments.dropFirst(3) {
+        for q in arguments.dropFirst(3) where q != "--" { // 0.8.8: infoArguments ends its options with --
             let name = q.split(separator: "/").last.map(String.init) ?? q
             guard let f = formulae[name] else {
                 return ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: No available formula with the name \"\(q)\".\n".utf8))
@@ -273,7 +273,7 @@ struct IntelbrewDiscoverTests {
         #expect(d.results.map(\.name) == ["xz", "zstd"])
         await d.waitForDetails()
         // One batch for the visible rows, fully qualified, formula kind.
-        #expect(runner.log.calls == [["info", "--json=v2", "--formula", "homebrew/core/xz", "homebrew/core/zstd"]])
+        #expect(runner.log.calls == [["info", "--json=v2", "--formula", "--", "homebrew/core/xz", "homebrew/core/zstd"]])
         let xz = try #require(d.results.first)
         #expect(xz.detailsLoaded)
         #expect(xz.version == "5.8.4")
@@ -607,7 +607,7 @@ struct WelcomeTests {
         #expect(url.lastPathComponent == "tankard-install-homebrew.command")
         #expect(try String(contentsOf: url, encoding: .utf8) == hb)
         let perms = try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions] as? Int
-        #expect(perms == 0o755)
+        #expect(perms == 0o700) // 0.8.8 (security review #10): 0700, in a new 0700 folder
     }
 
     @Test func welcomeUntilBrewAppearsThenMain() async throws {

@@ -27,7 +27,11 @@ public struct BrewInstallation: Sendable, Equatable {
     public static let candidates = ["/usr/local/bin/brew", "/opt/homebrew/bin/brew"]
 
     /// Finds brew. `override` (a path, from --brew or TANKARD_BREW) wins.
-    public static func locate(override: String? = nil, fileManager: FileManager = .default) -> BrewInstallation? {
+    /// 0.8.8: `standardOnly` (the GUI app): only a standard location, never
+    /// another executable, is run as brew; any other override finds nothing.
+    public static func locate(override: String? = nil, standardOnly: Bool = false,
+                              fileManager: FileManager = .default) -> BrewInstallation? {
+        if standardOnly, let override, !candidates.contains(override) { return nil }
         let paths = override.map { [$0] } ?? candidates
         for path in paths where fileManager.isExecutableFile(atPath: path) {
             return from(brewPath: path)

@@ -221,12 +221,20 @@ public enum BrewCommands {
     /// `brew upgrade --formula homebrew/core/xz` (or `--cask`). The kind
     /// flag plus the qualified name keeps formula/cask name clashes apart.
     public static func upgradeArguments(for p: Package) -> [String] {
-        ["upgrade", p.kind == .cask ? "--cask" : "--formula", p.qualifiedName]
+        ["upgrade", p.kind == .cask ? "--cask" : "--formula"] + operand(p.qualifiedName)
     }
 
     /// `brew install --formula homebrew/core/xz` (or `--cask`).
     public static func installArguments(kind: PackageKind, qualifiedName: String) -> [String] {
-        ["install", kind == .cask ? "--cask" : "--formula", qualifiedName]
+        ["install", kind == .cask ? "--cask" : "--formula"] + operand(qualifiedName)
+    }
+
+    /// 0.8.8 (security review #5): a package name as the last argument.
+    /// Installed and Discover names are tap-qualified ("user/tap/x") and
+    /// Brewfile names are checked, so none starts with "-"; if one ever did,
+    /// `--` keeps brew from reading it as an option.
+    static func operand(_ name: String) -> [String] {
+        name.hasPrefix("-") ? ["--", name] : [name]
     }
 
     public static func installArguments(for e: CatalogEntry) -> [String] {
@@ -236,7 +244,7 @@ public enum BrewCommands {
     /// `brew uninstall --formula homebrew/core/xz` (or `--cask`). No
     /// `--ignore-dependencies`: brew refuses too if something needs it.
     public static func uninstallArguments(for p: Package) -> [String] {
-        ["uninstall", p.kind == .cask ? "--cask" : "--formula", p.qualifiedName]
+        ["uninstall", p.kind == .cask ? "--cask" : "--formula"] + operand(p.qualifiedName)
     }
 
     /// `brew reinstall --force-bottle --formula homebrew/core/vim`.

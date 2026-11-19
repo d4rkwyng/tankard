@@ -28,6 +28,21 @@ extension AppStore {
         brewfile.export(to: path, force: force)
     }
 
+    /// 0.8.8 (security review #2): Check Brewfile… opens the static
+    /// preview; nothing runs until `confirmBrewfileCheck()`.
+    public func previewBrewfile(at path: String) {
+        brewfile.readFile = deps.readBrewfile
+        brewfile.preview(path: path)
+    }
+
+    /// The user confirmed that brew may run the previewed Brewfile.
+    public func confirmBrewfileCheck() {
+        guard case .confirmRun(let p) = brewfile.page else { return }
+        checkBrewfile(at: p.path)
+    }
+
+    /// Runs `brew bundle check` on the file, which runs it as Ruby. Only
+    /// after the confirmation (and the demo's fixture).
     public func checkBrewfile(at path: String) {
         prepareBrewfile()
         brewfile.check(path: path)
