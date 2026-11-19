@@ -119,7 +119,19 @@ struct TableSelectionStyler: NSViewRepresentable {
 
         func apply() {
             guard let t = table else { return }
-            if fixedRowHeights && t.usesAutomaticRowHeights { t.usesAutomaticRowHeights = false }
+            // 0.8.7 (B1): only while the table has no rows. Turned off on a
+            // table SwiftUI had already filled (a list made again with rows
+            // in it: a tab switch, or a search that brought it back), macOS
+            // 15 left those rows' cell views zero points wide, laid out by
+            // constraints that no longer gave them their column's width
+            // (seen in the VM: every cell 0×30 at its column's x; setting
+            // the frames or reloadData didn't hold). Text that fills its
+            // cell drew nothing; the fixed-size badge, size and marks
+            // overflowed and drew. A table made with rows keeps automatic
+            // heights (its rows still measure 30 pt, PackageRow) until its
+            // rows next go to none, which every search that matches
+            // nothing, and the launch, does.
+            if fixedRowHeights && t.usesAutomaticRowHeights && t.numberOfRows == 0 { t.usesAutomaticRowHeights = false }
             let highlight: NSTableView.SelectionHighlightStyle = tankard ? .none : .regular
             if t.selectionHighlightStyle != highlight { t.selectionHighlightStyle = highlight }
             styleHeader(t)
