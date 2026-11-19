@@ -300,7 +300,7 @@ extension BrewClient {
                     // 0.8.6 (HK-47 review): by full name: the bare name can
                     // resolve to a core formula of the same name, which brew
                     // reads fine (exit 0), and the row would be dropped.
-                    let args = ["info", "--json=v2", p.kind == .cask ? "--cask" : "--formula", p.fullName.isEmpty ? p.name : p.fullName]
+                    let args = Self.infoArguments([p.fullName.isEmpty ? p.name : p.fullName], kind: p.kind) // 0.8.8 (#5): with --
                     return (i, try? await runner.run(installation.brewPath, args, environment: env))
                 }
             }
