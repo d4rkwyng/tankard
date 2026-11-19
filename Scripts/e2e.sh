@@ -570,10 +570,11 @@ STEPS
         if qbrew install "$tap/$f" >"$OUT/restore/install-1.0.log" 2>&1; then
             formula 1.1 > "$taps_dir/tankard-e2e/homebrew-probe/Formula/$f.rb"
             git -C "$taps_dir/tankard-e2e/homebrew-probe" -c user.name=e2e -c user.email=e2e@localhost commit -qam "probe 1.1"
-            # A relaunch inside the status cache's hour shows the cache (no
-            # brew call), which predates the shell install: refresh first.
+            # The shell install changed brew after the cache was written, so
+            # 0.8.6's change detection re-reads brew at launch (no cache);
+            # refresh anyway so the step doesn't depend on that.
             run_phase restore 2-upgrade-rollback <<STEPS
-expect-ready cached
+expect-ready
 refresh
 expect installed $f 1.0
 save-restore-point
@@ -841,10 +842,11 @@ RUBY
         probe 1.1 > "$work/tap/Formula/$f.rb"
         git -C "$work/tap" -c user.name=e2e -c user.email=e2e@localhost commit -qam "probe 1.1"
         git -C "$taps_dir/tankard-e2e/homebrew-probe" pull -q --ff-only
-        # The first update at launch re-reads the list (it predates the
-        # shell install); the second, 5 s later, is the one clicked into.
+        # The shell install changed brew after the cache was written, so
+        # the launch reads brew live (0.8.6 change detection, no cache); the
+        # update 5 s later is the one clicked into.
         run_phase background 4-upgrade-during-update TANKARD_E2E_BACKGROUND=1 <<STEPS
-expect-ready cached
+expect-ready
 wait-background-update
 expect installed $f 1.0
 upgrade-during-update $f
