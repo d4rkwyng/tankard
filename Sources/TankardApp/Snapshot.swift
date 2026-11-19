@@ -93,6 +93,15 @@ struct SnapshotHook: NSViewRepresentable {
                         }
                     } else if let content = makeView(name) {
                         Snapshot.write(view: content, appearance: window.effectiveAppearance, to: request.path)
+                        // 0.8.8 (gauntlet 3, B3): does the Settings tab fit
+                        // its window (Scripts/settings-check.sh)?
+                        if name == "settings", ProcessInfo.processInfo.environment["TANKARD_SETTINGS_CHECK"] == "1" {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                FileHandle.standardError.write(Data(SettingsFit.report().utf8))
+                                if request.quit { exit(0) }
+                            }
+                            return
+                        }
                     }
                     if request.quit { exit(0) }
                     return

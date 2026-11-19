@@ -45,23 +45,35 @@ struct SettingsView: View {
                     .tabItem { Label("Upgrades", systemImage: "arrow.up.circle") }
                     .tag("upgrades")
             }
-            Form {
-                Picker("Appearance", selection: $appearance.theme) {
-                    ForEach(AppTheme.allCases) { t in
-                        Text(t.title + (t == .default ? String(localized: " (default)") : "")).tag(t)
-                    }
-                }
-                .pickerStyle(.radioGroup)
-                Text(appearance.theme.help)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(20)
+            AppearanceTab(appearance: appearance)
             .tabItem { Label("Appearance", systemImage: "paintpalette") }
             .tag("appearance")
         }
-        .frame(width: 460)
+        .frame(width: SettingsFit.width)
         .themed(Theme.of(appearance.theme))
+    }
+}
+
+/// Settings → Appearance.
+struct AppearanceTab: View {
+    @Bindable var appearance: AppearanceSettings
+
+    var body: some View {
+        Form {
+            Picker("Appearance", selection: $appearance.theme) {
+                ForEach(AppTheme.allCases) { t in
+                    Text(t.title + (t == .default ? String(localized: " (default)") : "")).tag(t)
+                }
+            }
+            .pickerStyle(.radioGroup)
+            Text(appearance.theme.help)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .settingsFitProbe("appearance")
     }
 }
 
@@ -76,8 +88,13 @@ struct GeneralSettings: View {
     private let loginOn = State<Bool?>(initialValue: nil)
     private let loginNote = State<String?>(initialValue: nil)
 
+    /// 0.8.8 (gauntlet 3, B3): a plain column like Settings → Upgrades,
+    /// not a Form. The Form put "Check every" in a label column left of
+    /// the checkboxes, past the window's edge in every language, and its
+    /// rows didn't wrap: French lost the "V" of "Vérifier toutes les" and
+    /// the "Off: …" line ran off the right edge.
     var body: some View {
-        Form {
+        VStack(alignment: .leading, spacing: 8) {
             ExplainedRow(help: SettingsHelp.showMenuBarIcon) {
                 Toggle("Show Tankard in the menu bar", isOn: $settings.showMenuBarIcon)
             }
@@ -94,12 +111,18 @@ struct GeneralSettings: View {
 
             Divider().padding(.vertical, 4)
 
+            // 0.8.8 (gauntlet 3, B9): with HOMEBREW_NO_AUTO_UPDATE the
+            // checkbox showed checked (and dimmed) under "Off: …"; it now
+            // shows what happens: unchecked and dimmed. The saved choice is
+            // kept for when the setting goes away.
             ExplainedRow(help: SettingsHelp.backgroundUpdate) {
-                Toggle("Check for new versions in the background", isOn: $settings.backgroundUpdate)
+                Toggle("Check for new versions in the background", isOn: Binding(
+                    get: { BackgroundUpdateSetting.shownOn(saved: settings.backgroundUpdate, optOut: backgroundUpdateOptOut) },
+                    set: { if backgroundUpdateOptOut == nil { settings.backgroundUpdate = $0 } }))
                     .disabled(backgroundUpdateOptOut != nil)
             }
             if let source = backgroundUpdateOptOut {
-                Text("Off: your Homebrew settings turn this off (in \(source)).").font(.system(size: 11)).foregroundStyle(.secondary)
+                SettingsNote(String(localized: "Off: your Homebrew settings turn this off (in \(source))."))
             }
             ExplainedRow(help: SettingsHelp.notifyNewUpgrades) {
                 Toggle("Notify me about new upgrades", isOn: Binding(
@@ -119,14 +142,18 @@ struct GeneralSettings: View {
                     }))
             }
             HStack(spacing: 6) {
+                Text("Check every")
                 Picker("Check every", selection: $settings.checkIntervalHours) {
-                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(h == 1 ? String(localized: "1 hour") : String(localized: "\(h) hours")).tag(h) }
+                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(String(localized: "\(h) hours")).tag(h) }
                 }
-                .disabled(!settings.notifyNewUpgrades && !settings.backgroundUpdate)
+                .labelsHidden()
                 .fixedSize()
+                .accessibilityLabel(Text("Check every"))
                 .help(SettingsHelp.checkInterval)
                 InfoButton(text: SettingsHelp.checkInterval)
             }
+            .disabled(!BackgroundUpdateSetting.intervalEnabled(notify: settings.notifyNewUpgrades, saved: settings.backgroundUpdate,
+                                                               optOut: backgroundUpdateOptOut))
             // 0.8.2: also when it was allowed once and later turned off in
             // System Settings (the toggle stays on, but nothing would show).
             if let note = notificationNote.wrappedValue
@@ -134,6 +161,7 @@ struct GeneralSettings: View {
                     ? String(localized: "Off for Tankard in System Settings → Notifications") : nil) {
                 HStack(spacing: 8) {
                     Text(note).font(.system(size: 11)).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                     if notificationsDenied.wrappedValue {
                         Button("Open Notification Settings") { SystemNotifier.openSystemSettings() }
                             .controlSize(.small)
@@ -153,10 +181,48 @@ struct GeneralSettings: View {
                     }))
             }
             if let note = loginNote.wrappedValue ?? loginItem.statusNote {
-                Text(note).font(.system(size: 11)).foregroundStyle(.secondary)
+                SettingsNote(note)
             }
         }
         .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .settingsFitProbe("general")
         .task { notificationsDenied.wrappedValue = await notifier.isDenied() }
+    }
+}
+
+/// 0.8.8 (gauntlet 3, B3): whether each Settings tab fits the window's
+/// width. A tab's content wider than the window (a row that can't wrap) is
+/// centred and cut at both edges, which is how French lost the first
+/// letters of its labels. Each tab reports its laid-out width here; the
+/// snapshot hook prints it (TANKARD_SETTINGS_CHECK=1, Scripts/settings-check.sh).
+@MainActor
+enum SettingsFit {
+    static let width: CGFloat = 460
+    static var widths: [String: CGFloat] = [:]
+
+    static func report() -> String {
+        var ok = !widths.isEmpty
+        var lines: [String] = []
+        for (tab, w) in widths.sorted(by: { $0.key < $1.key }) {
+            let fits = w <= width + 0.5
+            if !fits { ok = false }
+            lines.append(String(format: "settings-check: tab %@ width %.1f of %.0f %@", tab, w, width, fits ? "fits" : "OVERFLOWS"))
+        }
+        lines.append(ok ? "settings-check: OK" : "settings-check: FAIL")
+        return lines.joined(separator: "\n") + "\n"
+    }
+}
+
+extension View {
+    /// Reports this tab content's width to `SettingsFit` (after its
+    /// padding and a `.frame(maxWidth: .infinity)`: a child too wide to
+    /// fit makes it wider than the window).
+    func settingsFitProbe(_ tab: String) -> some View {
+        background(GeometryReader { g in
+            Color.clear
+                .onAppear { SettingsFit.widths[tab] = g.size.width }
+                .onChange(of: g.size.width) { _, w in SettingsFit.widths[tab] = w }
+        })
     }
 }

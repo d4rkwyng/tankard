@@ -37,11 +37,27 @@ struct AutoUpdateRulesRows: View {
 
     var body: some View {
         // Snooze sits with the log button (Settings → Upgrades).
+        // 0.8.8 (gauntlet 3, B3, B7): the label and the pop-up on one line
+        // when they fit, else the pop-up under its label (French, Spanish);
+        // the pop-up keeps its name for VoiceOver.
         ExplainedRow(help: SettingsHelp.bumpRule) {
-            Picker("Automatically upgrade:", selection: $rules.bumpRule) {
+            let picker = Picker("Automatically upgrade:", selection: $rules.bumpRule) {
                 ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
             }
+            .labelsHidden()
             .fixedSize()
+            .accessibilityLabel(Text("Automatically upgrade:"))
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 6) {
+                    Text("Automatically upgrade:").accessibilityHidden(true)
+                    picker
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Automatically upgrade:").accessibilityHidden(true)
+                        .fixedSize(horizontal: false, vertical: true)
+                    picker
+                }
+            }
         }
     }
 }

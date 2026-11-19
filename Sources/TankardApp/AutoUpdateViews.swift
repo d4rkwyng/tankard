@@ -129,11 +129,20 @@ struct AutoUpdateSettingsSection: View {
                     Text(line).font(.system(size: 11)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                HStack(spacing: 8) {
-                    Button("Show Auto-update Log…", action: showLog)
-                        .controlSize(.small)
-                    AutoUpdateSnoozeControl(rules: updater.rules)
-                        .disabled(!settings.enabled)
+                // 0.8.8 (gauntlet 3, B3): on two lines when one is too narrow.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 8) {
+                        Button("Show Auto-update Log…", action: showLog)
+                            .controlSize(.small)
+                        AutoUpdateSnoozeControl(rules: updater.rules)
+                            .disabled(!settings.enabled)
+                    }
+                    VStack(alignment: .leading, spacing: 6) {
+                        Button("Show Auto-update Log…", action: showLog)
+                            .controlSize(.small)
+                        AutoUpdateSnoozeControl(rules: updater.rules)
+                            .disabled(!settings.enabled)
+                    }
                 }
             }
             .padding(.leading, SettingsNote.indent)
@@ -160,24 +169,44 @@ struct AutoUpdateScheduleRow: View {
     @Bindable var settings: AutoUpdateSettings
 
     var body: some View {
-        HStack(spacing: 10) {
-            Picker("", selection: $settings.frequency) {
-                ForEach(AutoUpdateFrequency.allCases) { f in Text(f.title).tag(f) }
+        // 0.8.8 (gauntlet 3, B3): the time on a second line when one is too
+        // narrow (a weekly run in French); B7: each control has a name for
+        // VoiceOver (they read as unlabeled pop-ups and a bare date field).
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 10) {
+                when
+                at
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 10) { when }
+                HStack(spacing: 10) { at }
+            }
+        }
+    }
+
+    @ViewBuilder private var when: some View {
+        Picker("How often", selection: $settings.frequency) {
+            ForEach(AutoUpdateFrequency.allCases) { f in Text(f.title).tag(f) }
+        }
+        .labelsHidden()
+        .fixedSize()
+        .accessibilityLabel(Text("How often"))
+        if settings.frequency == .weekly {
+            Picker("Day", selection: $settings.weekday) {
+                ForEach(1...7, id: \.self) { d in Text(Calendar.current.weekdaySymbols[d - 1]).tag(d) }
             }
             .labelsHidden()
             .fixedSize()
-            if settings.frequency == .weekly {
-                Picker("", selection: $settings.weekday) {
-                    ForEach(1...7, id: \.self) { d in Text(Calendar.current.weekdaySymbols[d - 1]).tag(d) }
-                }
-                .labelsHidden()
-                .fixedSize()
-            }
-            Text("at")
-            DatePicker("", selection: time, displayedComponents: .hourAndMinute)
-                .labelsHidden()
-                .fixedSize()
+            .accessibilityLabel(Text("Day"))
         }
+    }
+
+    @ViewBuilder private var at: some View {
+        Text("at").accessibilityHidden(true)
+        DatePicker("Time", selection: time, displayedComponents: .hourAndMinute)
+            .labelsHidden()
+            .fixedSize()
+            .accessibilityLabel(Text("Time of the automatic update"))
     }
 
     /// Today at the chosen time; only a real change reaches the settings

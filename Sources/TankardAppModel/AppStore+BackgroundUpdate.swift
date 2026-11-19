@@ -136,3 +136,17 @@ extension AppStore {
         return error == nil
     }
 }
+
+/// 0.8.8 (gauntlet 3, B9): Settings → General's background-check controls
+/// while HOMEBREW_NO_AUTO_UPDATE is set (`optOut`, its source): the checkbox
+/// shows off (it showed the saved "on", dimmed, under "Off: …"), and "Check
+/// every" is enabled only when something still checks (notifications).
+public enum BackgroundUpdateSetting {
+    public static func shownOn(saved: Bool, optOut: String?) -> Bool {
+        optOut == nil && saved
+    }
+
+    public static func intervalEnabled(notify: Bool, saved: Bool, optOut: String?) -> Bool {
+        notify || shownOn(saved: saved, optOut: optOut)
+    }
+}

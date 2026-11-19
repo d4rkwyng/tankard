@@ -236,3 +236,20 @@ struct V088HelperAppTests {
         #expect(Askpass.helperPath(appBundle: app) == app.appendingPathComponent(Askpass.helperRelativePath).path)
     }
 }
+
+// MARK: B9: background checks while HOMEBREW_NO_AUTO_UPDATE is set
+
+struct V088BackgroundUpdateSettingTests {
+    @Test func optedOutShowsOffAndTheIntervalFollows() {
+        let source = "~/.zprofile"
+        // Saved on, but Homebrew's setting turns it off: shown off.
+        #expect(!BackgroundUpdateSetting.shownOn(saved: true, optOut: source))
+        #expect(BackgroundUpdateSetting.shownOn(saved: true, optOut: nil))
+        #expect(!BackgroundUpdateSetting.shownOn(saved: false, optOut: nil))
+        // "Check every": only while something checks.
+        #expect(!BackgroundUpdateSetting.intervalEnabled(notify: false, saved: true, optOut: source))
+        #expect(BackgroundUpdateSetting.intervalEnabled(notify: true, saved: true, optOut: source))
+        #expect(BackgroundUpdateSetting.intervalEnabled(notify: false, saved: true, optOut: nil))
+        #expect(!BackgroundUpdateSetting.intervalEnabled(notify: false, saved: false, optOut: nil))
+    }
+}

@@ -89,14 +89,17 @@ struct ContentView: View {
             case "settings":
                 // A Settings tab's content (an off-screen TabView draws no tab
                 // bar): General, or TANKARD_SETTINGS_TAB=upgrades for the whole
-                // Upgrades tab as the Settings window shows it.
-                let content: AnyView = ProcessInfo.processInfo.environment["TANKARD_SETTINGS_TAB"] == "upgrades"
+                // Upgrades tab as the Settings window shows it (0.8.8:
+                // =appearance for that tab).
+                let tab = ProcessInfo.processInfo.environment["TANKARD_SETTINGS_TAB"]
+                let content: AnyView = tab == "upgrades"
                     ? AnyView(UpgradeSettings(settings: store.insights.settings, autoUpdater: store.autoUpdate, notifier: SystemNotifier(),
                                               appSettings: store.settings, rollbackSettings: store.restorePoints.settings, store: store))
+                    : tab == "appearance" ? AnyView(AppearanceTab(appearance: appearance))
                     : AnyView(GeneralSettings(settings: store.settings, notifier: SystemNotifier(), loginItem: LoginItem(),
                                               backgroundUpdateOptOut: store.backgroundUpdateOptOut))
                 return AnyView(content
-                    .frame(width: 460)
+                    .frame(width: SettingsFit.width)
                     .themed(theme)
                     .background(theme.window ?? Color(nsColor: .windowBackgroundColor)))
             case "settings-autoupdate":

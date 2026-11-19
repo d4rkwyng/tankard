@@ -526,6 +526,7 @@ struct UpgradeSettings: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .settingsFitProbe("upgrades")
         .sheet(isPresented: showLog.projectedValue) {
             if let autoUpdater {
                 AutoUpdateLogView(log: autoUpdater.log, done: { showLog.wrappedValue = false }, store: store)
