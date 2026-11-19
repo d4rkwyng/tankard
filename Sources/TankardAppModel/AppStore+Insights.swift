@@ -87,6 +87,8 @@ extension AppStore {
 
     /// After a run: the caveats of what it installed or upgraded, once.
     func offerPostInstallNotes(for session: UpgradeSession) {
+        // 0.8.8: not while quitting (a sheet would block the quit).
+        guard !terminating else { return }
         let changed = session.items.filter { $0.state == .done }.map(\.package.id)
         let notes = PostInstallNotes.make(action: session.action, changedIDs: changed, packages: packages,
                                           prefix: report?.host.prefix)

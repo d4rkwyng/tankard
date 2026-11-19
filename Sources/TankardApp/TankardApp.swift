@@ -516,7 +516,11 @@ enum Relauncher {
 
     /// AppKit won't terminate while a sheet is up ("App termination blocked
     /// by modal sheet"): end every window's sheets, and any modal session.
+    /// 0.8.8: the store's own sheet state first, or SwiftUI presents an
+    /// ended sheet again (the relaunch wedge: the activity sheet came back
+    /// empty, zero-size, ~20 ms before each terminate).
     static func closeSheets() {
+        QuitGuard.store?.prepareForTermination()
         if NSApp.modalWindow != nil { NSApp.abortModal() }
         // 0.8.5: the progress panel too (its alert first).
         ProgressPanelController.shared?.close()

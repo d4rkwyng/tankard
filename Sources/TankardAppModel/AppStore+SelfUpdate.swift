@@ -111,6 +111,7 @@ extension AppStore {
     /// The relaunch started but this process is still running: something
     /// refused to let it quit. The helper opens nothing; the user quits.
     public func relaunchGaveUp() {
+        terminationCancelled()
         error = StoreError(title: String(localized: "Couldn't relaunch Tankard"), detail: Self.quitAndReopen)
     }
 

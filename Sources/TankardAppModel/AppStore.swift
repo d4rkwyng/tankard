@@ -290,6 +290,8 @@ public final class AppStore {
     public internal(set) var appManagementResume: AppManagementResume?
     /// 0.8.3: "Relaunch Tankard" started the helper; this instance quits.
     @ObservationIgnored private(set) var relaunching = false
+    /// 0.8.8: Tankard is quitting (`prepareForTermination`): no new sheet.
+    @ObservationIgnored public private(set) var terminating = false
     /// 0.3: the Cleanup sheet's state.
     public private(set) var cleanup: CleanupStore?
     public var showCleanupSheet = false
@@ -507,12 +509,18 @@ public final class AppStore {
         // read (Terminal), or an interrupted run waits to be offered.
         launchStarted = true
         let stale = isStale, changed = homebrewChangedSinceRead, journal = settings.defaults.data(forKey: RunJournal.key) != nil
-        if stale || changed || journal {
-            LaunchTiming.note("launch read: stale=\(stale) changed=\(changed) journal=\(journal)")
+        // 0.8.8: also when a relaunch for App Management left its operation
+        // (it is offered against what brew says now, not the saved list).
+        let pendingRetry = settings.appManagementPendingRetry != nil
+        if stale || changed || journal || pendingRetry {
+            LaunchTiming.note("launch read: stale=\(stale) changed=\(changed) journal=\(journal) retry=\(pendingRetry)")
             await refresh(manual: false)
         } else {
             startInsights(force: false)
         }
+        // 0.8.8: the "Run again" offer is this launch's only: shown now or
+        // dropped, never attached to a later, unrelated run's read.
+        if pendingRetry { resumeAppManagementRetry() }
     }
 
     /// 0.8.6 (M4): brew's folders changed after the report on screen was
@@ -662,10 +670,10 @@ public final class AppStore {
             error = updateError.map(Self.refreshFailure)
             homebrewState = .ready
             startInsights(force: kind != .afterUpdate, measureSizes: false)
-            // 0.8.1: relaunched for App Management: the operation it was for.
-            if settings.appManagementPendingRetry != nil {
-                Task { @MainActor in self.resumeAppManagementRetry() }
-            } else if settings.defaults.data(forKey: RunJournal.key) != nil {
+            // 0.8.1: relaunched for App Management: the operation it was
+            // for. 0.8.8: offered by the launch (start()) once its read has
+            // ended; until then the interrupted-run offer waits too.
+            if settings.appManagementPendingRetry == nil, settings.defaults.data(forKey: RunJournal.key) != nil {
                 // 0.8.3: an upgrade run a quit or crash interrupted.
                 Task { @MainActor in self.offerInterruptedRun() }
             }
@@ -1200,6 +1208,11 @@ public final class AppStore {
         if relaunch() {
             relaunching = true
             settings.appManagementPendingRetry = pending?.encoded()
+            // 0.8.8 (gauntlet, the relaunch wedge): the prompt is gone but
+            // the activity sheet's own flag was still set, so SwiftUI put
+            // the (now empty, zero-size) sheet back each time AppKit ended
+            // it for the quit, and termination was refused under it.
+            prepareForTermination()
         } else {
             error = StoreError(title: String(localized: "Couldn't relaunch Tankard"),
                                detail: String(localized: "Quit Tankard and open it again, then run it again."))
@@ -1243,7 +1256,9 @@ public final class AppStore {
         // nothing.)
         guard !relaunching, let data = settings.appManagementPendingRetry else { return false }
         settings.appManagementPendingRetry = nil
-        guard !isUpgrading, upgradePlan == nil, appManagementPrompt == nil,
+        // 0.8.8: against a fresh read only (a launch whose read failed
+        // drops it rather than offering it against the saved list).
+        guard !reportFromCache, !terminating, !isUpgrading, upgradePlan == nil, appManagementPrompt == nil,
               let pending = AppManagementPendingRetry.decode(data) else { return false }
         let classifier = deps.classifier
         guard let offer = pending.resolve(installed: packages, now: deps.now(),
@@ -1316,6 +1331,53 @@ public final class AppStore {
     public func showAppManagementExplainer(packages: [Package] = [], reason: AppManagementPrompt.Reason = .firstUse) {
         appManagementPrompt = AppManagementPrompt(reason: reason, action: .upgrade, packages: packages)
         showUpgradeSheet = true
+    }
+
+    // MARK: quitting (0.8.8)
+
+    /// What Tankard ▸ Quit (⌘Q) and the menu-bar panel's Quit do now.
+    /// AppKit refuses to terminate while a sheet is attached ("App
+    /// termination blocked by modal sheet") before it asks the app
+    /// delegate, so the quit guard's question has to be asked here, not in
+    /// applicationShouldTerminate, whenever a sheet may be up.
+    public enum QuitStep: Equatable, Sendable {
+        /// brew is running: "Homebrew is still working… Quit anyway?" first.
+        case ask(QuitPrompt)
+        /// Nothing to ask about: close every sheet, then quit.
+        case closeSheetsAndQuit
+    }
+
+    public var quitStep: QuitStep {
+        if let prompt = quitPrompt { return .ask(prompt) }
+        return .closeSheetsAndQuit
+    }
+
+    /// Tankard is about to terminate (Quit, or a relaunch): every sheet
+    /// the store presents is closed in its own state, so SwiftUI doesn't
+    /// put one back after AppKit ends it, and nothing new is offered
+    /// (post-install notes, the Run again and interrupted-run offers)
+    /// until `terminationCancelled`.
+    public func prepareForTermination() {
+        terminating = true
+        dismissPresentations()
+        // dismissPresentations keeps a running session's sheet; quitting
+        // closes it too (the quit guard has already stopped brew, or the
+        // user chose Quit Now and the stop ran out of time).
+        showUpgradeSheet = false
+        appManagementPrompt = nil
+        appManagementResume = nil
+        interruptedRun = nil
+        upgradePlan = nil
+        progressPanelNotes = nil
+        progressPanelHideQuestion = false
+        offerRelaunch = false
+        insights.pendingNotes = nil
+    }
+
+    /// The quit didn't happen after all (AppKit still refused, or the
+    /// relaunch gave up): offers may show again.
+    public func terminationCancelled() {
+        terminating = false
     }
 
     // MARK: sessions
@@ -1512,7 +1574,7 @@ public final class AppStore {
         // A cask step macOS blocked: explain, offer one retry. 0.8.1: a
         // restore's blocked step (a command row) is explained too, without
         // a retry (Restore Points runs it again).
-        if !session.isRetry, !session.blockedPackages.isEmpty {
+        if !session.isRetry, !session.blockedPackages.isEmpty, !terminating {
             let retry = AppManagement.retryable(session.action) ? session.blockedPackages : []
             appManagementPrompt = AppManagementPrompt(reason: .blocked, action: session.action, packages: retry)
             showUpgradeSheet = true
