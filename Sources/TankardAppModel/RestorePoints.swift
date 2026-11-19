@@ -109,11 +109,43 @@ public struct RestorePoint: Codable, Sendable, Equatable, Identifiable {
     public var pins: [String] { packages.filter(\.pinned).map(\.fullName) }
 
     /// A Brewfile with the same packages (no versions: Brewfiles have none).
+    /// 0.8.8 (security review #6): a Brewfile is Ruby, so each name must stay
+    /// a plain string: names brew wouldn't accept are left out (counted in a
+    /// comment, never quoted into it), and the rest are escaped for Ruby's
+    /// double quotes anyway (`\`, `"`, `#`).
     public var brewfile: String {
-        var lines = taps.filter { $0 != "homebrew/core" && $0 != "homebrew/cask" }.map { "tap \"\($0)\"" }
-        lines += packages.filter { $0.kind == .formula && $0.requested }.map { "brew \"\($0.qualifiedName)\"" }
-        lines += packages.filter { $0.kind == .cask }.map { "cask \"\($0.qualifiedName)\"" }
+        var lines: [String] = []
+        var skipped = 0
+        func add(_ keyword: String, _ name: String, _ kind: BrewfileKind) {
+            if BrewfileStaticReader.validName(name, kind) {
+                lines.append("\(keyword) \(Self.rubyString(name))")
+            } else {
+                skipped += 1
+            }
+        }
+        for t in taps where t != "homebrew/core" && t != "homebrew/cask" { add("tap", t, .tap) }
+        for p in packages where p.kind == .formula && p.requested { add("brew", p.qualifiedName, .formula) }
+        for p in packages where p.kind == .cask { add("cask", p.qualifiedName, .cask) }
+        if skipped > 0 {
+            lines.append(skipped == 1 ? "# Tankard left out 1 entry whose name isn't a valid Homebrew name."
+                                      : "# Tankard left out \(skipped) entries whose names aren't valid Homebrew names.")
+        }
         return lines.joined(separator: "\n") + "\n"
+    }
+
+    /// `s` as a Ruby double-quoted string literal with no escapes or
+    /// interpolation left live.
+    static func rubyString(_ s: String) -> String {
+        var out = "\""
+        for c in s {
+            switch c {
+            case "\\": out += "\\\\"
+            case "\"": out += "\\\""
+            case "#": out += "\\#"
+            default: out.append(c)
+            }
+        }
+        return out + "\""
     }
 }
 

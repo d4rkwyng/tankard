@@ -180,8 +180,8 @@ struct BrewfileStoreTests {
         #expect(plan.terminalOnly.map(\.entry.name) == ["hashicorp/tap"])
         #expect(plan.packages().map(\.qualifiedName) == ["bit-git", "git-absorb", "jsontoolkit", "firefox", "chrome-remote-desktop-host"])
         // One batched read-only `brew info` per kind.
-        #expect(rec.all == [["info", "--json=v2", "--formula", "bit-git", "git-absorb", "jsontoolkit"],
-                            ["info", "--json=v2", "--cask", "firefox", "chrome-remote-desktop-host"]])
+        #expect(rec.all == [["info", "--json=v2", "--formula", "--", "bit-git", "git-absorb", "jsontoolkit"],
+                            ["info", "--json=v2", "--cask", "--", "firefox", "chrome-remote-desktop-host"]])
     }
 
     @Test func restorePlanWithoutDetailsNotesIt() async {

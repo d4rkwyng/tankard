@@ -195,3 +195,68 @@ struct V088BrewfilePreviewTests {
         #expect(BrewfileStaticReader.isQuarantined(f.path))
     }
 }
+
+/// #5: Brewfile names that start with "-" never reach brew as options.
+struct V088BrewfileNameTests {
+    @Test func dashNamesFromBundleCheckAreDropped() {
+        let missing = BrewfileParser.missing(["→ Formula --force needs to be installed.",
+                                              "→ Cask -v needs to be installed.",
+                                              "→ Formula jq needs to be installed.",
+                                              "→ Widget --x needs to be installed."])
+        #expect(missing == [BrewfileEntry(kind: .formula, name: "jq")])
+    }
+
+    @Test func invalidNamesAreTerminalOnlyInThePlan() {
+        let plan = BrewfileRestorePlan(missing: [BrewfileEntry(kind: .formula, name: "jq"),
+                                                 BrewfileEntry(kind: .formula, name: "a b"),
+                                                 BrewfileEntry(kind: .cask, name: "../evil")], path: "/b")
+        #expect(plan.queued.map(\.entry.name) == ["jq"])
+        #expect(plan.packages().map(\.qualifiedName) == ["jq"])
+    }
+
+    @Test func aDashNameIsNeverAnOption() {
+        #expect(BrewCommands.installArguments(kind: .formula, qualifiedName: "--force") == ["install", "--formula", "--", "--force"])
+        // Ordinary names are unchanged.
+        #expect(BrewCommands.installArguments(kind: .cask, qualifiedName: "homebrew/cask/firefox") == ["install", "--cask", "homebrew/cask/firefox"])
+        var p = Package.command("x")
+        p.kind = .formula
+        p.id = "formula:-x"
+        p.fullName = "-x"
+        #expect(BrewCommands.upgradeArguments(for: p).suffix(2) == ["--", p.qualifiedName])
+        #expect(BrewCommands.uninstallArguments(for: p).suffix(2) == ["--", p.qualifiedName])
+    }
+}
+
+/// #6: Copy as Brewfile can't turn a name into Ruby code.
+struct V088RestoreBrewfileTests {
+    static func pkg(_ name: String, kind: PackageKind = .formula, tap: String? = nil) -> RestorePointPackage {
+        let q = tap.map { "\($0)/\(name)" } ?? name
+        return RestorePointPackage(id: "\(kind.rawValue):\(q)", name: name, fullName: q, tap: tap, kind: kind,
+                                   version: "1", pinned: false, requested: true)
+    }
+
+    @Test func interpolationAndQuotesNeverBecomeCode() {
+        let point = RestorePoint(createdAt: Date(), reason: .manual,
+                                 packages: [Self.pkg(##"x#{system("x")}"##), Self.pkg(#"a"; system("x"); b""#),
+                                            Self.pkg("jq", tap: "homebrew/core"), Self.pkg("firefox", kind: .cask, tap: "homebrew/cask")],
+                                 taps: ["homebrew/core", ##"evil/#{system("x")}"##, "user/tools"])
+        let text = point.brewfile
+        #expect(!text.contains("system"))
+        #expect(text == """
+        tap "user/tools"
+        brew "homebrew/core/jq"
+        cask "homebrew/cask/firefox"
+        # Tankard left out 3 entries whose names aren't valid Homebrew names.
+
+        """)
+        // What the preview reads back from it: the same, nothing unread.
+        let back = BrewfileStaticReader.preview(path: "/b", text: text, quarantined: false)
+        #expect(back.notRead.isEmpty && back.entries.count == 3)
+    }
+
+    @Test func rubyStringEscapesEverythingLive() {
+        #expect(RestorePoint.rubyString(##"#{system("x")}"##) == ##""\#{system(\"x\")}""##)
+        #expect(RestorePoint.rubyString(#"a\b"#) == #""a\\b""#)
+        #expect(RestorePoint.rubyString("jq") == #""jq""#)
+    }
+}

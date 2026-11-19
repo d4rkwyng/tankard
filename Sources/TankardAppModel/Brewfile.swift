@@ -112,10 +112,16 @@ public enum BrewfileParser {
             if s.hasPrefix("→") { s = String(s.dropFirst()).trimmingCharacters(in: .whitespaces) }
             guard let r = s.range(of: " needs to be ") else { continue }
             let head = String(s[..<r.lowerBound])
+            // 0.8.8 (security review #5): a name brew would take for an
+            // option ("--force") is never listed, so never passed on.
             if let (prefix, kind) = kinds.first(where: { head.hasPrefix($0.0) }) {
-                out.append(BrewfileEntry(kind: kind, name: String(head.dropFirst(prefix.count))))
+                let name = String(head.dropFirst(prefix.count))
+                guard !name.hasPrefix("-") else { continue }
+                out.append(BrewfileEntry(kind: kind, name: name))
             } else if let sp = head.firstIndex(of: " ") {
-                out.append(BrewfileEntry(kind: nil, name: String(head[head.index(after: sp)...])))
+                let name = String(head[head.index(after: sp)...])
+                guard !name.hasPrefix("-") else { continue }
+                out.append(BrewfileEntry(kind: nil, name: name))
             }
         }
         return out
@@ -227,7 +233,9 @@ public struct BrewfileRestorePlan: Equatable, Sendable {
         items = missing.map { e in
             Item(entry: e, compiles: e.kind == .formula ? compiles[e.name] : nil,
                  needsAdmin: e.kind == .cask && needsAdmin.contains(e.name),
-                 throughQueue: e.kind == .formula || e.kind == .cask,
+                 // 0.8.8 (#5): only a name brew accepts goes to `brew install`.
+                 throughQueue: (e.kind == .formula || e.kind == .cask)
+                    && BrewfileStaticReader.validName(e.name, e.kind ?? .formula),
                  tapSource: e.kind == .tap
                     ? (tapSources.map { $0[BrewfileTapScanner.sanitize(e.name)] ?? .unreadable } ?? .unreadable) : nil)
         }

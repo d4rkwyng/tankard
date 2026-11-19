@@ -273,7 +273,7 @@ struct IntelbrewDiscoverTests {
         #expect(d.results.map(\.name) == ["xz", "zstd"])
         await d.waitForDetails()
         // One batch for the visible rows, fully qualified, formula kind.
-        #expect(runner.log.calls == [["info", "--json=v2", "--formula", "homebrew/core/xz", "homebrew/core/zstd"]])
+        #expect(runner.log.calls == [["info", "--json=v2", "--formula", "--", "homebrew/core/xz", "homebrew/core/zstd"]])
         let xz = try #require(d.results.first)
         #expect(xz.detailsLoaded)
         #expect(xz.version == "5.8.4")

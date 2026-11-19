@@ -77,7 +77,7 @@ struct V086UnreadableTests {
         #expect(o.unreadableDetail?.contains("Installed from yakitrak/yakitrak.") == true)
         #expect(report.packages["tailscale"] == nil)
         #expect(report.summary.installed == 21)
-        #expect(runner.calls.contains { $0.arguments == ["info", "--json=v2", "--formula", "yakitrak/yakitrak/obsidian-cli"] })
+        #expect(runner.calls.contains { $0.arguments == ["info", "--json=v2", "--formula", "--", "yakitrak/yakitrak/obsidian-cli"] })
     }
 
     /// 0.8.6 (HK-47 review, item 5): the reason is asked for by full name.

@@ -220,7 +220,7 @@ struct TapIndexTests {
     }
 
     @Test func infoArguments() {
-        #expect(BrewClient.infoArguments(["homebrew/core/xz"], kind: .formula) == ["info", "--json=v2", "--formula", "homebrew/core/xz"])
-        #expect(BrewClient.infoArguments(["homebrew/cask/firefox"], kind: .cask) == ["info", "--json=v2", "--cask", "homebrew/cask/firefox"])
+        #expect(BrewClient.infoArguments(["homebrew/core/xz"], kind: .formula) == ["info", "--json=v2", "--formula", "--", "homebrew/core/xz"])
+        #expect(BrewClient.infoArguments(["homebrew/cask/firefox"], kind: .cask) == ["info", "--json=v2", "--cask", "--", "homebrew/cask/firefox"])
     }
 }
