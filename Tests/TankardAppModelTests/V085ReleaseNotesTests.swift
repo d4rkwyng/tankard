@@ -78,7 +78,7 @@ struct V085ReleaseNotesTests {
         }
         #expect(headings == ["Highlights", "Fixed"])
         let all = ReleaseNotesSummary.make(try releaseBody("0.8.8"), limit: 1000)
-        #expect(all.bullets.count == 24)
+        #expect(all.bullets.count == 27)
         #expect(all.items.contains(.heading("Security")))
         for line in s.plainText.split(separator: "\n") {
             #expect(line.count <= 140, "\(line)")
