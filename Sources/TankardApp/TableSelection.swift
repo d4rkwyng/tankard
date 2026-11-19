@@ -34,6 +34,11 @@ struct TableSelectionStyler: NSViewRepresentable {
     /// package lists; see PackageRow). SwiftUI sets the height itself
     /// (`defaultMinListRowHeight`), but not this.
     var fixedRowHeights = false
+    /// 0.8.8: told, once per table, whether the table measures no row
+    /// (true: fixed heights, it may have its rows) or was found with rows
+    /// and automatic heights (false: it keeps them; the list makes a new,
+    /// empty table). See RowHeightGate.
+    var onRowHeights: ((Bool) -> Void)? = nil
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -52,10 +57,10 @@ struct TableSelectionStyler: NSViewRepresentable {
         c.palette = palette
         c.paintsSelection = paintsSelection
         c.fixedRowHeights = fixedRowHeights
+        c.onRowHeights = onRowHeights
         DispatchQueue.main.async { [weak view] in
             guard let view else { return }
-            if c.table == nil { c.attach(Self.findTable(near: view)) }
-            c.apply()
+            c.attachAndApply(near: view, triesLeft: 5)
         }
     }
 
@@ -98,6 +103,11 @@ struct TableSelectionStyler: NSViewRepresentable {
         /// per table, not per coordinator: SwiftUI can give this coordinator
         /// a new NSTableView (a rebuilt list), and that table decides anew.
         private weak var rowHeightsDecidedFor: NSTableView?
+        var onRowHeights: ((Bool) -> Void)?
+        /// The table `onRowHeights` was last told about.
+        private weak var rowHeightsReportedFor: NSTableView?
+        /// A notification's `apply` is waiting for the next turn.
+        private var applyPending = false
         /// Whether the selection and header are painted here (a palette
         /// theme on a table that wants it).
         var tankard: Bool { palette != nil && paintsSelection }
@@ -105,12 +115,37 @@ struct TableSelectionStyler: NSViewRepresentable {
         /// touched on the main thread, and deinit runs once nothing else can).
         nonisolated(unsafe) private var observers: [NSObjectProtocol] = []
 
+        /// Finds the table (once) and applies. 0.8.8: a list shows no rows
+        /// until it hears from `onRowHeights`, so a table not in the window
+        /// yet is looked for again a moment later; if it never turns up the
+        /// list is told to show its rows anyway.
+        func attachAndApply(near view: NSView, triesLeft: Int) {
+            if table == nil { attach(TableSelectionStyler.findTable(near: view)) }
+            guard table != nil else {
+                if triesLeft > 0 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self, weak view] in
+                        guard let self, let view else { return }
+                        self.attachAndApply(near: view, triesLeft: triesLeft - 1)
+                    }
+                } else if fixedRowHeights {
+                    onRowHeights?(true)
+                }
+                return
+            }
+            apply()
+        }
+
         func attach(_ t: NSTableView?) {
             guard let t else { return }
             table = t
             let nc = NotificationCenter.default
+            // 0.8.8: on the next turn, never inside the notification.
+            // The table posts selectionDidChange and its clip view
+            // boundsDidChange from inside its own update (endUpdates, while
+            // SwiftUI inserts or removes rows); walking and repainting its
+            // row views from there re-enters the table mid-update.
             let refresh: @Sendable (Notification) -> Void = { [weak self] _ in
-                MainActor.assumeIsolated { self?.apply() }
+                MainActor.assumeIsolated { self?.applySoon() }
             }
             observers.append(nc.addObserver(forName: NSTableView.selectionDidChangeNotification, object: t, queue: .main, using: refresh))
             if let clip = t.enclosingScrollView?.contentView {
@@ -119,6 +154,18 @@ struct TableSelectionStyler: NSViewRepresentable {
             }
             observers.append(nc.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main, using: refresh))
             observers.append(nc.addObserver(forName: NSWindow.didResignKeyNotification, object: nil, queue: .main, using: refresh))
+        }
+
+        /// `apply` on the next turn of the main queue, once however many
+        /// notifications come before it.
+        func applySoon() {
+            guard !applyPending else { return }
+            applyPending = true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.applyPending = false
+                self.apply()
+            }
         }
 
         func apply() {
@@ -143,6 +190,17 @@ struct TableSelectionStyler: NSViewRepresentable {
             if fixedRowHeights && rowHeightsDecidedFor !== t {
                 rowHeightsDecidedFor = t
                 if t.usesAutomaticRowHeights && t.numberOfRows == 0 { t.usesAutomaticRowHeights = false }
+            }
+            // 0.8.8: a table that kept automatic heights measures its rows
+            // on every big change, and AppKit's row-height cache re-enters
+            // itself while SwiftUI inserts or removes rows ("Application
+            // performed a reentrant operation in its NSTableView delegate",
+            // NSTableRowHeightData _cacheRowSpansInRange from endUpdates).
+            // So the lists hold their rows back until their table is
+            // found empty and switched (RowHeightGate), and are told here.
+            if fixedRowHeights && rowHeightsReportedFor !== t {
+                rowHeightsReportedFor = t
+                onRowHeights?(!t.usesAutomaticRowHeights)
             }
             let highlight: NSTableView.SelectionHighlightStyle = tankard ? .none : .regular
             if t.selectionHighlightStyle != highlight { t.selectionHighlightStyle = highlight }
