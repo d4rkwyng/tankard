@@ -126,6 +126,11 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
     /// 0.8.7: brew 7 refused a package from a tap the user hasn't trusted
     /// (trust.rb, UntrustedTapError; UntrustedTapRefusal has the tap).
     case untrustedTap
+    /// 0.8.8 (gauntlet 26): another brew (Terminal) was installing the same
+    /// package at the same moment ("Bottle destination already exists":
+    /// the other run's unpacked bottle was in brew's way). Retry works
+    /// once it has finished.
+    case concurrentInstall
 
     public var title: String {
         switch self {
@@ -138,6 +143,7 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
         case .notFound: return String(localized: "The download isn't on the server")
         case .buildFailed: return String(localized: "The build from source failed")
         case .untrustedTap: return String(localized: "This tap isn't trusted yet")
+        case .concurrentInstall: return String(localized: "Another Homebrew run was installing it")
         }
     }
 
@@ -161,6 +167,8 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
             return String(localized: "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.")
         case .untrustedTap:
             return String(localized: "Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again.")
+        case .concurrentInstall:
+            return String(localized: "Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished.")
         }
     }
 }
@@ -175,6 +183,8 @@ public enum BrewFailure {
             || (text.contains("flock") && text.contains("lock")) {
             return .locked
         }
+        // 0.8.8: brew's per-package race with another run of the same install.
+        if text.contains("bottle destination already exists") { return .concurrentInstall }
         // 0.8.7: before the build check (brew's error can come from a child process).
         if text.contains("from untrusted tap") || text.contains("untrustedtaperror") { return .untrustedTap }
         if isAppManagementBlock(lines.map { $0 }) { return .appManagement }

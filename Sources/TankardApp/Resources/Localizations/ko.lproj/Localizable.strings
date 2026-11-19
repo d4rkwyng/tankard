@@ -227,6 +227,8 @@
 "An older copy of Tankard is still running. Quit it to finish updating." = "이전 Tankard가 아직 실행 중입니다. 업데이트를 마치려면 종료하세요.";
 "Another Homebrew command is running" = "다른 Homebrew 명령이 실행 중입니다";
 "Another Homebrew command kept brew's lock. Retry once it has finished." = "다른 Homebrew 명령이 brew 잠금을 쥐고 있었습니다. 끝난 뒤 다시 시도하세요.";
+"Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished." = "다른 Homebrew 실행(터미널 또는 다른 앱)이 같은 순간에 같은 패키지를 설치하고 있었을 가능성이 높습니다. 그 작업이 끝나면 다시 시도하십시오.";
+"Another Homebrew run was installing it" = "다른 Homebrew 실행이 설치하는 중이었음";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "다른 설치 프로그램이 Homebrew의 prefix에 파일을 넣었습니다. 소스 빌드에 문제가 생길 수 있습니다.";
 "Another old version is installed" = "다른 이전 버전이 설치되어 있음";
 "Another older version is also on this Mac, and Homebrew would switch to that one instead." = "이 Mac에 다른 이전 버전도 있어서, Homebrew가 대신 그 버전으로 전환하게 됩니다.";

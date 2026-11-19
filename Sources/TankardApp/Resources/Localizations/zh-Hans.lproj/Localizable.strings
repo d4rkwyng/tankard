@@ -227,6 +227,8 @@
 "An older copy of Tankard is still running. Quit it to finish updating." = "旧版 Tankard 仍在运行。请退出它以完成更新。";
 "Another Homebrew command is running" = "另一个 Homebrew 命令正在运行";
 "Another Homebrew command kept brew's lock. Retry once it has finished." = "另一个 Homebrew 命令占用了 brew 的锁。请在它完成后重试。";
+"Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished." = "另一个 Homebrew 进程（在“终端”或其他 App 中）可能正在同时安装同一个软件包。请在它完成后重试。";
+"Another Homebrew run was installing it" = "另一个 Homebrew 进程正在安装它";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "另一个安装程序在 Homebrew 的前缀中放入了文件。它们可能干扰从源码构建。";
 "Another old version is installed" = "已安装另一个旧版本";
 "Another older version is also on this Mac, and Homebrew would switch to that one instead." = "这台 Mac 上还有另一个较旧的版本，Homebrew 会改为切换到那个版本。";

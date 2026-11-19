@@ -227,6 +227,8 @@
 "An older copy of Tankard is still running. Quit it to finish updating." = "An older copy of Tankard is still running. Quit it to finish updating.";
 "Another Homebrew command is running" = "Another Homebrew command is running";
 "Another Homebrew command kept brew's lock. Retry once it has finished." = "Another Homebrew command kept brew's lock. Retry once it has finished.";
+"Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished." = "Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished.";
+"Another Homebrew run was installing it" = "Another Homebrew run was installing it";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "Another installer put files in Homebrew's prefix. They can confuse builds from source.";
 "Another old version is installed" = "Another old version is installed";
 "Another older version is also on this Mac, and Homebrew would switch to that one instead." = "Another older version is also on this Mac, and Homebrew would switch to that one instead.";
