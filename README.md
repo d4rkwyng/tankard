@@ -46,7 +46,7 @@ Homebrew yet? Tankard's welcome screen shows how to install it.
 
 ## What Tankard changes, and privacy
 
-- Packages change only when you click (or turn on automatic updates); on its own Tankard only runs `brew update`. Every button shows the brew command it runs.
+- On its own, Tankard only reads (`brew info`, `outdated`, `services list`, and `vulns` if you opt in to scans on refresh) and runs `brew update`. Packages change only when you click, or with automatic updates on. Every button shows the brew command it runs.
 - Passwords for cask installers go straight to sudo and are never stored.
 - No telemetry, no account. [What Tankard runs](docs/usage.md#what-tankard-runs) · [Privacy and network](docs/usage.md#privacy-and-network)
 
