@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Fixed
+- **Upgrade All counts what it upgraded along the way.** When upgrading one package made brew upgrade others as its dependencies or dependents (aws-c-auth bringing s2n, aws-c-http and awscli up to date), the later steps for those packages found them already installed and said another Homebrew command had done it; the summary read "7 upgraded, 7 already up to date" for a run that upgraded all 14. Those steps now count as upgraded by the run, and the log says which earlier step upgraded them.
+
 ## [0.8.7]
 
 ### Highlights

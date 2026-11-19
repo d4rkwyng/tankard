@@ -297,6 +297,14 @@ public final class UpgradeSession: Identifiable {
     /// exit 0): another Homebrew command, often in Terminal while Tankard
     /// waited for brew's lock, did the work. Not counted as Tankard's.
     public private(set) var doneElsewhere: Set<UUID> = []
+    /// 0.8.8 (VM retest): steps brew found "already installed" because an
+    /// earlier step of this same run upgraded them (as a dependency or a
+    /// dependent of what it upgraded); the value is that step's package.
+    /// Counted as upgraded by this run, not as done elsewhere.
+    public private(set) var doneByEarlierStep: [UUID: String] = [:]
+    /// What this run's finished steps upgraded or poured (brew's names),
+    /// each with the step's package name.
+    private var upgradedThisRun: [String: String] = [:]
     public var failedItems: [Item] { items.filter { if case .failed = $0.state { true } else { false } } }
     public var current: Item? { items.first { $0.state == .running } }
 
@@ -324,6 +332,14 @@ public final class UpgradeSession: Identifiable {
         if !expected.isEmpty, Set(steps.map(\.package.installedVersion)).count == steps.count { return "\(name) \(expected)" }
         let k = (steps.firstIndex { $0.id == item.id } ?? 0) + 1
         return String(localized: "\(name) (\(k) of \(steps.count))")
+    }
+
+    /// 0.8.8: the earlier step whose brew output upgraded `name`, if any.
+    nonisolated static func earlierStep(_ upgraded: [String: String], name: String) -> String? {
+        guard BrewRefusal.contains(Set(upgraded.keys), name) else { return nil }
+        if let by = upgraded[name] { return by }
+        let short = name.split(separator: "/").last.map(String.init) ?? name
+        return upgraded.first { ($0.key.split(separator: "/").last.map(String.init) ?? $0.key) == short }?.value
     }
 
     /// The version in brew's "Uninstalling <cellar>/<name>/<version>..."
@@ -594,8 +610,20 @@ public final class UpgradeSession: Identifiable {
                 note("brew didn't do it: \(items[i].package.name) is pinned (brew still exited 0). Unpin it first.")
             }
             if code == 0, !refused, action == .upgrade || action == .install, BrewRefusal.alreadyInstalled(commandLines) {
-                doneElsewhere.insert(items[i].id)
-                note("Already up to date: brew says \(items[i].package.name) is already installed, so another Homebrew command (in Terminal, perhaps) did it. Tankard changed nothing.")
+                let name = items[i].package.name
+                if let by = Self.earlierStep(upgradedThisRun, name: name) {
+                    // 0.8.8: brew upgraded it a moment ago, for an earlier step.
+                    doneByEarlierStep[items[i].id] = by
+                    note("Already upgraded by this run: brew upgraded \(name) while upgrading \(by) (as a dependency or dependent), so this step had nothing left to do.")
+                } else {
+                    doneElsewhere.insert(items[i].id)
+                    note("Already up to date: brew says \(name) is already installed, so another Homebrew command (in Terminal, perhaps) did it. Tankard changed nothing.")
+                }
+            }
+            if action == .upgrade || action == .install {
+                for n in BrewRefusal.upgradedNames(commandLines) where upgradedThisRun[n] == nil {
+                    upgradedThisRun[n] = items[i].package.name
+                }
             }
             if action == .uninstall, code == 0, !refused,
                let v = Self.removedVersion(commandLines, name: items[i].package.name) {

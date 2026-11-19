@@ -248,6 +248,67 @@ public enum BrewRefusal {
         return already
     }
 
+    /// 0.8.8: the packages one brew command upgraded or poured, by name as
+    /// brew printed it. `brew upgrade aws-c-auth` also upgrades the
+    /// dependencies and dependents it needs:
+    ///
+    ///     ==> Upgrading aws-c-auth
+    ///     ==> Upgrading aws-c-auth dependency: s2n (1.7.13 -> 1.7.14)
+    ///     ==> Pouring aws-c-http--1.3.0.arm64_sequoia.bottle.tar.gz
+    ///     ==> Upgraded 1 dependent
+    ///     awscli 2.39.6 -> 2.41.1
+    ///
+    /// so a later `brew upgrade s2n` in the same run finds it "already
+    /// installed": done by this run, not by another Homebrew command.
+    /// Headings that count ("==> Upgrading 1 dependent of upgraded
+    /// formulae:") are not names; the lines after "==> Upgraded …" and
+    /// "==> Upgrading N … :" are ("name old -> new").
+    public static func upgradedNames<S: Sequence>(_ lines: S) -> Set<String> where S.Element == String {
+        var names = Set<String>()
+        var listing = false
+        for line in lines {
+            let l = line.trimmingCharacters(in: .whitespaces)
+            if l.hasPrefix("==> ") {
+                listing = false
+                let rest = l.dropFirst(4)
+                if rest.hasPrefix("Upgrading ") {
+                    let body = rest.dropFirst("Upgrading ".count)
+                    if let r = body.range(of: " dependency: ") {
+                        // "aws-c-auth dependency: s2n (1.7.13 -> 1.7.14)"
+                        if let name = body[r.upperBound...].split(separator: " ").first { names.insert(String(name)) }
+                    } else if body.first?.isNumber == true {
+                        // "1 dependent of upgraded formulae:" — a list follows.
+                        listing = body.hasSuffix(":")
+                    } else if !body.contains(" ") {
+                        names.insert(String(body))
+                    }
+                } else if rest.hasPrefix("Upgraded ") {
+                    listing = true
+                } else if rest.hasPrefix("Pouring ") {
+                    // "s2n--1.7.14.arm64_sequoia.bottle.tar.gz"
+                    let file = rest.dropFirst("Pouring ".count)
+                    if let r = file.range(of: "--") { names.insert(String(file[..<r.lowerBound])) }
+                }
+                continue
+            }
+            if listing {
+                // "awscli 2.39.6 -> 2.41.1"
+                let parts = l.split(separator: " ")
+                if parts.count >= 4, parts[parts.count - 2] == "->" { names.insert(String(parts[0])) } else { listing = false }
+            }
+        }
+        return names
+    }
+
+    /// Whether `name` (a package's name or full name, "tap/x" or "x") is
+    /// among `upgraded` (brew prints core names short, tap names in full).
+    public static func contains(_ upgraded: Set<String>, _ name: String) -> Bool {
+        if upgraded.contains(name) { return true }
+        func short(_ s: String) -> Substring { s.split(separator: "/").last ?? Substring(s) }
+        let n = short(name)
+        return upgraded.contains { short($0) == n }
+    }
+
     public static func pinned<S: Sequence>(_ lines: S) -> Bool where S.Element == String {
         lines.contains { $0.contains(" is pinned. You must unpin it to ") }
     }
