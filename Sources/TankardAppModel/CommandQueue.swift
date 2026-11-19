@@ -143,10 +143,13 @@ public final class CommandQueue: Sendable {
     }
 
     /// Cancels one command: skipped if still waiting, its process group
-    /// stopped if running.
+    /// stopped if running. 0.8.6: also when it hasn't been enqueued yet: a
+    /// chain's first step can fail (a precondition refusal is instant)
+    /// while its later steps are still being enqueued, and that cancel
+    /// must still skip them. An id that never arrives costs one set entry.
     public func cancel(_ id: UUID) {
         let task: Task<Int32, Error>? = state.withLockUnchecked { s in
-            if s.pending.contains(id) { s.cancelled.insert(id) }
+            if s.running?.id != id { s.cancelled.insert(id) }
             return s.running?.id == id ? s.running?.task : nil
         }
         task?.cancel()
