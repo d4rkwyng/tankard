@@ -16,7 +16,7 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Added
 - **Settings ▸ General ▸ Show the number of upgrades in the menu bar** (on by default). Off, the menu bar shows only the tankard, full when upgrades are ready; the number stays in its tooltip and in the menu.
-- **Homebrew ▸ Upgrade All…** (⇧⌘U), which shows the plan first, and **Homebrew ▸ Upgrade <name>** (⌘U) for the package selected in Installed. Upgrading had no menu command or shortcut.
+- **Homebrew ▸ Upgrade All…** (⇧⌘U), which shows the plan first, and **Homebrew ▸ Upgrade** (⌘U), named after the package selected in Installed. Upgrading had no menu command or shortcut.
 
 ### Changed
 - **Sheets fit the window.** Adopt Apps (620 points tall), Taps, Health, History, Restore Points, Clean Up and Remove Unused had fixed heights, taller than a small window, so their buttons could end up below its edge (Adopt's, even at the default size). Each is now its usual height when there is room and shorter when there isn't: the list scrolls, the buttons stay.
