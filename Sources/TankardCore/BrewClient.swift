@@ -65,8 +65,10 @@ public struct BrewClient: Sendable {
     }
 
     /// Locates brew (override path, else the standard locations).
-    public static func locate(override: String? = nil) throws -> BrewClient {
-        guard let installation = BrewInstallation.locate(override: override) else {
+    /// `standardOnly` (the app, 0.8.8): an override that isn't one of
+    /// `BrewInstallation.candidates` finds nothing.
+    public static func locate(override: String? = nil, standardOnly: Bool = false) throws -> BrewClient {
+        guard let installation = BrewInstallation.locate(override: override, standardOnly: standardOnly) else {
             let searched = override.map { [$0] } ?? BrewInstallation.candidates
             throw BrewClientError.brewNotFound(searched: searched)
         }

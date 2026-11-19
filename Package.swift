@@ -50,7 +50,7 @@ let package = Package(
         // CLT have no xcstringstool to compile the catalog itself).
         .executableTarget(
             name: "TankardApp",
-            dependencies: ["TankardCore", "TankardAppModel"],
+            dependencies: ["TankardCore", "TankardAppModel", "AskpassSupport"],
             resources: [
                 .copy("Resources/intelbrew-mug.png"), .copy("Resources/tankard-mark.png"),
                 .process("Resources/Localizations"),

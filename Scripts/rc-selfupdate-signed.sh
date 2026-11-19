@@ -27,8 +27,13 @@
 #    CFBundleShortVersionString matching its tag, and the rc newer (semver).
 # 3. Runs Scripts/e2e-selfupdate.sh (this checkout's) on the pair. It needs
 #    an unlocked GUI session; an unanswered Gatekeeper prompt blocks it.
-#    Release builds honour the TANKARD_E2E* script hooks (no #if DEBUG),
-#    and every release since 0.8.3 has the self-update steps. But before
+#    Releases up to 0.8.7 honour the TANKARD_E2E* script hooks (no #if
+#    DEBUG). 0.8.8 and later (security review #1, TestHooks.swift) honour
+#    them in a Developer ID build only while an administrator's marker file
+#    exists: sudo mkdir -p "/Library/Application Support/Tankard" && sudo
+#    touch "/Library/Application Support/Tankard/allow-test-hooks" before
+#    the run, and sudo rm it after. The script refuses to start the e2e
+#    without it. Every release since 0.8.3 has the self-update steps. But before
 #    0.8.4 the relaunch passed the whole environment to the new copy, so
 #    the rc, relaunched by such an OLD, runs OLD's script again and quits:
 #    phase A can't judge that pair. Then (found by looking for 0.8.4's
@@ -205,6 +210,13 @@ fi
 # phases A and C drive OLD with them.
 grep -aqF TANKARD_E2E_SELF_TAP "$OLDAPP/Contents/MacOS/Tankard" \
     || fail "not running the e2e: $PREV has no self-update e2e hooks (before 0.8.3)"
+
+# 0.8.8: a signed 0.8.8+ build ignores the hooks unless this root-owned
+# marker exists (TestHooks.markerTrusted checks owner and modes itself).
+HOOKS_MARKER="/Library/Application Support/Tankard/allow-test-hooks"
+if [ ! -f "$HOOKS_MARKER" ] || [ "$(stat -f %u "$HOOKS_MARKER")" != 0 ]; then
+    fail "not running the e2e: signed builds ignore the TANKARD_* hooks without $HOOKS_MARKER (root-owned). Create it with sudo (see the header), and remove it after the run."
+fi
 
 # MARK: 3. the e2e run
 RESULT=0

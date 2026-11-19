@@ -169,10 +169,13 @@ public final class AppStore {
 
         /// The real thing: brew from its standard locations (or
         /// TANKARD_BREW), posix_spawn, the user's cache and log paths.
+        /// 0.8.8 (security review #1): the app runs only a standard brew. A
+        /// TANKARD_BREW naming anything else (a dev build's test switch; a
+        /// release never sees it, TestHooks) means "no brew found".
         public static func live(environment: [String: String] = ProcessInfo.processInfo.environment) -> Dependencies {
             let override = environment["TANKARD_BREW"].flatMap { $0.isEmpty ? nil : $0 }
             var d = Dependencies(
-                makeClient: { try BrewClient.locate(override: override) },
+                makeClient: { try BrewClient.locate(override: override, standardOnly: true) },
                 streamRunner: StreamingProcessRunner(),
                 cache: StatusCache(url: StatusCache.defaultURL),
                 logURL: AppPaths.upgradeLog

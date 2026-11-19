@@ -102,7 +102,9 @@ func sendPassword(_ password: String) -> Bool {
     return true
 }
 
-let env = ProcessInfo.processInfo.environment
+// 0.8.8 (security review #1): the TANKARD_ASKPASS_* debug hooks only in a
+// build without a Team ID (TestHooks).
+let env = TestHooks.filtered(ProcessInfo.processInfo.environment, allowed: TestHooks.liveAllowed)
 let ppid = getppid()
 
 // The gate (AskpassGate): before anything is drawn or read, including the
