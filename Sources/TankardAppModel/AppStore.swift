@@ -126,6 +126,11 @@ public final class AppStore {
         /// Checked for a foreign SUDO_ASKPASS (ForeignAskpass) when a sheet
         /// starts and again right before each sudo-capable step.
         public var brewEnvFiles: @Sendable (BrewClient) -> [(String, [String: String])] = { $0.sources.brewEnvFiles }
+        /// 0.8.8 (gauntlet 3, B6): reads brew's settings (shell profiles,
+        /// brew.env) again, for a Refresh. The client kept the ones read at
+        /// launch, so a proxy removed from ~/.zprofile still broke every
+        /// Refresh until a relaunch. nil (tests, demo): the client's stay.
+        public var reloadSources: (@Sendable (BrewClient) -> EnvironmentSources)?
         /// 0.8.3: whether brew's Caskroom has a tankard cask (path given).
         public var selfCaskroomExists: @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
         /// 0.8.5: the Mac Pro 6,1 Electron check (ElectronGPU.swift). Off
@@ -195,6 +200,7 @@ public final class AppStore {
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             d.askpassHelper = AdminPassword.liveHelper()
             d.brewEnvFiles = { EnvironmentSources.load(prefix: $0.installation.prefix, process: $0.sources.process).brewEnvFiles }
+            d.reloadSources = { EnvironmentSources.load(prefix: $0.installation.prefix, process: $0.sources.process) }
             d.updateFeed = .live()
             d.lockWait = .live
             d.electronGPU = .live
@@ -512,6 +518,11 @@ public final class AppStore {
     /// 0.8: the brew settings Tankard found (environment, brew.env, shell
     /// profiles), once brew was located.
     public var brewSources: EnvironmentSources? { client?.sources }
+
+    /// 0.8.8 (gauntlet 3, B6): the last refresh (or its brew update) failed,
+    /// so the list's "no upgrades" isn't known: the summary mustn't say
+    /// "Everything is up to date" (offline, every row was "can't be read").
+    public var upgradeCheckFailed: Bool { error?.fromRefresh == true }
     /// 0.8: the brew repository's last fetch (see `BrewClient.lastFetch`).
     var brewLastFetch: Date? { client?.lastFetch() }
     public var isUpgrading: Bool { upgrade.map { !$0.isFinished } ?? false }
@@ -653,7 +664,15 @@ public final class AppStore {
         }
         let client: BrewClient
         do {
-            client = try resolvedClient()
+            var c = try resolvedClient()
+            // 0.8.8 (gauntlet 3, B6): a Refresh (or a scheduled check) reads
+            // brew's settings again: a proxy or other setting the user fixed
+            // since launch takes effect now, not after a relaunch.
+            if kind == .manual || kind == .scheduled, let reload = deps.reloadSources {
+                c.sources = reload(c)
+                self.client = c
+            }
+            client = c
         } catch {
             self.error = StoreError(title: String(localized: "Homebrew not found"), detail: String(describing: error), fromRefresh: true)
             if case BrewClientError.brewNotFound(let searched) = error {

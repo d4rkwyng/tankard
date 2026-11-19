@@ -395,8 +395,19 @@ struct SummaryStrip: View {
                 Circle().fill(theme.upgrade).frame(width: 7, height: 7)
                 Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
                 if showDetail { Text(detail).foregroundStyle(.secondary) }
+            } else if store.upgradeCheckFailed {
+                // 0.8.8 (gauntlet 3, B6): not "Everything is up to date"
+                // when the check failed.
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    .accessibilityHidden(true)
+                if showDetail || disk {
+                    Text("Couldn't check for upgrades").foregroundStyle(.secondary)
+                } else {
+                    Text("Not checked").foregroundStyle(.secondary)
+                }
             } else {
                 Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    .accessibilityHidden(true)
                 // Two literals, not a ternary: a ternary of literals is a
                 // String, which Text shows unlocalized.
                 if showDetail || disk {
@@ -413,7 +424,8 @@ struct SummaryStrip: View {
     /// Everything the strip's left side says, unshortened, for its tooltip.
     private var fullText: String {
         guard let report = store.report else { return "" }
-        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map { "\($0.0) \($0.1)" } ?? String(localized: "Everything is up to date")
+        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map { "\($0.0) \($0.1)" }
+            ?? (store.upgradeCheckFailed ? String(localized: "Couldn't check for upgrades") : String(localized: "Everything is up to date"))
         if let total = store.totalDiskBytes {
             second += " " + String(localized: "· \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)")
         }

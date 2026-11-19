@@ -95,6 +95,8 @@ public final class HealthStore {
     /// The summary line under the title.
     public var summary: String {
         guard let d = doctor else { return "" }
+        // 0.8.8 (gauntlet 3, B6): brew doctor failed: say so, not "no warnings".
+        if d.warnings.isEmpty, let failure = d.failure { return String(localized: "brew doctor couldn't finish: \(failure)") }
         if d.warnings.isEmpty { return d.ready ? String(localized: "brew doctor found nothing to fix.") : String(localized: "brew doctor printed no warnings.") }
         // 0.8.5 (newbie review H5): no alarm for notes that rarely matter.
         if d.warnings.allSatisfy(\.isHarmless) {

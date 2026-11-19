@@ -253,3 +253,82 @@ struct V088BackgroundUpdateSettingTests {
         #expect(!BackgroundUpdateSetting.intervalEnabled(notify: false, saved: false, optOut: nil))
     }
 }
+
+// MARK: B6: a failed refresh, then the network (or proxy) fixed
+
+@MainActor
+struct V088RefreshRecoveryTests {
+    /// What brew doctor printed offline (gauntlet 3, a dead proxy): it
+    /// tried to tap homebrew/core and failed; no warnings, no "ready".
+    static let offlineDoctor = """
+        ==> Tapping homebrew/core
+        Cloning into '/opt/homebrew/Library/Taps/homebrew/homebrew-core'...
+        fatal: unable to access 'https://github.com/Homebrew/homebrew-core/': Failed to connect to 127.0.0.1 port 3128 after 0 ms: Couldn't connect to server
+        Error: Failure while executing; `/usr/bin/env git -c core.hooksPath=/dev/null clone` exited with 128. Here's the output:
+        """
+
+    @Test func doctorThatFailedIsNotNoWarnings() {
+        let d = DoctorReport.parse(Self.offlineDoctor)
+        #expect(d.warnings.isEmpty && !d.ready)
+        #expect(d.failure?.hasPrefix("Failure while executing; `/usr/bin/env git") == true)
+        // A normal run with warnings, or ready: no failure.
+        #expect(DoctorReport.parse("Your system is ready to brew.\n").failure == nil)
+        #expect(DoctorReport.parse("Warning: Some installed formulae are deprecated.\n  x\n").failure == nil)
+    }
+
+    final class Box: @unchecked Sendable {
+        private let lock = NSLock()
+        private var _n = 0
+        private var _fail = true
+        var n: Int { lock.withLock { _n } }
+        var fail: Bool {
+            get { lock.withLock { _fail } }
+            set { lock.withLock { _fail = newValue } }
+        }
+        func bump() { lock.withLock { _n += 1 } }
+    }
+
+    @Test func aRefreshReReadsBrewsSettingsAndAGoodOneClearsTheFailure() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-b6-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let log = CallLog()
+        let client = makeClient(FakeInfoRunner(log: log, info: demoIntelInfo()))
+        let box = Box()
+        let runner = FakeStreamRunner(log: log) { args, output in
+            guard args.first == "update" else { output(Data("ok\n".utf8)); return 0 }
+            if box.fail {
+                output(Data("fatal: unable to access 'https://github.com/Homebrew/brew/': Failed to connect to 127.0.0.1 port 3128\n".utf8))
+                return 1
+            }
+            output(Data("Already up-to-date.\n".utf8))
+            return 0
+        }
+        var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: runner,
+                                         cache: StatusCache(url: dir.appendingPathComponent("status.json")),
+                                         logURL: dir.appendingPathComponent("upgrade.log"), ttl: 3600, now: { Date() })
+        deps.reloadSources = { c in
+            box.bump()
+            var s = c.sources
+            s.process["TANKARD_TEST_RELOADED"] = "\(box.n)"
+            return s
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.refresh(manual: true)
+        #expect(store.error?.fromRefresh == true)
+        #expect(store.upgradeCheckFailed)
+        #expect(box.n == 1)
+        #expect(store.brewSources?.process["TANKARD_TEST_RELOADED"] == "1")
+        // A read without brew update (the window to the front) reads no settings.
+        await store.refresh(manual: false)
+        #expect(box.n == 1)
+        #expect(store.upgradeCheckFailed)
+        // The proxy is gone: the next Refresh succeeds and clears it all.
+        box.fail = false
+        await store.refresh(manual: true)
+        #expect(box.n == 2)
+        #expect(store.error == nil)
+        #expect(!store.upgradeCheckFailed)
+        #expect(!store.packages.isEmpty)
+        #expect(store.packages.allSatisfy { $0.unreadable == nil })
+    }
+}

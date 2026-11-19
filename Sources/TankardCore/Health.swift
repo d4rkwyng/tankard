@@ -523,6 +523,11 @@ public struct DoctorReport: Equatable, Sendable {
     public var maintainersNote: Bool
     /// `Your system is ready to brew.`
     public var ready: Bool
+    /// 0.8.8 (gauntlet 3, B6): brew doctor itself failed before it could
+    /// check (offline, it tried to tap homebrew/core and git couldn't
+    /// connect): its first "Error: " line. The sheet said "brew doctor
+    /// printed no warnings."
+    public var failure: String? = nil
 
     public static let maintainersMarker = "these warnings are just used to help the Homebrew maintainers"
 
@@ -554,9 +559,15 @@ public struct DoctorReport: Equatable, Sendable {
             let joined = warnings[i].raw.split(separator: "\n", omittingEmptySubsequences: false).prefix(2).joined(separator: " ")
             if let k = DoctorWarningKind.match(joined) { warnings[i].kind = k }
         }
+        let ready = text.contains("Your system is ready to brew")
+        let error = text.components(separatedBy: "\n").lazy
+            .map { $0.replacingOccurrences(of: "\r", with: "") }
+            .first { $0.hasPrefix("Error: ") }
+            .map { String($0.dropFirst("Error: ".count)).trimmingCharacters(in: .whitespaces) }
+        let failure = ready ? nil : error.map { $0.count > 200 ? String($0.prefix(199)) + "…" : $0 }
         return DoctorReport(warnings: warnings,
                             maintainersNote: text.contains(maintainersMarker),
-                            ready: text.contains("Your system is ready to brew"))
+                            ready: ready, failure: failure)
     }
 }
 
