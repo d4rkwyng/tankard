@@ -37,6 +37,8 @@ enum ContextMenuActions {
     }
 
     static func open(_ url: URL) {
+        // 0.8.8 (security review #4): menu links come from package data.
+        guard WebURL.isWeb(url) else { return }
         NSWorkspace.shared.open(url)
     }
 

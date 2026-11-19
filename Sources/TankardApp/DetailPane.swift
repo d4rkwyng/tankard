@@ -197,7 +197,7 @@ struct PackageDetail: View {
                 UninstallSection(package: p, dependents: dependents, enabled: canUpgrade, uninstall: uninstall,
                                  command: blockedNote ?? uninstallCommand ?? AppStore.uninstallDisplay(p))
 
-                if let page = p.releasePageURL {
+                if let page = p.releasePageURL, WebURL.isWeb(page) {
                     Link(destination: page) {
                         HStack(spacing: 3) {
                             Text("Open Release Page")

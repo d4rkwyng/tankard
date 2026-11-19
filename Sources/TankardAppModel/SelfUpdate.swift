@@ -280,6 +280,11 @@ public struct UpdateFeed: Sendable {
         var prerelease: Bool?
     }
 
+    /// A release link Tankard will open: https on github.com itself.
+    public static func releasePageOK(_ url: URL) -> Bool {
+        url.scheme?.lowercased() == "https" && url.host?.lowercased() == "github.com"
+    }
+
     /// GitHub's answer, compared with the running version.
     public static func result(data: Data, status: Int, current: String) -> SelfUpdateCheck {
         guard status == 200 else {
@@ -293,7 +298,8 @@ public struct UpdateFeed: Sendable {
             return .failed(String(localized: "GitHub's answer couldn't be read."))
         }
         guard running < latest else { return .upToDate(current) }
-        let page = release.html_url.flatMap(URL.init(string:)).flatMap { $0.host == "github.com" ? $0 : nil } ?? releasesPage
+        // 0.8.8 (security review #9): https and github.com, or the releases page.
+        let page = release.html_url.flatMap(URL.init(string:)).flatMap { releasePageOK($0) ? $0 : nil } ?? releasesPage
         return .available(TankardRelease(version: latest.description, summary: ReleaseNotesSummary.make(release.body ?? ""), url: page))
     }
 }

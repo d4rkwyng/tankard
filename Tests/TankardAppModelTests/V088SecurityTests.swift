@@ -260,3 +260,97 @@ struct V088RestoreBrewfileTests {
         #expect(RestorePoint.rubyString("jq") == #""jq""#)
     }
 }
+
+/// #4: links from package data open only as http(s) web pages.
+struct V088WebURLTests {
+    @Test func onlyHTTPAndHTTPSWithAHost() {
+        #expect(WebURL.from("https://jqlang.org")?.host == "jqlang.org")
+        #expect(WebURL.from("http://example.com/x") != nil)
+        #expect(WebURL.from("HTTPS://Example.com") != nil)
+        for bad in ["file:///opt/homebrew/Library/Taps/x/evil.command", "smb://host/share", "ssh://host",
+                    "javascript:alert(1)", "x-apple.systempreferences:com.apple.x", "vnc://h", "ftp://h/x",
+                    "https:///nohost", "https:nohost", "/etc/passwd", "", "tel:123"] {
+            #expect(WebURL.from(bad) == nil, "\(bad)")
+        }
+        #expect(WebURL.from(nil) == nil)
+        // The context menus use the same rule.
+        #expect(ContextMenus.webURL("file:///x") == nil)
+        #expect(ContextMenus.webURL("https://x.org") != nil)
+    }
+}
+
+/// #8: banner text is never Markdown; only `code` spans are styled.
+struct V088NoticeTextTests {
+    @Test func linksStayTextAndCodeSpansAreStyled() {
+        let a = NoticeText.attributed("Couldn't refresh: [click](https://evil.example) run `brew update` <https://x.org>")
+        #expect(String(a.characters) == "Couldn't refresh: [click](https://evil.example) run brew update <https://x.org>")
+        #expect(a.runs.allSatisfy { $0.link == nil })
+        let code = a.runs.filter { $0.inlinePresentationIntent == .code }.map { String(a[$0.range].characters) }
+        #expect(code == ["brew update"])
+    }
+
+    @Test func anUnpairedBacktickIsShownAsTyped() {
+        let a = NoticeText.attributed("a `b` c `d")
+        #expect(String(a.characters) == "a b c `d")
+    }
+}
+
+/// #9: the self-update release link must be https on github.com.
+struct V088SelfUpdateLinkTests {
+    static func answer(_ url: String) -> Data {
+        Data(#"{"tag_name":"v99.0.0","body":"","html_url":"\#(url)","draft":false,"prerelease":false}"#.utf8)
+    }
+
+    func page(_ url: String) -> URL? {
+        if case .available(let r) = UpdateFeed.result(data: Self.answer(url), status: 200, current: "0.8.8") { return r.url }
+        return nil
+    }
+
+    @Test func httpOrOtherHostsFallBackToTheReleasesPage() {
+        #expect(page("https://github.com/d4rkwyng/tankard/releases/tag/v99.0.0")?.absoluteString
+                == "https://github.com/d4rkwyng/tankard/releases/tag/v99.0.0")
+        #expect(page("http://github.com/d4rkwyng/tankard/releases/tag/v99.0.0") == UpdateFeed.releasesPage)
+        #expect(page("https://evil.example/releases") == UpdateFeed.releasesPage)
+        #expect(page("file://github.com/x") == UpdateFeed.releasesPage)
+        #expect(UpdateFeed.releasePageOK(URL(string: "https://GitHub.com/x")!))
+    }
+}
+
+/// #10: Terminal scripts are new, exclusively created 0700 files.
+struct V088TerminalScriptTests {
+    @Test func eachScriptIsAFreshPrivateFile() throws {
+        let base = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-ts-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: base) }
+        let a = try TerminalScript.write("#!/bin/bash\necho a\n", name: "uninstall", in: base)
+        let b = try TerminalScript.write("#!/bin/bash\necho b\n", name: "uninstall", in: base)
+        #expect(a != b)
+        #expect(a.lastPathComponent == "tankard-uninstall.command")
+        #expect(try String(contentsOf: a, encoding: .utf8) == "#!/bin/bash\necho a\n")
+        for url in [a, b] {
+            let fileMode = try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions] as? Int
+            let dirMode = try FileManager.default.attributesOfItem(atPath: url.deletingLastPathComponent().path)[.posixPermissions] as? Int
+            #expect(fileMode == 0o700)
+            #expect(dirMode == 0o700)
+            #expect(url.deletingLastPathComponent().deletingLastPathComponent().standardizedFileURL.path
+                    == base.standardizedFileURL.path)
+        }
+        // The installer scripts use the same writer.
+        let i = try HomebrewInstaller.homebrew.writeScript(in: base)
+        #expect(i.deletingLastPathComponent() != a.deletingLastPathComponent())
+    }
+
+    @Test func aPlantedFileAtTheOldFixedNameIsNeverFollowed() throws {
+        let base = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-ts-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: base) }
+        // Before 0.8.8 the script was always $TMPDIR/tankard-<name>.command.
+        let target = base.appendingPathComponent("target")
+        try Data("untouched".utf8).write(to: target)
+        let planted = base.appendingPathComponent("tankard-uninstall.command")
+        try FileManager.default.createSymbolicLink(at: planted, withDestinationURL: target)
+        let url = try TerminalScript.write("#!/bin/bash\n", name: "uninstall", in: base)
+        #expect(url.standardizedFileURL.path != planted.standardizedFileURL.path)
+        #expect(try String(contentsOf: target, encoding: .utf8) == "untouched")
+    }
+}

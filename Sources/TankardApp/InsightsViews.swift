@@ -327,7 +327,7 @@ struct VulnerabilitySection: View {
                 ForEach(list) { v in
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
-                            if let url = v.url {
+                            if let url = v.url, WebURL.isWeb(url) {
                                 Link(v.id, destination: url)
                                     .font(.system(size: 11, weight: .semibold, design: .monospaced))
                                     .help(url.absoluteString)

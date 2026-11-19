@@ -220,11 +220,7 @@ public enum ContextMenus {
     }
 
     /// http(s) URLs only: a homepage string is data from a tap.
-    static func webURL(_ s: String?) -> URL? {
-        guard let s, let url = URL(string: s), let scheme = url.scheme?.lowercased(),
-              scheme == "https" || scheme == "http", url.host != nil else { return nil }
-        return url
-    }
+    static func webURL(_ s: String?) -> URL? { WebURL.from(s) }
 
     /// Non-empty groups with a separator between each.
     static func joined(_ groups: [[MenuItemModel]]) -> [MenuEntry] {
@@ -301,5 +297,22 @@ public enum RelatedSearch: Equatable, Sendable {
         case .dependents: return Dependents.of(t, among: packages)
         case .tap: return nil
         }
+    }
+}
+
+/// 0.8.8 (security review #4): the only links Tankard opens from package
+/// data (homepages, release pages, advisories, the self-update page) are
+/// http and https with a host. `file:`, `smb:`, `ssh:` and app URL schemes
+/// from a tap's metadata are never opened.
+public enum WebURL {
+    public static func from(_ s: String?) -> URL? {
+        guard let s, let url = URL(string: s), isWeb(url) else { return nil }
+        return url
+    }
+
+    public static func isWeb(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http",
+              let host = url.host, !host.isEmpty else { return false }
+        return true
     }
 }

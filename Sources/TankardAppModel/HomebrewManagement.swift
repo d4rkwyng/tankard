@@ -328,13 +328,42 @@ public struct RevertPlan: Equatable, Sendable {
 
 /// Writes a `.command` file Terminal can open (the installers and the
 /// Homebrew menu use these: the scripts ask questions and wait for Return).
+///
+/// 0.8.8 (security review #10): each script goes in a new folder of its own
+/// (`mkdtemp`, mode 0700) in the per-user temporary directory, created with
+/// O_CREAT|O_EXCL|O_NOFOLLOW at mode 0700. Before, a fixed name such as
+/// $TMPDIR/tankard-uninstall.command let another process of the user's
+/// predict it and swap it between Tankard's write and Terminal's read. The
+/// file keeps its readable name (Terminal shows it as the window title).
 public enum TerminalScript {
+    public enum WriteError: Error, Equatable {
+        case directory(Int32)
+        case file(Int32)
+    }
+
     public static func write(_ contents: String, name: String,
                              in directory: URL = FileManager.default.temporaryDirectory) throws -> URL {
-        let url = directory.appendingPathComponent("tankard-\(name).command")
-        try Data(contents.utf8).write(to: url, options: .atomic)
-        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: url.path)
-        return url
+        try writeUnique(contents, fileName: "tankard-\(name).command", in: directory)
+    }
+
+    static func writeUnique(_ contents: String, fileName: String, in directory: URL) throws -> URL {
+        var template = Array(directory.appendingPathComponent("tankard-XXXXXXXX").path.utf8CString)
+        guard let dir = template.withUnsafeMutableBufferPointer({ mkdtemp($0.baseAddress!) }).map({ String(cString: $0) }) else {
+            throw WriteError.directory(errno)
+        }
+        let path = (dir as NSString).appendingPathComponent(fileName)
+        let fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o700)
+        guard fd >= 0 else { throw WriteError.file(errno) }
+        defer { close(fd) }
+        // open(2)'s mode is masked by the umask: set it exactly.
+        guard fchmod(fd, 0o700) == 0 else { throw WriteError.file(errno) }
+        let bytes = Array(contents.utf8)
+        var written = 0
+        while written < bytes.count {
+            let n = bytes.withUnsafeBytes { Darwin.write(fd, $0.baseAddress! + written, $0.count - written) }
+            if n > 0 { written += n } else if n < 0 && errno == EINTR { continue } else { throw WriteError.file(errno) }
+        }
+        return URL(fileURLWithPath: path)
     }
 }
 
