@@ -161,16 +161,22 @@ struct SpawnDescriptorTests {
 
     @Test func concurrentReadsFinishIndependently() async throws {
         // A slow and a fast command at once: the fast one returns first.
+        // Compared with when the slow one ends, not with a wall-clock bound,
+        // so a loaded CI runner can't fail it: had the reads been serialised,
+        // every fast run would end after the slow one.
         let runner = ProcessRunner()
         let t0 = ContinuousClock.now
-        async let slow = runner.run("/bin/sleep", ["3"], environment: [:])
+        let slow = Task { () -> Duration in
+            _ = try await runner.run("/bin/sleep", ["5"], environment: [:])
+            return ContinuousClock.now - t0
+        }
         var fast: [Duration] = []
         for _ in 0..<5 {
             _ = try await runner.run("/bin/echo", ["hi"], environment: [:])
             fast.append(ContinuousClock.now - t0)
         }
-        _ = try await slow
-        #expect(fast.allSatisfy { $0 < .milliseconds(2500) })
+        let slowEnd = try await slow.value
+        #expect(fast.allSatisfy { $0 < slowEnd })
     }
 }
 
