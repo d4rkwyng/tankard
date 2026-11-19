@@ -44,6 +44,7 @@
 "%@ is pinned" = "%@ 已固定";
 "%@ is running" = "%@ 正在运行";
 "%@ is there but doesn't run. It said:" = "%@ 存在但无法运行。它的输出：";
+"%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ 尚未被信任。请在终端中运行 `%@`，或点按“信任 Tap…”，然后重试。";
 "%@ needs your administrator password" = "%@ 需要你的管理员密码";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
@@ -513,6 +514,7 @@
 "Homebrew isn't ready yet." = "Homebrew 尚未就绪。";
 "Homebrew isn't working" = "Homebrew 无法正常工作";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew 只保留当前的 cask 定义，因此无法安装 App 的旧版本。";
+"Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again." = "只有在你信任某个第三方 Tap 之后（brew trust），Homebrew 才会加载其中的公式和 Cask。如果你信任其作者，请信任该 Tap，然后重试。";
 "Homebrew no longer installs or upgrades it." = "Homebrew 不再安装或升级它。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew 已不再维护它们，或即将停止维护。“已弃用”筛选会列出它们，并在 brew 给出替代项时一并显示。";
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew 不再为 Intel Mac 提供 bottle（预构建的软件包），因此标准 Homebrew 在此会从源码编译大多数软件包，速度很慢。Intelbrew 是带有 Intel bottle 的 Homebrew。";
@@ -1143,6 +1145,7 @@
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";
+"This tap isn't trusted yet" = "此 Tap 尚未被信任";
 "To install %@." = "用于安装 %@。";
 "To reinstall %@." = "用于重新安装 %@。";
 "To uninstall %@." = "用于卸载 %@。";
@@ -1151,6 +1154,7 @@
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "像 Homebrew 一样，在 Homebrew 安装的 App 中尝试一次无害写入，并立即移除";
 "Trust" = "信任";
 "Trust %@?" = "信任 %@？";
+"Trust Tap…" = "信任 Tap…";
 "Trust?" = "信任？";
 "Trusted" = "已信任";
 "Trust…" = "信任…";

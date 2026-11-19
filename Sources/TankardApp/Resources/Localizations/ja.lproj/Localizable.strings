@@ -44,6 +44,7 @@
 "%@ is pinned" = "%@ はピン留めされています";
 "%@ is running" = "%@ は実行中です";
 "%@ is there but doesn't run. It said:" = "%@ はありますが、実行できません。出力:";
+"%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ はまだ信頼されていません。ターミナルで `%@` を実行するか、「Tapを信頼…」をクリックしてから、もう一度お試しください。";
 "%@ needs your administrator password" = "%@には管理者パスワードが必要です";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
@@ -513,6 +514,7 @@
 "Homebrew isn't ready yet." = "Homebrewの準備ができていません。";
 "Homebrew isn't working" = "Homebrewが動作していません";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrewは現在のcask定義だけを保持するため、アプリの古いバージョンはインストールできません。";
+"Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again." = "Homebrew は、サードパーティの Tap を信頼するまで (brew trust)、その Tap のフォーミュラと Cask を読み込みません。作者を信頼できる場合は Tap を信頼してから、もう一度お試しください。";
 "Homebrew no longer installs or upgrades it." = "Homebrewはもうインストールもアップグレードもしません。";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrewはもうメンテナンスしていないか、まもなく終了します。「非推奨」フィルタで一覧でき、brewが代替を示す場合はそれも表示されます。";
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "HomebrewはIntel Mac用のbottle(ビルド済みパッケージ)をもう提供していないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされ、時間がかかります。IntelbrewはIntel用bottleを備えたHomebrewです。";
@@ -1143,6 +1145,7 @@
 "This macOS version isn't supported by Homebrew" = "このバージョンのmacOSはHomebrewでサポートされていません";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "この復元ポイントのtap、formula、caskをBrewfileとして（バージョンなし: Brewfileにはバージョンがありません）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "この手順には管理者権限が必要ですが、Tankardは要求できません。ターミナルでこれを実行してください:";
+"This tap isn't trusted yet" = "この Tap はまだ信頼されていません";
 "To install %@." = "%@をインストールするため。";
 "To reinstall %@." = "%@を再インストールするため。";
 "To uninstall %@." = "%@をアンインストールするため。";
@@ -1151,6 +1154,7 @@
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Homebrewと同じように、Homebrewでインストールしたアプリに無害な書き込みを試し、すぐに削除します";
 "Trust" = "信頼";
 "Trust %@?" = "%@を信頼しますか？";
+"Trust Tap…" = "Tapを信頼…";
 "Trust?" = "信頼しますか？";
 "Trusted" = "信頼済み";
 "Trust…" = "信頼…";

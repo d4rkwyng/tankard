@@ -44,6 +44,7 @@
 "%@ is pinned" = "%@ está fixado";
 "%@ is running" = "%@ está em execução";
 "%@ is there but doesn't run. It said:" = "%@ existe, mas não executa. Ele disse:";
+"%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ ainda não é confiável. Execute `%@` no Terminal ou clique em Confiar no tap… e tente novamente.";
 "%@ needs your administrator password" = "%@ precisa da sua senha de administrador";
 "%@ of %@ %@ (%lld%%)" = "%@ de %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@ de %@ com bottle";
@@ -513,6 +514,7 @@
 "Homebrew isn't ready yet." = "O Homebrew ainda não está pronto.";
 "Homebrew isn't working" = "O Homebrew não está funcionando";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "O Homebrew mantém apenas a definição atual do cask, então não pode instalar uma versão mais antiga de um app.";
+"Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again." = "O Homebrew só carrega fórmulas e casks de um tap de terceiros depois que você confia no tap (brew trust). Confie nele se confiar no autor e tente novamente.";
 "Homebrew no longer installs or upgrades it." = "O Homebrew não o instala nem atualiza mais.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "O Homebrew não os mantém mais, ou logo deixará de manter. O filtro Obsoleto os lista, com a substituição quando o brew indica uma.";
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "O Homebrew não oferece mais bottles (pacotes pré-compilados) para Macs Intel, então o Homebrew padrão compila a maioria dos pacotes do código-fonte aqui, o que é lento. O Intelbrew é o Homebrew com bottles Intel.";
@@ -1143,6 +1145,7 @@
 "This macOS version isn't supported by Homebrew" = "Esta versão do macOS não é compatível com o Homebrew";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Os taps, formulae e casks deste ponto de restauração como um Brewfile (sem versões: Brewfiles não as têm)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Esta etapa exige direitos de administrador, que o Tankard não pode solicitar. Execute isto no Terminal:";
+"This tap isn't trusted yet" = "Este tap ainda não é confiável";
 "To install %@." = "Para instalar %@.";
 "To reinstall %@." = "Para reinstalar %@.";
 "To uninstall %@." = "Para desinstalar %@.";
@@ -1151,6 +1154,7 @@
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Tenta uma gravação inofensiva em um app instalado pelo Homebrew, como o Homebrew faz, e a remove na hora";
 "Trust" = "Confiar";
 "Trust %@?" = "Confiar em %@?";
+"Trust Tap…" = "Confiar no tap…";
 "Trust?" = "Confiar?";
 "Trusted" = "Confiável";
 "Trust…" = "Confiar…";

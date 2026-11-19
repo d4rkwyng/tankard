@@ -224,6 +224,23 @@ public extension AppStore {
         }
     }
 
+    /// 0.8.7: Trust Tap… where brew refused a package from an untrusted
+    /// tap (the detail pane's "can't be read" box, a failed run's sheet),
+    /// after its confirmation: `brew trust --tap`, then the status again
+    /// (the package becomes readable) and the Taps list if it was read.
+    func trustTap(named tap: String) {
+        let args = TapCommands.trust(tap, true)
+        Task {
+            guard let r = await runQuick(args) else { return }
+            if r.failed {
+                error = Self.quickError(verb: String(localized: "Trust"), name: tap, args: args, result: r)
+                return
+            }
+            if !taps.taps.isEmpty { await taps.load() }
+            await refresh(manual: false)
+        }
+    }
+
     /// The confirmed Trust / Untrust: one queued command, then a re-read.
     func confirmTrustTap() {
         guard let tap = taps.takeTrust() else { return }

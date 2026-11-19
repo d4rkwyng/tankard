@@ -192,8 +192,10 @@ public extension AppStore {
         let tail = result.lines.suffix(6).joined(separator: "\n")
         // 0.6: brew's lock, no network, a full disk, permissions.
         if let kind = BrewFailure.classify(result.lines) {
+            // 0.8.7: an untrusted tap: the command that fixes it, not the one that failed.
+            let fix = kind == .untrustedTap ? UntrustedTapRefusal.parse(lines: result.lines)?.trustCommand : nil
             return StoreError(title: String(localized: "\(verb) \(name): \(kind.title)"), detail: kind.explanation + "\n\n" + tail,
-                              terminalCommand: display)
+                              terminalCommand: fix ?? display)
         }
         return StoreError(title: String(localized: "\(verb) \(name) failed (exit \(result.exitCode))"), detail: tail, terminalCommand: display)
     }

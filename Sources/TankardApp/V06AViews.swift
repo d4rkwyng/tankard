@@ -80,10 +80,22 @@ struct UnreadableDetail: View {
                     Text(detail).font(.system(size: 12)).foregroundStyle(w.text).fixedSize(horizontal: false, vertical: true)
                         .textSelection(.enabled)
                 }
-                Text("It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.")
-                    .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                if package.tap != nil {
-                    Button("Taps…") { store.openTaps() }.controlSize(.small)
+                if let r = package.untrustedTapRefusal {
+                    // 0.8.7: brew 7's trust gate: say so, the exact command, and Trust Tap….
+                    Text(BrewFailureKind.untrustedTap.title).font(.system(size: 12, weight: .semibold))
+                    Text(BrewFailureKind.untrustedTap.explanation)
+                        .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    CommandBox(command: r.trustCommand)
+                    HStack(spacing: 8) {
+                        TrustTapButton(store: store, refusal: r)
+                        Button("Taps…") { store.openTaps() }.controlSize(.small)
+                    }
+                } else {
+                    Text("It is still installed (brew list shows it). Trusting its tap, or installing it again under its new name, lets Homebrew read it.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    if package.tap != nil {
+                        Button("Taps…") { store.openTaps() }.controlSize(.small)
+                    }
                 }
             }
             .padding(.horizontal, 10)

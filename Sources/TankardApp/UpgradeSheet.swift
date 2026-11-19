@@ -120,6 +120,11 @@ struct UpgradeSheet: View {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: "arrow.uturn.forward.circle").foregroundStyle(.orange)
                     Text(next).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
+                    // 0.8.7: brew refused a package from an untrusted tap.
+                    if session.failureKinds.last == .untrustedTap, let r = session.untrustedTap {
+                        Spacer(minLength: 4)
+                        TrustTapButton(store: store, refusal: r)
+                    }
                 }
                 .padding(.top, 10)
             }

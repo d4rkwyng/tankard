@@ -112,6 +112,9 @@ public final class UpgradeSession: Identifiable {
     public private(set) var failureKinds: [BrewFailureKind] = []
     /// 0.8.6 (L1): each failed step's recognised failure.
     public private(set) var failureKindByItem: [UUID: BrewFailureKind] = [:]
+    /// 0.8.7: the last untrusted-tap refusal in a failed step's output
+    /// (the tap the sheet offers to trust).
+    public private(set) var untrustedTap: UntrustedTapRefusal?
     /// 0.3: this run is the one retry after the App Management sheet.
     public var isRetry = false
     public private(set) var stopRequested = false
@@ -629,6 +632,10 @@ public final class UpgradeSession: Identifiable {
                     failureKinds.append(kind)
                     failureKindByItem[items[i].id] = kind
                     note("\(kind.title). \(kind.explanation)")
+                    if kind == .untrustedTap, let r = UntrustedTapRefusal.parse(lines: commandLines) {
+                        untrustedTap = r
+                        note(r.trustCommand)
+                    }
                 }
                 note("brew exited with status \(code)")
                 if action == .upgrade { failedStepOutput[items[i].id] = commandLines }

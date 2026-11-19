@@ -44,6 +44,7 @@
 "%@ is pinned" = "%@ is pinned";
 "%@ is running" = "%@ is running";
 "%@ is there but doesn't run. It said:" = "%@ is there but doesn't run. It said:";
+"%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again.";
 "%@ needs your administrator password" = "%@ needs your administrator password";
 "%@ of %@ %@ (%lld%%)" = "%@ of %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@ of %@ bottled";
@@ -513,6 +514,7 @@
 "Homebrew isn't ready yet." = "Homebrew isn't ready yet.";
 "Homebrew isn't working" = "Homebrew isn't working";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew keeps only the current cask definition, so it can't install an older version of an app.";
+"Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again." = "Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again.";
 "Homebrew no longer installs or upgrades it." = "Homebrew no longer installs or upgrades it.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one.";
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles.";
@@ -1143,6 +1145,7 @@
 "This macOS version isn't supported by Homebrew" = "This macOS version isn't supported by Homebrew";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:";
+"This tap isn't trusted yet" = "This tap isn't trusted yet";
 "To install %@." = "To install %@.";
 "To reinstall %@." = "To reinstall %@.";
 "To uninstall %@." = "To uninstall %@.";
@@ -1151,6 +1154,7 @@
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once";
 "Trust" = "Trust";
 "Trust %@?" = "Trust %@?";
+"Trust Tap…" = "Trust Tap…";
 "Trust?" = "Trust?";
 "Trusted" = "Trusted";
 "Trust…" = "Trust…";

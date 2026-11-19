@@ -115,6 +115,9 @@ public extension Package {
     /// from `brew info --installed`), so brew won't upgrade it either.
     var isUnreadable: Bool { unreadable != nil }
 
+    /// 0.8.7: brew can't read it because its tap isn't trusted.
+    var untrustedTapRefusal: UntrustedTapRefusal? { unreadable.flatMap(UntrustedTapRefusal.parse) }
+
     /// "brew can't read it: Refusing to load …" for the detail pane, Health
     /// and the tooltip.
     var unreadableDetail: String? {

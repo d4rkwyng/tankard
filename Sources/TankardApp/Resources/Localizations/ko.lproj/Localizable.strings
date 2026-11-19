@@ -44,6 +44,7 @@
 "%@ is pinned" = "%@이(가) 고정됨";
 "%@ is running" = "%@ 실행 중";
 "%@ is there but doesn't run. It said:" = "%@이(가) 있지만 실행되지 않습니다. 출력:";
+"%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@은(는) 아직 신뢰되지 않았습니다. 터미널에서 `%@`을(를) 실행하거나 'Tap 신뢰…'를 클릭한 다음 다시 시도하십시오.";
 "%@ needs your administrator password" = "%@에는 관리자 암호가 필요합니다";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
@@ -513,6 +514,7 @@
 "Homebrew isn't ready yet." = "Homebrew가 아직 준비되지 않았습니다.";
 "Homebrew isn't working" = "Homebrew가 작동하지 않음";
 "Homebrew keeps only the current cask definition, so it can't install an older version of an app." = "Homebrew는 현재 cask 정의만 유지하므로 앱의 이전 버전을 설치할 수 없습니다.";
+"Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again." = "Homebrew는 서드파티 Tap을 신뢰한 후에만(brew trust) 그 Tap의 포뮬러와 Cask를 불러옵니다. 작성자를 신뢰한다면 Tap을 신뢰한 다음 다시 시도하십시오.";
 "Homebrew no longer installs or upgrades it." = "Homebrew가 더 이상 설치하거나 업그레이드하지 않습니다.";
 "Homebrew no longer maintains them, or soon won't. The Deprecated filter lists them, with the replacement when brew names one." = "Homebrew가 더 이상 유지 관리하지 않거나 곧 중단합니다. 지원 중단됨 필터에 나열되며, brew가 대체 항목을 알려주면 함께 표시됩니다.";
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew는 더 이상 Intel Mac용 bottle(미리 빌드된 패키지)을 제공하지 않으므로, 표준 Homebrew는 여기서 대부분의 패키지를 소스에서 컴파일하며 오래 걸립니다. Intelbrew는 Intel bottle을 제공하는 Homebrew입니다.";
@@ -1143,6 +1145,7 @@
 "This macOS version isn't supported by Homebrew" = "이 macOS 버전은 Homebrew에서 지원하지 않습니다";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";
+"This tap isn't trusted yet" = "이 Tap은 아직 신뢰되지 않았습니다";
 "To install %@." = "%@ 설치를 위해.";
 "To reinstall %@." = "%@ 재설치를 위해.";
 "To uninstall %@." = "%@ 제거를 위해.";
@@ -1151,6 +1154,7 @@
 "Tries a harmless write in an app Homebrew installed, as Homebrew does, and removes it at once" = "Homebrew처럼 Homebrew가 설치한 앱에 무해한 쓰기를 시도하고 바로 제거합니다";
 "Trust" = "신뢰";
 "Trust %@?" = "%@ 신뢰할까요?";
+"Trust Tap…" = "Tap 신뢰…";
 "Trust?" = "신뢰할까요?";
 "Trusted" = "신뢰함";
 "Trust…" = "신뢰…";

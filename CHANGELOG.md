@@ -6,11 +6,15 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [Unreleased]
 
+### Added
+- **Trust Tap…** next to "This tap isn't trusted yet" (in the details of a package brew can't read, and under a run that failed for it): after the same confirmation as in Taps, it runs `brew trust --tap <tap>` and reads the list again.
+
 ### Fixed
 - **Typing a letter in a package list selects the package whose name starts with it.** In Installed (every filter and search) and in Discover, typing jumped to some other row: the Mac matched the letters against other words in the row, such as a note ("No bottle: will compile from source" for "b"), not the name. Tankard now matches the names shown, ignoring case, and letters typed in quick succession narrow the search ("lu" selects lua).
 - **A launch inside the hour shows the saved list again on macOS 26, without asking brew.** On macOS 26 the window came to the front before Tankard had loaded its saved list, so it saw no list, took it as out of date and read brew again at every launch (with "Scan for vulnerabilities on refresh" on, it scanned too). Coming to the front now waits until the launch has decided between the saved list and a fresh read.
 - **Show in Installed shows the package in the list.** After a search in Installed (say "aws-c-auth"), installing something in Discover and clicking **Show in Installed** showed it in the details, but the list kept the old search and the package wasn't in it. Show in Installed now clears a search, and then a filter, that would hide the package, selects it and scrolls to it. The dependency links in the details do the same, and now scroll too.
 - **The focus ring around "Details" sits on it.** In the Uninstall confirmation (and the other sheets with the commands under Details), the keyboard focus ring was drawn 20 points to the left, across the sheet's edge. Details is now drawn by Tankard, and its ring follows it.
+- **"This tap isn't trusted yet", with the command that fixes it.** Homebrew 7 won't read a formula or cask from a third-party tap you haven't trusted ("Refusing to load … from untrusted tap …"). A run that failed for that said only "The log below shows what brew printed", and a banner (Pin, say) offered the command that had just failed. They now say **This tap isn't trusted yet** and give `brew trust --tap <tap>`. The details of a package that "can't be read" for that reason say so too, with the command. The list itself was never affected: brew still lists everything else.
 
 ## [0.8.6]
 

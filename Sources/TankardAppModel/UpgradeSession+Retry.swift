@@ -13,6 +13,7 @@ extension UpgradeSession {
     /// Nil for App Management (its own explainer opens) and when not known.
     public var nextStep: String? {
         guard isFinished, !failedItems.isEmpty, let kind = failureKinds.last else { return nil }
+        if kind == .untrustedTap, let r = untrustedTap { return Self.trustStep(r) }
         return Self.nextStep(kind)
     }
 
@@ -26,7 +27,13 @@ extension UpgradeSession {
         case .notFound: return String(localized: "Check Now (it runs brew update) to get the current download address, then upgrade again.")
         case .buildFailed: return String(localized: "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.")
         case .appManagement: return nil
+        case .untrustedTap: return BrewFailureKind.untrustedTap.explanation
         }
+    }
+
+    /// 0.8.7: "Run `brew trust --tap user/tap` (or Trust Tap…), then try again."
+    nonisolated static func trustStep(_ r: UntrustedTapRefusal) -> String {
+        String(localized: "\(r.tap) isn't trusted yet. Run `\(r.trustCommand)` in Terminal, or click Trust Tap…, then try again.")
     }
 
     /// Whether this action can be retried from the sheet.

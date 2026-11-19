@@ -123,6 +123,9 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
     case notFound
     /// 0.8.6 (walkthrough L1): building from source failed.
     case buildFailed
+    /// 0.8.7: brew 7 refused a package from a tap the user hasn't trusted
+    /// (trust.rb, UntrustedTapError; UntrustedTapRefusal has the tap).
+    case untrustedTap
 
     public var title: String {
         switch self {
@@ -134,6 +137,7 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
         case .checksum: return String(localized: "A download didn't match its checksum")
         case .notFound: return String(localized: "The download isn't on the server")
         case .buildFailed: return String(localized: "The build from source failed")
+        case .untrustedTap: return String(localized: "This tap isn't trusted yet")
         }
     }
 
@@ -155,6 +159,8 @@ public enum BrewFailureKind: String, Sendable, Equatable, CaseIterable {
             return String(localized: "The server answered 404 (not found) for the package's download. Trying the same address again fails the same way; brew update may bring a new one.")
         case .buildFailed:
             return String(localized: "brew couldn't build it on this Mac. The log below shows where it stopped; a newer version after brew update may build.")
+        case .untrustedTap:
+            return String(localized: "Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again.")
         }
     }
 }
@@ -169,6 +175,8 @@ public enum BrewFailure {
             || (text.contains("flock") && text.contains("lock")) {
             return .locked
         }
+        // 0.8.7: before the build check (brew's error can come from a child process).
+        if text.contains("from untrusted tap") || text.contains("untrustedtaperror") { return .untrustedTap }
         if isAppManagementBlock(lines.map { $0 }) { return .appManagement }
         if text.contains("sha-256 mismatch") || text.contains("sha256 mismatch") || text.contains("checksum mismatch") {
             return .checksum

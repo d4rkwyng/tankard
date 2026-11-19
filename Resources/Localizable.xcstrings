@@ -2341,6 +2341,58 @@
         }
       }
     },
+    "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ist noch nicht vertrauenswürdig. Führe `%@` im Terminal aus oder klicke auf „Tap vertrauen…“ und versuche es dann erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’est pas encore approuvé. Exécutez `%@` dans Terminal, ou cliquez sur Approuver le tap…, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ aún no es de confianza. Ejecuta `%@` en Terminal o haz clic en Confiar en el tap… y vuelve a intentarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ はまだ信頼されていません。ターミナルで `%@` を実行するか、「Tapを信頼…」をクリックしてから、もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 尚未被信任。请在终端中运行 `%@`，或点按“信任 Tap…”，然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ainda não é confiável. Execute `%@` no Terminal ou clique em Confiar no tap… e tente novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non è ancora considerato attendibile. Esegui `%@` nel Terminale, oppure fai clic su Considera attendibile il tap…, poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@은(는) 아직 신뢰되지 않았습니다. 터미널에서 `%@`을(를) 실행하거나 'Tap 신뢰…'를 클릭한 다음 다시 시도하십시오."
+          }
+        }
+      }
+    },
     "%@ needs your administrator password": {
       "localizations": {
         "de": {
@@ -27013,6 +27065,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew는 현재 cask 정의만 유지하므로 앱의 이전 버전을 설치할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Homebrew loads formulae and casks from a third-party tap only once you trust the tap (brew trust). Trust it if you trust its author, then try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew lädt Formeln und Casks aus einem Tap von Dritten erst, wenn du dem Tap vertraust (brew trust). Vertraue ihm, wenn du seinem Autor vertraust, und versuche es dann erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ne charge les formules et casks d’un tap tiers qu’une fois ce tap approuvé (brew trust). Approuvez-le si vous faites confiance à son auteur, puis réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew solo carga fórmulas y casks de un tap de terceros cuando confías en el tap (brew trust). Confía en él si confías en su autor y vuelve a intentarlo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew は、サードパーティの Tap を信頼するまで (brew trust)、その Tap のフォーミュラと Cask を読み込みません。作者を信頼できる場合は Tap を信頼してから、もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有在你信任某个第三方 Tap 之后（brew trust），Homebrew 才会加载其中的公式和 Cask。如果你信任其作者，请信任该 Tap，然后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew só carrega fórmulas e casks de um tap de terceiros depois que você confia no tap (brew trust). Confie nele se confiar no autor e tente novamente."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew carica formule e cask da un tap di terze parti solo dopo che lo hai considerato attendibile (brew trust). Consideralo attendibile se ti fidi del suo autore, poi riprova."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew는 서드파티 Tap을 신뢰한 후에만(brew trust) 그 Tap의 포뮬러와 Cask를 불러옵니다. 작성자를 신뢰한다면 Tap을 신뢰한 다음 다시 시도하십시오."
           }
         }
       }
@@ -59777,6 +59881,58 @@
         }
       }
     },
+    "This tap isn't trusted yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesem Tap wird noch nicht vertraut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce tap n’est pas encore approuvé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este tap aún no es de confianza"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この Tap はまだ信頼されていません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Tap 尚未被信任"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este tap ainda não é confiável"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo tap non è ancora considerato attendibile"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Tap은 아직 신뢰되지 않았습니다"
+          }
+        }
+      }
+    },
     "To install %@.": {
       "localizations": {
         "de": {
@@ -60189,6 +60345,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 신뢰할까요?"
+          }
+        }
+      }
+    },
+    "Trust Tap…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap vertrauen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approuver le tap…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confiar en el tap…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapを信頼…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信任 Tap…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confiar no tap…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Considera attendibile il tap…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap 신뢰…"
           }
         }
       }

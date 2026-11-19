@@ -253,3 +253,26 @@ func applyTapsLaunchOptions(store: AppStore, options: LaunchOptions) async {
     }
     if env["TANKARD_DEMO_TAP_REMOVE"] == "1", let t = store.taps.selectedTap { _ = store.taps.requestRemove(t, packages: store.packages) }
 }
+
+/// 0.8.7: Trust Tap…'s confirmation outside the Taps sheet (the detail
+/// pane's "can't be read" box, a failed run's sheet): the Taps sheet's
+/// words, then `brew trust --tap` (AppStore.trustTap).
+struct TrustTapButton: View {
+    var store: AppStore
+    var refusal: UntrustedTapRefusal
+    private let asking = State(initialValue: false)
+
+    var body: some View {
+        Button("Trust Tap…") { asking.wrappedValue = true }
+            .controlSize(.small)
+            .disabled(store.isBusy)
+            .help(refusal.trustCommand)
+            .alert(String(localized: "Trust \(refusal.tap)?"), isPresented: asking.projectedValue) {
+                Button("Cancel", role: .cancel) {}
+                Button(String(localized: "Trust")) { store.trustTap(named: refusal.tap) }
+            } message: {
+                Text(String(localized: "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust.")
+                     + String(localized: "\n\nTankard runs: ") + refusal.trustCommand)
+            }
+    }
+}
