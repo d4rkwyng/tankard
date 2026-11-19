@@ -989,6 +989,15 @@ brew's own requests:
 
 Links (homepages, release pages) open only when you click them.
 
+
+**Test switches.** The `TANKARD_*` environment variables that Tankard's own tests and
+screenshots use (for example `TANKARD_BREW`, another program to run as brew) are ignored by
+the released, Developer ID signed app: it removes them at launch and runs brew only from
+`/opt/homebrew` or `/usr/local`. Only builds made from source honour them. The separate
+`tankard` command-line tool, built from source and not part of the app, still reads
+`TANKARD_BREW` as the default for its `--brew` option; it runs with your own permissions
+only.
+
 ## What Tankard runs
 
 Reading your packages never changes anything. Your packages change only when you click,
