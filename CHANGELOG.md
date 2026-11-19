@@ -28,6 +28,14 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Run sheets say what happened.** Cancelling the password dialog gave "Install finished with problems" and "The log below shows what brew printed"; it now says **Install cancelled** and that brew didn't run the step that needed the password. After a run with failures, the line under the title lists only what was done, which read like the whole run ("1 cask" for a Brewfile with a cask and a formula); it now says "Done: 1 cask". An install that can't reach the network, where brew sits at "Downloading bottle manifests" and retries for minutes, now says so after 30 seconds without progress.
 - **Lists: the down arrow, the lock in Discover, stripes in full screen.** The down arrow in the search field now moves into the list, selecting the first row when none is. Discover shows the lock Installed shows for casks whose installer needs your password (zoom, for one). In full screen the row stripes stopped after the Available column; they now span the row.
 
+### Security
+- **Check Brewfile… no longer runs the Brewfile to show it.** A Brewfile is a Ruby program, and brew bundle runs it as soon as it reads it. Tankard now shows the plain brew, cask, tap, mas and vscode lines it can read from the file's text, lists every other line as not read, and asks before brew checks the file, with a stronger warning for a file downloaded from the internet.
+- **Test switches are off in the released app.** The launch settings Tankard's own tests and screenshots use, such as another program to run as brew, are ignored by the Developer ID signed Tankard, and Tankard runs brew only from /opt/homebrew or /usr/local.
+- **The password dialog answers only Tankard's own step.** It now appears only for the brew run Tankard started for a step that may need your password, not for other programs running under Tankard.
+- **Links from package information open only as web pages.** Homepages, release pages and advisories open only when they are http or https addresses, and the update check's release link must be https on github.com.
+- **Package names always reach brew as names.** Names from a Brewfile that brew would read as options are left out, brew and git get "--" before names and addresses, and Copy as Brewfile leaves out names Homebrew wouldn't accept and quotes the rest safely.
+- **Smaller hardening.** The Terminal scripts for the Homebrew menu and the installers are written to a new private file each time, and the Discover notice shows its text exactly as written.
+
 ## [0.8.7]
 
 ### Highlights
