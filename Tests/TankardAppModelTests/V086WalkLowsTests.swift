@@ -38,9 +38,14 @@ struct V086WalkLowsTests {
         #expect(s.subtitle == "The build from source failed")
     }
 
+    /// 0.8.6 (HK-47 review): a run that changed nothing on disk (brew said
+    /// "already installed" for each step, exit 0) keeps no restore point.
     @Test func aRunThatChangedNothingKeepsNoRestorePoint() async throws {
         var deps = Demo.dependencies(.intelbrew, pace: 0)
-        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 1 }
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            out(Data("Warning: \(args.last ?? "") 1.2 already installed\n".utf8))
+            return 0
+        }
         let store = AppStore(deps: deps, settings: testSettings())
         await store.start()
         let before = store.restorePoints.points.count
@@ -49,7 +54,52 @@ struct V086WalkLowsTests {
         let s = try #require(store.upgrade)
         #expect(store.restorePoints.points.count == before + 1) // saved before it runs
         #expect(await waitUntil { s.isFinished })
+        #expect(s.succeededCount == 0)
         #expect(await waitUntil { store.restorePoints.points.count == before })
+    }
+
+    /// 0.8.6 (HK-47 review): brew poured a dependency, then the package
+    /// asked for failed: the dependency changed, so the point stays
+    /// (succeededCount was 0, and the point used to be deleted).
+    @Test func aFailedRunThatPouredADependencyKeepsItsRestorePoint() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0)
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            out(Data("==> Upgrading \(args.last ?? "")\n==> Installing \(args.last ?? "") dependency: libdep\n==> Pouring libdep--2.0.sonoma.bottle.tar.gz\nError: An exception occurred within a child process:\n".utf8))
+            return 1
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        let before = store.restorePoints.points.count
+        let p = try #require(store.upgradable.first { store.deps.classifier.upgradeWarning($0) == nil })
+        store.startUpgrade([p])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+        #expect(s.succeededCount == 0)
+        // Give a deletion every chance to happen (it would follow a read).
+        #expect(await waitUntil { store.refreshesCompleted >= 2 && !store.isRefreshing })
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(store.restorePoints.points.count == before + 1)
+    }
+
+    /// A stopped run keeps its point too.
+    @Test func aStoppedRunKeepsItsRestorePoint() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0)
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in
+            try await Task.sleep(for: .seconds(30))
+            return 0
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        let before = store.restorePoints.points.count
+        let p = try #require(store.upgradable.first { store.deps.classifier.upgradeWarning($0) == nil })
+        store.startUpgrade([p])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.current != nil })
+        s.stopNow()
+        #expect(await waitUntil { s.isFinished })
+        #expect(await waitUntil { store.refreshesCompleted >= 2 && !store.isRefreshing })
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(store.restorePoints.points.count == before + 1)
     }
 
     @Test func tapFormulaeAreNotPromisedABottle() {

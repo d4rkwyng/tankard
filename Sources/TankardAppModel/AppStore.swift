@@ -929,6 +929,25 @@ public final class AppStore {
         }
     }
 
+    /// 0.8.6 (HK-47 review): deletes the restore point saved before
+    /// `session` only when every step finished cleanly (no step failed,
+    /// was stopped or didn't run), none upgraded anything, and a fresh
+    /// `brew info --installed` read matches the point. A failed read keeps it.
+    func dropRestorePointIfUnchanged(_ pointID: RestorePoint.ID, after session: UpgradeSession) {
+        let clean = session.items.allSatisfy { $0.state == .done }
+        guard clean, session.succeededCount == 0,
+              let point = restorePoints.points.first(where: { $0.id == pointID }),
+              let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
+        let env = client.environment(for: detection)
+        let classifier = StatusClassifier(platform: client.platform, intelbrewMode: detection.detected,
+                                          folderTime: client.caskFolderTime)
+        Task { @MainActor [weak self] in
+            guard let info = try? await client.installedInfo(env: env) else { return }
+            guard RestoreDiff.between(point, classifier.classify(info: info)).isEmpty else { return }
+            self?.restorePoints.delete(pointID)
+        }
+    }
+
     nonisolated static func installedNow(_ info: BrewInfoJSON, classifier: StatusClassifier, ids: Set<String>) -> [String: InstalledNow] {
         var found: [String: InstalledNow] = [:]
         for p in classifier.classify(info: info) where ids.contains(p.id) {
@@ -1447,11 +1466,14 @@ public final class AppStore {
         }
         runJournalSessionFinished(session)
         recordBuilds(session)
-        // 0.8.6 (walkthrough L7): a run that upgraded nothing (failed,
-        // stopped first, or already done elsewhere) keeps no restore point:
-        // eight small runs left eight points, most identical.
-        if let point = sessionRestorePoints.removeValue(forKey: session.id), session.succeededCount == 0 {
-            restorePoints.delete(point)
+        // 0.8.6 (walkthrough L7): a run that changed nothing keeps no
+        // restore point: eight small runs left eight points, most identical.
+        // HK-47 review: "upgraded nothing" isn't "changed nothing" (brew may
+        // have poured dependencies before the package failed or was
+        // stopped), so a failed or stopped run always keeps its point, and
+        // a clean one drops it only when a fresh read matches the point.
+        if let pointID = sessionRestorePoints.removeValue(forKey: session.id) {
+            dropRestorePointIfUnchanged(pointID, after: session)
         }
         selfUpgradeFinished(session)
         // 0.8.3: Tankard's own bundle was just replaced: only the relaunch
