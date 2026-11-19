@@ -293,3 +293,87 @@ struct TableRevealer: NSViewRepresentable {
         }
     }
 }
+
+/// 0.8.7: type-select by package name (TypeSelect). SwiftUI's Table gives
+/// AppKit no type-select string per row, so AppKit's own type-select
+/// matched other text in the row's views (a note such as "No bottle: …"),
+/// and typing a letter jumped to the wrong package. This turns AppKit's
+/// off on the table and, while the table has the keyboard focus, takes the
+/// typed letters (no ⌘, ⌃ or ⌥) and selects the first row whose name
+/// starts with them, through the table (as AppKit's did, so SwiftUI's
+/// selection binding follows) and scrolled into view.
+struct TableTypeSelect: NSViewRepresentable {
+    /// The rows' names, in the order the Table was given them.
+    var names: [String]
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeNSView(context: Context) -> NSView {
+        let v = NSView()
+        v.setFrameSize(.zero)
+        return v
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        let c = context.coordinator
+        c.names = names
+        guard c.table == nil else { return }
+        DispatchQueue.main.async { [weak view] in
+            guard let view, c.table == nil, let t = TableSelectionStyler.findTable(near: view) else { return }
+            c.attach(t)
+        }
+    }
+
+    static func dismantleNSView(_ view: NSView, coordinator: Coordinator) {
+        coordinator.detach()
+    }
+
+    @MainActor
+    final class Coordinator {
+        weak var table: NSTableView?
+        var names: [String] = []
+        private var search = TypeSelect()
+        nonisolated(unsafe) private var monitor: Any?
+
+        func attach(_ t: NSTableView) {
+            table = t
+            t.allowsTypeSelect = false
+            monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+                // Key events arrive on the main thread.
+                nonisolated(unsafe) let e = event
+                let handled = MainActor.assumeIsolated { self?.handle(e) ?? false }
+                return handled ? nil : event
+            }
+        }
+
+        func detach() {
+            if let m = monitor { NSEvent.removeMonitor(m) }
+            monitor = nil
+        }
+
+        /// true: the key was type-select's.
+        private func handle(_ event: NSEvent) -> Bool {
+            guard let t = table, let w = t.window, event.window === w, w.firstResponder === t else { return false }
+            guard event.modifierFlags.intersection([.command, .control, .option, .function]).isEmpty,
+                  let chars = event.characters,
+                  TypeSelect.isTypeSelectInput(chars, bufferEmpty: search.buffer.isEmpty) else {
+                search.reset()
+                return false
+            }
+            let count = min(names.count, t.numberOfRows)
+            let current = t.selectedRow >= 0 && t.selectedRow < count ? t.selectedRow : nil
+            guard let row = search.select(chars, at: event.timestamp, names: Array(names.prefix(count)), selected: current) else {
+                return true
+            }
+            if row != t.selectedRow {
+                t.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+            }
+            t.scrollRowToVisible(row)
+            return true
+        }
+
+        deinit {
+            if let m = monitor { NSEvent.removeMonitor(m) }
+        }
+    }
+}

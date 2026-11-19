@@ -215,6 +215,7 @@ struct DiscoverTable: View {
         .scrollContentBackground(.hidden)
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
+        .background(TableTypeSelect(names: discover.results.map(\.name)))
         .overlay { overlay }
     }
 

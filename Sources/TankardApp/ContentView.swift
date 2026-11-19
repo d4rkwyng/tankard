@@ -584,6 +584,7 @@ struct PackageTable: View {
         .background(theme.table ?? Color(nsColor: .controlBackgroundColor))
         .background(TableSelectionStyler(palette: theme.palette, token: rowsToken, fixedRowHeights: true))
         .background(TableRevealer(request: store.revealRequest, row: shown.firstIndex { $0.id == store.selection }))
+        .background(TableTypeSelect(names: shown.map(\.name)))
         .overlay {
             if store.report != nil && rows.isEmpty && store.filter == .vulnerable && store.search.isEmpty {
                 VulnerableEmptyState(store: store)

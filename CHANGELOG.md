@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Fixed
+- **Typing a letter in a package list selects the package whose name starts with it.** In Installed (every filter and search) and in Discover, typing jumped to some other row: the Mac matched the letters against other words in the row, such as a note ("No bottle: will compile from source" for "b"), not the name. Tankard now matches the names shown, ignoring case, and letters typed in quick succession narrow the search ("lu" selects lua).
+
 ## [0.8.6]
 
 ### Highlights
