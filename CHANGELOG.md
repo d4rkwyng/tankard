@@ -6,9 +6,15 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.8]
 
+### Highlights
+- No blank package rows on macOS 15 after a search that matched nothing
+- Upgrade All counts packages it upgraded as dependencies
+- The dependency tree opens from its label, not only its arrow
+
 ### Fixed
 - **Blank package rows on macOS 15: the fix 0.8.7 began is completed.** In Installed, a search that matched nothing ("Not installed") and was then cleared or changed left the rows with only their badge, upgrade arrow and size, with no name or versions, until a switch to Discover and back. 0.8.7 changed a list to fixed row heights once its rows went to none; the rows it had already drawn were made for the other kind, and macOS 15 then gave every row's cells no width. A list now settles its row heights once, when it first appears, and keeps them.
 - **Upgrade All counts what it upgraded along the way.** When upgrading one package made brew upgrade others as its dependencies or dependents (aws-c-auth bringing s2n, aws-c-http and awscli up to date), the later steps for those packages found them already installed and said another Homebrew command had done it; the summary read "7 upgraded, 7 already up to date" for a run that upgraded all 14. Those steps now count as upgraded by the run, and the log says which earlier step upgraded them.
+- **The dependency tree in a package's details opens from its label too,** not only from its arrow.
 
 ## [0.8.7]
 

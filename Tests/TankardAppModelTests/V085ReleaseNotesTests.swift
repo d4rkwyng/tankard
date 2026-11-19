@@ -63,6 +63,32 @@ struct V085ReleaseNotesTests {
         ])
     }
 
+    /// 0.8.8: three Highlights and three fixes, all shown.
+    @Test func v088ShowsEveryChange() throws {
+        let s = ReleaseNotesSummary.make(try releaseBody("0.8.8"))
+        #expect(s.items.first == .heading("Highlights"))
+        #expect(s.bullets.count == 6)
+        #expect(s.more == 0)
+        let headings = s.items.compactMap { item -> String? in
+            if case .heading(let h) = item { return h }
+            return nil
+        }
+        #expect(headings == ["Highlights", "Fixed"])
+        for line in s.plainText.split(separator: "\n") {
+            #expect(line.count <= 140, "\(line)")
+            #expect(!line.contains("**") && !line.contains("`"), "\(line)")
+        }
+    }
+
+    @Test func oldAppShowsV088AsAList() throws {
+        let shown = Self.excerpt084(try releaseBody("0.8.8"))
+        let lines = shown.split(separator: "\n").map(String.init)
+        #expect(lines.first == "Tankard v0.8.8 for macOS 14 Sonoma and later.")
+        #expect(lines.contains("Highlights"))
+        #expect(lines.filter { $0.hasPrefix("- ") }.count == 3, "\(shown)")
+        for line in lines { #expect(line.count < 80, "\(line)") }
+    }
+
     /// 0.8.7: four Highlights and seven changes, under the 12 the summary
     /// shows, so all of them show and there is no "and N more".
     @Test func v087ShowsEveryChange() throws {
