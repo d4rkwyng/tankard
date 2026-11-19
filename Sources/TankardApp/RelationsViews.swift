@@ -229,6 +229,9 @@ struct DependencyTreeView: View {
             Text("Dependency tree (\(root.children.count) direct, \(Set(allNames(root)).count) in all)")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .help(String(localized: "What \(root.name) needs, and what those need in turn"))
+                // 0.8.8 (VM retest): the label opens and closes it too, not only the chevron.
+                .contentShape(Rectangle())
+                .onTapGesture { withAnimation { shown.wrappedValue.toggle() } }
         }
     }
 
