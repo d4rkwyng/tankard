@@ -22,7 +22,7 @@ struct MenuBarNavigationTests {
     }
 
     /// From Discover, with a search and a More filter: Installed, no
-    /// search, All, the package selected and in the rows, a scroll asked for.
+    /// search, Upgrades (0.8.8), the package selected and in the rows, a scroll asked for.
     @Test func packageRowFromAnywhereSelectsIt() async throws {
         let store = await demoStore()
         let row = try #require(panelRows(store).first)
@@ -38,7 +38,7 @@ struct MenuBarNavigationTests {
 
         #expect(store.tab == .installed)
         #expect(store.search.isEmpty)
-        #expect(store.filter == .all)
+        #expect(store.filter == .upgrades) // 0.8.8: was the filter on screen (All)
         #expect(store.selection == row.id)
         #expect(store.selectedPackage?.name == row.name)
         #expect(store.visiblePackages.contains { $0.id == row.id })
@@ -53,13 +53,13 @@ struct MenuBarNavigationTests {
         #expect(p.isVulnerable && p.isUpgradeTarget)
         store.moreFilterSelection = .vulnerable
         store.showFromMenuBar(.package(p.id))
-        #expect(store.filter == .all)
+        #expect(store.filter == .upgrades)
         #expect(store.moreFilterSelection == nil)
         #expect(store.selection == p.id)
     }
 
-    /// Upgrades lists every package the panel does, so it stays; a segment
-    /// that hides the package goes back to All.
+    /// Upgrades lists every package the panel does, so it stays; 0.8.8: a
+    /// segment that hides the package goes to Upgrades too (was All).
     @Test func segmentedFilterStaysOnlyIfItShowsThePackage() async throws {
         let store = await demoStore()
         let rows = panelRows(store)
@@ -75,7 +75,7 @@ struct MenuBarNavigationTests {
         let hiding = try #require([PackageFilter.newer, .source, .bottleAvailable].first { !$0.includes(p) })
         store.filter = hiding
         store.showFromMenuBar(.package(p.id))
-        #expect(store.filter == .all)
+        #expect(store.filter == .upgrades)
         #expect(store.visiblePackages.contains { $0.id == p.id })
     }
 

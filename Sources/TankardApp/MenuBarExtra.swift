@@ -55,19 +55,27 @@ struct MenuBarContent: View {
                             HStack(spacing: 6) {
                                 Image(systemName: row.isCask ? "macwindow" : "shippingbox")
                                     .font(.system(size: 10)).foregroundStyle(.secondary).frame(width: 14)
+                                // 0.8.8: the name keeps up to 110 pt; past that it is cut.
                                 Text(row.name).font(.system(size: 12, weight: .medium)).lineLimit(1)
+                                    .frame(maxWidth: 110, alignment: .leading)
+                                    .fixedSize()
                                 if row.compiles {
                                     Image(systemName: "hammer.fill").font(.system(size: 9))
                                         .foregroundStyle(theme.badge(.source).dot)
                                         .help(CompileWarning(context: .upgrade).label)
                                 }
                                 Spacer(minLength: 8)
-                                // 0.8.4: shortened versions, cut in the middle if still
-                                // too long (from the front hid both versions).
-                                Text(row.versions).font(.system(size: 11)).monospacedDigit()
-                                    .foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
-                                    .layoutPriority(1) // the name gives way first
-                                    .help(row.fullVersions)
+                                // 0.8.4: shortened versions. 0.8.8 (owner report: "26.1111.71704…"
+                                // cut off at the panel's edge): the new version is shown whole;
+                                // the old one gives way first (cut in the middle).
+                                HStack(spacing: 3) {
+                                    Text(row.from).lineLimit(1).truncationMode(.middle)
+                                    Text(verbatim: "→ " + row.to).lineLimit(1).truncationMode(.middle)
+                                        .layoutPriority(1)
+                                }
+                                .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
+                                .layoutPriority(1)
+                                .help(row.fullVersions)
                             }
                         }
                         .accessibilityValue(Text(row.fullVersions))
@@ -126,10 +134,18 @@ struct MenuBarContent: View {
                         upgradeFromMenu(nil)
                     }
                 }
-                MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true, action: openMain)
+                // 0.8.8 (owner report): the two upgrade actions together,
+                // Open Tankard in its own section. (Gauntlets 15 and 26: Open
+                // Tankard and Check Now left the panel open over the window.)
                 MenuRow(title: String(localized: "Check Now"), systemImage: "arrow.clockwise", shortcut: nil,
                         enabled: !store.isRefreshing && !store.isUpgrading) {
+                    closePanel()
                     Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) }
+                }
+                Divider().padding(.vertical, 3)
+                MenuRow(title: String(localized: "Open Tankard"), systemImage: "macwindow", shortcut: nil, enabled: true) {
+                    closePanel()
+                    openMain()
                 }
                 Divider().padding(.vertical, 3)
                 MenuRow(title: String(localized: "Quit Tankard"), systemImage: "power", shortcut: "Q", enabled: true) {
@@ -173,6 +189,7 @@ extension MenuBarContent {
     /// Opens the main window (Dock icon first, as Open Tankard does), then
     /// shows `destination` in it.
     func show(_ destination: MenuBarDestination) {
+        closePanel()
         openMain()
         store.showFromMenuBar(destination)
     }

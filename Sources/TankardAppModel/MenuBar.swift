@@ -17,6 +17,15 @@ public struct MenuBarSummary: Equatable, Sendable {
         public var versions: String
         /// 0.8.4: both versions in full, for the tooltip.
         public var fullVersions: String = ""
+        /// 0.8.8: `versions` in its two halves, so the panel can cut the
+        /// old version and keep the new one whole ("3.15.1", "3.15.2").
+        public var from: String {
+            versions.components(separatedBy: " → ").first ?? versions
+        }
+        public var to: String {
+            let parts = versions.components(separatedBy: " → ")
+            return parts.count > 1 ? parts.dropFirst().joined(separator: " → ") : ""
+        }
         public var compiles: Bool
         public var isCask: Bool
     }
