@@ -306,6 +306,7 @@ The rest of this page is the full reference.
 ### Install
 
 ```sh
+brew trust --tap d4rkwyng/tap      # once: Homebrew 7 asks you to trust a third-party tap
 brew install --cask d4rkwyng/tap/tankard
 ```
 
@@ -900,6 +901,10 @@ Open with **Tankard ▸ Settings…** (⌘,). Each setting has an ⓘ button wit
 **Appearance:** **Dark**, **Light**, **System** (the default, follows your Mac), **Tankard**
 (purple and amber) and **Dracula**.
 
+**Language:** Tankard follows the macOS language: English, German, French, Spanish,
+Italian, Portuguese (Brazil), Japanese, Korean or Simplified Chinese. The translations are
+machine translations; corrections are welcome.
+
 ## Menu reference
 
 - **Tankard:** About Tankard, **Check for Tankard Updates…**, Settings… (⌘,), Quit Tankard (⌘Q).
@@ -934,8 +939,9 @@ opens Terminal with the commands, and waits for you to press Return.
 - **Revert** switches an Intelbrew Mac back to standard Homebrew. It backs up your shell
   startup files, removes the Intelbrew lines from them, points brew back at
   Homebrew/brew and runs `brew update`.
-- **Uninstall Homebrew** runs Homebrew's official uninstaller. It removes every installed
-  package.
+- **Uninstall Homebrew** runs Homebrew's official uninstaller with `--path` set to the
+  prefix Tankard shows, so on a Mac with both /usr/local and /opt/homebrew only that one is
+  removed. It removes every package installed there.
 
 **Right-click menus** on the Installed list, Discover and the menu-bar list offer the same
 actions as the buttons, plus Copy Name, Copy Upgrade (or Install) Command, Open Homepage,
@@ -986,7 +992,7 @@ Links (homepages, release pages) open only when you click them.
 ## What Tankard runs
 
 Reading your packages never changes anything. Your packages change only when you click,
-or when automatic updates is on. Commands run one at a time. Tankard never runs sudo
+or when automatic updates is on. Commands run one at a time and never through a shell. Tankard never runs sudo
 itself; when a cask's installer needs your administrator password, a Tankard dialog passes
 it straight to sudo (or you can run the command in Terminal). See below.
 
