@@ -63,11 +63,12 @@ struct V085ReleaseNotesTests {
         ])
     }
 
-    /// 0.8.8: three Highlights and three fixes, all shown.
+    /// 0.8.8: three Highlights and nine fixes, all shown (12, the most
+    /// the summary lists).
     @Test func v088ShowsEveryChange() throws {
         let s = ReleaseNotesSummary.make(try releaseBody("0.8.8"))
         #expect(s.items.first == .heading("Highlights"))
-        #expect(s.bullets.count == 6)
+        #expect(s.bullets.count == 12)
         #expect(s.more == 0)
         let headings = s.items.compactMap { item -> String? in
             if case .heading(let h) = item { return h }
