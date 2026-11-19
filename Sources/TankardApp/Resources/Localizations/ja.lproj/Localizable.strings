@@ -1401,6 +1401,7 @@
 "updated %@" = "%@に更新";
 "upgraded" = "アップグレード済み";
 "upgraded (brew then exited %d over another package)" = "アップグレード済み（その後、別のパッケージが原因でbrewが終了コード%dで終了）";
+"upgraded (brew then exited %d)" = "アップグレード済み（その後brewが終了コード%dで終了）";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@のアップグレードには%@をソースから再ビルドする必要があります。手動でアップグレードしてください";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "別の Homebrew コマンドを待機しました";

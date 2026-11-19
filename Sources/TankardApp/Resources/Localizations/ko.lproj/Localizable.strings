@@ -1401,6 +1401,7 @@
 "updated %@" = "%@에 업데이트됨";
 "upgraded" = "업그레이드됨";
 "upgraded (brew then exited %d over another package)" = "업그레이드됨 (이후 다른 패키지 때문에 brew가 상태 %d(으)로 종료됨)";
+"upgraded (brew then exited %d)" = "업그레이드됨 (이후 brew가 상태 %d(으)로 종료됨)";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@을(를) 업그레이드하려면 %@을(를) 소스에서 다시 빌드해야 하므로, 직접 업그레이드하세요";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "다른 Homebrew 명령을 기다렸습니다";

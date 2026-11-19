@@ -1401,6 +1401,7 @@
 "updated %@" = "已更新 %@";
 "upgraded" = "已升级";
 "upgraded (brew then exited %d over another package)" = "已升级（随后 brew 因另一个软件包以状态 %d 退出）";
+"upgraded (brew then exited %d)" = "已升级（随后 brew 以状态 %d 退出）";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "升级 %@ 需要从源码重新构建 %@；请手动升级";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "等待了另一个 Homebrew 命令";

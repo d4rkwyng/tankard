@@ -342,7 +342,8 @@ public final class AppStore {
     /// 0.8.5: History entries to mark as builds from source once they arrive.
     @ObservationIgnored var pendingBuilt: Set<UUID> = []
     /// 0.8.6 (VM test M1): History entries to mark as upgraded once they arrive.
-    @ObservationIgnored var pendingUpgradedAnyway: Set<UUID> = []
+    /// History entry id → whether brew's error named another package.
+    @ObservationIgnored var pendingUpgradedAnyway: [UUID: Bool] = [:]
     /// 0.8.6 (L7): the restore point saved before each upgrade session.
     @ObservationIgnored var sessionRestorePoints: [UUID: RestorePoint.ID] = [:]
     /// 0.8.5: how the last scheduled `brew update` went (auto-update reads it).
@@ -917,17 +918,29 @@ public final class AppStore {
     /// installed version of each of those packages (a fresh `brew info
     /// --json=v2 --installed`), so a step brew upgraded before it failed
     /// over another package counts as upgraded. nil: the read failed.
+    /// 0.8.6 (HK-47 review): with the linked keg (`linked_keg`) and keg-only.
     nonisolated func upgradedVersionsCheck(_ client: BrewClient, env: [String: String], intelbrewMode: Bool)
-        -> @Sendable ([Package]) async -> [String: String]? {
+        -> @Sendable ([Package]) async -> [String: InstalledNow]? {
         let classifier = StatusClassifier(platform: client.platform, intelbrewMode: intelbrewMode,
                                           folderTime: client.caskFolderTime)
         return { packages in
             guard let info = try? await client.installedInfo(env: env) else { return nil }
-            let ids = Set(packages.map(\.id))
-            var found: [String: String] = [:]
-            for p in classifier.classify(info: info) where ids.contains(p.id) { found[p.id] = p.installedVersion }
-            return found
+            return Self.installedNow(info, classifier: classifier, ids: Set(packages.map(\.id)))
         }
+    }
+
+    nonisolated static func installedNow(_ info: BrewInfoJSON, classifier: StatusClassifier, ids: Set<String>) -> [String: InstalledNow] {
+        var found: [String: InstalledNow] = [:]
+        for p in classifier.classify(info: info) where ids.contains(p.id) {
+            if p.kind == .formula {
+                let f = info.formulae.first { $0.fullName == p.fullName && $0.tap == p.tap }
+                found[p.id] = InstalledNow(version: p.installedVersion, linkedVersion: f?.linkedKeg,
+                                           kegOnly: f?.kegOnly ?? (p.kegOnly ?? false))
+            } else {
+                found[p.id] = InstalledNow(version: p.installedVersion, linkedVersion: p.installedVersion, kegOnly: false)
+            }
+        }
+        return found
     }
 
     /// 0.8: reads the installed packages again (`brew info --json=v2
@@ -1428,7 +1441,10 @@ public final class AppStore {
             Task { await d.reload() }
         }
         // 0.8.6 (VM test M1): steps that upgraded although brew exited non-zero.
-        for id in session.upgradedAnyway where !history.markUpgradedAnyway(id) { pendingUpgradedAnyway.insert(id) }
+        for id in session.upgradedAnyway {
+            let other = session.upgradedOverAnotherPackage.contains(id)
+            if !history.markUpgradedAnyway(id, overAnotherPackage: other) { pendingUpgradedAnyway[id] = other }
+        }
         runJournalSessionFinished(session)
         recordBuilds(session)
         // 0.8.6 (walkthrough L7): a run that upgraded nothing (failed,

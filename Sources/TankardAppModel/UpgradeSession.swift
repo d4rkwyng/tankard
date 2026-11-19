@@ -187,16 +187,21 @@ public final class UpgradeSession: Identifiable {
     /// again; the sheet doesn't say "complete" before that has answered.
     public private(set) var checkingInstalled = false
     /// 0.8.6 (VM test M1): reads the installed version of each package
-    /// (id → version) after an upgrade run with failed steps; nil: the
-    /// read failed. brew exits 1 for the whole command when a later part
-    /// fails (a dependent it upgrades next, refused over a pinned
-    /// dependency), after it has upgraded the package asked for.
-    @ObservationIgnored private let upgradeCheck: (@Sendable ([Package]) async -> [String: String]?)?
+    /// (id → version and linked keg) after an upgrade run with failed
+    /// steps; nil: the read failed. brew exits 1 for the whole command
+    /// when a later part fails (a dependent it upgrades next, refused over
+    /// a pinned dependency), after it has upgraded the package asked for.
+    @ObservationIgnored private let upgradeCheck: (@Sendable ([Package]) async -> [String: InstalledNow]?)?
     @ObservationIgnored private var upgradeChecked = false
     /// The read is running: the run isn't finished until it answers.
     public private(set) var checkingUpgraded = false
     /// Steps brew exited non-zero for although the package was upgraded.
     public private(set) var upgradedAnyway: Set<UUID> = []
+    /// 0.8.6 (HK-47 review): those of them whose output names another
+    /// package as what failed.
+    public private(set) var upgradedOverAnotherPackage: Set<UUID> = []
+    /// The output of each upgrade step brew exited non-zero for.
+    @ObservationIgnored private var failedStepOutput: [UUID: [String]] = [:]
 
     init(packages: [Package], intelbrewMode: Bool, action: SessionAction = .upgrade, queue: CommandQueue,
          makeCommand: (Package) -> QueuedCommand, logURL: URL?,
@@ -206,7 +211,7 @@ public final class UpgradeSession: Identifiable {
          downloads: DownloadMonitor? = nil,
          prefetch: [PrefetchStep] = [],
          lockWait: BrewLockWait? = nil,
-         upgradeCheck: (@Sendable ([Package]) async -> [String: String]?)? = nil,
+         upgradeCheck: (@Sendable ([Package]) async -> [String: InstalledNow]?)? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
         self.upgradeCheck = upgradeCheck
@@ -622,6 +627,7 @@ public final class UpgradeSession: Identifiable {
                     note("\(kind.title). \(kind.explanation)")
                 }
                 note("brew exited with status \(code)")
+                if action == .upgrade { failedStepOutput[items[i].id] = commandLines }
                 noteChainSkipped(after: i)
             }
         case .cancelled:
@@ -685,20 +691,39 @@ public final class UpgradeSession: Identifiable {
         return true
     }
 
-    private func finishUpgradeCheck(_ found: [String: String]?) {
+    /// 0.8.6 (HK-47 review): a step counts as upgraded only when the new
+    /// version is installed and linked (keg-only formulae, and formulae that
+    /// weren't linked before, need no link), and its output shows no link
+    /// or post-install failure of this package (or one it doesn't tie to a
+    /// package). "Over another package" only when brew's error names one.
+    private func finishUpgradeCheck(_ found: [String: InstalledNow]?) {
         upgradeChecked = true
         checkingUpgraded = false
         if let found {
             for i in items.indices {
+                let p = items[i].package
                 guard case .failed(let code) = items[i].state, code > 0,
-                      let now = found[items[i].package.id], !now.isEmpty else { continue }
-                let before = items[i].package.installedVersion
-                guard now != before, before.isEmpty || PkgVersion(parsing: now) > PkgVersion(parsing: before) else { continue }
+                      let now = found[p.id], !now.version.isEmpty else { continue }
+                let before = p.installedVersion
+                guard now.version != before,
+                      before.isEmpty || PkgVersion(parsing: now.version) > PkgVersion(parsing: before) else { continue }
+                let linkExpected = p.kind == .formula && !now.kegOnly && p.linked != false
+                if linkExpected && now.linkedVersion != now.version { continue }
+                let lines = failedStepOutput[items[i].id] ?? []
+                let failedHere = UpgradeEvidence.linkOrPostInstallFailures(lines).contains { name in
+                    name.map { UpgradeEvidence.names($0, p) } ?? true
+                }
+                if failedHere { continue }
+                let other = UpgradeEvidence.namesAnotherPackage(lines, p)
                 items[i].state = .done
                 upgradedAnyway.insert(items[i].id)
+                if other { upgradedOverAnotherPackage.insert(items[i].id) }
                 failureKindByItem[items[i].id] = nil
                 appManagementBlocked.removeAll { $0 == items[i].id }
-                note("\(items[i].package.name) is now \(now): brew upgraded it, then exited with status \(code) over another package (the log above says which).")
+                let state = !linkExpected ? "" : p.kind == .formula ? " and linked" : ""
+                note(other
+                     ? "\(p.name) is now \(now.version)\(state): brew upgraded it, then exited with status \(code) over another package (the log above says which)."
+                     : "\(p.name) is now \(now.version)\(state): brew upgraded it, then exited with status \(code) (the log above says why).")
             }
             failureKinds = items.compactMap { failureKindByItem[$0.id] }
         } else {

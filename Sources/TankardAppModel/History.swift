@@ -67,6 +67,8 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
     /// 0.8.6 (VM test M1): brew exited non-zero (`exitCode`), but the
     /// package was upgraded: a later part of the command failed.
     public var upgradedDespiteExit: Bool?
+    /// 0.8.6 (HK-47 review): and brew's error named another package.
+    public var exitOverAnotherPackage: Bool?
 
     public init(id: UUID = UUID(), startedAt: Date, duration: TimeInterval, command: String, arguments: [String],
                 outcome: Outcome, exitCode: Int32? = nil, origin: Origin = .user, failure: String? = nil,
@@ -85,7 +87,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case id, startedAt, duration, command, arguments, outcome, exitCode, origin, failure, outputTail
-        case quietReason, quietCount, quietSince, builtFromSource, upgradedDespiteExit
+        case quietReason, quietCount, quietSince, builtFromSource, upgradedDespiteExit, exitOverAnotherPackage
     }
 
     /// 0.8.5 (M2): the fields this entry can't do without must be there;
@@ -108,6 +110,7 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
         quietSince = try? c.decodeIfPresent(Date.self, forKey: .quietSince)
         builtFromSource = try? c.decodeIfPresent(Bool.self, forKey: .builtFromSource)
         upgradedDespiteExit = try? c.decodeIfPresent(Bool.self, forKey: .upgradedDespiteExit)
+        exitOverAnotherPackage = try? c.decodeIfPresent(Bool.self, forKey: .exitOverAnotherPackage)
     }
 
     public var category: HistoryCategory { HistoryCategory(arguments: arguments) }
@@ -153,7 +156,9 @@ public struct HistoryEntry: Codable, Equatable, Identifiable, Sendable {
             return quietReason.text + " " + String(localized: "(\(n) times)")
         }
         if outcome == .succeeded, upgradedDespiteExit == true, let code = exitCode {
-            return String(localized: "upgraded (brew then exited \(code) over another package)")
+            return exitOverAnotherPackage == true
+                ? String(localized: "upgraded (brew then exited \(code) over another package)")
+                : String(localized: "upgraded (brew then exited \(code))")
         }
         switch outcome {
         case .succeeded: return String(localized: "succeeded")
@@ -476,7 +481,9 @@ public extension AppStore {
         // before this entry arrives from the queue's thread).
         if let reason = pendingQuiet.removeValue(forKey: e.id) { history.markQuiet(e.id, reason: reason) }
         if pendingBuilt.remove(e.id) != nil { history.markBuiltFromSource(e.id) }
-        if pendingUpgradedAnyway.remove(e.id) != nil { history.markUpgradedAnyway(e.id) }
+        if let other = pendingUpgradedAnyway.removeValue(forKey: e.id) {
+            history.markUpgradedAnyway(e.id, overAnotherPackage: other)
+        }
     }
 
     /// Runs a failed entry's brew arguments again through the queue (a
@@ -516,10 +523,11 @@ public extension HistoryLog {
     /// exited non-zero (UpgradeSession.upgradedAnyway). false: no such
     /// entry (yet).
     @discardableResult
-    func markUpgradedAnyway(_ id: UUID) -> Bool {
+    func markUpgradedAnyway(_ id: UUID, overAnotherPackage: Bool) -> Bool {
         guard var e = entries.first(where: { $0.id == id }) else { return false }
         e.outcome = .succeeded
         e.upgradedDespiteExit = true
+        e.exitOverAnotherPackage = overAnotherPackage
         e.failure = nil
         replace(removing: [id], with: e)
         return true

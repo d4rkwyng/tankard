@@ -73193,6 +73193,58 @@
         }
       }
     },
+    "upgraded (brew then exited %d)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aktualisiert (brew endete danach mit Status %d)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mis à jour (brew s’est ensuite arrêté avec le code %d)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "actualizado (brew terminó después con el código %d)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレード済み（その後brewが終了コード%dで終了）"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已升级（随后 brew 以状态 %d 退出）"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "atualizado (depois o brew saiu com status %d)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aggiornato (poi brew è uscito con stato %d)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드됨 (이후 brew가 상태 %d(으)로 종료됨)"
+          }
+        }
+      }
+    },
     "upgrading %@ would need %@ rebuilt from source; upgrade by hand": {
       "localizations": {
         "de": {

@@ -22,7 +22,7 @@ struct V086UpgradedAnywayTests {
     }
 
     func session(_ packages: [Package], exit: @escaping @Sendable (String) -> Int32,
-                 check: (@Sendable ([Package]) async -> [String: String]?)?,
+                 check: (@Sendable ([Package]) async -> [String: InstalledNow]?)?,
                  finished: Box<Int>? = nil) -> UpgradeSession {
         UpgradeSession(packages: packages, intelbrewMode: false, action: .upgrade,
                        queue: CommandQueue(runner: FakeStreamRunner(log: CallLog()) { args, out in
@@ -92,12 +92,12 @@ struct V086UpgradedAnywayTests {
         log.record(HistoryEntry(id: id, startedAt: Date(), duration: 3, command: "brew upgrade aws-c-auth",
                                 arguments: ["upgrade", "aws-c-auth"], outcome: .failed, exitCode: 1,
                                 outputTail: ["Error: awscli: the dependency lz4 is pinned"]))
-        #expect(log.markUpgradedAnyway(id))
+        #expect(log.markUpgradedAnyway(id, overAnotherPackage: true))
         let e = log.entries[0]
         #expect(e.outcome == .succeeded)
         #expect(!e.isFailure)
         #expect(!e.canRetry)
         #expect(e.resultText == "upgraded (brew then exited 1 over another package)")
-        #expect(!log.markUpgradedAnyway(UUID()))
+        #expect(!log.markUpgradedAnyway(UUID(), overAnotherPackage: true))
     }
 }

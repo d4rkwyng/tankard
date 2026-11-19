@@ -1401,6 +1401,7 @@
 "updated %@" = "aktualisiert %@";
 "upgraded" = "upgegradet";
 "upgraded (brew then exited %d over another package)" = "aktualisiert (brew endete danach mit Status %d wegen eines anderen Pakets)";
+"upgraded (brew then exited %d)" = "aktualisiert (brew endete danach mit Status %d)";
 "upgrading %@ would need %@ rebuilt from source; upgrade by hand" = "%@ zu upgraden würde einen Neubau von %@ aus dem Quellcode erfordern; manuell upgraden";
 "user/repo" = "user/repo";
 "waited for another Homebrew command" = "auf anderen Homebrew-Befehl gewartet";
