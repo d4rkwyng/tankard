@@ -91,11 +91,13 @@ struct StatusBar: View {
                 store.requestUpgrade()
             } label: {
                 HStack(spacing: 6) {
+                    // 0.8.8 (gauntlet 3, B7): the icons are decoration
+                    // (VoiceOver read the check as "selected").
                     if n == 0 {
-                        Image(systemName: "checkmark")
+                        Image(systemName: "checkmark").accessibilityHidden(true)
                         Text("Up to date")
                     } else {
-                        Image(systemName: "arrow.up")
+                        Image(systemName: "arrow.up").accessibilityHidden(true)
                         Text("Upgrade")
                         ActionCountPill(count: n)
                     }

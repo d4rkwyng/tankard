@@ -246,6 +246,7 @@ struct PackageDetail: View {
             switch p.status {
             case .bottle:
                 Image(systemName: "checkmark.circle").foregroundStyle(theme.badge(.bottle).dot)
+                    .accessibilityHidden(true)
                 if let repo = p.bottleRepository {
                     // 0.8.6 (UI L1): one sentence for the translations.
                     Text("Poured from the \(repo) release")

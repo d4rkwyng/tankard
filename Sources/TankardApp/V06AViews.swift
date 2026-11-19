@@ -162,9 +162,14 @@ struct SheetHeader: View {
 
     var body: some View {
         HStack(spacing: 12) {
+            // 0.8.8 (gauntlet 3, B7): decoration; VoiceOver read the symbol's
+            // raw name ("point.3.connected.trianglepath.dotted") or a
+            // misleading one (Adopt Apps: "Download Multiple").
             Image(systemName: icon).font(.system(size: 28)).foregroundStyle(theme.accent)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.system(size: 14, weight: .bold))
+                    .accessibilityAddTraits(.isHeader)
                 Text(subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
             }
         }
@@ -567,6 +572,7 @@ struct HistoryRow: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 8) {
                 Image(systemName: icon).foregroundStyle(e.isFailure ? w.text : e.outcome == .succeeded ? theme.badge(.bottle).dot : Color.secondary)
+                    .accessibilityLabel(Text(iconLabel))
                 Text(e.command).font(.system(size: 11.5, design: .monospaced)).lineLimit(1).truncationMode(.middle)
                     .textSelection(.enabled)
                 Spacer(minLength: 4)
@@ -623,6 +629,19 @@ struct HistoryRow: View {
         case .failed, .notStarted: return "xmark.octagon.fill"
         case .cancelled: return "stop.circle"
         case .unknown: return "questionmark.circle"
+        }
+    }
+
+    /// 0.8.8 (gauntlet 3, B7): what the icon says, for VoiceOver (it read
+    /// the success mark as "selected").
+    private var iconLabel: String {
+        if entry.quietReason != nil { return String(localized: "Will try again") }
+        switch entry.outcome {
+        case .succeeded: return String(localized: "Done")
+        case .noChange: return String(localized: "No change")
+        case .failed, .notStarted: return String(localized: "Failed")
+        case .cancelled: return String(localized: "Cancelled")
+        case .unknown: return String(localized: "Unknown outcome")
         }
     }
 }

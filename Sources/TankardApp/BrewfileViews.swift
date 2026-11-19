@@ -100,6 +100,7 @@ struct BrewfileSheet: View {
     private func header(_ icon: String, _ color: Color, _ title: String, _ subtitle: String?) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon).font(.system(size: 26)).foregroundStyle(color).frame(width: 40)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.system(size: 14, weight: .bold))
                 if let subtitle {

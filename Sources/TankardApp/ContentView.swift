@@ -853,7 +853,7 @@ struct NoteMark: View {
 
     var body: some View {
         HStack(spacing: 3) {
-            Image(systemName: symbol).font(.system(size: 8.5))
+            Image(systemName: symbol).font(.system(size: 8.5)).accessibilityHidden(true)
             // The first to give way (the name and badges come first).
             Text(text).lineLimit(1).truncationMode(.tail)
         }

@@ -60,6 +60,7 @@ struct SelfUpdateSheet: View {
                 }
             } icon: {
                 Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    .accessibilityHidden(true)
             }
             .font(.system(size: 13))
         case .available(let r)?:

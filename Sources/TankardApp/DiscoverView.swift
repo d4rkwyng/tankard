@@ -314,7 +314,7 @@ struct InstalledMark: View {
     var body: some View {
         let selected = prominence == .increased && !theme.isCustom
         HStack(spacing: 2) {
-            Image(systemName: "checkmark").font(.system(size: 8, weight: .bold))
+            Image(systemName: "checkmark").font(.system(size: 8, weight: .bold)).accessibilityHidden(true)
             Text("installed").font(.system(size: 9.5, weight: .medium))
         }
         .foregroundStyle(selected ? Color.white : theme.badge(.bottle).foreground)
@@ -415,7 +415,10 @@ struct DiscoverDetail: View {
                         ForEach(deps, id: \.self) { d in
                             let have = store.packages.contains { $0.name == d || $0.fullName == d }
                             HStack(spacing: 3) {
-                                if have { Image(systemName: "checkmark").font(.system(size: 8, weight: .bold)) }
+                                if have {
+                                    Image(systemName: "checkmark").font(.system(size: 8, weight: .bold))
+                                        .accessibilityLabel(Text("installed"))
+                                }
                                 Text(d)
                             }
                             .font(.system(size: 10.5, design: .monospaced))
