@@ -8,6 +8,7 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ### Fixed
 - **Typing a letter in a package list selects the package whose name starts with it.** In Installed (every filter and search) and in Discover, typing jumped to some other row: the Mac matched the letters against other words in the row, such as a note ("No bottle: will compile from source" for "b"), not the name. Tankard now matches the names shown, ignoring case, and letters typed in quick succession narrow the search ("lu" selects lua).
+- **A launch inside the hour shows the saved list again on macOS 26, without asking brew.** On macOS 26 the window came to the front before Tankard had loaded its saved list, so it saw no list, took it as out of date and read brew again at every launch (with "Scan for vulnerabilities on refresh" on, it scanned too). Coming to the front now waits until the launch has decided between the saved list and a fresh read.
 
 ## [0.8.6]
 

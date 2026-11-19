@@ -491,6 +491,10 @@ public final class AppStore {
 
     // MARK: loading
 
+    /// 0.8.7: start() has run, so the launch's cache-or-read decision is
+    /// made (revalidateIfStale waits for it).
+    @ObservationIgnored var launchStarted = false
+
     /// Shows the cached report at once (if any), then refreshes when there
     /// is none or it is older than the TTL. Returns when that is done.
     public func start() async {
@@ -501,7 +505,10 @@ public final class AppStore {
         }
         // 0.8.6 (M4): also when brew changed something since the cached
         // read (Terminal), or an interrupted run waits to be offered.
-        if isStale || homebrewChangedSinceRead || settings.defaults.data(forKey: RunJournal.key) != nil {
+        launchStarted = true
+        let stale = isStale, changed = homebrewChangedSinceRead, journal = settings.defaults.data(forKey: RunJournal.key) != nil
+        if stale || changed || journal {
+            LaunchTiming.note("launch read: stale=\(stale) changed=\(changed) journal=\(journal)")
             await refresh(manual: false)
         } else {
             startInsights(force: false)
@@ -519,6 +526,11 @@ public final class AppStore {
     /// Re-reads status if the data is older than the TTL, or (0.8.6, M4)
     /// brew changed something since (window became active).
     public func revalidateIfStale() {
+        // 0.8.7: not before start() has shown the cache. On macOS 26 the
+        // window becomes key before the window's start task runs: with no
+        // report yet, isStale was true, so every launch read brew live
+        // (and, with the scan on refresh, scanned) behind the cache.
+        guard launchStarted || report != nil else { return }
         if homebrewState.needsWelcome, !isRefreshing {
             Task { await checkAgain() }
             return

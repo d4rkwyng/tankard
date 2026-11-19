@@ -95,3 +95,40 @@ struct V086FreshnessTests {
         #expect(HomebrewChanges.latest(paths: [dir.appendingPathComponent("nope").path]) == nil)
     }
 }
+
+// 0.8.7 (B3): on macOS 26 the window became key before its start task ran;
+// revalidateIfStale saw no report (stale) and read brew live behind a
+// fresh cache at every launch (e2e settings/2-relaunch, 3 of 3).
+@MainActor
+struct V087LaunchRevalidateTests {
+    @Test func activationBeforeStartKeepsTheFreshCache() async throws {
+        let now = Date()
+        let changed = V086FreshnessTests.Changed()
+        let t = V086FreshnessTests()
+        let (store, log, cache, dir) = try t.rig(now: now, changed: changed)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        try cache.save(try await t.cached(at: now.addingTimeInterval(-600)))
+        store.revalidateIfStale() // the window became key first
+        await store.start()
+        try await Task.sleep(for: .milliseconds(150))
+        #expect(log.count("info") == 0)
+        #expect(store.reportFromCache)
+        // After start, activation still checks as before.
+        changed.value = now
+        store.revalidateIfStale()
+        #expect(await waitUntil { log.count("info") == 1 && !store.isRefreshing })
+    }
+
+    @Test func activationBeforeStartWithAStaleCacheReadsOnce() async throws {
+        let now = Date()
+        let t = V086FreshnessTests()
+        let (store, log, cache, dir) = try t.rig(now: now, changed: V086FreshnessTests.Changed())
+        defer { try? FileManager.default.removeItem(at: dir) }
+        try cache.save(try await t.cached(at: now.addingTimeInterval(-7200)))
+        store.revalidateIfStale()
+        await store.start()
+        #expect(await waitUntil { !store.isRefreshing })
+        #expect(log.count("info") == 1)
+        #expect(!store.reportFromCache)
+    }
+}
