@@ -62,17 +62,26 @@ struct UpgradeSheet: View {
             }
             .progressViewStyle(.linear)
 
-            FlowLayout(spacing: 6) {
-                ForEach(session.items) { item in
-                    Chip(item: item, action: session.action, title: session.chipName(item))
-                        .contextMenu {
-                            // 0.8.3: one failed step again.
-                            if session.retryableItems.contains(where: { $0.id == item.id }) {
-                                Button("Retry \(item.package.name)") { store.retryInSheet([item]) }
+            // 0.8.8 (gauntlet 15): a 15-step Restore's chips took 12 rows
+            // and pushed Done below a 660 pt window. Past a few rows they
+            // scroll; a short run's chips take only their own height.
+            ScrollView(.vertical) {
+                FlowLayout(spacing: 6) {
+                    ForEach(session.items) { item in
+                        Chip(item: item, action: session.action, title: session.chipName(item))
+                            .contextMenu {
+                                // 0.8.3: one failed step again.
+                                if session.retryableItems.contains(where: { $0.id == item.id }) {
+                                    Button("Retry \(item.package.name)") { store.retryInSheet([item]) }
+                                }
                             }
-                        }
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(maxHeight: CGFloat(SessionSheetLayout.chipsMaxHeight))
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 12)
             .padding(.bottom, 10)
 
@@ -112,8 +121,10 @@ struct UpgradeSheet: View {
                 .padding(.bottom, 8)
             }
 
+            // 0.8.8: the log gives way first when the window is short.
             LogView(assembler: session.log)
-                .frame(height: 236)
+                .frame(minHeight: CGFloat(SessionSheetLayout.logMinHeight), idealHeight: CGFloat(SessionSheetLayout.logHeight),
+                       maxHeight: CGFloat(SessionSheetLayout.logHeight))
 
             // 0.8.3: what to do about a failure Tankard recognises.
             if let next = session.nextStep {
@@ -184,6 +195,10 @@ struct UpgradeSheet: View {
         .padding(.top, 20)
         .padding(.bottom, 16)
         .frame(width: 600)
+        // 0.8.8 (gauntlet 15): never taller than the window (the 0.8.6
+        // promise); the log shrinks to fit. The progress panel sizes
+        // itself to the page and scrolls past the screen's height.
+        .frame(maxHeight: inPanel ? nil : SessionSheetLayout.maxHeight(room: store.sheetRoom).map { CGFloat($0) }, alignment: .top)
         .background(theme.window ?? .clear)
         .alert("Stop now?", isPresented: Binding(get: { session.confirmingStop }, set: { session.confirmingStop = $0 })) {
             Button("Stop Now", role: .destructive) { session.stopNow() }

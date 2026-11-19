@@ -25,9 +25,8 @@ extension AppStore {
         }
     }
 
-    /// Installed, no search, and a filter that shows the package: a More
-    /// filter (Pinned, Has notes…) or a segment that hides it goes back to
-    /// All; Upgrades (it lists every package the panel does) stays. Then
+    /// Installed, no search, the Upgrades filter (0.8.8; before, the filter
+    /// on screen when it showed the package, else All). Then
     /// the package is selected and the table asked to scroll to it. A
     /// package gone since the panel was drawn (upgraded, refreshed away)
     /// shows the Upgrades list instead.
@@ -38,7 +37,11 @@ extension AppStore {
         }
         if tab != .installed { tab = .installed }
         if !search.isEmpty { search = "" }
-        if PackageFilter.more.contains(filter) || !filter.includes(p) { filter = .all }
+        // 0.8.8 (owner report): the panel lists upgrades, so its row opens
+        // the Upgrades list with the package selected, as "and N more…"
+        // does; All only for a package Upgrades wouldn't show.
+        let target: PackageFilter = PackageFilter.upgrades.includes(p) ? .upgrades : .all
+        if filter != target { filter = target }
         if selection != p.id { selection = p.id }
         revealRequest &+= 1
     }

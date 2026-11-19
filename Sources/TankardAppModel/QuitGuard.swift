@@ -171,7 +171,7 @@ extension AppStore {
     func offerInterruptedRun() -> Bool {
         // This process's own run keeps its journal until it ends (and when
         // it ends for a quit, the journal is for the next launch).
-        guard !quittingMidRun, !isUpgrading, let data = settings.defaults.data(forKey: RunJournal.key) else { return false }
+        guard !quittingMidRun, !terminating, !isUpgrading, let data = settings.defaults.data(forKey: RunJournal.key) else { return false }
         settings.defaults.removeObject(forKey: RunJournal.key)
         guard upgradePlan == nil, appManagementPrompt == nil, appManagementResume == nil,
               let j = RunJournal.decode(data) else { return false }

@@ -18,27 +18,60 @@ enum QuitGuard {
 
     /// 0.8.6: Tankard ▸ Quit Tankard (⌘Q) and the menu-bar panel's Quit.
     /// AppKit refuses to terminate while a sheet is attached ("App
-    /// termination blocked by modal sheet"), so ⌘Q did nothing over the
-    /// Welcome sheet. With no brew running (nothing for the guard to ask
-    /// about), the sheets are closed first; with brew running, quitting
-    /// goes to the guard as before.
+    /// termination blocked by modal sheet"), and it refuses before it asks
+    /// applicationShouldTerminate, so neither the guard's question nor a
+    /// plain quit got anywhere over a sheet.
+    /// 0.8.8 (gauntlets 15 and 26): ⌘Q over a run's sheet, or over a
+    /// finished "Install complete" or Post-install notes sheet, did
+    /// nothing. With brew running, the guard asks here (`AppStore.quitStep`);
+    /// then, or with nothing running, every sheet is closed in the store
+    /// (so SwiftUI doesn't put it back) and in AppKit, and Tankard quits.
     static func quitFromMenu() {
-        guard exempt || store?.quitPrompt == nil else {
-            NSApp.terminate(nil)
+        guard let store, !exempt else {
+            closeSheetsAndTerminate()
             return
         }
-        quitLog.notice("quit from menu: closing sheets first")
-        // SwiftUI presents the sheets from the store's state: clear it, so
-        // a sheet ended by AppKit isn't put back, then end what is attached.
-        store?.closeToolSheet()
-        Relauncher.closeSheets()
-        // Terminate once the sheet is gone (SwiftUI removes it on the next
-        // turns of the run loop).
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { NSApp.terminate(nil) }
+        switch store.quitStep {
+        case .ask(let prompt):
+            quitLog.notice("quit from menu: brew is running, asking first")
+            guard let choice = ask(prompt) else { return }
+            exempt = true
+            store.prepareToQuit(choice) {
+                quitLog.notice("quit from menu: the run has ended, quitting")
+                closeSheetsAndTerminate()
+            }
+        case .closeSheetsAndQuit:
+            closeSheetsAndTerminate()
+        }
     }
 
-    static func shouldTerminate() -> NSApplication.TerminateReply {
-        guard !exempt, let store, let prompt = store.quitPrompt else { return .terminateNow }
+    /// Closes every sheet (store first, then AppKit), terminates on the
+    /// next turns of the run loop, and once more if a sheet still refused
+    /// it (the relaunch's sequence, with no helper).
+    private static func closeSheetsAndTerminate() {
+        quitLog.notice("quit from menu: closing sheets first")
+        _ = RelaunchSequence(
+            startHelper: { true },
+            closeSheets: Relauncher.closeSheets,
+            terminate: {
+                exempt = true
+                NSApp.terminate(nil)
+            },
+            after: { delay, work in
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(delay))
+                    work()
+                }
+            },
+            gaveUp: {
+                quitLog.error("quit from menu: still running after two terminate attempts")
+                exempt = false
+                store?.terminationCancelled()
+            }).run()
+    }
+
+    /// The guard's question. nil: Keep Running.
+    private static func ask(_ prompt: QuitPrompt) -> QuitChoice? {
         let alert = NSAlert()
         alert.messageText = prompt.message + " " + String(localized: "Quit anyway?")
         alert.informativeText = prompt.detail
@@ -47,12 +80,18 @@ enum QuitGuard {
         alert.addButton(withTitle: String(localized: "Stop After Current and Quit"))
         alert.addButton(withTitle: String(localized: "Quit Now"))
         alert.buttons.last?.hasDestructiveAction = true
-        let choice: QuitChoice
         switch alert.runModal() {
-        case .alertSecondButtonReturn: choice = .afterCurrent
-        case .alertThirdButtonReturn: choice = .now
-        default: return .terminateCancel
+        case .alertSecondButtonReturn: return .afterCurrent
+        case .alertThirdButtonReturn: return .now
+        default: return nil
         }
+    }
+
+    /// A quit that didn't come from the menu (the Dock, a logout): AppKit
+    /// asks here when no sheet is attached.
+    static func shouldTerminate() -> NSApplication.TerminateReply {
+        guard !exempt, let store, let prompt = store.quitPrompt else { return .terminateNow }
+        guard let choice = ask(prompt) else { return .terminateCancel }
         store.prepareToQuit(choice) {
             NSApp.reply(toApplicationShouldTerminate: true)
         }

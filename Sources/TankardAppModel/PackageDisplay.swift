@@ -416,6 +416,23 @@ public enum SheetHeight {
     }
 }
 
+/// 0.8.8 (gauntlet 15): the run sheet (UpgradeSheet) in a short window.
+/// A finished 15-step Restore was 721 pt tall in a 660 pt window, Done
+/// below its edge: its chips now scroll past `chipsMaxHeight` (about five
+/// rows), and the sheet is at most the window's room, its log shrinking
+/// down to `logMinHeight` to fit.
+public enum SessionSheetLayout {
+    public static let chipsMaxHeight: Double = 140
+    public static let logHeight: Double = 236
+    public static let logMinHeight: Double = 96
+
+    /// nil: no limit (the window hasn't laid out yet).
+    public static func maxHeight(room: Double?) -> Double? {
+        guard let room, room > 0 else { return nil }
+        return max(SheetHeight.minimum, room - SheetHeight.margin)
+    }
+}
+
 /// 0.8.6 (UI details M8): at the minimum window width (820 pt) the table's
 /// columns couldn't fit beside a 272 pt detail pane: sizes lost digits
 /// from the middle ("77…5"), a header read "Grö". Below 900 pt the pane

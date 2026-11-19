@@ -12145,6 +12145,110 @@
         }
       }
     },
+    "Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein anderer Homebrew-Lauf (im Terminal oder in einer anderen App) hat wahrscheinlich gleichzeitig dasselbe Paket installiert. Versuche es erneut, sobald er fertig ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une autre exécution de Homebrew (dans Terminal ou une autre app) installait probablement le même paquet au même moment. Réessayez une fois qu’elle est terminée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otra ejecución de Homebrew (en Terminal o en otra app) probablemente estaba instalando el mismo paquete al mismo tiempo. Reinténtalo cuando haya terminado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別のHomebrewの実行（ターミナルや別のアプリ）が同時に同じパッケージをインストールしていた可能性があります。それが終わってから再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "另一个 Homebrew 进程（在“终端”或其他 App 中）可能正在同时安装同一个软件包。请在它完成后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outra execução do Homebrew (no Terminal ou em outro app) provavelmente estava instalando o mesmo pacote ao mesmo tempo. Tente novamente quando ela terminar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un’altra esecuzione di Homebrew (nel Terminale o in un’altra app) stava probabilmente installando lo stesso pacchetto nello stesso momento. Riprova quando ha finito."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 Homebrew 실행(터미널 또는 다른 앱)이 같은 순간에 같은 패키지를 설치하고 있었을 가능성이 높습니다. 그 작업이 끝나면 다시 시도하십시오."
+          }
+        }
+      }
+    },
+    "Another Homebrew run was installing it": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein anderer Homebrew-Lauf hat es installiert"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une autre exécution de Homebrew l’installait"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otra ejecución de Homebrew lo estaba instalando"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別のHomebrewの実行がインストール中でした"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "另一个 Homebrew 进程正在安装它"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outra execução do Homebrew estava instalando"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un’altra esecuzione di Homebrew lo stava installando"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 Homebrew 실행이 설치하는 중이었음"
+          }
+        }
+      }
+    },
     "Another installer put files in Homebrew's prefix. They can confuse builds from source.": {
       "localizations": {
         "de": {

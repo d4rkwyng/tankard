@@ -28,6 +28,7 @@ extension UpgradeSession {
         case .buildFailed: return String(localized: "The log shows where the build stopped. A later version may build; Skip Version keeps it out of Upgrade All until then.")
         case .appManagement: return nil
         case .untrustedTap: return BrewFailureKind.untrustedTap.explanation
+        case .concurrentInstall: return BrewFailureKind.concurrentInstall.explanation
         }
     }
 

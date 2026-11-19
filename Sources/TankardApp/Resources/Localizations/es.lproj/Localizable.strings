@@ -227,6 +227,8 @@
 "An older copy of Tankard is still running. Quit it to finish updating." = "Aún hay una copia anterior de Tankard abierta. Ciérrala para terminar la actualización.";
 "Another Homebrew command is running" = "Otro comando de Homebrew se está ejecutando";
 "Another Homebrew command kept brew's lock. Retry once it has finished." = "Otro comando de Homebrew mantenía el bloqueo de brew. Reintenta cuando haya terminado.";
+"Another Homebrew run (in Terminal, or another app) was probably installing the same package at the same moment. Retry once it has finished." = "Otra ejecución de Homebrew (en Terminal o en otra app) probablemente estaba instalando el mismo paquete al mismo tiempo. Reinténtalo cuando haya terminado.";
+"Another Homebrew run was installing it" = "Otra ejecución de Homebrew lo estaba instalando";
 "Another installer put files in Homebrew's prefix. They can confuse builds from source." = "Otro instalador puso archivos en el prefijo de Homebrew. Pueden confundir las compilaciones desde el código fuente.";
 "Another old version is installed" = "Hay otra versión antigua instalada";
 "Another older version is also on this Mac, and Homebrew would switch to that one instead." = "En este Mac también hay otra versión anterior, y Homebrew cambiaría a esa en su lugar.";
