@@ -106,8 +106,7 @@ enum ContextMenuActions {
                             store.startInstall(e)
                         }
                     case .showInInstalled:
-                        store.tab = .installed
-                        store.selection = e.id
+                        store.showInInstalled(e.id)
                     case .copy(let s): copy(s)
                     case .open(let url): open(url)
                     default: break

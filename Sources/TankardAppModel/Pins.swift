@@ -129,15 +129,10 @@ public extension AppStore {
     }
 
     /// Selects a package from a dependency link, clearing a filter or
-    /// search that would hide it.
+    /// search that would hide it (0.8.7: and scrolls to it; showInInstalled).
     func reveal(_ id: Package.ID) {
-        guard let p = packages.first(where: { $0.id == id }) else { return }
-        tab = .installed
-        if !visiblePackages.contains(where: { $0.id == p.id }) {
-            filter = .all
-            search = ""
-        }
-        selection = p.id
+        guard packages.contains(where: { $0.id == id }) else { return }
+        showInInstalled(id)
     }
 
     /// Runs one mutating brew command through the queue (the same queue as

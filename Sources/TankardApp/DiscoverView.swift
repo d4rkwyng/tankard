@@ -438,8 +438,7 @@ struct DiscoverDetail: View {
                             .foregroundStyle(theme.badge(.bottle).foreground)
                         Spacer()
                         Button("Show in Installed") {
-                            store.tab = .installed
-                            store.selection = e.id
+                            store.showInInstalled(e.id)
                         }
                         .controlSize(.small)
                     }

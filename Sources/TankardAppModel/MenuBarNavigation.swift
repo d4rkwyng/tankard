@@ -42,4 +42,28 @@ extension AppStore {
         if selection != p.id { selection = p.id }
         revealRequest &+= 1
     }
+
+    /// 0.8.7: Discover's Show in Installed (its button and context menu)
+    /// and the detail pane's dependency links: Installed with the package
+    /// selected and the table scrolled to it. A search that would hide it
+    /// is cleared, then, if it is still hidden, the filter goes back to All
+    /// (a search or filter that shows it stays). A package not in the list
+    /// yet (the read after an install hasn't landed) is selected anyway,
+    /// with the search and a filter cleared, so it shows when it arrives.
+    /// Before, Show in Installed only switched tab and selection: after
+    /// searching Installed for something else, the detail pane showed the
+    /// package but the list didn't.
+    public func showInInstalled(_ id: Package.ID) {
+        if tab != .installed { tab = .installed }
+        if selection != id { selection = id }
+        if packages.contains(where: { $0.id == id }) {
+            func hidden() -> Bool { !visiblePackages.contains { $0.id == id } }
+            if hidden(), !search.isEmpty { search = "" }
+            if hidden(), filter != .all { filter = .all }
+        } else {
+            if !search.isEmpty { search = "" }
+            if filter != .all { filter = .all }
+        }
+        revealRequest &+= 1
+    }
 }
