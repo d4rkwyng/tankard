@@ -54,7 +54,7 @@ Homebrew yet? Tankard's welcome screen shows how to install it.
 
 `Scripts/test.sh` runs the tests; `Scripts/bundle-app.sh --universal` builds `dist/Tankard.app` (Swift 6, Command Line Tools). More in [architecture.md](docs/architecture.md) and [CHANGELOG.md](CHANGELOG.md).
 
-Built with Claude Code under Derek's direction ([write-up](https://mindtricks.io/blog/20261117-intelbrew-tankard)).
+Built with Claude Code under d4rkwyng's direction ([write-up](https://mindtricks.io/blog/20261117-intelbrew-tankard)).
 
 ## License
 
