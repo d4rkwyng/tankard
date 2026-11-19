@@ -48,11 +48,11 @@ public final class ServicesStore {
     /// "2 services · 1 running · 1 error"
     public var summary: String {
         guard !services.isEmpty else { return String(localized: "No services") }
-        var parts = [services.count == 1 ? String(localized: "\(services.count) service") : String(localized: "\(services.count) services")]
+        var parts = [String(localized: "\(services.count) services", bundle: L10n.bundle)]
         let running = services.filter { $0.status == .started }.count
         if running > 0 { parts.append(String(localized: "\(running) running")) }
         let failed = services.filter { $0.status == .error }.count
-        if failed > 0 { parts.append(failed == 1 ? String(localized: "\(failed) error") : String(localized: "\(failed) errors")) }
+        if failed > 0 { parts.append(String(localized: "\(failed) errors", bundle: L10n.bundle)) }
         return parts.joined(separator: " · ")
     }
 

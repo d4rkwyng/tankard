@@ -410,7 +410,7 @@ public final class UpgradeSession: Identifiable {
             return String(localized: "\(verb) complete")
         }
         if action == .cleanup { return String(localized: "Cleaning up") }
-        if action == .restore { return total == 1 ? String(localized: "Restoring (\(total) step)") : String(localized: "Restoring (\(total) steps)") }
+        if action == .restore { return String(localized: "Restoring (\(total) steps)", bundle: L10n.bundle) }
         if action == .replaceBottle {
             return total == 1 ? String(localized: "Reinstalling \(items[0].package.name) from a bottle") : String(localized: "Reinstalling \(total) packages from bottles")
         }
@@ -471,21 +471,21 @@ public final class UpgradeSession: Identifiable {
         if !bottles.isEmpty && action == .install && intelbrewMode {
             // Installs know whose bottle it is (from the catalogue).
             let ib = bottles.filter { $0.bottleOrigin == .intelbrew }.count
-            if ib > 0 { parts.append(ib == 1 ? String(localized: "\(ib) bottle from Intelbrew") : String(localized: "\(ib) bottles from Intelbrew")) }
+            if ib > 0 { parts.append(String(localized: "\(ib) bottles from Intelbrew", bundle: L10n.bundle)) }
             let other = bottles.count - ib
-            if other > 0 { parts.append(other == 1 ? String(localized: "\(other) Homebrew bottle") : String(localized: "\(other) Homebrew bottles")) }
+            if other > 0 { parts.append(String(localized: "\(other) Homebrew bottles", bundle: L10n.bundle)) }
         } else if !bottles.isEmpty {
             let from = intelbrewMode ? String(localized: " from Intelbrew") : ""
-            parts.append((bottles.count == 1 ? String(localized: "\(bottles.count) bottle") : String(localized: "\(bottles.count) bottles")) + from)
+            parts.append((String(localized: "\(bottles.count) bottles", bundle: L10n.bundle)) + from)
         }
         if !compiles.isEmpty {
             let names = compiles.count <= 3 ? " (\(compiles.map(\.name).joined(separator: ", ")))" : ""
-            parts.append((compiles.count == 1 ? String(localized: "\(compiles.count) build from source") : String(localized: "\(compiles.count) builds from source")) + names)
+            parts.append((String(localized: "\(compiles.count) builds from source", bundle: L10n.bundle)) + names)
         }
         if readyMade > 0 {
-            parts.append(readyMade == 1 ? String(localized: "\(readyMade) ready-made program") : String(localized: "\(readyMade) ready-made programs"))
+            parts.append(String(localized: "\(readyMade) ready-made programs", bundle: L10n.bundle))
         }
-        if casks > 0 { parts.append(casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")) }
+        if casks > 0 { parts.append(String(localized: "\(casks) casks", bundle: L10n.bundle)) }
         if already > 0 { parts.append(String(localized: "\(already) already up to date")) }
         let line = parts.joined(separator: " · ")
         // 0.8.8 (gauntlet 15): with failures, the line is what was done,
@@ -1048,7 +1048,6 @@ public final class UpgradeSession: Identifiable {
 /// translations used to get the English "has"/"have" in a placeholder).
 public enum PlanText {
     public static func compiles(_ n: Int) -> String {
-        n == 1 ? String(localized: "1 package has no bottle for this Mac and will compile from source, which can take a long time.")
-               : String(localized: "\(n) packages have no bottle for this Mac and will compile from source, which can take a long time.")
+        String(localized: "\(n) packages have no bottle for this Mac and will compile from source, which can take a long time.", bundle: L10n.bundle)
     }
 }

@@ -248,7 +248,7 @@ public extension UpgradeSession {
         guard action == .upgrade, finishedCleanly else { return nil }
         let names = packages.map(\.name)
         let n = names.count
-        let title = n == 1 ? String(localized: "Tankard upgraded \(n) package") : String(localized: "Tankard upgraded \(n) packages")
+        let title = String(localized: "Tankard upgraded \(n) packages", bundle: L10n.bundle)
         let body = names.prefix(4).joined(separator: ", ") + (n > 4 ? String(localized: " and \(n - 4) more") : "")
         return UpgradeNotificationDiff.Message(title: title, body: body, newKeys: ["upgrade@\(id.uuidString)"], kind: .upgradeDone)
     }

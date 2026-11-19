@@ -383,3 +383,38 @@ struct V088PolishTests {
         #expect(UpgradeMenu.selectedTitle(pkg("wget")) == "Upgrade wget")
     }
 }
+
+// MARK: B8: counts follow each language's plural rules
+
+struct V088PluralTests {
+    static let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+
+    func format(_ key: String, _ lang: String, _ n: Int) throws -> String {
+        let dir = Self.root.appendingPathComponent("Sources/TankardApp/Resources/Localizations/\(lang).lproj")
+        let bundle = try #require(Bundle(path: dir.path))
+        let fmt = bundle.localizedString(forKey: key, value: nil, table: nil)
+        return String(format: fmt, locale: Locale(identifier: lang), n)
+    }
+
+    /// French counts 0 as singular ("0 service"); English doesn't. Before,
+    /// every count was `n == 1 ? singular : plural`.
+    @Test func zeroIsSingularInFrenchAndPluralInEnglish() throws {
+        #expect(try format("%lld services", "fr", 0) == "0 service")
+        #expect(try format("%lld services", "fr", 2) == "2 services")
+        #expect(try format("%lld services", "en", 0) == "0 services")
+        #expect(try format("%lld services", "en", 1) == "1 service")
+        #expect(try format("%lld upgrades ready", "pt-BR", 1).hasPrefix("1 "))
+        #expect(try format("%lld hours", "de", 1) == "1 Stunde")
+    }
+
+    /// No count string is left as an `n == 1` pair: the singular keys are
+    /// gone from the catalog.
+    @Test func singularKeysAreGone() throws {
+        let data = try Data(contentsOf: Self.root.appendingPathComponent("Resources/Localizable.xcstrings"))
+        let strings = try #require((try JSONSerialization.jsonObject(with: data) as? [String: Any])?["strings"] as? [String: Any])
+        for gone in ["%lld service", "1 hour", "%lld upgrade ready", "1 known vulnerability", "Upgrade Selected"] {
+            #expect(strings[gone] == nil, "\(gone)")
+        }
+        #expect(strings["%lld services"] != nil)
+    }
+}

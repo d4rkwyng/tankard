@@ -209,9 +209,7 @@ public enum TapRemoval: Equatable, Sendable {
         case .notTapped: return String(localized: "Not tapped: Homebrew reads this tap from its API, so there is nothing to remove.")
         case .inUse(let names):
             let list = names.prefix(5).joined(separator: ", ") + (names.count > 5 ? " +\(names.count - 5)" : "")
-            return names.count == 1
-                ? String(localized: "1 installed package comes from this tap (\(list)). Uninstall it first: brew won't remove a tap while packages from it are installed.")
-                : String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first: brew won't remove a tap while packages from it are installed.")
+            return String(localized: "\(names.count) installed packages come from this tap (\(list)). Uninstall them first: brew won't remove a tap while packages from it are installed.", bundle: L10n.bundle)
         case .inUseUnreadable(let names, let unreadable):
             let list = unreadable.prefix(5).joined(separator: ", ") + (unreadable.count > 5 ? " +\(unreadable.count - 5)" : "")
             let base = TapRemoval.inUse(names).reason ?? ""

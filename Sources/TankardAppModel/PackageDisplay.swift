@@ -326,16 +326,16 @@ public enum SummaryText {
     public static func line(_ s: StatusSummary, intelbrewMode: Bool) -> String {
         var parts = [String(localized: "\(s.installed) installed")]
         if intelbrewMode {
-            parts.append(s.intelbrewBottled == 1 ? String(localized: "\(s.intelbrewBottled) Intelbrew bottle") : String(localized: "\(s.intelbrewBottled) Intelbrew bottles"))
+            parts.append(String(localized: "\(s.intelbrewBottled) Intelbrew bottles", bundle: L10n.bundle))
             let others = s.bottled - s.intelbrewBottled
-            if others > 0 { parts.append(others == 1 ? String(localized: "\(others) Homebrew bottle") : String(localized: "\(others) Homebrew bottles")) }
+            if others > 0 { parts.append(String(localized: "\(others) Homebrew bottles", bundle: L10n.bundle)) }
         } else {
-            parts.append(s.bottled == 1 ? String(localized: "\(s.bottled) bottle") : String(localized: "\(s.bottled) bottles"))
+            parts.append(String(localized: "\(s.bottled) bottles", bundle: L10n.bundle))
         }
         parts.append(String(localized: "\(s.source) from source"))
         if s.newer > 0 || intelbrewMode { parts.append(String(localized: "\(s.newer) newer")) }
         if s.noBottle > 0 { parts.append(String(localized: "\(s.noBottle) no bottle")) }
-        if s.casks > 0 { parts.append(s.casks == 1 ? String(localized: "\(s.casks) cask") : String(localized: "\(s.casks) casks")) }
+        if s.casks > 0 { parts.append(String(localized: "\(s.casks) casks", bundle: L10n.bundle)) }
         return parts.joined(separator: " · ")
     }
 
@@ -346,14 +346,14 @@ public enum SummaryText {
     /// The strip shows the first that fits; hovering shows the full line.
     public static func lines(_ s: StatusSummary, intelbrewMode: Bool) -> [String] {
         let installed = String(localized: "\(s.installed) installed")
-        let bottles = s.bottled == 1 ? String(localized: "\(s.bottled) bottle") : String(localized: "\(s.bottled) bottles")
+        let bottles = String(localized: "\(s.bottled) bottles", bundle: L10n.bundle)
         let source = String(localized: "\(s.source) from source")
-        let casks = s.casks > 0 ? (s.casks == 1 ? String(localized: "\(s.casks) cask") : String(localized: "\(s.casks) casks")) : nil
+        let casks = s.casks > 0 ? (String(localized: "\(s.casks) casks", bundle: L10n.bundle)) : nil
         var parts = [installed]
         if intelbrewMode {
-            parts.append(s.intelbrewBottled == 1 ? String(localized: "\(s.intelbrewBottled) Intelbrew bottle") : String(localized: "\(s.intelbrewBottled) Intelbrew bottles"))
+            parts.append(String(localized: "\(s.intelbrewBottled) Intelbrew bottles", bundle: L10n.bundle))
             let others = s.bottled - s.intelbrewBottled
-            if others > 0 { parts.append(others == 1 ? String(localized: "\(others) Homebrew bottle") : String(localized: "\(others) Homebrew bottles")) }
+            if others > 0 { parts.append(String(localized: "\(others) Homebrew bottles", bundle: L10n.bundle)) }
         } else {
             parts.append(bottles)
         }
@@ -388,9 +388,9 @@ public enum SummaryText {
     public static func upgrades(_ s: StatusSummary) -> (String, String)? {
         guard s.upgrades > 0 else { return nil }
         var detail = [String(localized: "\(s.upgradesWithBottle) with bottles")]
-        if s.upgradesFromSource > 0 { detail.append(s.upgradesFromSource == 1 ? String(localized: "\(s.upgradesFromSource) compiles") : String(localized: "\(s.upgradesFromSource) compile")) }
-        if s.caskUpgrades > 0 { detail.append(s.caskUpgrades == 1 ? String(localized: "\(s.caskUpgrades) cask") : String(localized: "\(s.caskUpgrades) casks")) }
-        return (s.upgrades == 1 ? String(localized: "\(s.upgrades) upgrade ready") : String(localized: "\(s.upgrades) upgrades ready"), "(\(detail.joined(separator: ", ")))")
+        if s.upgradesFromSource > 0 { detail.append(String(localized: "\(s.upgradesFromSource) compile", bundle: L10n.bundle)) }
+        if s.caskUpgrades > 0 { detail.append(String(localized: "\(s.caskUpgrades) casks", bundle: L10n.bundle)) }
+        return (String(localized: "\(s.upgrades) upgrades ready", bundle: L10n.bundle), "(\(detail.joined(separator: ", ")))")
     }
 }
 
@@ -516,7 +516,7 @@ public func updatedAgo(_ date: Date, now: Date) -> String {
     case ..<86400: return String(localized: "\(Int(s / 3600)) h ago")
     default:
         let d = Int(s / 86400)
-        return d == 1 ? String(localized: "\(d) day ago") : String(localized: "\(d) days ago")
+        return String(localized: "\(d) days ago", bundle: L10n.bundle)
     }
 }
 

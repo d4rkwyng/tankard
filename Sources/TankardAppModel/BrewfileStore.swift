@@ -36,9 +36,9 @@ public struct BrewfileSummary: Equatable, Sendable {
 
     /// "3 taps, 41 formulae, 12 casks"
     public var line: String {
-        let t = taps == 1 ? String(localized: "\(taps) tap") : String(localized: "\(taps) taps")
-        let f = formulae == 1 ? String(localized: "\(formulae) formula") : String(localized: "\(formulae) formulae")
-        let c = casks == 1 ? String(localized: "\(casks) cask") : String(localized: "\(casks) casks")
+        let t = String(localized: "\(taps) taps", bundle: L10n.bundle)
+        let f = String(localized: "\(formulae) formulae", bundle: L10n.bundle)
+        let c = String(localized: "\(casks) casks", bundle: L10n.bundle)
         return [t, f, c].joined(separator: ", ")
     }
 }

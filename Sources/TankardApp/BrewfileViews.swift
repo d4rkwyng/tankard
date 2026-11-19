@@ -287,9 +287,7 @@ struct BrewfileSheet: View {
             // third longer than English and the sheet doesn't widen. The
             // tooltip has the full sentence too.
             if !p.compiling.isEmpty {
-                let text = p.compiling.count == 1
-                    ? String(localized: "1 would compile from source: no bottle for this Mac. That can take a long time.")
-                    : String(localized: "\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time.")
+                let text = String(localized: "\(p.compiling.count) would compile from source: no bottle for this Mac. That can take a long time.", bundle: L10n.bundle)
                 Label(text, systemImage: "hammer.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.orange)
                     .lineLimit(2...3)
@@ -297,9 +295,7 @@ struct BrewfileSheet: View {
                     .help(text)
             }
             if !p.adminCasks.isEmpty {
-                let text = p.adminCasks.count == 1
-                    ? String(localized: "\(p.adminCasks.count) cask runs a pkg installer: macOS asks for an administrator password.")
-                    : String(localized: "\(p.adminCasks.count) casks run a pkg installer: macOS asks for an administrator password.")
+                let text = String(localized: "\(p.adminCasks.count) casks run a pkg installer: macOS asks for an administrator password.", bundle: L10n.bundle)
                 Label(text, systemImage: "lock.fill")
                     .font(.system(size: 11.5)).foregroundStyle(.secondary)
                     .lineLimit(2...3)

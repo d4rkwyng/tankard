@@ -2,6 +2,230 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>%lld Homebrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のHomebrew bottle</string>
+			<key>other</key>
+			<string>%lld個のHomebrew bottle</string>
+		</dict>
+	</dict>
+	<key>%lld Intelbrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のIntelbrew bottle</string>
+			<key>other</key>
+			<string>%lld個のIntelbrew bottle</string>
+		</dict>
+	</dict>
+	<key>%lld bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のbottle</string>
+			<key>other</key>
+			<string>%lld個のbottle</string>
+		</dict>
+	</dict>
+	<key>%lld bottles from Intelbrew</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のbottle(Intelbrew提供)</string>
+			<key>other</key>
+			<string>%lld個のbottle(Intelbrew提供)</string>
+		</dict>
+	</dict>
+	<key>%lld builds from source</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個がソースからビルド</string>
+			<key>other</key>
+			<string>%lld個がソースからビルド</string>
+		</dict>
+	</dict>
+	<key>%lld casks</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のcask</string>
+			<key>other</key>
+			<string>%lld個のcask</string>
+		</dict>
+	</dict>
+	<key>%lld casks run a pkg installer: macOS asks for an administrator password.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のcaskがpkgインストーラを実行します: macOSが管理者パスワードを要求します。</string>
+			<key>other</key>
+			<string>%lld個のcaskがpkgインストーラを実行します: macOSが管理者パスワードを要求します。</string>
+		</dict>
+	</dict>
+	<key>%lld compile</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個がコンパイル</string>
+			<key>other</key>
+			<string>%lld個がコンパイル</string>
+		</dict>
+	</dict>
+	<key>%lld days ago</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld日前</string>
+			<key>other</key>
+			<string>%lld日前</string>
+		</dict>
+	</dict>
+	<key>%lld errors</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld件のエラー</string>
+			<key>other</key>
+			<string>%lld件のエラー</string>
+		</dict>
+	</dict>
+	<key>%lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のformula</string>
+			<key>other</key>
+			<string>%lld個のformulae</string>
+		</dict>
+	</dict>
+	<key>%lld hours</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld時間</string>
+			<key>other</key>
+			<string>%lld時間</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages Homebrew can't read</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrew が読み込めないインストール済みパッケージ：%lld 個</string>
+			<key>other</key>
+			<string>Homebrew が読み込めないインストール済みパッケージ：%lld 個</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。</string>
+			<key>other</key>
+			<string>このtap(%2$@)から%1$lld個のインストール済みパッケージが来ています。先にアンインストールしてください。tapのパッケージがインストールされている間、brewはtapを削除しません。</string>
+		</dict>
+	</dict>
 	<key>%lld installs in the last 30 days</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -42,6 +266,406 @@
 			<string>lld</string>
 			<key>other</key>
 			<string>過去90日間に%lld回インストール</string>
+		</dict>
+	</dict>
+	<key>%lld items</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld項目</string>
+			<key>other</key>
+			<string>%lld項目</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld件の既知の脆弱性</string>
+			<key>other</key>
+			<string>%lld件の既知の脆弱性</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities (brew vulns): %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld件の既知の脆弱性(brew vulns): %@</string>
+			<key>other</key>
+			<string>%lld件の既知の脆弱性(brew vulns): %@</string>
+		</dict>
+	</dict>
+	<key>%lld packages have no bottle for this Mac and will compile from source, which can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。</string>
+			<key>other</key>
+			<string>%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。</string>
+		</dict>
+	</dict>
+	<key>%lld pinned upgrades not included (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld件のピン留めされたアップグレードは含まれません(%@)</string>
+			<key>other</key>
+			<string>%lld件のピン留めされたアップグレードは含まれません(%@)</string>
+		</dict>
+	</dict>
+	<key>%lld ready-made programs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>ビルド済みプログラム%lld個</string>
+			<key>other</key>
+			<string>ビルド済みプログラム%lld個</string>
+		</dict>
+	</dict>
+	<key>%lld results for “%@”</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>「%2$@」の結果: %1$lld件</string>
+			<key>other</key>
+			<string>「%2$@」の結果: %1$lld件</string>
+		</dict>
+	</dict>
+	<key>%lld services</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のサービス</string>
+			<key>other</key>
+			<string>%lld個のサービス</string>
+		</dict>
+	</dict>
+	<key>%lld taps</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のtap</string>
+			<key>other</key>
+			<string>%lld個のtap</string>
+		</dict>
+	</dict>
+	<key>%lld upgrades ready</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld件のアップグレードが利用可能</string>
+			<key>other</key>
+			<string>%lld件のアップグレードが利用可能</string>
+		</dict>
+	</dict>
+	<key>%lld vulnerable packages; more filters</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>脆弱なパッケージ%lld個、他のフィルタ</string>
+			<key>other</key>
+			<string>脆弱なパッケージ%lld個、他のフィルタ</string>
+		</dict>
+	</dict>
+	<key>%lld would compile from source: no bottle for this Mac. That can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個はソースからコンパイルされます: このMac用のbottleがありません。時間がかかる場合があります。</string>
+			<key>other</key>
+			<string>%lld個はソースからコンパイルされます: このMac用のbottleがありません。時間がかかる場合があります。</string>
+		</dict>
+	</dict>
+	<key>+%lld dependencies also compile: %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>+%lld個の依存関係もコンパイルされます: %@</string>
+			<key>other</key>
+			<string>+%lld個の依存関係もコンパイルされます: %@</string>
+		</dict>
+	</dict>
+	<key>Adopt %lld Apps…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のアプリを引き継ぐ…</string>
+			<key>other</key>
+			<string>%lld個のアプリを引き継ぐ…</string>
+		</dict>
+	</dict>
+	<key>Can't uninstall: needed by %lld installed packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>アンインストールできません: %lld個のインストール済みパッケージが必要としています</string>
+			<key>other</key>
+			<string>アンインストールできません: %lld個のインストール済みパッケージが必要としています</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up found %lld things to look at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrewの点検で確認すべき項目が%lld件見つかりました</string>
+			<key>other</key>
+			<string>Homebrewの点検で確認すべき項目が%lld件見つかりました</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up has %lld notes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrewの点検に%lld件のメモがあります</string>
+			<key>other</key>
+			<string>Homebrewの点検に%lld件のメモがあります</string>
+		</dict>
+	</dict>
+	<key>Notes from %lld %@ packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個の%@パッケージのメモ</string>
+			<key>other</key>
+			<string>%lld個の%@パッケージのメモ</string>
+		</dict>
+	</dict>
+	<key>Restore %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のパッケージを復元しますか?</string>
+			<key>other</key>
+			<string>%lld個のパッケージを復元しますか?</string>
+		</dict>
+	</dict>
+	<key>Restoring (%lld steps)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>復元中（%lld ステップ）</string>
+			<key>other</key>
+			<string>復元中（%lld ステップ）</string>
+		</dict>
+	</dict>
+	<key>Scanning %lld formulae…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のformulaをスキャン中…</string>
+			<key>other</key>
+			<string>%lld個のformulaをスキャン中…</string>
+		</dict>
+	</dict>
+	<key>Tankard upgraded %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Tankardが%lld個のパッケージをアップグレードしました</string>
+			<key>other</key>
+			<string>Tankardが%lld個のパッケージをアップグレードしました</string>
+		</dict>
+	</dict>
+	<key>Upgrade %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のパッケージをアップグレードしますか？</string>
+			<key>other</key>
+			<string>%lld個のパッケージをアップグレードしますか？</string>
+		</dict>
+	</dict>
+	<key>Would remove %lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のformulaが削除されます</string>
+			<key>other</key>
+			<string>%lld個のformulaが削除されます</string>
+		</dict>
+	</dict>
+	<key>brew printed %lld warnings (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>brewが警告を%lld件出力しました（%@）</string>
+			<key>other</key>
+			<string>brewが警告を%lld件出力しました（%@）</string>
 		</dict>
 	</dict>
 </dict>

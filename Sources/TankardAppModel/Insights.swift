@@ -251,9 +251,7 @@ public struct PostInstallNotes: Identifiable, Equatable, Sendable {
 
     /// "Notes from 2 upgraded packages".
     public var subtitle: String {
-        notes.count == 1
-            ? String(localized: "Notes from \(notes.count) \(action.past) package")
-            : String(localized: "Notes from \(notes.count) \(action.past) packages")
+        String(localized: "Notes from \(notes.count) \(action.past) packages", bundle: L10n.bundle)
     }
 }
 

@@ -668,7 +668,7 @@ struct AutoremoveSheet: View {
                 Label(m, systemImage: "exclamationmark.triangle.fill").font(.system(size: 12)).foregroundStyle(.orange)
             case .ready:
                 let names = autoremove.plan?.formulae ?? []
-                Text(names.isEmpty ? String(localized: "Nothing to remove") : (names.count == 1 ? String(localized: "Would remove 1 formula") : String(localized: "Would remove \(names.count) formulae")))
+                Text(names.isEmpty ? String(localized: "Nothing to remove") : (String(localized: "Would remove \(names.count) formulae", bundle: L10n.bundle)))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(names.isEmpty ? Color.secondary : theme.accent)
                 if !names.isEmpty {

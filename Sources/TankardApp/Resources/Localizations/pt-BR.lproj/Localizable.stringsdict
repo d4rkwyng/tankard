@@ -2,6 +2,230 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>%lld Homebrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld bottle do Homebrew</string>
+			<key>other</key>
+			<string>%lld bottles do Homebrew</string>
+		</dict>
+	</dict>
+	<key>%lld Intelbrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld bottle do Intelbrew</string>
+			<key>other</key>
+			<string>%lld bottles do Intelbrew</string>
+		</dict>
+	</dict>
+	<key>%lld bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld bottle</string>
+			<key>other</key>
+			<string>%lld bottles</string>
+		</dict>
+	</dict>
+	<key>%lld bottles from Intelbrew</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld bottle do Intelbrew</string>
+			<key>other</key>
+			<string>%lld bottles do Intelbrew</string>
+		</dict>
+	</dict>
+	<key>%lld builds from source</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld compilado do código-fonte</string>
+			<key>other</key>
+			<string>%lld compilados do código-fonte</string>
+		</dict>
+	</dict>
+	<key>%lld casks</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld cask</string>
+			<key>other</key>
+			<string>%lld casks</string>
+		</dict>
+	</dict>
+	<key>%lld casks run a pkg installer: macOS asks for an administrator password.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld cask executa um instalador pkg: o macOS pede uma senha de administrador.</string>
+			<key>other</key>
+			<string>%lld casks executam um instalador pkg: o macOS pede uma senha de administrador.</string>
+		</dict>
+	</dict>
+	<key>%lld compile</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld compilações</string>
+			<key>other</key>
+			<string>%lld compilação</string>
+		</dict>
+	</dict>
+	<key>%lld days ago</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>há %lld dia</string>
+			<key>other</key>
+			<string>há %lld dias</string>
+		</dict>
+	</dict>
+	<key>%lld errors</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld erro</string>
+			<key>other</key>
+			<string>%lld erros</string>
+		</dict>
+	</dict>
+	<key>%lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld formula</string>
+			<key>other</key>
+			<string>%lld formulae</string>
+		</dict>
+	</dict>
+	<key>%lld hours</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld hora</string>
+			<key>other</key>
+			<string>%lld horas</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages Homebrew can't read</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld pacote instalado que o Homebrew não consegue ler</string>
+			<key>other</key>
+			<string>%lld pacotes instalados que o Homebrew não consegue ler</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld pacote instalado vem deste tap (%@). Desinstale-o primeiro: o brew não remove um tap enquanto houver pacotes dele instalados.</string>
+			<key>other</key>
+			<string>%lld pacotes instalados vêm deste tap (%@). Desinstale-os primeiro: o brew não remove um tap enquanto houver pacotes dele instalados.</string>
+		</dict>
+	</dict>
 	<key>%lld installs in the last 30 days</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -48,6 +272,406 @@
 			<string>%lld instalação nos últimos 90 dias</string>
 			<key>other</key>
 			<string>%lld instalações nos últimos 90 dias</string>
+		</dict>
+	</dict>
+	<key>%lld items</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld item</string>
+			<key>other</key>
+			<string>%lld itens</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld vulnerabilidade conhecida</string>
+			<key>other</key>
+			<string>%lld vulnerabilidades conhecidas</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities (brew vulns): %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld vulnerabilidade conhecida (brew vulns): %@</string>
+			<key>other</key>
+			<string>%lld vulnerabilidades conhecidas (brew vulns): %@</string>
+		</dict>
+	</dict>
+	<key>%lld packages have no bottle for this Mac and will compile from source, which can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld pacote não tem bottle para este Mac e será compilado do código-fonte, o que pode demorar muito.</string>
+			<key>other</key>
+			<string>%lld pacotes não têm bottle para este Mac e serão compilados do código-fonte, o que pode demorar muito.</string>
+		</dict>
+	</dict>
+	<key>%lld pinned upgrades not included (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld atualização fixada não incluída (%@)</string>
+			<key>other</key>
+			<string>%lld atualizações fixadas não incluídas (%@)</string>
+		</dict>
+	</dict>
+	<key>%lld ready-made programs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld programa pronto</string>
+			<key>other</key>
+			<string>%lld programas prontos</string>
+		</dict>
+	</dict>
+	<key>%lld results for “%@”</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld resultado para “%@”</string>
+			<key>other</key>
+			<string>%lld resultados para “%@”</string>
+		</dict>
+	</dict>
+	<key>%lld services</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld serviço</string>
+			<key>other</key>
+			<string>%lld serviços</string>
+		</dict>
+	</dict>
+	<key>%lld taps</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld tap</string>
+			<key>other</key>
+			<string>%lld taps</string>
+		</dict>
+	</dict>
+	<key>%lld upgrades ready</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld atualização pronta</string>
+			<key>other</key>
+			<string>%lld atualizações prontas</string>
+		</dict>
+	</dict>
+	<key>%lld vulnerable packages; more filters</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld pacote vulnerável; mais filtros</string>
+			<key>other</key>
+			<string>%lld pacotes vulneráveis; mais filtros</string>
+		</dict>
+	</dict>
+	<key>%lld would compile from source: no bottle for this Mac. That can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld seria compilado do código-fonte: sem bottle para este Mac. Isso pode demorar muito.</string>
+			<key>other</key>
+			<string>%lld seriam compilados do código-fonte: sem bottle para este Mac. Isso pode demorar muito.</string>
+		</dict>
+	</dict>
+	<key>+%lld dependencies also compile: %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>+%lld dependência também é compilada: %@</string>
+			<key>other</key>
+			<string>+%lld dependências também são compiladas: %@</string>
+		</dict>
+	</dict>
+	<key>Adopt %lld Apps…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Adotar %lld app…</string>
+			<key>other</key>
+			<string>Adotar %lld apps…</string>
+		</dict>
+	</dict>
+	<key>Can't uninstall: needed by %lld installed packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Não é possível desinstalar: necessário para %lld pacote instalado</string>
+			<key>other</key>
+			<string>Não é possível desinstalar: necessário para %lld pacotes instalados</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up found %lld things to look at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>A verificação do Homebrew encontrou %lld item para olhar</string>
+			<key>other</key>
+			<string>A verificação do Homebrew encontrou %lld itens para olhar</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up has %lld notes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>A verificação do Homebrew tem %lld observação</string>
+			<key>other</key>
+			<string>A verificação do Homebrew tem %lld observações</string>
+		</dict>
+	</dict>
+	<key>Notes from %lld %@ packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Notas de %lld pacote %@</string>
+			<key>other</key>
+			<string>Notas de %lld pacotes %@</string>
+		</dict>
+	</dict>
+	<key>Restore %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Restaurar %lld pacote?</string>
+			<key>other</key>
+			<string>Restaurar %lld pacotes?</string>
+		</dict>
+	</dict>
+	<key>Restoring (%lld steps)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Restaurando (%lld etapa)</string>
+			<key>other</key>
+			<string>Restaurando (%lld etapas)</string>
+		</dict>
+	</dict>
+	<key>Scanning %lld formulae…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Verificando %lld formula…</string>
+			<key>other</key>
+			<string>Verificando %lld formulae…</string>
+		</dict>
+	</dict>
+	<key>Tankard upgraded %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>O Tankard atualizou %lld pacote</string>
+			<key>other</key>
+			<string>O Tankard atualizou %lld pacotes</string>
+		</dict>
+	</dict>
+	<key>Upgrade %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Atualizar %lld pacote?</string>
+			<key>other</key>
+			<string>Atualizar %lld pacotes?</string>
+		</dict>
+	</dict>
+	<key>Would remove %lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Removeria %lld formula</string>
+			<key>other</key>
+			<string>Removeria %lld formulae</string>
+		</dict>
+	</dict>
+	<key>brew printed %lld warnings (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>O brew imprimiu %lld aviso (%@)</string>
+			<key>other</key>
+			<string>O brew imprimiu %lld avisos (%@)</string>
 		</dict>
 	</dict>
 </dict>

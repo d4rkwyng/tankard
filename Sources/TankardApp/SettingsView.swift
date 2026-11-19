@@ -1,4 +1,5 @@
 import SwiftUI
+import TankardCore
 import TankardAppModel
 
 /// Settings (⌘,): General (menu bar, notifications, login) and Appearance.
@@ -144,7 +145,7 @@ struct GeneralSettings: View {
             HStack(spacing: 6) {
                 Text("Check every")
                 Picker("Check every", selection: $settings.checkIntervalHours) {
-                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(String(localized: "\(h) hours")).tag(h) }
+                    ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(String(localized: "\(h) hours", bundle: L10n.bundle)).tag(h) }
                 }
                 .labelsHidden()
                 .fixedSize()

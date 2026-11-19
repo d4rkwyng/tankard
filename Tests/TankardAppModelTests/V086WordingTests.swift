@@ -15,12 +15,18 @@ struct V086WordingTests {
     @Test func compileSentenceIsWholeInEveryLanguage() throws {
         #expect(PlanText.compiles(1) == "1 package has no bottle for this Mac and will compile from source, which can take a long time.")
         #expect(PlanText.compiles(3) == "3 packages have no bottle for this Mac and will compile from source, which can take a long time.")
+        // 0.8.8 (gauntlet 3, B8): one plural entry (Localizable.stringsdict),
+        // its "one" and "other" forms whole sentences.
+        let key = "%lld packages have no bottle for this Mac and will compile from source, which can take a long time."
         for lang in ["de", "fr", "es", "ja", "zh-Hans", "pt-BR", "it", "ko"] {
-            let s = try Self.strings(lang)
-            let one = try #require(s["1 package has no bottle for this Mac and will compile from source, which can take a long time."], "\(lang)")
-            let many = try #require(s["%lld packages have no bottle for this Mac and will compile from source, which can take a long time."], "\(lang)")
+            let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+                .appendingPathComponent("Sources/TankardApp/Resources/Localizations/\(lang).lproj/Localizable.stringsdict")
+            let dict = try #require(NSDictionary(contentsOf: url) as? [String: Any], "\(lang)")
+            let forms = try #require((dict[key] as? [String: Any])?["n"] as? [String: String], "\(lang)")
+            let one = try #require(forms["one"], "\(lang)")
+            let many = try #require(forms["other"], "\(lang)")
             #expect(!one.contains("%@") && !many.contains("%@"))
-            #expect(many.contains("%lld"))
+            #expect(many.contains("%") && one.contains("%"))
         }
         #expect(try Self.strings("de")["%lld %@ no bottle for this Mac and will compile from source, which can take a long time."] == nil)
     }

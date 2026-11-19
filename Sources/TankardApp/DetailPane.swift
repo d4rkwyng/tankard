@@ -352,7 +352,7 @@ struct UninstallSection: View {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: "lock").foregroundStyle(.secondary)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(dependents.count == 1 ? String(localized: "Can't uninstall: needed by 1 installed package") : String(localized: "Can't uninstall: needed by \(dependents.count) installed packages"))
+                        Text(String(localized: "Can't uninstall: needed by \(dependents.count) installed packages", bundle: L10n.bundle))
                             .font(.system(size: 11.5, weight: .medium))
                         Text(dependents.map(\.name).joined(separator: ", "))
                             .font(.system(size: 11, design: .monospaced))

@@ -620,7 +620,7 @@ public struct AutoUpdateRun: Codable, Equatable, Identifiable, Sendable {
     public var notification: UpgradeNotificationDiff.Message? {
         guard !dryRun, !(upgraded.isEmpty && failed.isEmpty && note == nil) else { return nil }
         let n = upgraded.count
-        let title = n > 0 ? (n == 1 ? String(localized: "Tankard upgraded \(n) package") : String(localized: "Tankard upgraded \(n) packages"))
+        let title = n > 0 ? (String(localized: "Tankard upgraded \(n) packages", bundle: L10n.bundle))
             : (failed.isEmpty ? String(localized: "Auto-update didn't run") : String(localized: "Auto-update failed"))
         var lines: [String] = []
         if n > 0 {

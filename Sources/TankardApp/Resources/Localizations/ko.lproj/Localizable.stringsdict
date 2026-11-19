@@ -2,6 +2,230 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>%lld Homebrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrew bottle %lld개</string>
+			<key>other</key>
+			<string>Homebrew bottle %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld Intelbrew bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Intelbrew bottle %lld개</string>
+			<key>other</key>
+			<string>Intelbrew bottle %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld bottles</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>bottle %lld개</string>
+			<key>other</key>
+			<string>bottle %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld bottles from Intelbrew</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Intelbrew의 bottle %lld개</string>
+			<key>other</key>
+			<string>Intelbrew의 bottle %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld builds from source</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>소스에서 빌드 %lld개</string>
+			<key>other</key>
+			<string>소스에서 빌드 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld casks</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>cask %lld개</string>
+			<key>other</key>
+			<string>cask %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld casks run a pkg installer: macOS asks for an administrator password.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>cask %lld개가 pkg 설치 프로그램을 실행합니다: macOS가 관리자 암호를 요청합니다.</string>
+			<key>other</key>
+			<string>cask %lld개가 pkg 설치 프로그램을 실행합니다: macOS가 관리자 암호를 요청합니다.</string>
+		</dict>
+	</dict>
+	<key>%lld compile</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>컴파일 %lld개</string>
+			<key>other</key>
+			<string>컴파일 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld days ago</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld일 전</string>
+			<key>other</key>
+			<string>%lld일 전</string>
+		</dict>
+	</dict>
+	<key>%lld errors</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>오류 %lld개</string>
+			<key>other</key>
+			<string>오류 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>formula %lld개</string>
+			<key>other</key>
+			<string>formula %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld hours</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld시간</string>
+			<key>other</key>
+			<string>%lld시간</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages Homebrew can't read</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrew가 읽을 수 없는 설치된 패키지 %lld개</string>
+			<key>other</key>
+			<string>Homebrew가 읽을 수 없는 설치된 패키지 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld installed packages come from this tap (%@). Uninstall them first: brew won't remove a tap while packages from it are installed.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다.</string>
+			<key>other</key>
+			<string>설치된 패키지 %lld개가 이 tap(%@)에서 왔습니다. 먼저 제거하세요. 이 tap의 패키지가 설치되어 있는 동안에는 brew가 tap을 제거하지 않습니다.</string>
+		</dict>
+	</dict>
 	<key>%lld installs in the last 30 days</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -42,6 +266,406 @@
 			<string>lld</string>
 			<key>other</key>
 			<string>최근 90일간 %lld회 설치</string>
+		</dict>
+	</dict>
+	<key>%lld items</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>항목 %lld개</string>
+			<key>other</key>
+			<string>항목 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>알려진 취약점 %lld개</string>
+			<key>other</key>
+			<string>알려진 취약점 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld known vulnerabilities (brew vulns): %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>알려진 취약점 %lld개(brew vulns): %@</string>
+			<key>other</key>
+			<string>알려진 취약점 %lld개(brew vulns): %@</string>
+		</dict>
+	</dict>
+	<key>%lld packages have no bottle for this Mac and will compile from source, which can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.</string>
+			<key>other</key>
+			<string>%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.</string>
+		</dict>
+	</dict>
+	<key>%lld pinned upgrades not included (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>고정된 업그레이드 %lld개 제외됨(%@)</string>
+			<key>other</key>
+			<string>고정된 업그레이드 %lld개 제외됨(%@)</string>
+		</dict>
+	</dict>
+	<key>%lld ready-made programs</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>미리 빌드된 프로그램 %lld개</string>
+			<key>other</key>
+			<string>미리 빌드된 프로그램 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld results for “%@”</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>“%2$@” 결과 %1$lld개</string>
+			<key>other</key>
+			<string>“%2$@” 결과 %1$lld개</string>
+		</dict>
+	</dict>
+	<key>%lld services</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>서비스 %lld개</string>
+			<key>other</key>
+			<string>서비스 %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld taps</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>tap %lld개</string>
+			<key>other</key>
+			<string>tap %lld개</string>
+		</dict>
+	</dict>
+	<key>%lld upgrades ready</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>업그레이드 %lld개 준비됨</string>
+			<key>other</key>
+			<string>업그레이드 %lld개 준비됨</string>
+		</dict>
+	</dict>
+	<key>%lld vulnerable packages; more filters</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>취약한 패키지 %lld개; 필터 더 보기</string>
+			<key>other</key>
+			<string>취약한 패키지 %lld개; 필터 더 보기</string>
+		</dict>
+	</dict>
+	<key>%lld would compile from source: no bottle for this Mac. That can take a long time.</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>소스에서 컴파일될 항목 %lld개: 이 Mac용 bottle이 없습니다. 오래 걸릴 수 있습니다.</string>
+			<key>other</key>
+			<string>소스에서 컴파일될 항목 %lld개: 이 Mac용 bottle이 없습니다. 오래 걸릴 수 있습니다.</string>
+		</dict>
+	</dict>
+	<key>+%lld dependencies also compile: %@</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>종속 항목 %lld개도 컴파일됨: %@</string>
+			<key>other</key>
+			<string>종속 항목 %lld개도 컴파일됨: %@</string>
+		</dict>
+	</dict>
+	<key>Adopt %lld Apps…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>앱 %lld개 가져오기…</string>
+			<key>other</key>
+			<string>앱 %lld개 가져오기…</string>
+		</dict>
+	</dict>
+	<key>Can't uninstall: needed by %lld installed packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>제거할 수 없음: 설치된 패키지 %lld개가 필요로 함</string>
+			<key>other</key>
+			<string>제거할 수 없음: 설치된 패키지 %lld개가 필요로 함</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up found %lld things to look at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrew 점검에서 살펴볼 항목 %lld개를 찾았습니다</string>
+			<key>other</key>
+			<string>Homebrew 점검에서 살펴볼 항목 %lld개를 찾았습니다</string>
+		</dict>
+	</dict>
+	<key>Homebrew's check-up has %lld notes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Homebrew 점검 노트 %lld개</string>
+			<key>other</key>
+			<string>Homebrew 점검 노트 %lld개</string>
+		</dict>
+	</dict>
+	<key>Notes from %lld %@ packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld개 %@ 패키지의 참고 사항</string>
+			<key>other</key>
+			<string>%lld개 %@ 패키지의 참고 사항</string>
+		</dict>
+	</dict>
+	<key>Restore %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>패키지 %lld개를 복원할까요?</string>
+			<key>other</key>
+			<string>패키지 %lld개를 복원할까요?</string>
+		</dict>
+	</dict>
+	<key>Restoring (%lld steps)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>복원 중 (%lld단계)</string>
+			<key>other</key>
+			<string>복원 중 (%lld단계)</string>
+		</dict>
+	</dict>
+	<key>Scanning %lld formulae…</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>formula %lld개 검사 중…</string>
+			<key>other</key>
+			<string>formulae %lld개 검사 중…</string>
+		</dict>
+	</dict>
+	<key>Tankard upgraded %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Tankard가 패키지 %lld개를 업그레이드함</string>
+			<key>other</key>
+			<string>Tankard가 패키지 %lld개를 업그레이드함</string>
+		</dict>
+	</dict>
+	<key>Upgrade %lld packages?</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>패키지 %lld개를 업그레이드할까요?</string>
+			<key>other</key>
+			<string>패키지 %lld개를 업그레이드할까요?</string>
+		</dict>
+	</dict>
+	<key>Would remove %lld formulae</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>formula %lld개를 제거합니다</string>
+			<key>other</key>
+			<string>formulae %lld개를 제거합니다</string>
+		</dict>
+	</dict>
+	<key>brew printed %lld warnings (%@)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>brew가 경고 %lld개를 출력함 (%@)</string>
+			<key>other</key>
+			<string>brew가 경고 %lld개를 출력함 (%@)</string>
 		</dict>
 	</dict>
 </dict>

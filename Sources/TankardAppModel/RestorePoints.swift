@@ -410,7 +410,7 @@ public struct RestorePlan: Sendable, Equatable {
     public var confirmTitle: String {
         guard !steps.isEmpty else { return String(localized: "Nothing to restore") }
         let n = summaryLines.count
-        return n == 1 ? String(localized: "Restore 1 package?") : String(localized: "Restore \(n) packages?")
+        return String(localized: "Restore \(n) packages?", bundle: L10n.bundle)
     }
 
     /// Under the title: how the commands run, or, with none, why not and

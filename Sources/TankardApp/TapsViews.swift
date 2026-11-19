@@ -126,7 +126,7 @@ struct TapsSheet: View {
     private func row(_ t: TapInfo) -> some View {
         let selected = taps.selection == t.id
         let installed = store.installedCount(from: t)
-        var facts = [t.formulaCount == 1 ? String(localized: "1 formula") : String(localized: "\(t.formulaCount) formulae"), t.caskCount == 1 ? String(localized: "1 cask") : String(localized: "\(t.caskCount) casks"),
+        var facts = [String(localized: "\(t.formulaCount) formulae", bundle: L10n.bundle), String(localized: "\(t.caskCount) casks", bundle: L10n.bundle),
                      String(localized: "\(installed) installed from it")]
         // 0.8.6 (M1): counted above, and said apart: brew can't read them.
         let unreadable = store.unreadableCount(from: t)

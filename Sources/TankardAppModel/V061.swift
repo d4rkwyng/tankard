@@ -74,7 +74,7 @@ public enum ScanOutcome: Equatable, Sendable {
 public enum ScanProgressText {
     /// "Scanning 42 formulae…"
     public static func running(formulae: Int) -> String {
-        formulae > 0 ? (formulae == 1 ? String(localized: "Scanning \(formulae) formula…") : String(localized: "Scanning \(formulae) formulae…")) : String(localized: "Scanning…")
+        formulae > 0 ? (String(localized: "Scanning \(formulae) formulae…", bundle: L10n.bundle)) : String(localized: "Scanning…")
     }
 
     /// "0:07", "1:02".

@@ -85,9 +85,7 @@ public extension AppStore {
         let p = pinnedUpgrades
         guard !p.isEmpty else { return nil }
         let names = p.prefix(3).map(\.name).joined(separator: ", ") + (p.count > 3 ? " +\(p.count - 3)" : "")
-        return p.count == 1
-            ? String(localized: "\(p.count) pinned upgrade not included (\(names))")
-            : String(localized: "\(p.count) pinned upgrades not included (\(names))")
+        return String(localized: "\(p.count) pinned upgrades not included (\(names))", bundle: L10n.bundle)
     }
 
     /// The installed packages' dependency graph (built per call; cheap).

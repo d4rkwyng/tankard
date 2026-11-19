@@ -130,7 +130,7 @@ struct DiscoverStrip: View {
             if discover.resultsQuery.isEmpty { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
             let n = discover.results.count
             if n == 200 { return String(localized: "Top 200 results for “\(discover.resultsTerm)”") }
-        return n == 1 ? String(localized: "\(n) result for “\(discover.resultsTerm)”") : String(localized: "\(n) results for “\(discover.resultsTerm)”")
+        return String(localized: "\(n) results for “\(discover.resultsTerm)”", bundle: L10n.bundle)
         }
     }
 }
@@ -588,8 +588,7 @@ struct CompileWarningBox: View {
                     if !deps.isEmpty {
                         Text(verbatim: { () -> String in
                             let names = deps.prefix(5).map(\.name).joined(separator: ", ") + (deps.count > 5 ? "…" : "")
-                            return deps.count == 1 ? String(localized: "+1 dependency also compiles: \(names)")
-                                : String(localized: "+\(deps.count) dependencies also compile: \(names)")
+                            return String(localized: "+\(deps.count) dependencies also compile: \(names)", bundle: L10n.bundle)
                         }())
                             .fontWeight(.medium)
                             .fixedSize(horizontal: false, vertical: true)

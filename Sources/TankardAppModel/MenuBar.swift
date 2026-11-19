@@ -91,7 +91,7 @@ public struct MenuBarSummary: Equatable, Sendable {
     public var title: String {
         guard hasData else { return String(localized: "No data yet") }
         if count == 0 { return String(localized: "Everything is up to date") }
-        return count == 1 ? String(localized: "\(count) upgrade ready") : String(localized: "\(count) upgrades ready")
+        return String(localized: "\(count) upgrades ready", bundle: L10n.bundle)
     }
 
     /// The number next to the mug; nil (icon only) when there are none,
@@ -171,7 +171,7 @@ public enum UpgradeNotificationDiff {
         guard !added.isEmpty else { return nil }
         let names = packages.filter { added.contains("\($0.id)@\($0.currentVersion ?? "")") }.map(\.name).sorted()
         let total = current.count
-        let title = total == 1 ? String(localized: "\(total) upgrade ready") : String(localized: "\(total) upgrades ready")
+        let title = String(localized: "\(total) upgrades ready", bundle: L10n.bundle)
         let shown = names.prefix(4).joined(separator: ", ")
         let body = names.count > 4
             ? String(localized: "New: \(shown) and \(names.count - 4) more")

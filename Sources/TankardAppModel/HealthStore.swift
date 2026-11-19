@@ -22,8 +22,7 @@ public enum ToolSheet: String, Identifiable, Sendable {
 /// 0.8.6 (M1): Health's words for packages brew can't read.
 public enum HealthText {
     public static func unreadableTitle(_ n: Int) -> String {
-        n == 1 ? String(localized: "1 installed package Homebrew can't read")
-               : String(localized: "\(n) installed packages Homebrew can't read")
+        String(localized: "\(n) installed packages Homebrew can't read", bundle: L10n.bundle)
     }
 }
 
@@ -100,13 +99,9 @@ public final class HealthStore {
         if d.warnings.isEmpty { return d.ready ? String(localized: "brew doctor found nothing to fix.") : String(localized: "brew doctor printed no warnings.") }
         // 0.8.5 (newbie review H5): no alarm for notes that rarely matter.
         if d.warnings.allSatisfy(\.isHarmless) {
-            return d.warnings.count == 1
-                ? String(localized: "Homebrew's check-up has 1 note")
-                : String(localized: "Homebrew's check-up has \(d.warnings.count) notes")
+            return String(localized: "Homebrew's check-up has \(d.warnings.count) notes", bundle: L10n.bundle)
         }
-        return d.warnings.count == 1
-            ? String(localized: "Homebrew's check-up found 1 thing to look at")
-            : String(localized: "Homebrew's check-up found \(d.warnings.count) things to look at")
+        return String(localized: "Homebrew's check-up found \(d.warnings.count) things to look at", bundle: L10n.bundle)
     }
 
     /// 0.8.5: every warning is a known, harmless one.

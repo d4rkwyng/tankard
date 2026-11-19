@@ -41,7 +41,7 @@ struct UpgradePlanView: View {
             HStack(spacing: 12) {
                 BrandMark(size: 64, intelbrew: store.intelbrewMode)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(plan.rows.count == 1 ? String(localized: "Upgrade 1 package?") : String(localized: "Upgrade \(plan.rows.count) packages?"))
+                    Text(String(localized: "Upgrade \(plan.rows.count) packages?", bundle: L10n.bundle))
                         .font(.system(size: 14, weight: .bold))
                     // 0.8.3: a notification's Upgrade All… shows the plan
                     // even when nothing compiles.
@@ -541,7 +541,7 @@ struct CleanupSheet: View {
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(d.items.isEmpty ? Color.secondary : theme.accent)
             if !d.items.isEmpty {
-                Text(verbatim: (d.items.count == 1 ? String(localized: "1 item") : String(localized: "\(d.items.count) items"))
+                Text(verbatim: (String(localized: "\(d.items.count) items", bundle: L10n.bundle))
                      + (d.totalIsFromBrew ? "" : " " + String(localized: "(Tankard's sum: brew printed no total)")))
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
@@ -597,7 +597,7 @@ struct CleanupSheet: View {
             }
         }
         if !d.warnings.isEmpty {
-            Text(d.warnings.count == 1 ? String(localized: "brew printed 1 warning (\(d.warnings[0]))") : String(localized: "brew printed \(d.warnings.count) warnings (\(d.warnings[0]))"))
+            Text(String(localized: "brew printed \(d.warnings.count) warnings (\(d.warnings[0]))", bundle: L10n.bundle))
                 .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.tail)
         }
     }

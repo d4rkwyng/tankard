@@ -254,7 +254,7 @@ struct AdoptSheet: View {
                 Button("Done") { store.closeToolSheet() }
                     .keyboardShortcut(.cancelAction)
                 let n = adopt.plan.count
-                Button(n == 0 ? String(localized: "Adopt Apps…") : n == 1 ? String(localized: "Adopt 1 App…") : String(localized: "Adopt \(n) Apps…")) { adopt.requestAdopt() }
+                Button(n == 0 ? String(localized: "Adopt Apps…") : String(localized: "Adopt \(n) Apps…", bundle: L10n.bundle)) { adopt.requestAdopt() }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
                     .disabled(n == 0 || store.isBusy)

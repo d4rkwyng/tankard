@@ -50,13 +50,13 @@ enum VulnerabilityText {
     static func help(_ p: Package) -> String {
         let list = p.vulnerabilities ?? []
         let ids = list.prefix(4).map(\.id).joined(separator: ", ") + (list.count > 4 ? ", …" : "")
-        return list.count == 1 ? String(localized: "1 known vulnerability (brew vulns): \(ids)") : String(localized: "\(list.count) known vulnerabilities (brew vulns): \(ids)")
+        return String(localized: "\(list.count) known vulnerabilities (brew vulns): \(ids)", bundle: L10n.bundle)
     }
 
     /// 0.8.6 (UI L6): VoiceOver's words for the tag.
     static func spoken(_ p: Package) -> String {
         let n = p.vulnerabilities?.count ?? 0
-        return n == 1 ? String(localized: "1 known vulnerability") : String(localized: "\(n) known vulnerabilities")
+        return String(localized: "\(n) known vulnerabilities", bundle: L10n.bundle)
     }
 
     /// "Scanned 5 min ago · partial scan".
@@ -129,7 +129,7 @@ struct MoreFiltersPicker: View {
     static func help(vulnerable: Int, selected: PackageFilter?) -> String {
         if let selected, let h = selected.help { return h }
         if vulnerable > 0 {
-            return vulnerable == 1 ? String(localized: "1 vulnerable package; more filters") : String(localized: "\(vulnerable) vulnerable packages; more filters")
+            return String(localized: "\(vulnerable) vulnerable packages; more filters", bundle: L10n.bundle)
         }
         return String(localized: "More filters: Vulnerable, Pinned (packages brew won't upgrade), Installed by you (packages you installed yourself, not ones pulled in as dependencies), Has notes, Deprecated")
     }
@@ -320,7 +320,7 @@ struct VulnerabilitySection: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                    Text(list.count == 1 ? String(localized: "1 known vulnerability") : String(localized: "\(list.count) known vulnerabilities"))
+                    Text(String(localized: "\(list.count) known vulnerabilities", bundle: L10n.bundle))
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundStyle(w.text)
