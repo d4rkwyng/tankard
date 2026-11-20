@@ -503,6 +503,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installiert aus diesem Katalog, ohne ihn hinzuzufügen. Nichts zu tun.";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installiert die neuere Version des Casks an Stelle dieser App und verwaltet sie ab dann. Deine Einstellungen und Daten in ~/Library bleiben unberührt.";
+"Homebrew is busy; try again in a moment." = "Homebrew ist ausgelastet; versuche es gleich noch einmal.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew ändert gerade %1$@. Beim Stoppen macht Homebrew den offenen Schritt rückgängig, %2$@ bleibt wie es war. Bleibt etwas halb fertig, hilft meist ein erneuter Lauf.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew aktualisiert noch %@ (%lld von %lld).";
 "Homebrew is still upgrading %@." = "Homebrew aktualisiert noch %@.";
@@ -1076,6 +1077,7 @@
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard aktualisiert %@ automatisch (%lld von %lld).";
 "Tankard is upgrading %@ automatically." = "Tankard aktualisiert %@ automatisch.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard selbst wird nie automatisch aktualisiert: nutze brew upgrade --cask tankard.";
+"Tankard kept a safety copy of %@ from %@." = "Tankard hat eine Sicherheitskopie von %1$@ vom %2$@ behalten.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard lässt Upgrades dieser App aus „Alle upgraden“, den Zählern und Auto-Update heraus. Ihr eigener Updater hält sie aktuell. brew upgrade im Terminal kann sie weiterhin upgraden.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard zeigt jede neuere Version dieses Casks, upgradet es mit „Alle upgraden“ und Auto-Update und ersetzt die App wie brew.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard sucht Homebrew dort, wo sein Installationsprogramm es ablegt.";

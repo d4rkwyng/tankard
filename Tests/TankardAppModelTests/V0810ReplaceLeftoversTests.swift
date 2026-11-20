@@ -5,9 +5,10 @@ import Testing
 @testable import TankardAppModel
 
 // 0.8.10: a Replace with Homebrew's Version that never finished (Tankard
-// quit or crashed while brew ran) leaves its safety copy in
-// replace-backup/<uuid>/. At launch the copies are listed and logged, never
-// deleted: each may be the only copy of the user's app.
+// quit or crashed while brew ran, or a finished run kept the copy) leaves
+// its safety copy in replace-backup/<uuid>/. At launch the copies are
+// listed, logged, and one notice is shown. Nothing is moved or deleted:
+// each may be the only copy of the user's app.
 
 @MainActor
 struct V0810ReplaceLeftoversTests {

@@ -916,34 +916,47 @@ cask's quit id hides an app only when the app has the cask's or its app's name (
 name plus more words); pkg casks' quit ids still count alone. **Replace with Homebrew's
 Version (0.8.10)**, `AdoptReplace` and AppStore+ReplaceApp.swift: for Needs update first
 with a sure match (high confidence, one cask) whose cask version is newer by `BrewVersion`
-(never equal by brew's ordering, older, `latest`, HEAD, or without a digit), newer than the
-app's CFBundleVersion too where that is the same kind of number, and of the same kind as
-the short version (a bare build number against a dotted version is `.cantTell`), and
-whose cask installs exactly one app and nothing else (`AdoptReplace.installsOnlyOneApp`:
-`AdoptCask.contentKinds` == ["app"]; --force overwrites every artifact), the row offers
-`brew install --cask --force`, run as SessionAction `.replaceApp` through the queue (the
-password helper as for other cask steps). The plan sheet checks the running apps
-(`autoUpdate.conditions`, by path or bundle id) and refuses while the app is open; it
-never quits it. brew --force deletes the app before moving the download in, and its
-revert after a later failure removes the new one, so Tankard first copies the app to
+(never equal by brew's ordering, older, `latest`, HEAD, or without a digit). A dotted
+cask version is compared only with the short version, so short "2" against cask "2.1" is
+offered and a Chromium-style CFBundleVersion does not block. The build number is used
+only when the cask version is a bare integer: a dotted short version is `.cantTell`
+unless that integer is newer than the build (short 2.0, build 200, cask 199 is not
+offered; cask 201 is). The cask must install exactly one app and nothing else
+(`AdoptReplace.installsOnlyOneApp`: `AdoptCask.contentKinds` == ["app"]; --force
+overwrites every artifact). The row offers `brew install --cask --force`, run as
+SessionAction `.replaceApp` through the queue (the password helper as for other cask
+steps). `.replaceApp` does not use the lock-wait retry: `UpgradeSession` passes no
+`BrewLockWait` for that action, so `CommandQueue.runWaitingForLock` is not used. If brew
+reports its lock is held, the run stops as a failure (brew has not changed the app) with
+the note "Homebrew is busy; try again in a moment.", and the copy is kept because the
+run failed. The plan sheet checks the running apps (`autoUpdate.conditions`, by path or
+bundle id) and refuses while the app is open; it never quits it. brew --force deletes
+the app before moving the download in, and its revert after a later failure removes the
+new one, so Tankard first copies the app to
 ~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
 clone on APFS; no copy, no run; `.origin` beside it holds the app's path). Right before
 the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedNote`): a
 changed version, build or bundle id, or one no longer older than the cask, stops the run;
 right after it the running check is made again (the copy is dropped, `discard`).
-`AppReplaceSafety.finishLive`: only brew's exit 0 with a whole bundle (Info.plist readable,
-its CFBundleExecutable present) of the cask's version deletes the copy. Otherwise: nothing
-at the path, the copy goes back; a whole bundle of the same bundle id (after exit 0, any
-whole bundle) stays and the copy is kept (`.kept`); anything else (a half-deleted bundle
-after Stop Now, a missing executable, another app, a file) is moved into the copy's folder
-as `<name>.partial` and the copy goes back (`.restoredMovingAside`). The log says which.
-Copies a run left behind (Tankard quit or crashed while brew ran) are listed at launch
-(`start()`, `noteReplaceLeftovers`) and logged with their paths (os_log, category
-`replace`); one whose `.origin` path is empty and that is a whole bundle is moved back
-there (`recoverLeftover`), the rest are kept. None is ever deleted: each may be the only
-copy of the user's app. Not retryable after an
-App Management relaunch (the copy and the running check belong to the sheet). Tests and
-the demo have no copy (`Dependencies.appReplaceSafety` nil). brew
+`AppReplaceSafety.finishLive`: the copy is deleted only when brew's exit is 0, the app
+is a whole bundle, and its version matches the cask. Whole means `Contents/Info.plist`
+is a regular file (not a symlink), `CFBundleExecutable` is present, and
+`Contents/MacOS/<exe>` is a regular file (`lstat`, not a symlink) whose real path is
+inside the bundle. Anything else is not whole. Otherwise: nothing at the path, the copy
+goes back; a whole bundle of the same bundle id (after exit 0, any whole bundle whose
+version does not match) stays and the copy is kept (`.kept`); anything else (a
+half-deleted bundle after Stop Now, a missing or linked executable, a linked Info.plist,
+another app, a file) is moved into the copy's folder as `<name>.partial` and the copy
+goes back (`.restoredMovingAside`). Every outcome deletes `.origin`, so only a copy from
+a crash before `finishLive` still has one. The log says which. Copies a run left behind
+are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
+(os_log, category `replace`). Nothing is moved or deleted. One notice names the newest
+copy ("Tankard kept a safety copy of <App> from <date>.") with Show in Finder
+(`NSWorkspace.activateFileViewerSelecting` on the copy paths from the folder listing).
+`.origin` may be read for the log only; it is never a path for a move, a delete, or
+Show in Finder. None is ever deleted: each may be the only copy of the user's app. Not
+retryable after an App Management relaunch (the copy and the running check belong to the
+sheet). Tests and the demo have no copy (`Dependencies.appReplaceSafety` nil). brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not
 available with `HOMEBREW_NO_INSTALL_FROM_API` set.
 

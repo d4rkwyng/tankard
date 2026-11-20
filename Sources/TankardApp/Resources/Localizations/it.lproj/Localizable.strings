@@ -503,6 +503,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Questa copia è stata installata da Homebrew, quindi è Homebrew ad aggiornarla, tramite la coda. Tankard resta aperto mentre brew sostituisce l’app, poi propone di riavviarla.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installa da questo catalogo senza aggiungerlo. Non serve fare nulla.";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installa la versione più recente del cask al posto di questa app e da quel momento la gestisce. Le tue impostazioni e i tuoi dati in ~/Library non vengono toccati.";
+"Homebrew is busy; try again in a moment." = "Homebrew è occupato; riprova tra un momento.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew sta modificando %1$@ ora. Se interrompi, Homebrew annulla il passaggio in corso e %2$@ resta com'era. Se resta qualcosa a metà, rieseguire di solito risolve.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew sta ancora aggiornando %@ (%lld di %lld).";
 "Homebrew is still upgrading %@." = "Homebrew sta ancora aggiornando %@.";
@@ -1067,7 +1068,7 @@
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard non è riuscito a fare una copia di sicurezza di %@, quindi non l'ha sostituita: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard non è riuscito a rimettere a posto %1$@ (%2$@). Una copia della vecchia versione si trova in %3$@.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard non è riuscito a raggiungere la rete per scaricare l’elenco dei pacchetti di Homebrew. Controlla la connessione a Internet (o una VPN o un proxy), poi riprova.";
-"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard non è riuscito a leggere la versione di %1$@ in %2$@, quindi non l'ha sostituita.";
+"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard non è riuscito a leggere la versione di %1$@ in %2$@, quindi non ha sostituito l'app.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard non è riuscito a leggere i pacchetti dei tuoi tap. Riprova tra un momento.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard non è riuscito a leggere questo file come Brewfile.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard non è riuscito a leggere nel Brewfile da dove viene questo tap. Usa il comando per il Terminale qui sotto.";
@@ -1076,6 +1077,7 @@
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard sta aggiornando %@ automaticamente (%lld di %lld).";
 "Tankard is upgrading %@ automatically." = "Tankard sta aggiornando %@ automaticamente.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard stesso non viene mai aggiornato automaticamente: usa brew upgrade --cask tankard.";
+"Tankard kept a safety copy of %@ from %@." = "Tankard ha tenuto una copia di sicurezza dell'app %1$@ del %2$@.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard esclude gli aggiornamenti di questa app da Aggiorna tutto, dai conteggi e dall'aggiornamento automatico. Il suo programma di aggiornamento la mantiene aggiornata. brew upgrade nel Terminal può comunque aggiornarla.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard elenca ogni nuova versione di questo cask, lo aggiorna con Aggiorna tutto e l'aggiornamento automatico, e sostituisce l'app come fa brew.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard cerca Homebrew dove lo mette il suo programma di installazione.";

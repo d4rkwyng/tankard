@@ -952,11 +952,11 @@ public enum AdoptReplace {
         case notNewer
         /// A version without a number (`latest`, "unknown", empty).
         case unparseable
-        /// Tankard can't tell which is newer: the cask's version is a
-        /// different kind of number than the app's (a bare build number
-        /// against a dotted version), or it is newer than the app's short
-        /// version but not than its build number (CFBundleVersion). Not
-        /// offered: it could be a downgrade.
+        /// Tankard can't tell which is newer. The cask version is a bare
+        /// integer and the short version is dotted, and that integer is not
+        /// newer than the app's build number (short 2.0, build 200, cask
+        /// 199) or there is no integer build number to check. Not offered:
+        /// it could be a downgrade.
         case cantTell
     }
 
@@ -968,23 +968,42 @@ public enum AdoptReplace {
     }
 
     /// `cask` is the cask version's comparable part (`AdoptVersion.split`'s
-    /// head). Offered only when the cask's version is newer than the app's
-    /// short version and, where it is the same kind of number, than its
-    /// CFBundleVersion too.
+    /// head). Offered when the cask's version is newer than the app's short
+    /// version by brew's ordering. The build number (CFBundleVersion) is
+    /// used only when the cask version is a bare integer: a dotted short
+    /// version is then `.cantTell` unless that integer is newer than the
+    /// build (short 2.0, build 200, cask 199 is not offered; cask 201 is).
+    /// A dotted cask version is compared only with the short version, so
+    /// short "2" against "2.1" is offered and a Chromium-style build number
+    /// does not block.
     public static func eligibility(installed: String, cask: String, bundleVersion: String? = nil) -> Eligibility {
         let i = installed.trimmingCharacters(in: .whitespaces), c = cask.trimmingCharacters(in: .whitespaces)
         guard comparable(i), comparable(c) else { return .unparseable }
-        // A bare build number ("199") against a dotted version ("2.0"), or
-        // the other way round: brew's ordering would compare 199 with 2.
-        guard Shape(c) == Shape(i) else { return .cantTell }
-        guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
-        if let b = bundleVersion?.trimmingCharacters(in: .whitespaces), !b.isEmpty, b != i,
-           comparable(b), Shape(b) == Shape(c) {
+        let caskShape = Shape(c), installedShape = Shape(i)
+        if caskShape == .dotted {
+            guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
+            return .update(installed: i, cask: c)
+        }
+        if caskShape == .integer, installedShape == .dotted {
             // short 2.0, build 200, cask 199: newer than "2.0" by brew's
-            // ordering, older than the build.
+            // ordering, not newer than the build.
+            guard let b = integerBuild(bundleVersion), BrewVersion(c).compare(to: BrewVersion(b)) == 1 else { return .cantTell }
+            guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
+            return .update(installed: i, cask: c)
+        }
+        guard caskShape == installedShape else { return .cantTell }
+        guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
+        if caskShape == .integer, let b = integerBuild(bundleVersion), b != i {
             guard BrewVersion(c).compare(to: BrewVersion(b)) == 1 else { return .cantTell }
         }
         return .update(installed: i, cask: c)
+    }
+
+    /// The app's CFBundleVersion when it is a bare integer, else nil.
+    static func integerBuild(_ bundleVersion: String?) -> String? {
+        guard let b = bundleVersion?.trimmingCharacters(in: .whitespaces), !b.isEmpty,
+              comparable(b), Shape(b) == .integer else { return nil }
+        return b
     }
 
     /// What kind of number a version is, for telling whether two can be

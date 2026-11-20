@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import TankardAppModel
 import TankardCore
@@ -134,6 +135,10 @@ struct ContentView: View {
     @ViewBuilder
     private func main(_ theme: Theme) -> some View {
         VStack(spacing: 0) {
+            if let notice = store.replaceLeftoverNotice {
+                ReplaceLeftoverBanner(store: store, notice: notice)
+                Divider()
+            }
             if store.tab == .installed {
                 SummaryStrip(store: store)
                 Divider()
@@ -438,6 +443,40 @@ struct SummaryStrip: View {
             second += " " + String(localized: "· \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)")
         }
         return SummaryText.line(report.summary, intelbrewMode: store.intelbrewMode) + "\n" + second
+    }
+}
+
+/// 0.8.10: a safety copy left from Replace. One notice, not a sheet.
+/// Show in Finder selects the copies from the backup folder, never a path
+/// read from `.origin`.
+struct ReplaceLeftoverBanner: View {
+    var store: AppStore
+    var notice: ReplaceLeftoverNotice
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: "info.circle").foregroundStyle(.secondary)
+            Text(notice.message)
+                .font(.system(size: 12))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Button("Show in Finder") {
+                let urls = notice.paths.map { URL(fileURLWithPath: $0) }
+                if !urls.isEmpty { NSWorkspace.shared.activateFileViewerSelecting(urls) }
+            }
+            .controlSize(.small)
+            Button {
+                store.dismissReplaceLeftoverNotice()
+            } label: {
+                Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
+            }
+            .buttonStyle(.borderless)
+            .help(String(localized: "Hide this message"))
+            .accessibilityLabel(Text("Hide this message"))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.secondary.opacity(0.08))
     }
 }
 

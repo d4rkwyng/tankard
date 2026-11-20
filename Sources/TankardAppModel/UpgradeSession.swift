@@ -310,8 +310,14 @@ public final class UpgradeSession: Identifiable {
         for item in items {
             let itemID = item.id
             let rest = chainRest[itemID] ?? []
+            // 0.8.10: Replace does not wait and run brew again when the lock
+            // is held. The retry would start with no new check that the app
+            // is still closed, and brew --force can delete a running app.
+            // A lock failure stops the run (CommandQueue skips
+            // runWaitingForLock when lockWait is nil).
+            let waitForLock = action == .replaceApp ? nil : lockWait
             queue.enqueue(item.command, id: itemID, precondition: precondition?(item.package),
-                          skipCheck: skipCheck?(item.package), lockWait: lockWait) { [queue] event in
+                          skipCheck: skipCheck?(item.package), lockWait: waitForLock) { [queue] event in
                 if !rest.isEmpty {
                     switch event {
                     case .finished(let code) where code != 0: queue.cancel(rest)

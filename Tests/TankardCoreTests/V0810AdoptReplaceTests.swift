@@ -80,15 +80,14 @@ struct V0810AdoptReplaceTests {
         let v = AdoptVersion.verdict(app: app, caskVersion: "199", autoUpdates: false)
         #expect(v == .needsUpdate(installed: "2.0", cask: "199"))
         #expect(AdoptReplace.eligibility(v, bundleVersion: app.bundleVersion) == .cantTell)
-        // Newer than both short version and build: still can't tell (a
-        // bare build number against a dotted version).
-        #expect(AdoptReplace.eligibility(installed: "2.0", cask: "201", bundleVersion: "200") == .cantTell)
+        // Newer than the build: the cask version is that build number.
+        #expect(AdoptReplace.eligibility(installed: "2.0", cask: "201", bundleVersion: "200") == .update(installed: "2.0", cask: "201"))
+        // No build number to check against: still can't tell.
         #expect(AdoptReplace.eligibility(installed: "2.0", cask: "199") == .cantTell)
-        // The other way round: a dotted cask version against an app whose
-        // short version is a bare number.
-        #expect(AdoptReplace.eligibility(installed: "2", cask: "2.1") == .cantTell)
-        // Dotted build newer than the cask: can't tell.
-        #expect(AdoptReplace.eligibility(installed: "1.4", cask: "1.5", bundleVersion: "1.6.2") == .cantTell)
+        // A dotted cask against a bare short version: brew orders 2.1 above 2.
+        #expect(AdoptReplace.eligibility(installed: "2", cask: "2.1") == .update(installed: "2", cask: "2.1"))
+        // A dotted build is another sequence and does not block a dotted cask.
+        #expect(AdoptReplace.eligibility(installed: "1.4", cask: "1.5", bundleVersion: "1.6.2") == .update(installed: "1.4", cask: "1.5"))
         // Bare build numbers on both sides: compared.
         #expect(AdoptReplace.eligibility(installed: "199", cask: "198", bundleVersion: "199") == .notNewer)
         #expect(AdoptReplace.eligibility(installed: "199", cask: "200", bundleVersion: "199") == .update(installed: "199", cask: "200"))
@@ -107,6 +106,20 @@ struct V0810AdoptReplaceTests {
                                bundleID: "com.dwarvesv.minimalbar", shortVersion: "1.13.1", bundleVersion: "15")
         let v = AdoptVersion.verdict(app: app, caskVersion: "1.13.2", autoUpdates: false)
         #expect(AdoptReplace.eligibility(v, bundleVersion: app.bundleVersion) == .update(installed: "1.13.1", cask: "1.13.2"))
+    }
+
+    /// A dotted cask version is compared only with the short version. The
+    /// build number is not consulted, so a Chromium-style build and a short
+    /// "2" against cask "2.1" are offered.
+    @Test func dottedCaskComparesOnlyWithTheShortVersion() {
+        #expect(AdoptReplace.eligibility(installed: "2", cask: "2.1") == .update(installed: "2", cask: "2.1"))
+        #expect(AdoptReplace.eligibility(installed: "2", cask: "2.1", bundleVersion: "9999.1") == .update(installed: "2", cask: "2.1"))
+        #expect(AdoptReplace.eligibility(installed: "130.0.6723.91", cask: "131.0.6778.86", bundleVersion: "6723.91")
+                == .update(installed: "130.0.6723.91", cask: "131.0.6778.86"))
+        #expect(AdoptReplace.eligibility(installed: "1.4.2", cask: "1.4.3", bundleVersion: "10402.1") == .update(installed: "1.4.2", cask: "1.4.3"))
+        // Still not a downgrade, and still not equal.
+        #expect(AdoptReplace.eligibility(installed: "2.1", cask: "2.0", bundleVersion: "999") == .notNewer)
+        #expect(AdoptReplace.eligibility(installed: "2", cask: "2.0") == .notNewer)
     }
 
     /// `brew install --cask --force` overwrites every artifact; Tankard keeps

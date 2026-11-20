@@ -1318,7 +1318,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ ha cambiado desde el análisis (ahora es la versión %2$@), así que Tankard no la reemplazó. Haz clic en Volver a analizar para ver qué puede hacer Homebrew con ella."
+            "value": "La app %1$@ ha cambiado desde el análisis (ahora es la versión %2$@), así que Tankard no la reemplazó. Haz clic en Volver a analizar para ver qué puede hacer Homebrew con ella."
           }
         },
         "it": {
@@ -29799,6 +29799,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homebrew가 이 앱 대신 cask의 최신 버전을 설치하고 이후 관리합니다. ~/Library에 있는 설정과 데이터는 건드리지 않습니다."
+          }
+        }
+      }
+    },
+    "Homebrew is busy; try again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ist ausgelastet; versuche es gleich noch einmal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew est occupé ; réessayez dans un instant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew está ocupado; inténtalo de nuevo en un momento."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewがビジー状態です。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 正忙，请稍后再试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew está ocupado; tente novamente daqui a pouco."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew è occupato; riprova tra un momento."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 바쁩니다. 잠시 후 다시 시도하세요."
           }
         }
       }
@@ -59832,13 +59884,13 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard no pudo leer la versión de %1$@ en %2$@, así que no la reemplazó."
+            "value": "Tankard no pudo leer la versión de %1$@ en %2$@, así que no reemplazó la app."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard non è riuscito a leggere la versione di %1$@ in %2$@, quindi non l'ha sostituita."
+            "value": "Tankard non è riuscito a leggere la versione di %1$@ in %2$@, quindi non ha sostituito l'app."
           }
         },
         "pt-BR": {
@@ -60279,6 +60331,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요."
+          }
+        }
+      }
+    },
+    "Tankard kept a safety copy of %@ from %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard hat eine Sicherheitskopie von %1$@ vom %2$@ behalten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard a gardé une copie de sécurité de l'app %1$@ du %2$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard guardó una copia de seguridad de la app %1$@ del %2$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard ha tenuto una copia di sicurezza dell'app %1$@ del %2$@."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard guardou uma cópia de segurança do app %1$@ de %2$@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardは %1$@ の安全コピー（%2$@）を残しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 保留了 %1$@ 的安全副本（%2$@）。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %1$@의 안전 사본(%2$@)을 보관했습니다."
           }
         }
       }
@@ -62176,13 +62280,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L'app à %1$@ n'est pas %2$@ %3$@ ; Tankard a donc gardé la copie de l'ancienne version à %4$@."
+            "value": "L'app située à %1$@ n'est pas %2$@ %3$@ ; Tankard a donc gardé la copie de l'ancienne version à %4$@."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app de %1$@ no es %2$@ %3$@, así que Tankard guardó la copia de la versión anterior en %4$@."
+            "value": "La app en %1$@ no es %2$@ %3$@, así que Tankard guardó la copia de la versión anterior en %4$@."
           }
         },
         "it": {

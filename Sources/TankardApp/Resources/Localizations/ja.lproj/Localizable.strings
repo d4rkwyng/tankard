@@ -503,6 +503,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "このコピーはHomebrewでインストールされたため、Homebrewがキューを通じてアップグレードします。brewがアプリを置き換える間もTankardは動作し続け、完了後に再起動を提案します。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew はこのカタログを追加せずにインストールできます。操作は不要です。";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew が cask の新しいバージョンをこのアプリの代わりにインストールし、以降は Homebrew が管理します。~/Library 内の設定とデータには触れません。";
+"Homebrew is busy; try again in a moment." = "Homebrewがビジー状態です。しばらくしてからもう一度お試しください。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew は今 %1$@ を変更しています。停止すると、Homebrew は途中の手順を元に戻し、%2$@ は元のままです。中途半端に残った場合も、もう一度実行すれば通常は直ります。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew はまだ %@ をアップグレード中です(%lld/%lld)。";
 "Homebrew is still upgrading %@." = "Homebrew はまだ %@ をアップグレード中です。";
@@ -1076,6 +1077,7 @@
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard は %@ を自動でアップグレード中です(%lld/%lld)。";
 "Tankard is upgrading %@ automatically." = "Tankard は %@ を自動でアップグレード中です。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
+"Tankard kept a safety copy of %@ from %@." = "Tankardは %1$@ の安全コピー（%2$@）を残しました。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。";
 "Tankard looks for Homebrew where its installer puts it." = "TankardはHomebrewのインストーラが置く場所でHomebrewを探します。";

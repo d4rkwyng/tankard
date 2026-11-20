@@ -503,6 +503,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew a installé cette copie, c’est donc Homebrew qui la met à jour, via la file d’attente. Tankard continue de tourner pendant que brew remplace l’app, puis propose de la relancer.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installe depuis ce catalogue sans l’ajouter. Rien à faire.";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installe la version plus récente du cask à la place de cette app, et la gère ensuite. Vos réglages et données dans ~/Library ne sont pas modifiés.";
+"Homebrew is busy; try again in a moment." = "Homebrew est occupé ; réessayez dans un instant.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew modifie %1$@ en ce moment. Si vous arrêtez, Homebrew annule l'étape en cours et %2$@ reste tel quel. S'il reste quelque chose à moitié fait, relancer corrige généralement.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew met encore à jour %@ (%lld sur %lld).";
 "Homebrew is still upgrading %@." = "Homebrew met encore à jour %@.";
@@ -1076,6 +1077,7 @@
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard met à jour %@ automatiquement (%lld sur %lld).";
 "Tankard is upgrading %@ automatically." = "Tankard met à jour %@ automatiquement.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard n’est jamais mis à niveau automatiquement : utilisez brew upgrade --cask tankard.";
+"Tankard kept a safety copy of %@ from %@." = "Tankard a gardé une copie de sécurité de l'app %1$@ du %2$@.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard exclut les mises à niveau de cette app de Tout mettre à niveau, des compteurs et de la mise à jour auto. Son propre outil de mise à jour la garde à jour. brew upgrade dans Terminal peut toujours la mettre à niveau.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard liste chaque nouvelle version de ce cask, le met à niveau avec Tout mettre à niveau et la mise à jour auto, et remplace l'app comme le fait brew.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard cherche Homebrew là où son installeur le place.";
@@ -1110,7 +1112,7 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "Les dossiers de Homebrew ne sont pas accessibles en écriture pour cet utilisateur. `brew doctor` (Homebrew ▸ Santé) indique généralement lesquels, ainsi que la commande de correction.";
 "The Installed list, filtered to this tap (tap:%@)" = "La liste des installés, filtrée sur ce tap (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "L’URL doit être https://, http://, ssh://, git:// ou file://, ou git@hôte:chemin, sans espaces.";
-"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "L'app à %1$@ n'est pas %2$@ %3$@ ; Tankard a donc gardé la copie de l'ancienne version à %4$@.";
+"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "L'app située à %1$@ n'est pas %2$@ %3$@ ; Tankard a donc gardé la copie de l'ancienne version à %4$@.";
 "The app has no version brew can compare." = "L'app n'a pas de version que brew peut comparer.";
 "The app's ID (its bundle identifier) is one the cask names." = "L’ID de l’app (son identifiant de bundle) est l’un de ceux que le cask nomme.";
 "The build from source failed" = "La compilation depuis les sources a échoué";

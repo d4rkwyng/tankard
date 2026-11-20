@@ -16,7 +16,9 @@ import TankardCore
 // takes the new one away again (cask/installer.rb's revert), so a failure
 // past that point would leave no app at all. So Tankard first copies the
 // app aside (`AppReplaceSafety`; a clone on APFS) and, when brew fails and
-// the app is gone, puts the copy back.
+// the app is gone or only partly there, puts the copy back. A run that
+// reaches the end deletes the `.origin` record. At the next launch, copies
+// still in the cache are only listed (one notice); nothing is moved.
 
 /// What the plan sheet shows and the run uses.
 public struct ReplaceAppPlan: Sendable, Equatable, Identifiable {
@@ -132,15 +134,6 @@ public struct AppReplaceSafety: Sendable {
         case restoreFailed(backup: String, error: String)
     }
 
-    /// What a launch did with a copy an earlier run left behind.
-    public enum LeftoverOutcome: Sendable, Equatable {
-        /// The app's path was empty: the copy is back there.
-        case restored(to: String)
-        /// Kept where it is (something is at the app's path, the app's path
-        /// isn't known, or the move failed).
-        case kept
-    }
-
     /// An app's Info.plist, as far as the replace checks need it.
     public struct BundleInfo: Sendable, Equatable {
         public var bundleID: String?
@@ -161,10 +154,9 @@ public struct AppReplaceSafety: Sendable {
     /// brew never started: the copy is deleted (the app wasn't touched).
     public var discard: @Sendable (_ backup: String) -> Void
     /// Copies an earlier run left behind (Tankard quit or crashed while brew
-    /// ran). Only listed: they are the user's apps, never deleted.
+    /// ran, or a finished run kept the copy). Only listed: never moved or
+    /// deleted. Each may be the only copy of the user's app.
     public var leftovers: @Sendable () -> [String]
-    /// One of `leftovers`, at launch: put back when its app's path is empty.
-    public var recoverLeftover: @Sendable (_ copy: String) -> LeftoverOutcome
     /// Reads the app's Info.plist (nil: it can't be read). nil: no check
     /// (tests, demo).
     public var readApp: (@Sendable (_ appPath: String) -> BundleInfo?)?
@@ -173,13 +165,11 @@ public struct AppReplaceSafety: Sendable {
                 finish: @escaping @Sendable (String, String, Bool, String) -> Outcome,
                 discard: @escaping @Sendable (String) -> Void = { _ in },
                 leftovers: @escaping @Sendable () -> [String] = { [] },
-                recoverLeftover: @escaping @Sendable (String) -> LeftoverOutcome = { _ in .kept },
                 readApp: (@Sendable (String) -> BundleInfo?)? = nil) {
         self.backup = backup
         self.finish = finish
         self.discard = discard
         self.leftovers = leftovers
-        self.recoverLeftover = recoverLeftover
         self.readApp = readApp
     }
 
@@ -189,8 +179,9 @@ public struct AppReplaceSafety: Sendable {
             .appendingPathComponent("net.mindtricks.tankard/replace-backup")
     }
 
-    /// Next to each copy: the path it was copied from, so a launch after a
-    /// crash knows where it goes back.
+    /// Next to each copy: the path it was copied from. Deleted when the run
+    /// reaches finishLive. A crash before that leaves the file; launch may
+    /// log its text and never uses it as a path.
     static let originFile = ".origin"
 
     /// The copies under `root` (<uuid>/<name>.app), sorted. Reads only.
@@ -233,7 +224,6 @@ public struct AppReplaceSafety: Sendable {
                 try? FileManager.default.removeItem(atPath: (backup as NSString).deletingLastPathComponent)
             },
             leftovers: { leftoverCopies(root: root) },
-            recoverLeftover: { recoverLeftoverLive($0) },
             readApp: { info(at: $0) })
     }
 
@@ -241,32 +231,56 @@ public struct AppReplaceSafety: Sendable {
     enum Found: Equatable {
         /// Nothing (not even a link).
         case nothing
-        /// A bundle with a readable Info.plist and, when it names one, its
-        /// executable.
+        /// A whole bundle: Info.plist is a regular file, CFBundleExecutable
+        /// is present, and Contents/MacOS/<exe> is a regular file inside the
+        /// bundle (lstat, not a symlink).
         case bundle(BundleInfo, executable: String?)
-        /// Anything else: a file, a link, a bundle without a readable
-        /// Info.plist or without its executable.
+        /// Anything else: a file, a link, a symlink Info.plist, a missing or
+        /// linked executable, or an executable outside the bundle.
         case broken
     }
 
     static func found(at path: String) -> Found {
         let fm = FileManager.default
         guard let attrs = try? fm.attributesOfItem(atPath: path) else { return .nothing }
+        let plistPath = (path as NSString).appendingPathComponent("Contents/Info.plist")
         guard attrs[.type] as? FileAttributeType == .typeDirectory,
-              let d = try? Data(contentsOf: URL(fileURLWithPath: path).appendingPathComponent("Contents/Info.plist")),
+              regularFileInside(plistPath, bundle: path),
+              let d = try? Data(contentsOf: URL(fileURLWithPath: plistPath)),
               let p = try? PropertyListSerialization.propertyList(from: d, format: nil) as? [String: Any] else { return .broken }
         func str(_ k: String) -> String? {
             if let s = p[k] as? String { return s.trimmingCharacters(in: .whitespaces) }
             if let n = p[k] as? NSNumber { return n.stringValue }
             return nil
         }
-        let exe = str("CFBundleExecutable").flatMap { $0.isEmpty ? nil : $0 }
-        if let exe {
-            let exePath = (path as NSString).appendingPathComponent("Contents/MacOS/\(exe)")
-            guard fm.fileExists(atPath: exePath) else { return .broken }
-        }
+        // Absent, empty, or not a single file name (a slash or ".." would
+        // leave Contents/MacOS): not whole.
+        guard let exe = str("CFBundleExecutable"), singlePathComponent(exe) else { return .broken }
+        let exePath = (path as NSString).appendingPathComponent("Contents/MacOS/\(exe)")
+        guard regularFileInside(exePath, bundle: path) else { return .broken }
         return .bundle(BundleInfo(bundleID: str("CFBundleIdentifier"), shortVersion: str("CFBundleShortVersionString"),
                                   bundleVersion: str("CFBundleVersion")), executable: exe)
+    }
+
+    /// One path component: the executable's file name, not a path.
+    static func singlePathComponent(_ name: String) -> Bool {
+        !name.isEmpty && name != "." && name != ".." && !name.contains("/") && !name.contains("\0")
+    }
+
+    /// `path` is a regular file (lstat, so a symlink does not count) and its
+    /// real path stays inside `bundle` (a linked Contents or MacOS does not).
+    static func regularFileInside(_ path: String, bundle: String) -> Bool {
+        var st = stat()
+        guard lstat(path, &st) == 0, (st.st_mode & S_IFMT) == S_IFREG else { return false }
+        guard let file = canonicalPath(path), let root = canonicalPath(bundle) else { return false }
+        let prefix = root.hasSuffix("/") ? root : root + "/"
+        return file.hasPrefix(prefix)
+    }
+
+    static func canonicalPath(_ path: String) -> String? {
+        guard let r = realpath(path, nil) else { return nil }
+        defer { free(r) }
+        return String(cString: r)
     }
 
     static func info(at path: String) -> BundleInfo? {
@@ -285,18 +299,23 @@ public struct AppReplaceSafety: Sendable {
         }
     }
 
-    /// After the run. Only a run that worked (brew's exit 0 and a whole app
-    /// of the cask's version at the path) deletes the copy. Otherwise the
-    /// copy is deleted only once it is back in place:
+    /// After the run. The copy is deleted only when brew's exit is 0, the
+    /// app is whole, and its version matches the cask. Otherwise the copy
+    /// is kept, unless it has been put back:
     /// - nothing at the path: the copy goes back;
     /// - a whole bundle of the same app (the same bundle id; after brew's
-    ///   exit 0, any whole bundle): it stays, and the copy is kept;
+    ///   exit 0, any whole bundle that is not the cask's version): it stays,
+    ///   and the copy is kept;
     /// - anything else (a bundle brew stopped deleting halfway, one without
-    ///   its Info.plist or executable, another app): that is moved into the
-    ///   copy's folder as "<name>.partial" and the copy goes back.
+    ///   its Info.plist or executable, a symlink plist or executable,
+    ///   another app): that is moved into the copy's folder as
+    ///   "<name>.partial" and the copy goes back.
+    /// Every outcome deletes `.origin`. Only a crash before this runs still
+    /// has one.
     static func finishLive(appPath: String, backup: String, succeeded: Bool, caskVersion: String) -> Outcome {
         let fm = FileManager.default
         let dir = (backup as NSString).deletingLastPathComponent
+        try? fm.removeItem(atPath: (dir as NSString).appendingPathComponent(originFile))
         let now = found(at: appPath)
         if succeeded, case .bundle(let i, _) = now, isVersion(i, caskVersion) {
             try? fm.removeItem(atPath: dir)
@@ -337,55 +356,84 @@ public struct AppReplaceSafety: Sendable {
             return .restoreFailed(backup: backup, error: error.localizedDescription)
         }
         if let partial { return .restoredMovingAside(partial: partial) }
-        try? fm.removeItem(atPath: (dir as NSString).appendingPathComponent(originFile))
         try? fm.removeItem(atPath: dir)
         return .restored
     }
 
-    /// At launch, for a copy an earlier run left: back to its app's path
-    /// when nothing is there, the copy is a whole bundle and its origin is
-    /// known. Never deletes anything but the emptied folder.
-    static func recoverLeftoverLive(_ copy: String) -> LeftoverOutcome {
+    /// One leftover, for the launch log and the notice. `recordedPath` is
+    /// the text of `.origin` when it reads as text. Display only: never a
+    /// path for a move, a delete, or Show in Finder.
+    struct DescribedLeftover: Sendable, Equatable {
+        var path: String
+        var appName: String
+        var made: Date
+        var recordedPath: String?
+    }
+
+    static func describe(_ path: String) -> DescribedLeftover {
         let fm = FileManager.default
-        let dir = (copy as NSString).deletingLastPathComponent
-        guard copy.hasSuffix(".app"),
-              let d = fm.contents(atPath: (dir as NSString).appendingPathComponent(originFile)),
-              let origin = String(data: d, encoding: .utf8), origin.hasPrefix("/"),
-              (origin as NSString).lastPathComponent == (copy as NSString).lastPathComponent,
-              case .nothing = found(at: origin), case .bundle = found(at: copy) else { return .kept }
-        do {
-            try fm.moveItem(atPath: copy, toPath: origin)
-        } catch {
-            return .kept
+        let base = (path as NSString).lastPathComponent
+        let appName = base.lowercased().hasSuffix(".app") && base.count > 4 ? String(base.dropLast(4)) : base
+        let dir = (path as NSString).deletingLastPathComponent
+        let made = directoryDate(dir) ?? directoryDate(path) ?? Date()
+        var recorded: String?
+        if let data = fm.contents(atPath: (dir as NSString).appendingPathComponent(originFile)),
+           let text = String(data: data, encoding: .utf8) {
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty { recorded = String(trimmed.prefix(500)) }
         }
-        try? fm.removeItem(atPath: (dir as NSString).appendingPathComponent(originFile))
-        // Only when nothing else is in it (a ".partial" stays).
-        if (try? fm.contentsOfDirectory(atPath: dir))?.isEmpty == true { try? fm.removeItem(atPath: dir) }
-        return .restored(to: origin)
+        return DescribedLeftover(path: path, appName: appName.isEmpty ? base : appName, made: made, recordedPath: recorded)
+    }
+
+    static func directoryDate(_ path: String) -> Date? {
+        guard let attrs = try? FileManager.default.attributesOfItem(atPath: path) else { return nil }
+        return (attrs[.creationDate] as? Date) ?? (attrs[.modificationDate] as? Date)
+    }
+}
+
+/// One launch notice for safety copies an earlier Replace left behind.
+/// `paths` are the copies themselves (the backup folder's listing), never
+/// a path read from `.origin`.
+public struct ReplaceLeftoverNotice: Equatable, Sendable {
+    public var message: String
+    public var paths: [String]
+    public init(message: String, paths: [String]) {
+        self.message = message
+        self.paths = paths
     }
 }
 
 private let replaceLog = Logger(subsystem: AppPaths.bundleID, category: "replace")
 
 extension AppStore {
-    /// At launch: copies a run left behind (Tankard quit or crashed while
-    /// brew replaced the app) are logged, with their paths, and kept: each
-    /// may be the only copy of the user's app. Returns them (tests).
-    /// 0.8.10: a copy whose app's path is empty (brew had removed the app
-    /// when Tankard stopped) is put back there, and that is logged.
+    /// At launch: copies a run left behind are logged, with their paths, and
+    /// one notice is shown. Nothing is moved or deleted. `.origin`, when a
+    /// crash mid-run left one, is read for the log only. Returns the copy
+    /// paths (tests).
     @discardableResult
     func noteReplaceLeftovers() async -> [String] {
         guard let safety = deps.appReplaceSafety else { return [] }
-        let found = await Task.detached { safety.leftovers().map { ($0, safety.recoverLeftover($0)) } }.value
-        for (path, outcome) in found {
-            switch outcome {
-            case .restored(let to):
-                replaceLog.notice("Replace with Homebrew's Version: an earlier run left a copy of the old app at \(path, privacy: .public) and nothing at \(to, privacy: .public); put it back there")
-            case .kept:
-                replaceLog.notice("Replace with Homebrew's Version: an earlier run left a copy of the old app at \(path, privacy: .public); kept, not deleted")
+        let found = await Task.detached { safety.leftovers().map { AppReplaceSafety.describe($0) } }.value
+        for item in found {
+            if let recorded = item.recordedPath {
+                replaceLog.notice("Replace with Homebrew's Version: an earlier run left a safety copy of \(item.appName, privacy: .public) at \(item.path, privacy: .public); recorded path \(recorded, privacy: .public) is display only; kept, not moved or deleted")
+            } else {
+                replaceLog.notice("Replace with Homebrew's Version: an earlier run left a safety copy of \(item.appName, privacy: .public) at \(item.path, privacy: .public); kept, not moved or deleted")
             }
         }
-        return found.map { $0.0 }
+        if let newest = found.max(by: { $0.made < $1.made }) {
+            let when = newest.made.formatted(date: .abbreviated, time: .shortened)
+            let name = newest.appName
+            replaceLeftoverNotice = ReplaceLeftoverNotice(
+                message: String(localized: "Tankard kept a safety copy of \(name) from \(when)."),
+                paths: found.map(\.path))
+        }
+        return found.map(\.path)
+    }
+
+    /// The launch notice's close. The copies stay where they are.
+    public func dismissReplaceLeftoverNotice() {
+        replaceLeftoverNotice = nil
     }
 }
 
@@ -496,6 +544,11 @@ public extension AppStore {
         for item in session.items {
             guard let r = pending[item.package.id] else { continue }
             let ok = item.state == .done
+            if session.failureKindByItem[item.id] == .locked {
+                // Brew printed its lock error and exited. It had not changed
+                // the app. The copy is kept because the run failed (below).
+                session.addNote(String(localized: "Homebrew is busy; try again in a moment."))
+            }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced.")) }
                 continue

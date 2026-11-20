@@ -13,8 +13,9 @@ import Testing
 // - the app is read again right before the copy (it may have updated
 //   itself), and checked for running again right before brew starts;
 // - only a cask that installs exactly one app, and never a build-number
-//   downgrade;
-// - at launch, a copy whose app's path is empty is put back.
+//   downgrade (2.0 / build 200 / cask 199);
+// - at launch, leftover copies are listed and one notice is shown. Nothing
+//   is moved. A finished run deletes `.origin`.
 
 @MainActor
 struct V0810ReplaceFixTests {
@@ -50,9 +51,10 @@ struct V0810ReplaceFixTests {
         #expect(fm.fileExists(atPath: (partial as NSString).appendingPathComponent("Contents/MacOS/Foo")))
         // The copy's folder stays (with what brew left), the copy itself is back.
         #expect(!fm.fileExists(atPath: copy))
-        // A later launch lists the partial and leaves it.
+        // A later launch lists the partial and leaves it. `.origin` is gone:
+        // this run finished.
         #expect(live.leftovers() == [partial])
-        #expect(live.recoverLeftover(partial) == .kept)
+        #expect(!fm.fileExists(atPath: (dir as NSString).appendingPathComponent(".origin")))
         #expect(fm.fileExists(atPath: partial))
     }
 
@@ -96,8 +98,8 @@ struct V0810ReplaceFixTests {
         let copy = try live.backup(d.app.path)
         #expect(live.finish(d.app.path, copy, false, "2.0") == .kept(backup: copy))
         #expect(fm.fileExists(atPath: copy) && FakeBundle.version(d.app) == "1.0")
-        // A launch later: the app's path is taken, so it is only listed.
-        #expect(live.recoverLeftover(copy) == .kept && fm.fileExists(atPath: copy))
+        // The run finished, so `.origin` is gone. The copy stays.
+        #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
     }
 
     /// brew's exit 0 isn't enough: the app must be whole and the cask's version.
@@ -106,10 +108,12 @@ struct V0810ReplaceFixTests {
         let live = AppReplaceSafety.live(root: d.root)
         try FakeBundle.make(d.app, version: "1.0")
 
-        // Exit 0, but the app at the path is still 1.0: kept.
+        // Exit 0, but the app at the path is still 1.0: kept. `.origin` is gone.
         var copy = try live.backup(d.app.path)
+        #expect(fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
         #expect(live.finish(d.app.path, copy, true, "2.0") == .kept(backup: copy))
         #expect(fm.fileExists(atPath: copy))
+        #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
 
         // Exit 0, and the bundle is broken: the copy goes back.
         copy = try live.backup(d.app.path)
@@ -130,59 +134,111 @@ struct V0810ReplaceFixTests {
         #expect(live.finish(d.app.path, copy, true, "210") == .discarded)
     }
 
+    /// A link, a missing executable, or an executable outside the bundle is
+    /// not whole, so exit 0 does not delete the copy.
+    @Test func aLinkOrAMissingExecutableIsNotAWholeApp() throws {
+        let d = Dir(), fm = FileManager.default
+        let live = AppReplaceSafety.live(root: d.root)
+        try FakeBundle.make(d.app, version: "1.0")
+
+        func notDiscarded(_ outcome: AppReplaceSafety.Outcome, _ why: String) {
+            if case .discarded = outcome { Issue.record("\(why)") }
+        }
+
+        // The executable is a symlink. Exit 0 and the version would match.
+        var copy = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0")
+        let exe = d.app.appendingPathComponent("Contents/MacOS/Foo")
+        try fm.removeItem(at: exe)
+        try fm.createSymbolicLink(at: exe, withDestinationURL: URL(fileURLWithPath: "/usr/bin/true"))
+        let linkedExe = live.finish(d.app.path, copy, true, "2.0")
+        notDiscarded(linkedExe, "symlink executable deleted the copy")
+        #expect(FakeBundle.version(d.app) == "1.0")
+
+        // Info.plist is a symlink.
+        copy = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0")
+        let plist = d.app.appendingPathComponent("Contents/Info.plist")
+        let aside = d.app.appendingPathComponent("Contents/Info-real.plist")
+        try fm.moveItem(at: plist, to: aside)
+        try fm.createSymbolicLink(at: plist, withDestinationURL: aside)
+        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "symlink Info.plist deleted the copy")
+        #expect(FakeBundle.version(d.app) == "1.0")
+
+        // CFBundleExecutable is absent.
+        copy = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0")
+        let bare: [String: Any] = ["CFBundleIdentifier": "com.foo.Foo", "CFBundleShortVersionString": "2.0", "CFBundleVersion": "2.0"]
+        try PropertyListSerialization.data(fromPropertyList: bare, format: .xml, options: 0).write(to: plist)
+        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "missing CFBundleExecutable deleted the copy")
+        #expect(FakeBundle.version(d.app) == "1.0")
+
+        // The executable name leaves the bundle.
+        copy = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0")
+        let escaped: [String: Any] = ["CFBundleIdentifier": "com.foo.Foo", "CFBundleShortVersionString": "2.0",
+                                      "CFBundleVersion": "2.0", "CFBundleExecutable": "../../../outside"]
+        try PropertyListSerialization.data(fromPropertyList: escaped, format: .xml, options: 0).write(to: plist)
+        try Data("x".utf8).write(to: d.url.appendingPathComponent("outside"))
+        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "executable outside the bundle deleted the copy")
+        #expect(FakeBundle.version(d.app) == "1.0")
+
+        // A real bundle is still whole.
+        try FakeBundle.make(d.app, version: "2.0")
+        guard case .bundle = AppReplaceSafety.found(at: d.app.path) else {
+            Issue.record("a real bundle was not whole")
+            return
+        }
+    }
+
     // MARK: - leftovers at launch
 
-    @Test func leftoverIsPutBackOnlyWhenItsPathIsEmpty() throws {
+    /// Launch never moves a copy, even when the app's path is empty and
+    /// `.origin` names it. The text of `.origin` is not a path Tankard uses.
+    @Test func launchNeverMovesALeftover() async throws {
         let d = Dir(), fm = FileManager.default
         try FakeBundle.make(d.app, version: "1.0")
         let live = AppReplaceSafety.live(root: d.root)
-
-        // Tankard quit after brew removed the app: the path is empty.
         let copy = try live.backup(d.app.path)
+        let origin = ((copy as NSString).deletingLastPathComponent as NSString).appendingPathComponent(".origin")
+        try Data("/tmp/ShouldNotAppear.app".utf8).write(to: URL(fileURLWithPath: origin))
         try fm.removeItem(at: d.app)
-        #expect(live.recoverLeftover(copy) == .restored(to: d.app.path))
-        #expect(FakeBundle.version(d.app) == "1.0")
-        #expect(d.items(d.root.path).isEmpty)
 
-        // The path is taken (the new app, or the old one): kept.
-        let copy2 = try live.backup(d.app.path)
-        #expect(live.recoverLeftover(copy2) == .kept)
-        #expect(fm.fileExists(atPath: copy2))
-
-        // No record of where it came from (a copy cut short, or made by an
-        // earlier build): kept, even with the path empty.
-        let dir2 = (copy2 as NSString).deletingLastPathComponent
-        try fm.removeItem(atPath: (dir2 as NSString).appendingPathComponent(".origin"))
-        try fm.removeItem(at: d.app)
-        #expect(live.recoverLeftover(copy2) == .kept)
-        #expect(fm.fileExists(atPath: copy2) && !fm.fileExists(atPath: d.app.path))
-
-        // A copy that isn't a whole bundle: kept.
-        try FakeBundle.make(d.app, version: "1.0")
-        let copy3 = try live.backup(d.app.path)
-        try fm.removeItem(at: d.app)
-        try fm.removeItem(atPath: (copy3 as NSString).appendingPathComponent("Contents/Info.plist"))
-        #expect(live.recoverLeftover(copy3) == .kept)
-        #expect(fm.fileExists(atPath: copy3))
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appReplaceSafety = live
+        let store = AppStore(deps: deps)
+        let listed = await store.noteReplaceLeftovers()
+        #expect(listed == [copy])
+        #expect(fm.fileExists(atPath: copy))
+        #expect(!fm.fileExists(atPath: d.app.path))
+        #expect(!fm.fileExists(atPath: "/tmp/ShouldNotAppear.app"))
+        let notice = try #require(store.replaceLeftoverNotice)
+        #expect(notice.paths == [copy])
+        #expect(notice.message.contains("Foo"))
+        #expect(notice.message.contains("safety copy"))
+        #expect(!notice.message.contains("ShouldNotAppear"))
+        #expect(!notice.message.contains("/tmp"))
+        store.dismissReplaceLeftoverNotice()
+        #expect(store.replaceLeftoverNotice == nil)
+        #expect(fm.fileExists(atPath: copy))
     }
 
-    @Test func launchPutsBackALeftoverAndLogsTheRest() async throws {
+    @Test func launchListsLeftoversAndShowsOneNotice() async throws {
         let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
         let safety = AppReplaceSafety(
-            backup: { _ in "/tmp/x" },
+            backup: { _ in calls.withLock { $0.append("backup") }; return "/tmp/x" },
             finish: { _, _, _, _ in calls.withLock { $0.append("finish") }; return .discarded },
             discard: { _ in calls.withLock { $0.append("discard") } },
-            leftovers: { ["/c/A/Foo.app", "/c/B/Bar.app"] },
-            recoverLeftover: { p in
-                calls.withLock { $0.append("recover \(p)") }
-                return p.hasSuffix("Foo.app") ? .restored(to: "/Applications/Foo.app") : .kept
-            })
+            leftovers: { ["/c/A/Foo.app", "/c/B/Bar.app"] })
         var deps = Demo.dependencies(.arm64, pace: 0)
         deps.appReplaceSafety = safety
         let store = AppStore(deps: deps)
         await store.start()
-        #expect(await waitUntil { calls.withLock { $0.contains("recover /c/B/Bar.app") } })
-        #expect(!calls.withLock { $0.contains("finish") || $0.contains("discard") })
+        #expect(await waitUntil { store.replaceLeftoverNotice != nil })
+        let notice = try #require(store.replaceLeftoverNotice)
+        #expect(notice.paths == ["/c/A/Foo.app", "/c/B/Bar.app"])
+        #expect(notice.message.contains("Foo") || notice.message.contains("Bar"))
+        #expect(!calls.withLock { $0.contains("finish") || $0.contains("discard") || $0.contains("backup") })
     }
 
     // MARK: - the run
@@ -290,6 +346,59 @@ struct V0810ReplaceFixTests {
         #expect(store.upgrade == nil)
         #expect(r.calls.withLock { $0 } == ["read", "backup", "discard"])
         #expect(store.busyNotice?.contains("Audacity is open. Quit it first") == true)
+    }
+
+    /// Counts `brew install --cask --force` and whether the lock wait asked
+    /// who holds the lock.
+    final class LockRunner: StreamingCommandRunning, @unchecked Sendable {
+        let inner: StreamingCommandRunning
+        let installs = OSAllocatedUnfairLock(initialState: 0)
+        let probes = OSAllocatedUnfairLock(initialState: 0)
+        init(_ inner: StreamingCommandRunning) { self.inner = inner }
+        func stream(_ executable: String, _ arguments: [String], environment: [String: String],
+                    output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            if arguments.contains("--force") {
+                installs.withLock { $0 += 1 }
+                output(Data("Error: A `brew install --cask audacity` process has already locked /opt/homebrew/Caskroom/audacity.\n".utf8))
+                return 1
+            }
+            return try await inner.stream(executable, arguments, environment: environment, output: output)
+        }
+    }
+
+    /// brew's lock stops the run. It is not waited out and not run again.
+    /// The copy is kept because the run failed.
+    @Test func replaceDoesNotWaitOnBrewsLock() async throws {
+        let r = Recorder(info: Self.audacity)
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = LockRunner(deps.streamRunner)
+        deps.streamRunner = runner
+        deps.lockWait = BrewLockWait(interval: .milliseconds(20), limit: .milliseconds(300), maxAttempts: 5, holders: { _ in
+            runner.probes.withLock { $0 += 1 }
+            return ["99 brew install"]
+        })
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { [r] p in r.calls.withLock { $0.append("backup") }; return "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { [r] _, backup, ok, v in
+                r.calls.withLock { $0.append("finish \(ok) \(v)") }
+                return ok ? .discarded : .kept(backup: backup)
+            },
+            discard: { [r] _ in r.calls.withLock { $0.append("discard") } },
+            readApp: { [r] _ in r.calls.withLock { $0.append("read") }; return r.info.withLock { $0 } })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let p = try plan(store)
+        #expect(await store.startReplace(p))
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        #expect(runner.installs.withLock { $0 } == 1)
+        #expect(runner.probes.withLock { $0 } == 0)
+        #expect(r.calls.withLock { $0.contains("finish false 4.0.2") })
+        let lines = store.upgrade?.log.lines.joined(separator: "\n") ?? ""
+        #expect(lines.contains("Homebrew is busy; try again in a moment."))
+        #expect(lines.contains("wasn't replaced; it is as it was. Tankard kept a copy"))
     }
 
     // MARK: - when it is offered

@@ -643,16 +643,23 @@ touched, and from now on Homebrew manages the app. Quit the app first: if it is 
 Tankard says so and waits for you to click **Check Again**; it never quits the app for
 you. Then click **Replace**. Tankard runs `brew install --cask --force <cask>` in the
 activity sheet, asking for your password as for any cask install. Tankard keeps a copy of
-the app while brew runs: if brew fails, the sheet shows brew's error and the app is left
-as it was. If brew stopped halfway (for example after **Stop Now**), what it left is moved
-next to the copy and the copy goes back; if the app is still whole, the copy is kept and
-the sheet says where. The copy is deleted only after brew installed the cask's version.
-If the app changed since the scan (it updated itself) or was opened again while Tankard
-made the copy, Tankard doesn't start. If Tankard quits while brew runs and the app is
-gone, the copy is put back at the next launch. Tankard never offers this for a version
-that is older, the same or can't be compared (a cask version that is a build number, for
-example), for a cask that installs more than the one app (a second app, a command-line
-tool, a font), or for a match on the name alone.
+the app while brew runs. The copy is deleted only when brew finished, the app is a whole
+app (its Info.plist and its program are real files inside the app, not links), and that
+app is the cask's version. Otherwise the copy is kept. If brew stopped halfway (for
+example after **Stop Now**) and the app is missing or only partly there, what brew left
+is moved next to the copy and the copy goes back. If the app is still whole, the copy is
+kept and the sheet says where. If the app changed since the scan (it updated itself) or
+was opened again while Tankard made the copy, Tankard doesn't start. If another Homebrew
+command is running, Tankard stops and says Homebrew is busy; it does not wait and try
+again, and the copy is kept. If Tankard quits while brew is still running, the next
+launch does not move the copy. It shows one notice, "Tankard kept a safety copy of <App>
+from <date>.", with **Show in Finder**. Tankard never offers this for a version that is
+older or the same, or when the cask's version is a plain build number that is not newer
+than the app's (2.0 with build 200, against cask 199). A dotted newer version is offered,
+including when the app's short version is a plain number (2, and the cask is 2.1) and
+when the app's build number is a different sequence. It is also never offered for a cask
+that installs more than the one app (a second app, a command-line tool, a font), or for
+a match on the name alone.
 
 Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online cask list.
 

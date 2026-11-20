@@ -503,6 +503,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew 无需添加此目录即可从中安装。无需任何操作。";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew 会用 cask 的较新版本替换这个 App，此后由 Homebrew 管理。你在 ~/Library 中的设置和数据不会被改动。";
+"Homebrew is busy; try again in a moment." = "Homebrew 正忙，请稍后再试。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。";
 "Homebrew is still upgrading %@." = "Homebrew 仍在升级 %@。";
@@ -1076,6 +1077,7 @@
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard 正在自动升级 %@(第 %lld 个,共 %lld 个)。";
 "Tankard is upgrading %@ automatically." = "Tankard 正在自动升级 %@。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
+"Tankard kept a safety copy of %@ from %@." = "Tankard 保留了 %1$@ 的安全副本（%2$@）。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard 会在 Homebrew 安装程序放置它的位置查找 Homebrew。";

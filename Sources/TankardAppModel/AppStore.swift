@@ -335,6 +335,9 @@ public final class AppStore {
     /// seconds. See `runQuick`.
     public internal(set) var busyNotice: String?
     @ObservationIgnored var busyNoticeToken = 0
+    /// 0.8.10: a safety copy an earlier Replace left in the cache. One
+    /// notice, with Show in Finder. Nothing is moved. Nil when there is none.
+    public internal(set) var replaceLeftoverNotice: ReplaceLeftoverNotice?
     /// 0.8.2: what the last Refresh / Check Now found ("3 new upgrades"),
     /// shown in the status bar for a few seconds. See UserCheckFeedback.swift.
     public internal(set) var checkNote: String?
@@ -567,7 +570,8 @@ public final class AppStore {
         // 0.8.6 (M4): also when brew changed something since the cached
         // read (Terminal), or an interrupted run waits to be offered.
         launchStarted = true
-        // 0.8.10: safety copies an interrupted Replace left behind: logged, kept.
+        // 0.8.10: safety copies an earlier Replace left behind: logged, one
+        // notice, never moved or deleted.
         if deps.appReplaceSafety != nil { Task { await self.noteReplaceLeftovers() } }
         let stale = isStale, changed = homebrewChangedSinceRead, journal = settings.defaults.data(forKey: RunJournal.key) != nil
         // 0.8.8: also when a relaunch for App Management left its operation
