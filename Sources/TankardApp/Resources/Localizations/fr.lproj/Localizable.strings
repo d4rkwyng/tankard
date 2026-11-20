@@ -227,7 +227,7 @@
 "Auto-update: upgrading %@" = "Mise à jour auto : mise à niveau de %@";
 "Automatic updates" = "Mises à jour automatiques";
 "Automatic updates never ask for your password." = "Les mises à jour automatiques ne demandent jamais votre mot de passe.";
-"Automatically upgrade:" = "Mettre à niveau automatiquement :";
+"Automatically upgrade:" = "Mise à niveau auto :";
 "Available" = "Disponible";
 "BSD-2-Clause license" = "Licence BSD-2-Clause";
 "Back" = "Retour";
