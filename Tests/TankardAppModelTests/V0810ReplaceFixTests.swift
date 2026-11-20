@@ -10,8 +10,9 @@ import Testing
 //   executable, or another app at the path is moved aside as
 //   "<name>.partial" and the copy goes back;
 // - only brew's exit 0 with a whole app of the cask's version deletes it;
-// - the app is read again right before the copy (it may have updated
-//   itself), and checked for running again right before brew starts;
+// - the app is read again right before the copy and again after it (it
+//   may have updated itself), and checked for running again right before
+//   brew starts;
 // - only a cask that installs exactly one app, and never a build-number
 //   downgrade (2.0 / build 200 / cask 199);
 // - at launch, leftover copies are listed and one notice is shown. Nothing
@@ -132,6 +133,23 @@ struct V0810ReplaceFixTests {
         copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.1", build: "210")
         #expect(live.finish(d.app.path, copy, true, "210") == .discarded)
+    }
+
+    /// Same rule as the offer: a dotted cask version is the short version
+    /// only (as text or by brew's ordering). A bare-integer cask may be the
+    /// build number.
+    @Test func successMatchFollowsTheOfferRule() {
+        func info(_ short: String, _ build: String?) -> AppReplaceSafety.BundleInfo {
+            .init(bundleID: "com.foo.Foo", shortVersion: short, bundleVersion: build)
+        }
+        // short 1.9, build 2.0.0, cask 2.0: the build is not consulted.
+        #expect(!AppReplaceSafety.isVersion(info("1.9", "2.0.0"), "2.0"))
+        // short 2.0 is the cask 2.0.0 by brew's ordering.
+        #expect(AppReplaceSafety.isVersion(info("2.0", nil), "2.0.0"))
+        // A bare integer may be the build number.
+        #expect(AppReplaceSafety.isVersion(info("2.0", "200"), "200"))
+        // Dotted, so build 200 is not consulted, and 2.0 is not 2.0.1.
+        #expect(!AppReplaceSafety.isVersion(info("2.0", "200"), "2.0.1"))
     }
 
     /// A link, a missing executable, or an executable outside the bundle is
@@ -288,8 +306,8 @@ struct V0810ReplaceFixTests {
         #expect(p.bundleVersion == "4.0.1")
         #expect(await store.startReplace(p))
         #expect(await waitUntil { store.upgrade?.isFinished == true })
-        #expect(await waitUntil { r.calls.withLock { $0.count } == 3 })
-        #expect(r.calls.withLock { $0 } == ["read", "backup", "finish true 4.0.2"])
+        #expect(await waitUntil { r.calls.withLock { $0.count } == 4 })
+        #expect(r.calls.withLock { $0 } == ["read", "backup", "read", "finish true 4.0.2"])
     }
 
     /// The app updated itself since the scan: nothing is copied, brew doesn't run.
@@ -313,6 +331,35 @@ struct V0810ReplaceFixTests {
         #expect(await !store.startReplace(p))
         #expect(store.busyNotice?.contains("couldn't read Audacity's version") == true)
         #expect(!r.calls.withLock { $0.contains("backup") } && store.upgrade == nil)
+    }
+
+    /// Updated itself while the copy was made: the second read differs, so
+    /// no session starts and the copy is discarded.
+    @Test func anAppThatChangesDuringTheCopyIsNotReplaced() async throws {
+        let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
+        let reads = OSAllocatedUnfairLock<[AppReplaceSafety.BundleInfo?]>(initialState: [
+            Self.audacity,
+            .init(bundleID: "org.audacityteam.audacity4", shortVersion: "4.1.0", bundleVersion: "4.1.0"),
+        ])
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in calls.withLock { $0.append("backup") }; return "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, _, ok, v in calls.withLock { $0.append("finish \(ok) \(v)") }; return ok ? .discarded : .restored },
+            discard: { _ in calls.withLock { $0.append("discard") } },
+            readApp: { _ in
+                calls.withLock { $0.append("read") }
+                return reads.withLock { queued in queued.isEmpty ? nil : queued.removeFirst() }
+            })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let p = try plan(store)
+        #expect(await !store.startReplace(p))
+        #expect(store.upgrade == nil)
+        #expect(calls.withLock { $0 } == ["read", "backup", "read", "discard"])
+        #expect(store.busyNotice?.contains("Audacity changed since the scan (it is now version 4.1.0)") == true)
     }
 
     @Test func changedNoteRules() {
@@ -344,7 +391,7 @@ struct V0810ReplaceFixTests {
         let p = try plan(store)
         #expect(await !store.startReplace(p))
         #expect(store.upgrade == nil)
-        #expect(r.calls.withLock { $0 } == ["read", "backup", "discard"])
+        #expect(r.calls.withLock { $0 } == ["read", "backup", "read", "discard"])
         #expect(store.busyNotice?.contains("Audacity is open. Quit it first") == true)
     }
 

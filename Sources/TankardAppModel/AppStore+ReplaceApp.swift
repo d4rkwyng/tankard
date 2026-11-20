@@ -288,12 +288,15 @@ public struct AppReplaceSafety: Sendable {
         return nil
     }
 
-    /// Whether `info` is the cask's version: its short version or its
-    /// build number, as text or by brew's ordering ("2.1" and "2.1.0").
+    /// Whether `info` is the cask's version, as text or by brew's ordering
+    /// ("2.1" and "2.1.0"). Same rule as the offer: a dotted cask version is
+    /// the short version only; a bare-integer one may be the build number.
     static func isVersion(_ info: BundleInfo, _ caskVersion: String) -> Bool {
         let c = caskVersion.trimmingCharacters(in: .whitespaces)
         guard !c.isEmpty else { return false }
-        return [info.shortVersion, info.bundleVersion].contains { v in
+        let integerCask = c.allSatisfy(\.isNumber)
+        let candidates = integerCask ? [info.shortVersion, info.bundleVersion] : [info.shortVersion]
+        return candidates.contains { v in
             guard let v, !v.isEmpty else { return false }
             return v == c || BrewVersion(v).compare(to: BrewVersion(c)) == 0
         }
@@ -510,6 +513,16 @@ public extension AppStore {
             } catch {
                 showBusyNotice(String(localized: "Tankard couldn't make a safety copy of \(plan.appName), so it didn't replace it: \(error.localizedDescription)"), seconds: 12)
                 return false
+            }
+            // And once more after the copy: it may have updated itself while
+            // the copy was made.
+            if let read = safety.readApp {
+                let now = await Task.detached { read(plan.appPath) }.value
+                if let note = plan.changedNote(now: now) {
+                    if let backup { safety.discard(backup) }
+                    showBusyNotice(note, seconds: 12)
+                    return false
+                }
             }
         }
         // 0.8.10: opened while the copy was made: brew would delete a
