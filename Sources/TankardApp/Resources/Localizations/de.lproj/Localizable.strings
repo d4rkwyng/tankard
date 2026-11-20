@@ -877,7 +877,7 @@
 "Replace with Bottle" = "Durch Bottle ersetzen";
 "Replace with Homebrew's Version…" = "Durch Homebrews Version ersetzen…";
 "Replacement: " = "Ersatz: ";
-"Replacing" = "Ersetzen";
+"Replacing" = "Wird ersetzt";
 "Report an Issue…" = "Problem melden…";
 "Requested" = "Angefordert";
 "Restart" = "Neu starten";
@@ -1332,7 +1332,7 @@
 "brew says the scan is incomplete: %@." = "brew meldet, der Scan sei unvollständig: %@.";
 "brew services failed" = "brew services fehlgeschlagen";
 "brew services list exited %d" = "brew services list beendet mit %d";
-"brew stopped after removing %@; Tankard put the old version back at %@." = "brew hat nach dem Entfernen von %1$@ abgebrochen; Tankard hat die alte Version wieder unter %2$@ abgelegt.";
+"brew stopped after removing %@; Tankard put the old version back at %@." = "brew hat nach dem Entfernen von %1$@ angehalten; Tankard hat die alte Version wieder unter %2$@ abgelegt.";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info hat etwas ausgegeben, das Tankard nicht lesen konnte.";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info hat etwas ausgegeben, das Tankard nicht lesen konnte:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: „Trust non-official tap formulae, casks or commands so Homebrew may load them.“ Es ist der Ruby-Code des Autors. Vertraue nur Taps, deren Autor du vertraust.";

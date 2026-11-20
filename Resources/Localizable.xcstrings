@@ -2248,19 +2248,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ est ouverte. Quittez-la d'abord, puis cliquez sur Vérifier à nouveau. Tankard ne la quitte pas à votre place."
+            "value": "L'app %@ est ouverte. Quittez-la d'abord, puis cliquez sur Vérifier à nouveau. Tankard ne la quitte pas à votre place."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ está abierta. Ciérrala primero y luego haz clic en Comprobar de nuevo. Tankard no la cierra por ti."
+            "value": "La app %@ está abierta. Ciérrala primero y luego haz clic en Comprobar de nuevo. Tankard no la cierra por ti."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ è aperta. Chiudila prima, poi fai clic su Ricontrolla. Tankard non la chiude al posto tuo."
+            "value": "L'app %@ è aperta. Chiudila prima, poi fai clic su Ricontrolla. Tankard non la chiude al posto tuo."
           }
         },
         "pt-BR": {
@@ -2976,7 +2976,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n'a pas été remplacée."
+            "value": "L'app %@ n'a pas été remplacée."
           }
         },
         "es": {
@@ -2988,7 +2988,7 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non è stata sostituita."
+            "value": "L'app %@ non è stata sostituita."
           }
         },
         "pt-BR": {
@@ -3028,7 +3028,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ n'a pas été remplacée ; elle est restée telle quelle."
+            "value": "L'app %@ n'a pas été remplacée ; elle est restée telle quelle."
           }
         },
         "es": {
@@ -3040,7 +3040,7 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ non è stata sostituita; è rimasta com'era."
+            "value": "L'app %@ non è stata sostituita; è rimasta com'era."
           }
         },
         "pt-BR": {
@@ -29370,7 +29370,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Homebrew が %1$@ %2$@ をダウンロードし、%3$@ にあるアプリと置き換えます。"
+            "value": "Homebrew が %1$@ %2$@ をダウンロードし、%3$@ にあるアプリをそれに置き換えます。"
           }
         },
         "zh-Hans": {
@@ -49598,7 +49598,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ersetzen"
+            "value": "Wird ersetzt"
           }
         },
         "fr": {
@@ -59590,7 +59590,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ の安全のためのコピーを作成できなかったため、置き換えませんでした: %2$@"
+            "value": "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@"
           }
         },
         "zh-Hans": {
@@ -59642,7 +59642,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。"
+            "value": "Tankardは %1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。"
           }
         },
         "zh-Hans": {
@@ -70062,7 +70062,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "バージョン %1$@ → %2$@"
+            "value": "バージョン %1$@ から %2$@"
           }
         },
         "zh-Hans": {
@@ -72544,13 +72544,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "brew n'adopte que la version exacte installée par le cask. Mettez à jour l'app avec son propre outil puis Réanalyser, ou, si la version du cask est plus récente, laissez Homebrew remplacer l'app."
+            "value": "brew n'adopte que la version exacte installée par le cask. Mettez à jour l'app avec son propre outil de mise à jour, puis cliquez sur Réanalyser, ou, si la version du cask est plus récente, laissez Homebrew remplacer l'app."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y Volver a analizar o, si la versión del cask es más reciente, deja que Homebrew reemplace la app."
+            "value": "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y haz clic en Volver a analizar o, si la versión del cask es más reciente, deja que Homebrew reemplace la app."
           }
         },
         "it": {
@@ -72574,7 +72574,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "brew 只接管与 cask 安装版本完全相同的版本。请用 App 自带的更新程序更新后点按“重新扫描”；如果 cask 的版本更新，也可以让 Homebrew 替换该 App。"
+            "value": "brew 只接管与 cask 安装版本完全相同的版本。请用 App 自带的更新程序更新后点按“重新扫描”；如果 cask 的版本较新，也可以让 Homebrew 替换该 App。"
           }
         },
         "ko": {
@@ -74056,7 +74056,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "brew hat nach dem Entfernen von %1$@ abgebrochen; Tankard hat die alte Version wieder unter %2$@ abgelegt."
+            "value": "brew hat nach dem Entfernen von %1$@ angehalten; Tankard hat die alte Version wieder unter %2$@ abgelegt."
           }
         },
         "fr": {

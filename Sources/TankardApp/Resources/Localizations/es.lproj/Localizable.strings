@@ -42,7 +42,7 @@
 "%@ installed" = "%@ instalado";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ está disponible, pero este paquete está fijado: brew upgrade y Actualizar todo lo omiten. Desfíjalo para actualizarlo.";
 "%@ is installed" = "%@ está instalado";
-"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ está abierta. Ciérrala primero y luego haz clic en Comprobar de nuevo. Tankard no la cierra por ti.";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "La app %@ está abierta. Ciérrala primero y luego haz clic en Comprobar de nuevo. Tankard no la cierra por ti.";
 "%@ is pinned" = "%@ está fijado";
 "%@ is running" = "%@ se está ejecutando";
 "%@ is there but doesn't run. It said:" = "%@ está ahí pero no se ejecuta. Dijo:";
@@ -1305,7 +1305,7 @@
 "auto" = "auto";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --version terminó con %d";
-"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y Volver a analizar o, si la versión del cask es más reciente, deja que Homebrew reemplace la app.";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew solo adopta la versión exacta que instala el cask. Actualiza la app con su propio actualizador y haz clic en Volver a analizar o, si la versión del cask es más reciente, deja que Homebrew reemplace la app.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew permite un comando a la vez. Espera a que termine el otro (en Terminal u otra app) y reintenta.";
 "brew bundle check failed:\n" = "brew bundle check falló:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle no terminó en %lld segundos, así que Tankard lo detuvo. Puede que Homebrew esté ocupado o esperando a la red; inténtalo de nuevo en un momento.";

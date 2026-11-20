@@ -42,7 +42,7 @@
 "%@ installed" = "%@ installato";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ è disponibile, ma questo pacchetto è bloccato: brew upgrade e Aggiorna tutto lo saltano. Sbloccalo per aggiornarlo.";
 "%@ is installed" = "%@ è installato";
-"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ è aperta. Chiudila prima, poi fai clic su Ricontrolla. Tankard non la chiude al posto tuo.";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "L'app %@ è aperta. Chiudila prima, poi fai clic su Ricontrolla. Tankard non la chiude al posto tuo.";
 "%@ is pinned" = "%@ è bloccato";
 "%@ is running" = "%@ è in esecuzione";
 "%@ is there but doesn't run. It said:" = "%@ è presente ma non si avvia. Ha risposto:";
@@ -56,8 +56,8 @@
 "%@ stopped" = "%@ interrotto";
 "%@ uninstalled" = "%@ disinstallato";
 "%@ upgraded" = "%@ aggiornato";
-"%@ wasn't replaced." = "%@ non è stata sostituita.";
-"%@ wasn't replaced; it is as it was." = "%@ non è stata sostituita; è rimasta com'era.";
+"%@ wasn't replaced." = "L'app %@ non è stata sostituita.";
+"%@ wasn't replaced; it is as it was." = "L'app %@ non è stata sostituita; è rimasta com'era.";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ sarà adottata come %@. Altri cask installano un’app con questo nome (%@): brew upgrade segue il cask che adotti, quindi verifica che sia quello giusto.";
 "%@ would be installed too" = "%@ verrebbe installato anch'esso";
 "%@ · %lld" = "%@ · %lld";

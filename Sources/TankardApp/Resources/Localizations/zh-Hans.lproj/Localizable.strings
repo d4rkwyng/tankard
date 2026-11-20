@@ -1305,7 +1305,7 @@
 "auto" = "自动";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --version 已退出，代码 %d";
-"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew 只接管与 cask 安装版本完全相同的版本。请用 App 自带的更新程序更新后点按“重新扫描”；如果 cask 的版本更新，也可以让 Homebrew 替换该 App。";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew 只接管与 cask 安装版本完全相同的版本。请用 App 自带的更新程序更新后点按“重新扫描”；如果 cask 的版本较新，也可以让 Homebrew 替换该 App。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew 一次只允许运行一条命令。请等另一条命令（在“终端”或其他 App 中）完成后再重试。";
 "brew bundle check failed:\n" = "brew bundle check 失败：\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle 未在 %lld 秒内完成，因此 Tankard 已将其停止。Homebrew 可能正忙或在等待网络；请稍后再试。";

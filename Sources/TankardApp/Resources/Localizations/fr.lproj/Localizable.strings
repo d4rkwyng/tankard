@@ -42,7 +42,7 @@
 "%@ installed" = "%@ installé";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ est disponible, mais ce paquet est épinglé : brew upgrade et « Tout mettre à niveau » l’ignorent. Désépinglez-le pour le mettre à niveau.";
 "%@ is installed" = "%@ est installé";
-"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ est ouverte. Quittez-la d'abord, puis cliquez sur Vérifier à nouveau. Tankard ne la quitte pas à votre place.";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "L'app %@ est ouverte. Quittez-la d'abord, puis cliquez sur Vérifier à nouveau. Tankard ne la quitte pas à votre place.";
 "%@ is pinned" = "%@ est épinglé";
 "%@ is running" = "%@ est en cours d’exécution";
 "%@ is there but doesn't run. It said:" = "%@ est présent mais ne s’exécute pas. Message :";
@@ -56,8 +56,8 @@
 "%@ stopped" = "%@ arrêté";
 "%@ uninstalled" = "%@ désinstallé";
 "%@ upgraded" = "%@ mis à niveau";
-"%@ wasn't replaced." = "%@ n'a pas été remplacée.";
-"%@ wasn't replaced; it is as it was." = "%@ n'a pas été remplacée ; elle est restée telle quelle.";
+"%@ wasn't replaced." = "L'app %@ n'a pas été remplacée.";
+"%@ wasn't replaced; it is as it was." = "L'app %@ n'a pas été remplacée ; elle est restée telle quelle.";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ sera adoptée comme %@. D’autres casks installent une app de ce nom (%@) : brew upgrade suit le cask adopté, vérifiez donc que c’est le bon.";
 "%@ would be installed too" = "%@ serait aussi installé";
 "%@ · %lld" = "%@ · %lld";
@@ -1305,7 +1305,7 @@
 "auto" = "auto";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --version a quitté avec %d";
-"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew n'adopte que la version exacte installée par le cask. Mettez à jour l'app avec son propre outil puis Réanalyser, ou, si la version du cask est plus récente, laissez Homebrew remplacer l'app.";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew n'adopte que la version exacte installée par le cask. Mettez à jour l'app avec son propre outil de mise à jour, puis cliquez sur Réanalyser, ou, si la version du cask est plus récente, laissez Homebrew remplacer l'app.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew n’autorise qu’une commande à la fois. Attendez la fin de l’autre (dans Terminal ou une autre app), puis réessayez.";
 "brew bundle check failed:\n" = "Échec de brew bundle check :\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle ne s’est pas terminé en %lld secondes, Tankard l’a donc arrêté. Homebrew est peut-être occupé ou attend le réseau ; réessayez dans un instant.";
