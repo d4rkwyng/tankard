@@ -21,10 +21,29 @@ public struct BrewInstallation: Sendable, Equatable {
         "\(repository)/Library/Taps/homebrew/homebrew-core"
     }
 
-    /// Standard locations in preference order: /usr/local/bin/brew first
-    /// (Intel, Tankard's primary target), then /opt/homebrew/bin/brew. On an
-    /// Apple silicon Mac with both, pass --brew / TANKARD_BREW to pick.
-    public static let candidates = ["/usr/local/bin/brew", "/opt/homebrew/bin/brew"]
+    /// Standard locations in preference order, this Mac's native one first:
+    /// /usr/local/bin/brew on Intel (Tankard's primary target), then
+    /// /opt/homebrew/bin/brew. 0.8.9 (security review F3): on Apple silicon
+    /// /opt/homebrew/bin/brew comes first. /usr/local/bin there is only
+    /// Rosetta Homebrew's, and is often a directory other installers write
+    /// to, so a brew planted there no longer wins over the real one. To use
+    /// the Rosetta brew on a Mac with both, pass --brew / TANKARD_BREW (CLI).
+    public static let candidates = candidates(arm64: hardwareIsArm64())
+
+    /// The candidates for an Apple silicon Mac (`arm64`) or an Intel one.
+    public static func candidates(arm64: Bool) -> [String] {
+        arm64 ? ["/opt/homebrew/bin/brew", "/usr/local/bin/brew"]
+              : ["/usr/local/bin/brew", "/opt/homebrew/bin/brew"]
+    }
+
+    /// The hardware, not the process: Tankard running under Rosetta on Apple
+    /// silicon still prefers /opt/homebrew (hw.optional.arm64 is 1 there too).
+    public static func hardwareIsArm64() -> Bool {
+        var value: Int32 = 0
+        var size = MemoryLayout<Int32>.size
+        guard sysctlbyname("hw.optional.arm64", &value, &size, nil, 0) == 0 else { return false }
+        return value == 1
+    }
 
     /// Finds brew. `override` (a path, from --brew or TANKARD_BREW) wins.
     /// 0.8.8: `standardOnly` (the GUI app): only a standard location, never

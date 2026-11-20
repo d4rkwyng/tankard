@@ -72,7 +72,7 @@ public enum Prefetch {
     }
 
     public static func arguments(_ kind: PackageKind, _ targets: [Package]) -> [String] {
-        ["fetch", kind == .cask ? "--cask" : "--formula"] + targets.map(\.qualifiedName)
+        ["fetch", kind == .cask ? "--cask" : "--formula"] + BrewOperand.list(targets.map(\.qualifiedName))
     }
 
     /// The user's HOMEBREW_DOWNLOAD_CONCURRENCY (brew.env, Tankard's own

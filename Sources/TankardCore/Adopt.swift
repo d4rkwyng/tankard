@@ -912,13 +912,13 @@ public enum AdoptVendor {
 /// `brew install --cask --adopt homebrew/cask/foo`.
 public enum AdoptCommands {
     public static func arguments(qualifiedName: String) -> [String] {
-        ["install", "--cask", "--adopt", qualifiedName]
+        ["install", "--cask", "--adopt"] + BrewOperand.one(qualifiedName)
     }
 
     /// For "needs update first": what replacing the app with the cask's
     /// version would take. Shown to copy, never run by Tankard: it
     /// overwrites the app that is there.
     public static func replaceArguments(qualifiedName: String) -> [String] {
-        ["install", "--cask", "--force", qualifiedName]
+        ["install", "--cask", "--force"] + BrewOperand.one(qualifiedName)
     }
 }

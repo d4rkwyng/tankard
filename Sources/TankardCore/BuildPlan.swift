@@ -182,6 +182,6 @@ public enum BottleReplacement {
     /// makes brew pour even when the keg was built with options; `--formula`
     /// and the tap-qualified name keep a same-named cask out of it.
     public static func arguments(qualifiedName: String) -> [String] {
-        ["reinstall", "--force-bottle", "--formula", qualifiedName]
+        ["reinstall", "--force-bottle", "--formula"] + BrewOperand.one(qualifiedName)
     }
 }

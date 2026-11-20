@@ -233,8 +233,9 @@ public enum BrewCommands {
     /// Installed and Discover names are tap-qualified ("user/tap/x") and
     /// Brewfile names are checked, so none starts with "-"; if one ever did,
     /// `--` keeps brew from reading it as an option.
+    /// 0.8.9: the rule itself is TankardCore's BrewOperand (F2).
     static func operand(_ name: String) -> [String] {
-        name.hasPrefix("-") ? ["--", name] : [name]
+        BrewOperand.one(name)
     }
 
     public static func installArguments(for e: CatalogEntry) -> [String] {

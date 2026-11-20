@@ -166,6 +166,7 @@ struct BrewEnvironmentTests {
         let i = BrewInstallation.from(brewPath: "/opt/homebrew/bin/brew")
         #expect(i.prefix == "/opt/homebrew")
         #expect(i.coreTapPath.hasSuffix("/Library/Taps/homebrew/homebrew-core"))
-        #expect(BrewInstallation.candidates == ["/usr/local/bin/brew", "/opt/homebrew/bin/brew"])
+        // 0.8.9 (F3): the native location first.
+        #expect(Set(BrewInstallation.candidates) == ["/usr/local/bin/brew", "/opt/homebrew/bin/brew"])
     }
 }

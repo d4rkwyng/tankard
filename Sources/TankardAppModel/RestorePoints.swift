@@ -456,14 +456,14 @@ public struct RestorePlan: Sendable, Equatable {
                 guard rollback?.contains(c.id) ?? true else { continue }
                 let q = c.now.qualifiedName
                 rollbacks.append(RestoreStep(kind: .rollbackUninstall, package: c.id,
-                                             arguments: ["uninstall", "--formula", q],
+                                             arguments: ["uninstall", "--formula"] + BrewOperand.one(q),
                                              environment: [Self.noAutoremoveKey: "1"],
                                              keg: RestoreStep.Keg(name: c.now.name, version: c.then.version)))
                 rollbacks.append(RestoreStep(kind: .rollbackLink, package: c.id,
-                                             arguments: ["link", "--formula", q], environment: [:]))
+                                             arguments: ["link", "--formula"] + BrewOperand.one(q), environment: [:]))
                 if pinAfter {
                     rollbacks.append(RestoreStep(kind: .pin, package: c.id,
-                                                 arguments: ["pin", "--formula", q], environment: [:]))
+                                                 arguments: ["pin", "--formula"] + BrewOperand.one(q), environment: [:]))
                 }
             case .manual(let block):
                 plan.manual.append((c, block))
