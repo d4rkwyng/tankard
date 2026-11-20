@@ -201,8 +201,10 @@ struct NotificationDiffTests {
     }
 
     @Test func settingsPersistWithDefaults() {
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let a = testSettings(name)
+        let scoped = TestDefaults.Scoped()
+        defer { withExtendedLifetime(scoped) {} }
+        let name = scoped.name
+        let a = AppSettings(defaults: scoped.defaults)
         #expect(a.showMenuBarIcon)
         #expect(!a.notifyNewUpgrades)
         #expect(a.checkIntervalHours == 6)
@@ -228,8 +230,10 @@ struct NotificationDiffTests {
     /// observers, App.body (which reads the setting) re-runs and the binding
     /// is written again, forever. An unchanged write must notify nothing.
     @Test func unchangedMenuBarWriteNotifiesNothing() {
-        let name = "net.mindtricks.tankard.tests.\(UUID().uuidString)"
-        let s = testSettings(name)
+        let scoped = TestDefaults.Scoped()
+        defer { withExtendedLifetime(scoped) {} }
+        let name = scoped.name
+        let s = AppSettings(defaults: scoped.defaults)
         for value in [true, false] {
             if s.showMenuBarIcon != value { s.showMenuBarIcon = value }
             let notified = Flag()

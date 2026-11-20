@@ -6,8 +6,9 @@ import Testing
 
 struct V086ToolTipDelayTests {
     @Test func registersInMemoryOnly() throws {
-        let name = TestDefaults.track("net.mindtricks.tankard.tests.\(UUID().uuidString)")
-        let d = try #require(UserDefaults(suiteName: name))
+        let scoped = TestDefaults.Scoped()
+        defer { withExtendedLifetime(scoped) {} }
+        let name = scoped.name, d = scoped.defaults
         #expect(d.object(forKey: ToolTipDelay.key) == nil)
         ToolTipDelay.register(in: d)
         #expect(d.integer(forKey: ToolTipDelay.key) == 350)

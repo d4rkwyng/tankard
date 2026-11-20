@@ -178,6 +178,29 @@ enum TestDefaults {
     }
 
     static func removeAll() { registry.drain().forEach(remove) }
+
+    /// 0.8.9: a suite that removes itself (domain and plist) when the test
+    /// is done with it, rather than only at process exit, so a run that is
+    /// killed part-way doesn't leave every suite behind. For tests that own
+    /// the suite outright; a suite handed to a store whose async work may
+    /// still write after the test returns stays on `fresh`/`track`, which
+    /// clean up after the process (and Scripts/test.sh after that).
+    final class Scoped: @unchecked Sendable {
+        let name: String
+        let defaults: UserDefaults
+        init(_ name: String = "net.mindtricks.tankard.tests.\(UUID().uuidString)") {
+            self.name = name
+            defaults = TestDefaults.fresh(name)
+        }
+        deinit { TestDefaults.remove(name) }
+    }
+}
+
+/// Runs `body` with a fresh suite, removed (domain and plist) when it returns.
+func withTestDefaults<R>(_ body: (UserDefaults, String) throws -> R) rethrows -> R {
+    let scoped = TestDefaults.Scoped()
+    defer { withExtendedLifetime(scoped) {} }
+    return try body(scoped.defaults, scoped.name)
 }
 
 func tempDir() throws -> URL {
