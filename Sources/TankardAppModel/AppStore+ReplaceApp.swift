@@ -1,4 +1,5 @@
 import Foundation
+import os
 import TankardCore
 
 // 0.8.10: Adopt Apps' "Replace with Homebrew's Version". brew's --adopt
@@ -100,16 +101,39 @@ public struct AppReplaceSafety: Sendable {
     public var backup: @Sendable (_ appPath: String) throws -> String
     /// After the run: `succeeded` is brew's exit.
     public var finish: @Sendable (_ appPath: String, _ backup: String, _ succeeded: Bool) -> Outcome
+    /// Copies an earlier run left behind (Tankard quit or crashed while brew
+    /// ran). Only listed: they are the user's apps, never deleted.
+    public var leftovers: @Sendable () -> [String]
 
     public init(backup: @escaping @Sendable (String) throws -> String,
-                finish: @escaping @Sendable (String, String, Bool) -> Outcome) {
+                finish: @escaping @Sendable (String, String, Bool) -> Outcome,
+                leftovers: @escaping @Sendable () -> [String] = { [] }) {
         self.backup = backup
         self.finish = finish
+        self.leftovers = leftovers
+    }
+
+    /// ~/Library/Caches/net.mindtricks.tankard/replace-backup
+    public static var defaultRoot: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("net.mindtricks.tankard/replace-backup")
+    }
+
+    /// The copies under `root` (<uuid>/<name>.app), sorted. Reads only.
+    public static func leftoverCopies(root: URL) -> [String] {
+        let fm = FileManager.default
+        guard let dirs = try? fm.contentsOfDirectory(atPath: root.path) else { return [] }
+        var found: [String] = []
+        for d in dirs where !d.hasPrefix(".") {
+            let dir = root.appendingPathComponent(d)
+            guard let items = try? fm.contentsOfDirectory(atPath: dir.path) else { continue }
+            found += items.filter { !$0.hasPrefix(".") }.map { dir.appendingPathComponent($0).path }
+        }
+        return found.sorted()
     }
 
     /// The real one: ~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/<name>.app.
-    public static func live(root: URL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        .appendingPathComponent("net.mindtricks.tankard/replace-backup")) -> AppReplaceSafety {
+    public static func live(root: URL = AppReplaceSafety.defaultRoot) -> AppReplaceSafety {
         AppReplaceSafety(
             backup: { appPath in
                 let fm = FileManager.default
@@ -127,7 +151,8 @@ public struct AppReplaceSafety: Sendable {
             },
             finish: { appPath, backup, succeeded in
                 finishLive(appPath: appPath, backup: backup, succeeded: succeeded)
-            })
+            },
+            leftovers: { leftoverCopies(root: root) })
     }
 
     static func finishLive(appPath: String, backup: String, succeeded: Bool) -> Outcome {
@@ -145,6 +170,23 @@ public struct AppReplaceSafety: Sendable {
         } catch {
             return .restoreFailed(backup: backup, error: error.localizedDescription)
         }
+    }
+}
+
+private let replaceLog = Logger(subsystem: AppPaths.bundleID, category: "replace")
+
+extension AppStore {
+    /// At launch: copies a run left behind (Tankard quit or crashed while
+    /// brew replaced the app) are logged, with their paths, and kept: each
+    /// may be the only copy of the user's app. Returns them (tests).
+    @discardableResult
+    func noteReplaceLeftovers() async -> [String] {
+        guard let safety = deps.appReplaceSafety else { return [] }
+        let found = await Task.detached { safety.leftovers() }.value
+        for path in found {
+            replaceLog.notice("Replace with Homebrew's Version: an earlier run left a copy of the old app at \(path, privacy: .public); kept, not deleted")
+        }
+        return found
     }
 }
 

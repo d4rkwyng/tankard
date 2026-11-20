@@ -567,6 +567,8 @@ public final class AppStore {
         // 0.8.6 (M4): also when brew changed something since the cached
         // read (Terminal), or an interrupted run waits to be offered.
         launchStarted = true
+        // 0.8.10: safety copies an interrupted Replace left behind: logged, kept.
+        if deps.appReplaceSafety != nil { Task { await self.noteReplaceLeftovers() } }
         let stale = isStale, changed = homebrewChangedSinceRead, journal = settings.defaults.data(forKey: RunJournal.key) != nil
         // 0.8.8: also when a relaunch for App Management left its operation
         // (it is offered against what brew says now, not the saved list).

@@ -924,7 +924,7 @@ never quits it. brew --force deletes the app before moving the download in, and 
 revert after a later failure removes the new one, so Tankard first copies the app to
 ~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
 clone on APFS; no copy, no run). After the run the copy is deleted, or, when brew failed
-and nothing is at the app's path, moved back; the log says which. Not retryable after an
+and nothing is at the app's path, moved back; the log says which. Copies a run left behind (Tankard quit or crashed while brew ran) are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths (os_log, category `replace`), never deleted: each may be the only copy of the user's app. Not retryable after an
 App Management relaunch (the copy and the running check belong to the sheet). Tests and
 the demo have no copy (`Dependencies.appReplaceSafety` nil). brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not
