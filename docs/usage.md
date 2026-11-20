@@ -6,7 +6,7 @@ each time. New here? Start with the [Quick start](#quick-start), seven short ste
 pictures. Stuck? The [FAQ and troubleshooting](#faq-and-troubleshooting) answers the
 questions people ask most. Everything after that is the full reference, one section per
 part of the app. For what Tankard is, see the [README](../README.md); for how it is built,
-see [architecture.md](architecture.md). This guide describes Tankard 0.8.8.
+see [architecture.md](architecture.md). This guide describes Tankard 0.8.9.
 
 ## Contents
 

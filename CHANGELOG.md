@@ -10,11 +10,18 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Cancelling the password dialog while "Quit anyway?" is open is recorded.** With the quit question up (the Dock's Quit, AppleScript's `quit` or a logout during a run), the run's sheet stopped moving until the question was answered, and a password dialog cancelled meanwhile left that step with a plain ✓. The question no longer holds up the sheet, and the step says brew skipped the part that needed the password.
 - **Upgrading Tankard with Homebrew says what happens.** The plan said Tankard would be "closed during the upgrade and opened again afterwards"; it stays open while Homebrew replaces it, then offers to relaunch, and now says so.
 - **VoiceOver.** The "Select a package" picture is no longer read as "Box", and Settings' pop-ups and time field are read once ("Check every", not "Check every, Check every").
+- **"Quit anyway?" follows the run.** The question kept the step it opened on ("still upgrading lz4 (9 of 17)") after the run had moved on or finished. It now shows the step that is running, and when the run finishes while it is open it closes and asks "Homebrew has finished. Quit Tankard?" instead.
+- **Arrow keys move the segmented filters on macOS 26.** With the filter (All / Upgrades) or another of Tankard's segmented controls focused, ← and → did nothing on macOS 26.
+- **VoiceOver follows Tab to the segmented controls on macOS 26.** The focused element was an unnamed group or button, so VoiceOver stayed where it was. Each control is now one element, "Filter, All 66", that VoiceOver lands on; pressing it moves to the next option, and each option is in its actions.
+- **The upgrade plan takes the first click.** Shown while Tankard wasn't the active app (from the menu bar with the Dock icon hidden), the plan's buttons only woke the window on the first click. The plan's window now takes the click, and Tankard brings the plan to the front when it appears.
+- **A Brewfile with `tap "homebrew/cask"` can be installed with Tankard.** Restore greyed out Install with Tankard until that tap was added, which Homebrew no longer needs (and refuses without --force). homebrew/core and homebrew/cask now show "Built into Homebrew" and don't hold it up.
+- **Focus rings with Full Keyboard Access.** The rings on the plan's password "Details", the Details pane's dependency links and its dependency tree sat beside what they marked; they now surround it.
 
 ### Security
 - **Every package name reaches brew as a name.** The downloads before a run, Restore's rollback steps, the bottle reinstall and adopting an app now put "--" before a name brew could read as an option, like upgrade, install and uninstall already did.
 - **Apple silicon Macs use /opt/homebrew first.** When both /opt/homebrew and /usr/local have a brew, Tankard now runs this Mac's own one, /opt/homebrew/bin/brew, rather than the one in /usr/local, a folder other installers write to.
 - **Check Brewfile… runs only the file it showed.** Tankard reads the Brewfile again right before brew runs it and refuses if it changed since the preview, and it reads only an ordinary file, never a pipe or a device.
+- **Adding and removing taps passes the name as a name.** `brew tap` and `brew untap` also get "--" before a name brew could read as an option (Add Tap already refuses such names).
 - **The password dialog finds its step directly.** It reads only the ticket of the brew run that asked, so other files in Tankard's ticket folder can no longer push that ticket aside; Tankard deletes files there that aren't tickets.
 
 ## [0.8.8]
