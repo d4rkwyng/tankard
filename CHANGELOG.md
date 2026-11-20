@@ -4,6 +4,19 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.8.9]
+
+### Fixed
+- **Cancelling the password dialog while "Quit anyway?" is open is recorded.** With the quit question up (the Dock's Quit, AppleScript's `quit` or a logout during a run), the run's sheet stopped moving until the question was answered, and a password dialog cancelled meanwhile left that step with a plain ✓. The question no longer holds up the sheet, and the step says brew skipped the part that needed the password.
+- **Upgrading Tankard with Homebrew says what happens.** The plan said Tankard would be "closed during the upgrade and opened again afterwards"; it stays open while Homebrew replaces it, then offers to relaunch, and now says so.
+- **VoiceOver.** The "Select a package" picture is no longer read as "Box", and Settings' pop-ups and time field are read once ("Check every", not "Check every, Check every").
+
+### Security
+- **Every package name reaches brew as a name.** The downloads before a run, Restore's rollback steps, the bottle reinstall and adopting an app now put "--" before a name brew could read as an option, like upgrade, install and uninstall already did.
+- **Apple silicon Macs use /opt/homebrew first.** When both /opt/homebrew and /usr/local have a brew, Tankard now runs this Mac's own one, /opt/homebrew/bin/brew, rather than the one in /usr/local, a folder other installers write to.
+- **Check Brewfile… runs only the file it showed.** Tankard reads the Brewfile again right before brew runs it and refuses if it changed since the preview, and it reads only an ordinary file, never a pipe or a device.
+- **The password dialog finds its step directly.** It reads only the ticket of the brew run that asked, so other files in Tankard's ticket folder can no longer push that ticket aside; Tankard deletes files there that aren't tickets.
+
 ## [0.8.8]
 
 ### Highlights

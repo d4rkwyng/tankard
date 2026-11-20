@@ -160,7 +160,7 @@ one under [Troubleshooting](#troubleshooting).
 ### Tankard says Homebrew isn't installed
 
 Tankard looks for brew only where Homebrew's installer puts it: `/opt/homebrew/bin/brew`
-(Apple silicon) and `/usr/local/bin/brew` (Intel, and Intelbrew). A brew somewhere else
+(Apple silicon) and `/usr/local/bin/brew` (Intel, and Intelbrew), this Mac's own one first. A brew somewhere else
 isn't used. If the window says brew is there but doesn't run, reinstalling Homebrew usually
 fixes it. After installing, click **Check Again**. See
 ["Homebrew not found"](#homebrew-not-found).
@@ -758,8 +758,10 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
   yet. Lines it can't read that way are listed as "Not read: needs brew to evaluate". A
   Brewfile is a Ruby program, and `brew bundle check` runs the code in it, so **Check with
   brew…** asks first ("Run this Brewfile's code?"), with a stronger warning for a file
-  downloaded from the internet. Continue only if you trust whoever wrote the file. The
-  check then lists what the Brewfile needs that this Mac doesn't have. **Restore Plan…**
+  downloaded from the internet. Continue only if you trust whoever wrote the file. Tankard
+  reads the file again right before brew runs it, and refuses if it changed since the
+  preview (check it again to see the new text); it reads only an ordinary file, never a
+  pipe or a device. The check then lists what the Brewfile needs that this Mac doesn't have. **Restore Plan…**
   installs them one by one with **Install with Tankard**, or gives you the `brew bundle`
   command to copy.
 

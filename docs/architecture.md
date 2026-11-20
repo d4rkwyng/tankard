@@ -391,8 +391,10 @@ formulae.brew.sh and ghcr.io directly, even with `HOMEBREW_API_DOMAIN` set; foll
 left for later (brew falls back to the default domain when a mirror file is missing, and
 Tankard would need the same fallback).
 
-**Finding brew:** `--brew PATH`, then `$TANKARD_BREW`, then `/usr/local/bin/brew`, then
-`/opt/homebrew/bin/brew`. The prefix is two directories above the brew path. The
+**Finding brew:** `--brew PATH`, then `$TANKARD_BREW`, then the two standard locations, this
+Mac's own first: `/usr/local/bin/brew`, then `/opt/homebrew/bin/brew` on Intel, and the other
+way round on Apple silicon (0.8.9; the hardware decides, so a Tankard running under Rosetta
+still prefers `/opt/homebrew`). The GUI app takes only those two. The prefix is two directories above the brew path. The
 repository is two directories above the resolved symlink: `/usr/local/bin/brew` points to
 `/usr/local/Homebrew/bin/brew`. The bottle CPU comes from the prefix: `/opt/homebrew` is
 arm64 and anything else is x86_64, which covers Intel brew under Rosetta.
