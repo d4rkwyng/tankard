@@ -90,6 +90,16 @@ struct UpgradePlanView: View {
                 .font(.system(size: 12))
                 .padding(.top, 12)
             }
+            // 0.8.9: Tankard's own cask: it stays open, then offers to relaunch.
+            if let note = plan.selfUpgradeNote {
+                Label {
+                    Text(note).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "info.circle").foregroundStyle(.secondary)
+                }
+                .font(.system(size: 12))
+                .padding(.top, 12)
+            }
             // 0.8.3: say before starting that brew's sudo will ask.
             let password = plan.needingPassword
             if !password.isEmpty {

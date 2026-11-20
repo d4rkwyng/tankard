@@ -143,10 +143,14 @@ struct GeneralSettings: View {
                     }))
             }
             HStack(spacing: 6) {
-                Text("Check every")
-                Picker("Check every", selection: $settings.checkIntervalHours) {
+                // 0.8.9 (confirm run on 26): VoiceOver read "Check every,
+                // Check every": the picker's own label and its
+                // accessibilityLabel, joined. The picker has no label of its
+                // own now, and this text is for the eye only.
+                Text("Check every").accessibilityHidden(true)
+                Picker(selection: $settings.checkIntervalHours) {
                     ForEach([1, 3, 6, 12, 24, 48], id: \.self) { h in Text(String(localized: "\(h) hours", bundle: L10n.bundle)).tag(h) }
-                }
+                } label: { EmptyView() }
                 .labelsHidden()
                 .fixedSize()
                 .accessibilityLabel(Text("Check every"))

@@ -343,7 +343,9 @@ struct DiscoverDetail: View {
             }
         } else {
             VStack(spacing: 8) {
+                // 0.8.9: decoration; VoiceOver read it as "Box".
                 Image(systemName: "sparkle.magnifyingglass").font(.system(size: 28)).foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
                 Text("Select a package").foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

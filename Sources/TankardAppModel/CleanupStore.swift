@@ -181,13 +181,27 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     /// ask for the administrator password.
     public var needingPassword: [Package] { rows.map(\.package).filter(AdminPassword.required) }
     /// Whether the plan page is shown before starting (else it starts at once).
-    public var needsConfirmation: Bool { hasCompiling || !needingPassword.isEmpty || !runningAppsToRun.isEmpty }
+    public var needsConfirmation: Bool {
+        hasCompiling || !needingPassword.isEmpty || !runningAppsToRun.isEmpty || selfUpgradeNote != nil
+    }
 
     /// The open apps among what Start runs (a skipped package's app isn't
     /// touched).
+    /// 0.8.9 (confirm run on 26, polish): not Tankard itself. brew replaces
+    /// it on disk while it keeps running, and Tankard then offers to
+    /// relaunch (`selfUpgradeNote`); the sheet said it would be "closed
+    /// during the upgrade and opened again afterwards".
     public var runningAppsToRun: [String] {
-        let run = Set(toRun.map(\.id))
+        let run = Set(toRun.filter { !SelfInstall.isTankardCask($0) }.map(\.id))
         return runningApps.filter { run.contains($0.packageID) }.map(\.name)
+    }
+
+    /// 0.8.9: what happens to Tankard when the plan upgrades its own cask
+    /// while it is open. nil otherwise.
+    public var selfUpgradeNote: String? {
+        let ids = Set(runningApps.map(\.packageID))
+        guard toRun.contains(where: { SelfInstall.isTankardCask($0) && ids.contains($0.id) }) else { return nil }
+        return String(localized: "Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version.")
     }
 
     /// "These apps will be closed during the upgrade: Google Chrome, Visual

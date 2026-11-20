@@ -41,9 +41,11 @@ struct AutoUpdateRulesRows: View {
         // when they fit, else the pop-up under its label (French, Spanish);
         // the pop-up keeps its name for VoiceOver.
         ExplainedRow(help: SettingsHelp.bumpRule) {
-            let picker = Picker("Automatically upgrade:", selection: $rules.bumpRule) {
+            // 0.8.9 (confirm run on 26): no label of its own beside the
+            // accessibilityLabel (VoiceOver read both).
+            let picker = Picker(selection: $rules.bumpRule) {
                 ForEach(BumpRule.allCases) { Text($0.title).tag($0) }
-            }
+            } label: { EmptyView() }
             .labelsHidden()
             .fixedSize()
             .accessibilityLabel(Text("Automatically upgrade:"))

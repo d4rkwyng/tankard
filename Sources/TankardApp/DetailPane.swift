@@ -30,7 +30,9 @@ struct DetailPane: View {
             .task(id: p.id) { if store.deps.classifier.upgradeWarning(p) != nil { store.compileWarningShown() } }
         } else {
             VStack(spacing: 8) {
+                // 0.8.9: decoration; VoiceOver read it as "Box".
                 Image(systemName: "shippingbox").font(.system(size: 28)).foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
                 Text("Select a package").foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

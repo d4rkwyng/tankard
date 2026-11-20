@@ -184,17 +184,20 @@ struct AutoUpdateScheduleRow: View {
         }
     }
 
+    // 0.8.9 (confirm run on 26): no label of their own beside the
+    // accessibilityLabel; VoiceOver read both ("How often, How often",
+    // "Time, Time of the automatic update").
     @ViewBuilder private var when: some View {
-        Picker("How often", selection: $settings.frequency) {
+        Picker(selection: $settings.frequency) {
             ForEach(AutoUpdateFrequency.allCases) { f in Text(f.title).tag(f) }
-        }
+        } label: { EmptyView() }
         .labelsHidden()
         .fixedSize()
         .accessibilityLabel(Text("How often"))
         if settings.frequency == .weekly {
-            Picker("Day", selection: $settings.weekday) {
+            Picker(selection: $settings.weekday) {
                 ForEach(1...7, id: \.self) { d in Text(Calendar.current.weekdaySymbols[d - 1]).tag(d) }
-            }
+            } label: { EmptyView() }
             .labelsHidden()
             .fixedSize()
             .accessibilityLabel(Text("Day"))
@@ -203,7 +206,7 @@ struct AutoUpdateScheduleRow: View {
 
     @ViewBuilder private var at: some View {
         Text("at").accessibilityHidden(true)
-        DatePicker("Time", selection: time, displayedComponents: .hourAndMinute)
+        DatePicker(selection: time, displayedComponents: .hourAndMinute) { EmptyView() }
             .labelsHidden()
             .fixedSize()
             .accessibilityLabel(Text("Time of the automatic update"))
