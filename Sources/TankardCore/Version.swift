@@ -5,7 +5,7 @@ import Foundation
 /// (release.sh refuses a TANKARD_VERSION that differs from it).
 public enum TankardVersion {
     /// This tree's version.
-    public static let source = "0.8.9"
+    public static let source = "0.8.10"
 
     /// 0.8.4: inside Tankard.app, the bundle's CFBundleShortVersionString,
     /// which bundle-app.sh writes from TANKARD_VERSION; elsewhere (the CLI,

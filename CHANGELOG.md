@@ -4,6 +4,13 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.8.10]
+
+### Fixed
+- **No more Security warnings at launch.** Tankard and its password dialog checked their own code signature on the main thread, and macOS logged "This method should not be called on the main thread as it may lead to UI unresponsiveness" about 12 times each time Tankard started, and again each time the password dialog opened. The checks now run on a background thread; what they decide is unchanged.
+- **The French Upgrades settings are as tall as the other languages.** "Mise à niveau auto :" fits next to its pop-up again, instead of pushing it onto a line of its own.
+- **VoiceOver follows Tab to the View picker on macOS 26.** With the keyboard focus on the toolbar's Installed / Discover / Services control, macOS 26 didn't report it as focused. It now does, as on macOS 15.
+
 ## [0.8.9]
 
 ### Fixed
