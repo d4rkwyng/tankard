@@ -57,6 +57,7 @@ func ancestors(above pid: pid_t, limit: Int) -> [(pid: pid_t, path: String?)] {
 /// The Team ID a code object is signed with; nil when there is none or
 /// the signature doesn't check out.
 func teamID(_ code: SecStaticCode) -> String? {
+    OffMain.assertOffMain("teamID")
     var info: CFDictionary?
     guard SecCodeCopySigningInformation(code, SecCSFlags(rawValue: kSecCSSigningInformation), &info) == errSecSuccess,
           let dict = info as? [String: Any] else { return nil }
@@ -64,6 +65,7 @@ func teamID(_ code: SecStaticCode) -> String? {
 }
 
 func ownTeamID() -> String? {
+    OffMain.assertOffMain("ownTeamID")
     var code: SecCode?
     var staticCode: SecStaticCode?
     guard SecCodeCopySelf([], &code) == errSecSuccess, let code,
@@ -73,6 +75,7 @@ func ownTeamID() -> String? {
 
 /// A running process's Team ID, only after its dynamic signature is valid.
 func runningTeamID(_ pid: pid_t) -> String? {
+    OffMain.assertOffMain("runningTeamID")
     var code: SecCode?
     let attributes = [kSecGuestAttributePid: NSNumber(value: pid)] as CFDictionary
     guard SecCodeCopyGuestWithAttributes(nil, attributes, [], &code) == errSecSuccess, let code,
@@ -112,10 +115,15 @@ let ppid = getppid()
 let helperPath = executablePath(getpid()) ?? ""
 let parentPath = executablePath(ppid)
 let above = ancestors(above: ppid, limit: AskpassGate.maxAncestors)
-let helperTeam = ownTeamID()
-let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard(helperPath: helperPath)
-    .flatMap { expected in above.first { $0.path == expected } }
-    .flatMap { runningTeamID($0.pid) }
+// 0.8.10: the signature checks on a worker thread (OffMain), waited for
+// here: same order, same answer, nothing drawn before the gate decides.
+let (helperTeam, tankardTeam): (String?, String?) = OffMain.run { [helperPath, above] in
+    let helperTeam = ownTeamID()
+    let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard(helperPath: helperPath)
+        .flatMap { expected in above.first { $0.path == expected } }
+        .flatMap { runningTeamID($0.pid) }
+    return (helperTeam, tankardTeam)
+}
 // 0.8.8 (security review #3): one of the ancestors must be the brew run
 // Tankard ticketed for this step (AskpassTicket), same pid and start time.
 let ticketDir = AskpassTicket.liveHome().map { AskpassTicket.directory(home: $0) }

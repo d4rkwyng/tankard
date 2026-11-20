@@ -38,8 +38,10 @@ public enum TestHooks {
         allowed ? env : env.filter { !$0.key.hasPrefix(prefix) }
     }
 
-    /// The running code's own signature.
+    /// The running code's own signature. Off the main thread only
+    /// (OffMain): Security evaluates the certificate trust here.
     public static func ownSigning() -> Signing {
+        OffMain.assertOffMain("TestHooks.ownSigning")
         var code: SecCode?
         var staticCode: SecStaticCode?
         guard SecCodeCopySelf([], &code) == errSecSuccess, let code,
@@ -60,8 +62,9 @@ public enum TestHooks {
         return .unknown
     }
 
-    /// Decided once per process.
-    public static let liveAllowed: Bool = allowed(signing: ownSigning())
+    /// Decided once per process. 0.8.10: on a worker thread (OffMain), the
+    /// caller waits for it.
+    public static let liveAllowed: Bool = OffMain.run { allowed(signing: ownSigning()) }
 
     /// Removes every `TANKARD_*` variable from this process's environment
     /// when the hooks are off. Called first thing at launch, so no later

@@ -682,7 +682,10 @@ password from its stdout; a non-zero exit makes sudo fail with "no password was 
   resolves to the real helper, and a copy outside a `.app/Contents/MacOS/` has no Tankard).
   When the helper carries a Team ID (Developer ID release), that Tankard process must pass
   `SecCodeCheckValidity` and have the same Team ID, which stops a copied helper in a
-  home-made bundle next to a program named Tankard. Anything else: exit 1, one
+  home-made bundle next to a program named Tankard. (0.8.10: these signature checks, and
+  the app's own TestHooks check at launch, run on a worker thread the caller waits for,
+  `OffMain.run`: same order and answer, but Security no longer logs its main-thread
+  runtime issue.) Anything else: exit 1, one
   "refused: …" line on stderr, no window; sudo then fails as on Cancel. Residual risk,
   inherent to Homebrew: brew's prefix is user-writable, so a process that already runs as
   the user can replace `brew` itself, and the real Tankard would then run that brew, which
