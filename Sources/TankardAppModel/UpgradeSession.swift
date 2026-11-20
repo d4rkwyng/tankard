@@ -1,6 +1,7 @@
 import AskpassSupport
 import Foundation
 import Observation
+import os
 import TankardCore
 
 /// What a sheet run does to its packages.
@@ -162,7 +163,8 @@ public final class UpgradeSession: Identifiable {
     /// 0.8.4: the running step's password note is in the log.
     @ObservationIgnored private var passwordNoted = false
     /// 0.8.8 (gauntlet 3, B2): `AskpassCancels.count` when the step started.
-    @ObservationIgnored private var cancelsAtStart = 0
+    /// 0.8.9: as its `.started` event arrived (nil: no count then).
+    @ObservationIgnored private var cancelsAtStart: Int?
     /// 0.8.8 (gauntlet 3, B2): steps brew finished (exit 0) although the
     /// password dialog was cancelled during them: brew skipped what needed
     /// sudo. The value: the launchctl services brew was removing (empty
@@ -187,7 +189,22 @@ public final class UpgradeSession: Identifiable {
     public private(set) var awaitingPassword = false
     /// 0.8.3: finds the helper and hands it focus (AskpassFocus). nil: no
     /// watching (tests that don't ask, demo mode).
-    @ObservationIgnored public var passwordFocus: AskpassFocus?
+    @ObservationIgnored public var passwordFocus: AskpassFocus? {
+        didSet {
+            let count = passwordFocus?.cancelCount
+            cancelCounter.withLock { $0 = count }
+        }
+    }
+    /// 0.8.9 (confirm run on 15, MED): `passwordFocus.cancelCount`, read
+    /// where the queue's events arrive (off the main actor) rather than
+    /// where the main actor applies them. A step's `.started` and
+    /// `.finished` each carry the count at that moment. Read when applied,
+    /// both could see a Cancel made in between: while the main actor was
+    /// held (the quit question's modal alert, 0.8.8), the steps' events
+    /// waited in the stream, the step's brew exited with its dialog
+    /// cancelled, and by the time `.started` was applied the count already
+    /// held that Cancel, so the step ended as a plain ✓.
+    private nonisolated let cancelCounter = OSAllocatedUnfairLock<(@Sendable () -> Int)?>(initialState: nil)
     /// 0.8.4: brew.env's own password helper, when the session started with
     /// one (ForeignAskpass): sudo-capable steps run without sudo or are
     /// refused, and the sheet says why with the Terminal command.
@@ -247,10 +264,21 @@ public final class UpgradeSession: Identifiable {
         }
         for id in prefetchIDs { fetchStates[id] = .waiting }
 
-        let (stream, continuation) = AsyncStream.makeStream(of: (UUID, CommandEvent).self, bufferingPolicy: .unbounded)
+        // 0.8.9: each event with the password dialog's cancel count as it
+        // arrived (`cancelCounter`).
+        let (stream, continuation) = AsyncStream.makeStream(of: (UUID, CommandEvent, Int?).self, bufferingPolicy: .unbounded)
+        let counter = cancelCounter
+        let send: @Sendable (UUID, CommandEvent) -> Void = { id, event in
+            let count: Int?
+            switch event {
+            case .started, .finished: count = counter.withLock { $0 }?()
+            default: count = nil
+            }
+            continuation.yield((id, event, count))
+        }
         consumer = Task { @MainActor [weak self] in
-            for await (itemID, event) in stream {
-                self?.apply(event, to: itemID)
+            for await (itemID, event, cancels) in stream {
+                self?.apply(event, to: itemID, cancels: cancels)
             }
         }
         // 0.7: for each step, the later steps of its chain. Cancelled from
@@ -269,7 +297,7 @@ public final class UpgradeSession: Identifiable {
         for (i, step) in prefetch.enumerated() {
             let stepID = prefetchIDs[i]
             queue.enqueue(step.command, id: stepID) { event in
-                continuation.yield((stepID, event))
+                send(stepID, event)
             }
         }
         // Enqueued in package order; the queue runs them strictly in order.
@@ -285,7 +313,7 @@ public final class UpgradeSession: Identifiable {
                     default: break
                     }
                 }
-                continuation.yield((itemID, event))
+                send(itemID, event)
             }
         }
     }
@@ -592,7 +620,9 @@ public final class UpgradeSession: Identifiable {
 
     // MARK: events
 
-    private func apply(_ event: CommandEvent, to itemID: UUID) {
+    /// `cancels`: the password dialog's cancel count when a `.started` or
+    /// `.finished` event arrived (0.8.9); nil for other events.
+    private func apply(_ event: CommandEvent, to itemID: UUID, cancels: Int? = nil) {
         if let s = prefetchIDs.firstIndex(of: itemID) { return applyFetch(event, step: s) }
         guard let i = items.firstIndex(where: { $0.id == itemID }) else { return }
         // The running command ended: its downloads are over too. (A waiting
@@ -612,7 +642,7 @@ public final class UpgradeSession: Identifiable {
             lastActivityAt = now()
             watchDownloads(of: items[i].package)
             if items[i].command.environment[Askpass.askpassKey] != nil { watchPassword() }
-            cancelsAtStart = passwordFocus?.cancelCount() ?? 0
+            cancelsAtStart = cancels
             commandLines = []
             let header = "$ \(items[i].command.display)"
             log.feed(header + "\n")
@@ -659,7 +689,7 @@ public final class UpgradeSession: Identifiable {
             // the way: brew went on without what needed sudo (hiddenbar's
             // launchctl service stays). Not a plain ✓.
             if code == 0, !refused, items[i].command.environment[Askpass.askpassKey] != nil,
-               let focus = passwordFocus, focus.cancelCount() > cancelsAtStart {
+               let before = cancelsAtStart, let after = cancels, after > before {
                 let services = Self.launchctlServices(commandLines)
                 sudoSkipped[items[i].id] = services
                 note(services.isEmpty

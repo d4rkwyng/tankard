@@ -76,7 +76,12 @@ enum QuitGuard {
         nonisolated(unsafe) let suspension = manager.suspendCurrentAppleEvent()
         let reason = QuitEventReason(code: reasonCode)
         // Out of the event handler before any alert or terminate.
-        Task { @MainActor in
+        // 0.8.9 (confirm run on 15, MED): as a run-loop block, not a
+        // main-actor Task: the alert's modal loop inside a Task (a
+        // main-queue job) held up every other main-actor job, so the run's
+        // sheet froze and its events waited until the alert closed
+        // (RunLoopPerform).
+        RunLoopPerform.onMain {
             quit(.appleEvent(reason)) { quitting in
                 guard let suspension else { return }
                 if !quitting {
