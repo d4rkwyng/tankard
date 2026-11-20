@@ -139,11 +139,18 @@ public struct AdoptCask: Sendable, Equatable {
     public var ownBundleIDs: Set<String>
     public var deprecated: Bool
     public var disabled: Bool
+    /// 0.8.10: the stanza keys of what the cask installs ("app", "binary",
+    /// "font", …; `BrewInfoJSON.Cask.artifactKinds`), each once. Empty when
+    /// brew gave no artifacts. For Replace with Homebrew's Version
+    /// (`AdoptReplace.installsOnlyOneApp`).
+    public var contentKinds: [String]
 
+    /// `contentKinds` nil: what `apps`, `suites` and `pkg` say (tests).
     public init(token: String, fullToken: String? = nil, tap: String? = "homebrew/cask", version: String,
                 autoUpdates: Bool = false, names: [String] = [], web: String = "",
                 apps: [BrewInfoJSON.Cask.AdoptArtifacts.App] = [], suites: [String] = [], pkg: Bool = false,
-                bundleIDs: Set<String> = [], ownBundleIDs: Set<String>? = nil, deprecated: Bool = false, disabled: Bool = false) {
+                bundleIDs: Set<String> = [], ownBundleIDs: Set<String>? = nil, deprecated: Bool = false, disabled: Bool = false,
+                contentKinds: [String]? = nil) {
         self.token = token
         self.fullToken = fullToken ?? token
         self.tap = tap
@@ -158,6 +165,8 @@ public struct AdoptCask: Sendable, Equatable {
         self.ownBundleIDs = ownBundleIDs ?? bundleIDs
         self.deprecated = deprecated
         self.disabled = disabled
+        self.contentKinds = contentKinds
+            ?? ((apps.isEmpty ? [] : ["app"]) + (suites.isEmpty ? [] : ["suite"]) + (pkg ? ["pkg"] : []))
     }
 
     public init(_ c: BrewInfoJSON.Cask) {
@@ -165,7 +174,8 @@ public struct AdoptCask: Sendable, Equatable {
         self.init(token: c.token, fullToken: c.fullToken, tap: c.tap, version: c.version, autoUpdates: c.autoUpdates ?? false,
                   names: c.name ?? [], web: [c.homepage ?? "", c.url ?? ""].joined(separator: " "),
                   apps: a.apps, suites: a.suites, pkg: a.pkg, bundleIDs: AdoptIndex.bundleIDHints(a.idStrings),
-                  ownBundleIDs: AdoptIndex.bundleIDHints(a.ownIDStrings), deprecated: c.deprecated ?? false, disabled: c.disabled ?? false)
+                  ownBundleIDs: AdoptIndex.bundleIDHints(a.ownIDStrings), deprecated: c.deprecated ?? false, disabled: c.disabled ?? false,
+                  contentKinds: c.artifactKinds ?? [])
     }
 
     /// "homebrew/cask/firefox": what install is given (as Discover does).
@@ -942,19 +952,64 @@ public enum AdoptReplace {
         case notNewer
         /// A version without a number (`latest`, "unknown", empty).
         case unparseable
+        /// Tankard can't tell which is newer: the cask's version is a
+        /// different kind of number than the app's (a bare build number
+        /// against a dotted version), or it is newer than the app's short
+        /// version but not than its build number (CFBundleVersion). Not
+        /// offered: it could be a downgrade.
+        case cantTell
     }
 
-    public static func eligibility(_ verdict: AdoptVerdict?) -> Eligibility {
+    /// `bundleVersion` is the app's CFBundleVersion, when it has one: a
+    /// cask version that is really a build number is checked against it too.
+    public static func eligibility(_ verdict: AdoptVerdict?, bundleVersion: String? = nil) -> Eligibility {
         guard case .needsUpdate(let installed, let cask)? = verdict else { return .notVersionMismatch }
-        return eligibility(installed: installed, cask: cask)
+        return eligibility(installed: installed, cask: cask, bundleVersion: bundleVersion)
     }
 
-    /// `cask` is the cask version's comparable part (`AdoptVersion.split`'s head).
-    public static func eligibility(installed: String, cask: String) -> Eligibility {
+    /// `cask` is the cask version's comparable part (`AdoptVersion.split`'s
+    /// head). Offered only when the cask's version is newer than the app's
+    /// short version and, where it is the same kind of number, than its
+    /// CFBundleVersion too.
+    public static func eligibility(installed: String, cask: String, bundleVersion: String? = nil) -> Eligibility {
         let i = installed.trimmingCharacters(in: .whitespaces), c = cask.trimmingCharacters(in: .whitespaces)
         guard comparable(i), comparable(c) else { return .unparseable }
+        // A bare build number ("199") against a dotted version ("2.0"), or
+        // the other way round: brew's ordering would compare 199 with 2.
+        guard Shape(c) == Shape(i) else { return .cantTell }
         guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
+        if let b = bundleVersion?.trimmingCharacters(in: .whitespaces), !b.isEmpty, b != i,
+           comparable(b), Shape(b) == Shape(c) {
+            // short 2.0, build 200, cask 199: newer than "2.0" by brew's
+            // ordering, older than the build.
+            guard BrewVersion(c).compare(to: BrewVersion(b)) == 1 else { return .cantTell }
+        }
         return .update(installed: i, cask: c)
+    }
+
+    /// What kind of number a version is, for telling whether two can be
+    /// compared at all.
+    enum Shape: Equatable {
+        /// Digits only: "199".
+        case integer
+        /// Has a dot: "2.0", "1.13.2", "2.0-beta1".
+        case dotted
+        /// Anything else ("r123", "2024a").
+        case other
+
+        init(_ v: String) {
+            if !v.isEmpty, v.allSatisfy({ $0.isASCII && $0.isNumber }) { self = .integer }
+            else if v.contains(".") { self = .dotted }
+            else { self = .other }
+        }
+    }
+
+    /// 0.8.10: `brew install --cask --force` overwrites every artifact the
+    /// cask installs, and Tankard keeps a copy of one app only. So Replace
+    /// is offered only for a cask whose contents are exactly one app: no
+    /// second app (karabiner-elements), suite, pkg, binary, font, plug-in.
+    public static func installsOnlyOneApp(_ c: AdoptCask) -> Bool {
+        c.apps.count == 1 && c.suites.isEmpty && !c.pkg && c.contentKinds == ["app"]
     }
 
     /// Has a digit, isn't `latest` or a HEAD build: brew's ordering means

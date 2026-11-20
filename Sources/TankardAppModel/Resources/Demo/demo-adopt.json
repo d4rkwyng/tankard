@@ -1,5 +1,5 @@
 {
- "_comment": "Demo fixture for Adopt Apps (0.8). casks: entries copied from formulae.brew.sh/api/cask.json on 2026-11-17. apps: illustrative; no real Mac's /Applications. 0.8.6: copilot-money from `brew info --cask --json=v2` (2026-11-18) with an illustrative different Copilot.app (com.microsoft.copilot-mac), which must not match.",
+ "_comment": "Demo fixture for Adopt Apps (0.8). casks: entries copied from formulae.brew.sh/api/cask.json on 2026-11-17. apps: illustrative; no real Mac's /Applications. 0.8.6: copilot-money from `brew info --cask --json=v2` (2026-11-18) with an illustrative different Copilot.app (com.microsoft.copilot-mac), which must not match. 0.8.10: audacity from formulae.brew.sh/api/cask/audacity.json (2026-11-20), with an illustrative older Audacity 4.app: the demo's Replace with Homebrew's Version (a cask that installs one app only).",
  "apps": [
   {
    "path": "/Applications/Firefox.app",
@@ -53,6 +53,17 @@
    "shortVersion": "3.2.6",
    "bundleVersion": "3.2.6",
    "displayName": "GIMP",
+   "hasMASReceipt": false,
+   "isSymlink": false
+  },
+  {
+   "path": "/Applications/Audacity 4.app",
+   "root": "/Applications",
+   "relativePath": "Audacity 4.app",
+   "bundleID": "org.audacityteam.audacity4",
+   "shortVersion": "4.0.1",
+   "bundleVersion": "4.0.1",
+   "displayName": "Audacity",
    "hasMASReceipt": false,
    "isSymlink": false
   },
@@ -374,6 +385,51 @@
    "deprecated": false,
    "disabled": false,
    "depends_on": {}
+  },
+  {
+   "token": "audacity",
+   "full_token": "audacity",
+   "tap": "homebrew/cask",
+   "name": [
+    "Audacity"
+   ],
+   "desc": "Multi-track audio editor and recorder",
+   "homepage": "https://www.audacityteam.org/",
+   "url": "https://github.com/audacity/audacity/releases/download/Audacity-4.0.2/audacity-macOS-4.0.2-arm64.dmg",
+   "version": "4.0.2",
+   "auto_updates": null,
+   "artifacts": [
+    {
+     "uninstall": [
+      {
+       "quit": "org.audacityteam.audacity4"
+      }
+     ]
+    },
+    {
+     "app": [
+      "Audacity 4.app"
+     ],
+     "target": "/Applications/Audacity 4.app"
+    },
+    {
+     "zap": [
+      {
+       "quit": "org.audacityteam.audacity4",
+       "trash": [
+        "~/Library/Application Support/audacity",
+        "~/Library/Caches/Audacity",
+        "~/Library/Preferences/org.audacityteam.Audacity4.plist",
+        "~/Library/Preferences/org.audacityteam.audacity.plist",
+        "~/Library/Saved Application State/org.audacityteam.audacity.savedState"
+       ],
+       "rmdir": "~/Documents/Audacity4"
+      }
+     ]
+    }
+   ],
+   "deprecated": false,
+   "disabled": false
   },
   {
    "token": "libreoffice",

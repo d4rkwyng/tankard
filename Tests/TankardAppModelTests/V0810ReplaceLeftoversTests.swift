@@ -40,7 +40,7 @@ struct V0810ReplaceLeftoversTests {
         let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
         let safety = AppReplaceSafety(
             backup: { _ in calls.withLock { $0.append("backup") }; return "/tmp/x" },
-            finish: { _, _, _ in calls.withLock { $0.append("finish") }; return .discarded },
+            finish: { _, _, _, _ in calls.withLock { $0.append("finish") }; return .discarded },
             leftovers: { calls.withLock { $0.append("leftovers") }; return ["/c/AAAA/Foo.app"] })
         var deps = Demo.dependencies(.arm64, pace: 0)
         deps.appReplaceSafety = safety

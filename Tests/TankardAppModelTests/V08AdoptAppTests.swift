@@ -26,7 +26,8 @@ struct V08AdoptAppTests {
         let a = store.adopt
         func names(_ g: AdoptGroup) -> [String] { a.rows(g).map(\.app.displayName) }
         #expect(names(.ready) == ["Firefox", "Hidden Bar", "LibreOffice", "Obsidian"])
-        #expect(names(.needsUpdate) == ["GIMP", "Impactor"])
+        // 0.8.10: Audacity (an older copy; the demo's Replace with Homebrew's Version).
+        #expect(names(.needsUpdate) == ["Audacity", "GIMP", "Impactor"])
         #expect(names(.cantAdopt) == ["Inkscape", "KiCad", "zoom.us"])
         // 0.8.6: Copilot has copilot-money's name but not its app ID: no cask.
         #expect(names(.noCask) == ["Acme Widgets", "Copilot"])
@@ -389,7 +390,10 @@ struct V08AdoptAppTests {
         let im = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "Impactor" })
         #expect(a.confidence(im) == .low && !a.offersReplace(im))
         let gimp = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "GIMP" })
-        #expect(a.offersReplace(gimp) == (a.confidence(gimp) == .high))
+        // 0.8.10: GIMP's cask also installs a command wrapper: a sure match, not offered.
+        #expect(a.confidence(gimp) == .high && !a.offersReplace(gimp))
+        let aud = try #require(a.rows(.needsUpdate).first { $0.app.displayName == "Audacity" })
+        #expect(a.offersReplace(aud) == (a.confidence(aud) == .high) && a.offersReplace(aud))
         // Never outside "Needs update first".
         #expect(a.rows(.ready).allSatisfy { !a.offersReplace($0) })
     }

@@ -24,6 +24,7 @@
 "%@ and more" = "%@ und weiteren";
 "%@ can't be uninstalled" = "%@ kann nicht deinstalliert werden";
 "%@ cancelled" = "%@ abgebrochen";
+"%@ changed since the scan (it is now version %@), so Tankard didn't replace it. Scan Again to see what Homebrew can do with it." = "%1$@ hat sich seit der Prüfung geändert (jetzt Version %2$@), daher hat Tankard die App nicht ersetzt. Klicke auf „Neu prüfen“, um zu sehen, was Homebrew damit tun kann.";
 "%@ complete" = "%@ abgeschlossen";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ nicht gestartet: %@ läuft noch. Versuche es erneut, wenn es fertig ist.";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ nicht gestartet: Homebrew ist noch nicht bereit. Aktualisiere und versuche es erneut.";
@@ -58,6 +59,7 @@
 "%@ upgraded" = "%@ aktualisiert";
 "%@ wasn't replaced." = "%@ wurde nicht ersetzt.";
 "%@ wasn't replaced; it is as it was." = "%@ wurde nicht ersetzt; die App ist unverändert.";
+"%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ wurde nicht ersetzt; die App ist unverändert. Tankard hat eine Kopie unter %2$@ behalten.";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ wird als %@ übernommen. Auch andere Casks installieren eine App mit diesem Namen (%@): brew upgrade folgt dem Cask, den du übernimmst, prüfe also, ob es der richtige ist.";
 "%@ would be installed too" = "%@ würde ebenfalls installiert";
 "%@ · %lld" = "%@ · %lld";
@@ -1065,6 +1067,7 @@
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard konnte keine Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard konnte %1$@ nicht zurücklegen (%2$@). Eine Kopie der alten Version liegt unter %3$@.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard konnte das Netzwerk nicht erreichen, um die Paketliste von Homebrew zu laden. Prüfe die Internetverbindung (oder ein VPN oder einen Proxy) und versuche es dann erneut.";
+"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard konnte die Version von %1$@ unter %2$@ nicht lesen und hat die App daher nicht ersetzt.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard konnte die Pakete in deinen Taps nicht lesen. Versuche es gleich noch einmal.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard konnte diese Datei nicht als Brewfile lesen.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard konnte in der Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten.";
@@ -1107,6 +1110,7 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "Die Homebrew-Ordner sind für diesen Benutzer nicht beschreibbar. `brew doctor` (Homebrew ▸ Zustand) nennt meist, welche, und den Befehl zur Behebung.";
 "The Installed list, filtered to this tap (tap:%@)" = "Die Liste „Installiert“, gefiltert auf diesen Tap (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "Die URL muss https://, http://, ssh://, git:// oder file:// bzw. git@host:pfad sein, ohne Leerzeichen.";
+"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "Die App unter %1$@ ist nicht %2$@ %3$@, daher hat Tankard die Kopie der alten Version unter %4$@ behalten.";
 "The app has no version brew can compare." = "Die App hat keine Version, die brew vergleichen kann.";
 "The app's ID (its bundle identifier) is one the cask names." = "Die ID der App (ihr Bundle-Identifier) ist eine, die der Cask nennt.";
 "The build from source failed" = "Das Kompilieren aus dem Quellcode ist fehlgeschlagen";
@@ -1333,6 +1337,7 @@
 "brew services failed" = "brew services fehlgeschlagen";
 "brew services list exited %d" = "brew services list beendet mit %d";
 "brew stopped after removing %@; Tankard put the old version back at %@." = "brew hat nach dem Entfernen von %1$@ angehalten; Tankard hat die alte Version wieder unter %2$@ abgelegt.";
+"brew stopped partway through replacing %@; Tankard put the old version back at %@. What brew left there is at %@." = "brew hat beim Ersetzen von %1$@ mittendrin angehalten; Tankard hat die alte Version wieder unter %2$@ abgelegt. Was brew dort hinterlassen hat, liegt unter %3$@.";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info hat etwas ausgegeben, das Tankard nicht lesen konnte.";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info hat etwas ausgegeben, das Tankard nicht lesen konnte:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: „Trust non-official tap formulae, casks or commands so Homebrew may load them.“ Es ist der Ruby-Code des Autors. Vertraue nur Taps, deren Autor du vertraust.";

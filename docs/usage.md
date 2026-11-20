@@ -644,8 +644,15 @@ Tankard says so and waits for you to click **Check Again**; it never quits the a
 you. Then click **Replace**. Tankard runs `brew install --cask --force <cask>` in the
 activity sheet, asking for your password as for any cask install. Tankard keeps a copy of
 the app while brew runs: if brew fails, the sheet shows brew's error and the app is left
-as it was. Tankard never offers this for a version that is older, the same or can't be
-compared, or for a match on the name alone.
+as it was. If brew stopped halfway (for example after **Stop Now**), what it left is moved
+next to the copy and the copy goes back; if the app is still whole, the copy is kept and
+the sheet says where. The copy is deleted only after brew installed the cask's version.
+If the app changed since the scan (it updated itself) or was opened again while Tankard
+made the copy, Tankard doesn't start. If Tankard quits while brew runs and the app is
+gone, the copy is put back at the next launch. Tankard never offers this for a version
+that is older, the same or can't be compared (a cask version that is a build number, for
+example), for a cask that installs more than the one app (a second app, a command-line
+tool, a font), or for a match on the name alone.
 
 Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online cask list.
 

@@ -916,15 +916,32 @@ cask's quit id hides an app only when the app has the cask's or its app's name (
 name plus more words); pkg casks' quit ids still count alone. **Replace with Homebrew's
 Version (0.8.10)**, `AdoptReplace` and AppStore+ReplaceApp.swift: for Needs update first
 with a sure match (high confidence, one cask) whose cask version is newer by `BrewVersion`
-(never equal by brew's ordering, older, `latest`, HEAD, or without a digit), the row offers
+(never equal by brew's ordering, older, `latest`, HEAD, or without a digit), newer than the
+app's CFBundleVersion too where that is the same kind of number, and of the same kind as
+the short version (a bare build number against a dotted version is `.cantTell`), and
+whose cask installs exactly one app and nothing else (`AdoptReplace.installsOnlyOneApp`:
+`AdoptCask.contentKinds` == ["app"]; --force overwrites every artifact), the row offers
 `brew install --cask --force`, run as SessionAction `.replaceApp` through the queue (the
 password helper as for other cask steps). The plan sheet checks the running apps
 (`autoUpdate.conditions`, by path or bundle id) and refuses while the app is open; it
 never quits it. brew --force deletes the app before moving the download in, and its
 revert after a later failure removes the new one, so Tankard first copies the app to
 ~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
-clone on APFS; no copy, no run). After the run the copy is deleted, or, when brew failed
-and nothing is at the app's path, moved back; the log says which. Copies a run left behind (Tankard quit or crashed while brew ran) are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths (os_log, category `replace`), never deleted: each may be the only copy of the user's app. Not retryable after an
+clone on APFS; no copy, no run; `.origin` beside it holds the app's path). Right before
+the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedNote`): a
+changed version, build or bundle id, or one no longer older than the cask, stops the run;
+right after it the running check is made again (the copy is dropped, `discard`).
+`AppReplaceSafety.finishLive`: only brew's exit 0 with a whole bundle (Info.plist readable,
+its CFBundleExecutable present) of the cask's version deletes the copy. Otherwise: nothing
+at the path, the copy goes back; a whole bundle of the same bundle id (after exit 0, any
+whole bundle) stays and the copy is kept (`.kept`); anything else (a half-deleted bundle
+after Stop Now, a missing executable, another app, a file) is moved into the copy's folder
+as `<name>.partial` and the copy goes back (`.restoredMovingAside`). The log says which.
+Copies a run left behind (Tankard quit or crashed while brew ran) are listed at launch
+(`start()`, `noteReplaceLeftovers`) and logged with their paths (os_log, category
+`replace`); one whose `.origin` path is empty and that is a whole bundle is moved back
+there (`recoverLeftover`), the rest are kept. None is ever deleted: each may be the only
+copy of the user's app. Not retryable after an
 App Management relaunch (the copy and the running check belong to the sheet). Tests and
 the demo have no copy (`Dependencies.appReplaceSafety` nil). brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not

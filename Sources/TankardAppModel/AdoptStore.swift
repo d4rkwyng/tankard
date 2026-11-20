@@ -12,7 +12,7 @@ import TankardCore
 //   TANKARD_DEMO_ADOPT=1        demo: open the sheet on the demo's apps
 //   TANKARD_DEMO_ADOPT=confirm  demo: also open the confirmation
 //   TANKARD_DEMO_ADOPT=run      demo: also confirm (the fake brew adopts)
-//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (GIMP)
+//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (Audacity)
 
 /// What the scan reads: the cask index and the apps on disk.
 public struct AdoptInput: Sendable {
@@ -285,18 +285,26 @@ public final class AdoptStore {
     /// app's: never a downgrade, never versions brew can't order
     /// (`AdoptReplace`).
     public func offersReplace(_ row: AdoptRow) -> Bool {
-        guard group(row) == .needsUpdate, confidence(row) == .high, !row.isAmbiguous else { return false }
-        if case .update = AdoptReplace.eligibility(verdict(row)) { return true }
+        guard group(row) == .needsUpdate, confidence(row) == .high, !row.isAmbiguous,
+              let c = cask(row), AdoptReplace.installsOnlyOneApp(c) else { return false }
+        if case .update = replaceEligibility(row) { return true }
         return false
+    }
+
+    /// 0.8.10: whether the cask's version is newer, checked against the
+    /// app's short version and its build number (`AdoptReplace`).
+    public func replaceEligibility(_ row: AdoptRow) -> AdoptReplace.Eligibility {
+        AdoptReplace.eligibility(verdict(row), bundleVersion: row.app.bundleVersion)
     }
 
     /// The plan sheet's facts for a row that `offersReplace`.
     public func replacePlan(_ row: AdoptRow) -> ReplaceAppPlan? {
         guard offersReplace(row), let c = cask(row),
-              case .update(let installed, let caskVersion) = AdoptReplace.eligibility(verdict(row)) else { return nil }
+              case .update(let installed, let caskVersion) = replaceEligibility(row) else { return nil }
         return ReplaceAppPlan(token: c.token, qualifiedName: c.qualifiedName, appName: row.app.displayName,
                               appPath: row.app.path, bundleID: row.app.bundleID,
-                              installedVersion: installed, caskVersion: caskVersion)
+                              installedVersion: installed, caskVersion: caskVersion,
+                              bundleVersion: row.app.bundleVersion)
     }
 
     public func rows(_ g: AdoptGroup) -> [AdoptRow] {

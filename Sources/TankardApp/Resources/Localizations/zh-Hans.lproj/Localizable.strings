@@ -24,6 +24,7 @@
 "%@ and more" = "%@ 等";
 "%@ can't be uninstalled" = "无法卸载 %@";
 "%@ cancelled" = "%@ 已取消";
+"%@ changed since the scan (it is now version %@), so Tankard didn't replace it. Scan Again to see what Homebrew can do with it." = "%1$@ 自扫描后已更改（现为 %2$@ 版本），因此 Tankard 没有替换它。点击“重新扫描”查看 Homebrew 可以如何处理它。";
 "%@ complete" = "%@ 已完成";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ 未启动：%@ 仍在运行。请在其完成后重试。";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ 未启动：Homebrew 尚未就绪。请刷新后重试。";
@@ -58,6 +59,7 @@
 "%@ upgraded" = "已升级 %@";
 "%@ wasn't replaced." = "%@ 未被替换。";
 "%@ wasn't replaced; it is as it was." = "%@ 未被替换，保持原样。";
+"%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ 未被替换，保持原样。Tankard 在 %2$@ 保留了一份副本。";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ 将作为 %@ 接管。还有其他 cask 安装同名应用(%@):brew upgrade 会跟随你接管的 cask,请确认它是正确的那个。";
 "%@ would be installed too" = "也会安装 %@";
 "%@ · %lld" = "%@ · %lld";
@@ -1065,6 +1067,7 @@
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard 无法放回 %1$@（%2$@）。旧版本的副本位于 %3$@。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。";
+"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard 无法读取 %2$@ 处 %1$@ 的版本，因此没有替换它。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard 无法读取你的 Tap 中的软件包。请稍后重试。";
 "Tankard couldn't read this file as a Brewfile." = "Tankard 无法将此文件作为 Brewfile 读取。";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard 无法从 Brewfile 中读出此 Tap 的来源。请使用下方的终端命令。";
@@ -1107,6 +1110,7 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "此用户无法写入 Homebrew 文件夹。`brew doctor`（Homebrew ▸ 健康状况）通常会指出是哪些，以及修复命令。";
 "The Installed list, filtered to this tap (tap:%@)" = "“已安装”列表，已按此 tap 过滤 (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URL 必须是 https://、http://、ssh://、git:// 或 file://，或 git@host:path，且不含空格。";
+"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "%1$@ 处的应用不是 %2$@ %3$@，因此 Tankard 在 %4$@ 保留了旧版本的副本。";
 "The app has no version brew can compare." = "该 App 没有 brew 可比较的版本。";
 "The app's ID (its bundle identifier) is one the cask names." = "应用的 ID(其 Bundle 标识符)是 cask 列出的 ID 之一。";
 "The build from source failed" = "从源码构建失败";
@@ -1333,6 +1337,7 @@
 "brew services failed" = "brew services 失败";
 "brew services list exited %d" = "brew services list 已退出，代码 %d";
 "brew stopped after removing %@; Tankard put the old version back at %@." = "brew 在移除 %1$@ 后停止了；Tankard 已将旧版本放回 %2$@。";
+"brew stopped partway through replacing %@; Tankard put the old version back at %@. What brew left there is at %@." = "brew 在替换 %1$@ 的中途停止了；Tankard 已将旧版本放回 %2$@。brew 留在那里的内容位于 %3$@。";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info 输出了 Tankard 无法读取的内容。";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info 输出了 Tankard 无法读取的内容：\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust：“Trust non-official tap formulae, casks or commands so Homebrew may load them.” 它们是作者的 Ruby 代码。请只信任你信任其作者的 tap。";

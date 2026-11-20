@@ -11,7 +11,7 @@ import TankardCore
 //   TANKARD_DEMO_ADOPT=1        demo: open the sheet on the demo's apps
 //   TANKARD_DEMO_ADOPT=confirm  demo: also open the confirmation
 //   TANKARD_DEMO_ADOPT=run      demo: also confirm (the fake brew adopts)
-//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (GIMP)
+//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (Audacity)
 
 /// The Homebrew menu item. A view, so its store reads aren't tracked by App.body.
 struct AdoptMenuCommands: View {

@@ -24,6 +24,7 @@
 "%@ and more" = "%@ など";
 "%@ can't be uninstalled" = "%@ はアンインストールできません";
 "%@ cancelled" = "%@ はキャンセルされました";
+"%@ changed since the scan (it is now version %@), so Tankard didn't replace it. Scan Again to see what Homebrew can do with it." = "%1$@ はスキャン後に変更されました（現在のバージョンは %2$@）。そのため Tankard は置き換えませんでした。「再スキャン」をクリックして、Homebrew で何ができるか確認してください。";
 "%@ complete" = "%@ が完了しました";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ を開始できませんでした: %@ がまだ実行中です。終了してからもう一度お試しください。";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ を開始できませんでした: Homebrewの準備ができていません。更新してからもう一度お試しください。";
@@ -58,6 +59,7 @@
 "%@ upgraded" = "%@をアップグレードしました";
 "%@ wasn't replaced." = "%@ は置き換えられませんでした。";
 "%@ wasn't replaced; it is as it was." = "%@ は置き換えられませんでした。アプリは元のままです。";
+"%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ は置き換えられませんでした。アプリは元のままです。Tankard はコピーを %2$@ に残しました。";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ は %@ として引き継がれます。同じ名前のアプリを入れる cask がほかにもあります(%@)。brew upgrade は引き継いだ cask に従うので、正しいものか確認してください。";
 "%@ would be installed too" = "%@ もインストールされます";
 "%@ · %lld" = "%@ · %lld";
@@ -1065,6 +1067,7 @@
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankardは %1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";
+"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard は %2$@ にある %1$@ のバージョンを読み取れなかったため、置き換えませんでした。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankardはtap内のパッケージを読み取れませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't read this file as a Brewfile." = "TankardはこのファイルをBrewfileとして読み取れませんでした。";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "TankardはBrewfileからこのtapの取得元を読み取れませんでした。下のターミナルコマンドを使ってください。";
@@ -1107,6 +1110,7 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "このユーザーはHomebrewのフォルダに書き込めません。通常は `brew doctor`（Homebrew ▸ ヘルス）で原因と修正コマンドが分かります。";
 "The Installed list, filtered to this tap (tap:%@)" = "このtapで絞り込んだインストール済みリスト (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "URLは https://、http://、ssh://、git:// または file://、もしくは git@host:path 形式で、スペースを含められません。";
+"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "%1$@ のアプリは %2$@ %3$@ ではないため、Tankard は古いバージョンのコピーを %4$@ に残しました。";
 "The app has no version brew can compare." = "このアプリには brew が比較できるバージョンがありません。";
 "The app's ID (its bundle identifier) is one the cask names." = "アプリのID(バンドル識別子)が cask に記載されたものと同じです。";
 "The build from source failed" = "ソースからのビルドに失敗しました";
@@ -1333,6 +1337,7 @@
 "brew services failed" = "brew servicesに失敗しました";
 "brew services list exited %d" = "brew services listが%dで終了しました";
 "brew stopped after removing %@; Tankard put the old version back at %@." = "brew は %1$@ を削除した後に停止しました。Tankard が古いバージョンを %2$@ に戻しました。";
+"brew stopped partway through replacing %@; Tankard put the old version back at %@. What brew left there is at %@." = "brew は %1$@ の置き換え途中で停止しました。Tankard が古いバージョンを %2$@ に戻しました。brew がそこに残したものは %3$@ にあります。";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-infoがTankardで読み取れない内容を出力しました。";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-infoがTankardで読み取れない内容を出力しました:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: 「Trust non-official tap formulae, casks or commands so Homebrew may load them.」これらは作者のRubyコードです。作者を信頼できるtapだけを信頼してください。";

@@ -24,6 +24,7 @@
 "%@ and more" = "%@ and more";
 "%@ can't be uninstalled" = "%@ can't be uninstalled";
 "%@ cancelled" = "%@ cancelled";
+"%@ changed since the scan (it is now version %@), so Tankard didn't replace it. Scan Again to see what Homebrew can do with it." = "%@ changed since the scan (it is now version %@), so Tankard didn't replace it. Scan Again to see what Homebrew can do with it.";
 "%@ complete" = "%@ complete";
 "%@ didn't start: %@ is still running. Try again when it finishes." = "%@ didn't start: %@ is still running. Try again when it finishes.";
 "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again." = "%@ didn't start: Homebrew isn't ready yet. Refresh, then try again.";
@@ -58,6 +59,7 @@
 "%@ upgraded" = "%@ upgraded";
 "%@ wasn't replaced." = "%@ wasn't replaced.";
 "%@ wasn't replaced; it is as it was." = "%@ wasn't replaced; it is as it was.";
+"%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@.";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one.";
 "%@ would be installed too" = "%@ would be installed too";
 "%@ · %lld" = "%@ · %lld";
@@ -1065,6 +1067,7 @@
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard couldn't put %@ back (%@). A copy of the old version is at %@.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again.";
+"Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard couldn't read %@'s version at %@, so it didn't replace it.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard couldn't read the packages in your taps. Try again in a moment.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard couldn't read this file as a Brewfile.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below.";
@@ -1107,6 +1110,7 @@
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it.";
 "The Installed list, filtered to this tap (tap:%@)" = "The Installed list, filtered to this tap (tap:%@)";
 "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces." = "The URL must be https://, http://, ssh://, git:// or file://, or git@host:path, with no spaces.";
+"The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@." = "The app at %@ isn't %@ %@, so Tankard kept the copy of the old version at %@.";
 "The app has no version brew can compare." = "The app has no version brew can compare.";
 "The app's ID (its bundle identifier) is one the cask names." = "The app's ID (its bundle identifier) is one the cask names.";
 "The build from source failed" = "The build from source failed";
@@ -1333,6 +1337,7 @@
 "brew services failed" = "brew services failed";
 "brew services list exited %d" = "brew services list exited %d";
 "brew stopped after removing %@; Tankard put the old version back at %@." = "brew stopped after removing %@; Tankard put the old version back at %@.";
+"brew stopped partway through replacing %@; Tankard put the old version back at %@. What brew left there is at %@." = "brew stopped partway through replacing %@; Tankard put the old version back at %@. What brew left there is at %@.";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info printed something Tankard couldn't read.";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info printed something Tankard couldn't read:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust.";
