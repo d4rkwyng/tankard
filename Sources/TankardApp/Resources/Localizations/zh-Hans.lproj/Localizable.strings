@@ -1069,6 +1069,7 @@
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "Tankard 已重新启动，以便 macOS 应用“App 管理”。在你点按“再次运行”之前不会运行任何操作。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard 会在后台运行 brew update，让数量保持最新。可在“设置”▸“通用”中关闭。";
 "Tankard runs:" = "Tankard 会运行：";
+"Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version." = "Homebrew 替换 Tankard 时它会保持打开，完成后提示以新版本重新启动。";
 "Tankard update available" = "Tankard 有可用更新";
 "Tankard updates itself through brew" = "Tankard 通过 brew 自行更新";
 "Tankard upgraded %lld packages" = "Tankard 已升级 %lld 个软件包";
@@ -1129,6 +1130,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "这些 App 与某个 cask 匹配，但 brew install --adopt 不会接管它们。";
 "These need your administrator password: %@" = "以下项目需要你的管理员密码：%@";
 "Third-party" = "第三方";
+"This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "此 Brewfile 在 Tankard 显示后被更改，因此 brew 没有运行它。请再次检查以查看它现在的内容。";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "此 Brewfile 是从互联网下载的。下载的 Brewfile 在 brew 读取它时即可在这台 Mac 上运行任何程序。";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "此 Homebrew 可以安装命令行工具，但不能安装 Firefox 或 VLC 等应用。开启应用需要一次性下载约 620 MB。";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "此 App 基于 Electron 构建。在这台 Mac 的显卡上，若使用 OpenCore Legacy Patcher 安装的较新 macOS，这类 App 可能显示不正常：窗口空白、发黑或闪烁，或文字错乱。Tankard 不会修改此 App。";
@@ -1141,7 +1143,6 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";
 "This tap isn't trusted yet" = "此 Tap 尚未被信任";
-"Time" = "时间";
 "Time of the automatic update" = "自动更新的时间";
 "To install %@." = "用于安装 %@。";
 "To reinstall %@." = "用于重新安装 %@。";

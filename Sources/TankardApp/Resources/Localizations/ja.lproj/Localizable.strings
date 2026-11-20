@@ -1069,6 +1069,7 @@
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOSがApp管理を適用できるようTankardを再起動しました。「もう一度実行」をクリックするまで何も実行されません。";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankardは数を最新に保つためにバックグラウンドでbrew updateを実行します。「設定」▸「一般」でオフにできます。";
 "Tankard runs:" = "Tankardが実行するコマンド:";
+"Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version." = "Homebrewが置き換える間もTankardは開いたままで、完了後に新しいバージョンで再起動するか提案します。";
 "Tankard update available" = "Tankardのアップデートがあります";
 "Tankard updates itself through brew" = "Tankardはbrew経由で自己アップデートします";
 "Tankard upgraded %lld packages" = "Tankardが%lld個のパッケージをアップグレードしました";
@@ -1129,6 +1130,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "cask と一致しますが、brew install --adopt では引き継げません。";
 "These need your administrator password: %@" = "管理者パスワードが必要です: %@";
 "Third-party" = "サードパーティ";
+"This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Tankardが表示した後にこのBrewfileが変更されたため、brewは実行しませんでした。もう一度確認して、現在の内容を見てください。";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "このBrewfileはインターネットからダウンロードされました。ダウンロードしたBrewfileは、brewが読み込んだ時点でこのMac上の任意のプログラムを実行できます。";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "この Homebrew はコマンドラインツールをインストールできますが、Firefox や VLC のような App はインストールできません。App をオンにするには、約 620 MB の 1 回限りのダウンロードが必要です。";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "このアプリはElectronで作られています。このMacのグラフィックカードでOpenCore Legacy Patcherで入れた新しいmacOSを使っている場合、このようなアプリは正しく表示されないことがあります（ウインドウが白い・黒い・ちらつく、文字が崩れるなど）。Tankardはアプリを変更しません。";
@@ -1141,7 +1143,6 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "この復元ポイントのtap、formula、caskをBrewfileとして（バージョンなし: Brewfileにはバージョンがありません）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "この手順には管理者権限が必要ですが、Tankardは要求できません。ターミナルでこれを実行してください:";
 "This tap isn't trusted yet" = "この Tap はまだ信頼されていません";
-"Time" = "時刻";
 "Time of the automatic update" = "自動アップデートの時刻";
 "To install %@." = "%@をインストールするため。";
 "To reinstall %@." = "%@を再インストールするため。";

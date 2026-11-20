@@ -1069,6 +1069,7 @@
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "O Tankard foi reaberto para o macOS aplicar o Gerenciamento de Apps. Nada é executado até você clicar em Executar de novo.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "O Tankard executa brew update em segundo plano para manter os números atualizados. Desative em Ajustes ▸ Geral.";
 "Tankard runs:" = "O Tankard executa:";
+"Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version." = "O Tankard continua aberto enquanto o Homebrew o substitui e depois oferece reabri-lo na nova versão.";
 "Tankard update available" = "Atualização do Tankard disponível";
 "Tankard updates itself through brew" = "O Tankard se atualiza pelo brew";
 "Tankard upgraded %lld packages" = "O Tankard atualizou %lld pacotes";
@@ -1129,6 +1130,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "Estes conferem com um cask, mas brew install --adopt não os assumiria.";
 "These need your administrator password: %@" = "Estes precisam da sua senha de administrador: %@";
 "Third-party" = "De terceiros";
+"This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Este Brewfile mudou depois que o Tankard o mostrou, então o brew não o executou. Verifique-o de novo para ver o que ele contém agora.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "Este Brewfile foi baixado da internet. Um Brewfile baixado pode executar qualquer programa neste Mac assim que o brew o lê.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Este Homebrew pode instalar ferramentas de linha de comando, mas não apps como Firefox ou VLC. Ativar os apps é um download único de cerca de 620 MB.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Este app é feito com Electron. Com a placa de vídeo deste Mac e um macOS mais novo instalado pelo OpenCore Legacy Patcher, apps assim podem aparecer errado: janelas em branco, pretas ou piscando, ou texto embaralhado. O Tankard não altera o app.";
@@ -1141,7 +1143,6 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Os taps, formulae e casks deste ponto de restauração como um Brewfile (sem versões: Brewfiles não as têm)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Esta etapa exige direitos de administrador, que o Tankard não pode solicitar. Execute isto no Terminal:";
 "This tap isn't trusted yet" = "Este tap ainda não é confiável";
-"Time" = "Horário";
 "Time of the automatic update" = "Horário da atualização automática";
 "To install %@." = "Para instalar %@.";
 "To reinstall %@." = "Para reinstalar %@.";

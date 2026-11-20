@@ -38,6 +38,9 @@ extension AppStore {
     /// The user confirmed that brew may run the previewed Brewfile.
     public func confirmBrewfileCheck() {
         guard case .confirmRun(let p) = brewfile.page else { return }
+        // 0.8.9 (F4): only the file the preview showed.
+        brewfile.readFile = deps.readBrewfile
+        guard brewfile.verifyUnchanged(p) else { return }
         checkBrewfile(at: p.path)
     }
 

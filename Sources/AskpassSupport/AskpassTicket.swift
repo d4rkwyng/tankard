@@ -165,7 +165,7 @@ public enum AskpassTicket {
     /// that have gone are removed first. Returns the file's path.
     public static func write(_ t: Ticket, in dir: String, isAlive: (Ticket) -> Bool = { processStart($0.pid) == $0.start }) -> String? {
         guard prepareDirectory(dir) else { return nil }
-        for (path, old) in readAll(in: dir) where !isAlive(old) {
+        for (path, old) in readAll(in: dir, deleteStray: true) where !isAlive(old) {
             unlink(cancelPath(old, in: dir))
             unlink(path)
         }
@@ -199,27 +199,66 @@ public enum AskpassTicket {
     /// user's that no one else can write or read (0700), and only from
     /// plain files of this user's with no group or other access.
     public static func read(in dir: String) -> [Ticket] {
-        var st = stat()
-        guard lstat(dir, &st) == 0, st.st_mode & S_IFMT == S_IFDIR, st.st_uid == getuid(),
-              st.st_mode & 0o077 == 0 else { return [] }
+        guard folderIsPrivate(dir) else { return [] }
         return readAll(in: dir).map(\.1)
     }
 
-    static func readAll(in dir: String) -> [(String, Ticket)] {
+    /// 0.8.9 (security review F5): the helper's lookup. Reads only
+    /// `dir/<pid>` for each of sudo's ancestors, so no other file in the
+    /// folder (however many, whatever their names) can push the step's own
+    /// ticket out of the list. Same folder and file checks as `read(in:)`.
+    public static func read(in dir: String, pids: [Int32]) -> [Ticket] {
+        guard folderIsPrivate(dir) else { return [] }
+        var seen = Set<Int32>()
+        return pids.filter { $0 > 1 && seen.insert($0).inserted }.compactMap { readOne(dir + "/\($0)", pid: $0) }
+    }
+
+    static func folderIsPrivate(_ dir: String) -> Bool {
+        var st = stat()
+        return lstat(dir, &st) == 0 && st.st_mode & S_IFMT == S_IFDIR && st.st_uid == getuid() && st.st_mode & 0o077 == 0
+    }
+
+    /// The pid a ticket file's name gives: canonical decimal only ("123",
+    /// not "0123", "+123" or "123.x").
+    static func pid(fromName name: String) -> Int32? {
+        guard let pid = Int32(name), pid > 1, String(pid) == name else { return nil }
+        return pid
+    }
+
+    /// One ticket file: a plain 0600 file of this user's, naming `pid`.
+    static func readOne(_ path: String, pid: Int32) -> Ticket? {
+        var st = stat()
+        guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_uid == getuid(),
+              st.st_mode & 0o077 == 0, st.st_size < 256 else { return nil }
+        let fd = open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+        guard fd >= 0 else { return nil }
+        var buf = [UInt8](repeating: 0, count: 256)
+        let n = buf.withUnsafeMutableBytes { Darwin.read(fd, $0.baseAddress, $0.count) }
+        close(fd)
+        guard n > 0, let text = String(bytes: buf[0..<n], encoding: .utf8), let t = decode(text), t.pid == pid else { return nil }
+        return t
+    }
+
+    /// Every ticket in `dir` (the app's cleanup of stale ones, and
+    /// `read(in:)`). 0.8.9 (F5): a name that isn't a ticket's (`<pid>`) or a
+    /// cancel mark's (`<pid>.cancelled`) is never read, and only well-named
+    /// files count toward `maxTickets`; with `deleteStray` (the app, when it
+    /// writes a ticket) such names are deleted.
+    static func readAll(in dir: String, deleteStray: Bool = false) -> [(String, Ticket)] {
         guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else { return [] }
+        var pids: [Int32] = []
+        for name in names {
+            if let pid = pid(fromName: name) {
+                pids.append(pid)
+            } else if deleteStray,
+                      !(name.hasSuffix(".cancelled") && pid(fromName: String(name.dropLast(".cancelled".count))) != nil) {
+                unlink(dir + "/" + name)
+            }
+        }
         var out: [(String, Ticket)] = []
-        for name in names.filter({ !$0.hasSuffix(".cancelled") }).sorted().prefix(maxTickets) {
-            let path = dir + "/" + name
-            var st = stat()
-            guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_uid == getuid(),
-                  st.st_mode & 0o077 == 0, st.st_size < 256 else { continue }
-            let fd = open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
-            guard fd >= 0 else { continue }
-            var buf = [UInt8](repeating: 0, count: 256)
-            let n = buf.withUnsafeMutableBytes { Darwin.read(fd, $0.baseAddress, $0.count) }
-            close(fd)
-            guard n > 0, let text = String(bytes: buf[0..<n], encoding: .utf8), let t = decode(text) else { continue }
-            out.append((path, t))
+        for pid in pids.sorted().prefix(maxTickets) {
+            let path = dir + "/\(pid)"
+            if let t = readOne(path, pid: pid) { out.append((path, t)) }
         }
         return out
     }

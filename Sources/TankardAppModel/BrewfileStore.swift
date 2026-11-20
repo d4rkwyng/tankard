@@ -141,6 +141,8 @@ public final class BrewfileStore {
     @ObservationIgnored public var readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
     /// 0.8.8: whether macOS marked the file as downloaded.
     @ObservationIgnored public var quarantined: @Sendable (String) -> Bool = { BrewfileStaticReader.isQuarantined($0) }
+    /// 0.8.9 (F4): what the path names (regular file, FIFO, device…).
+    @ObservationIgnored public var fileKind: @Sendable (String) -> BrewfileStaticReader.FileKind = { BrewfileStaticReader.fileKind($0) }
     @ObservationIgnored public var timeout: Duration = .seconds(60)
     @ObservationIgnored private var task: Task<Void, Never>?
 
@@ -202,12 +204,31 @@ public final class BrewfileStore {
     public func preview(path: String) {
         task?.cancel()
         task = nil
-        let size = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? Int) ?? nil
-        guard size.map({ $0 <= BrewfileStaticReader.maxBytes }) ?? true, let text = readFile(path) else {
+        guard let text = readChecked(path) else {
             set(.failed(String(localized: "Tankard couldn't read this file as a Brewfile.")))
             return
         }
         set(.preview(BrewfileStaticReader.preview(path: path, text: text, quarantined: quarantined(path))))
+    }
+
+    /// The file's text, or nil when it isn't a regular file (0.8.9, F4: a
+    /// FIFO or a device is never opened), is too large or can't be read.
+    private func readChecked(_ path: String) -> String? {
+        guard fileKind(path) != .other else { return nil }
+        let size = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? Int) ?? nil
+        guard size.map({ $0 <= BrewfileStaticReader.maxBytes }) ?? true else { return nil }
+        return readFile(path)
+    }
+
+    /// 0.8.9 (security review F4): right before brew runs the Brewfile,
+    /// reads it again; when its text isn't the one the preview showed (or
+    /// it is no longer a regular file), shows why and returns false.
+    public func verifyUnchanged(_ p: BrewfilePreview) -> Bool {
+        guard let text = readChecked(p.path), BrewfileStaticReader.digest(text) == p.digest else {
+            set(.failed(String(localized: "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now.")))
+            return false
+        }
+        return true
     }
 
     /// 0.8.8: from the preview to the "it runs the file's code" question.

@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 // 0.8.8 (security review #2): what a Brewfile lists, read from its text
@@ -38,12 +39,17 @@ public struct BrewfilePreview: Equatable, Sendable {
     public var notRead: [BrewfileUnreadLine]
     /// The file carries macOS's `com.apple.quarantine` mark (downloaded).
     public var quarantined: Bool
+    /// 0.8.9 (security review F4): SHA-256 of the text shown, so brew runs
+    /// only the file the user saw (`BrewfileStore.verifyUnchanged`).
+    public var digest: String
 
-    public init(path: String, entries: [BrewfileEntry], notRead: [BrewfileUnreadLine], quarantined: Bool) {
+    public init(path: String, entries: [BrewfileEntry], notRead: [BrewfileUnreadLine], quarantined: Bool,
+                digest: String = "") {
         self.path = path
         self.entries = entries
         self.notRead = notRead
         self.quarantined = quarantined
+        self.digest = digest
     }
 
     public func names(_ kind: BrewfileKind?) -> [String] { entries.filter { $0.kind == kind }.map(\.name) }
@@ -67,7 +73,24 @@ public enum BrewfileStaticReader {
                 notRead.append(BrewfileUnreadLine(number: i + 1, text: shown(line)))
             }
         }
-        return BrewfilePreview(path: path, entries: entries, notRead: notRead, quarantined: quarantined)
+        return BrewfilePreview(path: path, entries: entries, notRead: notRead, quarantined: quarantined,
+                               digest: digest(text))
+    }
+
+    /// 0.8.9 (F4): hex SHA-256 of the file's text (its UTF-8 bytes).
+    public static func digest(_ text: String) -> String {
+        SHA256.hash(data: Data(text.utf8)).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// 0.8.9 (F4): what a path names. Only a regular file (or a symlink to
+    /// one) is read as a Brewfile: a FIFO or a device would block the read,
+    /// or give different bytes each time.
+    public enum FileKind: Equatable, Sendable { case regular, missing, other }
+
+    public static func fileKind(_ path: String) -> FileKind {
+        var st = stat()
+        guard stat(path, &st) == 0 else { return .missing }
+        return (st.st_mode & S_IFMT) == S_IFREG ? .regular : .other
     }
 
     /// The entry a plain literal line declares; nil for anything else.

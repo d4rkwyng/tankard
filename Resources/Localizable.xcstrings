@@ -59919,6 +59919,58 @@
         }
       }
     },
+    "Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard bleibt geöffnet, während Homebrew es ersetzt, und bietet dann einen Neustart mit der neuen Version an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard reste ouvert pendant que Homebrew le remplace, puis propose de le relancer dans la nouvelle version."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard sigue abierto mientras Homebrew lo reemplaza y luego ofrece reiniciarlo con la nueva versión."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewが置き換える間もTankardは開いたままで、完了後に新しいバージョンで再起動するか提案します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 替换 Tankard 时它会保持打开，完成后提示以新版本重新启动。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard continua aberto enquanto o Homebrew o substitui e depois oferece reabri-lo na nova versão."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard resta aperto mentre Homebrew lo sostituisce, poi propone di riavviarlo con la nuova versione."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 Tankard를 교체하는 동안 Tankard는 열린 상태로 유지되며, 완료 후 새 버전으로 다시 시작할지 묻습니다."
+          }
+        }
+      }
+    },
     "Tankard update available": {
       "localizations": {
         "de": {
@@ -63153,6 +63205,58 @@
         }
       }
     },
+    "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Brewfile hat sich geändert, nachdem Tankard es angezeigt hat, daher hat brew es nicht ausgeführt. Prüfe es erneut, um zu sehen, was es jetzt enthält."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce Brewfile a changé depuis que Tankard l’a affiché, donc brew ne l’a pas exécuté. Vérifiez-le de nouveau pour voir ce qu’il contient maintenant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile cambió después de que Tankard lo mostrara, así que brew no lo ejecutó. Vuelve a comprobarlo para ver qué contiene ahora."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardが表示した後にこのBrewfileが変更されたため、brewは実行しませんでした。もう一度確認して、現在の内容を見てください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Brewfile 在 Tankard 显示后被更改，因此 brew 没有运行它。请再次检查以查看它现在的内容。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile mudou depois que o Tankard o mostrou, então o brew não o executou. Verifique-o de novo para ver o que ele contém agora."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo Brewfile è cambiato dopo che Tankard l’ha mostrato, quindi brew non l’ha eseguito. Controllalo di nuovo per vedere cosa contiene ora."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 보여 준 뒤에 이 Brewfile이 변경되어 brew가 실행하지 않았습니다. 지금 어떤 내용인지 보려면 다시 확인하십시오."
+          }
+        }
+      }
+    },
     "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it.": {
       "localizations": {
         "de": {
@@ -63773,58 +63877,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 Tap은 아직 신뢰되지 않았습니다"
-          }
-        }
-      }
-    },
-    "Time": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uhrzeit"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heure"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hora"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ora"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "時刻"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시간"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Horário"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "时间"
           }
         }
       }

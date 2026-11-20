@@ -1069,6 +1069,7 @@
 "Tankard relaunched so macOS applies App Management. Nothing runs until you click Run Again." = "macOS가 앱 관리를 적용하도록 Tankard를 다시 시작했습니다. 다시 실행을 클릭하기 전에는 아무것도 실행되지 않습니다.";
 "Tankard runs brew update in the background so the counts stay fresh. Settings ▸ General turns it off." = "Tankard는 개수를 최신으로 유지하기 위해 백그라운드에서 brew update를 실행합니다. 설정 ▸ 일반에서 끌 수 있습니다.";
 "Tankard runs:" = "Tankard가 실행하는 명령:";
+"Tankard stays open while Homebrew replaces it, then offers to relaunch into the new version." = "Homebrew가 Tankard를 교체하는 동안 Tankard는 열린 상태로 유지되며, 완료 후 새 버전으로 다시 시작할지 묻습니다.";
 "Tankard update available" = "Tankard 업데이트 사용 가능";
 "Tankard updates itself through brew" = "Tankard는 brew를 통해 스스로 업데이트합니다";
 "Tankard upgraded %lld packages" = "Tankard가 패키지 %lld개를 업그레이드함";
@@ -1129,6 +1130,7 @@
 "These match a cask, but brew install --adopt wouldn't take them over." = "cask와 일치하지만 brew install --adopt로는 가져올 수 없습니다.";
 "These need your administrator password: %@" = "관리자 암호가 필요한 항목: %@";
 "Third-party" = "서드파티";
+"This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Tankard가 보여 준 뒤에 이 Brewfile이 변경되어 brew가 실행하지 않았습니다. 지금 어떤 내용인지 보려면 다시 확인하십시오.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "이 Brewfile은 인터넷에서 다운로드되었습니다. 다운로드한 Brewfile은 brew가 읽는 즉시 이 Mac에서 어떤 프로그램이든 실행할 수 있습니다.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "이 Homebrew는 명령줄 도구는 설치할 수 있지만 Firefox나 VLC 같은 앱은 설치할 수 없습니다. 앱을 켜려면 약 620MB를 한 번 다운로드해야 합니다.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "이 앱은 Electron으로 만들어졌습니다. 이 Mac의 그래픽 카드에서 OpenCore Legacy Patcher로 설치한 최신 macOS를 사용하면 이런 앱이 제대로 표시되지 않을 수 있습니다(빈 창, 검은 창, 깜박이는 창 또는 깨진 글자). Tankard는 앱을 변경하지 않습니다.";
@@ -1141,7 +1143,6 @@
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";
 "This tap isn't trusted yet" = "이 Tap은 아직 신뢰되지 않았습니다";
-"Time" = "시간";
 "Time of the automatic update" = "자동 업데이트 시간";
 "To install %@." = "%@ 설치를 위해.";
 "To reinstall %@." = "%@ 재설치를 위해.";

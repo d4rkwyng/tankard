@@ -119,7 +119,8 @@ let tankardTeam: String? = helperTeam == nil ? nil : AskpassGate.expectedTankard
 // 0.8.8 (security review #3): one of the ancestors must be the brew run
 // Tankard ticketed for this step (AskpassTicket), same pid and start time.
 let ticketDir = AskpassTicket.liveHome().map { AskpassTicket.directory(home: $0) }
-let tickets = ticketDir.map { AskpassTicket.read(in: $0) } ?? []
+// 0.8.9 (F5): only dir/<pid> for each ancestor is read.
+let tickets = ticketDir.map { AskpassTicket.read(in: $0, pids: above.map(\.pid)) } ?? []
 let matchedTicket = AskpassTicket.matching(tickets: tickets,
                                            ancestors: above.map { (pid: $0.pid, start: AskpassTicket.processStart($0.pid)) })
 let ticketMatched = matchedTicket != nil
