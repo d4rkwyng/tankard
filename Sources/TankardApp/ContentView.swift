@@ -29,9 +29,17 @@ struct ContentView: View {
             }
             if !store.homebrewState.needsWelcome {
                 ToolbarItem(placement: .principal) {
-                    ThemedSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases, label: \.title)
-                        .environment(\.theme, Theme.of(appearance.theme))
-                        .help("Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)")
+                    // 0.8.10: on macOS 26 an AppKit view, so the focused
+                    // element says it is focused (ToolbarAccessibility).
+                    if #available(macOS 26, *) {
+                        ToolbarSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases,
+                                               label: \.title, theme: Theme.of(appearance.theme),
+                                               help: String(localized: "Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)"))
+                    } else {
+                        ThemedSegmentedPicker(title: String(localized: "View"), selection: $store.tab, options: MainTab.allCases, label: \.title)
+                            .environment(\.theme, Theme.of(appearance.theme))
+                            .help("Installed packages, everything Homebrew has, or your services (⌘1, ⌘2, ⌘3)")
+                    }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     if store.isRefreshing {

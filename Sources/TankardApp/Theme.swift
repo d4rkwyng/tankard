@@ -507,8 +507,22 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
     /// control looked stuck on All. Now Tab reaches the control once (one
     /// ring around all of it), and the arrow keys change the selection.
     @FocusState private var focused: Bool
+    /// 0.8.10: false in the toolbar, where ToolbarSegmentedPicker's AppKit
+    /// view takes the keyboard focus and is the accessibility element
+    /// (macOS 26 reported no focused element for SwiftUI's own there).
+    var keyboard = true
 
     var body: some View {
+        if keyboard {
+            keyboardControl
+        } else {
+            segments
+                .accessibilityHidden(true)
+        }
+    }
+
+    /// The drawn segments: clicks only, no keyboard focus.
+    private var segments: some View {
         HStack(spacing: 2) {
             ForEach(options) { option in
                 let selected = option == selection
@@ -532,6 +546,11 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
         }
         .padding(2)
         .background(RoundedRectangle(cornerRadius: 7).fill(theme.segmentTrack))
+        .fixedSize()
+    }
+
+    private var keyboardControl: some View {
+        segments
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(Color(nsColor: .keyboardFocusIndicatorColor), lineWidth: 3)
