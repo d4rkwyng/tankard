@@ -913,8 +913,20 @@ ticked by default and gets no copyable `--force`; only *match* rows are ticked. 
 found by ID only uses `uninstall`'s ids (`ownBundleIDs`), not zap's, and with several
 such casks keeps those whose name has a word of the ID. `ManagedApps`: an installed
 cask's quit id hides an app only when the app has the cask's or its app's name (or that
-name plus more words); pkg casks' quit ids still count alone. For Needs update first with a sure match, the
-`brew install --cask --force` command is shown to copy; Tankard never runs it. brew
+name plus more words); pkg casks' quit ids still count alone. **Replace with Homebrew's
+Version (0.8.10)**, `AdoptReplace` and AppStore+ReplaceApp.swift: for Needs update first
+with a sure match (high confidence, one cask) whose cask version is newer by `BrewVersion`
+(never equal by brew's ordering, older, `latest`, HEAD, or without a digit), the row offers
+`brew install --cask --force`, run as SessionAction `.replaceApp` through the queue (the
+password helper as for other cask steps). The plan sheet checks the running apps
+(`autoUpdate.conditions`, by path or bundle id) and refuses while the app is open; it
+never quits it. brew --force deletes the app before moving the download in, and its
+revert after a later failure removes the new one, so Tankard first copies the app to
+~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
+clone on APFS; no copy, no run). After the run the copy is deleted, or, when brew failed
+and nothing is at the app's path, moved back; the log says which. Not retryable after an
+App Management relaunch (the copy and the running check belong to the sheet). Tests and
+the demo have no copy (`Dependencies.appReplaceSafety` nil). brew
 doesn't compare the download with the installed app for `auto_updates` casks. Not
 available with `HOMEBREW_NO_INSTALL_FROM_API` set.
 

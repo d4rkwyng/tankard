@@ -96,6 +96,8 @@ extension AppStore {
         managementSheet = nil
         showAutoUpdateLog = false
         toolSheet = nil
+        // 0.8.10: Adopt Apps' Replace plan sits on its sheet.
+        adopt.pendingReplace = nil
         restorePoints.isShowing = false
         insights.postInstallNotes = nil
         // Counted by isSheetPresented but missing here before 0.8.5.

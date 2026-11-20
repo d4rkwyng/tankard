@@ -19,6 +19,9 @@ public enum SessionAction: String, Sendable {
     case restore
     /// 0.8: `brew install --cask --adopt` of an app already in /Applications.
     case adopt
+    /// 0.8.10: `brew install --cask --force`: Adopt Apps' Replace with
+    /// Homebrew's Version, for an app older than the cask's.
+    case replaceApp
 
     /// "Upgrade", "Install", "Uninstall", "Reinstall", "Cleanup"
     public var verb: String {
@@ -33,6 +36,7 @@ public enum SessionAction: String, Sendable {
         case .untap: return String(localized: "Remove tap")
         case .restore: return String(localized: "Restore")
         case .adopt: return String(localized: "Adopt")
+        case .replaceApp: return String(localized: "Replace")
         }
     }
     /// "Upgrading", "Installing", "Uninstalling", "Reinstalling", "Cleaning up"
@@ -48,6 +52,7 @@ public enum SessionAction: String, Sendable {
         case .untap: return String(localized: "Removing tap")
         case .restore: return String(localized: "Restoring")
         case .adopt: return String(localized: "Adopting")
+        case .replaceApp: return String(localized: "Replacing")
         }
     }
     /// "upgraded", "installed", "uninstalled", "reinstalled", "done": the
@@ -65,6 +70,7 @@ public enum SessionAction: String, Sendable {
         case .untap: return String(localized: "untapped")
         case .restore: return String(localized: "done")
         case .adopt: return String(localized: "adopted")
+        case .replaceApp: return String(localized: "replaced")
         }
     }
 }
@@ -1067,6 +1073,10 @@ public final class UpgradeSession: Identifiable {
         let plain = ForeignAskpass(helper: "", source: "", unstoppable: false)
         return message == plain.message ? plain : nil
     }
+
+    /// 0.8.10: a line from the store after the run (Replace with
+    /// Homebrew's Version: whether the app was put back).
+    func addNote(_ s: String) { note(s) }
 
     private func note(_ s: String) {
         log.feed("tankard: \(s)\n")

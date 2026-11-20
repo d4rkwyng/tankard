@@ -26,7 +26,7 @@ extension UpgradeSession {
                                                   waitingForLock: Bool) -> Bool {
         guard running, !downloading, !waitingForLock else { return false }
         switch action {
-        case .upgrade, .install, .replaceBottle, .restore, .adopt: return true
+        case .upgrade, .install, .replaceBottle, .restore, .adopt, .replaceApp: return true
         case .uninstall, .cleanup, .autoremove, .tap, .untap: return false
         }
     }

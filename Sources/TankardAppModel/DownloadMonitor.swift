@@ -46,7 +46,7 @@ public struct DownloadMonitor: Sendable {
     /// The sheet runs that download something.
     public static func watches(_ action: SessionAction) -> Bool {
         switch action {
-        case .upgrade, .install, .replaceBottle, .restore, .adopt: return true
+        case .upgrade, .install, .replaceBottle, .restore, .adopt, .replaceApp: return true
         case .uninstall, .cleanup, .autoremove, .tap, .untap: return false
         }
     }

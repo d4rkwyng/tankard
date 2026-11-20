@@ -271,6 +271,7 @@ public enum BrewCommands {
         // A restore's commands come from its plan (RestorePoints.swift).
         case .restore: return []
         case .adopt: return AdoptCommands.arguments(qualifiedName: p.qualifiedName)
+        case .replaceApp: return AdoptCommands.replaceArguments(qualifiedName: p.qualifiedName)
         }
     }
 

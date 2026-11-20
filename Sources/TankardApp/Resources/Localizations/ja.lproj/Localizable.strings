@@ -10,7 +10,6 @@
 " to confirm" = " 確認のため";
 " · partial scan" = " · 部分スキャン";
 " · source" = " · ソース";
-"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\n既存のアプリを削除し、代わりに cask のバージョンをインストールします。";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ が失敗しました(終了コード %d)";
 "%@ %@ needs administrator rights" = "%@ %@ には管理者権限が必要です";
@@ -43,6 +42,7 @@
 "%@ installed" = "%@をインストールしました";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ は利用可能ですが、このパッケージはピン留めされているため、brew upgradeと「すべてアップグレード」ではスキップされます。アップグレードするにはピン留めを解除してください。";
 "%@ is installed" = "%@ はインストール済みです";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ が開いています。先に終了してから「再確認」をクリックしてください。Tankard がアプリを終了することはありません。";
 "%@ is pinned" = "%@ はピン留めされています";
 "%@ is running" = "%@ は実行中です";
 "%@ is there but doesn't run. It said:" = "%@ はありますが、実行できません。出力:";
@@ -56,6 +56,8 @@
 "%@ stopped" = "%@ は停止しました";
 "%@ uninstalled" = "%@をアンインストールしました";
 "%@ upgraded" = "%@をアップグレードしました";
+"%@ wasn't replaced." = "%@ は置き換えられませんでした。";
+"%@ wasn't replaced; it is as it was." = "%@ は置き換えられませんでした。アプリは元のままです。";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ は %@ として引き継がれます。同じ名前のアプリを入れる cask がほかにもあります(%@)。brew upgrade は引き継いだ cask に従うので、正しいものか確認してください。";
 "%@ would be installed too" = "%@ もインストールされます";
 "%@ · %lld" = "%@ · %lld";
@@ -456,6 +458,7 @@
 "From brew.env: brew reads it itself." = "brew.env から：brew が自分で読み込みます。";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "formulae.brew.sh より。~/Library/Caches/net.mindtricks.tankard/api に1時間キャッシュされます";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "レシートより: インストール時にリンクされたすべて(brew deps --installed では少なく表示されることがあります)";
+"From now on Homebrew manages this app: brew upgrade updates it, and uninstalling the cask deletes it." = "今後このアプリは Homebrew が管理します。brew upgrade で更新され、cask をアンインストールするとアプリは削除されます。";
 "From source" = "ソースから";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "Homebrew/install のREADME(「Uninstall Homebrew」)に基づき、--path オプションを付けて、Tankardが表示しているHomebrewだけを削除します。ターミナルで実行され、削除前にもう一度確認します。";
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "以降、これらのアプリは Homebrew が管理します。brew upgrade で cask のバージョンに置き換えられ、cask をアンインストールすると（Tankard でも brew uninstall でも）アプリは削除されます。";
@@ -491,11 +494,13 @@
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "HomebrewにはまだTankard %@ がありません。リリース後、tapへの反映には少し時間がかかることがあります。後でもう一度試すか、ダウンロードしてください。";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew はピン留めされたパッケージをアンインストールしません。先に %@ のピン留めを解除するか、そのままにしてください。";
+"Homebrew downloads %@ %@ and puts it in place of the app at %@." = "Homebrew が %1$@ %2$@ をダウンロードし、%3$@ にあるアプリと置き換えます。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "これらのアプリには Homebrew の cask があり、インストール済みのバージョンが一致しています（またはアプリが自己更新するため brew は比較しません）。";
 "Homebrew has disabled this cask." = "Homebrew はこの cask を無効にしています。";
 "Homebrew has finished. Quit Tankard?" = "Homebrew の処理が終わりました。Tankard を終了しますか?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "このコピーはHomebrewでインストールされたため、Homebrewがキューを通じてアップグレードします。brewがアプリを置き換える間もTankardは動作し続け、完了後に再起動を提案します。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew はこのカタログを追加せずにインストールできます。操作は不要です。";
+"Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew が cask の新しいバージョンをこのアプリの代わりにインストールし、以降は Homebrew が管理します。~/Library 内の設定とデータには触れません。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew は今 %1$@ を変更しています。停止すると、Homebrew は途中の手順を元に戻し、%2$@ は元のままです。中途半端に残った場合も、もう一度実行すれば通常は直ります。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew はまだ %@ をアップグレード中です(%lld/%lld)。";
 "Homebrew is still upgrading %@." = "Homebrew はまだ %@ をアップグレード中です。";
@@ -531,6 +536,7 @@
 "How often Tankard checks for new versions in the background." = "Tankardがバックグラウンドで新しいバージョンを確認する頻度です。";
 "I've done this" = "完了しました";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "ダウンロードが一致しない場合、brew はそのアプリの処理を中止し、元のままにします。";
+"If brew fails, the app is left as it was." = "brew が失敗した場合、アプリは元のままです。";
 "If “%@” is an app, Homebrew can't find it because apps (casks) are turned off. Turning them on is a one-time download of about 620 MB." = "「%@」がアプリの場合、アプリ(cask)がオフになっているためHomebrewは見つけられません。オンにするには、約620 MBを1回だけダウンロードします。";
 "Ignored: %@ (%@)" = "無視：%@（%@）";
 "Ignored: not on Tankard's list of settings it passes to brew." = "無視：Tankard が brew に渡す設定の一覧にありません。";
@@ -774,7 +780,6 @@
 "Opens Tankard when you log in, as a macOS login item." = "ログイン時にmacOSのログイン項目としてTankardを開きます。";
 "Opens Terminal. Nothing is typed or run for you." = "ターミナルを開きます。入力や実行は自動では行われません。";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "任意。実行はされません: brew untap homebrew/core でcoreのクローンを削除します。すでに開いているターミナルウインドウは、開き直すまで古い設定のままです。d4rkwyng/intelbrewのREADME「How do I go back to upstream Homebrew?」より。";
-"Or have Homebrew replace it, in Terminal:" = "または、ターミナルで Homebrew に置き換えさせます:";
 "Other" = "その他";
 "Other installed packages need the current version, and Homebrew can't give them an older one." = "ほかのインストール済みパッケージが現在のバージョンを必要としており、Homebrewはそれらに古いバージョンを渡せません。";
 "Other packages need it" = "他のパッケージが必要としています";
@@ -865,9 +870,14 @@
 "Remove…" = "削除…";
 "Removing tap" = "tapを削除中";
 "Removing unused dependencies" = "未使用の依存関係を削除中";
+"Replace" = "置き換える";
+"Replace %@ with Homebrew's version" = "%@ を Homebrew のバージョンに置き換える";
+"Replace %@ with Homebrew's version?" = "%@ を Homebrew のバージョンに置き換えますか？";
 "Replace all (%lld)" = "すべて置き換え (%lld)";
 "Replace with Bottle" = "bottleで置き換え";
+"Replace with Homebrew's Version…" = "Homebrew のバージョンに置き換える…";
 "Replacement: " = "置き換え: ";
+"Replacing" = "置き換え中";
 "Report an Issue…" = "問題を報告…";
 "Requested" = "リクエスト済み";
 "Restart" = "再起動";
@@ -1052,6 +1062,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
+"Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "%1$@ の安全のためのコピーを作成できなかったため、置き換えませんでした: %2$@";
+"Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "%1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankardはtap内のパッケージを読み取れませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't read this file as a Brewfile." = "TankardはこのファイルをBrewfileとして読み取れませんでした。";
@@ -1247,6 +1259,7 @@
 "Version" = "バージョン";
 "Version %@" = "バージョン%@";
 "Version %@ is skipped" = "バージョン%@はスキップされています";
+"Version %@ to %@" = "バージョン %1$@ → %2$@";
 "View" = "表示";
 "Vulnerability scan" = "脆弱性スキャン";
 "Vulnerable" = "脆弱性あり";
@@ -1282,6 +1295,7 @@
 "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "クリーンアップで残す古いバージョンは、Homebrew の設定（brew.env）で決まります。";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Homebrewの設定で別のパスワードプログラムを使っているため、Tankardはここでパスワードを求められません。この手順はターミナルで実行してください:";
 "Your PATH finds other tools before Homebrew's" = "PATHでHomebrewより先に他のツールが見つかります";
+"Your settings and data in ~/Library are not touched." = "~/Library 内の設定とデータには触れません。";
 "a symlink to %@: that file is backed up and edited" = "%@へのシンボリックリンク: そのファイルがバックアップされ、編集されます";
 "adopted" = "引き継ぎ済み";
 "and %lld more" = "ほか%lld個";
@@ -1291,11 +1305,12 @@
 "auto" = "自動";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --versionが%dで終了しました";
-"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew は cask がインストールするのと同じバージョンしか引き継ぎません。アプリ自身のアップデート機能で更新してから「再スキャン」してください。Tankard がアプリを置き換えることはありません。";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew は cask がインストールするのと同じバージョンしか引き継ぎません。アプリ自身のアップデート機能で更新してから「再スキャン」するか、cask のバージョンの方が新しい場合は Homebrew にアプリを置き換えさせてください。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brewは一度に1つのコマンドしか実行できません。もう一方（ターミナルまたは別のアプリ内）が終了するのを待ってから、再試行してください。";
 "brew bundle check failed:\n" = "brew bundle checkに失敗しました:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundleが%lld秒以内に終了しなかったため、Tankardが停止しました。Homebrewがビジー状態か、ネットワークを待っている可能性があります。しばらくしてからもう一度お試しください。";
 "brew bundle dump failed:\n" = "brew bundle dumpに失敗しました:\n";
+"brew can't adopt this copy because its version differs from the cask's." = "このアプリはバージョンが cask と異なるため、brew は引き継げません。";
 "brew can't update or install while it can't write there." = "brewは、そこに書き込めない間は更新やインストールができません。";
 "brew cleanup -n exited %d." = "brew cleanup -nが%dで終了しました。";
 "brew clones %@ and reads its formulae and casks." = "brewは%@をクローンし、そのformulaとcaskを読み込みます。";
@@ -1317,6 +1332,7 @@
 "brew says the scan is incomplete: %@." = "brewによると、スキャンは不完全です: %@。";
 "brew services failed" = "brew servicesに失敗しました";
 "brew services list exited %d" = "brew services listが%dで終了しました";
+"brew stopped after removing %@; Tankard put the old version back at %@." = "brew は %1$@ を削除した後に停止しました。Tankard が古いバージョンを %2$@ に戻しました。";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-infoがTankardで読み取れない内容を出力しました。";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-infoがTankardで読み取れない内容を出力しました:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: 「Trust non-official tap formulae, casks or commands so Homebrew may load them.」これらは作者のRubyコードです。作者を信頼できるtapだけを信頼してください。";
@@ -1394,6 +1410,7 @@
 "pin changed" = "ピン留めを変更しました";
 "pinned" = "ピン留め済み";
 "reinstalled" = "再インストール済み";
+"replaced" = "置き換え済み";
 "result unknown" = "結果不明";
 "set to update itself" = "自己更新に設定";
 "source" = "ソース";

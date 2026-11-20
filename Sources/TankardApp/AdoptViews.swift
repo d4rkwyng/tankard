@@ -11,6 +11,7 @@ import TankardCore
 //   TANKARD_DEMO_ADOPT=1        demo: open the sheet on the demo's apps
 //   TANKARD_DEMO_ADOPT=confirm  demo: also open the confirmation
 //   TANKARD_DEMO_ADOPT=run      demo: also confirm (the fake brew adopts)
+//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (GIMP)
 
 /// The Homebrew menu item. A view, so its store reads aren't tracked by App.body.
 struct AdoptMenuCommands: View {
@@ -65,6 +66,11 @@ struct AdoptSheet: View {
         .sheetFrame(width: 760, height: 620, store: store)
         .background(theme.window ?? .clear)
         .modifier(AdoptConfirmation(store: store, adopt: adopt))
+        // 0.8.10: Replace with Homebrew's Version's plan.
+        .sheet(item: Binding(get: { adopt.pendingReplace },
+                             set: { if $0 == nil && adopt.pendingReplace != nil { store.cancelReplace() } })) { plan in
+            ReplaceAppSheet(store: store, adopt: adopt, plan: plan)
+        }
     }
 
     @ViewBuilder
@@ -185,16 +191,15 @@ struct AdoptSheet: View {
                                                accessibilityName: String(localized: "Who updates \(r.app.displayName)")) { adopt.setPolicy($0, for: r) }
                     }
                 }
-                // Replacing the app is offered only for a sure match: on a
-                // weaker one it could overwrite a different app.
-                if adopt.offersReplace(r), let cask {
-                    HStack(spacing: 6) {
-                        Text("Or have Homebrew replace it, in Terminal:").font(.system(size: 11)).foregroundStyle(.secondary)
-                        let cmd = BrewCommands.display(AdoptCommands.replaceArguments(qualifiedName: cask.qualifiedName))
-                        Button("Copy Command") { copyToPasteboard(cmd) }
-                            .controlSize(.small)
-                            .help(String(localized: "\(cmd)\nThis deletes the app that is there and installs the cask's version in its place."))
-                    }
+                // Replacing the app is offered only for a sure match (on a
+                // weaker one it could overwrite a different app), and only
+                // when the cask's version is newer (0.8.10: never a downgrade).
+                if adopt.offersReplace(r) {
+                    Button("Replace with Homebrew's Version…") { store.requestReplace(r) }
+                        .controlSize(.small)
+                        .disabled(store.isBusy)
+                        .help(String(localized: "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched."))
+                        .accessibilityLabel(String(localized: "Replace \(r.app.displayName) with Homebrew's version"))
                 }
             }
         }
@@ -263,6 +268,71 @@ struct AdoptSheet: View {
     }
 }
 
+/// 0.8.10: the plan before Replace with Homebrew's Version: the app, its
+/// version and the cask's, what changes and what doesn't, the command. An
+/// open app has to be quit first; Tankard only checks, it never quits it.
+struct ReplaceAppSheet: View {
+    var store: AppStore
+    var adopt: AdoptStore
+    var plan: ReplaceAppPlan
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SheetHeader(icon: "arrow.triangle.2.circlepath",
+                        title: String(localized: "Replace \(plan.appName) with Homebrew's version?"),
+                        subtitle: String(localized: "brew can't adopt this copy because its version differs from the cask's."))
+            HStack(spacing: 8) {
+                Text(plan.appName).font(.system(size: 13, weight: .semibold))
+                Text(verbatim: "\(plan.installedVersion) → \(plan.caskVersion)")
+                    .font(.system(size: 13)).monospacedDigit()
+                    .accessibilityLabel(String(localized: "Version \(plan.installedVersion) to \(plan.caskVersion)"))
+            }
+            .accessibilityElement(children: .combine)
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(plan.planLines, id: \.self) { line in
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(verbatim: "•").accessibilityHidden(true)
+                        Text(line).fixedSize(horizontal: false, vertical: true)
+                    }
+                    .font(.system(size: 12))
+                }
+            }
+            HStack(spacing: 6) {
+                Text("Tankard runs:").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text(verbatim: plan.command).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
+                    .lineLimit(1).truncationMode(.middle)
+            }
+            if adopt.replaceAppOpen {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill").accessibilityHidden(true)
+                    Text(plan.runningNote).fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.system(size: 12)).foregroundStyle(theme.warning(scheme).text)
+                .accessibilityElement(children: .combine)
+            }
+            Spacer(minLength: 0)
+            HStack {
+                Spacer()
+                if adopt.replaceAppOpen {
+                    Button("Check Again") { store.refreshReplaceRunning() }
+                }
+                Button("Cancel", role: .cancel) { store.cancelReplace() }
+                    .keyboardShortcut(.cancelAction)
+                Button("Replace") { store.confirmReplace() }
+                    .buttonStyle(.primaryAction)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(adopt.replaceAppOpen || store.isBusy)
+            }
+        }
+        .padding(20)
+        .frame(width: 500)
+        .fixedSize(horizontal: false, vertical: true)
+        .background(theme.window ?? .clear)
+    }
+}
+
 /// An alert binding that writes nothing when unchanged.
 @MainActor
 private func adoptPendingBinding(_ adopt: AdoptStore) -> Binding<Bool> {
@@ -303,6 +373,11 @@ func applyAdoptLaunchOptions(store: AppStore, options: LaunchOptions) async {
     guard env["TANKARD_ADOPT"] == "1" || demoMode != nil else { return }
     store.openAdopt()
     for _ in 0..<200 where store.adopt.phase != .ready { try? await Task.sleep(for: .milliseconds(50)) }
+    // 0.8.10: the first row that offers Replace with Homebrew's Version: its plan.
+    if demoMode == "replace" {
+        if let row = store.adopt.rows(.needsUpdate).first(where: store.adopt.offersReplace) { store.requestReplace(row) }
+        return
+    }
     guard let mode = demoMode, mode == "confirm" || mode == "run" else { return }
     store.adopt.requestAdopt()
     if mode == "run" {

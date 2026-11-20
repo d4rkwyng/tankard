@@ -915,10 +915,53 @@ public enum AdoptCommands {
         ["install", "--cask", "--adopt"] + BrewOperand.one(qualifiedName)
     }
 
-    /// For "needs update first": what replacing the app with the cask's
-    /// version would take. Shown to copy, never run by Tankard: it
-    /// overwrites the app that is there.
+    /// For "needs update first": replacing the app with the cask's version
+    /// (0.8.10: Replace with Homebrew's Version, `AdoptReplace`). brew
+    /// deletes the app that is there and moves the download in its place.
     public static func replaceArguments(qualifiedName: String) -> [String] {
         ["install", "--cask", "--force"] + BrewOperand.one(qualifiedName)
+    }
+}
+
+/// 0.8.10: when "Replace with Homebrew's Version" is offered. brew's
+/// --adopt refuses an app whose version differs from the download's
+/// (moved.rb, "the existing app is different from the one being
+/// installed"); `brew install --cask --force` replaces it instead. Tankard
+/// offers that only as an update: the cask's version must be newer than
+/// the installed one by brew's own ordering (`BrewVersion`), never equal,
+/// older or not comparable.
+public enum AdoptReplace {
+    /// Why it is or isn't offered.
+    public enum Eligibility: Sendable, Equatable {
+        /// The cask's version is newer: offered.
+        case update(installed: String, cask: String)
+        /// Adopt can do it, or can't for another reason than the version.
+        case notVersionMismatch
+        /// The cask's version is the same by brew's ordering ("1.0" and
+        /// "1.0.0"), older (a downgrade), or the two can't be compared.
+        case notNewer
+        /// A version without a number (`latest`, "unknown", empty).
+        case unparseable
+    }
+
+    public static func eligibility(_ verdict: AdoptVerdict?) -> Eligibility {
+        guard case .needsUpdate(let installed, let cask)? = verdict else { return .notVersionMismatch }
+        return eligibility(installed: installed, cask: cask)
+    }
+
+    /// `cask` is the cask version's comparable part (`AdoptVersion.split`'s head).
+    public static func eligibility(installed: String, cask: String) -> Eligibility {
+        let i = installed.trimmingCharacters(in: .whitespaces), c = cask.trimmingCharacters(in: .whitespaces)
+        guard comparable(i), comparable(c) else { return .unparseable }
+        guard BrewVersion(c).compare(to: BrewVersion(i)) == 1 else { return .notNewer }
+        return .update(installed: i, cask: c)
+    }
+
+    /// Has a digit, isn't `latest` or a HEAD build: brew's ordering means
+    /// something for it.
+    static func comparable(_ v: String) -> Bool {
+        let l = v.lowercased()
+        guard !l.isEmpty, l != "latest", !BrewVersion(v).isHead else { return false }
+        return v.contains { $0.isASCII && $0.isNumber }
     }
 }

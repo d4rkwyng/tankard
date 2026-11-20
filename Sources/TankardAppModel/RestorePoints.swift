@@ -655,7 +655,7 @@ public final class RollbackSettings {
     /// The brew commands that can run brew's periodic cleanup.
     public nonisolated static func appliesTo(_ action: SessionAction) -> Bool {
         switch action {
-        case .upgrade, .install, .replaceBottle, .adopt: return true
+        case .upgrade, .install, .replaceBottle, .adopt, .replaceApp: return true
         case .uninstall, .cleanup, .autoremove, .tap, .untap, .restore: return false
         }
     }

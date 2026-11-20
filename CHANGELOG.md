@@ -6,6 +6,9 @@ are its section below (`Scripts/changelog-section.sh`).
 
 ## [0.8.10]
 
+### Added
+- **Replace with Homebrew's Version.** Homebrew can only adopt an app when it is exactly the version the cask installs, so an older copy you installed yourself stayed under "Needs update first". When the cask's version is newer, the app's row now has **Replace with Homebrew's Version…**: a plan shows the app, its version and the new one, and that your settings and data in ~/Library are not touched; from then on Homebrew manages the app. The app has to be closed first (Tankard asks, it doesn't quit it). Tankard keeps a copy of the app while brew runs, and if brew fails it shows brew's error and leaves the app as it was. Never offered for an older or equal version, or when only the app's name matches.
+
 ### Fixed
 - **No more Security warnings at launch.** Tankard and its password dialog checked their own code signature on the main thread, and macOS logged "This method should not be called on the main thread as it may lead to UI unresponsiveness" about 12 times each time Tankard started, and again each time the password dialog opened. The checks now run on a background thread; what they decide is unchanged.
 - **The French Upgrades settings are as tall as the other languages.** "Mise à niveau auto :" fits next to its pop-up again, instead of pushing it onto a line of its own.

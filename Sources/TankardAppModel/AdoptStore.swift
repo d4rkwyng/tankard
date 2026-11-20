@@ -12,6 +12,7 @@ import TankardCore
 //   TANKARD_DEMO_ADOPT=1        demo: open the sheet on the demo's apps
 //   TANKARD_DEMO_ADOPT=confirm  demo: also open the confirmation
 //   TANKARD_DEMO_ADOPT=run      demo: also confirm (the fake brew adopts)
+//   TANKARD_DEMO_ADOPT=replace  demo: Replace with Homebrew's Version's plan (GIMP)
 
 /// What the scan reads: the cask index and the apps on disk.
 public struct AdoptInput: Sendable {
@@ -52,7 +53,7 @@ public enum AdoptGroup: String, CaseIterable, Identifiable, Sendable {
         case .ready:
             return String(localized: "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).")
         case .needsUpdate:
-            return String(localized: "brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you.")
+            return String(localized: "brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it.")
         case .cantAdopt:
             return String(localized: "These match a cask, but brew install --adopt wouldn't take them over.")
         case .noCask:
@@ -178,6 +179,11 @@ public final class AdoptStore {
     public private(set) var policies: [String: SelfUpdatePolicy] = [:]
     /// The confirmation, while it shows.
     public private(set) var pendingConfirm: [AdoptPlanItem]?
+    /// 0.8.10: Replace with Homebrew's Version's plan sheet, while it shows.
+    public internal(set) var pendingReplace: ReplaceAppPlan?
+    /// 0.8.10: that app is open (checked when the sheet opens, on Check
+    /// Again and right before starting).
+    public internal(set) var replaceAppOpen = false
 
     /// Reads the index and the apps (set by AppStore).
     @ObservationIgnored public var loader: AdoptLoader?
@@ -218,6 +224,7 @@ public final class AdoptStore {
         policies = [:]
         ticked = Set(scan.rows.filter(defaultTicked).map(\.id))
         pendingConfirm = nil
+        pendingReplace = nil
         phase = .ready
     }
 
@@ -271,11 +278,25 @@ public final class AdoptStore {
         return !row.isAmbiguous
     }
 
-    /// "Needs update first": the copyable `brew install --cask --force`,
-    /// only for a sure match (on a weaker one it could overwrite a
-    /// different app with the same name).
+    /// "Needs update first": Replace with Homebrew's Version (0.8.10;
+    /// before, a copyable `brew install --cask --force`). Only for a sure
+    /// match (on a weaker one it could overwrite a different app with the
+    /// same name), and only when the cask's version is newer than the
+    /// app's: never a downgrade, never versions brew can't order
+    /// (`AdoptReplace`).
     public func offersReplace(_ row: AdoptRow) -> Bool {
-        group(row) == .needsUpdate && confidence(row) == .high && !row.isAmbiguous
+        guard group(row) == .needsUpdate, confidence(row) == .high, !row.isAmbiguous else { return false }
+        if case .update = AdoptReplace.eligibility(verdict(row)) { return true }
+        return false
+    }
+
+    /// The plan sheet's facts for a row that `offersReplace`.
+    public func replacePlan(_ row: AdoptRow) -> ReplaceAppPlan? {
+        guard offersReplace(row), let c = cask(row),
+              case .update(let installed, let caskVersion) = AdoptReplace.eligibility(verdict(row)) else { return nil }
+        return ReplaceAppPlan(token: c.token, qualifiedName: c.qualifiedName, appName: row.app.displayName,
+                              appPath: row.app.path, bundleID: row.app.bundleID,
+                              installedVersion: installed, caskVersion: caskVersion)
     }
 
     public func rows(_ g: AdoptGroup) -> [AdoptRow] {

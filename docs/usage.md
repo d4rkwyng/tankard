@@ -622,7 +622,8 @@ The apps are grouped:
 
 - **Ready to adopt.**
 - **Needs update first:** Homebrew adopts only the exact version the cask installs. Update
-  the app with its own updater, then click **Scan Again**.
+  the app with its own updater, then click **Scan Again**. Or, when the cask's version is
+  newer and the app's ID matches, click **Replace with Homebrew's Version…** (see below).
 - **Can't adopt:** for example, the cask runs an installer package, or the app isn't where
   the cask puts it.
 - **No cask.**
@@ -633,6 +634,18 @@ Tankard knows them from the package's install receipt and the cask's uninstall s
 
 **After adopting, Homebrew owns the app.** It stays where it is, but `brew upgrade`
 replaces it with the cask's version, and uninstalling the cask deletes the app.
+
+**Replace with Homebrew's Version.** For an app older than the cask, Homebrew can't adopt
+it, but it can install the cask's version in its place. Click **Replace with Homebrew's
+Version…** on the app's row. The plan shows the app, its version and the cask's (for
+example 3.2.6 → 3.2.8), and what happens: your settings and data in ~/Library are not
+touched, and from now on Homebrew manages the app. Quit the app first: if it is open,
+Tankard says so and waits for you to click **Check Again**; it never quits the app for
+you. Then click **Replace**. Tankard runs `brew install --cask --force <cask>` in the
+activity sheet, asking for your password as for any cask install. Tankard keeps a copy of
+the app while brew runs: if brew fails, the sheet shows brew's error and the app is left
+as it was. Tankard never offers this for a version that is older, the same or can't be
+compared, or for a match on the name alone.
 
 Adopt Apps isn't available in Intelbrew mode, because it needs Homebrew's online cask list.
 
@@ -1014,6 +1027,7 @@ it straight to sudo (or you can run the command in Terminal). See below.
 | Install | `brew install --formula\|--cask <tap>/<name>`; installing a Brewfile's missing packages fetches first, as Upgrade does |
 | Uninstall | `HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --formula\|--cask <tap>/<name>` (once per installed version of a formula), then each dependency you chose to remove |
 | Adopt | `brew install --cask --adopt <tap>/<name>`, one per app |
+| Replace with Homebrew's Version | `brew install --cask --force <tap>/<name>` |
 | Replace with Bottle | `brew reinstall --force-bottle --formula <tap>/<name>` |
 | Pin / Unpin | `brew pin\|unpin --formula\|--cask <tap>/<name>` |
 | Clean Up | `brew cleanup` |

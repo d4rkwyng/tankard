@@ -30,9 +30,12 @@ extension Demo {
         return AdoptInput(index: index, apps: apps, source: String(localized: "Demo · \(index.count.formatted()) casks"))
     }
 
-    /// `brew install --cask --adopt <token>`, scripted.
+    /// `brew install --cask --adopt <token>`, scripted. 0.8.10: and
+    /// `--force` (Replace with Homebrew's Version).
     static func adoptStream(state: State, arguments: [String], say: (String, Double) async throws -> Void) async throws -> Int32? {
-        guard arguments.count == 4, Array(arguments.prefix(3)) == ["install", "--cask", "--adopt"], let qualified = arguments.last else { return nil }
+        guard arguments.count == 4, Array(arguments.prefix(2)) == ["install", "--cask"],
+              arguments[2] == "--adopt" || arguments[2] == "--force", let qualified = arguments.last else { return nil }
+        let replacing = arguments[2] == "--force"
         let token = qualified.split(separator: "/").last.map(String.init) ?? qualified
         guard let json = adoptCaskJSON(token) ?? catalogJSON(.arm64, kind: .cask, name: token),
               let e = (try? JSONSerialization.jsonObject(with: json)) as? [String: Any] else {
@@ -43,7 +46,13 @@ extension Demo {
         let target = ((e["artifacts"] as? [[String: Any]])?.first { $0["app"] != nil }?["target"] as? String) ?? "/Applications/\(token).app"
         try await say("==> Downloading \(token) \(version)\n", 300)
         try await say("==> Installing Cask \(token)\n", 400)
-        try await say("==> Adopting existing App at '\(target)'\n", 500)
+        if replacing {
+            try await say("Warning: It seems there is already an App at '\(target)'; overwriting.\n", 300)
+            try await say("==> Removing App '\(target)'\n", 300)
+            try await say("==> Moving App '\((target as NSString).lastPathComponent)' to '\(target)'\n", 500)
+        } else {
+            try await say("==> Adopting existing App at '\(target)'\n", 500)
+        }
         try await say("🍺  \(token) was successfully installed!\n", 300)
         state.removed.withLock { _ = $0.remove(token) }
         state.installed.withLock { $0[token] = (.cask, json) }

@@ -90,6 +90,10 @@ public final class AppStore {
         public var restorePointsURL: URL?
         /// 0.8: Adopt Apps' scan (nil: the real cask.json and disk).
         public var adoptLoader: AdoptLoader?
+        /// 0.8.10: Replace with Homebrew's Version's copy of the app while
+        /// brew runs (nil: none, as in tests and demo mode; `live()` sets
+        /// `.live()`).
+        public var appReplaceSafety: AppReplaceSafety?
         /// 0.8: whether the background `brew update` may run at all. Only the
         /// real app (`live()`) turns it on: never demo mode, tests opt in.
         public var backgroundUpdates = false
@@ -196,6 +200,7 @@ public final class AppStore {
             d.autoUpdateLogURL = AutoUpdateLog.defaultURL
             d.historyURL = HistoryLog.defaultURL
             d.restorePointsURL = RestorePointStore.defaultDirectory
+            d.appReplaceSafety = .live()
             d.backgroundUpdates = true
             d.downloadMonitor = { client, env in DownloadMonitor.live(client: client, env: env) }
             d.askpassHelper = AdminPassword.liveHelper()
@@ -407,6 +412,9 @@ public final class AppStore {
     @ObservationIgnored public let taps = TapsStore()
     /// 0.8: the Adopt Apps sheet (AdoptStore.swift).
     @ObservationIgnored public let adopt = AdoptStore()
+    /// 0.8.10: the running Replace with Homebrew's Version, by package id
+    /// (AppStore+ReplaceApp.swift).
+    @ObservationIgnored var replaceBackups: [String: ReplaceBackup] = [:]
     /// 0.7: restore points and "Keep the previous version" (RestorePoints.swift).
     @ObservationIgnored public let restorePoints: RestorePointStore
     /// 0.8.5: Electron apps on a Mac Pro 6,1 (ElectronGPU.swift).
@@ -1598,6 +1606,7 @@ public final class AppStore {
         // 0.8.5: after the rest (it may open the App Management page).
         defer { progressPanelSessionFinished(session) }
         if session.action == .adopt { adoptSessionFinished(session) }
+        if session.action == .replaceApp { replaceSessionFinished(session) }
         // 0.8.5: a tap added or removed (Enable Casks among them): Discover
         // lists what the taps now hold.
         if session.action == .tap || session.action == .untap, let d = discover {

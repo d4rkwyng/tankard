@@ -10,7 +10,6 @@
 " to confirm" = " 以确认";
 " · partial scan" = " · 部分扫描";
 " · source" = " · 源码";
-"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\n这会删除现有的 App，并在原位置安装 cask 的版本。";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ 失败（退出码 %d）";
 "%@ %@ needs administrator rights" = "%@ %@ 需要管理员权限";
@@ -43,6 +42,7 @@
 "%@ installed" = "已安装 %@";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ 已可用，但此软件包已固定：brew upgrade 和“全部升级”会跳过它。取消固定后即可升级。";
 "%@ is installed" = "%@ 已安装";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ 正在运行。请先退出它，然后点按“再次检查”。Tankard 不会替你退出它。";
 "%@ is pinned" = "%@ 已固定";
 "%@ is running" = "%@ 正在运行";
 "%@ is there but doesn't run. It said:" = "%@ 存在但无法运行。它的输出：";
@@ -56,6 +56,8 @@
 "%@ stopped" = "%@ 已停止";
 "%@ uninstalled" = "已卸载 %@";
 "%@ upgraded" = "已升级 %@";
+"%@ wasn't replaced." = "%@ 未被替换。";
+"%@ wasn't replaced; it is as it was." = "%@ 未被替换，保持原样。";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ 将作为 %@ 接管。还有其他 cask 安装同名应用(%@):brew upgrade 会跟随你接管的 cask,请确认它是正确的那个。";
 "%@ would be installed too" = "也会安装 %@";
 "%@ · %lld" = "%@ · %lld";
@@ -456,6 +458,7 @@
 "From brew.env: brew reads it itself." = "来自 brew.env：brew 会自行读取。";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "来自 formulae.brew.sh，缓存一小时，位于 ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "来自其收据：所有已安装且链接到它的内容（brew deps --installed 列出的可能更少）";
+"From now on Homebrew manages this app: brew upgrade updates it, and uninstalling the cask deletes it." = "此后由 Homebrew 管理这个 App：brew upgrade 会更新它，卸载 cask 会删除它。";
 "From source" = "从源码";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "来自 Homebrew/install README（“Uninstall Homebrew”），带 --path 选项，因此只会移除 Tankard 显示的那个 Homebrew。它在“终端”中运行，并在移除任何内容前再次询问。";
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "此后这些 App 归 Homebrew 管理：brew upgrade 会将其替换为 cask 的版本，卸载 cask（在 Tankard 中或使用 brew uninstall）会删除该 App。";
@@ -491,11 +494,13 @@
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew 不会卸载已固定的软件包。请先取消固定 %@，或保留它。";
+"Homebrew downloads %@ %@ and puts it in place of the app at %@." = "Homebrew 会下载 %1$@ %2$@，并用它替换位于 %3$@ 的 App。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。";
 "Homebrew has disabled this cask." = "Homebrew 已停用此 cask。";
 "Homebrew has finished. Quit Tankard?" = "Homebrew 已完成。要退出 Tankard 吗?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew 无需添加此目录即可从中安装。无需任何操作。";
+"Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew 会用 cask 的较新版本替换这个 App，此后由 Homebrew 管理。你在 ~/Library 中的设置和数据不会被改动。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。";
 "Homebrew is still upgrading %@." = "Homebrew 仍在升级 %@。";
@@ -531,6 +536,7 @@
 "How often Tankard checks for new versions in the background." = "Tankard 在后台检查新版本的频率。";
 "I've done this" = "我已完成";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "如果下载内容不一致，brew 会停止处理该 App 并保持原样。";
+"If brew fails, the app is left as it was." = "如果 brew 失败，App 会保持原样。";
 "If “%@” is an app, Homebrew can't find it because apps (casks) are turned off. Turning them on is a one-time download of about 620 MB." = "如果“%@”是一个 App，Homebrew 找不到它，因为 App（cask）已关闭。开启只需一次性下载约 620 MB。";
 "Ignored: %@ (%@)" = "已忽略：%@（%@）";
 "Ignored: not on Tankard's list of settings it passes to brew." = "已忽略：不在 Tankard 传给 brew 的设置列表中。";
@@ -774,7 +780,6 @@
 "Opens Tankard when you log in, as a macOS login item." = "登录 Mac 时作为 macOS 登录项打开 Tankard。";
 "Opens Terminal. Nothing is typed or run for you." = "打开“终端”。不会为你输入或运行任何内容。";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "可选，不会运行：用 brew untap homebrew/core 删除 core 克隆。已打开的终端窗口在重新打开前仍使用旧设置。摘自 d4rkwyng/intelbrew 的 README，“How do I go back to upstream Homebrew?”。";
-"Or have Homebrew replace it, in Terminal:" = "或者在终端中让 Homebrew 替换它：";
 "Other" = "其他";
 "Other installed packages need the current version, and Homebrew can't give them an older one." = "其他已安装的软件包需要当前版本，而 Homebrew 无法为它们提供旧版本。";
 "Other packages need it" = "其他软件包需要它";
@@ -865,9 +870,14 @@
 "Remove…" = "移除…";
 "Removing tap" = "正在移除 tap";
 "Removing unused dependencies" = "正在移除未使用的依赖项";
+"Replace" = "替换";
+"Replace %@ with Homebrew's version" = "用 Homebrew 的版本替换 %@";
+"Replace %@ with Homebrew's version?" = "要用 Homebrew 的版本替换 %@ 吗？";
 "Replace all (%lld)" = "全部替换 (%lld)";
 "Replace with Bottle" = "替换为 bottle";
+"Replace with Homebrew's Version…" = "替换为 Homebrew 的版本…";
 "Replacement: " = "替代项： ";
+"Replacing" = "替换中";
 "Report an Issue…" = "报告问题…";
 "Requested" = "已请求";
 "Restart" = "重新启动";
@@ -1052,6 +1062,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
+"Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";
+"Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard 无法放回 %1$@（%2$@）。旧版本的副本位于 %3$@。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard 无法读取你的 Tap 中的软件包。请稍后重试。";
 "Tankard couldn't read this file as a Brewfile." = "Tankard 无法将此文件作为 Brewfile 读取。";
@@ -1247,6 +1259,7 @@
 "Version" = "版本";
 "Version %@" = "版本 %@";
 "Version %@ is skipped" = "版本 %@ 已跳过";
+"Version %@ to %@" = "版本 %1$@ 到 %2$@";
 "View" = "显示";
 "Vulnerability scan" = "漏洞扫描";
 "Vulnerable" = "存在漏洞";
@@ -1282,6 +1295,7 @@
 "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "清理时保留哪些旧版本，由你的 Homebrew 设置（brew.env）决定。";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "你的 Homebrew 设置使用了其他密码程序，因此 Tankard 无法在这里询问你的密码。请在“终端”中运行此步骤：";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
+"Your settings and data in ~/Library are not touched." = "你在 ~/Library 中的设置和数据不会被改动。";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
 "adopted" = "已接管";
 "and %lld more" = "及另外 %lld 个";
@@ -1291,11 +1305,12 @@
 "auto" = "自动";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --version 已退出，代码 %d";
-"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew 只接管与 cask 安装版本完全相同的版本。请先用 App 自带的更新程序更新，然后点按“重新扫描”。Tankard 不会替你替换该 App。";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew 只接管与 cask 安装版本完全相同的版本。请用 App 自带的更新程序更新后点按“重新扫描”；如果 cask 的版本更新，也可以让 Homebrew 替换该 App。";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew 一次只允许运行一条命令。请等另一条命令（在“终端”或其他 App 中）完成后再重试。";
 "brew bundle check failed:\n" = "brew bundle check 失败：\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle 未在 %lld 秒内完成，因此 Tankard 已将其停止。Homebrew 可能正忙或在等待网络；请稍后再试。";
 "brew bundle dump failed:\n" = "brew bundle dump 失败：\n";
+"brew can't adopt this copy because its version differs from the cask's." = "这个副本的版本与 cask 的不同，brew 无法接管它。";
 "brew can't update or install while it can't write there." = "当 brew 无法写入那里时，就无法更新或安装。";
 "brew cleanup -n exited %d." = "brew cleanup -n 已退出，代码 %d。";
 "brew clones %@ and reads its formulae and casks." = "brew 会克隆 %@ 并读取其中的 formula 和 cask。";
@@ -1317,6 +1332,7 @@
 "brew says the scan is incomplete: %@." = "brew 表示扫描不完整：%@。";
 "brew services failed" = "brew services 失败";
 "brew services list exited %d" = "brew services list 已退出，代码 %d";
+"brew stopped after removing %@; Tankard put the old version back at %@." = "brew 在移除 %1$@ 后停止了；Tankard 已将旧版本放回 %2$@。";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info 输出了 Tankard 无法读取的内容。";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info 输出了 Tankard 无法读取的内容：\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust：“Trust non-official tap formulae, casks or commands so Homebrew may load them.” 它们是作者的 Ruby 代码。请只信任你信任其作者的 tap。";
@@ -1394,6 +1410,7 @@
 "pin changed" = "固定状态已更改";
 "pinned" = "已固定";
 "reinstalled" = "已重新安装";
+"replaced" = "已替换";
 "result unknown" = "结果未知";
 "set to update itself" = "设为自行更新";
 "source" = "源码";

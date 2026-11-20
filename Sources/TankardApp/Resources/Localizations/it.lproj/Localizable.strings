@@ -10,7 +10,6 @@
 " to confirm" = " per confermare";
 " · partial scan" = " · scansione parziale";
 " · source" = " · sorgente";
-"%@\nThis deletes the app that is there and installs the cask's version in its place." = "%@\nL'app esistente viene eliminata e al suo posto viene installata la versione del cask.";
 "%@ %@" = "%@ %@";
 "%@ %@ failed (exit %d)" = "%@ %@ non riuscito (uscita %d)";
 "%@ %@ needs administrator rights" = "%@ %@ richiede i diritti di amministratore";
@@ -43,6 +42,7 @@
 "%@ installed" = "%@ installato";
 "%@ is available, but this package is pinned: brew upgrade and Upgrade All skip it. Unpin it to upgrade." = "%@ è disponibile, ma questo pacchetto è bloccato: brew upgrade e Aggiorna tutto lo saltano. Sbloccalo per aggiornarlo.";
 "%@ is installed" = "%@ è installato";
+"%@ is open. Quit it first, then click Check Again. Tankard doesn't quit it for you." = "%@ è aperta. Chiudila prima, poi fai clic su Ricontrolla. Tankard non la chiude al posto tuo.";
 "%@ is pinned" = "%@ è bloccato";
 "%@ is running" = "%@ è in esecuzione";
 "%@ is there but doesn't run. It said:" = "%@ è presente ma non si avvia. Ha risposto:";
@@ -56,6 +56,8 @@
 "%@ stopped" = "%@ interrotto";
 "%@ uninstalled" = "%@ disinstallato";
 "%@ upgraded" = "%@ aggiornato";
+"%@ wasn't replaced." = "%@ non è stata sostituita.";
+"%@ wasn't replaced; it is as it was." = "%@ non è stata sostituita; è rimasta com'era.";
 "%@ will be adopted as %@. Other casks install an app with this name (%@): brew upgrade follows the cask you adopt, so make sure it's the right one." = "%@ sarà adottata come %@. Altri cask installano un’app con questo nome (%@): brew upgrade segue il cask che adotti, quindi verifica che sia quello giusto.";
 "%@ would be installed too" = "%@ verrebbe installato anch'esso";
 "%@ · %lld" = "%@ · %lld";
@@ -456,6 +458,7 @@
 "From brew.env: brew reads it itself." = "Da brew.env: brew lo legge da solo.";
 "From formulae.brew.sh, cached for an hour in ~/Library/Caches/net.mindtricks.tankard/api" = "Da formulae.brew.sh, in cache per un'ora in ~/Library/Caches/net.mindtricks.tankard/api";
 "From its receipt: everything installed it was linked against (brew deps --installed can list fewer)" = "Dalla sua ricevuta: tutto ciò che è stato installato con cui è stato collegato (brew deps --installed può elencarne meno)";
+"From now on Homebrew manages this app: brew upgrade updates it, and uninstalling the cask deletes it." = "Da ora Homebrew gestisce questa app: brew upgrade la aggiorna, e disinstallare il cask la elimina.";
 "From source" = "Dai sorgenti";
 "From the Homebrew/install README (\"Uninstall Homebrew\"), with its --path option so it removes only the Homebrew Tankard is showing. It runs in Terminal and asks once more before removing anything." = "Dal README di Homebrew/install (\"Uninstall Homebrew\"), con l'opzione --path così rimuove solo l'Homebrew mostrato da Tankard. Viene eseguito in Terminale e chiede ancora conferma prima di rimuovere qualcosa.";
 "From then on Homebrew owns these apps: brew upgrade replaces them with the cask's version, and uninstalling the cask (in Tankard or with brew uninstall) deletes the app." = "Da quel momento Homebrew gestisce queste app: brew upgrade le sostituisce con la versione del cask, e disinstallare il cask (in Tankard o con brew uninstall) elimina l'app.";
@@ -491,11 +494,13 @@
 "Homebrew couldn't write to its folders" = "Homebrew non è riuscito a scrivere nelle sue cartelle";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew non elenca ancora Tankard %@: il tap può richiedere un po’ di tempo dopo una versione. Riprova più tardi o scaricalo.";
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew non disinstalla i pacchetti bloccati. Sblocca prima %@ o tienilo.";
+"Homebrew downloads %@ %@ and puts it in place of the app at %@." = "Homebrew scarica %@ %@ e lo mette al posto dell'app in %@.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew ha un cask per queste app e la versione installata corrisponde (oppure l'app si aggiorna da sola, quindi brew non confronta).";
 "Homebrew has disabled this cask." = "Homebrew ha disattivato questo cask.";
 "Homebrew has finished. Quit Tankard?" = "Homebrew ha finito. Uscire da Tankard?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Questa copia è stata installata da Homebrew, quindi è Homebrew ad aggiornarla, tramite la coda. Tankard resta aperto mentre brew sostituisce l’app, poi propone di riavviarla.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installa da questo catalogo senza aggiungerlo. Non serve fare nulla.";
+"Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installa la versione più recente del cask al posto di questa app e da quel momento la gestisce. Le tue impostazioni e i tuoi dati in ~/Library non vengono toccati.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew sta modificando %1$@ ora. Se interrompi, Homebrew annulla il passaggio in corso e %2$@ resta com'era. Se resta qualcosa a metà, rieseguire di solito risolve.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew sta ancora aggiornando %@ (%lld di %lld).";
 "Homebrew is still upgrading %@." = "Homebrew sta ancora aggiornando %@.";
@@ -531,6 +536,7 @@
 "How often Tankard checks for new versions in the background." = "Ogni quanto Tankard cerca nuove versioni in background.";
 "I've done this" = "L'ho fatto";
 "If a download doesn't match, brew stops for that app and leaves it as it was." = "Se un download non corrisponde, brew si ferma per quell'app e la lascia com'era.";
+"If brew fails, the app is left as it was." = "Se brew non riesce, l'app resta com'era.";
 "If “%@” is an app, Homebrew can't find it because apps (casks) are turned off. Turning them on is a one-time download of about 620 MB." = "Se “%@” è un'app, Homebrew non la trova perché le app (cask) sono disattivate. Attivarle richiede un unico download di circa 620 MB.";
 "Ignored: %@ (%@)" = "Ignorata: %@ (%@)";
 "Ignored: not on Tankard's list of settings it passes to brew." = "Ignorata: non è nell'elenco delle impostazioni che Tankard passa a brew.";
@@ -774,7 +780,6 @@
 "Opens Tankard when you log in, as a macOS login item." = "Apre Tankard quando accedi, come elemento di login di macOS.";
 "Opens Terminal. Nothing is typed or run for you." = "Apre il Terminale. Nulla viene digitato o eseguito al posto tuo.";
 "Optional, not run: delete the core clone with brew untap homebrew/core. Terminal windows that were already open keep the old settings until reopened. From d4rkwyng/intelbrew's README, \"How do I go back to upstream Homebrew?\"." = "Facoltativo, non eseguito: elimina il clone di core con brew untap homebrew/core. Le finestre del Terminale già aperte mantengono le vecchie impostazioni finché non vengono riaperte. Dal README di d4rkwyng/intelbrew, \"How do I go back to upstream Homebrew?\".";
-"Or have Homebrew replace it, in Terminal:" = "Oppure fai sostituire l'app da Homebrew, nel Terminal:";
 "Other" = "Altro";
 "Other installed packages need the current version, and Homebrew can't give them an older one." = "Altri pacchetti installati richiedono la versione attuale, e Homebrew non può dar loro una versione precedente.";
 "Other packages need it" = "Altri pacchetti ne hanno bisogno";
@@ -865,9 +870,14 @@
 "Remove…" = "Rimuovi…";
 "Removing tap" = "Rimozione del tap";
 "Removing unused dependencies" = "Rimozione delle dipendenze inutilizzate";
+"Replace" = "Sostituisci";
+"Replace %@ with Homebrew's version" = "Sostituisci %@ con la versione di Homebrew";
+"Replace %@ with Homebrew's version?" = "Sostituire %@ con la versione di Homebrew?";
 "Replace all (%lld)" = "Sostituisci tutto (%lld)";
 "Replace with Bottle" = "Sostituisci con bottle";
+"Replace with Homebrew's Version…" = "Sostituisci con la versione di Homebrew…";
 "Replacement: " = "Sostituto: ";
+"Replacing" = "Sostituzione";
 "Report an Issue…" = "Segnala un problema…";
 "Requested" = "Richiesto";
 "Restart" = "Riavvia";
@@ -1052,6 +1062,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard non può chiederla qui. In Dettagli trovi cosa fare.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard confronta la versione di ogni app con quella di Homebrew. Quando corrispondono, Homebrew si occupa degli aggiornamenti senza spostare l'app.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard non è riuscito a caricare l’elenco dei pacchetti di Homebrew. Riprova tra un momento.";
+"Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard non è riuscito a fare una copia di sicurezza di %@, quindi non l'ha sostituita: %@";
+"Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard non è riuscito a rimettere a posto %1$@ (%2$@). Una copia della vecchia versione si trova in %3$@.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard non è riuscito a raggiungere la rete per scaricare l’elenco dei pacchetti di Homebrew. Controlla la connessione a Internet (o una VPN o un proxy), poi riprova.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard non è riuscito a leggere i pacchetti dei tuoi tap. Riprova tra un momento.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard non è riuscito a leggere questo file come Brewfile.";
@@ -1247,6 +1259,7 @@
 "Version" = "Versione";
 "Version %@" = "Versione %@";
 "Version %@ is skipped" = "La versione %@ è saltata";
+"Version %@ to %@" = "Versione da %@ a %@";
 "View" = "Vista";
 "Vulnerability scan" = "Scansione vulnerabilità";
 "Vulnerable" = "Vulnerabile";
@@ -1282,6 +1295,7 @@
 "Your Homebrew settings (brew.env) decide which old versions Clean Up keeps." = "Le tue impostazioni di Homebrew (brew.env) decidono quali versioni precedenti la pulizia conserva.";
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Le tue impostazioni di Homebrew usano un altro programma per la password, quindi Tankard non può chiederti la password qui. Esegui questo passaggio nel Terminale:";
 "Your PATH finds other tools before Homebrew's" = "Il tuo PATH trova altri strumenti prima di quelli di Homebrew";
+"Your settings and data in ~/Library are not touched." = "Le tue impostazioni e i tuoi dati in ~/Library non vengono toccati.";
 "a symlink to %@: that file is backed up and edited" = "un collegamento simbolico a %@: quel file viene salvato in backup e modificato";
 "adopted" = "adottate";
 "and %lld more" = "e altre %lld";
@@ -1291,11 +1305,12 @@
 "auto" = "auto";
 "bottle" = "bottle";
 "brew --version exited %d" = "brew --version è terminato con %d";
-"brew adopts only the exact version the cask installs. Update the app with its own updater, then Scan Again. Tankard doesn't replace the app for you." = "brew adotta solo la versione esatta installata dal cask. Aggiorna l'app con il suo programma di aggiornamento, poi Ripeti scansione. Tankard non sostituisce l'app al posto tuo.";
+"brew adopts only the exact version the cask installs. Update the app with its own updater and Scan Again, or, when the cask's version is newer, let Homebrew replace the app with it." = "brew adotta solo la versione esatta installata dal cask. Aggiorna l'app con il suo programma di aggiornamento e Ripeti scansione oppure, se la versione del cask è più recente, lascia che Homebrew sostituisca l'app.";
 "brew allows one command at a time. Wait for the other one (in Terminal, or another app) to finish, then retry." = "brew consente un solo comando alla volta. Attendi che l'altro (nel Terminale o in un'altra app) termini, poi riprova.";
 "brew bundle check failed:\n" = "brew bundle check non riuscito:\n";
 "brew bundle didn't finish within %lld seconds, so Tankard stopped it. Homebrew may be busy or waiting on the network; try again in a moment." = "brew bundle non è terminato entro %lld secondi, quindi Tankard lo ha interrotto. Homebrew potrebbe essere occupato o in attesa della rete; riprova tra un momento.";
 "brew bundle dump failed:\n" = "brew bundle dump non riuscito:\n";
+"brew can't adopt this copy because its version differs from the cask's." = "brew non può adottare questa copia perché la sua versione è diversa da quella del cask.";
 "brew can't update or install while it can't write there." = "brew non può aggiornare né installare finché non può scrivere lì.";
 "brew cleanup -n exited %d." = "brew cleanup -n è terminato con %d.";
 "brew clones %@ and reads its formulae and casks." = "brew clona %@ e ne legge le formulae e i cask.";
@@ -1317,6 +1332,7 @@
 "brew says the scan is incomplete: %@." = "brew dice che la scansione è incompleta: %@.";
 "brew services failed" = "brew services non riuscito";
 "brew services list exited %d" = "brew services list è terminato con %d";
+"brew stopped after removing %@; Tankard put the old version back at %@." = "brew si è fermato dopo aver rimosso %1$@; Tankard ha rimesso la vecchia versione in %2$@.";
 "brew tap-info printed something Tankard couldn't read." = "brew tap-info ha stampato qualcosa che Tankard non ha potuto leggere.";
 "brew tap-info printed something Tankard couldn't read:\n%@" = "brew tap-info ha stampato qualcosa che Tankard non ha potuto leggere:\n%@";
 "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" They are its author's Ruby code. Trust only taps whose author you trust." = "brew trust: \"Trust non-official tap formulae, casks or commands so Homebrew may load them.\" Sono codice Ruby del loro autore. Considera attendibili solo i tap di cui ti fidi dell'autore.";
@@ -1394,6 +1410,7 @@
 "pin changed" = "blocco modificato";
 "pinned" = "bloccato";
 "reinstalled" = "reinstallato";
+"replaced" = "sostituite";
 "result unknown" = "risultato sconosciuto";
 "set to update itself" = "impostata per aggiornarsi da sola";
 "source" = "sorgente";
