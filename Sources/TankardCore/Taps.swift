@@ -103,11 +103,14 @@ public enum TapCommands {
     public static let infoArguments = ["tap-info", "--installed", "--json"]
 
     /// `brew tap user/repo [URL]`.
+    /// 0.8.9: the names go through BrewOperand like every other name
+    /// (TapInput already refuses one that starts with "-"; this is the
+    /// second check).
     public static func tap(_ name: String, url: String? = nil) -> [String] {
-        ["tap", name] + (url.map { [$0] } ?? [])
+        ["tap"] + BrewOperand.list([name] + (url.map { [$0] } ?? []))
     }
 
-    public static func untap(_ name: String) -> [String] { ["untap", name] }
+    public static func untap(_ name: String) -> [String] { ["untap"] + BrewOperand.one(name) }
 
     /// 0.8.5 (bug hunt L8): Remove runs `brew untrust --tap` before `brew
     /// untap` for a third-party tap. brew's trust.json keeps a tap's remote

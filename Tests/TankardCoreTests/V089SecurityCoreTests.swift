@@ -44,3 +44,17 @@ struct V089BrewLocationTests {
         #endif
     }
 }
+
+/// 0.8.9 batch 2: tap and untap put "--" before a name brew could read as
+/// an option, as every other command does (Add Tap's check refuses such a
+/// name first).
+struct V089TapOperandTests {
+    @Test func tapAndUntapPutDashDashBeforeAnOptionLikeName() {
+        #expect(TapCommands.tap("--force") == ["tap", "--", "--force"])
+        #expect(TapCommands.tap("-x/y", url: "https://example.com/x.git") == ["tap", "--", "-x/y", "https://example.com/x.git"])
+        #expect(TapCommands.untap("--force") == ["untap", "--", "--force"])
+        // Ordinary names are unchanged.
+        #expect(TapCommands.tap("steipete/tap") == ["tap", "steipete/tap"])
+        #expect(TapCommands.untap("steipete/tap") == ["untap", "steipete/tap"])
+    }
+}
