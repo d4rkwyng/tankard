@@ -120,9 +120,10 @@ func makeClient(_ runner: CommandRunning, intelbrew: Bool = true) -> BrewClient 
 ///   and the script runs `defaults delete` and removes the plist for each
 ///   name listed. That is the reliable one: nothing in the tests can still
 ///   write by then.
-/// - An `atexit` hook here, for a bare `swift test`. It can miss some: at
-///   exit, async work left over from tests (stores, background checks) may
-///   still write a suite after it was removed.
+/// - An `atexit` hook here, for a bare `swift test`: it removes each suite
+///   and then leaves a detached sweeper to delete the plists cfprefsd writes
+///   back once the process has gone (`sweepAfterExit`).
+/// `Scoped` / `withTestDefaults` remove a suite as soon as the test is done.
 /// Before 0.8.4 nothing removed them and a busy Mac collected over 10,000
 /// plists in ~/Library/Preferences. Names are per-process (a UUID each), so
 /// neither ever touches another, concurrent test run's suites.
@@ -177,7 +178,35 @@ enum TestDefaults {
             .appendingPathComponent("Library/Preferences/\(name).plist")
     }
 
-    static func removeAll() { registry.drain().forEach(remove) }
+    static func removeAll() {
+        let names = registry.drain()
+        names.forEach(remove)
+        sweepAfterExit(names)
+    }
+
+    /// 0.8.9: cfprefsd writes an emptied domain back as a `{}` plist when
+    /// the process disconnects, after anything this process could delete
+    /// (a bare `swift test` left ~175 per run that way). So for a bare run,
+    /// a detached `sh` waits for this process to be gone and then deletes
+    /// each listed plist, the exact path and only test-shaped names. Under
+    /// Scripts/test.sh (TANKARD_TEST_DEFAULTS_LIST set) the script does this.
+    private static func sweepAfterExit(_ names: [String]) {
+        guard ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"] == nil else { return }
+        let safe = names.filter {
+            ($0.hasPrefix("net.mindtricks.tankard.tests.") || $0.hasPrefix("tankard-test-")) && !$0.contains("/")
+        }
+        guard !safe.isEmpty else { return }
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/bin/sh")
+        p.arguments = ["-c", """
+            while kill -0 "$1" 2>/dev/null; do sleep 0.2; done; sleep 3; shift
+            for n; do rm -f "$HOME/Library/Preferences/$n.plist"; done
+            """, "sh", String(getpid())] + safe
+        p.standardInput = FileHandle.nullDevice
+        p.standardOutput = FileHandle.nullDevice
+        p.standardError = FileHandle.nullDevice
+        try? p.run()
+    }
 
     /// 0.8.9: a suite that removes itself (domain and plist) when the test
     /// is done with it, rather than only at process exit, so a run that is
