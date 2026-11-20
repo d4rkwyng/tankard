@@ -106,7 +106,7 @@ final class ProgressPanelController: NSObject, NSWindowDelegate {
         // its title and buttons. The content now reports each page's size
         // and `fit` sets the panel to it, up to the screen's height (the
         // page scrolls past that).
-        let host = NSHostingView(rootView: ProgressPanelContent(store: store, appearance: appearance) { [weak self] size in
+        let host = FirstMouseHostingView(rootView: ProgressPanelContent(store: store, appearance: appearance) { [weak self] size in
             self?.fit(size)
         })
         host.sizingOptions = []

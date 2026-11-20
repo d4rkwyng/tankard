@@ -205,6 +205,8 @@ struct GeneralSettings: View {
 enum SettingsFit {
     static let width: CGFloat = 460
     static var widths: [String: CGFloat] = [:]
+    /// 0.8.9: each tab's height too (French Upgrades was 629 pt).
+    static var heights: [String: CGFloat] = [:]
 
     static func report() -> String {
         var ok = !widths.isEmpty
@@ -212,7 +214,8 @@ enum SettingsFit {
         for (tab, w) in widths.sorted(by: { $0.key < $1.key }) {
             let fits = w <= width + 0.5
             if !fits { ok = false }
-            lines.append(String(format: "settings-check: tab %@ width %.1f of %.0f %@", tab, w, width, fits ? "fits" : "OVERFLOWS"))
+            lines.append(String(format: "settings-check: tab %@ width %.1f of %.0f %@, height %.1f", tab, w, width,
+                                fits ? "fits" : "OVERFLOWS", heights[tab] ?? -1))
         }
         lines.append(ok ? "settings-check: OK" : "settings-check: FAIL")
         return lines.joined(separator: "\n") + "\n"
@@ -226,8 +229,8 @@ extension View {
     func settingsFitProbe(_ tab: String) -> some View {
         background(GeometryReader { g in
             Color.clear
-                .onAppear { SettingsFit.widths[tab] = g.size.width }
-                .onChange(of: g.size.width) { _, w in SettingsFit.widths[tab] = w }
+                .onAppear { SettingsFit.widths[tab] = g.size.width; SettingsFit.heights[tab] = g.size.height }
+                .onChange(of: g.size) { _, s in SettingsFit.widths[tab] = s.width; SettingsFit.heights[tab] = s.height }
         })
     }
 }

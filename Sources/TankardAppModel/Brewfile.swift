@@ -221,8 +221,22 @@ public struct BrewfileRestorePlan: Equatable, Sendable {
         }
 
         /// Add Tap… can add it as the Brewfile says.
-        public var canAddTap: Bool { entry.kind == .tap && tapSource != .unreadable }
+        public var canAddTap: Bool { entry.kind == .tap && tapSource != .unreadable && !isBuiltInTap }
+
+        /// 0.8.9 (0.8.8 confirm run on 15, LOW): `tap "homebrew/cask"` (or
+        /// homebrew/core) in a Brewfile. Homebrew installs from these
+        /// through its API without the tap, so `brew bundle check` lists
+        /// it as missing, but nothing needs adding: Install with Tankard
+        /// doesn't wait for it, and there is no Add Tap… (`brew tap
+        /// homebrew/cask` refuses in API mode without --force, which
+        /// Tankard never passes).
+        public var isBuiltInTap: Bool {
+            entry.kind == .tap && BrewfileRestorePlan.builtInTaps.contains(BrewfileTapScanner.sanitize(entry.name))
+        }
     }
+
+    /// Homebrew's own taps, served by its API.
+    public static let builtInTaps: Set<String> = ["homebrew/core", "homebrew/cask"]
 
     public var items: [Item]
     public var path: String
@@ -244,7 +258,7 @@ public struct BrewfileRestorePlan: Equatable, Sendable {
     /// 0.8.5 (M3): taps the Brewfile needs that aren't added yet. Install
     /// with Tankard waits for them: a formula from a missing tap would
     /// otherwise make brew tap it from GitHub, not from the Brewfile's URL.
-    public var missingTaps: [Item] { items.filter { $0.entry.kind == .tap } }
+    public var missingTaps: [Item] { items.filter { $0.entry.kind == .tap && !$0.isBuiltInTap } }
     public var canInstallWithTankard: Bool { !queued.isEmpty && missingTaps.isEmpty }
 
     public var queued: [Item] { items.filter(\.throughQueue) }

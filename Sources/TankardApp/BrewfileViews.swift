@@ -343,7 +343,11 @@ struct BrewfileSheet: View {
                 Label("Admin password", systemImage: "lock.fill").font(.system(size: 10.5, weight: .semibold)).foregroundStyle(.secondary)
             }
             Spacer()
-            if e.kind == .tap {
+            if item.isBuiltInTap {
+                // 0.8.9: homebrew/core and homebrew/cask need no tap.
+                Text("Built into Homebrew").font(.system(size: 10.5)).foregroundStyle(.secondary)
+                    .help("Homebrew installs from this catalog without adding it. Nothing to do.")
+            } else if e.kind == .tap {
                 // 0.7: Add Tap… asks first (the third-party warning), then
                 // runs brew tap through the queue and the live log.
                 // 0.8.5 (M3): with the Brewfile's URL, shown here and in the

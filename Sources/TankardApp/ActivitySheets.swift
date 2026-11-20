@@ -21,6 +21,7 @@ struct ActivitySheet: View {
             PostInstallNotesSheet(notes: notes) { store.closeProgressPanelNotes() }
         } else if let plan = store.upgradePlan {
             UpgradePlanView(store: store, plan: plan)
+                .background(KeyWindowOnAppear())
         } else if let session = store.upgrade {
             UpgradeSheet(session: session, store: store)
         }
@@ -236,6 +237,10 @@ struct AdminPasswordNote: View {
                     } label: {
                         Text("Details").font(.system(size: 11.5)).foregroundStyle(.secondary)
                     }
+                    // 0.8.9 (0.8.8 confirm run on 15, polish): with Full
+                    // Keyboard Access the system style's ring sat left of
+                    // "Details"; CommandDisclosureStyle's follows the button.
+                    .disclosureGroupStyle(CommandDisclosureStyle())
                 }
             }
         }

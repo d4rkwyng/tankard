@@ -163,6 +163,11 @@ struct LinkChip: View {
     var isCask = false
     var action: () -> Void
     @Environment(\.theme) private var theme
+    /// 0.8.9 (0.8.8 confirm run on 15, polish): with Full Keyboard Access
+    /// the system's ring for a plain button sat a few points up and left of
+    /// the chip (it follows the button's platform frame, not the chip the
+    /// FlowLayout placed). The chip draws its own ring, on its own shape.
+    @FocusState private var focused: Bool
 
     var body: some View {
         Button(action: action) {
@@ -173,9 +178,18 @@ struct LinkChip: View {
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(RoundedRectangle(cornerRadius: 5).fill(theme.chip))
+            .overlay {
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(Color(nsColor: .keyboardFocusIndicatorColor), lineWidth: 3)
+                    .padding(-3)
+                    .opacity(focused ? 1 : 0)
+                    .allowsHitTesting(false)
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .focusEffectDisabled()
+        .focused($focused)
         .foregroundStyle(theme.isCustom ? theme.accent : Color.accentColor)
         .help("Select \(title)")
     }
@@ -233,6 +247,8 @@ struct DependencyTreeView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { withAnimation { shown.wrappedValue.toggle() } }
         }
+        // 0.8.9: the Details pane's ring on the triangle, not beside it.
+        .disclosureGroupStyle(CommandDisclosureStyle())
     }
 
     private func allNames(_ n: DependencyGraph.Node) -> [String] {

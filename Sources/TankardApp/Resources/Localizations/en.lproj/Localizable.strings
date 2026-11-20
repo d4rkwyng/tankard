@@ -253,6 +253,7 @@
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same.";
 "Built from source; a bottle exists for the current version" = "Built from source; a bottle exists for the current version";
 "Built from the latest source" = "Built from the latest source";
+"Built into Homebrew" = "Built into Homebrew";
 "Can roll back" = "Can roll back";
 "Can't adopt" = "Can't adopt";
 "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now.";
@@ -378,6 +379,7 @@
 "Discover" = "Discover";
 "Discover needs Homebrew's status first" = "Discover needs Homebrew's status first";
 "Dismiss" = "Dismiss";
+"Don't Quit" = "Don't Quit";
 "Don't Skip" = "Don't Skip";
 "Don't Skip %@" = "Don't Skip %@";
 "Don't quit running apps during upgrades" = "Don't quit running apps during upgrades";
@@ -491,7 +493,9 @@
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare).";
 "Homebrew has disabled this cask." = "Homebrew has disabled this cask.";
+"Homebrew has finished. Quit Tankard?" = "Homebrew has finished. Quit Tankard?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch.";
+"Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installs from this catalog without adding it. Nothing to do.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew is still upgrading %@ (%lld of %lld).";
 "Homebrew is still upgrading %@." = "Homebrew is still upgrading %@.";
@@ -721,6 +725,7 @@
 "Nothing here can be restored automatically" = "Nothing here can be restored automatically";
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nothing installed comes from it. brew deletes its local copy; you can add it again later.";
+"Nothing is running now, so quitting won't interrupt anything." = "Nothing is running now, so quitting won't interrupt anything.";
 "Nothing matches" = "Nothing matches";
 "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Nothing matches “%@”.";
@@ -805,6 +810,7 @@
 "Private" = "Private";
 "Put %@ back" = "Put %@ back";
 "Puts back the version Homebrew has now, which may be newer than %@." = "Puts back the version Homebrew has now, which may be newer than %@.";
+"Quit" = "Quit";
 "Quit Now" = "Quit Now";
 "Quit Tankard" = "Quit Tankard";
 "Quit Tankard and open it again to use the new version." = "Quit Tankard and open it again to use the new version.";

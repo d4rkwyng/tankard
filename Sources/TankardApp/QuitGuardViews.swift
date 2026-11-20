@@ -46,10 +46,29 @@ enum QuitGuard {
         case .ask(let prompt, let bringForward):
             quitLog.notice("quit from \(from, privacy: .public): brew is running, asking first")
             if bringForward { NSApp.activate(ignoringOtherApps: true) }
-            guard let store, let choice = ask(prompt) else {
+            let answer = ask(prompt)
+            guard let store else { decided(false); return }
+            let choice: QuitChoice
+            switch answer {
+            case .keepRunning:
                 quitLog.notice("quit from \(from, privacy: .public): Keep Running")
                 decided(false)
                 return
+            case .runFinished:
+                // A logout, restart or shutdown isn't asked again.
+                let system: Bool
+                if case .appleEvent(let reason) = source { system = reason.isSystem } else { system = false }
+                guard system || askAfterFinish() else {
+                    quitLog.notice("quit from \(from, privacy: .public): the run finished with the alert open; Don't Quit")
+                    decided(false)
+                    return
+                }
+                quitLog.notice("quit from \(from, privacy: .public): the run finished with the alert open; quitting")
+                decided(true)
+                closeSheetsAndTerminate()
+                return
+            case .choice(let c):
+                choice = c
             }
             exempt = true
             store.prepareToQuit(choice) {
@@ -119,28 +138,111 @@ enum QuitGuard {
             }).run()
     }
 
-    /// The guard's question. nil: Keep Running.
-    private static func ask(_ prompt: QuitPrompt) -> QuitChoice? {
+    enum Answer: Equatable {
+        case keepRunning
+        case choice(QuitChoice)
+        /// The run ended while the alert was open (it closed itself).
+        case runFinished
+    }
+
+    /// The alert open now, and the prompt it shows (the timer's state).
+    private static var liveAlert: NSAlert?
+    private static var liveShown: QuitPrompt?
+    private static var liveFinished = false
+
+    /// The guard's question. 0.8.9: it follows the run while it is open
+    /// (QuitAlertUpdate): each new step's text, and when the run ends, the
+    /// alert closes (`.runFinished`).
+    private static func ask(_ prompt: QuitPrompt) -> Answer {
         let alert = NSAlert()
-        alert.messageText = prompt.message + " " + String(localized: "Quit anyway?")
+        alert.messageText = QuitAlertUpdate.title(prompt)
         alert.informativeText = prompt.detail
         alert.alertStyle = .warning
         alert.addButton(withTitle: String(localized: "Keep Running"))
         alert.addButton(withTitle: String(localized: "Stop After Current and Quit"))
         alert.addButton(withTitle: String(localized: "Quit Now"))
         alert.buttons.last?.hasDestructiveAction = true
-        switch alert.runModal() {
-        case .alertSecondButtonReturn: return .afterCurrent
-        case .alertThirdButtonReturn: return .now
-        default: return nil
+        liveAlert = alert
+        liveShown = prompt
+        liveFinished = false
+        // Fires on the main run loop in the alert's modal loop, so
+        // assumeIsolated holds; the closure itself is @Sendable.
+        let timer = Timer(timeInterval: 0.25, repeats: true) { @Sendable _ in
+            MainActor.assumeIsolated { refreshLiveAlert() }
         }
+        RunLoop.main.add(timer, forMode: .modalPanel)
+        let response = alert.runModal()
+        timer.invalidate()
+        let finished = liveFinished
+        liveAlert = nil
+        liveShown = nil
+        liveFinished = false
+        if finished { return .runFinished }
+        switch response {
+        case .alertSecondButtonReturn: return .choice(.afterCurrent)
+        case .alertThirdButtonReturn: return .choice(.now)
+        default: return .keepRunning
+        }
+    }
+
+    private static func refreshLiveAlert() {
+        guard let alert = liveAlert, let shown = liveShown, !liveFinished else { return }
+        switch QuitAlertUpdate.next(shown: shown, current: store?.quitPrompt) {
+        case .unchanged:
+            break
+        case .text(let p):
+            liveShown = p
+            setText(alert, title: QuitAlertUpdate.title(p), detail: p.detail)
+        case .finished:
+            quitLog.notice("quit: the run finished while the question was open; closing it")
+            liveFinished = true
+            NSApp.abortModal()
+        }
+    }
+
+    /// Sets an open alert's text. NSAlert copies its strings into its own
+    /// text fields when it lays out, so the fields showing the old strings
+    /// are updated too, then the alert lays out again.
+    private static func setText(_ alert: NSAlert, title: String, detail: String) {
+        let oldTitle = alert.messageText, oldDetail = alert.informativeText
+        alert.messageText = title
+        alert.informativeText = detail
+        if let content = alert.window.contentView {
+            for field in textFields(in: content) {
+                if field.stringValue == oldTitle { field.stringValue = title }
+                else if field.stringValue == oldDetail { field.stringValue = detail }
+            }
+        }
+        alert.layout()
+    }
+
+    private static func textFields(in view: NSView) -> [NSTextField] {
+        view.subviews.flatMap { sub -> [NSTextField] in
+            (sub as? NSTextField).map { [$0] } ?? textFields(in: sub)
+        }
+    }
+
+    /// The run finished with "Quit anyway?" open: quitting now interrupts
+    /// nothing, but the user hasn't said to quit yet. true: Quit.
+    private static func askAfterFinish() -> Bool {
+        let alert = NSAlert()
+        alert.messageText = QuitAlertUpdate.finishedTitle
+        alert.informativeText = QuitAlertUpdate.finishedDetail
+        alert.addButton(withTitle: QuitAlertUpdate.finishedQuit)
+        alert.addButton(withTitle: QuitAlertUpdate.finishedStay)
+        return alert.runModal() == .alertFirstButtonReturn
     }
 
     /// A quit that didn't come from the menu (the Dock, a logout): AppKit
     /// asks here when no sheet is attached.
     static func shouldTerminate() -> NSApplication.TerminateReply {
         guard !exempt, let store, let prompt = store.quitPrompt else { return .terminateNow }
-        guard let choice = ask(prompt) else { return .terminateCancel }
+        let choice: QuitChoice
+        switch ask(prompt) {
+        case .keepRunning: return .terminateCancel
+        case .runFinished: return askAfterFinish() ? .terminateNow : .terminateCancel
+        case .choice(let c): choice = c
+        }
         store.prepareToQuit(choice) {
             NSApp.reply(toApplicationShouldTerminate: true)
         }

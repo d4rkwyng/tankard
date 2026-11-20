@@ -253,6 +253,7 @@
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "Aus Quellcode gebaut, aber %@ hat eine Bottle für diesen Mac. Beim Ersetzen wird stattdessen die Bottle eingespielt; die Version bleibt gleich.";
 "Built from source; a bottle exists for the current version" = "Aus Quellcode gebaut; für die aktuelle Version gibt es eine Bottle";
 "Built from the latest source" = "Aus dem neuesten Quellcode gebaut";
+"Built into Homebrew" = "In Homebrew enthalten";
 "Can roll back" = "Rollback möglich";
 "Can't adopt" = "Nicht übernehmbar";
 "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "Netzwerk noch nicht erreichbar: brew versucht es weiter. Prüfe die Verbindung oder wähle „Sofort stoppen“.";
@@ -378,6 +379,7 @@
 "Discover" = "Entdecken";
 "Discover needs Homebrew's status first" = "„Entdecken“ braucht zuerst den Status von Homebrew";
 "Dismiss" = "Verwerfen";
+"Don't Quit" = "Nicht beenden";
 "Don't Skip" = "Nicht überspringen";
 "Don't Skip %@" = "%@ nicht überspringen";
 "Don't quit running apps during upgrades" = "Laufende Apps bei Upgrades nicht beenden";
@@ -491,7 +493,9 @@
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew deinstalliert keine fixierten Pakete. Löse %@ zuerst oder behalte es.";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew hat ein Cask für diese Apps und die installierte Version passt (oder die App aktualisiert sich selbst, dann vergleicht brew nicht).";
 "Homebrew has disabled this cask." = "Homebrew hat dieses Cask deaktiviert.";
+"Homebrew has finished. Quit Tankard?" = "Homebrew ist fertig. Tankard beenden?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an.";
+"Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installiert aus diesem Katalog, ohne ihn hinzuzufügen. Nichts zu tun.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew ändert gerade %1$@. Beim Stoppen macht Homebrew den offenen Schritt rückgängig, %2$@ bleibt wie es war. Bleibt etwas halb fertig, hilft meist ein erneuter Lauf.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew aktualisiert noch %@ (%lld von %lld).";
 "Homebrew is still upgrading %@." = "Homebrew aktualisiert noch %@.";
@@ -721,6 +725,7 @@
 "Nothing here can be restored automatically" = "Nichts davon lässt sich automatisch wiederherstellen";
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie und vertraut dem Tap nicht mehr; fügst du ihn später wieder hinzu, fragt Tankard erneut.";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "Nichts Installiertes stammt daraus. brew löscht die lokale Kopie; du kannst den Tap später wieder hinzufügen.";
+"Nothing is running now, so quitting won't interrupt anything." = "Es läuft nichts mehr, Beenden unterbricht also nichts.";
 "Nothing matches" = "Keine Treffer";
 "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Nichts passt zu „%@“ im Hauptkatalog von Homebrew oder in den Taps, die du hinzugefügt hast. Ein Paket aus einem anderen Tap erscheint hier, sobald du diesen Tap hinzufügst (Homebrew ▸ Taps…).";
 "Nothing matches “%@”." = "Keine Treffer für „%@“.";
@@ -805,6 +810,7 @@
 "Private" = "Privat";
 "Put %@ back" = "%@ zurückholen";
 "Puts back the version Homebrew has now, which may be newer than %@." = "Holt die Version zurück, die Homebrew jetzt hat. Sie kann neuer sein als %@.";
+"Quit" = "Beenden";
 "Quit Now" = "Sofort beenden";
 "Quit Tankard" = "Tankard beenden";
 "Quit Tankard and open it again to use the new version." = "Beende Tankard und öffne es erneut, um die neue Version zu nutzen.";

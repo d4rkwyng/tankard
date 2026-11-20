@@ -253,6 +253,7 @@
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "ソースからビルドされていますが、%@ にはこのMac用のbottleがあります。置き換えるとbottleが展開されます。バージョンは変わりません。";
 "Built from source; a bottle exists for the current version" = "ソースからビルド。現在のバージョンのbottleがあります";
 "Built from the latest source" = "最新のソースからビルド";
+"Built into Homebrew" = "Homebrew に内蔵";
 "Can roll back" = "ロールバック可能";
 "Can't adopt" = "引き継ぎ不可";
 "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "まだネットワークに接続できません。brewは再試行を続けています。接続を確認するか、「今すぐ停止」を使ってください。";
@@ -378,6 +379,7 @@
 "Discover" = "見つける";
 "Discover needs Homebrew's status first" = "「見つける」にはまずHomebrewの状態が必要です";
 "Dismiss" = "閉じる";
+"Don't Quit" = "終了しない";
 "Don't Skip" = "スキップしない";
 "Don't Skip %@" = "%@をスキップしない";
 "Don't quit running apps during upgrades" = "アップグレード中に実行中のアプリを終了しない";
@@ -491,7 +493,9 @@
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew はピン留めされたパッケージをアンインストールしません。先に %@ のピン留めを解除するか、そのままにしてください。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "これらのアプリには Homebrew の cask があり、インストール済みのバージョンが一致しています（またはアプリが自己更新するため brew は比較しません）。";
 "Homebrew has disabled this cask." = "Homebrew はこの cask を無効にしています。";
+"Homebrew has finished. Quit Tankard?" = "Homebrew の処理が終わりました。Tankard を終了しますか?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "このコピーはHomebrewでインストールされたため、Homebrewがキューを通じてアップグレードします。brewがアプリを置き換える間もTankardは動作し続け、完了後に再起動を提案します。";
+"Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew はこのカタログを追加せずにインストールできます。操作は不要です。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew は今 %1$@ を変更しています。停止すると、Homebrew は途中の手順を元に戻し、%2$@ は元のままです。中途半端に残った場合も、もう一度実行すれば通常は直ります。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew はまだ %@ をアップグレード中です(%lld/%lld)。";
 "Homebrew is still upgrading %@." = "Homebrew はまだ %@ をアップグレード中です。";
@@ -721,6 +725,7 @@
 "Nothing here can be restored automatically" = "ここにある項目は自動で復元できません";
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除し、このtapの信頼も解除します。後でもう一度追加すると、Tankardは再び確認します。";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "インストール済みのものでこのtapから来たものはありません。brewはローカルのコピーを削除します。後でもう一度追加できます。";
+"Nothing is running now, so quitting won't interrupt anything." = "実行中の処理はないため、終了しても何も中断されません。";
 "Nothing matches" = "一致するものはありません";
 "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "Homebrew のメインカタログにも、追加した Tap にも「%@」に一致するものはありません。別の Tap のパッケージは、その Tap を追加するとここに表示されます（Homebrew ▸ Tap…）。";
 "Nothing matches “%@”." = "「%@」に一致するものはありません。";
@@ -805,6 +810,7 @@
 "Private" = "非公開";
 "Put %@ back" = "%@ を元に戻す";
 "Puts back the version Homebrew has now, which may be newer than %@." = "Homebrewにある現在のバージョンに戻します。%@ より新しい場合があります。";
+"Quit" = "終了";
 "Quit Now" = "今すぐ終了";
 "Quit Tankard" = "Tankardを終了";
 "Quit Tankard and open it again to use the new version." = "新しいバージョンを使うには、Tankardを終了してもう一度開いてください。";

@@ -83,6 +83,41 @@ public struct QuitPrompt: Equatable, Sendable {
     }
 }
 
+/// 0.8.9 (batch 1 VM pass on 15, polish): the "Quit anyway?" alert kept the
+/// step it opened on ("still upgrading lz4 (9 of 17)") after the run had
+/// moved on, and after it had finished. The alert now follows the run
+/// (QuitGuard's timer in the alert's modal loop asks this every quarter
+/// second): new text for a new step, and once nothing would be
+/// interrupted, the alert closes and asks a plain "Quit Tankard?" instead.
+public enum QuitAlertUpdate: Equatable, Sendable {
+    /// The alert still says what is running.
+    case unchanged
+    /// Another step (or another count): the alert shows this prompt.
+    case text(QuitPrompt)
+    /// Nothing is running any more: quitting interrupts nothing.
+    case finished
+
+    /// `shown`: the prompt the alert says now; `current`: the store's
+    /// `quitPrompt` (nil once the run has ended).
+    public static func next(shown: QuitPrompt, current: QuitPrompt?) -> QuitAlertUpdate {
+        guard let current else { return .finished }
+        if current.message == shown.message, current.detail == shown.detail { return .unchanged }
+        return .text(current)
+    }
+
+    /// The alert's title for a prompt ("Homebrew is still upgrading xz (3
+    /// of 7). Quit anyway?").
+    public static func title(_ prompt: QuitPrompt) -> String {
+        prompt.message + " " + String(localized: "Quit anyway?")
+    }
+
+    /// The question after the run finished with the alert open.
+    public static var finishedTitle: String { String(localized: "Homebrew has finished. Quit Tankard?") }
+    public static var finishedDetail: String { String(localized: "Nothing is running now, so quitting won't interrupt anything.") }
+    public static var finishedQuit: String { String(localized: "Quit") }
+    public static var finishedStay: String { String(localized: "Don't Quit") }
+}
+
 public enum QuitChoice: Sendable {
     /// Let the running step finish, skip the rest, then quit.
     case afterCurrent

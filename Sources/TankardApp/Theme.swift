@@ -545,19 +545,63 @@ struct ThemedSegmentedPicker<Value: Hashable & Identifiable>: View {
         .focusable(interactions: .activate)
         .focusEffectDisabled()
         .focused($focused)
-        .onMoveCommand { direction in
+        // 0.8.9: the arrow keys as key presses. On macOS 26 the move
+        // command (`onMoveCommand`) never reached a focused custom view
+        // here (0.8.8 confirm run on 26: the ring was on the control and
+        // ← → did nothing); a key press does, on 14, 15 and 26. Handled,
+        // so no move command follows it on the systems where it worked.
+        .onKeyPress(keys: [.leftArrow, .rightArrow]) { press in
+            step(press.key == .leftArrow ? -1 : 1)
+            return .handled
+        }
+        // 0.8.9 (B5, 0.8.8 gauntlet on 26): VoiceOver didn't follow Tab
+        // here. The keyboard focus is on the whole control (one stop, see
+        // above), but its accessibility element was a container of
+        // unfocusable buttons, and macOS 26 reported an unlabelled "group"
+        // or one of the buttons ("button", no name) as the focused element,
+        // so VoiceOver had nothing to follow. (An accessibilityRepresentation
+        // with the system's Picker, segmented or menu, came out with wrong
+        // frames, and nothing focused.) Now the control is one element, the
+        // one with the focus: "Filter, All 66, button". Pressing it moves
+        // to the next option, the arrow keys and VoiceOver's
+        // increment/decrement move either way, and each option is also a
+        // named action.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(label(selection))
+        // Without a role it was an AXUnknown, which VoiceOver passes over:
+        // a button whose press moves to the next option.
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { step(1, wrap: true) }
+        .accessibilityAdjustableAction { direction in
             switch direction {
-            case .left: step(-1)
-            case .right: step(1)
-            default: break
+            case .increment: step(1)
+            case .decrement: step(-1)
+            @unknown default: break
             }
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(title)
+        .modifier(SegmentActions(options: options, label: label) { selection = $0 })
     }
 
-    private func step(_ delta: Int) {
-        if let next = SegmentedStep.move(from: selection, in: options, by: delta), next != selection { selection = next }
+    private func step(_ delta: Int, wrap: Bool = false) {
+        if let next = SegmentedStep.move(from: selection, in: options, by: delta), next != selection {
+            selection = next
+        } else if wrap, let first = options.first {
+            selection = first
+        }
+    }
+}
+
+/// 0.8.9: each segment as a named accessibility action ("Upgrades 3").
+private struct SegmentActions<Value: Hashable & Identifiable>: ViewModifier {
+    var options: [Value]
+    var label: (Value) -> String
+    var select: (Value) -> Void
+
+    func body(content: Content) -> some View {
+        options.reduce(AnyView(content)) { view, option in
+            AnyView(view.accessibilityAction(named: Text(verbatim: label(option))) { select(option) })
+        }
     }
 }
 
@@ -664,4 +708,44 @@ enum SearchFieldFocus {
         }
         NSSound.beep()
     }
+}
+
+/// 0.8.9 (0.8.8 confirm runs on 15 and 26): the plan's buttons ignored the
+/// first click, once from the menu bar with Tankard menu-bar-only (the
+/// progress panel's plan) and once in the window's sheet on 26 (16
+/// packages). Both times the plan was on screen while Tankard wasn't the
+/// active app, or its window wasn't key, and AppKit spends the first click
+/// on activating the app and making the window key. When the plan
+/// appears, Tankard becomes active and its window key (the sheet's parent
+/// first, then the sheet), so the first click reaches the button.
+struct KeyWindowOnAppear: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView { Probe() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
+
+    final class Probe: NSView {
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard window != nil else { return }
+            // After SwiftUI has attached the sheet (or shown the panel).
+            for delay in [0.0, 0.2, 0.6] {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                    MainActor.assumeIsolated { self?.makeKey() }
+                }
+            }
+        }
+
+        private func makeKey() {
+            guard let window, window.isVisible || window.sheetParent != nil else { return }
+            if !NSApp.isActive { NSApp.activate(ignoringOtherApps: true) }
+            window.sheetParent?.makeKeyAndOrderFront(nil)
+            if window.canBecomeKey, !window.isKeyWindow { window.makeKeyAndOrderFront(nil) }
+        }
+    }
+}
+
+/// 0.8.9: a hosting view whose controls take the click that also brings
+/// its window forward (the progress panel: its plan's Upgrade worked only
+/// on the second click when the panel wasn't key).
+final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }

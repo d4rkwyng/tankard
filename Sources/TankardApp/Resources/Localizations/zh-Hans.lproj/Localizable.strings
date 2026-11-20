@@ -253,6 +253,7 @@
 "Built from source, but %@ has a bottle for this Mac. Replacing it pours the bottle instead; the version stays the same." = "从源码构建，但 %@ 有适用于这台 Mac 的 bottle。替换后将改用 bottle 安装；版本保持不变。";
 "Built from source; a bottle exists for the current version" = "从源码构建；当前版本有可用的 bottle";
 "Built from the latest source" = "从最新源码构建";
+"Built into Homebrew" = "Homebrew 内置";
 "Can roll back" = "可回滚";
 "Can't adopt" = "无法接管";
 "Can't reach the network yet: brew keeps retrying. Check the connection, or use Stop Now." = "暂时无法连接网络：brew 会继续重试。请检查网络连接，或使用“立即停止”。";
@@ -378,6 +379,7 @@
 "Discover" = "探索";
 "Discover needs Homebrew's status first" = "“探索”需要先获取 Homebrew 的状态";
 "Dismiss" = "忽略";
+"Don't Quit" = "不退出";
 "Don't Skip" = "不再跳过";
 "Don't Skip %@" = "不再跳过 %@";
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
@@ -491,7 +493,9 @@
 "Homebrew doesn't uninstall pinned packages. Unpin %@ first, or keep it." = "Homebrew 不会卸载已固定的软件包。请先取消固定 %@，或保留它。";
 "Homebrew has a cask for these apps and the installed version matches (or the app updates itself, so brew doesn't compare)." = "Homebrew 有这些 App 的 cask，且已安装的版本一致（或 App 会自行更新，因此 brew 不做比较）。";
 "Homebrew has disabled this cask." = "Homebrew 已停用此 cask。";
+"Homebrew has finished. Quit Tankard?" = "Homebrew 已完成。要退出 Tankard 吗?";
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
+"Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew 无需添加此目录即可从中安装。无需任何操作。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。";
 "Homebrew is still upgrading %@." = "Homebrew 仍在升级 %@。";
@@ -721,6 +725,7 @@
 "Nothing here can be restored automatically" = "这里的内容无法自动恢复";
 "Nothing installed comes from it. brew deletes its local copy and stops trusting it; if you add it again later, Tankard asks again." = "没有已安装的内容来自它。brew 会删除其本地副本并不再信任它；以后再次添加时，Tankard 会再次询问。";
 "Nothing installed comes from it. brew deletes its local copy; you can add it again later." = "没有已安装的内容来自它。brew 会删除其本地副本；你以后可以再次添加。";
+"Nothing is running now, so quitting won't interrupt anything." = "现在没有正在运行的任务,退出不会中断任何操作。";
 "Nothing matches" = "没有匹配项";
 "Nothing matches “%@” in Homebrew's main catalog or in the taps you've added. A package from another tap shows here once you add that tap (Homebrew ▸ Taps…)." = "在 Homebrew 主目录和你添加的 Tap 中都没有与“%@”匹配的内容。其他 Tap 中的软件包会在你添加该 Tap 后显示在这里（Homebrew ▸ Tap…）。";
 "Nothing matches “%@”." = "没有与“%@”匹配的项目。";
@@ -805,6 +810,7 @@
 "Private" = "私有";
 "Put %@ back" = "恢复 %@";
 "Puts back the version Homebrew has now, which may be newer than %@." = "恢复 Homebrew 当前提供的版本，可能比 %@ 更新。";
+"Quit" = "退出";
 "Quit Now" = "立即退出";
 "Quit Tankard" = "退出 Tankard";
 "Quit Tankard and open it again to use the new version." = "退出 Tankard 并重新打开，以使用新版本。";

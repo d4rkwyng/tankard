@@ -16689,6 +16689,58 @@
         }
       }
     },
+    "Built into Homebrew": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Homebrew enthalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inclus dans Homebrew"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluido en Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew に内蔵"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 内置"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluído no Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluso in Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew에 기본 포함"
+          }
+        }
+      }
+    },
     "Can roll back": {
       "localizations": {
         "de": {
@@ -23303,6 +23355,58 @@
         }
       }
     },
+    "Don't Quit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht beenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne pas quitter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No salir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了しない"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不退出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não Encerrar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non uscire"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료 안 함"
+          }
+        }
+      }
+    },
     "Don't Skip": {
       "localizations": {
         "de": {
@@ -29179,6 +29283,58 @@
         }
       }
     },
+    "Homebrew has finished. Quit Tankard?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ist fertig. Tankard beenden?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew a terminé. Quitter Tankard ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha terminado. ¿Salir de Tankard?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew の処理が終わりました。Tankard を終了しますか?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 已完成。要退出 Tankard 吗?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew terminou. Encerrar o Tankard?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha finito. Uscire da Tankard?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 작업이 끝났습니다. Tankard를 종료하시겠습니까?"
+          }
+        }
+      }
+    },
     "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch.": {
       "localizations": {
         "de": {
@@ -29227,6 +29383,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 사본은 Homebrew로 설치되었으므로 Homebrew가 대기열을 통해 업그레이드합니다. brew가 앱을 교체하는 동안 Tankard는 계속 실행되며, 완료 후 다시 시작할지 묻습니다."
+          }
+        }
+      }
+    },
+    "Homebrew installs from this catalog without adding it. Nothing to do.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew installiert aus diesem Katalog, ohne ihn hinzuzufügen. Nichts zu tun."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew installe depuis ce catalogue sans l’ajouter. Rien à faire."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew instala desde este catálogo sin añadirlo. No hay nada que hacer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew はこのカタログを追加せずにインストールできます。操作は不要です。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 无需添加此目录即可从中安装。无需任何操作。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew instala deste catálogo sem adicioná-lo. Nada a fazer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew installa da questo catalogo senza aggiungerlo. Non serve fare nulla."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew는 이 카탈로그를 추가하지 않고도 설치합니다. 할 일이 없습니다."
           }
         }
       }
@@ -41481,6 +41689,58 @@
         }
       }
     },
+    "Nothing is running now, so quitting won't interrupt anything.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es läuft nichts mehr, Beenden unterbricht also nichts."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus rien ne tourne : quitter n’interrompt rien."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya no hay nada en marcha, así que salir no interrumpe nada."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実行中の処理はないため、終了しても何も中断されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在没有正在运行的任务,退出不会中断任何操作。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada está em execução agora, então encerrar não interrompe nada."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non è in corso nulla, quindi uscire non interrompe niente."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "실행 중인 작업이 없으므로 종료해도 중단되는 작업이 없습니다."
+          }
+        }
+      }
+    },
     "Nothing matches": {
       "localizations": {
         "de": {
@@ -45845,6 +46105,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaura a versão que o Homebrew tem agora, que pode ser mais nova que %@."
+          }
+        }
+      }
+    },
+    "Quit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종료"
           }
         }
       }
