@@ -1069,6 +1069,7 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard kann hier nicht danach fragen. Unter „Details“ steht, was stattdessen zu tun ist.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard vergleicht die Version jeder App mit der von Homebrew. Stimmen sie überein, übernimmt Homebrew die Updates, ohne die App zu verschieben.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal.";
+"Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard konnte keine zuverlässige Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard konnte keine Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard konnte %1$@ nicht zurücklegen (%2$@). Eine Kopie der alten Version liegt unter %3$@.";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard konnte das Netzwerk nicht erreichen, um die Paketliste von Homebrew zu laden. Prüfe die Internetverbindung (oder ein VPN oder einen Proxy) und versuche es dann erneut.";

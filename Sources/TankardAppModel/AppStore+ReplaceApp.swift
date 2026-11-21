@@ -245,6 +245,30 @@ public struct AppReplaceSafety: Sendable {
         }
     }
 
+    /// The copy is not a whole bundle matching the source. Brew does not run.
+    enum BackupError: Error, Sendable, Equatable {
+        case unreliable
+    }
+
+    /// A copy can stand in for the app: a whole bundle (`found(at:)`), the
+    /// same bundle id and versions, and the same names directly inside Contents.
+    static func isReliableCopy(_ dest: String, of src: String) -> Bool {
+        guard case .bundle(let srcInfo, _) = found(at: src),
+              case .bundle(let dstInfo, _) = found(at: dest) else { return false }
+        guard (srcInfo.bundleID ?? "").lowercased() == (dstInfo.bundleID ?? "").lowercased(),
+              srcInfo.shortVersion == dstInfo.shortVersion,
+              srcInfo.bundleVersion == dstInfo.bundleVersion else { return false }
+        guard let srcEntries = contentsEntries(src), let dstEntries = contentsEntries(dest) else { return false }
+        return srcEntries == dstEntries
+    }
+
+    /// Names directly inside Contents. Nil when that folder cannot be listed.
+    static func contentsEntries(_ appPath: String) -> Set<String>? {
+        let contents = (appPath as NSString).appendingPathComponent("Contents")
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: contents) else { return nil }
+        return Set(names)
+    }
+
     /// The real one: ~/Library/Application Support/<bundle id>/replace-backup/<uuid>/<name>.app.
     /// `legacyRoots` nil with the default root also lists the old Caches
     /// folder. Any other root lists only itself, so a test root does not
@@ -252,8 +276,10 @@ public struct AppReplaceSafety: Sendable {
     ///
     /// `sameVolume` nil asks `statfs`. A test passes `{ _, _ in false }` to
     /// force the plain copy while both paths are still on one volume.
+    /// `copy` nil uses `copyApp`. A test passes one that writes a bad tree.
     public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil,
-                            sameVolume: (@Sendable (String, String) -> Bool)? = nil) -> AppReplaceSafety {
+                            sameVolume: (@Sendable (String, String) -> Bool)? = nil,
+                            copy: (@Sendable (_ src: String, _ dest: String, _ clone: Bool) throws -> Void)? = nil) -> AppReplaceSafety {
         let extras: [URL]
         if let legacyRoots {
             extras = legacyRoots
@@ -272,10 +298,20 @@ public struct AppReplaceSafety: Sendable {
                 do {
                     // Same volume: an APFS clone. Otherwise a plain copy.
                     let clone = sameVolume?(appPath, dir.path) ?? AppReplaceSafety.sameVolume(appPath, dir.path)
-                    try copyApp(from: appPath, to: dest.path, clone: clone)
+                    if let copy {
+                        try copy(appPath, dest.path, clone)
+                    } else {
+                        try copyApp(from: appPath, to: dest.path, clone: clone)
+                    }
                 } catch {
                     try? fm.removeItem(at: dir)
                     throw error
+                }
+                // copyfile can return 0 for a tree that is not this app.
+                // A bad copy is deleted. Brew is not started.
+                guard isReliableCopy(dest.path, of: appPath) else {
+                    try? fm.removeItem(at: dir)
+                    throw BackupError.unreliable
                 }
                 // Written once the copy is whole: a copy cut short by a
                 // crash has no origin and is never put back by itself.
@@ -620,6 +656,9 @@ public extension AppStore {
             }
             do {
                 backup = try await Task.detached { try safety.backup(plan.appPath) }.value
+            } catch is AppReplaceSafety.BackupError {
+                showBusyNotice(String(localized: "Tankard couldn't make a reliable safety copy of \(plan.appName), so it didn't replace it."), seconds: 12)
+                return false
             } catch {
                 showBusyNotice(String(localized: "Tankard couldn't make a safety copy of \(plan.appName), so it didn't replace it: \(error.localizedDescription)"), seconds: 12)
                 return false

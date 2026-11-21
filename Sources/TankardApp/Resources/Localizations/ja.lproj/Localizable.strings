@@ -1069,6 +1069,7 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
+"Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankardは %@ の信頼できる安全コピーを作成できなかったため、置き換えませんでした。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankardは %1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。";
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";

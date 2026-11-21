@@ -1,5 +1,7 @@
 import Foundation
+import os
 import Testing
+@testable import TankardCore
 @testable import TankardAppModel
 
 // 0.9.0 review of Replace with Homebrew's Version. The plain (cross-volume)
@@ -59,6 +61,95 @@ struct V090ReplaceReviewTests {
         if let srcID = Self.cloneID(srcExe), let copiedID = Self.cloneID(copiedExe) {
             #expect(srcID != copiedID)
         }
+    }
+
+    /// A copy that is not this app is deleted. A faithful one, including a
+    /// bundle id that differs only in case, is kept.
+    @Test func anUnreliableCopyIsDeleted() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0", build: "100")
+        try Data("extra".utf8).write(to: d.app.appendingPathComponent("Contents/Extra"))
+
+        func copying(_ body: @escaping @Sendable (String, String, Bool) throws -> Void) -> AppReplaceSafety {
+            AppReplaceSafety.live(root: d.root, copy: body)
+        }
+        func leftBehind() -> [String] {
+            (try? fm.contentsOfDirectory(atPath: d.root.path)) ?? []
+        }
+
+        let wrongVersion = copying { _, dest, _ in
+            try FakeBundle.make(URL(fileURLWithPath: dest), version: "9.0", build: "100")
+            try Data("extra".utf8).write(to: URL(fileURLWithPath: dest).appendingPathComponent("Contents/Extra"))
+        }
+        #expect(throws: AppReplaceSafety.BackupError.self) { try wrongVersion.backup(d.app.path) }
+        #expect(leftBehind().isEmpty)
+        #expect(fm.fileExists(atPath: d.app.path))
+
+        let wrongBuild = copying { _, dest, _ in
+            try FakeBundle.make(URL(fileURLWithPath: dest), version: "1.0", build: "999")
+            try Data("extra".utf8).write(to: URL(fileURLWithPath: dest).appendingPathComponent("Contents/Extra"))
+        }
+        #expect(throws: AppReplaceSafety.BackupError.self) { try wrongBuild.backup(d.app.path) }
+
+        let wrongID = copying { _, dest, _ in
+            try FakeBundle.make(URL(fileURLWithPath: dest), id: "com.other.Thing", version: "1.0", build: "100")
+            try Data("extra".utf8).write(to: URL(fileURLWithPath: dest).appendingPathComponent("Contents/Extra"))
+        }
+        #expect(throws: AppReplaceSafety.BackupError.self) { try wrongID.backup(d.app.path) }
+
+        let notWhole = copying { _, dest, _ in
+            try FileManager.default.createDirectory(atPath: dest, withIntermediateDirectories: true)
+        }
+        #expect(throws: AppReplaceSafety.BackupError.self) { try notWhole.backup(d.app.path) }
+
+        let missingEntry = copying { src, dest, _ in
+            try AppReplaceSafety.copyApp(from: src, to: dest, clone: false)
+            try FileManager.default.removeItem(atPath: (dest as NSString).appendingPathComponent("Contents/Extra"))
+        }
+        #expect(throws: AppReplaceSafety.BackupError.self) { try missingEntry.backup(d.app.path) }
+        #expect(leftBehind().isEmpty)
+
+        // The same id, different case, and the same Contents names: kept.
+        let sameID = copying { _, dest, _ in
+            try FakeBundle.make(URL(fileURLWithPath: dest), id: "COM.foo.foo", version: "1.0", build: "100")
+            try Data("extra".utf8).write(to: URL(fileURLWithPath: dest).appendingPathComponent("Contents/Extra"))
+        }
+        let copy = try sameID.backup(d.app.path)
+        #expect(fm.fileExists(atPath: copy))
+        #expect(AppReplaceSafety.isReliableCopy(copy, of: d.app.path))
+        let parent = (copy as NSString).deletingLastPathComponent
+        #expect(leftBehind() == [(parent as NSString).lastPathComponent])
+    }
+
+    /// The notice is the reliable-copy sentence, and brew does not start.
+    @Test func anUnreliableCopyDoesNotReplace() async throws {
+        let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { _ in
+                calls.withLock { $0.append("backup") }
+                throw AppReplaceSafety.BackupError.unreliable
+            },
+            finish: { _, _, _, _ in
+                calls.withLock { $0.append("finish") }
+                return .discarded
+            },
+            readApp: { _ in
+                calls.withLock { $0.append("read") }
+                return .init(bundleID: "org.audacityteam.audacity4", shortVersion: "4.0.1", bundleVersion: "4.0.1")
+            })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let row = try #require(store.adopt.rows(.needsUpdate).first { $0.app.displayName == "Audacity" })
+        let plan = try #require(store.adopt.replacePlan(row))
+        store.closeToolSheet()
+        #expect(await !store.startReplace(plan))
+        #expect(store.upgrade == nil)
+        #expect(store.busyNotice == "Tankard couldn't make a reliable safety copy of Audacity, so it didn't replace it.")
+        #expect(calls.withLock { $0 } == ["read", "backup"])
     }
 
     private static func isSymlink(_ path: String) -> Bool {

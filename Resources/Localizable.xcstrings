@@ -59919,6 +59919,58 @@
         }
       }
     },
+    "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte keine zuverlässige Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n'a pas pu faire de copie de sécurité fiable de l'app %@ ; elle n'a donc pas été remplacée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo hacer una copia de seguridad fiable de la app %@, así que no la reemplazó."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a fare una copia di sicurezza affidabile dell'app %@, quindi non l'ha sostituita."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu fazer uma cópia de segurança confiável do app %@, então não o substituiu."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardは %@ の信頼できる安全コピーを作成できなかったため、置き換えませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法为 %@ 创建可靠的安全副本，因此没有替换它。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %@의 신뢰할 수 있는 안전 사본을 만들 수 없어 교체하지 않았습니다."
+          }
+        }
+      }
+    },
     "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@": {
       "localizations": {
         "de": {
