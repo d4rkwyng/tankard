@@ -60335,6 +60335,58 @@
         }
       }
     },
+    "Tankard couldn't read this Brewfile: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte diese Brewfile nicht lesen: %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu lire ce Brewfile : %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo leer este Brewfile: %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardはこのBrewfileを読み取れませんでした: %@。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法读取此 Brewfile：%@。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu ler este Brewfile: %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a leggere questo Brewfile: %@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 이 Brewfile을 읽지 못했습니다: %@."
+          }
+        }
+      }
+    },
     "Tankard couldn't read this file as a Brewfile.": {
       "localizations": {
         "de": {
@@ -62473,6 +62525,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "최신 버전입니다."
+          }
+        }
+      }
+    },
+    "The Brewfile isn't there any more.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Brewfile ist nicht mehr da."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le Brewfile n’est plus là."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El Brewfile ya no está."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brewfileはもうありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brewfile 已经不在了。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Brewfile não está mais lá."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il Brewfile non c'è più."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brewfile이 더 이상 없습니다."
           }
         }
       }
@@ -64921,6 +65025,110 @@
         }
       }
     },
+    "This Brewfile is a symbolic link. Choose the file it points to instead.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Brewfile ist ein symbolischer Link. Wähle stattdessen die Datei, auf die er zeigt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce Brewfile est un lien symbolique. Choisissez plutôt le fichier vers lequel il pointe."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile es un enlace simbólico. Elige en su lugar el archivo al que apunta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このBrewfileはシンボリックリンクです。指しているファイルを選んでください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Brewfile 是一个符号链接。请改为选择它指向的文件。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile é um link simbólico. Escolha o arquivo para o qual ele aponta."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo Brewfile è un link simbolico. Scegli invece il file a cui punta."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Brewfile은 심볼릭 링크입니다. 가리키는 파일을 대신 선택하세요."
+          }
+        }
+      }
+    },
+    "This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Brewfile lädt andere Dateien. Tankard führt eine private Kopie aus, daher werden Dateien, die sie über einen zur Brewfile relativen Pfad lädt, nicht gefunden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce Brewfile charge d’autres fichiers. Tankard exécute une copie privée, donc les fichiers chargés par un chemin relatif au Brewfile ne seront pas trouvés."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile carga otros archivos. Tankard ejecuta una copia privada, así que no se encontrarán los archivos que cargue con una ruta relativa al Brewfile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このBrewfileは他のファイルを読み込みます。Tankardは非公開のコピーを実行するため、Brewfileからの相対パスで読み込まれるファイルは見つかりません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Brewfile 会加载其他文件。Tankard 运行的是一份私有副本，因此通过相对 Brewfile 的路径加载的文件将无法找到。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este Brewfile carrega outros arquivos. O Tankard executa uma cópia privada, então os arquivos carregados por um caminho relativo ao Brewfile não serão encontrados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo Brewfile carica altri file. Tankard ne esegue una copia privata, quindi i file caricati con un percorso relativo al Brewfile non saranno trovati."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Brewfile은 다른 파일을 불러옵니다. Tankard는 비공개 사본을 실행하므로, Brewfile 기준의 상대 경로로 불러오는 파일은 찾지 못합니다."
+          }
+        }
+      }
+    },
     "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it.": {
       "localizations": {
         "de": {
@@ -65285,6 +65493,266 @@
         }
       }
     },
+    "This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Datei ist größer als %lld MB, zu groß für eine Brewfile, daher hat Tankard sie nicht gelesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier dépasse %lld Mo, trop volumineux pour un Brewfile, donc Tankard ne l’a pas lu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este archivo supera los %lld MB, demasiado grande para un Brewfile, así que Tankard no lo leyó."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このファイルは%lld MBより大きく、Brewfileとしては大きすぎるため、Tankardは読み取りませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此文件大于 %lld MB，作为 Brewfile 太大，因此 Tankard 没有读取它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este arquivo é maior que %lld MB, grande demais para um Brewfile, então o Tankard não o leu."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo file è più grande di %lld MB, troppo grande per un Brewfile, quindi Tankard non lo ha letto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 파일은 %lld MB보다 커서 Brewfile로 쓰기에는 너무 크므로 Tankard가 읽지 않았습니다."
+          }
+        }
+      }
+    },
+    "This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Datei ist kein UTF-8-Text, daher hat Tankard sie nicht als Brewfile gelesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier n’est pas du texte UTF-8, donc Tankard ne l’a pas lu comme un Brewfile."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este archivo no es texto UTF-8, así que Tankard no lo leyó como Brewfile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このファイルはUTF-8のテキストではないため、TankardはBrewfileとして読み取りませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此文件不是 UTF-8 文本，因此 Tankard 没有将其作为 Brewfile 读取。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este arquivo não é texto UTF-8, então o Tankard não o leu como um Brewfile."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo file non è testo UTF-8, quindi Tankard non lo ha letto come Brewfile."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 파일은 UTF-8 텍스트가 아니므로 Tankard가 Brewfile로 읽지 않았습니다."
+          }
+        }
+      }
+    },
+    "This is a device, not a Brewfile, so Tankard didn't read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist ein Gerät, keine Brewfile, daher hat Tankard es nicht gelesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est un périphérique, pas un Brewfile, donc Tankard ne l’a pas lu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto es un dispositivo, no un Brewfile, así que Tankard no lo leyó."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これはデバイスであり、Brewfileではないため、Tankardは読み取りませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个设备，不是 Brewfile，因此 Tankard 没有读取它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto é um dispositivo, não um Brewfile, então o Tankard não o leu."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo è un dispositivo, non un Brewfile, quindi Tankard non lo ha letto."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이것은 장치이며 Brewfile이 아니므로 Tankard가 읽지 않았습니다."
+          }
+        }
+      }
+    },
+    "This is a folder, not a Brewfile.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist ein Ordner, keine Brewfile."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est un dossier, pas un Brewfile."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto es una carpeta, no un Brewfile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これはフォルダであり、Brewfileではありません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个文件夹，不是 Brewfile。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto é uma pasta, não um Brewfile."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa è una cartella, non un Brewfile."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이것은 폴더이며 Brewfile이 아닙니다."
+          }
+        }
+      }
+    },
+    "This is a named pipe, not a Brewfile, so Tankard didn't read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist eine benannte Pipe, keine Brewfile, daher hat Tankard sie nicht gelesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est un tube nommé, pas un Brewfile, donc Tankard ne l’a pas lu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto es una tubería con nombre, no un Brewfile, así que Tankard no la leyó."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これは名前付きパイプであり、Brewfileではないため、Tankardは読み取りませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个命名管道，不是 Brewfile，因此 Tankard 没有读取它。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto é um pipe nomeado, não um Brewfile, então o Tankard não o leu."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa è una pipe con nome, non un Brewfile, quindi Tankard non l'ha letta."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이것은 이름 있는 파이프이며 Brewfile이 아니므로 Tankard가 읽지 않았습니다."
+          }
+        }
+      }
+    },
     "This is a symbolic link, not the app itself. Tankard doesn't adopt links.": {
       "localizations": {
         "de": {
@@ -65333,6 +65801,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다."
+          }
+        }
+      }
+    },
+    "This isn't a regular file, so Tankard didn't read it as a Brewfile.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist keine reguläre Datei, daher hat Tankard sie nicht als Brewfile gelesen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce n’est pas un fichier régulier, donc Tankard ne l’a pas lu comme un Brewfile."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto no es un archivo regular, así que Tankard no lo leyó como Brewfile."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これは通常ファイルではないため、TankardはBrewfileとして読み取りませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这不是普通文件，因此 Tankard 没有将其作为 Brewfile 读取。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto não é um arquivo regular, então o Tankard não o leu como um Brewfile."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo non è un file regolare, quindi Tankard non lo ha letto come Brewfile."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이것은 일반 파일이 아니므로 Tankard가 Brewfile로 읽지 않았습니다."
           }
         }
       }

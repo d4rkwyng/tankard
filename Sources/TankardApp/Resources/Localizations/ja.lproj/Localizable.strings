@@ -1077,6 +1077,7 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "TankardはHomebrewのパッケージ一覧をダウンロードするためにネットワークに接続できませんでした。インターネット接続（またはVPNやプロキシ）を確認してから、もう一度お試しください。";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard は %2$@ にある %1$@ のバージョンを読み取れなかったため、置き換えませんでした。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankardはtap内のパッケージを読み取れませんでした。少し待ってからもう一度お試しください。";
+"Tankard couldn't read this Brewfile: %@." = "TankardはこのBrewfileを読み取れませんでした: %@。";
 "Tankard couldn't read this file as a Brewfile." = "TankardはこのファイルをBrewfileとして読み取れませんでした。";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "TankardはBrewfileからこのtapの取得元を読み取れませんでした。下のターミナルコマンドを使ってください。";
 "Tankard does these one at a time. Each is recorded in History." = "Tankardはこれらを1つずつ行います。それぞれ履歴に記録されます。";
@@ -1116,6 +1117,7 @@
 "Taps…" = "Tap…";
 "Terminal only" = "ターミナルのみ";
 "That's the latest version." = "これが最新バージョンです。";
+"The Brewfile isn't there any more." = "Brewfileはもうありません。";
 "The Command Line Tools are out of date" = "コマンドラインツールが古くなっています";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "このユーザーはHomebrewのフォルダに書き込めません。通常は `brew doctor`（Homebrew ▸ ヘルス）で原因と修正コマンドが分かります。";
 "The Installed list, filtered to this tap (tap:%@)" = "このtapで絞り込んだインストール済みリスト (tap:%@)";
@@ -1163,6 +1165,8 @@
 "These need your administrator password: %@" = "管理者パスワードが必要です: %@";
 "Third-party" = "サードパーティ";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Tankardが表示した後にこのBrewfileが変更されたため、brewは実行しませんでした。もう一度確認して、現在の内容を見てください。";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "このBrewfileはシンボリックリンクです。指しているファイルを選んでください。";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "このBrewfileは他のファイルを読み込みます。Tankardは非公開のコピーを実行するため、Brewfileからの相対パスで読み込まれるファイルは見つかりません。";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "このBrewfileはインターネットからダウンロードされました。ダウンロードしたBrewfileは、brewが読み込んだ時点でこのMac上の任意のプログラムを実行できます。";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "この Homebrew はコマンドラインツールをインストールできますが、Firefox や VLC のような App はインストールできません。App をオンにするには、約 620 MB の 1 回限りのダウンロードが必要です。";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "このアプリはElectronで作られています。このMacのグラフィックカードでOpenCore Legacy Patcherで入れた新しいmacOSを使っている場合、このようなアプリは正しく表示されないことがあります（ウインドウが白い・黒い・ちらつく、文字が崩れるなど）。Tankardはアプリを変更しません。";
@@ -1170,7 +1174,13 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "このbrewには `brew vulns` がありません（Homebrew 7で追加）。`brew update` で入手してください。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "この cask はインストーラパッケージを実行し、--adopt を無視します。brew はパスワードを使ってインストーラを再実行することになります。";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "この cask のアプリは自動でアップデートされるため、brew はダウンロードと比べずに引き継ぎます。Tankard はアプリのIDが cask に記載されている場合だけ提案しますが、このアプリは該当しません。";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "このファイルは%lld MBより大きく、Brewfileとしては大きすぎるため、Tankardは読み取りませんでした。";
+"This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "このファイルはUTF-8のテキストではないため、TankardはBrewfileとして読み取りませんでした。";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "これはデバイスであり、Brewfileではないため、Tankardは読み取りませんでした。";
+"This is a folder, not a Brewfile." = "これはフォルダであり、Brewfileではありません。";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "これは名前付きパイプであり、Brewfileではないため、Tankardは読み取りませんでした。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "これはアプリ本体ではなくシンボリックリンクです。Tankard はリンクを引き継ぎません。";
+"This isn't a regular file, so Tankard didn't read it as a Brewfile." = "これは通常ファイルではないため、TankardはBrewfileとして読み取りませんでした。";
 "This macOS version isn't supported by Homebrew" = "このバージョンのmacOSはHomebrewでサポートされていません";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "この復元ポイントのtap、formula、caskをBrewfileとして（バージョンなし: Brewfileにはバージョンがありません）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "この手順には管理者権限が必要ですが、Tankardは要求できません。ターミナルでこれを実行してください:";

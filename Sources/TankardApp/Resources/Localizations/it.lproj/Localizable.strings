@@ -1077,6 +1077,7 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard non è riuscito a raggiungere la rete per scaricare l’elenco dei pacchetti di Homebrew. Controlla la connessione a Internet (o una VPN o un proxy), poi riprova.";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard non è riuscito a leggere la versione di %1$@ in %2$@, quindi non ha sostituito l'app.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard non è riuscito a leggere i pacchetti dei tuoi tap. Riprova tra un momento.";
+"Tankard couldn't read this Brewfile: %@." = "Tankard non è riuscito a leggere questo Brewfile: %@.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard non è riuscito a leggere questo file come Brewfile.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard non è riuscito a leggere nel Brewfile da dove viene questo tap. Usa il comando per il Terminale qui sotto.";
 "Tankard does these one at a time. Each is recorded in History." = "Tankard li esegue uno alla volta. Ognuno viene registrato nella Cronologia.";
@@ -1116,6 +1117,7 @@
 "Taps…" = "Tap…";
 "Terminal only" = "Solo Terminale";
 "That's the latest version." = "È la versione più recente.";
+"The Brewfile isn't there any more." = "Il Brewfile non c'è più.";
 "The Command Line Tools are out of date" = "Gli strumenti da riga di comando sono obsoleti";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "Le cartelle di Homebrew non sono scrivibili da questo utente. `brew doctor` (Homebrew ▸ Salute) di solito indica quali, e il comando per risolvere.";
 "The Installed list, filtered to this tap (tap:%@)" = "L'elenco Installati, filtrato per questo tap (tap:%@)";
@@ -1163,6 +1165,8 @@
 "These need your administrator password: %@" = "Richiedono la password di amministratore: %@";
 "Third-party" = "Di terze parti";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Questo Brewfile è cambiato dopo che Tankard l’ha mostrato, quindi brew non l’ha eseguito. Controllalo di nuovo per vedere cosa contiene ora.";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "Questo Brewfile è un link simbolico. Scegli invece il file a cui punta.";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "Questo Brewfile carica altri file. Tankard ne esegue una copia privata, quindi i file caricati con un percorso relativo al Brewfile non saranno trovati.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "Questo Brewfile è stato scaricato da internet. Un Brewfile scaricato può eseguire qualsiasi programma su questo Mac appena brew lo legge.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Questo Homebrew può installare strumenti da riga di comando, ma non app come Firefox o VLC. Attivare le app richiede un unico download di circa 620 MB.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Questa app è fatta con Electron. Con la scheda grafica di questo Mac e un macOS più recente installato con OpenCore Legacy Patcher, le app di questo tipo potrebbero essere visualizzate male: finestre vuote, nere o che sfarfallano, o testo illeggibile. Tankard non modifica l’app.";
@@ -1170,7 +1174,13 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Questo brew non ha `brew vulns` (è nuovo in Homebrew 7). Esegui `brew update` per ottenerlo.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Questo cask esegue un pacchetto di installazione, che ignora --adopt: brew rieseguirebbe il programma di installazione, con la tua password.";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "L’app di questo cask si aggiorna da sola, quindi brew la adotterebbe senza confrontarla con il download. Tankard lo propone solo se l’ID dell’app è uno di quelli indicati dal cask, e qui non lo è.";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "Questo file è più grande di %lld MB, troppo grande per un Brewfile, quindi Tankard non lo ha letto.";
+"This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "Questo file non è testo UTF-8, quindi Tankard non lo ha letto come Brewfile.";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "Questo è un dispositivo, non un Brewfile, quindi Tankard non lo ha letto.";
+"This is a folder, not a Brewfile." = "Questa è una cartella, non un Brewfile.";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "Questa è una pipe con nome, non un Brewfile, quindi Tankard non l'ha letta.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "È un link simbolico, non l'app stessa. Tankard non adotta i link.";
+"This isn't a regular file, so Tankard didn't read it as a Brewfile." = "Questo non è un file regolare, quindi Tankard non lo ha letto come Brewfile.";
 "This macOS version isn't supported by Homebrew" = "Questa versione di macOS non è supportata da Homebrew";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "I tap, le formulae e i cask di questo punto di ripristino come Brewfile (senza versioni: i Brewfile non le hanno)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Questo passaggio richiede diritti di amministratore, che Tankard non può chiedere. Esegui questo nel Terminale:";

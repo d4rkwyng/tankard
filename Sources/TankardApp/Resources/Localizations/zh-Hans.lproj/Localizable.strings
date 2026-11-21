@@ -1077,6 +1077,7 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard 无法连接网络来下载 Homebrew 的软件包列表。请检查互联网连接（或 VPN、代理），然后重试。";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard 无法读取 %2$@ 处 %1$@ 的版本，因此没有替换它。";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard 无法读取你的 Tap 中的软件包。请稍后重试。";
+"Tankard couldn't read this Brewfile: %@." = "Tankard 无法读取此 Brewfile：%@。";
 "Tankard couldn't read this file as a Brewfile." = "Tankard 无法将此文件作为 Brewfile 读取。";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard 无法从 Brewfile 中读出此 Tap 的来源。请使用下方的终端命令。";
 "Tankard does these one at a time. Each is recorded in History." = "Tankard 会逐个执行这些操作。每一项都会记录在“历史记录”中。";
@@ -1116,6 +1117,7 @@
 "Taps…" = "Tap…";
 "Terminal only" = "仅限终端";
 "That's the latest version." = "这是最新版本。";
+"The Brewfile isn't there any more." = "Brewfile 已经不在了。";
 "The Command Line Tools are out of date" = "命令行工具已过期";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "此用户无法写入 Homebrew 文件夹。`brew doctor`（Homebrew ▸ 健康状况）通常会指出是哪些，以及修复命令。";
 "The Installed list, filtered to this tap (tap:%@)" = "“已安装”列表，已按此 tap 过滤 (tap:%@)";
@@ -1163,6 +1165,8 @@
 "These need your administrator password: %@" = "以下项目需要你的管理员密码：%@";
 "Third-party" = "第三方";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "此 Brewfile 在 Tankard 显示后被更改，因此 brew 没有运行它。请再次检查以查看它现在的内容。";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "此 Brewfile 是一个符号链接。请改为选择它指向的文件。";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "此 Brewfile 会加载其他文件。Tankard 运行的是一份私有副本，因此通过相对 Brewfile 的路径加载的文件将无法找到。";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "此 Brewfile 是从互联网下载的。下载的 Brewfile 在 brew 读取它时即可在这台 Mac 上运行任何程序。";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "此 Homebrew 可以安装命令行工具，但不能安装 Firefox 或 VLC 等应用。开启应用需要一次性下载约 620 MB。";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "此 App 基于 Electron 构建。在这台 Mac 的显卡上，若使用 OpenCore Legacy Patcher 安装的较新 macOS，这类 App 可能显示不正常：窗口空白、发黑或闪烁，或文字错乱。Tankard 不会修改此 App。";
@@ -1170,7 +1174,13 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "此 brew 没有 `brew vulns`（它是 Homebrew 7 的新增功能）。请运行 `brew update` 获取。";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "此 cask 会运行安装器包，而安装器包会忽略 --adopt：brew 会使用你的密码再次运行安装器。";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "此 cask 的应用会自行更新,因此 brew 接管时不会与下载内容比较。只有当应用的 ID 是 cask 列出的 ID 之一时,Tankard 才会提供接管,而此应用不是。";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "此文件大于 %lld MB，作为 Brewfile 太大，因此 Tankard 没有读取它。";
+"This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "此文件不是 UTF-8 文本，因此 Tankard 没有将其作为 Brewfile 读取。";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "这是一个设备，不是 Brewfile，因此 Tankard 没有读取它。";
+"This is a folder, not a Brewfile." = "这是一个文件夹，不是 Brewfile。";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "这是一个命名管道，不是 Brewfile，因此 Tankard 没有读取它。";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "这是一个符号链接，而不是 App 本身。Tankard 不接管链接。";
+"This isn't a regular file, so Tankard didn't read it as a Brewfile." = "这不是普通文件，因此 Tankard 没有将其作为 Brewfile 读取。";
 "This macOS version isn't supported by Homebrew" = "Homebrew 不支持此 macOS 版本";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "此恢复点的 tap、formula 和 cask，以 Brewfile 形式导出（不含版本：Brewfile 中没有版本）";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "此步骤需要管理员权限，而 Tankard 无法请求。请在“终端”中运行：";

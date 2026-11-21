@@ -1077,6 +1077,7 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard가 Homebrew의 패키지 목록을 내려받기 위해 네트워크에 연결하지 못했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 다음 다시 시도하세요.";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard가 %2$@에 있는 %1$@의 버전을 읽을 수 없어 교체하지 않았습니다.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard가 tap의 패키지를 읽지 못했습니다. 잠시 후 다시 시도하세요.";
+"Tankard couldn't read this Brewfile: %@." = "Tankard가 이 Brewfile을 읽지 못했습니다: %@.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard가 이 파일을 Brewfile로 읽을 수 없습니다.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard가 Brewfile에서 이 tap의 출처를 읽지 못했습니다. 아래의 터미널 명령을 사용하세요.";
 "Tankard does these one at a time. Each is recorded in History." = "Tankard는 이 작업을 하나씩 수행합니다. 각 작업은 기록에 남습니다.";
@@ -1116,6 +1117,7 @@
 "Taps…" = "Tap…";
 "Terminal only" = "터미널 전용";
 "That's the latest version." = "최신 버전입니다.";
+"The Brewfile isn't there any more." = "Brewfile이 더 이상 없습니다.";
 "The Command Line Tools are out of date" = "Command Line Tools가 오래되었습니다";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "이 사용자는 Homebrew 폴더에 쓸 수 없습니다. 보통 `brew doctor`(Homebrew ▸ 상태)가 어느 폴더인지와 해결 명령을 알려 줍니다.";
 "The Installed list, filtered to this tap (tap:%@)" = "이 tap으로 필터링한 설치됨 목록 (tap:%@)";
@@ -1163,6 +1165,8 @@
 "These need your administrator password: %@" = "관리자 암호가 필요한 항목: %@";
 "Third-party" = "서드파티";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Tankard가 보여 준 뒤에 이 Brewfile이 변경되어 brew가 실행하지 않았습니다. 지금 어떤 내용인지 보려면 다시 확인하십시오.";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "이 Brewfile은 심볼릭 링크입니다. 가리키는 파일을 대신 선택하세요.";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "이 Brewfile은 다른 파일을 불러옵니다. Tankard는 비공개 사본을 실행하므로, Brewfile 기준의 상대 경로로 불러오는 파일은 찾지 못합니다.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "이 Brewfile은 인터넷에서 다운로드되었습니다. 다운로드한 Brewfile은 brew가 읽는 즉시 이 Mac에서 어떤 프로그램이든 실행할 수 있습니다.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "이 Homebrew는 명령줄 도구는 설치할 수 있지만 Firefox나 VLC 같은 앱은 설치할 수 없습니다. 앱을 켜려면 약 620MB를 한 번 다운로드해야 합니다.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "이 앱은 Electron으로 만들어졌습니다. 이 Mac의 그래픽 카드에서 OpenCore Legacy Patcher로 설치한 최신 macOS를 사용하면 이런 앱이 제대로 표시되지 않을 수 있습니다(빈 창, 검은 창, 깜박이는 창 또는 깨진 글자). Tankard는 앱을 변경하지 않습니다.";
@@ -1170,7 +1174,13 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "이 brew에는 `brew vulns`가 없습니다(Homebrew 7에서 새로 추가됨). `brew update`를 실행하여 받으세요.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "이 cask는 설치 패키지를 실행하며, 설치 패키지는 --adopt를 무시합니다. brew가 사용자 암호로 설치 프로그램을 다시 실행하게 됩니다.";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "이 cask의 앱은 스스로 업데이트하므로 brew가 다운로드와 비교하지 않고 가져옵니다. Tankard는 앱 ID가 cask에 적힌 ID일 때만 제안하며, 이 앱은 그렇지 않습니다.";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "이 파일은 %lld MB보다 커서 Brewfile로 쓰기에는 너무 크므로 Tankard가 읽지 않았습니다.";
+"This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "이 파일은 UTF-8 텍스트가 아니므로 Tankard가 Brewfile로 읽지 않았습니다.";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "이것은 장치이며 Brewfile이 아니므로 Tankard가 읽지 않았습니다.";
+"This is a folder, not a Brewfile." = "이것은 폴더이며 Brewfile이 아닙니다.";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "이것은 이름 있는 파이프이며 Brewfile이 아니므로 Tankard가 읽지 않았습니다.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "앱 자체가 아니라 심볼릭 링크입니다. Tankard는 링크를 가져오지 않습니다.";
+"This isn't a regular file, so Tankard didn't read it as a Brewfile." = "이것은 일반 파일이 아니므로 Tankard가 Brewfile로 읽지 않았습니다.";
 "This macOS version isn't supported by Homebrew" = "이 macOS 버전은 Homebrew에서 지원하지 않습니다";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "이 복원 지점의 tap, formulae, cask를 Brewfile로 만듭니다(버전 없음: Brewfile에는 버전이 없습니다)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "이 단계에는 관리자 권한이 필요하며 Tankard가 요청할 수 없습니다. 터미널에서 실행하세요:";

@@ -1077,6 +1077,7 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "O Tankard não conseguiu acessar a rede para baixar a lista de pacotes do Homebrew. Verifique a conexão com a internet (ou uma VPN ou proxy) e tente novamente.";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "O Tankard não conseguiu ler a versão de %1$@ em %2$@, então não o substituiu.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "O Tankard não conseguiu ler os pacotes dos seus taps. Tente novamente daqui a pouco.";
+"Tankard couldn't read this Brewfile: %@." = "O Tankard não conseguiu ler este Brewfile: %@.";
 "Tankard couldn't read this file as a Brewfile." = "O Tankard não conseguiu ler este arquivo como um Brewfile.";
 "Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "O Tankard não conseguiu ler no Brewfile de onde vem este tap. Use o comando do Terminal abaixo.";
 "Tankard does these one at a time. Each is recorded in History." = "O Tankard faz isso um de cada vez. Cada um fica registrado no Histórico.";
@@ -1116,6 +1117,7 @@
 "Taps…" = "Taps…";
 "Terminal only" = "Somente no Terminal";
 "That's the latest version." = "Esta é a versão mais recente.";
+"The Brewfile isn't there any more." = "O Brewfile não está mais lá.";
 "The Command Line Tools are out of date" = "As Command Line Tools estão desatualizadas";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "As pastas do Homebrew não são graváveis por este usuário. O `brew doctor` (Homebrew ▸ Saúde) geralmente diz quais são e o comando para corrigir.";
 "The Installed list, filtered to this tap (tap:%@)" = "A lista de Instalados, filtrada por este tap (tap:%@)";
@@ -1163,6 +1165,8 @@
 "These need your administrator password: %@" = "Estes precisam da sua senha de administrador: %@";
 "Third-party" = "De terceiros";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Este Brewfile mudou depois que o Tankard o mostrou, então o brew não o executou. Verifique-o de novo para ver o que ele contém agora.";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "Este Brewfile é um link simbólico. Escolha o arquivo para o qual ele aponta.";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "Este Brewfile carrega outros arquivos. O Tankard executa uma cópia privada, então os arquivos carregados por um caminho relativo ao Brewfile não serão encontrados.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "Este Brewfile foi baixado da internet. Um Brewfile baixado pode executar qualquer programa neste Mac assim que o brew o lê.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Este Homebrew pode instalar ferramentas de linha de comando, mas não apps como Firefox ou VLC. Ativar os apps é um download único de cerca de 620 MB.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Este app é feito com Electron. Com a placa de vídeo deste Mac e um macOS mais novo instalado pelo OpenCore Legacy Patcher, apps assim podem aparecer errado: janelas em branco, pretas ou piscando, ou texto embaralhado. O Tankard não altera o app.";
@@ -1170,7 +1174,13 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Este brew não tem `brew vulns` (novo no Homebrew 7). Execute `brew update` para obtê-lo.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Este cask executa um pacote de instalação, que ignora --adopt: o brew executaria o instalador de novo, com sua senha.";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "O app deste cask se atualiza sozinho, então o brew o adotaria sem compará-lo com o download. O Tankard só oferece isso quando o ID do app é um dos que o cask cita, e este não é.";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "Este arquivo é maior que %lld MB, grande demais para um Brewfile, então o Tankard não o leu.";
+"This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "Este arquivo não é texto UTF-8, então o Tankard não o leu como um Brewfile.";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "Isto é um dispositivo, não um Brewfile, então o Tankard não o leu.";
+"This is a folder, not a Brewfile." = "Isto é uma pasta, não um Brewfile.";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "Isto é um pipe nomeado, não um Brewfile, então o Tankard não o leu.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Isto é um link simbólico, não o app em si. O Tankard não adota links.";
+"This isn't a regular file, so Tankard didn't read it as a Brewfile." = "Isto não é um arquivo regular, então o Tankard não o leu como um Brewfile.";
 "This macOS version isn't supported by Homebrew" = "Esta versão do macOS não é compatível com o Homebrew";
 "This restore point's taps, formulae and casks as a Brewfile (no versions: Brewfiles have none)" = "Os taps, formulae e casks deste ponto de restauração como um Brewfile (sem versões: Brewfiles não as têm)";
 "This step needs administrator rights, which Tankard can't ask for. Run this in Terminal:" = "Esta etapa exige direitos de administrador, que o Tankard não pode solicitar. Execute isto no Terminal:";
