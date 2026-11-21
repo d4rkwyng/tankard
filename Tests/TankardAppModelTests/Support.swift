@@ -187,8 +187,9 @@ enum TestDefaults {
     /// 0.8.9: cfprefsd writes an emptied domain back as a `{}` plist when
     /// the process disconnects, after anything this process could delete
     /// (a bare `swift test` left ~175 per run that way). So for a bare run,
-    /// a detached `sh` waits for this process to be gone and then deletes
-    /// each listed plist, the exact path and only test-shaped names. Under
+    /// a detached `sh` waits for this process to be gone and then, twice,
+    /// `defaults delete`s each listed domain and deletes its plist, the
+    /// exact path and only test-shaped names. Under
     /// Scripts/test.sh (TANKARD_TEST_DEFAULTS_LIST set) the script does this.
     private static func sweepAfterExit(_ names: [String]) {
         guard ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"] == nil else { return }
@@ -198,9 +199,20 @@ enum TestDefaults {
         guard !safe.isEmpty else { return }
         let p = Process()
         p.executableURL = URL(fileURLWithPath: "/bin/sh")
+        // 0.9.0: `rm` alone wasn't enough: cfprefsd still held about a third
+        // of the domains and wrote them back as `{}` seconds after the sweep
+        // (~165 per bare run; ~1,900 had piled up). `defaults delete` first,
+        // as Scripts/test.sh does (that leaves none), makes cfprefsd drop
+        // the domain; a second pass catches any late write-back.
         p.arguments = ["-c", """
-            while kill -0 "$1" 2>/dev/null; do sleep 0.2; done; sleep 3; shift
-            for n; do rm -f "$HOME/Library/Preferences/$n.plist"; done
+            while kill -0 "$1" 2>/dev/null; do sleep 0.2; done; shift
+            for pass in 1 2; do
+                sleep 3
+                for n; do
+                    /usr/bin/defaults delete "$n" >/dev/null 2>&1
+                    rm -f "$HOME/Library/Preferences/$n.plist"
+                done
+            done
             """, "sh", String(getpid())] + safe
         p.standardInput = FileHandle.nullDevice
         p.standardOutput = FileHandle.nullDevice
