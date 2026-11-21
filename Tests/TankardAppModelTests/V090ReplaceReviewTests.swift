@@ -121,6 +121,131 @@ struct V090ReplaceReviewTests {
         #expect(leftBehind() == [(parent as NSString).lastPathComponent])
     }
 
+    /// An empty Frameworks directory keeps the same top-level Contents names
+    /// and still is not the app: the nested framework is gone.
+    @Test func aGuttedFrameworksDirectoryIsRejected() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0", build: "100")
+        try Self.addFramework(d.app)
+        let copy = d.url.appendingPathComponent("Copy.app")
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        let frameworks = copy.appendingPathComponent("Contents/Frameworks")
+        for name in try fm.contentsOfDirectory(atPath: frameworks.path) {
+            try fm.removeItem(at: frameworks.appendingPathComponent(name))
+        }
+        let srcTop = Set(try fm.contentsOfDirectory(atPath: d.app.appendingPathComponent("Contents").path))
+        let dstTop = Set(try fm.contentsOfDirectory(atPath: copy.appendingPathComponent("Contents").path))
+        #expect(srcTop == dstTop)
+        #expect(dstTop.contains("Frameworks"))
+        #expect(!AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+
+        let gutting = AppReplaceSafety.live(root: d.root, copy: { src, dest, _ in
+            try AppReplaceSafety.copyApp(from: src, to: dest, clone: false)
+            let dir = (dest as NSString).appendingPathComponent("Contents/Frameworks")
+            for name in try FileManager.default.contentsOfDirectory(atPath: dir) {
+                try FileManager.default.removeItem(atPath: (dir as NSString).appendingPathComponent(name))
+            }
+        })
+        #expect(throws: AppReplaceSafety.BackupError.unreliable) { try gutting.backup(d.app.path) }
+        #expect(((try? fm.contentsOfDirectory(atPath: d.root.path)) ?? []).isEmpty)
+        #expect(fm.fileExists(atPath: d.app.path))
+    }
+
+    /// The same paths and types, with one symlink aimed somewhere else.
+    @Test func aRetargetedSymlinkIsRejected() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0")
+        try Self.addFramework(d.app)
+        let copy = d.url.appendingPathComponent("Copy.app")
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        let link = copy.appendingPathComponent("Contents/Frameworks/Foo.framework/Versions/Current").path
+        #expect(AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+        #expect(try fm.destinationOfSymbolicLink(atPath: link) == "A")
+        try fm.removeItem(atPath: link)
+        try fm.createSymbolicLink(atPath: link, withDestinationPath: "B")
+        #expect(try fm.destinationOfSymbolicLink(atPath: link) == "B")
+        #expect(!AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+    }
+
+    /// A plain copy of framework symlinks and a nested .lproj tree matches.
+    @Test func aFaithfulCopyIsAccepted() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0")
+        try Self.addFramework(d.app)
+        let en = d.app.appendingPathComponent("Contents/Resources/en.lproj")
+        try fm.createDirectory(at: en.appendingPathComponent("nested"), withIntermediateDirectories: true)
+        try Data("hello".utf8).write(to: en.appendingPathComponent("Localizable.strings"))
+        try Data("n".utf8).write(to: en.appendingPathComponent("nested/Info.txt"))
+        let copy = d.url.appendingPathComponent("Copy.app")
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        let copied = copy.appendingPathComponent("Contents/Frameworks/Foo.framework")
+        #expect(Self.isSymlink(copied.appendingPathComponent("Versions/Current").path))
+        #expect(try fm.destinationOfSymbolicLink(atPath: copied.appendingPathComponent("Versions/Current").path) == "A")
+        #expect(Self.isSymlink(copied.appendingPathComponent("Foo").path))
+        #expect(try fm.destinationOfSymbolicLink(atPath: copied.appendingPathComponent("Foo").path) == "Versions/Current/Foo")
+        #expect(fm.fileExists(atPath: copy.appendingPathComponent("Contents/Resources/en.lproj/nested/Info.txt").path))
+        #expect(AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+
+        try fm.createDirectory(at: d.root, withIntermediateDirectories: true)
+        let live = AppReplaceSafety.live(root: d.root, sameVolume: { _, _ in false })
+        let backup = try live.backup(d.app.path)
+        #expect(AppReplaceSafety.isReliableCopy(backup, of: d.app.path))
+        #expect(Self.isSymlink((backup as NSString).appendingPathComponent("Contents/Frameworks/Foo.framework/Versions/Current")))
+    }
+
+    /// Past the entry cap the copy is not trusted: it is deleted and brew
+    /// does not get a path. The production cap is `maxTreeEntries`; this
+    /// tree is checked against a smaller one.
+    @Test func aTreePastTheEntryCapFailsSafe() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0")
+        let extra = 40
+        for i in 0..<extra {
+            try Data("x".utf8).write(to: d.app.appendingPathComponent("Contents/f\(i)"))
+        }
+        // Contents, Info.plist, MacOS, MacOS/Foo, plus one file each.
+        let count = 4 + extra
+        let copy = d.url.appendingPathComponent("Copy.app")
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        #expect(AppReplaceSafety.maxTreeEntries == 200_000)
+        #expect(AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path, entryLimit: count))
+        #expect(!AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path, entryLimit: count - 1))
+
+        let live = AppReplaceSafety.live(root: d.root, entryLimit: count - 1)
+        #expect(throws: AppReplaceSafety.BackupError.tooLarge) { try live.backup(d.app.path) }
+        #expect(((try? fm.contentsOfDirectory(atPath: d.root.path)) ?? []).isEmpty)
+        #expect(fm.fileExists(atPath: d.app.path))
+        #expect(FakeBundle.version(d.app) == "1.0")
+    }
+
+    /// A signature that verifies on the source must verify on the copy. The
+    /// same-size edit keeps the tree and still fails. Unsigned, that edit
+    /// does not: there is no signature to keep.
+    @Test func aSignedSourceRequiresASignedCopy() throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0")
+        let copy = d.url.appendingPathComponent("Copy.app")
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        let exe = copy.appendingPathComponent("Contents/MacOS/Foo")
+        let original = try Data(contentsOf: exe)
+        var flipped = original
+        flipped[0] ^= 0xff
+        #expect(flipped.count == original.count)
+        try flipped.write(to: exe)
+        #expect(AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+        try original.write(to: exe)
+
+        #expect(Self.codesign(d.app.path) == 0)
+        try? fm.removeItem(at: copy)
+        try AppReplaceSafety.copyApp(from: d.app.path, to: copy.path, clone: false)
+        #expect(AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+        var signed = try Data(contentsOf: exe)
+        signed[0] ^= 0xff
+        #expect(signed.count == (try Data(contentsOf: d.app.appendingPathComponent("Contents/MacOS/Foo"))).count)
+        try signed.write(to: exe)
+        #expect(!AppReplaceSafety.isReliableCopy(copy.path, of: d.app.path))
+    }
+
     /// The notice is the reliable-copy sentence, and brew does not start.
     @Test func anUnreliableCopyDoesNotReplace() async throws {
         let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
@@ -149,6 +274,37 @@ struct V090ReplaceReviewTests {
         #expect(await !store.startReplace(plan))
         #expect(store.upgrade == nil)
         #expect(store.busyNotice == "Tankard couldn't make a reliable safety copy of Audacity, so it didn't replace it.")
+        #expect(calls.withLock { $0 } == ["read", "backup"])
+    }
+
+    /// Past the entry cap the sheet says why, and brew does not start.
+    @Test func aTreePastTheEntryCapDoesNotReplace() async throws {
+        let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { _ in
+                calls.withLock { $0.append("backup") }
+                throw AppReplaceSafety.BackupError.tooLarge
+            },
+            finish: { _, _, _, _ in
+                calls.withLock { $0.append("finish") }
+                return .discarded
+            },
+            readApp: { _ in
+                calls.withLock { $0.append("read") }
+                return .init(bundleID: "org.audacityteam.audacity4", shortVersion: "4.0.1", bundleVersion: "4.0.1")
+            })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let row = try #require(store.adopt.rows(.needsUpdate).first { $0.app.displayName == "Audacity" })
+        let plan = try #require(store.adopt.replacePlan(row))
+        store.closeToolSheet()
+        #expect(await !store.startReplace(plan))
+        #expect(store.upgrade == nil)
+        #expect(store.busyNotice == "Tankard couldn't check the safety copy of Audacity (it has too many files), so it didn't replace it.")
         #expect(calls.withLock { $0 } == ["read", "backup"])
     }
 
@@ -338,6 +494,28 @@ struct V090ReplaceReviewTests {
             }
             return try await inner.stream(executable, arguments, environment: environment, output: output)
         }
+    }
+
+    private static func addFramework(_ app: URL) throws {
+        let fm = FileManager.default
+        let fw = app.appendingPathComponent("Contents/Frameworks/Foo.framework")
+        let versionA = fw.appendingPathComponent("Versions/A")
+        try fm.createDirectory(at: versionA, withIntermediateDirectories: true)
+        try Data("framework".utf8).write(to: versionA.appendingPathComponent("Foo"))
+        try fm.createSymbolicLink(atPath: fw.appendingPathComponent("Versions/Current").path, withDestinationPath: "A")
+        try fm.createSymbolicLink(atPath: fw.appendingPathComponent("Foo").path, withDestinationPath: "Versions/Current/Foo")
+    }
+
+    /// Ad-hoc signature. 0 when the bundle verifies on disk.
+    private static func codesign(_ path: String) -> Int32 {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
+        p.arguments = ["--force", "--sign", "-", path]
+        p.standardOutput = FileHandle.nullDevice
+        p.standardError = FileHandle.nullDevice
+        do { try p.run() } catch { return -1 }
+        p.waitUntilExit()
+        return p.terminationStatus
     }
 
     private static func isSymlink(_ path: String) -> Bool {

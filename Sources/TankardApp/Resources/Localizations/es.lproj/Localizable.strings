@@ -1071,6 +1071,7 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard no puede pedirla aquí. En Detalles se explica qué hacer.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard compara la versión de cada app con la de Homebrew. Cuando coinciden, Homebrew se encarga de las actualizaciones sin mover la app.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento.";
+"Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard no pudo comprobar la copia de seguridad de la app %@ (tiene demasiados archivos), así que no la reemplazó.";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard no pudo hacer una copia de seguridad fiable de la app %@, así que no la reemplazó.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard no pudo hacer una copia de seguridad de %@, así que no la reemplazó: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard no pudo volver a poner %1$@ (%2$@). Hay una copia de la versión anterior en %3$@.";

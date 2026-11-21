@@ -255,25 +255,140 @@ public struct AppReplaceSafety: Sendable {
     /// The copy is not a whole bundle matching the source. Brew does not run.
     enum BackupError: Error, Sendable, Equatable {
         case unreliable
+        /// More than `maxTreeEntries` files, directories or symlinks. The
+        /// copy was not compared, so it is not trusted.
+        case tooLarge
     }
 
-    /// A copy can stand in for the app: a whole bundle (`found(at:)`), the
-    /// same bundle id and versions, and the same names directly inside Contents.
-    static func isReliableCopy(_ dest: String, of src: String) -> Bool {
+    /// How many files, directories and symlinks the safety-copy check will
+    /// compare. Past this the copy is not trusted and brew does not run.
+    public static let maxTreeEntries = 200_000
+
+    /// A copy can stand in for the app. Both paths are whole bundles
+    /// (`found(at:)`) with the same bundle id and versions, and the same
+    /// tree. The walk uses `lstat` and does not follow symlinks: the same
+    /// relative paths, the same type at each path, the same size for a
+    /// regular file, and the same target for a symlink. When the source's
+    /// code signature verifies, the copy's must verify too.
+    ///
+    /// `entryLimit` defaults to `maxTreeEntries`. A larger tree is not
+    /// reliable (`BackupError.tooLarge` from `backup`): brew does not run.
+    ///
+    /// The comparison runs off the main thread. `startReplace` already
+    /// calls `backup` on a detached task. A caller that is on the main
+    /// thread is hopped off before the walk and the signature check.
+    static func isReliableCopy(_ dest: String, of src: String, entryLimit: Int = maxTreeEntries) -> Bool {
+        copyVerdict(dest, of: src, entryLimit: entryLimit) == .reliable
+    }
+
+    private enum CopyVerdict: Sendable, Equatable {
+        case reliable
+        case unreliable
+        case tooLarge
+    }
+
+    private static func copyVerdict(_ dest: String, of src: String, entryLimit: Int) -> CopyVerdict {
+        if !Thread.isMainThread {
+            return copyVerdictOffMain(dest, of: src, entryLimit: entryLimit)
+        }
+        return OffMain.run { copyVerdictOffMain(dest, of: src, entryLimit: entryLimit) }
+    }
+
+    private static func copyVerdictOffMain(_ dest: String, of src: String, entryLimit: Int) -> CopyVerdict {
+        OffMain.assertOffMain("AppReplaceSafety.copyVerdict")
         guard case .bundle(let srcInfo, _) = found(at: src),
-              case .bundle(let dstInfo, _) = found(at: dest) else { return false }
+              case .bundle(let dstInfo, _) = found(at: dest) else { return .unreliable }
         guard (srcInfo.bundleID ?? "").lowercased() == (dstInfo.bundleID ?? "").lowercased(),
               srcInfo.shortVersion == dstInfo.shortVersion,
-              srcInfo.bundleVersion == dstInfo.bundleVersion else { return false }
-        guard let srcEntries = contentsEntries(src), let dstEntries = contentsEntries(dest) else { return false }
-        return srcEntries == dstEntries
+              srcInfo.bundleVersion == dstInfo.bundleVersion else { return .unreliable }
+        switch walkedTree(src, limit: entryLimit) {
+        case .tooLarge: return .tooLarge
+        case .unreadable: return .unreliable
+        case .entries(let srcEntries):
+            switch walkedTree(dest, limit: entryLimit) {
+            case .tooLarge: return .tooLarge
+            case .unreadable: return .unreliable
+            case .entries(let dstEntries):
+                guard srcEntries == dstEntries else { return .unreliable }
+            }
+        }
+        // Same paths and sizes. A same-size edit still has to keep a
+        // signature that verifies: an unsigned source does not require one.
+        if codeSignature(at: src) == .valid {
+            guard codeSignature(at: dest) == .valid else { return .unreliable }
+        }
+        return .reliable
     }
 
-    /// Names directly inside Contents. Nil when that folder cannot be listed.
-    static func contentsEntries(_ appPath: String) -> Set<String>? {
-        let contents = (appPath as NSString).appendingPathComponent("Contents")
-        guard let names = try? FileManager.default.contentsOfDirectory(atPath: contents) else { return nil }
-        return Set(names)
+    private enum TreeNode: Equatable {
+        case file(UInt64)
+        case directory
+        case symlink(String)
+    }
+
+    private enum TreeWalk {
+        case entries([String: TreeNode])
+        case tooLarge
+        case unreadable
+    }
+
+    /// Every relative path under `root`. `lstat` decides the type, so a
+    /// symlink is recorded and not descended into. Nil-sized or unreadable
+    /// entries, and anything that is not a file, directory or symlink, are
+    /// unreadable: the copy is not trusted.
+    private static func walkedTree(_ root: String, limit: Int) -> TreeWalk {
+        var entries: [String: TreeNode] = [:]
+        var pending = [""]
+        while let rel = pending.popLast() {
+            let dir = rel.isEmpty ? root : (root as NSString).appendingPathComponent(rel)
+            guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else { return .unreadable }
+            for name in names {
+                if entries.count >= limit { return .tooLarge }
+                let childRel = rel.isEmpty ? name : (rel as NSString).appendingPathComponent(name)
+                let child = (root as NSString).appendingPathComponent(childRel)
+                guard let node = treeNode(at: child) else { return .unreadable }
+                entries[childRel] = node
+                if case .directory = node { pending.append(childRel) }
+            }
+        }
+        return .entries(entries)
+    }
+
+    private static func treeNode(at path: String) -> TreeNode? {
+        var st = stat()
+        guard lstat(path, &st) == 0 else { return nil }
+        let mode = st.st_mode & S_IFMT
+        if mode == S_IFREG {
+            guard st.st_size >= 0 else { return nil }
+            return .file(UInt64(st.st_size))
+        }
+        if mode == S_IFDIR { return .directory }
+        if mode == S_IFLNK {
+            guard let target = symlinkTarget(path) else { return nil }
+            return .symlink(target)
+        }
+        return nil
+    }
+
+    /// The link's own text, not the file it names. Nil when it cannot be read.
+    private static func symlinkTarget(_ path: String) -> String? {
+        var capacity = 256
+        while capacity <= 1 << 20 {
+            var buffer = [CChar](repeating: 0, count: capacity)
+            let count = buffer.withUnsafeMutableBufferPointer { raw -> Int in
+                path.withCString { cPath in
+                    guard let base = raw.baseAddress else { return -1 }
+                    return readlink(cPath, base, capacity)
+                }
+            }
+            if count < 0 { return nil }
+            if count < capacity {
+                let bytes = buffer.prefix(count).map { UInt8(bitPattern: $0) }
+                return String(bytes: bytes, encoding: .utf8)
+            }
+            capacity *= 2
+        }
+        return nil
     }
 
     /// The real one: ~/Library/Application Support/<bundle id>/replace-backup/<uuid>/<name>.app.
@@ -328,7 +443,8 @@ public struct AppReplaceSafety: Sendable {
     public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil,
                             sameVolume: (@Sendable (String, String) -> Bool)? = nil,
                             copy: (@Sendable (_ src: String, _ dest: String, _ clone: Bool) throws -> Void)? = nil,
-                            signature: (@Sendable (String) -> CodeSignature)? = nil) -> AppReplaceSafety {
+                            signature: (@Sendable (String) -> CodeSignature)? = nil,
+                            entryLimit: Int = maxTreeEntries) -> AppReplaceSafety {
         let extras: [URL]
         if let legacyRoots {
             extras = legacyRoots
@@ -361,9 +477,15 @@ public struct AppReplaceSafety: Sendable {
                 }
                 // copyfile can return 0 for a tree that is not this app.
                 // A bad copy is deleted. Brew is not started.
-                guard isReliableCopy(dest.path, of: appPath) else {
+                switch copyVerdict(dest.path, of: appPath, entryLimit: entryLimit) {
+                case .reliable:
+                    break
+                case .unreliable:
                     try? fm.removeItem(at: dir)
                     throw BackupError.unreliable
+                case .tooLarge:
+                    try? fm.removeItem(at: dir)
+                    throw BackupError.tooLarge
                 }
                 // Written once the copy is whole: a copy cut short by a
                 // crash has no origin and is never put back by itself.
@@ -720,6 +842,9 @@ public extension AppStore {
             }
             do {
                 backup = try await Task.detached { try safety.backup(plan.appPath) }.value
+            } catch AppReplaceSafety.BackupError.tooLarge {
+                showBusyNotice(String(localized: "Tankard couldn't check the safety copy of \(plan.appName) (it has too many files), so it didn't replace it."), seconds: 12)
+                return false
             } catch is AppReplaceSafety.BackupError {
                 showBusyNotice(String(localized: "Tankard couldn't make a reliable safety copy of \(plan.appName), so it didn't replace it."), seconds: 12)
                 return false

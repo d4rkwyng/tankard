@@ -60023,6 +60023,58 @@
         }
       }
     },
+    "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte die Sicherheitskopie von %@ nicht prüfen (zu viele Dateien) und hat die App daher nicht ersetzt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n'a pas pu vérifier la copie de sécurité de l'app %@ (trop de fichiers) ; elle n'a donc pas été remplacée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo comprobar la copia de seguridad de la app %@ (tiene demasiados archivos), así que no la reemplazó."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a controllare la copia di sicurezza dell'app %@ (ha troppi file), quindi non l'ha sostituita."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu verificar a cópia de segurança do app %@ (há arquivos demais), então não o substituiu."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardは %@ の安全コピーを確認できませんでした（ファイルが多すぎます）。そのため置き換えませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法检查 %@ 的安全副本（文件太多），因此没有替换它。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 %@의 안전 사본을 확인할 수 없어(파일이 너무 많음) 교체하지 않았습니다."
+          }
+        }
+      }
+    },
     "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it.": {
       "localizations": {
         "de": {

@@ -1071,6 +1071,7 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
+"Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard 无法检查 %@ 的安全副本（文件太多），因此没有替换它。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard 无法为 %@ 创建可靠的安全副本，因此没有替换它。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard 无法放回 %1$@（%2$@）。旧版本的副本位于 %3$@。";
