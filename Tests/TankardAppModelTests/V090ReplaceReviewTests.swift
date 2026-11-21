@@ -184,6 +184,106 @@ struct V090ReplaceReviewTests {
         #expect(!runner.args.withLock { $0 }.contains { $0.contains("uninstall") })
     }
 
+    /// A verifying signature (or both unsigned) is the warning path. Anything
+    /// else keeps the copy, leaves the new tree in place, and stays a failure.
+    @Test func aBadSignatureIsARealFailure() throws {
+        let d = Dir(), fm = FileManager.default
+        let appPath = d.app.path
+        func finish(_ signing: @escaping @Sendable (String) -> AppReplaceSafety.CodeSignature) throws -> (AppReplaceSafety.Outcome, String) {
+            try FakeBundle.make(d.app, version: "1.0")
+            let live = AppReplaceSafety.live(root: d.root, signature: signing)
+            let copy = try live.backup(d.app.path)
+            try FakeBundle.make(d.app, version: "2.0")
+            return (live.finish(d.app.path, copy, false, "2.0"), copy)
+        }
+        func stayed(_ outcome: AppReplaceSafety.Outcome, _ copy: String) {
+            #expect(fm.fileExists(atPath: copy))
+            #expect(FakeBundle.version(URL(fileURLWithPath: copy)) == "1.0")
+            #expect(FakeBundle.version(d.app) == "2.0")
+            #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
+        }
+
+        let (valid, validCopy) = try finish { _ in .valid }
+        #expect(valid == .replacedDespiteError(backup: validCopy))
+        stayed(valid, validCopy)
+
+        let seen = OSAllocatedUnfairLock<[String]>(initialState: [])
+        let (onlyInstalled, onlyCopy) = try finish { path in
+            seen.withLock { $0.append(path) }
+            return .valid
+        }
+        #expect(onlyInstalled == .replacedDespiteError(backup: onlyCopy))
+        #expect(seen.withLock { $0 } == [appPath])
+
+        let (invalid, invalidCopy) = try finish { _ in .invalid }
+        #expect(invalid == .incomplete(backup: invalidCopy))
+        stayed(invalid, invalidCopy)
+
+        let (stripped, strippedCopy) = try finish { path in path == appPath ? .unsigned : .valid }
+        #expect(stripped == .incomplete(backup: strippedCopy))
+        stayed(stripped, strippedCopy)
+
+        let (unreadableBackup, unreadableCopy) = try finish { path in path == appPath ? .unsigned : .invalid }
+        #expect(unreadableBackup == .incomplete(backup: unreadableCopy))
+
+        let (bothUnsigned, bothCopy) = try finish { _ in .unsigned }
+        #expect(bothUnsigned == .replacedDespiteError(backup: bothCopy))
+        stayed(bothUnsigned, bothCopy)
+    }
+
+    /// The sheet keeps brew's explanation and the retry advice, and names the copy.
+    @Test func aBadSignatureKeepsTheFailureAndTheCopy() async throws {
+        let info = AppReplaceSafety.BundleInfo(bundleID: "org.audacityteam.audacity4", shortVersion: "4.0.1", bundleVersion: "4.0.1")
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.streamRunner = LockOnce(deps.streamRunner)
+        deps.lockWait = BrewLockWait(interval: .milliseconds(20), limit: .milliseconds(300), maxAttempts: 5, holders: { _ in
+            ["99 brew install"]
+        })
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, backup, ok, _ in
+                #expect(!ok)
+                return .incomplete(backup: backup)
+            },
+            readApp: { _ in info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let row = try #require(store.adopt.rows(.needsUpdate).first { $0.app.displayName == "Audacity" })
+        let plan = try #require(store.adopt.replacePlan(row))
+        store.closeToolSheet()
+        #expect(await store.startReplace(plan))
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let session = try #require(store.upgrade)
+        let item = try #require(session.items.first)
+        #expect(item.state != .done)
+        #expect(session.failedItems.map(\.id) == [item.id])
+        #expect(session.replacedDespiteError.isEmpty)
+        #expect(session.failureKindByItem[item.id] == .locked)
+        #expect(session.nextStep == "Another Homebrew command kept brew's lock. Retry once it has finished.")
+        #expect(session.title == "Replace finished with problems")
+        let lines = session.log.lines.joined(separator: "\n")
+        #expect(lines.contains("Another Homebrew command is running. brew allows one command at a time."))
+        #expect(lines.contains("Homebrew reported an error and Audacity may be incomplete. Tankard kept a copy of the old version at /tmp/b/Audacity 4.app."))
+        #expect(!lines.contains("was updated to"))
+    }
+
+    /// brew exits 1 with its lock message, so the failure kind is `.locked`.
+    final class LockOnce: StreamingCommandRunning, @unchecked Sendable {
+        let inner: StreamingCommandRunning
+        init(_ inner: StreamingCommandRunning) { self.inner = inner }
+        func stream(_ executable: String, _ arguments: [String], environment: [String: String],
+                    output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            if arguments.contains("--force") {
+                output(Data("Error: A `brew install --cask audacity` process has already locked /opt/homebrew/Caskroom/audacity.\n".utf8))
+                return 1
+            }
+            return try await inner.stream(executable, arguments, environment: environment, output: output)
+        }
+    }
+
     /// Hangs `brew install --cask --force` until Stop Now cancels it.
     final class HangInstall: StreamingCommandRunning, @unchecked Sendable {
         let inner: StreamingCommandRunning

@@ -524,6 +524,7 @@
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew 不再为 Intel Mac 提供 bottle（预构建的软件包），因此标准 Homebrew 在此会从源码编译大多数软件包，速度很慢。Intelbrew 是带有 Intel bottle 的 Homebrew。";
 "Homebrew not found" = "未找到 Homebrew";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew 记录的版本为 %@；对于自行更新的 App，brew 不比较版本。";
+"Homebrew reported an error and %@ may be incomplete. Tankard kept a copy of the old version at %@." = "Homebrew 报告了错误，%1$@ 可能不完整。Tankard 在 %2$@ 保留了旧版本的副本。";
 "Homebrew still has it, but will disable it later." = "Homebrew 仍保留它，但之后会将其停用。";
 "Homebrew updates it" = "由 Homebrew 更新";
 "Homebrew was busy" = "Homebrew 正忙";

@@ -524,6 +524,7 @@
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "Homebrew baut keine Bottles (fertige Pakete) mehr für Intel-Macs, daher kompiliert Standard-Homebrew hier die meisten Pakete langsam aus Quellcode. Intelbrew ist Homebrew mit Intel-Bottles.";
 "Homebrew not found" = "Homebrew nicht gefunden";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew führt sie als %@; bei selbstaktualisierenden Apps vergleicht brew keine Versionen.";
+"Homebrew reported an error and %@ may be incomplete. Tankard kept a copy of the old version at %@." = "Homebrew hat einen Fehler gemeldet und %1$@ ist möglicherweise unvollständig. Tankard hat eine Kopie der alten Version unter %2$@ behalten.";
 "Homebrew still has it, but will disable it later." = "Homebrew hat es noch, wird es aber später deaktivieren.";
 "Homebrew updates it" = "Homebrew";
 "Homebrew was busy" = "Homebrew war beschäftigt";

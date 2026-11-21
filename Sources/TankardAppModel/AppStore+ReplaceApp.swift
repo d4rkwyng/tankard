@@ -1,5 +1,7 @@
+import AskpassSupport
 import Foundation
 import os
+import Security
 import TankardCore
 
 // 0.8.10: Adopt Apps' "Replace with Homebrew's Version". brew's --adopt
@@ -133,9 +135,14 @@ public struct AppReplaceSafety: Sendable {
         /// it stays, and so does the copy, at `backup`.
         case kept(backup: String)
         /// brew failed and the app at the path is a whole app of the cask's
-        /// version: brew did replace it. The copy stays, because the run
+        /// version, and its signature verifies (or both it and the copy are
+        /// unsigned): brew did replace it. The copy stays, because the run
         /// failed. Not deleted.
         case replacedDespiteError(backup: String)
+        /// brew failed and the app looks like the cask's version, but its
+        /// signature does not verify, or it is unsigned and the copy was
+        /// signed. The copy stays. The run stays a failure.
+        case incomplete(backup: String)
         /// The copy couldn't be put back; it is still at this path.
         case restoreFailed(backup: String, error: String)
     }
@@ -276,10 +283,52 @@ public struct AppReplaceSafety: Sendable {
     ///
     /// `sameVolume` nil asks `statfs`. A test passes `{ _, _ in false }` to
     /// force the plain copy while both paths are still on one volume.
+    ///
+    /// What `SecStaticCodeCheckValidity` says, with the default flags.
+    public enum CodeSignature: Sendable, Equatable {
+        /// The signature verifies.
+        case valid
+        /// The bundle is unsigned (`errSecCSUnsigned`).
+        case unsigned
+        /// The signature does not verify, or it could not be read.
+        case invalid
+    }
+
+    /// `SecStaticCodeCreateWithPath` and `SecStaticCodeCheckValidity` with
+    /// the default flags. Call only off the main thread (`OffMain`).
+    static func codeSignature(at path: String) -> CodeSignature {
+        OffMain.assertOffMain("AppReplaceSafety.codeSignature")
+        var code: SecStaticCode?
+        guard SecStaticCodeCreateWithPath(URL(fileURLWithPath: path) as CFURL, [], &code) == errSecSuccess,
+              let code else { return .invalid }
+        let status = SecStaticCodeCheckValidity(code, [], nil)
+        if status == errSecSuccess { return .valid }
+        if status == errSecCSUnsigned { return .unsigned }
+        return .invalid
+    }
+
+    /// A whole app of the cask's version counts as replaced only when its
+    /// signature verifies. Unsigned is accepted when the copy is unsigned
+    /// too. Unsigned over a signed copy, or a signature that does not
+    /// verify, is a real failure.
+    static func signatureAllowsReplace(appPath: String, backup: String,
+                                      check: (String) -> CodeSignature) -> Bool {
+        switch check(appPath) {
+        case .valid:
+            return true
+        case .unsigned:
+            return check(backup) == .unsigned
+        case .invalid:
+            return false
+        }
+    }
+
     /// `copy` nil uses `copyApp`. A test passes one that writes a bad tree.
+    /// `signature` nil reads the real signature, off the main thread.
     public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil,
                             sameVolume: (@Sendable (String, String) -> Bool)? = nil,
-                            copy: (@Sendable (_ src: String, _ dest: String, _ clone: Bool) throws -> Void)? = nil) -> AppReplaceSafety {
+                            copy: (@Sendable (_ src: String, _ dest: String, _ clone: Bool) throws -> Void)? = nil,
+                            signature: (@Sendable (String) -> CodeSignature)? = nil) -> AppReplaceSafety {
         let extras: [URL]
         if let legacyRoots {
             extras = legacyRoots
@@ -289,6 +338,9 @@ public struct AppReplaceSafety: Sendable {
             extras = []
         }
         let roots = [root] + extras
+        let sign: @Sendable (String) -> CodeSignature = signature ?? { path in
+            OffMain.run { codeSignature(at: path) }
+        }
         return AppReplaceSafety(
             backup: { appPath in
                 let fm = FileManager.default
@@ -319,7 +371,8 @@ public struct AppReplaceSafety: Sendable {
                 return dest.path
             },
             finish: { appPath, backup, succeeded, caskVersion in
-                finishLive(appPath: appPath, backup: backup, succeeded: succeeded, caskVersion: caskVersion)
+                finishLive(appPath: appPath, backup: backup, succeeded: succeeded, caskVersion: caskVersion,
+                           signature: sign)
             },
             discard: { backup in
                 try? FileManager.default.removeItem(atPath: (backup as NSString).deletingLastPathComponent)
@@ -408,8 +461,12 @@ public struct AppReplaceSafety: Sendable {
     /// is kept, unless it has been put back:
     /// - nothing at the path: the copy goes back;
     /// - a failed run whose whole app is the cask's version (`isVersion`,
-    ///   the same rule as the offer): it stays, and the copy is kept
+    ///   the same rule as the offer) and whose signature verifies (or both
+    ///   it and the copy are unsigned): it stays, and the copy is kept
     ///   (`.replacedDespiteError`). brew can exit 1 after installing;
+    /// - the same, but the signature does not verify, or the app is
+    ///   unsigned and the copy was signed: both stay (`.incomplete`). The
+    ///   run stays a failure;
     /// - a whole bundle of the same app that is not the cask's version (the
     ///   same bundle id; after brew's exit 0, any whole bundle that is not
     ///   the cask's version): it stays, and the copy is kept;
@@ -419,7 +476,8 @@ public struct AppReplaceSafety: Sendable {
     ///   "<name>.partial" and the copy goes back.
     /// Every outcome deletes `.origin`. Only a crash before this runs still
     /// has one.
-    static func finishLive(appPath: String, backup: String, succeeded: Bool, caskVersion: String) -> Outcome {
+    static func finishLive(appPath: String, backup: String, succeeded: Bool, caskVersion: String,
+                           signature: @escaping @Sendable (String) -> CodeSignature) -> Outcome {
         let fm = FileManager.default
         let dir = (backup as NSString).deletingLastPathComponent
         try? fm.removeItem(atPath: (dir as NSString).appendingPathComponent(originFile))
@@ -438,8 +496,14 @@ public struct AppReplaceSafety: Sendable {
             if succeeded { return .kept(backup: backup) }
             // brew's exit was not 0, but the app is whole and is the cask's
             // version (brew 7 can wait out the download lock, install from
-            // its cache, and still exit 1). The copy stays: the run failed.
-            if isVersion(i, caskVersion) { return .replacedDespiteError(backup: backup) }
+            // its cache, and still exit 1). The copy stays when the
+            // signature verifies. Otherwise the run stays a failure.
+            if isVersion(i, caskVersion) {
+                if signatureAllowsReplace(appPath: appPath, backup: backup, check: signature) {
+                    return .replacedDespiteError(backup: backup)
+                }
+                return .incomplete(backup: backup)
+            }
             // The copy itself isn't a whole bundle: nothing better to put back.
             guard case .bundle(let o, let oExe) = found(at: backup) else { return .kept(backup: backup) }
             if (i.bundleID ?? "").lowercased() == (o.bundleID ?? "").lowercased(), exe != nil || oExe == nil {
@@ -764,6 +828,10 @@ public extension AppStore {
             case .replacedDespiteError(let copy):
                 session.markReplacedDespiteError(item.id)
                 session.addNote(String(localized: "\(r.plan.appName) was updated to \(r.plan.caskVersion), but Homebrew reported an error. Tankard kept a copy of the old version at \(copy)."))
+            case .incomplete(let copy):
+                explainFailure()
+                noteBusy()
+                session.addNote(String(localized: "Homebrew reported an error and \(r.plan.appName) may be incomplete. Tankard kept a copy of the old version at \(copy)."))
             case .restoreFailed(let copy, let error):
                 explainFailure()
                 noteBusy()

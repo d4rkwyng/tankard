@@ -97,7 +97,9 @@ struct V0810ReplaceFixTests {
     @Test func failedRunWithTheAppNowAtTheCaskVersionKeepsTheCopyAndSaysSo() async throws {
         let d = Dir(), fm = FileManager.default
         try FakeBundle.make(d.app, version: "1.0")
-        let live = AppReplaceSafety.live(root: d.root)
+        // The fake bundle is unsigned. The seam stands in for a signature
+        // that verifies, so this test does not call Security.
+        let live = AppReplaceSafety.live(root: d.root, signature: { _ in .valid })
         let copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.0")
         #expect(live.finish(d.app.path, copy, false, "2.0") == .replacedDespiteError(backup: copy))

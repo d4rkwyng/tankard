@@ -524,6 +524,7 @@
 "Homebrew no longer makes bottles (prebuilt packages) for Intel Macs, so standard Homebrew compiles most packages from source here, which is slow. Intelbrew is Homebrew with Intel bottles." = "HomebrewはIntel Mac用のbottle(ビルド済みパッケージ)をもう提供していないため、標準のHomebrewではここでほとんどのパッケージがソースからコンパイルされ、時間がかかります。IntelbrewはIntel用bottleを備えたHomebrewです。";
 "Homebrew not found" = "Homebrewが見つかりません";
 "Homebrew records it as %@; brew doesn't compare versions for apps that update themselves." = "Homebrew は %@ として記録します。自己更新するアプリについて brew はバージョンを比較しません。";
+"Homebrew reported an error and %@ may be incomplete. Tankard kept a copy of the old version at %@." = "Homebrew がエラーを報告し、%1$@ は不完全な可能性があります。Tankard は古いバージョンのコピーを %2$@ に残しました。";
 "Homebrew still has it, but will disable it later." = "Homebrewにはまだありますが、後で無効化されます。";
 "Homebrew updates it" = "Homebrew が更新";
 "Homebrew was busy" = "Homebrew が使用中でした";

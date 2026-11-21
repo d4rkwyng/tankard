@@ -30895,6 +30895,58 @@
         }
       }
     },
+    "Homebrew reported an error and %@ may be incomplete. Tankard kept a copy of the old version at %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew hat einen Fehler gemeldet und %1$@ ist möglicherweise unvollständig. Tankard hat eine Kopie der alten Version unter %2$@ behalten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew a signalé une erreur et l'app %1$@ est peut-être incomplète. Tankard a gardé une copie de l'ancienne version à %2$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew informó un error y la app %1$@ puede estar incompleta. Tankard guardó una copia de la versión anterior en %2$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ha segnalato un errore e l'app %1$@ potrebbe essere incompleta. Tankard ha tenuto una copia della vecchia versione in %2$@."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew relatou um erro e o app %1$@ pode estar incompleto. O Tankard guardou uma cópia da versão antiga em %2$@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew がエラーを報告し、%1$@ は不完全な可能性があります。Tankard は古いバージョンのコピーを %2$@ に残しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 报告了错误，%1$@ 可能不完整。Tankard 在 %2$@ 保留了旧版本的副本。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 오류를 보고했고 %1$@이(가) 불완전할 수 있습니다. Tankard가 이전 버전의 사본을 %2$@에 보관했습니다."
+          }
+        }
+      }
+    },
     "Homebrew still has it, but will disable it later.": {
       "localizations": {
         "de": {
