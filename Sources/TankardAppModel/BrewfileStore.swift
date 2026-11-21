@@ -137,14 +137,16 @@ public final class BrewfileStore {
     /// and read-only environment). Arguments after `brew`.
     @ObservationIgnored public var run: (@Sendable ([String]) async throws -> ProcessResult)?
     @ObservationIgnored public var platform: BottlePlatform?
-    /// 0.8.5 (M3): reads the Brewfile's text (taps' URLs).
-    @ObservationIgnored public var readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
+    /// 0.9.0 (F4): reads a Brewfile's bytes, once per use: the preview,
+    /// the copy brew runs (BrewfilePrivateCopy) and the taps' URLs all come
+    /// from such a read, never from brew opening the user's path.
+    @ObservationIgnored public var readBytes: @Sendable (String) throws -> Data = { try BrewfileSnapshot.read($0) }
     /// 0.8.8: whether macOS marked the file as downloaded.
     @ObservationIgnored public var quarantined: @Sendable (String) -> Bool = { BrewfileStaticReader.isQuarantined($0) }
-    /// 0.8.9 (F4): what the path names (regular file, FIFO, device…).
-    @ObservationIgnored public var fileKind: @Sendable (String) -> BrewfileStaticReader.FileKind = { BrewfileStaticReader.fileKind($0) }
     @ObservationIgnored public var timeout: Duration = .seconds(60)
     @ObservationIgnored private var task: Task<Void, Never>?
+    /// 0.9.0 (F4): the text the last check ran, for the plan's tap URLs.
+    @ObservationIgnored private var checkedText: (path: String, text: String)?
 
     public init() {}
 
@@ -158,9 +160,11 @@ public final class BrewfileStore {
         set(.idle)
     }
 
+    private static var notReady: String { String(localized: "Homebrew isn't ready yet.") }
+
     private func start(_ label: String, _ body: @escaping @MainActor (@escaping @Sendable ([String]) async throws -> ProcessResult) async throws -> Page) {
         guard let run else {
-            set(.failed(String(localized: "Homebrew isn't ready yet.")))
+            set(.failed(Self.notReady))
             return
         }
         task?.cancel()
@@ -183,16 +187,20 @@ public final class BrewfileStore {
         return text.isEmpty ? String(localized: "exit \(r.exitCode)") : text
     }
 
-    /// Export: dump, then count the file per kind.
+    /// Export: dump, then count the file per kind. 0.9.0 (F4): the counts
+    /// come from a private copy of what dump wrote, read once.
     public func export(to path: String, force: Bool) {
         let timeout = self.timeout
+        let readBytes = self.readBytes
         start(String(localized: "Writing Brewfile…")) { run in
             let dump = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.dump(path: path, force: force)) }
             guard dump.exitCode == 0 else { throw BrewfileError.failed(String(localized: "brew bundle dump failed:\n") + Self.tail(dump)) }
+            let copy = try BrewfilePrivateCopy.make(try readBytes(path))
+            defer { copy.remove() }
             let summary = try await withBrewfileTimeout(timeout) {
-                async let t = run(BrewfileCommands.list(path: path, kind: .tap))
-                async let f = run(BrewfileCommands.list(path: path, kind: .formula))
-                async let c = run(BrewfileCommands.list(path: path, kind: .cask))
+                async let t = run(BrewfileCommands.list(path: copy.path, kind: .tap))
+                async let f = run(BrewfileCommands.list(path: copy.path, kind: .formula))
+                async let c = run(BrewfileCommands.list(path: copy.path, kind: .cask))
                 return BrewfileSummary(path: path, tapList: try await t.stdoutString, formulaList: try await f.stdoutString,
                                        caskList: try await c.stdoutString)
             }
@@ -204,31 +212,20 @@ public final class BrewfileStore {
     public func preview(path: String) {
         task?.cancel()
         task = nil
-        guard let text = readChecked(path) else {
-            set(.failed(String(localized: "Tankard couldn't read this file as a Brewfile.")))
-            return
+        do {
+            let text = try BrewfileSnapshot.text(readBytes(path))
+            set(.preview(BrewfileStaticReader.preview(path: path, text: text, quarantined: quarantined(path))))
+        } catch {
+            set(.failed(Self.unreadable(error)))
         }
-        set(.preview(BrewfileStaticReader.preview(path: path, text: text, quarantined: quarantined(path))))
     }
 
-    /// The file's text, or nil when it isn't a regular file (0.8.9, F4: a
-    /// FIFO or a device is never opened), is too large or can't be read.
-    private func readChecked(_ path: String) -> String? {
-        guard fileKind(path) != .other else { return nil }
-        let size = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? Int) ?? nil
-        guard size.map({ $0 <= BrewfileStaticReader.maxBytes }) ?? true else { return nil }
-        return readFile(path)
+    private static func unreadable(_ error: Error) -> String {
+        String(localized: "Tankard couldn't read this file as a Brewfile.") + "\n" + String(describing: error)
     }
 
-    /// 0.8.9 (security review F4): right before brew runs the Brewfile,
-    /// reads it again; when its text isn't the one the preview showed (or
-    /// it is no longer a regular file), shows why and returns false.
-    public func verifyUnchanged(_ p: BrewfilePreview) -> Bool {
-        guard let text = readChecked(p.path), BrewfileStaticReader.digest(text) == p.digest else {
-            set(.failed(String(localized: "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now.")))
-            return false
-        }
-        return true
+    static var changedMessage: String {
+        String(localized: "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now.")
     }
 
     /// 0.8.8: from the preview to the "it runs the file's code" question.
@@ -256,11 +253,40 @@ public final class BrewfileStore {
 
     /// Check: what the Brewfile at `path` needs that this Mac lacks.
     /// Runs the Brewfile (brew bundle check): only after `confirmRun`, or
-    /// for the demo's fixture.
-    public func check(path: String) {
+    /// for the demo's fixture. 0.9.0 (F4): the file is read once
+    /// (`readBytes`); when `expectedDigest` (the preview's) doesn't match
+    /// those bytes, nothing runs. brew gets a private copy of the same
+    /// bytes, deleted when it is done.
+    public func check(path: String, expectedDigest: String? = nil) {
+        guard run != nil else {
+            task?.cancel()
+            task = nil
+            set(.failed(Self.notReady))
+            return
+        }
+        let text: String
+        let copy: BrewfilePrivateCopy
+        do {
+            let data = try readBytes(path)
+            text = try BrewfileSnapshot.text(data)
+            if let expectedDigest, BrewfileStaticReader.digest(text) != expectedDigest {
+                task?.cancel()
+                task = nil
+                set(.failed(Self.changedMessage))
+                return
+            }
+            copy = try BrewfilePrivateCopy.make(data)
+        } catch {
+            task?.cancel()
+            task = nil
+            set(.failed(Self.unreadable(error)))
+            return
+        }
+        checkedText = (path, text)
         let timeout = self.timeout
         start(String(localized: "Checking Brewfile…")) { run in
-            let r = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.check(path: path)) }
+            defer { copy.remove() }
+            let r = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.check(path: copy.path)) }
             let lines = (r.stdoutString + "\n" + r.stderrString).components(separatedBy: "\n")
             let missing = BrewfileParser.missing(lines)
             // check exits 1 when something is missing; any other failure
@@ -277,7 +303,14 @@ public final class BrewfileStore {
     public func planRestore(_ result: BrewfileCheckResult) {
         let timeout = self.timeout
         let platform = self.platform
-        let readFile = self.readFile
+        let readBytes = self.readBytes
+        let checked = checkedText
+        // The text the check ran; another file is read (once) only when
+        // the result came from elsewhere.
+        let readFile: @Sendable (String) -> String? = { p in
+            if let checked, checked.path == p { return checked.text }
+            return (try? readBytes(p)).flatMap { try? BrewfileSnapshot.text($0) }
+        }
         start(String(localized: "Reading package details…")) { run in
             let p = try await withBrewfileTimeout(timeout) {
                 await Self.buildPlan(result, platform: platform, run: run, readFile: readFile)
@@ -291,7 +324,7 @@ public final class BrewfileStore {
     /// details the marks are just left off.
     nonisolated static func buildPlan(_ result: BrewfileCheckResult, platform: BottlePlatform?,
                                       run: @Sendable ([String]) async throws -> ProcessResult,
-                                      readFile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) })
+                                      readFile: @Sendable (String) -> String? = { (try? BrewfileSnapshot.read($0)).flatMap { try? BrewfileSnapshot.text($0) } })
         async -> (BrewfileRestorePlan, String?) {
         var compiles: [String: Bool] = [:]
         var admin: Set<String> = []

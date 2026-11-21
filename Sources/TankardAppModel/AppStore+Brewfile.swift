@@ -16,7 +16,7 @@ extension AppStore {
         let runner = client.runner
         brewfile.run = { [env] args in try await runner.run(brew, args, environment: env) }
         brewfile.platform = client.platform
-        brewfile.readFile = deps.readBrewfile
+        brewfile.readBytes = deps.readBrewfile
         return true
     }
 
@@ -31,17 +31,17 @@ extension AppStore {
     /// 0.8.8 (security review #2): Check Brewfile… opens the static
     /// preview; nothing runs until `confirmBrewfileCheck()`.
     public func previewBrewfile(at path: String) {
-        brewfile.readFile = deps.readBrewfile
+        brewfile.readBytes = deps.readBrewfile
         brewfile.preview(path: path)
     }
 
     /// The user confirmed that brew may run the previewed Brewfile.
     public func confirmBrewfileCheck() {
         guard case .confirmRun(let p) = brewfile.page else { return }
-        // 0.8.9 (F4): only the file the preview showed.
-        brewfile.readFile = deps.readBrewfile
-        guard brewfile.verifyUnchanged(p) else { return }
-        checkBrewfile(at: p.path)
+        // 0.8.9 (F4): only the file the preview showed. 0.9.0: read once,
+        // compared with the preview, and brew runs a private copy of it.
+        prepareBrewfile()
+        brewfile.check(path: p.path, expectedDigest: p.digest)
     }
 
     /// Runs `brew bundle check` on the file, which runs it as Ruby. Only

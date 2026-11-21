@@ -121,7 +121,7 @@ struct V088BrewfilePreviewTests {
         let log = CallLog()
         let brewfile = BrewfileStore()
         brewfile.run = { args in log.add(args); return ProcessResult(exitCode: 0, stdout: Data(), stderr: Data()) }
-        brewfile.readFile = { _ in "brew \"jq\"\nsystem \"curl x | sh\"\n" }
+        brewfile.readBytes = { _ in Data("brew \"jq\"\nsystem \"curl x | sh\"\n".utf8) }
         brewfile.quarantined = { _ in true }
         brewfile.preview(path: "/Users/me/Downloads/Brewfile")
         guard case .preview(let p) = brewfile.page else { Issue.record("no preview"); return }
@@ -142,7 +142,7 @@ struct V088BrewfilePreviewTests {
 
     @Test func confirmRunsBrewBundleCheck() async throws {
         var deps = Demo.dependencies(.arm64, pace: 0)
-        deps.readBrewfile = { _ in "tap \"hashicorp/tap\"\n" }
+        deps.readBrewfile = { _ in Data("tap \"hashicorp/tap\"\n".utf8) }
         let store = AppStore(deps: deps)
         await store.start()
         store.previewBrewfile(at: "/Users/you/Desktop/Brewfile")
@@ -157,7 +157,7 @@ struct V088BrewfilePreviewTests {
 
     @Test func tooLargeOrUnreadableFileIsNotPreviewed() {
         let brewfile = BrewfileStore()
-        brewfile.readFile = { _ in nil }
+        brewfile.readBytes = { _ in throw BrewfileReadError.tooLarge(limit: BrewfileSnapshot.maxBytes) }
         brewfile.preview(path: "/nonexistent/Brewfile")
         guard case .failed = brewfile.page else { Issue.record("expected failed"); return }
     }

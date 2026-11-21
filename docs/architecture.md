@@ -1025,6 +1025,29 @@ it tries once more, then gives up and says so, opening nothing. Before 0.8.3 Rel
 opened the new copy first, and NSWorkspace's completion handler, isolated to the main
 actor but called on LaunchServices' queue, crashed the old one (EXC_BREAKPOINT).
 
+**Brewfile reads (0.9.0, F4 hardening; `BrewfileSnapshot.swift`).** A Brewfile is Ruby that
+`brew bundle` runs, so brew never opens the path the user chose. Check Brewfile…, the
+confirmed `brew bundle check` and an export's `brew bundle list` counts each read the file
+once: `open(O_RDONLY | O_NONBLOCK | O_NOFOLLOW | O_NOCTTY | O_CLOEXEC)`, `fstat` on that
+descriptor (only `S_IFREG`; a FIFO, device, directory or a symlink as the last component
+is refused with its own message, and a FIFO without a writer doesn't block), at most
+1 MB (checked on `st_size` and again while reading, from the same descriptor). The
+confirmed check compares those bytes' SHA-256 with the preview's and runs nothing when
+they differ. brew gets `--file=` a private copy of the same bytes:
+`$TMPDIR/tankard-brewfile.XXXXXX/Brewfile`, the folder from `mkdtemp` (0700), the file
+created with `O_CREAT | O_EXCL | O_NOFOLLOW` and `fchmod` 0600. The folder is deleted
+(`defer`) when brew returns, fails, times out or is cancelled. The restore plan's tap
+URLs come from the text the check ran.
+*Known limitations (internal):* `O_NOFOLLOW` covers the last path component only; a
+symlinked folder above the file is still followed (the open panel resolves the path the
+user picked, and `/tmp` itself is a link). `brew bundle dump` still writes to the chosen
+path itself (brew creates it; only the read-back for the counts goes through the copy).
+A Brewfile can `instance_eval` or `require` other files by path; brew reads those
+directly, as it would in Terminal, and anything resolved relative to the Brewfile itself
+(`require_relative`, `__dir__`) now resolves in the private folder, so such an include
+won't be found (from Ruby's rules, not yet tried against a real brew). The error messages are new strings, English until
+the next `Scripts/l10n.py extract` and translation pass.
+
 **Clean up.** `brew cleanup -n` (dry run), `brew --cache` and `du -sk` on the cache. When
 brew prints no total (it exits with an error on a Mac whose core tap brew 7 calls
 untrusted), Tankard shows its own sum of the items, labelled as such, with brew's error.

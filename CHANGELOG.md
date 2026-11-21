@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.9.0]
+
+### Changed
+- **Brewfile handling hardened.**
+
 ## [0.8.10]
 
 ### Added

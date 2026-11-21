@@ -56,7 +56,7 @@ struct V089BrewfileTests {
     @Test func changedAfterPreviewIsNotRun() async throws {
         let text = Text("brew \"jq\"\n")
         var deps = Demo.dependencies(.arm64, pace: 0)
-        deps.readBrewfile = { _ in text.value }
+        deps.readBrewfile = { _ in Data(text.value.utf8) }
         let store = AppStore(deps: deps)
         await store.start()
         store.previewBrewfile(at: "/Users/you/Desktop/Brewfile")
@@ -73,7 +73,7 @@ struct V089BrewfileTests {
 
     @Test func unchangedFileRuns() async throws {
         var deps = Demo.dependencies(.arm64, pace: 0)
-        deps.readBrewfile = { _ in "tap \"hashicorp/tap\"\n" }
+        deps.readBrewfile = { _ in Data("tap \"hashicorp/tap\"\n".utf8) }
         let store = AppStore(deps: deps)
         await store.start()
         store.previewBrewfile(at: "/Users/you/Desktop/Brewfile")
@@ -122,13 +122,15 @@ struct V089BrewfileTests {
         let file = dir.appendingPathComponent("Brewfile")
         try Data("brew \"jq\"\n".utf8).write(to: file)
         let brewfile = BrewfileStore()
+        let ran = Flag()
+        brewfile.run = { _ in ran.set(); return ProcessResult(exitCode: 0, stdout: Data(), stderr: Data()) }
         brewfile.preview(path: file.path)
         guard case .preview(let p) = brewfile.page else { Issue.record("no preview"); return }
-        #expect(brewfile.verifyUnchanged(p))
         try FileManager.default.removeItem(at: file)
         #expect(mkfifo(file.path, 0o600) == 0)
-        #expect(!brewfile.verifyUnchanged(p))
+        brewfile.check(path: p.path, expectedDigest: p.digest)
         guard case .failed = brewfile.page else { Issue.record("expected failed"); return }
+        #expect(!ran.value)
     }
 }
 

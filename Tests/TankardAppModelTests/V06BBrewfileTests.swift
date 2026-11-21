@@ -88,6 +88,7 @@ struct BrewfileStoreTests {
     @Test func exportRunsDumpThenListsEachKind() async {
         let rec = Recorder()
         let store = BrewfileStore()
+        store.readBytes = { _ in Data("brew \"jq\"\n".utf8) }
         store.run = { args in
             rec.add(args)
             if args.contains("--tap") { return Self.ok("a/b\n") }
@@ -106,6 +107,7 @@ struct BrewfileStoreTests {
 
     @Test func dumpFailureIsShown() async {
         let store = BrewfileStore()
+        store.readBytes = { _ in Data("brew \"jq\"\n".utf8) }
         store.run = { _ in ProcessResult(exitCode: 1, stdout: Data(), stderr: Data("Error: no permission\n".utf8)) }
         store.export(to: "/x", force: false)
         await store.waitForIdle()
@@ -115,6 +117,7 @@ struct BrewfileStoreTests {
 
     @Test func timeoutStopsDumpAndCheck() async {
         let store = BrewfileStore()
+        store.readBytes = { _ in Data("brew \"jq\"\n".utf8) }
         store.timeout = .milliseconds(150)
         let cancelled = Count()
         store.run = { _ in
@@ -144,6 +147,7 @@ struct BrewfileStoreTests {
 
     @Test func checkParsesMissingDespiteExitOne() async {
         let store = BrewfileStore()
+        store.readBytes = { _ in Data("brew \"jq\"\n".utf8) }
         store.run = { _ in Self.ok(BrewfileTests.checkOutput, exit: 1) }
         store.check(path: "/b")
         await store.waitForIdle()
@@ -197,6 +201,7 @@ struct BrewfileStoreTests {
     @Test func storeRestorePlanPage() async {
         let state = Demo.State()
         let store = BrewfileStore()
+        store.readBytes = { _ in Data("brew \"jq\"\n".utf8) }
         store.platform = Self.arm64
         store.run = { args in
             if let r = try await Demo.brewfile(.arm64, state: state, info: Data(), arguments: args) { return r }

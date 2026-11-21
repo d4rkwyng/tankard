@@ -145,8 +145,10 @@ public final class AppStore {
         /// var/homebrew/linked folders), for a re-read when that is newer
         /// than the report. nil (tests, demo): never.
         public var homebrewChangedAt: (@Sendable (BrewClient) -> Date?)?
-        /// 0.8.5 (M3): a Brewfile's text, for its taps' URLs (demo: a fixed one).
-        public var readBrewfile: @Sendable (String) -> String? = { try? String(contentsOfFile: $0, encoding: .utf8) }
+        /// A Brewfile's bytes (demo: a fixed one). 0.9.0 (F4): read once,
+        /// regular files only, capped (BrewfileSnapshot.read); brew runs a
+        /// private copy of these bytes, never the user's path.
+        public var readBrewfile: @Sendable (String) throws -> Data = { try BrewfileSnapshot.read($0) }
 
         public init(makeClient: @escaping @Sendable () throws -> BrewClient,
                     streamRunner: StreamingCommandRunning,

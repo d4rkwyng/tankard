@@ -171,7 +171,8 @@ public enum Demo {
         // 0.8.4: no look at the real Caskroom for Tankard's own cask.
         deps.selfCaskroomExists = { _ in false }
         // 0.8.5: the demo Brewfile is never read from disk; its one tap has no URL.
-        deps.readBrewfile = { _ in "tap \"hashicorp/tap\"\n" }
+        // (0.9.0: brew is handed a private temporary copy of these bytes.)
+        deps.readBrewfile = { _ in Data("tap \"hashicorp/tap\"\n".utf8) }
         // 0.8: Adopt Apps scans the fixture, never this Mac's disk.
         deps.adoptLoader = Demo.adoptLoader
         if variant == .intelbrew {

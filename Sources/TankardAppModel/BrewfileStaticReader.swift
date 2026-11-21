@@ -40,7 +40,7 @@ public struct BrewfilePreview: Equatable, Sendable {
     /// The file carries macOS's `com.apple.quarantine` mark (downloaded).
     public var quarantined: Bool
     /// 0.8.9 (security review F4): SHA-256 of the text shown, so brew runs
-    /// only the file the user saw (`BrewfileStore.verifyUnchanged`).
+    /// only the file the user saw (`BrewfileStore.check(path:expectedDigest:)`).
     public var digest: String
 
     public init(path: String, entries: [BrewfileEntry], notRead: [BrewfileUnreadLine], quarantined: Bool,
