@@ -237,6 +237,10 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored var onUpgradeCheckStarted: (@MainActor (UpgradeSession) -> Void)?
     /// Steps brew exited non-zero for although the package was upgraded.
     public private(set) var upgradedAnyway: Set<UUID> = []
+    /// 0.8.10: a Replace whose brew exited non-zero after the app at the
+    /// path was already a whole bundle of the cask's version. Counted as
+    /// replaced, with a warning. The failure kind is cleared.
+    public private(set) var replacedDespiteError: Set<UUID> = []
     /// 0.8.6 (HK-47 review): those of them whose output names another
     /// package as what failed.
     public private(set) var upgradedOverAnotherPackage: Set<UUID> = []
@@ -340,8 +344,9 @@ public final class UpgradeSession: Identifiable {
         var seen = Set<Package.ID>()
         return items.map(\.package).filter { seen.insert($0.id).inserted }
     }
-    /// Finished with nothing wrong: no failed step and nothing left installed.
-    public var hasProblems: Bool { !failedItems.isEmpty || !stillInstalled.isEmpty }
+    /// Finished with nothing wrong: no failed step, nothing left installed,
+    /// and no replace that brew reported an error for after the app was replaced.
+    public var hasProblems: Bool { !failedItems.isEmpty || !stillInstalled.isEmpty || !replacedDespiteError.isEmpty }
     public var succeededCount: Int { items.filter { $0.state == .done && !doneElsewhere.contains($0.id) }.count }
     /// 0.8.6 (M3): steps brew found already done ("already installed",
     /// exit 0): another Homebrew command, often in Terminal while Tankard
@@ -445,6 +450,8 @@ public final class UpgradeSession: Identifiable {
             if passwordCancelledOnly { return String(localized: "\(verb) cancelled") }
             // 0.8.6 (UI M5): the same phrase as the progress window's title.
             if !failedItems.isEmpty { return String(localized: "\(verb) finished with problems") }
+            // 0.8.10: the app is the cask's version; brew's exit is a warning.
+            if !replacedDespiteError.isEmpty { return String(localized: "\(verb) finished with a warning") }
             if !stillInstalled.isEmpty { return String(localized: "Uninstall incomplete") }
             if !doneElsewhere.isEmpty, succeededCount == 0 { return String(localized: "Already up to date (done elsewhere)") }
             return String(localized: "\(verb) complete")
@@ -758,7 +765,11 @@ public final class UpgradeSession: Identifiable {
                 if let kind = BrewFailure.classify(commandLines) {
                     failureKinds.append(kind)
                     failureKindByItem[items[i].id] = kind
-                    note("\(kind.title). \(kind.explanation)")
+                    // Replace writes this after finishLive. A run that left
+                    // the cask's version is a warning and does not get it.
+                    if action != .replaceApp {
+                        note("\(kind.title). \(kind.explanation)")
+                    }
                     if kind == .untrustedTap, let r = UntrustedTapRefusal.parse(lines: commandLines) {
                         untrustedTap = r
                         note(r.trustCommand)
@@ -1078,6 +1089,19 @@ public final class UpgradeSession: Identifiable {
         // log's note does), so it is recognised whole.
         let plain = ForeignAskpass(helper: "", source: "", unstoppable: false)
         return message == plain.message ? plain : nil
+    }
+
+    /// 0.8.10: brew exited non-zero, but the app is a whole bundle of the
+    /// cask's version. The step counts as replaced. The failure kind goes,
+    /// so the sheet does not show brew's error title or the retry advice.
+    func markReplacedDespiteError(_ id: UUID) {
+        guard let i = items.firstIndex(where: { $0.id == id }),
+              case .failed = items[i].state else { return }
+        items[i].state = .done
+        replacedDespiteError.insert(id)
+        failureKindByItem[id] = nil
+        appManagementBlocked.removeAll { $0 == id }
+        failureKinds = items.compactMap { failureKindByItem[$0.id] }
     }
 
     /// 0.8.10: a line from the store after the run (Replace with

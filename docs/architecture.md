@@ -932,7 +932,9 @@ still exit 1. When the app at the path is then a whole app of the cask's version
 (`isVersion`), `finishLive` returns `.replacedDespiteError`: the copy is kept, because
 the run failed, and the note says the app was updated to that version but Homebrew
 reported an error, and where the copy is. The note "Homebrew is busy; try again in a
-moment." is not shown in that case. When brew stops on the lock without leaving the
+moment." is not shown in that case. The result sheet counts that step as replaced with
+a warning: the headline is "Replace finished with a warning", the status line counts
+it as replaced, and the sheet does not show the brew-error title or the retry advice. When brew stops on the lock without leaving the
 cask's version, the run fails with that busy note and the copy is kept. The plan sheet
 checks the running apps (`autoUpdate.conditions`, by path or
 bundle id) and refuses while the app is open; it never quits it. brew --force deletes

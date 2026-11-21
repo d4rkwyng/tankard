@@ -144,6 +144,55 @@ struct V0810ReplaceFixTests {
         #expect(!lines.contains("it is as it was"))
     }
 
+    /// brew exited 1 after the app was already the cask's version. The sheet
+    /// counts the step as replaced, with a warning, and does not offer a retry.
+    @Test func replacedDespiteErrorCountsAsReplacedWithAWarning() async throws {
+        let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
+        let info = Self.audacity
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = LockRunner(deps.streamRunner)
+        deps.streamRunner = runner
+        deps.lockWait = BrewLockWait(interval: .milliseconds(20), limit: .milliseconds(300), maxAttempts: 5, holders: { _ in
+            ["99 brew install"]
+        })
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in calls.withLock { $0.append("backup") }; return "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, backup, ok, v in
+                calls.withLock { $0.append("finish \(ok) \(v)") }
+                return ok ? .discarded : .replacedDespiteError(backup: backup)
+            },
+            readApp: { _ in calls.withLock { $0.append("read") }; return info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let p = try plan(store)
+        #expect(await store.startReplace(p))
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let session = try #require(store.upgrade)
+        let item = try #require(session.items.first)
+        #expect(item.state == .done)
+        #expect(session.replacedDespiteError == [item.id])
+        #expect(session.failureKinds.isEmpty)
+        #expect(session.failureKindByItem[item.id] == nil)
+        #expect(session.succeededCount == 1)
+        #expect(session.failedItems.isEmpty)
+        #expect(session.hasProblems)
+        #expect(!session.finishedCleanly)
+        #expect(session.title == "Replace finished with a warning")
+        #expect(session.subtitle == "1 cask")
+        #expect(session.statusLine == "1 replaced")
+        #expect(session.nextStep == nil)
+        let lines = session.log.lines.joined(separator: "\n")
+        #expect(lines.contains("Audacity was updated to 4.0.2, but Homebrew reported an error. Tankard kept a copy of the old version at /tmp/b/Audacity 4.app."))
+        #expect(!lines.contains("Another Homebrew command is running"))
+        #expect(!lines.contains("Retry once it has finished"))
+        #expect(!lines.contains("then retry"))
+        #expect(!lines.contains("Homebrew is busy; try again in a moment."))
+        #expect(store.progressPanelTitle == "Replace finished with a warning")
+    }
+
     /// A failed run with the same app still whole, and not the cask's version: both stay.
     @Test func failedRunWithTheAppWholeKeepsTheCopy() throws {
         let d = Dir(), fm = FileManager.default
@@ -543,6 +592,7 @@ struct V0810ReplaceFixTests {
         let lines = store.upgrade?.log.lines.joined(separator: "\n") ?? ""
         #expect(lines.contains("Homebrew is busy; try again in a moment."))
         #expect(lines.contains("wasn't replaced; it is as it was. Tankard kept a copy"))
+        #expect(lines.contains("Another Homebrew command is running. brew allows one command at a time."))
     }
 
     // MARK: - when it is offered

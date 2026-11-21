@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ terminó con código %d";
 "%@ exited %lld" = "%@ terminó con código %lld";
 "%@ exited %lld:\n%@" = "%@ terminó con código %lld:\n%@";
+"%@ finished with a warning" = "%@ terminado con una advertencia";
 "%@ finished with problems" = "%@ terminado con problemas";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con %lld dependencias (%@). Puede tardar mucho en Macs más antiguos.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ no tiene bottle de Intelbrew para este Mac, así que brew lo compila junto con 1 dependencia (%@). Puede tardar mucho en Macs más antiguos.";
@@ -390,6 +391,7 @@
 "Don't quit running apps during upgrades" = "No cerrar apps en ejecución durante las actualizaciones";
 "Done" = "Hecho";
 "Done, with a step skipped" = "Hecho, con un paso omitido";
+"Done, with a warning" = "Hecho, con una advertencia";
 "Done: %@" = "Hecho: %@";
 "Download" = "Descargar";
 "Download cache" = "Caché de descargas";

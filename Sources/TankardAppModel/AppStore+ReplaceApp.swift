@@ -615,29 +615,44 @@ public extension AppStore {
             func noteBusy() {
                 if locked { session.addNote(String(localized: "Homebrew is busy; try again in a moment.")) }
             }
+            // The classifier sentence is written here, once finishLive has
+            // said whether the app is the cask's version. That outcome does
+            // not get it: the sheet counts the step as replaced, with a warning.
+            func explainFailure() {
+                if let kind = session.failureKindByItem[item.id] {
+                    session.addNote("\(kind.title). \(kind.explanation)")
+                }
+            }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
+                explainFailure()
                 noteBusy()
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced.")) }
                 continue
             }
             switch safety.finish(r.plan.appPath, backup, ok, r.plan.caskVersion) {
             case .discarded:
+                explainFailure()
                 noteBusy()
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced; it is as it was.")) }
             case .restored:
+                explainFailure()
                 noteBusy()
                 session.addNote(String(localized: "brew stopped after removing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath)."))
             case .restoredMovingAside(let partial):
+                explainFailure()
                 noteBusy()
                 session.addNote(String(localized: "brew stopped partway through replacing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath). What brew left there is at \(partial)."))
             case .kept(let copy):
+                explainFailure()
                 noteBusy()
                 session.addNote(ok
                     ? String(localized: "The app at \(r.plan.appPath) isn't \(r.plan.appName) \(r.plan.caskVersion), so Tankard kept the copy of the old version at \(copy).")
                     : String(localized: "\(r.plan.appName) wasn't replaced; it is as it was. Tankard kept a copy of it at \(copy)."))
             case .replacedDespiteError(let copy):
+                session.markReplacedDespiteError(item.id)
                 session.addNote(String(localized: "\(r.plan.appName) was updated to \(r.plan.caskVersion), but Homebrew reported an error. Tankard kept a copy of the old version at \(copy)."))
             case .restoreFailed(let copy, let error):
+                explainFailure()
                 noteBusy()
                 session.addNote(String(localized: "Tankard couldn't put \(r.plan.appName) back (\(error)). A copy of the old version is at \(copy)."))
             }

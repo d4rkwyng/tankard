@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ が終了コード %d で終了しました";
 "%@ exited %lld" = "%@ が終了コード %lld で終了しました";
 "%@ exited %lld:\n%@" = "%@ が終了コード %lld で終了しました:\n%@";
+"%@ finished with a warning" = "%@ 完了 (警告あり)";
 "%@ finished with problems" = "%@ 完了 (問題あり)";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
@@ -390,6 +391,7 @@
 "Don't quit running apps during upgrades" = "アップグレード中に実行中のアプリを終了しない";
 "Done" = "完了";
 "Done, with a step skipped" = "完了(1つの手順をスキップ)";
+"Done, with a warning" = "完了 (警告あり)";
 "Done: %@" = "完了: %@";
 "Download" = "ダウンロード";
 "Download cache" = "ダウンロードキャッシュ";

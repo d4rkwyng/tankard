@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ 已退出，退出码 %d";
 "%@ exited %lld" = "%@ 已退出，退出码 %lld";
 "%@ exited %lld:\n%@" = "%@ 已退出，退出码 %lld：\n%@";
+"%@ finished with a warning" = "%@已完成，但有警告";
 "%@ finished with problems" = "%@已完成，但有问题";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
@@ -390,6 +391,7 @@
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
 "Done" = "完成";
 "Done, with a step skipped" = "已完成，跳过了一个步骤";
+"Done, with a warning" = "完成，但有警告";
 "Done: %@" = "已完成：%@";
 "Download" = "下载";
 "Download cache" = "下载缓存";
