@@ -368,12 +368,15 @@ private enum BrewfileLoadScan {
         }
 
         /// `:name` and `:"..."` are symbols, not calls. `::` is scope, so the
-        /// name after it is still scanned as code.
+        /// name after it (`::require`, `Foo::require`) is still scanned as code.
         mutating func scanSymbol() -> Bool {
             i += 1
             guard i < chars.count else { return false }
             let c = chars[i]
-            if c == ":" { return false }
+            if c == ":" {
+                i += 1
+                return false
+            }
             if c == "'" { return scanQuoted(end: "'", interpolate: false) }
             if c == "\"" { return scanQuoted(end: "\"", interpolate: true) }
             if isIdentStart(c) { _ = readIdent(); return false }

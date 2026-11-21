@@ -231,6 +231,16 @@ struct V090BrewfileHardeningTests {
         #expect(!BrewfileStaticReader.preview(path: "/b", text: text, quarantined: false).loadsOtherFiles)
     }
 
+    /// `::require` and `Foo::require` are calls, not symbols. A leading `::`
+    /// and a constant's scope both load another file.
+    @Test func scopeResolutionRequireIsWarned() {
+        let texts = ["::require \"x\"", "Foo::require \"x\"", "::load \"x\"",
+                     "Foo::require_relative \"x\"", "Kernel::load \"x\""]
+        for text in texts {
+            #expect(BrewfileStaticReader.loadsOtherFiles(text), "\(text)")
+        }
+    }
+
     /// The same words in a comment, including a trailing one and a block comment, don't count.
     @Test func aTokenInACommentIsNotWarned() {
         #expect(!BrewfileStaticReader.loadsOtherFiles("# require \"helper\"\n"))
