@@ -33,6 +33,29 @@ struct V091SessionNoteSpanTests {
         // An odd trailing backtick is shown as typed, not swallowed.
         #expect(String(NoticeText.attributed("a `b` c `d").characters) == "a b c `d")
     }
+
+    /// The command is stored beside the sentence. A backtick in the app
+    /// name, or in the command itself, does not move what Copy pastes.
+    /// A note with no command does not grow one from backticks in a path.
+    @Test func aBacktickInTheNameDoesNotMoveTheCopiedCommand() {
+        let name = "Wei`rd"
+        let command = "brew uninstall --cask --force 'bad`name'"
+        let text = "Copy \(name) aside first, then run `\(command)`, then put the app back."
+        let note = SessionNote(id: 0, text: text, command: command)
+        #expect(note.text == text)
+        #expect(note.commands == [command])
+        #expect(note.copyText == command)
+        let styled = note.attributed
+        let code = styled.runs.filter { $0.inlinePresentationIntent == .code }.map { String(styled[$0.range].characters) }
+        #expect(code == [command])
+        #expect(String(styled.characters) == "Copy \(name) aside first, then run \(command), then put the app back.")
+        let path = "\(name) wasn't replaced; it is as it was. Tankard kept a copy of it at /tmp/b/\(name).app."
+        let literal = SessionNote(id: 1, literal: path)
+        #expect(literal.copyText == nil)
+        #expect(literal.commands.isEmpty)
+        #expect(String(literal.attributed.characters) == path)
+        #expect(literal.attributed.runs.allSatisfy { $0.inlinePresentationIntent != .code })
+    }
 }
 
 @MainActor
@@ -142,5 +165,31 @@ struct V091SessionNotesTests {
         #expect(incomplete.sessionNotes.map(\.text) == [incompleteText])
         #expect(incomplete.sessionNotes[0].copyText == nil)
         #expect(incomplete.log.lines.joined(separator: "\n").contains("tankard: \(incompleteText)"))
+    }
+
+    /// An app name with a backtick used to retarget Copy: the span parser
+    /// paired that backtick with the command's. The command is carried
+    /// beside the sentence, and the put-back path is not a command either.
+    @Test func aBacktickInTheAppNameDoesNotRetargetCopy() async throws {
+        let name = "Wei`rd"
+        let command = "brew uninstall --cask --force homebrew/cask/weird"
+        let session = try await run(hang: true, outcome: { _, ok in
+            #expect(!ok)
+            return .restored
+        }, name: name, qualified: "homebrew/cask/weird")
+        let recovery = "Copy \(name) aside first, then run `\(command)`, then put the app back."
+        let putBack = "brew stopped after removing \(name); Tankard put the old version back at /Applications/\(name).app."
+        #expect(session.sessionNotes.map(\.text) == [putBack, recovery])
+        #expect(session.sessionNotes.map(\.copyText) == [nil, command])
+        let note = try #require(session.sessionNotes.last)
+        let styled = note.attributed
+        let code = styled.runs.filter { $0.inlinePresentationIntent == .code }.map { String(styled[$0.range].characters) }
+        #expect(code == [command])
+        #expect(String(styled.characters).contains(name))
+        #expect(String(styled.characters).contains("`"))
+        let kept = try #require(session.sessionNotes.first)
+        #expect(kept.copyText == nil)
+        #expect(String(kept.attributed.characters) == putBack)
+        #expect(kept.attributed.runs.allSatisfy { $0.inlinePresentationIntent != .code })
     }
 }

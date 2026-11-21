@@ -332,8 +332,9 @@ struct Chip: View {
     }
 }
 
-/// One result note, wrapped and selectable. A note with a `code` span
-/// gets a Copy button for that command (several spans: one per line).
+/// One result note, wrapped and selectable. A note with a command gets
+/// a Copy button for that command (several: one per line). The command
+/// is the note's own field. The sentence is not scanned for backticks.
 struct SessionNoteLine: View {
     var note: SessionNote
     // `State(...)`, not `@State`: see CommandBox (the macro needs Xcode).
@@ -345,7 +346,7 @@ struct SessionNoteLine: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Text(NoticeText.attributed(note.text))
+            Text(note.attributed)
                 .font(.system(size: 12))
                 .textSelection(.enabled)
                 .fixedSize(horizontal: false, vertical: true)

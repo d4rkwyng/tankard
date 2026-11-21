@@ -930,7 +930,13 @@ public extension AppStore {
                 guard item.state == .cancelled else { return }
                 let name = r.plan.appName
                 let cask = BrewCommands.shellQuoted(r.plan.qualifiedName)
-                session.addNote(String(localized: "Copy \(name) aside first, then run `brew uninstall --cask --force \(cask)`, then put the app back."))
+                // Copy pastes `command` directly. The sentence is still the
+                // one localized string (the sheet styles the command where
+                // that string quotes it). A backtick in the app name must
+                // not become the thing Copy pastes.
+                let command = "brew uninstall --cask --force \(cask)"
+                session.addNote(String(localized: "Copy \(name) aside first, then run `brew uninstall --cask --force \(cask)`, then put the app back."),
+                                command: command)
             }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
                 explainFailure()
