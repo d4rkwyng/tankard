@@ -171,7 +171,7 @@
 "Add tap" = "Tap hinzufügen";
 "Add tap?" = "Tap hinzufügen?";
 "Add the tap a package comes from" = "Den Tap hinzufügen, aus dem ein Paket stammt";
-"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe die Brewfile dann erneut, um den Rest zu installieren.";
+"Add the taps first (Add Tap…), then check the Brewfile again to install the rest." = "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe das Brewfile dann erneut, um den Rest zu installieren.";
 "Add, Remove and Trust go through Tankard's queue and History." = "Hinzufügen, Entfernen und Vertrauen laufen über die Warteschlange und den Verlauf von Tankard.";
 "Added (%lld)" = "Hinzugefügt (%lld)";
 "Adding tap" = "Tap wird hinzugefügt";
@@ -1079,9 +1079,9 @@
 "Tankard couldn't reach the network to download Homebrew's list of packages. Check the internet connection (or a VPN or proxy), then try again." = "Tankard konnte das Netzwerk nicht erreichen, um die Paketliste von Homebrew zu laden. Prüfe die Internetverbindung (oder ein VPN oder einen Proxy) und versuche es dann erneut.";
 "Tankard couldn't read %@'s version at %@, so it didn't replace it." = "Tankard konnte die Version von %1$@ unter %2$@ nicht lesen und hat die App daher nicht ersetzt.";
 "Tankard couldn't read the packages in your taps. Try again in a moment." = "Tankard konnte die Pakete in deinen Taps nicht lesen. Versuche es gleich noch einmal.";
-"Tankard couldn't read this Brewfile: %@." = "Tankard konnte diese Brewfile nicht lesen: %@.";
+"Tankard couldn't read this Brewfile: %@." = "Tankard konnte dieses Brewfile nicht lesen: %@.";
 "Tankard couldn't read this file as a Brewfile." = "Tankard konnte diese Datei nicht als Brewfile lesen.";
-"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard konnte in der Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten.";
+"Tankard couldn't read where this tap comes from in the Brewfile. Use the Terminal command below." = "Tankard konnte im Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten.";
 "Tankard does these one at a time. Each is recorded in History." = "Tankard erledigt diese eins nach dem anderen. Jedes wird im Verlauf festgehalten.";
 "Tankard hasn't read this Mac's Homebrew prefix yet. Refresh first." = "Tankard hat das Homebrew-Präfix dieses Macs noch nicht gelesen. Aktualisiere zuerst.";
 "Tankard is upgrading %@ automatically (%lld of %lld)." = "Tankard aktualisiert %@ automatisch (%lld von %lld).";
@@ -1119,7 +1119,7 @@
 "Taps…" = "Taps…";
 "Terminal only" = "Nur im Terminal";
 "That's the latest version." = "Das ist die neueste Version.";
-"The Brewfile isn't there any more." = "Die Brewfile ist nicht mehr da.";
+"The Brewfile isn't there any more." = "Das Brewfile ist nicht mehr da.";
 "The Command Line Tools are out of date" = "Die Command Line Tools sind veraltet";
 "The Homebrew folders aren't writable by this user. `brew doctor` (Homebrew ▸ Health) usually says which, and the command to fix it." = "Die Homebrew-Ordner sind für diesen Benutzer nicht beschreibbar. `brew doctor` (Homebrew ▸ Zustand) nennt meist, welche, und den Befehl zur Behebung.";
 "The Installed list, filtered to this tap (tap:%@)" = "Die Liste „Installiert“, gefiltert auf diesen Tap (tap:%@)";
@@ -1167,8 +1167,8 @@
 "These need your administrator password: %@" = "Brauchen dein Admin-Passwort: %@";
 "Third-party" = "Drittanbieter";
 "This Brewfile changed after Tankard showed it, so brew didn't run it. Check it again to see what it holds now." = "Dieses Brewfile hat sich geändert, nachdem Tankard es angezeigt hat, daher hat brew es nicht ausgeführt. Prüfe es erneut, um zu sehen, was es jetzt enthält.";
-"This Brewfile is a symbolic link. Choose the file it points to instead." = "Diese Brewfile ist ein symbolischer Link. Wähle stattdessen die Datei, auf die er zeigt.";
-"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "Diese Brewfile lädt andere Dateien. Tankard führt eine private Kopie aus, daher werden Dateien, die sie über einen zur Brewfile relativen Pfad lädt, nicht gefunden.";
+"This Brewfile is a symbolic link. Choose the file it points to instead." = "Dieses Brewfile ist ein symbolischer Link. Wähle stattdessen die Datei, auf die er zeigt.";
+"This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." = "Dieses Brewfile lädt andere Dateien. Tankard führt eine private Kopie aus, daher werden Dateien, die es über einen zum Brewfile relativen Pfad lädt, nicht gefunden.";
 "This Brewfile was downloaded from the internet. A downloaded Brewfile can run any program on this Mac as soon as brew reads it." = "Dieses Brewfile wurde aus dem Internet geladen. Ein geladenes Brewfile kann jedes Programm auf diesem Mac ausführen, sobald brew es liest.";
 "This Homebrew can install command-line tools but not apps like Firefox or VLC. Turning apps on is a one-time download of about 620 MB." = "Dieses Homebrew kann Befehlszeilenwerkzeuge installieren, aber keine Apps wie Firefox oder VLC. Apps einzuschalten ist ein einmaliger Download von etwa 620 MB.";
 "This app is built with Electron. On this Mac's graphics card, with a newer macOS installed by OpenCore Legacy Patcher, apps like it may draw incorrectly: blank, black or flickering windows, or garbled text. Tankard doesn't change the app." = "Diese App ist mit Electron gebaut. Auf der Grafikkarte dieses Macs, mit einem neueren macOS über OpenCore Legacy Patcher, werden solche Apps eventuell falsch angezeigt: leere, schwarze oder flackernde Fenster oder verzerrter Text. Tankard verändert die App nicht.";
@@ -1176,11 +1176,11 @@
 "This brew has no `brew vulns` (it is new in Homebrew 7). Run `brew update` to get it." = "Dieses brew hat kein `brew vulns` (neu in Homebrew 7). Führe `brew update` aus, um es zu erhalten.";
 "This cask runs an installer package, which ignores --adopt: brew would run the installer again, with your password." = "Dieses Cask führt ein Installationspaket aus, das --adopt ignoriert: brew würde das Installationsprogramm erneut ausführen, mit deinem Passwort.";
 "This cask's app updates itself, so brew would adopt it without comparing it with the download. Tankard offers that only when the app's ID is one the cask names, and this app's isn't." = "Die App dieses Casks aktualisiert sich selbst, daher würde brew sie übernehmen, ohne sie mit dem Download zu vergleichen. Tankard bietet das nur an, wenn die ID der App eine ist, die der Cask nennt, und das ist hier nicht so.";
-"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "Diese Datei ist größer als %lld MB, zu groß für eine Brewfile, daher hat Tankard sie nicht gelesen.";
+"This file is larger than %lld MB, too large for a Brewfile, so Tankard didn't read it." = "Diese Datei ist größer als %lld MB, zu groß für ein Brewfile, daher hat Tankard sie nicht gelesen.";
 "This file isn't UTF-8 text, so Tankard didn't read it as a Brewfile." = "Diese Datei ist kein UTF-8-Text, daher hat Tankard sie nicht als Brewfile gelesen.";
-"This is a device, not a Brewfile, so Tankard didn't read it." = "Das ist ein Gerät, keine Brewfile, daher hat Tankard es nicht gelesen.";
-"This is a folder, not a Brewfile." = "Das ist ein Ordner, keine Brewfile.";
-"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "Das ist eine benannte Pipe, keine Brewfile, daher hat Tankard sie nicht gelesen.";
+"This is a device, not a Brewfile, so Tankard didn't read it." = "Das ist ein Gerät, kein Brewfile, daher hat Tankard es nicht gelesen.";
+"This is a folder, not a Brewfile." = "Das ist ein Ordner, kein Brewfile.";
+"This is a named pipe, not a Brewfile, so Tankard didn't read it." = "Das ist eine benannte Pipe, kein Brewfile, daher hat Tankard sie nicht gelesen.";
 "This is a symbolic link, not the app itself. Tankard doesn't adopt links." = "Ein symbolischer Link, nicht die App selbst. Tankard übernimmt keine Links.";
 "This isn't a regular file, so Tankard didn't read it as a Brewfile." = "Das ist keine reguläre Datei, daher hat Tankard sie nicht als Brewfile gelesen.";
 "This macOS version isn't supported by Homebrew" = "Diese macOS-Version wird von Homebrew nicht unterstützt";

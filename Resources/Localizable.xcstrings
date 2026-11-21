@@ -12316,7 +12316,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe die Brewfile dann erneut, um den Rest zu installieren."
+            "value": "Füge zuerst die Taps hinzu (Tap hinzufügen…) und prüfe das Brewfile dann erneut, um den Rest zu installieren."
           }
         },
         "fr": {
@@ -20766,19 +20766,19 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiez %@ de côté d'abord, puis exécutez `brew uninstall --cask --force %@`, puis remettez l'app."
+            "value": "Copiez l'app %@ de côté d'abord, puis exécutez `brew uninstall --cask --force %@`, puis remettez l'app."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copia %@ aparte primero, luego ejecuta `brew uninstall --cask --force %@` y vuelve a poner la app."
+            "value": "Copia la app %@ aparte primero, luego ejecuta `brew uninstall --cask --force %@` y vuelve a poner la app."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copia %@ da parte prima, poi esegui `brew uninstall --cask --force %@` e rimetti l'app."
+            "value": "Copia l'app %@ da parte prima, poi esegui `brew uninstall --cask --force %@` e rimetti l'app."
           }
         },
         "ja": {
@@ -60444,7 +60444,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard konnte diese Brewfile nicht lesen: %@."
+            "value": "Tankard konnte dieses Brewfile nicht lesen: %@."
           }
         },
         "fr": {
@@ -60548,7 +60548,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tankard konnte in der Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten."
+            "value": "Tankard konnte im Brewfile nicht lesen, woher dieser Tap kommt. Verwende den Terminalbefehl unten."
           }
         },
         "fr": {
@@ -62638,7 +62638,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die Brewfile ist nicht mehr da."
+            "value": "Das Brewfile ist nicht mehr da."
           }
         },
         "fr": {
@@ -65134,7 +65134,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Brewfile ist ein symbolischer Link. Wähle stattdessen die Datei, auf die er zeigt."
+            "value": "Dieses Brewfile ist ein symbolischer Link. Wähle stattdessen die Datei, auf die er zeigt."
           }
         },
         "fr": {
@@ -65186,7 +65186,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Brewfile lädt andere Dateien. Tankard führt eine private Kopie aus, daher werden Dateien, die sie über einen zur Brewfile relativen Pfad lädt, nicht gefunden."
+            "value": "Dieses Brewfile lädt andere Dateien. Tankard führt eine private Kopie aus, daher werden Dateien, die es über einen zum Brewfile relativen Pfad lädt, nicht gefunden."
           }
         },
         "fr": {
@@ -65602,7 +65602,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Datei ist größer als %lld MB, zu groß für eine Brewfile, daher hat Tankard sie nicht gelesen."
+            "value": "Diese Datei ist größer als %lld MB, zu groß für ein Brewfile, daher hat Tankard sie nicht gelesen."
           }
         },
         "fr": {
@@ -65706,7 +65706,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das ist ein Gerät, keine Brewfile, daher hat Tankard es nicht gelesen."
+            "value": "Das ist ein Gerät, kein Brewfile, daher hat Tankard es nicht gelesen."
           }
         },
         "fr": {
@@ -65758,7 +65758,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das ist ein Ordner, keine Brewfile."
+            "value": "Das ist ein Ordner, kein Brewfile."
           }
         },
         "fr": {
@@ -65810,7 +65810,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das ist eine benannte Pipe, keine Brewfile, daher hat Tankard sie nicht gelesen."
+            "value": "Das ist eine benannte Pipe, kein Brewfile, daher hat Tankard sie nicht gelesen."
           }
         },
         "fr": {
