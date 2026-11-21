@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "신뢰 중단";
 "Stop Trusting…" = "신뢰 중단…";
 "Stop also unregisters it from launching at login." = "중지하면 로그인 시 실행되도록 한 등록도 해제합니다.";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "중지가 너무 늦었습니다. %1$@이(가) %2$@(으)로 업데이트되었습니다. Tankard가 이전 버전의 사본을 %3$@에 보관했습니다.";
 "Stop now?" = "지금 중지하시겠습니까?";
 "Stop the running brew (and everything it started) immediately" = "실행 중인 brew(와 그것이 시작한 모든 것)를 즉시 중지합니다";
 "Stop the security check. The last result is kept." = "보안 검사를 중지합니다. 마지막 결과는 유지됩니다.";

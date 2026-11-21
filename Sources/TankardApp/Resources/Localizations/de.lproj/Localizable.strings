@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "Vertrauen entziehen";
 "Stop Trusting…" = "Vertrauen entziehen…";
 "Stop also unregisters it from launching at login." = "„Stoppen“ hebt auch die Registrierung für den Start bei der Anmeldung auf.";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "Das Stoppen kam zu spät: %1$@ wurde auf %2$@ aktualisiert. Tankard hat eine Kopie der alten Version unter %3$@ behalten.";
 "Stop now?" = "Jetzt stoppen?";
 "Stop the running brew (and everything it started) immediately" = "Das laufende brew (und alles, was es gestartet hat) sofort stoppen";
 "Stop the security check. The last result is kept." = "Sicherheitsprüfung stoppen. Das letzte Ergebnis bleibt erhalten.";

@@ -270,6 +270,46 @@ struct V090ReplaceReviewTests {
         #expect(!lines.contains("was updated to"))
     }
 
+    /// Stop Now after brew had already installed the cask version. The item
+    /// was `.cancelled`. It becomes done, the chip is the warning (done and
+    /// in `replacedDespiteError`), and the title is not "Replace stopped".
+    @Test func stopNowAfterTheAppWasAlreadyReplacedIsAWarning() async throws {
+        let info = AppReplaceSafety.BundleInfo(bundleID: "org.audacityteam.audacity4", shortVersion: "4.0.1", bundleVersion: "4.0.1")
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = HangInstall(deps.streamRunner)
+        deps.streamRunner = runner
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, backup, ok, _ in
+                #expect(!ok)
+                return .replacedDespiteError(backup: backup)
+            },
+            readApp: { _ in info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let row = try #require(store.adopt.rows(.needsUpdate).first { $0.app.displayName == "Audacity" })
+        let plan = try #require(store.adopt.replacePlan(row))
+        store.closeToolSheet()
+        #expect(await store.startReplace(plan))
+        #expect(await waitUntil { store.upgrade?.current != nil })
+        store.upgrade?.stopNow()
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let session = try #require(store.upgrade)
+        let item = try #require(session.items.first)
+        #expect(item.state == .done)
+        #expect(session.replacedDespiteError == [item.id])
+        #expect(session.failedItems.isEmpty)
+        #expect(session.title == "Replace finished with a warning")
+        let lines = session.log.lines.joined(separator: "\n")
+        #expect(lines.contains("Stop came too late: Audacity was updated to 4.0.2. Tankard kept a copy of the old version at /tmp/b/Audacity 4.app."))
+        #expect(!lines.contains("but Homebrew reported an error"))
+        #expect(!lines.contains("wasn't replaced"))
+        #expect(!runner.args.withLock { $0 }.contains { $0.contains("uninstall") })
+    }
+
     /// brew exits 1 with its lock message, so the failure kind is `.locked`.
     final class LockOnce: StreamingCommandRunning, @unchecked Sendable {
         let inner: StreamingCommandRunning

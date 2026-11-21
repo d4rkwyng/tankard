@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "信頼を解除";
 "Stop Trusting…" = "信頼を解除…";
 "Stop also unregisters it from launching at login." = "停止すると、ログイン時の起動の登録も解除されます。";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "停止が遅すぎました: %1$@ は %2$@ に更新されました。Tankard は古いバージョンのコピーを %3$@ に残しました。";
 "Stop now?" = "今すぐ停止しますか?";
 "Stop the running brew (and everything it started) immediately" = "実行中のbrew（とそれが開始したすべての処理）を直ちに停止します";
 "Stop the security check. The last result is kept." = "セキュリティチェックを停止します。前回の結果は残ります。";

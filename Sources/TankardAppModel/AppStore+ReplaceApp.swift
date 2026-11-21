@@ -826,8 +826,15 @@ public extension AppStore {
                     ? String(localized: "The app at \(r.plan.appPath) isn't \(r.plan.appName) \(r.plan.caskVersion), so Tankard kept the copy of the old version at \(copy).")
                     : String(localized: "\(r.plan.appName) wasn't replaced; it is as it was. Tankard kept a copy of it at \(copy)."))
             case .replacedDespiteError(let copy):
+                // Read this before the mark: Stop Now leaves `.cancelled`,
+                // and the mark turns it into `.done`.
+                let stopped = item.state == .cancelled
                 session.markReplacedDespiteError(item.id)
-                session.addNote(String(localized: "\(r.plan.appName) was updated to \(r.plan.caskVersion), but Homebrew reported an error. Tankard kept a copy of the old version at \(copy)."))
+                if stopped {
+                    session.addNote(String(localized: "Stop came too late: \(r.plan.appName) was updated to \(r.plan.caskVersion). Tankard kept a copy of the old version at \(copy)."))
+                } else {
+                    session.addNote(String(localized: "\(r.plan.appName) was updated to \(r.plan.caskVersion), but Homebrew reported an error. Tankard kept a copy of the old version at \(copy)."))
+                }
             case .incomplete(let copy):
                 explainFailure()
                 noteBusy()

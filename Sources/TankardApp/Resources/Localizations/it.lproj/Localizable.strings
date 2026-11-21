@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "Non considerare più attendibile";
 "Stop Trusting…" = "Non considerare più attendibile…";
 "Stop also unregisters it from launching at login." = "Arresta rimuove anche la sua apertura al login.";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "L'interruzione è arrivata troppo tardi: l'app %1$@ è stata aggiornata alla versione %2$@. Tankard ha tenuto una copia della vecchia versione in %3$@.";
 "Stop now?" = "Fermare ora?";
 "Stop the running brew (and everything it started) immediately" = "Interrompi subito il brew in esecuzione (e tutto ciò che ha avviato)";
 "Stop the security check. The last result is kept." = "Interrompi il controllo di sicurezza. L'ultimo risultato viene conservato.";

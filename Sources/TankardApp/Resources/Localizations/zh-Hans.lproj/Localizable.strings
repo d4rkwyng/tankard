@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "取消信任";
 "Stop Trusting…" = "取消信任…";
 "Stop also unregisters it from launching at login." = "停止时也会取消其登录时启动的注册。";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "停止得太晚了：%1$@ 已更新到 %2$@。Tankard 在 %3$@ 保留了旧版本的副本。";
 "Stop now?" = "立即停止?";
 "Stop the running brew (and everything it started) immediately" = "立即停止正在运行的 brew（及其启动的所有进程）";
 "Stop the security check. The last result is kept." = "停止安全检查。保留上次的结果。";

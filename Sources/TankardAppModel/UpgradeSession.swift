@@ -1094,9 +1094,15 @@ public final class UpgradeSession: Identifiable {
     /// 0.8.10: brew exited non-zero, but the app is a whole bundle of the
     /// cask's version. The step counts as replaced. The failure kind goes,
     /// so the sheet does not show brew's error title or the retry advice.
+    /// 0.9.0: Stop Now can arrive after brew has already laid the app down.
+    /// That item is `.cancelled`, not `.failed`, and counts the same way.
+    /// The chip is the warning, and the title is not "Replace stopped".
     func markReplacedDespiteError(_ id: UUID) {
-        guard let i = items.firstIndex(where: { $0.id == id }),
-              case .failed = items[i].state else { return }
+        guard let i = items.firstIndex(where: { $0.id == id }) else { return }
+        switch items[i].state {
+        case .failed, .cancelled: break
+        default: return
+        }
         items[i].state = .done
         replacedDespiteError.insert(id)
         failureKindByItem[id] = nil

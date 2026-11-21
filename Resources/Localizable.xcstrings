@@ -58567,6 +58567,58 @@
         }
       }
     },
+    "Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Stoppen kam zu spät: %1$@ wurde auf %2$@ aktualisiert. Tankard hat eine Kopie der alten Version unter %3$@ behalten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'arrêt est arrivé trop tard : l'app %1$@ a été mise à jour vers %2$@. Tankard a gardé une copie de l'ancienne version à %3$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La detención llegó demasiado tarde: la app %1$@ se actualizó a %2$@. Tankard guardó una copia de la versión anterior en %3$@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止が遅すぎました: %1$@ は %2$@ に更新されました。Tankard は古いバージョンのコピーを %3$@ に残しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止得太晚了：%1$@ 已更新到 %2$@。Tankard 在 %3$@ 保留了旧版本的副本。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A parada veio tarde demais: o app %1$@ foi atualizado para %2$@. O Tankard guardou uma cópia da versão antiga em %3$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'interruzione è arrivata troppo tardi: l'app %1$@ è stata aggiornata alla versione %2$@. Tankard ha tenuto una copia della vecchia versione in %3$@."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "중지가 너무 늦었습니다. %1$@이(가) %2$@(으)로 업데이트되었습니다. Tankard가 이전 버전의 사본을 %3$@에 보관했습니다."
+          }
+        }
+      }
+    },
     "Stop now?": {
       "localizations": {
         "de": {

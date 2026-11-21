@@ -1043,6 +1043,7 @@
 "Stop Trusting" = "Ne plus approuver";
 "Stop Trusting…" = "Ne plus approuver…";
 "Stop also unregisters it from launching at login." = "Arrêter le désenregistre aussi du lancement à l’ouverture de session.";
+"Stop came too late: %@ was updated to %@. Tankard kept a copy of the old version at %@." = "L'arrêt est arrivé trop tard : l'app %1$@ a été mise à jour vers %2$@. Tankard a gardé une copie de l'ancienne version à %3$@.";
 "Stop now?" = "Arrêter maintenant ?";
 "Stop the running brew (and everything it started) immediately" = "Arrêter immédiatement le brew en cours (et tout ce qu’il a lancé)";
 "Stop the security check. The last result is kept." = "Arrêter la vérification de sécurité. Le dernier résultat est conservé.";
