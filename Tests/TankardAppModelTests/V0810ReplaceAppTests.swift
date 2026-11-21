@@ -172,7 +172,7 @@ struct V0810ReplaceAppTests {
     }
 
     /// The real copy, on a folder standing in for an app.
-    @Test func liveSafetyCopyRestoresAndCleansUp() throws {
+    @Test func liveSafetyCopyRestoresAndCleansUp() async throws {
         let fm = FileManager.default
         let tmp = fm.temporaryDirectory.appendingPathComponent("tankard-replace-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: tmp) }
@@ -184,21 +184,21 @@ struct V0810ReplaceAppTests {
         // brew failed after removing the app: the copy goes back.
         var copy = try live.backup(app.path)
         try fm.removeItem(at: app)
-        #expect(live.finish(app.path, copy, false, "2.0") == .restored)
+        #expect(await live.finish(app.path, copy, false, "2.0") == .restored)
         #expect(FakeBundle.version(app) == "1.0")
         #expect((try? fm.contentsOfDirectory(atPath: root.path))?.isEmpty ?? true)
 
         // brew failed before touching it: the app stays, the copy too
         // (0.8.10: a failed run never deletes the copy unless it is back).
         copy = try live.backup(app.path)
-        #expect(live.finish(app.path, copy, false, "2.0") == .kept(backup: copy))
+        #expect(await live.finish(app.path, copy, false, "2.0") == .kept(backup: copy))
         #expect(FakeBundle.version(app) == "1.0" && FakeBundle.version(URL(fileURLWithPath: copy)) == "1.0")
         try fm.removeItem(atPath: (copy as NSString).deletingLastPathComponent)
 
         // brew succeeded: the copy is deleted, the new app stays.
         copy = try live.backup(app.path)
         try FakeBundle.make(app, version: "2.0")
-        #expect(live.finish(app.path, copy, true, "2.0") == .discarded)
+        #expect(await live.finish(app.path, copy, true, "2.0") == .discarded)
         #expect(FakeBundle.version(app) == "2.0")
         #expect((try? fm.contentsOfDirectory(atPath: root.path))?.isEmpty ?? true)
 

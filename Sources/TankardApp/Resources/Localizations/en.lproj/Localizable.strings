@@ -294,6 +294,7 @@
 "Checked %@" = "Checked %@";
 "Checking Brewfile…" = "Checking Brewfile…";
 "Checking for updates…" = "Checking for updates…";
+"Checking the new app…" = "Checking the new app…";
 "Checking what brew upgraded…" = "Checking what brew upgraded…";
 "Checking what can be removed…" = "Checking what can be removed…";
 "Checking what is still installed…" = "Checking what is still installed…";

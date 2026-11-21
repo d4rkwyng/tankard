@@ -342,15 +342,15 @@ struct V090ReplaceReviewTests {
 
     /// A verifying signature (or both unsigned) is the warning path. Anything
     /// else keeps the copy, leaves the new tree in place, and stays a failure.
-    @Test func aBadSignatureIsARealFailure() throws {
+    @Test func aBadSignatureIsARealFailure() async throws {
         let d = Dir(), fm = FileManager.default
         let appPath = d.app.path
-        func finish(_ signing: @escaping @Sendable (String) -> AppReplaceSafety.CodeSignature) throws -> (AppReplaceSafety.Outcome, String) {
+        func finish(_ signing: @escaping @Sendable (String) -> AppReplaceSafety.CodeSignature) async throws -> (AppReplaceSafety.Outcome, String) {
             try FakeBundle.make(d.app, version: "1.0")
             let live = AppReplaceSafety.live(root: d.root, signature: signing)
             let copy = try live.backup(d.app.path)
             try FakeBundle.make(d.app, version: "2.0")
-            return (live.finish(d.app.path, copy, false, "2.0"), copy)
+            return (await live.finish(d.app.path, copy, false, "2.0"), copy)
         }
         func stayed(_ outcome: AppReplaceSafety.Outcome, _ copy: String) {
             #expect(fm.fileExists(atPath: copy))
@@ -359,30 +359,30 @@ struct V090ReplaceReviewTests {
             #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
         }
 
-        let (valid, validCopy) = try finish { _ in .valid }
+        let (valid, validCopy) = try await finish { _ in .valid }
         #expect(valid == .replacedDespiteError(backup: validCopy))
         stayed(valid, validCopy)
 
         let seen = OSAllocatedUnfairLock<[String]>(initialState: [])
-        let (onlyInstalled, onlyCopy) = try finish { path in
+        let (onlyInstalled, onlyCopy) = try await finish { path in
             seen.withLock { $0.append(path) }
             return .valid
         }
         #expect(onlyInstalled == .replacedDespiteError(backup: onlyCopy))
         #expect(seen.withLock { $0 } == [appPath])
 
-        let (invalid, invalidCopy) = try finish { _ in .invalid }
+        let (invalid, invalidCopy) = try await finish { _ in .invalid }
         #expect(invalid == .incomplete(backup: invalidCopy))
         stayed(invalid, invalidCopy)
 
-        let (stripped, strippedCopy) = try finish { path in path == appPath ? .unsigned : .valid }
+        let (stripped, strippedCopy) = try await finish { path in path == appPath ? .unsigned : .valid }
         #expect(stripped == .incomplete(backup: strippedCopy))
         stayed(stripped, strippedCopy)
 
-        let (unreadableBackup, unreadableCopy) = try finish { path in path == appPath ? .unsigned : .invalid }
+        let (unreadableBackup, unreadableCopy) = try await finish { path in path == appPath ? .unsigned : .invalid }
         #expect(unreadableBackup == .incomplete(backup: unreadableCopy))
 
-        let (bothUnsigned, bothCopy) = try finish { _ in .unsigned }
+        let (bothUnsigned, bothCopy) = try await finish { _ in .unsigned }
         #expect(bothUnsigned == .replacedDespiteError(backup: bothCopy))
         stayed(bothUnsigned, bothCopy)
     }
@@ -466,6 +466,44 @@ struct V090ReplaceReviewTests {
         #expect(!runner.args.withLock { $0 }.contains { $0.contains("uninstall") })
     }
 
+    /// The new app's signature is read off the main thread. The sheet says
+    /// so while that runs, and the run still finishes as a warning.
+    @Test func theSignatureCheckLeavesTheMainThreadFree() async throws {
+        let d = Dir()
+        try FakeBundle.make(d.app, version: "1.0", build: "1")
+        let hold = SignatureHold()
+        let live = AppReplaceSafety.live(root: d.root, signature: { _ in
+            hold.ranOnMain.withLock { $0 = Thread.isMainThread }
+            let deadline = Date().addingTimeInterval(4)
+            while !hold.release.withLock({ $0 }) && Date() < deadline {
+                Thread.sleep(forTimeInterval: 0.02)
+            }
+            return .valid
+        })
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.streamRunner = InstallExitsAfterRewrite(deps.streamRunner, app: d.app)
+        deps.appReplaceSafety = live
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        let plan = ReplaceAppPlan(token: "foo", qualifiedName: "foo", appName: "Foo",
+                                  appPath: d.app.path, bundleID: "com.foo.Foo",
+                                  installedVersion: "1.0", caskVersion: "2.0", bundleVersion: "1")
+        #expect(await store.startReplace(plan))
+        let saw = await waitUntil(timeout: .seconds(8)) {
+            store.upgrade?.statusLine == "Checking the new app…" && hold.ranOnMain.withLock { $0 } == false
+        }
+        hold.release.withLock { $0 = true }
+        #expect(saw)
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let session = try #require(store.upgrade)
+        #expect(session.title == "Replace finished with a warning")
+        #expect(hold.ranOnMain.withLock { $0 } == false)
+        let lines = session.log.lines.joined(separator: "\n")
+        #expect(lines.contains("Foo was updated to 2.0, but Homebrew reported an error."))
+        #expect(FakeBundle.version(d.app) == "2.0")
+    }
+
     /// brew exits 1 with its lock message, so the failure kind is `.locked`.
     final class LockOnce: StreamingCommandRunning, @unchecked Sendable {
         let inner: StreamingCommandRunning
@@ -491,6 +529,32 @@ struct V090ReplaceReviewTests {
             if arguments.contains("--force") {
                 try await sleepUntilCancelled()
                 return 0
+            }
+            return try await inner.stream(executable, arguments, environment: environment, output: output)
+        }
+    }
+
+    /// Records whether the signature closure ran on the main thread, and
+    /// holds that closure until the test has seen the sheet's status line.
+    final class SignatureHold: @unchecked Sendable {
+        let ranOnMain = OSAllocatedUnfairLock<Bool?>(initialState: nil)
+        let release = OSAllocatedUnfairLock(initialState: false)
+    }
+
+    /// `brew install --cask --force` rewrites the app to the cask's version
+    /// and exits 1, the path where the signature is what decides the outcome.
+    final class InstallExitsAfterRewrite: StreamingCommandRunning, @unchecked Sendable {
+        let inner: StreamingCommandRunning
+        let app: URL
+        init(_ inner: StreamingCommandRunning, app: URL) {
+            self.inner = inner
+            self.app = app
+        }
+        func stream(_ executable: String, _ arguments: [String], environment: [String: String],
+                    output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            if arguments.contains("--force") {
+                try FakeBundle.make(app, version: "2.0", build: "1")
+                return 1
             }
             return try await inner.stream(executable, arguments, environment: environment, output: output)
         }

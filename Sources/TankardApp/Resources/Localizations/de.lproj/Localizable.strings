@@ -294,6 +294,7 @@
 "Checked %@" = "%@ geprüft";
 "Checking Brewfile…" = "Brewfile wird geprüft…";
 "Checking for updates…" = "Suche Updates…";
+"Checking the new app…" = "Neue App wird geprüft…";
 "Checking what brew upgraded…" = "Prüfe, was brew aktualisiert hat …";
 "Checking what can be removed…" = "Es wird geprüft, was entfernt werden kann…";
 "Checking what is still installed…" = "Prüfe, was noch installiert ist…";

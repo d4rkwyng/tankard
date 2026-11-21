@@ -294,6 +294,7 @@
 "Checked %@" = "%@を確認しました";
 "Checking Brewfile…" = "Brewfileを確認中…";
 "Checking for updates…" = "アップデートを確認中…";
+"Checking the new app…" = "新しいアプリを確認中…";
 "Checking what brew upgraded…" = "brewがアップグレードしたものを確認中…";
 "Checking what can be removed…" = "削除できるものを確認中…";
 "Checking what is still installed…" = "まだインストールされているものを確認中…";

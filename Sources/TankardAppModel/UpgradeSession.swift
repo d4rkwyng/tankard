@@ -231,6 +231,13 @@ public final class UpgradeSession: Identifiable {
     @ObservationIgnored private var upgradeChecked = false
     /// The read is running: the run isn't finished until it answers.
     public private(set) var checkingUpgraded = false
+    /// 0.9.0: a Replace is reading the new app's signature, off the main
+    /// actor. The run isn't finished until that answers.
+    public private(set) var checkingNewApp = false
+    /// Set by the store for a Replace. Runs before the session is finished,
+    /// so the signature read can be awaited without blocking the main actor.
+    @ObservationIgnored private var replaceCheck: (@MainActor (UpgradeSession) async -> Void)?
+    private var replaceCheckStarted = false
     /// 0.8.6 (HK-47 review): called when that read starts. Every step has
     /// run by then and no quit prompt stops a ⌘Q, so the app settles the
     /// run journal here rather than only at the end.
@@ -569,6 +576,7 @@ public final class UpgradeSession: Identifiable {
             return String(localized: "Downloading \(d.name ?? c.package.name)…") + " " + d.detail
         }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
+        if checkingNewApp { return String(localized: "Checking the new app…") }
         if checkingUpgraded { return String(localized: "Checking what brew upgraded…") }
         if isFinished {
             // 0.8.4: an uninstall counts packages (all of its steps done), not steps.
@@ -925,9 +933,35 @@ public final class UpgradeSession: Identifiable {
         checkingInstalled = false
     }
 
+    /// The store's Replace bookkeeping (the copy, and the new app's
+    /// signature). Called before the session is finished.
+    func setReplaceCheck(_ check: @escaping @MainActor (UpgradeSession) async -> Void) {
+        replaceCheck = check
+    }
+
+    /// Awaits the replace check before the sheet says the run is finished.
+    /// While it runs, another pass through here must not finish the session
+    /// out from under it. Returns true when the session should stay unfinished.
+    private func startReplaceCheck() -> Bool {
+        guard action == .replaceApp else { return false }
+        if replaceCheckStarted { return checkingNewApp }
+        guard let hook = replaceCheck else { return false }
+        replaceCheckStarted = true
+        replaceCheck = nil
+        checkingNewApp = true
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            await hook(self)
+            self.checkingNewApp = false
+            self.finishIfDone()
+        }
+        return true
+    }
+
     private func finishIfDone() {
         if !isFinished && items.allSatisfy({ $0.state.isTerminal }) && fetchStates.values.allSatisfy(\.isTerminal) {
             if startUpgradeCheck() { return }
+            if startReplaceCheck() { return }
             isFinished = true
             logFile?.close()
             let done = onFinish

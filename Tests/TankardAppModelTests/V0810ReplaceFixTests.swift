@@ -37,7 +37,7 @@ struct V0810ReplaceFixTests {
     // MARK: - finish, on disk
 
     /// Stop Now during brew's `rm -rf`: the bundle is there but half gone.
-    @Test func halfDeletedBundleIsMovedAsideAndTheCopyRestored() throws {
+    @Test func halfDeletedBundleIsMovedAsideAndTheCopyRestored() async throws {
         let d = Dir(), fm = FileManager.default
         try FakeBundle.make(d.app, version: "1.0")
         let live = AppReplaceSafety.live(root: d.root)
@@ -45,7 +45,7 @@ struct V0810ReplaceFixTests {
         let dir = (copy as NSString).deletingLastPathComponent
         // brew got as far as Info.plist.
         try fm.removeItem(at: d.app.appendingPathComponent("Contents/Info.plist"))
-        let outcome = live.finish(d.app.path, copy, false, "2.0")
+        let outcome = await live.finish(d.app.path, copy, false, "2.0")
         let partial = (dir as NSString).appendingPathComponent("Foo.app.partial")
         #expect(outcome == .restoredMovingAside(partial: partial))
         #expect(FakeBundle.version(d.app) == "1.0")
@@ -59,7 +59,7 @@ struct V0810ReplaceFixTests {
         #expect(fm.fileExists(atPath: partial))
     }
 
-    @Test func bundleWithoutItsExecutableOrAnotherAppIsMovedAside() throws {
+    @Test func bundleWithoutItsExecutableOrAnotherAppIsMovedAside() async throws {
         let d = Dir(), fm = FileManager.default
         let live = AppReplaceSafety.live(root: d.root)
 
@@ -67,7 +67,7 @@ struct V0810ReplaceFixTests {
         try FakeBundle.make(d.app, version: "1.0")
         var copy = try live.backup(d.app.path)
         try fm.removeItem(at: d.app.appendingPathComponent("Contents/MacOS/Foo"))
-        guard case .restoredMovingAside(let p1) = live.finish(d.app.path, copy, false, "2.0") else {
+        guard case .restoredMovingAside(let p1) = await live.finish(d.app.path, copy, false, "2.0") else {
             Issue.record("not moved aside"); return
         }
         #expect(FakeBundle.version(d.app) == "1.0" && fm.fileExists(atPath: d.app.appendingPathComponent("Contents/MacOS/Foo").path))
@@ -76,7 +76,7 @@ struct V0810ReplaceFixTests {
         // A different app (another bundle id) at the path.
         copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, id: "com.other.Thing", version: "9.0")
-        guard case .restoredMovingAside(let p2) = live.finish(d.app.path, copy, false, "2.0") else {
+        guard case .restoredMovingAside(let p2) = await live.finish(d.app.path, copy, false, "2.0") else {
             Issue.record("not moved aside"); return
         }
         #expect(FakeBundle.version(d.app) == "1.0" && FakeBundle.version(URL(fileURLWithPath: p2)) == "9.0")
@@ -85,7 +85,7 @@ struct V0810ReplaceFixTests {
         copy = try live.backup(d.app.path)
         try fm.removeItem(at: d.app)
         try Data("x".utf8).write(to: d.app)
-        guard case .restoredMovingAside = live.finish(d.app.path, copy, false, "2.0") else {
+        guard case .restoredMovingAside = await live.finish(d.app.path, copy, false, "2.0") else {
             Issue.record("not moved aside"); return
         }
         #expect(FakeBundle.version(d.app) == "1.0")
@@ -102,7 +102,7 @@ struct V0810ReplaceFixTests {
         let live = AppReplaceSafety.live(root: d.root, signature: { _ in .valid })
         let copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.0")
-        #expect(live.finish(d.app.path, copy, false, "2.0") == .replacedDespiteError(backup: copy))
+        #expect(await live.finish(d.app.path, copy, false, "2.0") == .replacedDespiteError(backup: copy))
         #expect(fm.fileExists(atPath: copy))
         #expect(FakeBundle.version(URL(fileURLWithPath: copy)) == "1.0")
         #expect(FakeBundle.version(d.app) == "2.0")
@@ -112,7 +112,7 @@ struct V0810ReplaceFixTests {
         try FakeBundle.make(d.app, version: "1.0")
         let copy2 = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.0.0")
-        #expect(live.finish(d.app.path, copy2, false, "2.0") == .replacedDespiteError(backup: copy2))
+        #expect(await live.finish(d.app.path, copy2, false, "2.0") == .replacedDespiteError(backup: copy2))
         #expect(fm.fileExists(atPath: copy2) && FakeBundle.version(URL(fileURLWithPath: copy2)) == "1.0")
 
         let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
@@ -196,19 +196,19 @@ struct V0810ReplaceFixTests {
     }
 
     /// A failed run with the same app still whole, and not the cask's version: both stay.
-    @Test func failedRunWithTheAppWholeKeepsTheCopy() throws {
+    @Test func failedRunWithTheAppWholeKeepsTheCopy() async throws {
         let d = Dir(), fm = FileManager.default
         try FakeBundle.make(d.app, version: "1.0")
         let live = AppReplaceSafety.live(root: d.root)
         let copy = try live.backup(d.app.path)
-        #expect(live.finish(d.app.path, copy, false, "2.0") == .kept(backup: copy))
+        #expect(await live.finish(d.app.path, copy, false, "2.0") == .kept(backup: copy))
         #expect(fm.fileExists(atPath: copy) && FakeBundle.version(d.app) == "1.0")
         // The run finished, so `.origin` is gone. The copy stays.
         #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
     }
 
     /// brew's exit 0 isn't enough: the app must be whole and the cask's version.
-    @Test func successNeedsAWholeAppOfTheCasksVersion() throws {
+    @Test func successNeedsAWholeAppOfTheCasksVersion() async throws {
         let d = Dir(), fm = FileManager.default
         let live = AppReplaceSafety.live(root: d.root)
         try FakeBundle.make(d.app, version: "1.0")
@@ -216,14 +216,14 @@ struct V0810ReplaceFixTests {
         // Exit 0, but the app at the path is still 1.0: kept. `.origin` is gone.
         var copy = try live.backup(d.app.path)
         #expect(fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
-        #expect(live.finish(d.app.path, copy, true, "2.0") == .kept(backup: copy))
+        #expect(await live.finish(d.app.path, copy, true, "2.0") == .kept(backup: copy))
         #expect(fm.fileExists(atPath: copy))
         #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
 
         // Exit 0, and the bundle is broken: the copy goes back.
         copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.0", executable: false)
-        guard case .restoredMovingAside = live.finish(d.app.path, copy, true, "2.0") else {
+        guard case .restoredMovingAside = await live.finish(d.app.path, copy, true, "2.0") else {
             Issue.record("not restored"); return
         }
         #expect(FakeBundle.version(d.app) == "1.0")
@@ -232,11 +232,11 @@ struct V0810ReplaceFixTests {
         // number as the cask's version: discarded.
         copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.0.0")
-        #expect(live.finish(d.app.path, copy, true, "2.0") == .discarded)
+        #expect(await live.finish(d.app.path, copy, true, "2.0") == .discarded)
         #expect(!fm.fileExists(atPath: copy))
         copy = try live.backup(d.app.path)
         try FakeBundle.make(d.app, version: "2.1", build: "210")
-        #expect(live.finish(d.app.path, copy, true, "210") == .discarded)
+        #expect(await live.finish(d.app.path, copy, true, "210") == .discarded)
     }
 
     /// Same rule as the offer: a dotted cask version is the short version
@@ -258,7 +258,7 @@ struct V0810ReplaceFixTests {
 
     /// A link, a missing executable, or an executable outside the bundle is
     /// not whole, so exit 0 does not delete the copy.
-    @Test func aLinkOrAMissingExecutableIsNotAWholeApp() throws {
+    @Test func aLinkOrAMissingExecutableIsNotAWholeApp() async throws {
         let d = Dir(), fm = FileManager.default
         let live = AppReplaceSafety.live(root: d.root)
         try FakeBundle.make(d.app, version: "1.0")
@@ -273,7 +273,7 @@ struct V0810ReplaceFixTests {
         let exe = d.app.appendingPathComponent("Contents/MacOS/Foo")
         try fm.removeItem(at: exe)
         try fm.createSymbolicLink(at: exe, withDestinationURL: URL(fileURLWithPath: "/usr/bin/true"))
-        let linkedExe = live.finish(d.app.path, copy, true, "2.0")
+        let linkedExe = await live.finish(d.app.path, copy, true, "2.0")
         notDiscarded(linkedExe, "symlink executable deleted the copy")
         #expect(FakeBundle.version(d.app) == "1.0")
 
@@ -284,7 +284,7 @@ struct V0810ReplaceFixTests {
         let aside = d.app.appendingPathComponent("Contents/Info-real.plist")
         try fm.moveItem(at: plist, to: aside)
         try fm.createSymbolicLink(at: plist, withDestinationURL: aside)
-        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "symlink Info.plist deleted the copy")
+        notDiscarded(await live.finish(d.app.path, copy, true, "2.0"), "symlink Info.plist deleted the copy")
         #expect(FakeBundle.version(d.app) == "1.0")
 
         // CFBundleExecutable is absent.
@@ -292,7 +292,7 @@ struct V0810ReplaceFixTests {
         try FakeBundle.make(d.app, version: "2.0")
         let bare: [String: Any] = ["CFBundleIdentifier": "com.foo.Foo", "CFBundleShortVersionString": "2.0", "CFBundleVersion": "2.0"]
         try PropertyListSerialization.data(fromPropertyList: bare, format: .xml, options: 0).write(to: plist)
-        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "missing CFBundleExecutable deleted the copy")
+        notDiscarded(await live.finish(d.app.path, copy, true, "2.0"), "missing CFBundleExecutable deleted the copy")
         #expect(FakeBundle.version(d.app) == "1.0")
 
         // The executable name leaves the bundle.
@@ -302,7 +302,7 @@ struct V0810ReplaceFixTests {
                                       "CFBundleVersion": "2.0", "CFBundleExecutable": "../../../outside"]
         try PropertyListSerialization.data(fromPropertyList: escaped, format: .xml, options: 0).write(to: plist)
         try Data("x".utf8).write(to: d.url.appendingPathComponent("outside"))
-        notDiscarded(live.finish(d.app.path, copy, true, "2.0"), "executable outside the bundle deleted the copy")
+        notDiscarded(await live.finish(d.app.path, copy, true, "2.0"), "executable outside the bundle deleted the copy")
         #expect(FakeBundle.version(d.app) == "1.0")
 
         // A real bundle is still whole.

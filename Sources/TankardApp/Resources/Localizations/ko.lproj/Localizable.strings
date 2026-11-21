@@ -294,6 +294,7 @@
 "Checked %@" = "%@ 확인함";
 "Checking Brewfile…" = "Brewfile 확인 중…";
 "Checking for updates…" = "업데이트 확인 중…";
+"Checking the new app…" = "새 앱 확인 중…";
 "Checking what brew upgraded…" = "brew가 업그레이드한 항목 확인 중…";
 "Checking what can be removed…" = "제거할 수 있는 항목 확인 중…";
 "Checking what is still installed…" = "아직 설치된 항목 확인 중…";

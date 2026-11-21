@@ -1541,6 +1541,11 @@ public final class AppStore {
         // 0.8.6 (HK-47 review): ⌘Q during "Checking what brew upgraded…"
         // quits without a prompt; the journal mustn't still list every target.
         upgrade?.onUpgradeCheckStarted = { [weak self] session in self?.runJournalSessionFinished(session) }
+        if action == .replaceApp {
+            upgrade?.setReplaceCheck { [weak self] session in
+                await self?.replaceSessionFinished(session)
+            }
+        }
         // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
         if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
         upgrade?.passwordFocus = deps.askpassFocus
@@ -1615,7 +1620,8 @@ public final class AppStore {
         // 0.8.5: after the rest (it may open the App Management page).
         defer { progressPanelSessionFinished(session) }
         if session.action == .adopt { adoptSessionFinished(session) }
-        if session.action == .replaceApp { replaceSessionFinished(session) }
+        // A Replace settled its copy before this, in `setReplaceCheck`:
+        // the signature read is awaited there, off the main actor.
         // 0.8.5: a tap added or removed (Enable Casks among them): Discover
         // lists what the taps now hold.
         if session.action == .tap || session.action == .untap, let d = discover {

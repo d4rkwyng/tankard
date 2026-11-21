@@ -162,8 +162,9 @@ public struct AppReplaceSafety: Sendable {
     /// Copies the app aside. Returns the copy's path.
     public var backup: @Sendable (_ appPath: String) throws -> String
     /// After the run: `succeeded` is brew's exit, `caskVersion` the version
-    /// the cask installs.
-    public var finish: @Sendable (_ appPath: String, _ backup: String, _ succeeded: Bool, _ caskVersion: String) -> Outcome
+    /// the cask installs. The signature read, when there is one, is awaited
+    /// off the main actor.
+    public var finish: @Sendable (_ appPath: String, _ backup: String, _ succeeded: Bool, _ caskVersion: String) async -> Outcome
     /// brew never started: the copy is deleted (the app wasn't touched).
     public var discard: @Sendable (_ backup: String) -> Void
     /// Copies an earlier run left behind (Tankard quit or crashed while brew
@@ -175,7 +176,7 @@ public struct AppReplaceSafety: Sendable {
     public var readApp: (@Sendable (_ appPath: String) -> BundleInfo?)?
 
     public init(backup: @escaping @Sendable (String) throws -> String,
-                finish: @escaping @Sendable (String, String, Bool, String) -> Outcome,
+                finish: @escaping @Sendable (String, String, Bool, String) async -> Outcome,
                 discard: @escaping @Sendable (String) -> Void = { _ in },
                 leftovers: @escaping @Sendable () -> [String] = { [] },
                 readApp: (@Sendable (String) -> BundleInfo?)? = nil) {
@@ -454,8 +455,10 @@ public struct AppReplaceSafety: Sendable {
             extras = []
         }
         let roots = [root] + extras
+        // Called from `finishLive`'s detached task, so this is already off
+        // the main thread. `codeSignature` checks that.
         let sign: @Sendable (String) -> CodeSignature = signature ?? { path in
-            OffMain.run { codeSignature(at: path) }
+            codeSignature(at: path)
         }
         return AppReplaceSafety(
             backup: { appPath in
@@ -493,8 +496,8 @@ public struct AppReplaceSafety: Sendable {
                 return dest.path
             },
             finish: { appPath, backup, succeeded, caskVersion in
-                finishLive(appPath: appPath, backup: backup, succeeded: succeeded, caskVersion: caskVersion,
-                           signature: sign)
+                await finishLive(appPath: appPath, backup: backup, succeeded: succeeded, caskVersion: caskVersion,
+                                 signature: sign)
             },
             discard: { backup in
                 try? FileManager.default.removeItem(atPath: (backup as NSString).deletingLastPathComponent)
@@ -599,7 +602,7 @@ public struct AppReplaceSafety: Sendable {
     /// Every outcome deletes `.origin`. Only a crash before this runs still
     /// has one.
     static func finishLive(appPath: String, backup: String, succeeded: Bool, caskVersion: String,
-                           signature: @escaping @Sendable (String) -> CodeSignature) -> Outcome {
+                           signature: @escaping @Sendable (String) -> CodeSignature) async -> Outcome {
         let fm = FileManager.default
         let dir = (backup as NSString).deletingLastPathComponent
         try? fm.removeItem(atPath: (dir as NSString).appendingPathComponent(originFile))
@@ -621,7 +624,13 @@ public struct AppReplaceSafety: Sendable {
             // its cache, and still exit 1). The copy stays when the
             // signature verifies. Otherwise the run stays a failure.
             if isVersion(i, caskVersion) {
-                if signatureAllowsReplace(appPath: appPath, backup: backup, check: signature) {
+                // SecStaticCodeCheckValidity can take a long time on a large
+                // bundle. Await it off the main actor; don't block that
+                // thread on a semaphore.
+                let allows = await Task.detached(priority: .userInitiated) {
+                    signatureAllowsReplace(appPath: appPath, backup: backup, check: signature)
+                }.value
+                if allows {
                     return .replacedDespiteError(backup: backup)
                 }
                 return .incomplete(backup: backup)
@@ -889,7 +898,7 @@ public extension AppStore {
 
     /// After the run: the copy is deleted, or put back when brew failed and
     /// the app is gone. The log says which.
-    internal func replaceSessionFinished(_ session: UpgradeSession) {
+    internal func replaceSessionFinished(_ session: UpgradeSession) async {
         let pending = replaceBackups
         replaceBackups = [:]
         for item in session.items {
@@ -929,7 +938,7 @@ public extension AppStore {
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced.")) }
                 continue
             }
-            switch safety.finish(r.plan.appPath, backup, ok, r.plan.caskVersion) {
+            switch await safety.finish(r.plan.appPath, backup, ok, r.plan.caskVersion) {
             case .discarded:
                 explainFailure()
                 noteBusy()
