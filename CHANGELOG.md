@@ -15,7 +15,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **VoiceOver follows Tab to the View picker on macOS 26.** With the keyboard focus on the toolbar's Installed / Discover / Services control, macOS 26 didn't report it as focused. It now does, as on macOS 15.
 
 ### Known issue
-- **Stop Now during Replace.** Stop Now while brew is removing the app can leave brew listing the cask as installed while the old app is back. Scanning again still treats it as already from Homebrew, so Replace is not offered. `brew uninstall --cask --force <token>` clears brew's record. That uninstall also deletes the app at the cask's path.
+- **Stop Now during Replace.** Stop Now while brew is removing the app can leave brew listing the cask as installed while the old app is back. Scanning again still treats it as already from Homebrew, so Replace is not offered. To clear brew's record, first copy the app somewhere safe (or quit it and drag it to the Desktop), because `brew uninstall --cask --force <token>` deletes the app at the cask's path as well; then run it and put the app back.
 
 ## [0.8.9]
 
