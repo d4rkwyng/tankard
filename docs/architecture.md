@@ -958,7 +958,10 @@ version (after exit 0, any whole bundle whose version does not match) stays and 
 is kept (`.kept`); anything else (a
 half-deleted bundle after Stop Now, a missing or linked executable, a linked Info.plist,
 another app, a file) is moved into the copy's folder as `<name>.partial` and the copy
-goes back (`.restoredMovingAside`). Every outcome deletes `.origin`, so only a copy from
+goes back (`.restoredMovingAside`). After Stop Now restores the copy, the sheet's note
+says to copy the app aside first, then run `brew uninstall --cask --force <token>`
+(the cask's token), then put the app back. Tankard does not run that command.
+Every outcome deletes `.origin`, so only a copy from
 a crash before `finishLive` still has one. The log says which. Copies a run left behind
 are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
 (os_log, category `replace`). Copies still under the old Caches path

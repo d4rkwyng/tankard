@@ -328,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "Continue somente se você confia em quem escreveu este arquivo.";
 "Continue without relaunching" = "Continuar sem reabrir";
 "Copied" = "Copiado";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "Copie %@ para o lado primeiro, depois execute `brew uninstall --cask --force %@` e coloque o app de volta.";
 "Copy All" = "Copiar Tudo";
 "Copy Brewfile" = "Copiar Brewfile";
 "Copy Command" = "Copiar comando";

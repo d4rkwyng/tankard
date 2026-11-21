@@ -328,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "このファイルの作成者を信頼できる場合にのみ続けてください。";
 "Continue without relaunching" = "再起動せずに続ける";
 "Copied" = "コピーしました";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "まず %@ を脇へコピーし、次に `brew uninstall --cask --force %@` を実行してから、アプリを戻してください。";
 "Copy All" = "すべてコピー";
 "Copy Brewfile" = "Brewfileをコピー";
 "Copy Command" = "コマンドをコピー";

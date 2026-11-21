@@ -593,6 +593,98 @@ struct V0810ReplaceFixTests {
         #expect(lines.contains("Homebrew is busy; try again in a moment."))
         #expect(lines.contains("wasn't replaced; it is as it was. Tankard kept a copy"))
         #expect(lines.contains("Another Homebrew command is running. brew allows one command at a time."))
+        #expect(!lines.contains("brew uninstall"))
+    }
+
+    /// Records the install, and can hang until Stop Now cancels it.
+    final class StopRunner: StreamingCommandRunning, @unchecked Sendable {
+        let inner: StreamingCommandRunning
+        let hang: Bool
+        let args = OSAllocatedUnfairLock<[[String]]>(initialState: [])
+        init(_ inner: StreamingCommandRunning, hang: Bool) { self.inner = inner; self.hang = hang }
+        func stream(_ executable: String, _ arguments: [String], environment: [String: String],
+                    output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            args.withLock { $0.append(arguments) }
+            if arguments.contains("--force") {
+                if hang {
+                    try await sleepUntilCancelled()
+                    return 0
+                }
+                output(Data("Error: install failed\n".utf8))
+                return 1
+            }
+            return try await inner.stream(executable, arguments, environment: environment, output: output)
+        }
+    }
+
+    /// One replace, with `finish` deciding the outcome. `hang` waits until Stop Now.
+    func runReplace(hang: Bool, outcome: @escaping @Sendable (String, Bool) -> AppReplaceSafety.Outcome) async throws -> (UpgradeSession, [[String]]) {
+        let info = Self.audacity
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = StopRunner(deps.streamRunner, hang: hang)
+        deps.streamRunner = runner
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, backup, ok, _ in outcome(backup, ok) },
+            readApp: { _ in info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let p = try plan(store)
+        #expect(p.token == "audacity")
+        #expect(await store.startReplace(p))
+        if hang {
+            #expect(await waitUntil { store.upgrade?.current != nil })
+            store.upgrade?.stopNow()
+        }
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        return (try #require(store.upgrade), runner.args.withLock { $0 })
+    }
+
+    /// Stop Now during brew's removal puts the old app back and leaves brew's
+    /// record. The note names the safe recovery, with this cask's token.
+    /// Tankard does not run it.
+    @Test func stopNowAfterTheCopyIsRestoredNamesHowToClearBrewsRecord() async throws {
+        let recovery = "Copy Audacity aside first, then run `brew uninstall --cask --force audacity`, then put the app back."
+        let (back, args) = try await runReplace(hang: true) { _, ok in
+            #expect(!ok)
+            return .restored
+        }
+        #expect(back.items.first?.state == .cancelled)
+        let lines = back.log.lines.joined(separator: "\n")
+        #expect(lines.contains("brew stopped after removing Audacity; Tankard put the old version back"))
+        #expect(lines.contains(recovery))
+        #expect(!args.contains { $0.contains("uninstall") })
+
+        let (aside, args2) = try await runReplace(hang: true) { backup, ok in
+            #expect(!ok)
+            return .restoredMovingAside(partial: (backup as NSString).deletingLastPathComponent + "/Audacity.app.partial")
+        }
+        #expect(aside.items.first?.state == .cancelled)
+        let lines2 = aside.log.lines.joined(separator: "\n")
+        #expect(lines2.contains("brew stopped partway through replacing Audacity"))
+        #expect(lines2.contains(recovery))
+        #expect(!args2.contains { $0.contains("uninstall") })
+    }
+
+    /// A failure that was not Stop Now, or a stop that left the app in place,
+    /// does not tell the user to uninstall the cask.
+    @Test func onlyACancelledRestoreNamesTheUninstall() async throws {
+        let (failed, args) = try await runReplace(hang: false) { _, ok in
+            #expect(!ok)
+            return .restored
+        }
+        #expect(failed.items.first?.state != .cancelled)
+        let failedLines = failed.log.lines.joined(separator: "\n")
+        #expect(failedLines.contains("brew stopped after removing Audacity; Tankard put the old version back"))
+        #expect(!failedLines.contains("brew uninstall"))
+        #expect(!args.contains { $0.contains("uninstall") })
+
+        let (kept, _) = try await runReplace(hang: true) { backup, _ in .kept(backup: backup) }
+        #expect(kept.items.first?.state == .cancelled)
+        #expect(!kept.log.lines.joined(separator: "\n").contains("brew uninstall"))
     }
 
     // MARK: - when it is offered

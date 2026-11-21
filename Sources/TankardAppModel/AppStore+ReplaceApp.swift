@@ -673,6 +673,15 @@ public extension AppStore {
                     session.addNote("\(kind.title). \(kind.explanation)")
                 }
             }
+            // Stop Now during brew's removal puts the old app back and leaves
+            // brew's Caskroom record. Say the safe recovery. Do not run it:
+            // `brew uninstall --cask --force` also deletes the app.
+            func noteClearRecord() {
+                guard item.state == .cancelled else { return }
+                let name = r.plan.appName
+                let token = r.plan.token
+                session.addNote(String(localized: "Copy \(name) aside first, then run `brew uninstall --cask --force \(token)`, then put the app back."))
+            }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
                 explainFailure()
                 noteBusy()
@@ -688,10 +697,12 @@ public extension AppStore {
                 explainFailure()
                 noteBusy()
                 session.addNote(String(localized: "brew stopped after removing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath)."))
+                noteClearRecord()
             case .restoredMovingAside(let partial):
                 explainFailure()
                 noteBusy()
                 session.addNote(String(localized: "brew stopped partway through replacing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath). What brew left there is at \(partial)."))
+                noteClearRecord()
             case .kept(let copy):
                 explainFailure()
                 noteBusy()

@@ -328,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "仅当你信任此文件的作者时才继续。";
 "Continue without relaunching" = "不重新启动，继续";
 "Copied" = "已拷贝";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "请先把 %@ 复制到别处，然后运行 `brew uninstall --cask --force %@`，再把应用放回去。";
 "Copy All" = "全部拷贝";
 "Copy Brewfile" = "拷贝 Brewfile";
 "Copy Command" = "拷贝命令";

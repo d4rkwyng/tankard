@@ -328,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "이 파일을 작성한 사람을 신뢰하는 경우에만 계속하십시오.";
 "Continue without relaunching" = "다시 시작하지 않고 계속";
 "Copied" = "복사됨";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "먼저 %@을(를) 옆으로 복사한 다음 `brew uninstall --cask --force %@`을(를) 실행하고, 앱을 다시 놓으세요.";
 "Copy All" = "모두 복사";
 "Copy Brewfile" = "Brewfile 복사";
 "Copy Command" = "명령어 복사";

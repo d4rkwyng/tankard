@@ -20703,6 +20703,58 @@
         }
       }
     },
+    "Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiere %@ zuerst beiseite, führe dann `brew uninstall --cask --force %@` aus und lege die App danach zurück."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiez %@ de côté d'abord, puis exécutez `brew uninstall --cask --force %@`, puis remettez l'app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia %@ aparte primero, luego ejecuta `brew uninstall --cask --force %@` y vuelve a poner la app."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia %@ da parte prima, poi esegui `brew uninstall --cask --force %@` e rimetti l'app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず %@ を脇へコピーし、次に `brew uninstall --cask --force %@` を実行してから、アプリを戻してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 %@을(를) 옆으로 복사한 다음 `brew uninstall --cask --force %@`을(를) 실행하고, 앱을 다시 놓으세요."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copie %@ para o lado primeiro, depois execute `brew uninstall --cask --force %@` e coloque o app de volta."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先把 %@ 复制到别处，然后运行 `brew uninstall --cask --force %@`，再把应用放回去。"
+          }
+        }
+      }
+    },
     "Copy All": {
       "localizations": {
         "de": {
