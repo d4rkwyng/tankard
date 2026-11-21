@@ -9,9 +9,7 @@ import Foundation
 public enum NoticeText {
     public static func attributed(_ text: String) -> AttributedString {
         var out = AttributedString()
-        let parts = text.split(separator: "`", omittingEmptySubsequences: false)
-        // An odd number of backticks: the last one is shown as typed.
-        let paired = parts.count % 2 == 1 ? parts.count : parts.count - 1
+        let (parts, paired) = split(text)
         for (i, part) in parts.enumerated() {
             if i >= paired {
                 out += AttributedString("`" + part)
@@ -22,5 +20,29 @@ public enum NoticeText {
             out += run
         }
         return out
+    }
+
+    /// The text of each paired `code` span, in order. An unpaired trailing
+    /// backtick is not a span (it is shown as typed). A span that is only
+    /// whitespace is not a command, so it is left out.
+    public static func codeSpans(_ text: String) -> [String] {
+        let (parts, paired) = split(text)
+        var spans: [String] = []
+        for (i, part) in parts.enumerated() {
+            if i >= paired { break }
+            guard i % 2 == 1 else { continue }
+            let s = String(part)
+            if !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                spans.append(s)
+            }
+        }
+        return spans
+    }
+
+    /// An odd number of backticks: the last one is shown as typed.
+    private static func split(_ text: String) -> ([Substring], Int) {
+        let parts = text.split(separator: "`", omittingEmptySubsequences: false)
+        let paired = parts.count % 2 == 1 ? parts.count : parts.count - 1
+        return (parts, paired)
     }
 }

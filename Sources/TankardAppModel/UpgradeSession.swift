@@ -75,6 +75,25 @@ public enum SessionAction: String, Sendable {
     }
 }
 
+/// A result note the sheet shows in full under the result line. `addNote`
+/// records these (Replace: the recovery command, a kept copy, "Stop came
+/// too late", "may be incomplete"). Running commentary stays in the log.
+public struct SessionNote: Equatable, Sendable, Identifiable {
+    public let id: Int
+    public let text: String
+
+    /// Commands in paired `code` spans, in order. Empty when there is
+    /// nothing to copy.
+    public var commands: [String] { NoticeText.codeSpans(text) }
+
+    /// What Copy puts on the pasteboard: the commands, one per line.
+    /// Nil when `commands` is empty.
+    public var copyText: String? {
+        let cmds = commands
+        return cmds.isEmpty ? nil : cmds.joined(separator: "\n")
+    }
+}
+
 /// One run of the upgrade sheet: a queued `brew upgrade` per package, the
 /// live log, and per-package state.
 ///
@@ -107,6 +126,9 @@ public final class UpgradeSession: Identifiable {
     public let id = UUID()
     public private(set) var items: [Item]
     public private(set) var log = LineAssembler()
+    /// Result notes, in the order `addNote` recorded them. The sheet shows
+    /// these in full under the result line. The log keeps the same words.
+    public private(set) var sessionNotes: [SessionNote] = []
     /// Set when a step failed because it needed sudo: the command to run in
     /// Terminal instead.
     public private(set) var sudoCommand: String?
@@ -1145,8 +1167,13 @@ public final class UpgradeSession: Identifiable {
     }
 
     /// 0.8.10: a line from the store after the run (Replace with
-    /// Homebrew's Version: whether the app was put back).
-    func addNote(_ s: String) { note(s) }
+    /// Homebrew's Version: whether the app was put back). Also one of
+    /// `sessionNotes`, so the sheet can show it in full: the log draws
+    /// each line on one row and cuts it off.
+    func addNote(_ s: String) {
+        note(s)
+        sessionNotes.append(SessionNote(id: sessionNotes.count, text: s))
+    }
 
     private func note(_ s: String) {
         log.feed("tankard: \(s)\n")
