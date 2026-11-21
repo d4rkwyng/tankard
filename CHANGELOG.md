@@ -4,10 +4,31 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.9.0]
+## [0.9.0] - 2026-11-21
+
+### Highlights
+- Check Brewfile… runs exactly the file it showed you, and warns when that file loads other files
+- Replace with Homebrew's Version checks its safety copy before brew runs, and keeps copies where cleaner apps don't empty them
+- A brew error after the app was already replaced is a warning, not a failure
 
 ### Changed
-- **Brewfile handling hardened.**
+- **Replace keeps its safety copies in Application Support.** A copy kept after a run is now in ~/Library/Application Support/net.mindtricks.tankard/replace-backup/ instead of ~/Library/Caches, which cleaner apps empty. Copies 0.8.10 left in Caches are still listed at launch, in the same notice; Tankard doesn't move or delete them.
+- **Replace checks the safety copy before brew runs.** The copy must be the whole app: every file, folder and link in the same place, files the same size, links pointing to the same place, the same bundle ID and versions, and, when the app's signature verifies, a copy whose signature verifies too. If it isn't, Tankard deletes the copy, says "Tankard couldn't make a reliable safety copy of <App>, so it didn't replace it.", and brew doesn't run. An app with more than 200,000 files and folders isn't compared, and isn't replaced.
+
+### Fixed
+- **A brew error after the app was replaced is a warning.** When brew reports an error but the app is already a whole app of the cask's version whose code signature checks out, the result sheet now says "Replace finished with a warning", counts the app as replaced with an orange mark, and no longer says "Replace finished with problems", that Homebrew is busy, or to retry. If the new app's signature doesn't verify, the run is a failure and the sheet says the app may be incomplete and where the copy of the old version is. The signature is checked in the background; the sheet says "Checking the new app…" meanwhile.
+- **Stop Now after brew had already replaced the app** now says "Stop came too late: <App> was updated to <version>", with where the copy of the old version is, instead of reporting a stopped run.
+- **After Stop Now puts the old app back, the sheet says how to clear brew's record**: copy the app aside, run `brew uninstall --cask --force <cask>` with the cask's full name (quoted for the shell), then put the app back. Tankard doesn't run that command. This was 0.8.10's known issue; the steps are the same.
+- **A safety copy on another volume keeps the app's links.** When Application Support and the app are on different volumes, the plain copy followed the links inside the app (a framework's Versions/Current), so it was not the same app as the original.
+
+### Security
+- **Check Brewfile… runs exactly the file it showed.** Tankard reads the Brewfile once and gives brew a private copy of those bytes (in a folder only you can read, deleted when brew is done), so the file can't be swapped between the preview and the check. It refuses, each with its own message, a symbolic link ("Choose the file it points to instead"), a folder, a named pipe, a device, a file over 1 MB and a file that isn't UTF-8 text. When a check times out, the private copy is deleted only after brew has stopped.
+- **A Brewfile that loads other files gets a warning.** When the file uses `require`, `require_relative`, `load`, `__dir__` or `__FILE__` (outside comments, and not as a method of some other object like `obj.load`), the preview and the confirmation say: "This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found." The check still runs.
+- The new messages are translated into all of Tankard's languages, and the German Brewfile messages now use "das Brewfile" throughout.
+
+### Known issues
+- **A Brewfile that loads a file next to it doesn't find it.** Because brew runs a private copy, `require_relative "other"` or a path built from `__dir__` looks in the private copy's folder, not the Brewfile's. Tankard warns about this (see above); a file loaded by its full path is found.
+- **Stop Now during Replace** can still leave brew listing the cask as installed while the old app is back; the result sheet gives the recovery steps (see above).
 
 ## [0.8.10]
 
