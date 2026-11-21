@@ -232,8 +232,13 @@ public struct AppReplaceSafety: Sendable {
 
     /// Copies an app bundle. `clone` asks APFS to share the data (same
     /// volume only). Without it, the bytes are copied.
+    ///
+    /// `COPYFILE_NOFOLLOW_SRC` is always on. `COPYFILE_CLONE` implies it,
+    /// and the plain copy must have it too: a framework's `Versions/Current`
+    /// (and `Headers`, `Resources`) are symlinks. Following them writes a
+    /// different tree, and the copy no longer matches the signature.
     static func copyApp(from src: String, to dest: String, clone: Bool) throws {
-        var flags = copyfile_flags_t(COPYFILE_ALL | COPYFILE_RECURSIVE)
+        var flags = copyfile_flags_t(COPYFILE_ALL | COPYFILE_RECURSIVE | COPYFILE_NOFOLLOW_SRC)
         if clone { flags |= copyfile_flags_t(COPYFILE_CLONE) }
         guard copyfile(src, dest, nil, flags) == 0 else {
             throw NSError(domain: NSPOSIXErrorDomain, code: Int(errno))
@@ -244,7 +249,11 @@ public struct AppReplaceSafety: Sendable {
     /// `legacyRoots` nil with the default root also lists the old Caches
     /// folder. Any other root lists only itself, so a test root does not
     /// read the user's Caches.
-    public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil) -> AppReplaceSafety {
+    ///
+    /// `sameVolume` nil asks `statfs`. A test passes `{ _, _ in false }` to
+    /// force the plain copy while both paths are still on one volume.
+    public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil,
+                            sameVolume: (@Sendable (String, String) -> Bool)? = nil) -> AppReplaceSafety {
         let extras: [URL]
         if let legacyRoots {
             extras = legacyRoots
@@ -262,7 +271,8 @@ public struct AppReplaceSafety: Sendable {
                 let dest = dir.appendingPathComponent((appPath as NSString).lastPathComponent)
                 do {
                     // Same volume: an APFS clone. Otherwise a plain copy.
-                    try copyApp(from: appPath, to: dest.path, clone: sameVolume(appPath, dir.path))
+                    let clone = sameVolume?(appPath, dir.path) ?? AppReplaceSafety.sameVolume(appPath, dir.path)
+                    try copyApp(from: appPath, to: dest.path, clone: clone)
                 } catch {
                     try? fm.removeItem(at: dir)
                     throw error
