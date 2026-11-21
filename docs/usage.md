@@ -803,8 +803,11 @@ The **Services** tab (⌘3) lists `brew services`. Select one to see its details
   brew…** asks first ("Run this Brewfile's code?"), with a stronger warning for a file
   downloaded from the internet. Continue only if you trust whoever wrote the file. Tankard
   reads the file again right before brew runs it, and refuses if it changed since the
-  preview (check it again to see the new text); it reads only an ordinary file, never a
-  pipe or a device. The check then lists what the Brewfile needs that this Mac doesn't have. **Restore Plan…**
+  preview (check it again to see the new text); it reads only an ordinary file of at most
+  1 MB, never a pipe, a device, a folder or a symbolic link, and brew runs a private copy
+  of exactly what Tankard read. Because of that copy, a file the Brewfile loads by a path
+  relative to itself (`require_relative`, `__dir__`) isn't found; Tankard warns when the
+  Brewfile loads other files. The check then lists what the Brewfile needs that this Mac doesn't have. **Restore Plan…**
   installs them one by one with **Install with Tankard**, or gives you the `brew bundle`
   command to copy.
 

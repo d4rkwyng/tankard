@@ -943,7 +943,14 @@ new one, so Tankard first copies the app to
 ~/Library/Application Support/net.mindtricks.tankard/replace-backup/<uuid>/
 (`AppReplaceSafety.defaultRoot`, `live`). The copy is made there. When that folder is on
 the same volume as the app, the copy is an APFS clone; otherwise it is a plain copy. No
-copy, no run. `.origin` beside it holds the app's path. Right before
+copy, no run. The copy is `copyfile` with `COPYFILE_NOFOLLOW_SRC` always set (a plain
+copy otherwise follows a framework's `Versions/Current`). 0.9.0: before brew runs, the copy
+is compared with the app (`isReliableCopy`, off the main thread): both whole bundles with
+the same bundle id and versions, and the same tree by `lstat` (each relative path, its
+type, a file's size, a symlink's target); when the app's signature verifies, the copy's
+must too. A copy that differs is deleted and brew doesn't run ("Tankard couldn't make a
+reliable safety copy of <App>…"); past `maxTreeEntries` (200,000) entries it isn't
+compared and brew doesn't run ("…it has too many files…"). `.origin` beside it holds the app's path. Right before
 the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedNote`): a
 changed version, build or bundle id, or one no longer older than the cask, stops the run;
 right after it the running check is made again (the copy is dropped, `discard`).
@@ -958,9 +965,15 @@ version (after exit 0, any whole bundle whose version does not match) stays and 
 is kept (`.kept`); anything else (a
 half-deleted bundle after Stop Now, a missing or linked executable, a linked Info.plist,
 another app, a file) is moved into the copy's folder as `<name>.partial` and the copy
-goes back (`.restoredMovingAside`). After Stop Now restores the copy, the sheet's note
-says to copy the app aside first, then run `brew uninstall --cask --force <token>`
-(the cask's token), then put the app back. Tankard does not run that command.
+goes back (`.restoredMovingAside`). 0.9.0: `.replacedDespiteError` needs the new app's
+signature to verify (or both it and the copy unsigned); otherwise the run stays a failure
+and the note says the app may be incomplete (`.incomplete`, the copy kept). Stop Now that
+lands after brew has already put the cask's version in place is that same warning ("Stop
+came too late: …"), not a stop. The signature read runs on a detached task while the
+session waits (`UpgradeSession.setReplaceCheck`, `checkingNewApp`; the status line says
+"Checking the new app…"), so the main thread isn't blocked. After Stop Now restores the
+copy, the sheet's note says to copy the app aside first, then run `brew uninstall --cask
+--force <cask>` (the qualified cask name, `BrewCommands.shellQuoted`), then put the app back. Tankard does not run that command.
 Every outcome deletes `.origin`, so only a copy from
 a crash before `finishLive` still has one. The log says which. Copies a run left behind
 are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
@@ -1054,8 +1067,13 @@ path itself (brew creates it; only the read-back for the counts goes through the
 A Brewfile can `instance_eval` or `require` other files by path; brew reads those
 directly, as it would in Terminal, and anything resolved relative to the Brewfile itself
 (`require_relative`, `__dir__`) now resolves in the private folder, so such an include
-won't be found (from Ruby's rules, not yet tried against a real brew). The error messages are new strings, English until
-the next `Scripts/l10n.py extract` and translation pass.
+won't be found. Tried with brew 7.0.15 (0.9.0 gate): `require_relative "other.rb"` fails
+with "Invalid Brewfile: cannot load such file -- $TMPDIR/tankard-brewfile.XXXXXX/other.rb",
+and other.rb doesn't run. So the preview and the confirm page warn
+(`BrewfilePreview.loadsOtherFiles`, `BrewfileStore.loadsOtherFilesWarning`) when the text
+calls `require`, `require_relative`, `load`, `__dir__` or `__FILE__` outside a comment,
+with no receiver or on `Kernel` (`::require` counts; `obj.load` doesn't). The check is
+not refused. The messages are translated like the rest of the catalog.
 
 **Clean up.** `brew cleanup -n` (dry run), `brew --cache` and `du -sk` on the cache. When
 brew prints no total (it exits with an error on a Mac whose core tap brew 7 calls
