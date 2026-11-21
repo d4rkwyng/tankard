@@ -135,6 +135,8 @@ public struct BrewfilePrivateCopy: Sendable {
                     if errno == EINTR { continue }
                     throw BrewfileReadError.unreadable(errno: errno)
                 }
+                // write(2) may return 0 without an error; don't spin on it.
+                if n == 0 { throw BrewfileReadError.unreadable(errno: EIO) }
                 offset += n
             }
         }
