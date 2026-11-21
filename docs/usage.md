@@ -643,7 +643,10 @@ touched, and from now on Homebrew manages the app. Quit the app first: if it is 
 Tankard says so and waits for you to click **Check Again**; it never quits the app for
 you. Then click **Replace**. Tankard runs `brew install --cask --force <cask>` in the
 activity sheet, asking for your password as for any cask install. Tankard keeps a copy of
-the app while brew runs. The copy is deleted only when brew finished, the app is a whole
+the app while brew runs. A copy that is kept lives in
+~/Library/Application Support/net.mindtricks.tankard/replace-backup/. Copies an earlier
+version left in ~/Library/Caches are still listed at the next launch; Tankard does not
+move or delete them. The copy is deleted only when brew finished, the app is a whole
 app (its Info.plist and its program are real files inside the app, not links), and that
 app is the cask's version. Otherwise the copy is kept. If brew stopped halfway (for
 example after **Stop Now**) and the app is missing or only partly there, what brew left

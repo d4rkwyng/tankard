@@ -940,8 +940,10 @@ checks the running apps (`autoUpdate.conditions`, by path or
 bundle id) and refuses while the app is open; it never quits it. brew --force deletes
 the app before moving the download in, and its revert after a later failure removes the
 new one, so Tankard first copies the app to
-~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
-clone on APFS; no copy, no run; `.origin` beside it holds the app's path). Right before
+~/Library/Application Support/net.mindtricks.tankard/replace-backup/<uuid>/
+(`AppReplaceSafety.defaultRoot`, `live`). The copy is made there. When that folder is on
+the same volume as the app, the copy is an APFS clone; otherwise it is a plain copy. No
+copy, no run. `.origin` beside it holds the app's path. Right before
 the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedNote`): a
 changed version, build or bundle id, or one no longer older than the cask, stops the run;
 right after it the running check is made again (the copy is dropped, `discard`).
@@ -959,7 +961,9 @@ another app, a file) is moved into the copy's folder as `<name>.partial` and the
 goes back (`.restoredMovingAside`). Every outcome deletes `.origin`, so only a copy from
 a crash before `finishLive` still has one. The log says which. Copies a run left behind
 are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
-(os_log, category `replace`). Nothing is moved or deleted. One notice names the newest
+(os_log, category `replace`). Copies still under the old Caches path
+(~/Library/Caches/net.mindtricks.tankard/replace-backup/) are listed with them. Nothing
+is moved or deleted. One notice names the newest
 safety copy ("Tankard kept a safety copy of <App> from <date>."). A `<name>.app.partial`
 or `<name>.app.partial-<n>` entry is what brew left behind, moved aside, and is not
 called a safety copy: the notice lists it separately ("Tankard kept what Homebrew left

@@ -17,8 +17,9 @@ import TankardCore
 // past that point would leave no app at all. So Tankard first copies the
 // app aside (`AppReplaceSafety`; a clone on APFS) and, when brew fails and
 // the app is gone or only partly there, puts the copy back. A run that
-// reaches the end deletes the `.origin` record. At the next launch, copies
-// still in the cache are only listed (one notice); nothing is moved.
+// reaches the end deletes the `.origin` record. A copy that is kept is made
+// in Application Support. At the next launch, copies there, and any older
+// copies still under Caches, are only listed (one notice); nothing is moved.
 
 /// What the plan sheet shows and the run uses.
 public struct ReplaceAppPlan: Sendable, Equatable, Identifiable {
@@ -178,10 +179,19 @@ public struct AppReplaceSafety: Sendable {
         self.readApp = readApp
     }
 
-    /// ~/Library/Caches/net.mindtricks.tankard/replace-backup
+    /// ~/Library/Application Support/net.mindtricks.tankard/replace-backup.
+    /// Kept copies live here: cleaner apps empty ~/Library/Caches.
     public static var defaultRoot: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(AppPaths.bundleID)
+            .appendingPathComponent("replace-backup")
+    }
+
+    /// Where copies lived before 0.8.10. Listed at launch. Never moved or deleted.
+    public static var legacyCachesRoot: URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("net.mindtricks.tankard/replace-backup")
+            .appendingPathComponent(AppPaths.bundleID)
+            .appendingPathComponent("replace-backup")
     }
 
     /// Next to each copy: the path it was copied from. Deleted when the run
@@ -191,28 +201,68 @@ public struct AppReplaceSafety: Sendable {
 
     /// The copies under `root` (<uuid>/<name>.app), sorted. Reads only.
     public static func leftoverCopies(root: URL) -> [String] {
+        leftoverCopies(roots: [root])
+    }
+
+    /// The copies under each root, sorted together. Reads only. A missing
+    /// folder contributes nothing.
+    public static func leftoverCopies(roots: [URL]) -> [String] {
         let fm = FileManager.default
-        guard let dirs = try? fm.contentsOfDirectory(atPath: root.path) else { return [] }
         var found: [String] = []
-        for d in dirs where !d.hasPrefix(".") {
-            let dir = root.appendingPathComponent(d)
-            guard let items = try? fm.contentsOfDirectory(atPath: dir.path) else { continue }
-            found += items.filter { !$0.hasPrefix(".") }.map { dir.appendingPathComponent($0).path }
+        for root in roots {
+            guard let dirs = try? fm.contentsOfDirectory(atPath: root.path) else { continue }
+            for d in dirs where !d.hasPrefix(".") {
+                let dir = root.appendingPathComponent(d)
+                guard let items = try? fm.contentsOfDirectory(atPath: dir.path) else { continue }
+                found += items.filter { !$0.hasPrefix(".") }.map { dir.appendingPathComponent($0).path }
+            }
         }
         return found.sorted()
     }
 
-    /// The real one: ~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/<name>.app.
-    public static func live(root: URL = AppReplaceSafety.defaultRoot) -> AppReplaceSafety {
-        AppReplaceSafety(
+    /// True when both paths are on one volume, so an APFS clone can share
+    /// the app's data. False when either path cannot be read: the caller
+    /// then makes a plain copy.
+    static func sameVolume(_ a: String, _ b: String) -> Bool {
+        var sa = statfs()
+        var sb = statfs()
+        guard statfs(a, &sa) == 0, statfs(b, &sb) == 0 else { return false }
+        return sa.f_fsid.val.0 == sb.f_fsid.val.0 && sa.f_fsid.val.1 == sb.f_fsid.val.1
+    }
+
+    /// Copies an app bundle. `clone` asks APFS to share the data (same
+    /// volume only). Without it, the bytes are copied.
+    static func copyApp(from src: String, to dest: String, clone: Bool) throws {
+        var flags = copyfile_flags_t(COPYFILE_ALL | COPYFILE_RECURSIVE)
+        if clone { flags |= copyfile_flags_t(COPYFILE_CLONE) }
+        guard copyfile(src, dest, nil, flags) == 0 else {
+            throw NSError(domain: NSPOSIXErrorDomain, code: Int(errno))
+        }
+    }
+
+    /// The real one: ~/Library/Application Support/<bundle id>/replace-backup/<uuid>/<name>.app.
+    /// `legacyRoots` nil with the default root also lists the old Caches
+    /// folder. Any other root lists only itself, so a test root does not
+    /// read the user's Caches.
+    public static func live(root: URL = AppReplaceSafety.defaultRoot, legacyRoots: [URL]? = nil) -> AppReplaceSafety {
+        let extras: [URL]
+        if let legacyRoots {
+            extras = legacyRoots
+        } else if root.standardizedFileURL.path == defaultRoot.standardizedFileURL.path {
+            extras = [legacyCachesRoot]
+        } else {
+            extras = []
+        }
+        let roots = [root] + extras
+        return AppReplaceSafety(
             backup: { appPath in
                 let fm = FileManager.default
                 let dir = root.appendingPathComponent(UUID().uuidString)
                 try fm.createDirectory(at: dir, withIntermediateDirectories: true)
                 let dest = dir.appendingPathComponent((appPath as NSString).lastPathComponent)
                 do {
-                    // copyfile clones on APFS: quick, and no extra space until one side changes.
-                    try fm.copyItem(atPath: appPath, toPath: dest.path)
+                    // Same volume: an APFS clone. Otherwise a plain copy.
+                    try copyApp(from: appPath, to: dest.path, clone: sameVolume(appPath, dir.path))
                 } catch {
                     try? fm.removeItem(at: dir)
                     throw error
@@ -228,7 +278,7 @@ public struct AppReplaceSafety: Sendable {
             discard: { backup in
                 try? FileManager.default.removeItem(atPath: (backup as NSString).deletingLastPathComponent)
             },
-            leftovers: { leftoverCopies(root: root) },
+            leftovers: { leftoverCopies(roots: roots) },
             readApp: { info(at: $0) })
     }
 
