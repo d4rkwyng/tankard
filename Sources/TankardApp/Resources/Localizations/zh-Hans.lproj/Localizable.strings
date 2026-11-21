@@ -57,6 +57,7 @@
 "%@ stopped" = "%@ 已停止";
 "%@ uninstalled" = "已卸载 %@";
 "%@ upgraded" = "已升级 %@";
+"%@ was updated to %@, but Homebrew reported an error. Tankard kept a copy of the old version at %@." = "%1$@ 已更新到 %2$@，但 Homebrew 报告了错误。Tankard 在 %3$@ 保留了旧版本的副本。";
 "%@ wasn't replaced." = "%@ 未被替换。";
 "%@ wasn't replaced; it is as it was." = "%@ 未被替换，保持原样。";
 "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ 未被替换，保持原样。Tankard 在 %2$@ 保留了一份副本。";
@@ -1078,6 +1079,7 @@
 "Tankard is upgrading %@ automatically." = "Tankard 正在自动升级 %@。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 本身不会被自动升级：请使用 brew upgrade --cask tankard。";
 "Tankard kept a safety copy of %@ from %@." = "Tankard 保留了 %1$@ 的安全副本（%2$@）。";
+"Tankard kept what Homebrew left of %@ from %@." = "Tankard 保留了 Homebrew 从 %1$@ 留下的内容（%2$@）。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard 会将此 App 的升级排除在“全部升级”、计数和自动更新之外。它自带的更新程序会使其保持最新。在终端中使用 brew upgrade 仍可升级它。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard 会列出此 cask 的每个新版本，通过“全部升级”和自动更新进行升级，并以 brew 的方式替换 App。";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard 会在 Homebrew 安装程序放置它的位置查找 Homebrew。";

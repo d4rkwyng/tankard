@@ -650,10 +650,20 @@ example after **Stop Now**) and the app is missing or only partly there, what br
 is moved next to the copy and the copy goes back. If the app is still whole, the copy is
 kept and the sheet says where. If the app changed since the scan (it updated itself) or
 was opened again while Tankard made the copy, Tankard doesn't start. If another Homebrew
-command is running, Tankard stops and says Homebrew is busy; it does not wait and try
-again, and the copy is kept. If Tankard quits while brew is still running, the next
-launch does not move the copy. It shows one notice, "Tankard kept a safety copy of <App>
-from <date>.", with **Show in Finder**. Tankard never offers this for a version that is
+command is running, Tankard does not wait and try again. Homebrew can wait up to 180
+seconds on its download lock and then install from its cache, and still report an error.
+When the app is then the cask's version, Tankard says it was updated to that version but
+Homebrew reported an error, and keeps the copy of the old version. When brew stops
+without changing the app, Tankard says Homebrew is busy and keeps the copy. If Tankard
+quits while brew is still running, the next launch does not move the copy. It shows one
+notice, "Tankard kept a safety copy of <App> from <date>.", with **Show in Finder**. A
+`<App>.app.partial` entry in that folder is what Homebrew left behind, not a safety copy:
+the notice names it as what Homebrew left of the app, still with **Show in Finder**, and
+Tankard never moves or deletes it. **Known issue.** Stop Now while brew is removing the
+app can leave brew listing the cask as installed while the old app is back. Scanning
+again still treats it as already from Homebrew, so Replace is not offered.
+`brew uninstall --cask --force <token>` clears brew's record. That uninstall also
+deletes the app at the cask's path. Tankard never offers this for a version that is
 older or the same, or when the cask's version is a plain build number that is not newer
 than the app's (2.0 with build 200, against cask 199). A dotted newer version is offered,
 including when the app's short version is a plain number (2, and the cask is 2.1) and

@@ -91,7 +91,60 @@ struct V0810ReplaceFixTests {
         #expect(FakeBundle.version(d.app) == "1.0")
     }
 
-    /// A failed run with the same app still whole: both stay.
+    /// brew exited 1 after installing: the app is whole and is the cask's
+    /// version. The copy stays (the run failed). The note says so, and does
+    /// not say the app is as it was or that Homebrew is busy.
+    @Test func failedRunWithTheAppNowAtTheCaskVersionKeepsTheCopyAndSaysSo() async throws {
+        let d = Dir(), fm = FileManager.default
+        try FakeBundle.make(d.app, version: "1.0")
+        let live = AppReplaceSafety.live(root: d.root)
+        let copy = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0")
+        #expect(live.finish(d.app.path, copy, false, "2.0") == .replacedDespiteError(backup: copy))
+        #expect(fm.fileExists(atPath: copy))
+        #expect(FakeBundle.version(URL(fileURLWithPath: copy)) == "1.0")
+        #expect(FakeBundle.version(d.app) == "2.0")
+        #expect(!fm.fileExists(atPath: (copy as NSString).deletingLastPathComponent + "/.origin"))
+
+        // The same isVersion rule as a successful run: 2.0.0 is cask 2.0.
+        try FakeBundle.make(d.app, version: "1.0")
+        let copy2 = try live.backup(d.app.path)
+        try FakeBundle.make(d.app, version: "2.0.0")
+        #expect(live.finish(d.app.path, copy2, false, "2.0") == .replacedDespiteError(backup: copy2))
+        #expect(fm.fileExists(atPath: copy2) && FakeBundle.version(URL(fileURLWithPath: copy2)) == "1.0")
+
+        let calls = OSAllocatedUnfairLock<[String]>(initialState: [])
+        let info = Self.audacity
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = LockRunner(deps.streamRunner)
+        deps.streamRunner = runner
+        deps.lockWait = BrewLockWait(interval: .milliseconds(20), limit: .milliseconds(300), maxAttempts: 5, holders: { _ in
+            ["99 brew install"]
+        })
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { p in calls.withLock { $0.append("backup") }; return "/tmp/b/\((p as NSString).lastPathComponent)" },
+            finish: { _, backup, ok, v in
+                calls.withLock { $0.append("finish \(ok) \(v)") }
+                return ok ? .discarded : .replacedDespiteError(backup: backup)
+            },
+            readApp: { _ in calls.withLock { $0.append("read") }; return info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        store.openAdopt()
+        #expect(await waitUntil { store.adopt.phase == .ready })
+        let p = try plan(store)
+        #expect(await store.startReplace(p))
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        #expect(calls.withLock { $0.contains("finish false 4.0.2") })
+        let lines = store.upgrade?.log.lines.joined(separator: "\n") ?? ""
+        #expect(lines.contains("Audacity was updated to 4.0.2, but Homebrew reported an error. Tankard kept a copy of the old version at /tmp/b/Audacity 4.app."))
+        #expect(!lines.contains("Homebrew is busy; try again in a moment."))
+        #expect(!lines.contains("wasn't replaced"))
+        #expect(!lines.contains("it is as it was"))
+    }
+
+    /// A failed run with the same app still whole, and not the cask's version: both stay.
     @Test func failedRunWithTheAppWholeKeepsTheCopy() throws {
         let d = Dir(), fm = FileManager.default
         try FakeBundle.make(d.app, version: "1.0")
@@ -239,6 +292,50 @@ struct V0810ReplaceFixTests {
         store.dismissReplaceLeftoverNotice()
         #expect(store.replaceLeftoverNotice == nil)
         #expect(fm.fileExists(atPath: copy))
+    }
+
+    /// A `<name>.app.partial` is what Homebrew left behind, moved aside. The
+    /// notice names it that way, not as a safety copy. Show in Finder still
+    /// gets its path. Nothing is moved or deleted.
+    @Test func aPartialLeftoverIsNotCalledASafetyCopy() async throws {
+        let d = Dir(), fm = FileManager.default
+        let partialDir = d.root.appendingPathComponent("AAAA")
+        let partial = partialDir.appendingPathComponent("Foo.app.partial")
+        try fm.createDirectory(at: partial.appendingPathComponent("Contents"), withIntermediateDirectories: true)
+        try Data("x".utf8).write(to: partial.appendingPathComponent("Contents/Info.plist"))
+        let numbered = partialDir.appendingPathComponent("Foo.app.partial-2")
+        try fm.createDirectory(at: numbered, withIntermediateDirectories: true)
+        #expect(AppReplaceSafety.describe(partial.path) == AppReplaceSafety.DescribedLeftover(
+            path: partial.path, appName: "Foo",
+            made: AppReplaceSafety.describe(partial.path).made, recordedPath: nil, partial: true))
+        #expect(AppReplaceSafety.describe(numbered.path).partial && AppReplaceSafety.describe(numbered.path).appName == "Foo")
+        #expect(!AppReplaceSafety.describe(d.root.appendingPathComponent("ZZZZ/Bar.app").path).partial)
+
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appReplaceSafety = AppReplaceSafety.live(root: d.root)
+        let store = AppStore(deps: deps)
+        let listed = await store.noteReplaceLeftovers()
+        #expect(listed == [numbered.path, partial.path].sorted())
+        #expect(fm.fileExists(atPath: partial.path) && fm.fileExists(atPath: numbered.path))
+        let notice = try #require(store.replaceLeftoverNotice)
+        #expect(notice.paths == [numbered.path, partial.path].sorted())
+        #expect(notice.message.contains("what Homebrew left of Foo"))
+        #expect(!notice.message.contains("safety copy"))
+        #expect(!notice.message.contains(".partial"))
+
+        // A real copy beside it is still a safety copy. The partial is not.
+        store.dismissReplaceLeftoverNotice()
+        let copy = d.root.appendingPathComponent("BBBB").appendingPathComponent("Bar.app")
+        try fm.createDirectory(at: copy, withIntermediateDirectories: true)
+        let listed2 = await store.noteReplaceLeftovers()
+        #expect(Set(listed2) == Set([numbered.path, partial.path, copy.path]))
+        let notice2 = try #require(store.replaceLeftoverNotice)
+        #expect(notice2.message.contains("safety copy of Bar"))
+        #expect(notice2.message.contains("what Homebrew left of Foo"))
+        #expect(!notice2.message.contains("safety copy of Foo"))
+        #expect(!notice2.message.contains(".partial"))
+        #expect(notice2.paths.sorted() == [numbered.path, partial.path, copy.path].sorted())
+        #expect(fm.fileExists(atPath: partial.path) && fm.fileExists(atPath: numbered.path) && fm.fileExists(atPath: copy.path))
     }
 
     @Test func launchListsLeftoversAndShowsOneNotice() async throws {

@@ -57,6 +57,7 @@
 "%@ stopped" = "%@ interrotto";
 "%@ uninstalled" = "%@ disinstallato";
 "%@ upgraded" = "%@ aggiornato";
+"%@ was updated to %@, but Homebrew reported an error. Tankard kept a copy of the old version at %@." = "L'app %1$@ è stata aggiornata alla versione %2$@, ma Homebrew ha segnalato un errore. Tankard ha tenuto una copia della vecchia versione in %3$@.";
 "%@ wasn't replaced." = "L'app %@ non è stata sostituita.";
 "%@ wasn't replaced; it is as it was." = "L'app %@ non è stata sostituita; è rimasta com'era.";
 "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "L'app %1$@ non è stata sostituita; è rimasta com'era. Tankard ne ha tenuto una copia in %2$@.";
@@ -1078,6 +1079,7 @@
 "Tankard is upgrading %@ automatically." = "Tankard sta aggiornando %@ automaticamente.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard stesso non viene mai aggiornato automaticamente: usa brew upgrade --cask tankard.";
 "Tankard kept a safety copy of %@ from %@." = "Tankard ha tenuto una copia di sicurezza dell'app %1$@ del %2$@.";
+"Tankard kept what Homebrew left of %@ from %@." = "Tankard ha tenuto ciò che Homebrew ha lasciato dell'app %1$@ del %2$@.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard esclude gli aggiornamenti di questa app da Aggiorna tutto, dai conteggi e dall'aggiornamento automatico. Il suo programma di aggiornamento la mantiene aggiornata. brew upgrade nel Terminal può comunque aggiornarla.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard elenca ogni nuova versione di questo cask, lo aggiorna con Aggiorna tutto e l'aggiornamento automatico, e sostituisce l'app come fa brew.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard cerca Homebrew dove lo mette il suo programma di installazione.";

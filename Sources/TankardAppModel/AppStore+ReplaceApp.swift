@@ -127,9 +127,14 @@ public struct AppReplaceSafety: Sendable {
         /// (a half-deleted bundle, another app): that was moved to
         /// `partial` and the copy put back.
         case restoredMovingAside(partial: String)
-        /// brew failed (or its app isn't the cask's version) and the app at
-        /// the path is whole: it stays, and so does the copy, at `backup`.
+        /// brew failed (or, after exit 0, its app isn't the cask's version)
+        /// and the app at the path is whole but is not the cask's version:
+        /// it stays, and so does the copy, at `backup`.
         case kept(backup: String)
+        /// brew failed and the app at the path is a whole app of the cask's
+        /// version: brew did replace it. The copy stays, because the run
+        /// failed. Not deleted.
+        case replacedDespiteError(backup: String)
         /// The copy couldn't be put back; it is still at this path.
         case restoreFailed(backup: String, error: String)
     }
@@ -306,9 +311,12 @@ public struct AppReplaceSafety: Sendable {
     /// app is whole, and its version matches the cask. Otherwise the copy
     /// is kept, unless it has been put back:
     /// - nothing at the path: the copy goes back;
-    /// - a whole bundle of the same app (the same bundle id; after brew's
-    ///   exit 0, any whole bundle that is not the cask's version): it stays,
-    ///   and the copy is kept;
+    /// - a failed run whose whole app is the cask's version (`isVersion`,
+    ///   the same rule as the offer): it stays, and the copy is kept
+    ///   (`.replacedDespiteError`). brew can exit 1 after installing;
+    /// - a whole bundle of the same app that is not the cask's version (the
+    ///   same bundle id; after brew's exit 0, any whole bundle that is not
+    ///   the cask's version): it stays, and the copy is kept;
     /// - anything else (a bundle brew stopped deleting halfway, one without
     ///   its Info.plist or executable, a symlink plist or executable,
     ///   another app): that is moved into the copy's folder as
@@ -332,6 +340,10 @@ public struct AppReplaceSafety: Sendable {
             // brew's exit 0 with a whole bundle, but not the cask's
             // version: both stay.
             if succeeded { return .kept(backup: backup) }
+            // brew's exit was not 0, but the app is whole and is the cask's
+            // version (brew 7 can wait out the download lock, install from
+            // its cache, and still exit 1). The copy stays: the run failed.
+            if isVersion(i, caskVersion) { return .replacedDespiteError(backup: backup) }
             // The copy itself isn't a whole bundle: nothing better to put back.
             guard case .bundle(let o, let oExe) = found(at: backup) else { return .kept(backup: backup) }
             if (i.bundleID ?? "").lowercased() == (o.bundleID ?? "").lowercased(), exe != nil || oExe == nil {
@@ -371,12 +383,29 @@ public struct AppReplaceSafety: Sendable {
         var appName: String
         var made: Date
         var recordedPath: String?
+        /// `<name>.app.partial` or `<name>.app.partial-<n>`: what brew left
+        /// behind and Tankard moved aside. Not a safety copy of the app.
+        var partial: Bool
+    }
+
+    /// The app name inside `<name>.app.partial` or `<name>.app.partial-<n>`,
+    /// or nil when `base` is not one of those.
+    static func partialAppName(_ base: String) -> String? {
+        guard let range = base.range(of: ".app.partial", options: [.caseInsensitive]) else { return nil }
+        let rest = base[range.upperBound...]
+        if !rest.isEmpty {
+            guard rest.first == "-", rest.dropFirst().allSatisfy(\.isNumber), rest.count > 1 else { return nil }
+        }
+        return String(base[..<range.lowerBound])
     }
 
     static func describe(_ path: String) -> DescribedLeftover {
         let fm = FileManager.default
         let base = (path as NSString).lastPathComponent
-        let appName = base.lowercased().hasSuffix(".app") && base.count > 4 ? String(base.dropLast(4)) : base
+        let stripped = partialAppName(base)
+        let partial = stripped != nil
+        let named = stripped ?? (base.lowercased().hasSuffix(".app") && base.count > 4 ? String(base.dropLast(4)) : base)
+        let appName = named.isEmpty ? base : named
         let dir = (path as NSString).deletingLastPathComponent
         let made = directoryDate(dir) ?? directoryDate(path) ?? Date()
         var recorded: String?
@@ -385,7 +414,7 @@ public struct AppReplaceSafety: Sendable {
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmed.isEmpty { recorded = String(trimmed.prefix(500)) }
         }
-        return DescribedLeftover(path: path, appName: appName.isEmpty ? base : appName, made: made, recordedPath: recorded)
+        return DescribedLeftover(path: path, appName: appName, made: made, recordedPath: recorded, partial: partial)
     }
 
     static func directoryDate(_ path: String) -> Date? {
@@ -394,9 +423,11 @@ public struct AppReplaceSafety: Sendable {
     }
 }
 
-/// One launch notice for safety copies an earlier Replace left behind.
-/// `paths` are the copies themselves (the backup folder's listing), never
-/// a path read from `.origin`.
+/// One launch notice for copies an earlier Replace left behind: safety
+/// copies, and `<name>.app.partial` entries (what Homebrew left, moved
+/// aside). Those are named separately, never as a safety copy. `paths`
+/// are the folder listing, never a path read from `.origin`. Show in
+/// Finder selects every one. Nothing is moved or deleted.
 public struct ReplaceLeftoverNotice: Equatable, Sendable {
     public var message: String
     public var paths: [String]
@@ -418,17 +449,36 @@ extension AppStore {
         guard let safety = deps.appReplaceSafety else { return [] }
         let found = await Task.detached { safety.leftovers().map { AppReplaceSafety.describe($0) } }.value
         for item in found {
-            if let recorded = item.recordedPath {
+            if item.partial {
+                // What brew left behind, moved aside. Not a safety copy.
+                if let recorded = item.recordedPath {
+                    replaceLog.notice("Replace with Homebrew's Version: what Homebrew left of \(item.appName, privacy: .public) is at \(item.path, privacy: .public); recorded path \(recorded, privacy: .public) is display only; kept, not moved or deleted")
+                } else {
+                    replaceLog.notice("Replace with Homebrew's Version: what Homebrew left of \(item.appName, privacy: .public) is at \(item.path, privacy: .public); kept, not moved or deleted")
+                }
+            } else if let recorded = item.recordedPath {
                 replaceLog.notice("Replace with Homebrew's Version: an earlier run left a safety copy of \(item.appName, privacy: .public) at \(item.path, privacy: .public); recorded path \(recorded, privacy: .public) is display only; kept, not moved or deleted")
             } else {
                 replaceLog.notice("Replace with Homebrew's Version: an earlier run left a safety copy of \(item.appName, privacy: .public) at \(item.path, privacy: .public); kept, not moved or deleted")
             }
         }
-        if let newest = found.max(by: { $0.made < $1.made }) {
+        // One notice. A safety copy and a .partial are named separately:
+        // the partial is what Homebrew left, not a copy of the old app.
+        // Show in Finder still selects every path. Nothing is moved.
+        var sentences: [String] = []
+        if let newest = found.filter({ !$0.partial }).max(by: { $0.made < $1.made }) {
             let when = newest.made.formatted(date: .abbreviated, time: .shortened)
             let name = newest.appName
+            sentences.append(String(localized: "Tankard kept a safety copy of \(name) from \(when)."))
+        }
+        if let newest = found.filter(\.partial).max(by: { $0.made < $1.made }) {
+            let when = newest.made.formatted(date: .abbreviated, time: .shortened)
+            let name = newest.appName
+            sentences.append(String(localized: "Tankard kept what Homebrew left of \(name) from \(when)."))
+        }
+        if !sentences.isEmpty {
             replaceLeftoverNotice = ReplaceLeftoverNotice(
-                message: String(localized: "Tankard kept a safety copy of \(name) from \(when)."),
+                message: sentences.joined(separator: " "),
                 paths: found.map(\.path))
         }
         return found.map(\.path)
@@ -557,27 +607,38 @@ public extension AppStore {
         for item in session.items {
             guard let r = pending[item.package.id] else { continue }
             let ok = item.state == .done
-            if session.failureKindByItem[item.id] == .locked {
-                // Brew printed its lock error and exited. It had not changed
-                // the app. The copy is kept because the run failed (below).
-                session.addNote(String(localized: "Homebrew is busy; try again in a moment."))
+            let locked = session.failureKindByItem[item.id] == .locked
+            // Brew's lock error. Often brew has not changed the app. It can
+            // also wait out the download lock, install from its cache, and
+            // still exit 1: that case is `.replacedDespiteError` below, and
+            // does not get this note.
+            func noteBusy() {
+                if locked { session.addNote(String(localized: "Homebrew is busy; try again in a moment.")) }
             }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
+                noteBusy()
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced.")) }
                 continue
             }
             switch safety.finish(r.plan.appPath, backup, ok, r.plan.caskVersion) {
             case .discarded:
+                noteBusy()
                 if !ok { session.addNote(String(localized: "\(r.plan.appName) wasn't replaced; it is as it was.")) }
             case .restored:
+                noteBusy()
                 session.addNote(String(localized: "brew stopped after removing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath)."))
             case .restoredMovingAside(let partial):
+                noteBusy()
                 session.addNote(String(localized: "brew stopped partway through replacing \(r.plan.appName); Tankard put the old version back at \(r.plan.appPath). What brew left there is at \(partial)."))
             case .kept(let copy):
+                noteBusy()
                 session.addNote(ok
                     ? String(localized: "The app at \(r.plan.appPath) isn't \(r.plan.appName) \(r.plan.caskVersion), so Tankard kept the copy of the old version at \(copy).")
                     : String(localized: "\(r.plan.appName) wasn't replaced; it is as it was. Tankard kept a copy of it at \(copy)."))
+            case .replacedDespiteError(let copy):
+                session.addNote(String(localized: "\(r.plan.appName) was updated to \(r.plan.caskVersion), but Homebrew reported an error. Tankard kept a copy of the old version at \(copy)."))
             case .restoreFailed(let copy, let error):
+                noteBusy()
                 session.addNote(String(localized: "Tankard couldn't put \(r.plan.appName) back (\(error)). A copy of the old version is at \(copy)."))
             }
         }

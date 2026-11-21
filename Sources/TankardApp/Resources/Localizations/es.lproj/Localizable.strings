@@ -57,6 +57,7 @@
 "%@ stopped" = "%@ detenido";
 "%@ uninstalled" = "%@ desinstalado";
 "%@ upgraded" = "%@ actualizado";
+"%@ was updated to %@, but Homebrew reported an error. Tankard kept a copy of the old version at %@." = "La app %1$@ se actualizó a %2$@, pero Homebrew informó un error. Tankard guardó una copia de la versión anterior en %3$@.";
 "%@ wasn't replaced." = "%@ no se ha reemplazado.";
 "%@ wasn't replaced; it is as it was." = "%@ no se ha reemplazado; sigue como estaba.";
 "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ no se ha reemplazado; sigue como estaba. Tankard guardó una copia en %2$@.";
@@ -1078,6 +1079,7 @@
 "Tankard is upgrading %@ automatically." = "Tankard está actualizando %@ automáticamente.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard nunca se actualiza a sí mismo automáticamente: usa brew upgrade --cask tankard.";
 "Tankard kept a safety copy of %@ from %@." = "Tankard guardó una copia de seguridad de la app %1$@ del %2$@.";
+"Tankard kept what Homebrew left of %@ from %@." = "Tankard guardó lo que Homebrew dejó de la app %1$@ del %2$@.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard deja las actualizaciones de esta app fuera de Actualizar todo, los recuentos y la actualización automática. Su propio actualizador la mantiene al día. brew upgrade en Terminal aún puede actualizarla.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard muestra cada versión nueva de este cask, lo actualiza con Actualizar todo y la actualización automática, y reemplaza la app como lo hace brew.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard busca Homebrew donde lo coloca su instalador.";

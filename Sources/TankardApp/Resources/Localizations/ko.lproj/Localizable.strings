@@ -57,6 +57,7 @@
 "%@ stopped" = "%@ 중지됨";
 "%@ uninstalled" = "%@ 제거됨";
 "%@ upgraded" = "%@ 업그레이드됨";
+"%@ was updated to %@, but Homebrew reported an error. Tankard kept a copy of the old version at %@." = "%1$@이(가) %2$@(으)로 업데이트되었지만 Homebrew가 오류를 보고했습니다. Tankard가 이전 버전의 사본을 %3$@에 보관했습니다.";
 "%@ wasn't replaced." = "%@을(를) 교체하지 않았습니다.";
 "%@ wasn't replaced; it is as it was." = "%@을(를) 교체하지 않았습니다. 그대로 남아 있습니다.";
 "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@을(를) 교체하지 않았습니다. 그대로 남아 있습니다. Tankard가 사본을 %2$@에 보관했습니다.";
@@ -1078,6 +1079,7 @@
 "Tankard is upgrading %@ automatically." = "Tankard가 %@을(를) 자동으로 업그레이드하고 있습니다.";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard 자체는 자동으로 업그레이드되지 않습니다. brew upgrade --cask tankard를 사용하세요.";
 "Tankard kept a safety copy of %@ from %@." = "Tankard가 %1$@의 안전 사본(%2$@)을 보관했습니다.";
+"Tankard kept what Homebrew left of %@ from %@." = "Tankard가 Homebrew가 %1$@에서 남긴 것(%2$@)을 보관했습니다.";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard는 이 앱의 업그레이드를 모두 업그레이드, 개수 표시, 자동 업데이트에서 제외합니다. 앱 자체 업데이터가 최신 상태로 유지합니다. 터미널의 brew upgrade로는 여전히 업그레이드할 수 있습니다.";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard는 이 cask의 모든 새 버전을 표시하고, 모두 업그레이드와 자동 업데이트로 업그레이드하며, brew와 같은 방식으로 앱을 교체합니다.";
 "Tankard looks for Homebrew where its installer puts it." = "Tankard는 Homebrew 설치 프로그램이 설치하는 위치에서 Homebrew를 찾습니다.";

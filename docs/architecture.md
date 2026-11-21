@@ -926,10 +926,15 @@ offered; cask 201 is). The cask must install exactly one app and nothing else
 overwrites every artifact). The row offers `brew install --cask --force`, run as
 SessionAction `.replaceApp` through the queue (the password helper as for other cask
 steps). `.replaceApp` does not use the lock-wait retry: `UpgradeSession` passes no
-`BrewLockWait` for that action, so `CommandQueue.runWaitingForLock` is not used. If brew
-reports its lock is held, the run stops as a failure (brew has not changed the app) with
-the note "Homebrew is busy; try again in a moment.", and the copy is kept because the
-run failed. The plan sheet checks the running apps (`autoUpdate.conditions`, by path or
+`BrewLockWait` for that action, so `CommandQueue.runWaitingForLock` is not used. Brew
+itself can wait up to 180 s on the download lock and then install from its cache, and
+still exit 1. When the app at the path is then a whole app of the cask's version
+(`isVersion`), `finishLive` returns `.replacedDespiteError`: the copy is kept, because
+the run failed, and the note says the app was updated to that version but Homebrew
+reported an error, and where the copy is. The note "Homebrew is busy; try again in a
+moment." is not shown in that case. When brew stops on the lock without leaving the
+cask's version, the run fails with that busy note and the copy is kept. The plan sheet
+checks the running apps (`autoUpdate.conditions`, by path or
 bundle id) and refuses while the app is open; it never quits it. brew --force deletes
 the app before moving the download in, and its revert after a later failure removes the
 new one, so Tankard first copies the app to
@@ -939,20 +944,26 @@ the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedN
 changed version, build or bundle id, or one no longer older than the cask, stops the run;
 right after it the running check is made again (the copy is dropped, `discard`).
 `AppReplaceSafety.finishLive`: the copy is deleted only when brew's exit is 0, the app
-is a whole bundle, and its version matches the cask. Whole means `Contents/Info.plist`
-is a regular file (not a symlink), `CFBundleExecutable` is present, and
+is a whole bundle, and its version matches the cask (`isVersion`, the same rule as the
+offer). Whole means `Contents/Info.plist` is a regular file (not a symlink), `CFBundleExecutable` is present, and
 `Contents/MacOS/<exe>` is a regular file (`lstat`, not a symlink) whose real path is
 inside the bundle. Anything else is not whole. Otherwise: nothing at the path, the copy
-goes back; a whole bundle of the same bundle id (after exit 0, any whole bundle whose
-version does not match) stays and the copy is kept (`.kept`); anything else (a
+goes back; a failed run whose whole app is the cask's version stays and the copy is kept
+(`.replacedDespiteError`); a whole bundle of the same bundle id that is not the cask's
+version (after exit 0, any whole bundle whose version does not match) stays and the copy
+is kept (`.kept`); anything else (a
 half-deleted bundle after Stop Now, a missing or linked executable, a linked Info.plist,
 another app, a file) is moved into the copy's folder as `<name>.partial` and the copy
 goes back (`.restoredMovingAside`). Every outcome deletes `.origin`, so only a copy from
 a crash before `finishLive` still has one. The log says which. Copies a run left behind
 are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
 (os_log, category `replace`). Nothing is moved or deleted. One notice names the newest
-copy ("Tankard kept a safety copy of <App> from <date>.") with Show in Finder
-(`NSWorkspace.activateFileViewerSelecting` on the copy paths from the folder listing).
+safety copy ("Tankard kept a safety copy of <App> from <date>."). A `<name>.app.partial`
+or `<name>.app.partial-<n>` entry is what brew left behind, moved aside, and is not
+called a safety copy: the notice lists it separately ("Tankard kept what Homebrew left
+of <App> from <date>."). Show in Finder
+(`NSWorkspace.activateFileViewerSelecting`) selects every path from the folder listing,
+copies and partials.
 `.origin` may be read for the log only; it is never a path for a move, a delete, or
 Show in Finder. None is ever deleted: each may be the only copy of the user's app. Not
 retryable after an App Management relaunch (the copy and the running check belong to the

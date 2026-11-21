@@ -446,9 +446,9 @@ struct SummaryStrip: View {
     }
 }
 
-/// 0.8.10: a safety copy left from Replace. One notice, not a sheet.
-/// Show in Finder selects the copies from the backup folder, never a path
-/// read from `.origin`.
+/// 0.8.10: a safety copy, or what Homebrew left (a `<name>.app.partial`),
+/// from Replace. One notice, not a sheet. Show in Finder selects the
+/// paths from the backup folder, never a path read from `.origin`.
 struct ReplaceLeftoverBanner: View {
     var store: AppStore
     var notice: ReplaceLeftoverNotice

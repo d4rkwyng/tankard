@@ -57,6 +57,7 @@
 "%@ stopped" = "%@ は停止しました";
 "%@ uninstalled" = "%@をアンインストールしました";
 "%@ upgraded" = "%@をアップグレードしました";
+"%@ was updated to %@, but Homebrew reported an error. Tankard kept a copy of the old version at %@." = "%1$@ は %2$@ に更新されましたが、Homebrew がエラーを報告しました。Tankard は古いバージョンのコピーを %3$@ に残しました。";
 "%@ wasn't replaced." = "%@ は置き換えられませんでした。";
 "%@ wasn't replaced; it is as it was." = "%@ は置き換えられませんでした。アプリは元のままです。";
 "%@ wasn't replaced; it is as it was. Tankard kept a copy of it at %@." = "%1$@ は置き換えられませんでした。アプリは元のままです。Tankard はコピーを %2$@ に残しました。";
@@ -1078,6 +1079,7 @@
 "Tankard is upgrading %@ automatically." = "Tankard は %@ を自動でアップグレード中です。";
 "Tankard itself is never upgraded automatically: use brew upgrade --cask tankard." = "Tankard自体は自動ではアップグレードされません。brew upgrade --cask tankard を使ってください。";
 "Tankard kept a safety copy of %@ from %@." = "Tankardは %1$@ の安全コピー（%2$@）を残しました。";
+"Tankard kept what Homebrew left of %@ from %@." = "Tankardは Homebrew が %1$@ から残したもの（%2$@）を残しました。";
 "Tankard leaves this app's upgrades out of Upgrade All, the counts and auto-update. Its own updater keeps it current. brew upgrade in Terminal can still upgrade it." = "Tankard はこのアプリのアップグレードを「すべてアップグレード」、件数、自動アップデートから除外します。アプリ自身のアップデート機能で最新に保たれます。ターミナルの brew upgrade では引き続きアップグレードできます。";
 "Tankard lists every newer version of this cask, upgrades it with Upgrade All and auto-update, and replaces the app the way brew does." = "Tankard はこの cask の新しいバージョンをすべて表示し、「すべてアップグレード」と自動アップデートでアップグレードし、brew と同じ方法でアプリを置き換えます。";
 "Tankard looks for Homebrew where its installer puts it." = "TankardはHomebrewのインストーラが置く場所でHomebrewを探します。";
