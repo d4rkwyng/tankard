@@ -241,6 +241,21 @@ struct V090BrewfileHardeningTests {
         }
     }
 
+    /// A method call on a receiver is not a load of another file.
+    /// `Kernel.load` and a call with no receiver still are.
+    @Test func aMethodCallOnAReceiverIsNotALoad() {
+        let calls = ["obj.load(\"helper\")", "obj.require \"x\"", "foo.bar.load",
+                     "obj.require_relative \"x\"", "helper.__dir__"]
+        for text in calls {
+            #expect(!BrewfileStaticReader.loadsOtherFiles(text), "\(text)")
+        }
+        let loads = ["Kernel.load \"x\"", "Kernel.require \"x\"", "Kernel.require_relative \"x\"",
+                     "load(\"helper\")", "::require \"x\""]
+        for text in loads {
+            #expect(BrewfileStaticReader.loadsOtherFiles(text), "\(text)")
+        }
+    }
+
     /// The same words in a comment, including a trailing one and a block comment, don't count.
     @Test func aTokenInACommentIsNotWarned() {
         #expect(!BrewfileStaticReader.loadsOtherFiles("# require \"helper\"\n"))

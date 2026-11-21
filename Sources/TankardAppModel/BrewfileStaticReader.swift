@@ -82,9 +82,11 @@ public enum BrewfileStaticReader {
     }
 
     /// 0.9.0: `require`, `require_relative`, `load`, `__dir__` or `__FILE__`
-    /// as a Ruby token, outside comments and string literals. Tankard runs
-    /// a private copy, so a path relative to the Brewfile won't be found.
-    /// A warning, never a refusal.
+    /// as a Ruby call with no receiver, or on `Kernel` (`Kernel.load`,
+    /// `::require`). A method call on another receiver (`obj.load`) is not
+    /// one. Outside comments and string literals. Tankard runs a private
+    /// copy, so a path relative to the Brewfile won't be found. A warning,
+    /// never a refusal.
     public static func loadsOtherFiles(_ text: String) -> Bool {
         BrewfileLoadScan.contains(text)
     }
@@ -237,7 +239,8 @@ public enum BrewfileStaticReader {
 /// `require` / `require_relative` / `load` / `__dir__` / `__FILE__` as Ruby
 /// tokens. Comments, string and symbol literals, and percent-literals don't
 /// count; `#{ }` interpolation is code and does. A word that only contains
-/// one of those names (`required`, `download`) is a different token.
+/// one of those names (`required`, `download`) is a different token. A call
+/// on a receiver other than `Kernel` (`obj.load`) is not one of these calls.
 private enum BrewfileLoadScan {
     static let tokens: Set<String> = ["require", "require_relative", "load", "__dir__", "__FILE__"]
 
@@ -303,7 +306,13 @@ private enum BrewfileLoadScan {
                     continue
                 }
                 if isIdentStart(c) {
-                    if BrewfileLoadScan.tokens.contains(readIdent()) { return true }
+                    let start = i
+                    let word = readIdent()
+                    // `obj.load` is a method. A bare call, `::require`, and
+                    // `Kernel.load` load another file.
+                    if BrewfileLoadScan.tokens.contains(word), !callOnOtherReceiver(identAt: start) {
+                        return true
+                    }
                     continue
                 }
                 i += 1
@@ -545,6 +554,29 @@ private enum BrewfileLoadScan {
             }
             if i < chars.count, chars[i] == "\n" { i += 1 }
             return false
+        }
+
+        /// True when the ident at `start` is a call on some receiver other
+        /// than `Kernel` (`obj.load`, `foo.bar.load`, `obj&.load`). A bare
+        /// call and `::require` have no `.` before them, so they are not.
+        /// A receiver that is not an ident (`1.load`) is not `Kernel`.
+        func callOnOtherReceiver(identAt start: Int) -> Bool {
+            var j = start - 1
+            while j >= 0, isIgnoredSpace(chars[j]) { j -= 1 }
+            guard j >= 0, chars[j] == "." else { return false }
+            j -= 1
+            if j >= 0, chars[j] == "&" { j -= 1 }
+            while j >= 0, isIgnoredSpace(chars[j]) { j -= 1 }
+            guard j >= 0, isIdentCont(chars[j]) else { return true }
+            let end = j
+            while j >= 0, isIdentCont(chars[j]) { j -= 1 }
+            let receiverStart = j + 1
+            guard isIdentStart(chars[receiverStart]) else { return true }
+            return String(chars[receiverStart...end]) != "Kernel"
+        }
+
+        func isIgnoredSpace(_ c: Character) -> Bool {
+            c == " " || c == "\t" || c == "\r" || c == "\n"
         }
 
         mutating func readIdent() -> String {
