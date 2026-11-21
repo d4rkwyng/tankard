@@ -75,7 +75,7 @@ struct TestDefaultsTests {
     }
 
     /// The sweep deletes twice, and the second wait is after the late flush.
-    @Test func sweepScriptDeletesTwiceAndTheSecondPassIsLate() {
+    @Test func sweepScriptDeletesTwiceAndTheSecondPassIsLate() throws {
         let script = TestDefaults.sweepScript
         #expect(script.contains("for pass in 1 2"))
         #expect(script.contains("net.mindtricks.tankard|net.mindtricks.tankard.ephemeral"))
@@ -87,6 +87,104 @@ struct TestDefaultsTests {
         let delete = script.range(of: #"delete "$name""#)
         let remove = script.range(of: #"rm -f "$HOME/Library/Preferences/$name.plist""#)
         #expect(delete != nil && remove != nil && delete!.lowerBound < remove!.lowerBound)
+        // The copy is taken when the owner is noticed gone, before either sleep.
+        let frozen = try #require(script.range(of: "$list.frozen"))
+        let delaySleep = try #require(script.range(of: "sleep \"$delay\""))
+        #expect(frozen.lowerBound < delaySleep.lowerBound)
+    }
+
+    /// The list file is not `tankard-test-defaults-<pid>.txt`. A token
+    /// chosen for this process is part of the name, and it does not change
+    /// for the rest of the process. A new process, even with this pid,
+    /// would choose its own token and open a different file.
+    @Test func sweeperListIsKeyedByPidAndAProcessToken() {
+        let path = TestDefaults.sweeperListPath
+        #expect(TestDefaults.sweeperListPath == path)
+        let base = URL(fileURLWithPath: path).lastPathComponent
+        let prefix = "tankard-test-defaults-\(getpid())-"
+        #expect(base.hasPrefix(prefix))
+        #expect(base.hasSuffix(".txt"))
+        #expect(base != "tankard-test-defaults-\(getpid()).txt")
+        let token = String(base.dropFirst(prefix.count).dropLast(".txt".count))
+        #expect(UUID(uuidString: token) != nil)
+    }
+
+    /// A line appended after the owner is gone is not swept. The copy is
+    /// taken first; both passes read that copy. Echo mode, so a broken
+    /// filter still cannot delete the real domain.
+    @Test func sweepIgnoresNamesAppendedAfterTheOwnerDied() throws {
+        let before = realPreferencesHash()
+        let fixture = try makeSweepFixture()
+        let early = try #require(fixture.sweepable.first)
+        let late = "tankard-test-late-\(UUID().uuidString)"
+        #expect(TestDefaults.isSweepable(late))
+        #expect(!early.contains(late))
+
+        let dead = "99999999"
+        let probe = Process()
+        probe.executableURL = URL(fileURLWithPath: "/bin/kill")
+        probe.arguments = ["-0", dead]
+        probe.standardOutput = FileHandle.nullDevice
+        probe.standardError = FileHandle.nullDevice
+        try probe.run()
+        probe.waitUntilExit()
+        try #require(probe.terminationStatus != 0)
+
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/bin/sh")
+        // Two seconds of sleep after the copy, so the append lands while
+        // the sweep is waiting and before either pass reads.
+        p.arguments = ["-c", TestDefaults.sweepScript, "sh", dead, fixture.list.path, "2", "0", "echo"]
+        p.environment = [
+            "HOME": fixture.home.path,
+            "PATH": "/bin:/usr/bin",
+            "DEFAULTS": fixture.stub.path,
+            "FAKE_DEFAULTS_LOG": fixture.log.path,
+        ]
+        let out = Pipe()
+        p.standardOutput = out
+        p.standardError = FileHandle.nullDevice
+        var started = false
+        defer {
+            if started {
+                if p.isRunning { p.terminate() }
+                p.waitUntilExit()
+            }
+            try? FileManager.default.removeItem(at: fixture.directory)
+        }
+        try p.run()
+        started = true
+
+        let frozen = URL(fileURLWithPath: fixture.list.path + ".frozen")
+        #expect(waitForFile(frozen, timeout: 5))
+        let handle = try FileHandle(forWritingTo: fixture.list)
+        try handle.seekToEnd()
+        try handle.write(contentsOf: Data((late + "\n").utf8))
+        try handle.close()
+        // The append happened while the sweep was still in its first sleep,
+        // not after it had already exited.
+        #expect(p.isRunning)
+        let frozenText = try String(contentsOf: frozen, encoding: .utf8)
+        #expect(frozenText.contains(early + "\n"))
+        #expect(!frozenText.contains(late))
+
+        let deadline = Date().addingTimeInterval(8)
+        while p.isRunning, Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        #expect(!p.isRunning)
+        guard !p.isRunning else { return }
+        let stdout = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        let lines = stdout.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
+        #expect(lines.filter { $0 == early }.count == 2)
+        #expect(!lines.contains(late))
+        #expect(!lines.contains("net.mindtricks.tankard"))
+        let listed = try String(contentsOf: fixture.list, encoding: .utf8)
+        #expect(listed.contains(late + "\n"))
+        #expect(!FileManager.default.fileExists(atPath: frozen.path))
+        let log = (try? String(contentsOf: fixture.log, encoding: .utf8)) ?? ""
+        #expect(log.isEmpty)
+        #expect(realPreferencesHash() == before)
     }
 
     /// Echo mode, delay 0, against a dead pid. The list names the app's own
@@ -147,6 +245,17 @@ struct TestDefaultsTests {
         #expect(loop.lowerBound < delete.lowerBound)
         #expect(delete.lowerBound < remove.lowerBound)
         #expect(remove.lowerBound < dropList.lowerBound)
+    }
+
+    /// Polls until `url` exists. The sweep's copy is renamed into place,
+    /// so the file appearing means the snapshot has been written.
+    private func waitForFile(_ url: URL, timeout: TimeInterval) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if FileManager.default.fileExists(atPath: url.path) { return true }
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        return FileManager.default.fileExists(atPath: url.path)
     }
 
     /// No file for this suite's UUID, now or once cfprefsd has had a moment

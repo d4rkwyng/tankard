@@ -128,6 +128,12 @@ func makeClient(_ runner: CommandRunning, intelbrew: Bool = true) -> BrewClient 
 ///   about 8s later). The sweeper waits until this process is gone and
 ///   deletes twice. It is started even when the test script's list is set,
 ///   because that script's trap does not run if the script is killed.
+///   Its list is `tankard-test-defaults-<pid>-<uuid>.txt`. The uuid is
+///   chosen once, when the sweeper is armed, and the sweeper is given that
+///   path: a later process that is handed the same pid writes a different
+///   file and never opens this one. When the sweeper notices this process
+///   is gone it copies the bytes written so far, and both passes delete
+///   only names from that copy.
 /// - An `atexit` hook that removes each suite in-process. If the early
 ///   sweeper could not be spawned, it also falls back to the same sweep
 ///   (`sweepAfterExit`) for a normal exit.
@@ -161,8 +167,11 @@ enum TestDefaults {
     /// list, `$3` the first delay, `$4` the gap before the second pass,
     /// `$5` `echo` to print sweepable names instead of deleting. The list
     /// is read only after the test process is gone, so a name appended
-    /// after the sweeper started is still covered. `DEFAULTS`, when set,
-    /// replaces `/usr/bin/defaults` (the guard test points it at a stub).
+    /// while it was alive is still covered. The bytes on disk at that
+    /// moment are copied to `$2.frozen` before either sleep; both passes
+    /// read the copy, and a line appended later is ignored. `DEFAULTS`,
+    /// when set, replaces `/usr/bin/defaults` (the guard test points it
+    /// at a stub).
     static let sweepScript = """
         parent=$1
         list=$2
@@ -178,6 +187,28 @@ enum TestDefaults {
         if [ ! -f "$list" ]; then
             exit 0
         fi
+        # Owner is gone. Freeze the bytes written so far. A later writer
+        # (a pid reuse that somehow still had this path) must not add a
+        # name this sweep deletes. The copy is renamed into place so a
+        # reader never sees a half-written file.
+        limit=$(/usr/bin/stat -f %z "$list" 2>/dev/null | /usr/bin/tr -d '[:space:]')
+        case "$limit" in
+            ''|*[!0-9]*) exit 0 ;;
+        esac
+        partial="$list.frozen.partial"
+        snapshot="$list.frozen"
+        if [ "$limit" -eq 0 ]; then
+            : > "$partial"
+        else
+            /bin/dd if="$list" of="$partial" bs="$limit" count=1 2>/dev/null || {
+                rm -f "$partial"
+                exit 0
+            }
+        fi
+        /bin/mv -f "$partial" "$snapshot" || {
+            rm -f "$partial"
+            exit 0
+        }
         for pass in 1 2; do
             if [ "$pass" = 1 ]; then
                 sleep "$delay"
@@ -197,8 +228,9 @@ enum TestDefaults {
                     ${DEFAULTS:-/usr/bin/defaults} delete "$name" >/dev/null 2>&1 || true
                     rm -f "$HOME/Library/Preferences/$name.plist"
                 fi
-            done < "$list"
+            done < "$snapshot"
         done
+        rm -f "$snapshot" "$partial"
         if [ "$mode" != echo ]; then
             rm -f "$list"
         fi
@@ -230,9 +262,14 @@ enum TestDefaults {
         private var armed = false
         let listPath: String
 
+        /// Pid plus a token chosen once, here. A later process that is
+        /// given the same pid builds a different path. The sweeper is
+        /// handed `listPath`; it does not derive the path itself, so it
+        /// cannot open that other file.
         init() {
+            let token = UUID().uuidString
             listPath = FileManager.default.temporaryDirectory
-                .appendingPathComponent("tankard-test-defaults-\(getpid()).txt").path
+                .appendingPathComponent("tankard-test-defaults-\(getpid())-\(token).txt").path
         }
 
         func arm() {
@@ -250,7 +287,9 @@ enum TestDefaults {
     private static let sweeper = Sweeper()
     private static let exitHook: Void = { atexit { TestDefaults.removeAll() } }()
 
-    /// The pid-specific name list the sweeper reads after this process exits.
+    /// The name list the sweeper reads after this process exits. The file
+    /// name is this process's pid and the token chosen when the sweeper
+    /// was armed.
     static var sweeperListPath: String { sweeper.listPath }
 
     /// Registers `name` for removal; returns it. The name is on disk before
