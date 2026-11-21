@@ -932,14 +932,18 @@ still exit 1. When the app at the path is then a whole app of the cask's version
 (`isVersion`), `finishLive` returns `.replacedDespiteError`: the copy is kept, because
 the run failed, and the note says the app was updated to that version but Homebrew
 reported an error, and where the copy is. The note "Homebrew is busy; try again in a
-moment." is not shown in that case. When brew stops on the lock without leaving the
+moment." is not shown in that case. The result sheet counts that step as replaced with
+a warning: the headline is "Replace finished with a warning", the status line counts
+it as replaced, and the sheet does not show the brew-error title or the retry advice. When brew stops on the lock without leaving the
 cask's version, the run fails with that busy note and the copy is kept. The plan sheet
 checks the running apps (`autoUpdate.conditions`, by path or
 bundle id) and refuses while the app is open; it never quits it. brew --force deletes
 the app before moving the download in, and its revert after a later failure removes the
 new one, so Tankard first copies the app to
-~/Library/Caches/net.mindtricks.tankard/replace-backup/<uuid>/ (`AppReplaceSafety.live`, a
-clone on APFS; no copy, no run; `.origin` beside it holds the app's path). Right before
+~/Library/Application Support/net.mindtricks.tankard/replace-backup/<uuid>/
+(`AppReplaceSafety.defaultRoot`, `live`). The copy is made there. When that folder is on
+the same volume as the app, the copy is an APFS clone; otherwise it is a plain copy. No
+copy, no run. `.origin` beside it holds the app's path. Right before
 the copy the app's Info.plist is read again (`readApp`, `ReplaceAppPlan.changedNote`): a
 changed version, build or bundle id, or one no longer older than the cask, stops the run;
 right after it the running check is made again (the copy is dropped, `discard`).
@@ -954,10 +958,15 @@ version (after exit 0, any whole bundle whose version does not match) stays and 
 is kept (`.kept`); anything else (a
 half-deleted bundle after Stop Now, a missing or linked executable, a linked Info.plist,
 another app, a file) is moved into the copy's folder as `<name>.partial` and the copy
-goes back (`.restoredMovingAside`). Every outcome deletes `.origin`, so only a copy from
+goes back (`.restoredMovingAside`). After Stop Now restores the copy, the sheet's note
+says to copy the app aside first, then run `brew uninstall --cask --force <token>`
+(the cask's token), then put the app back. Tankard does not run that command.
+Every outcome deletes `.origin`, so only a copy from
 a crash before `finishLive` still has one. The log says which. Copies a run left behind
 are listed at launch (`start()`, `noteReplaceLeftovers`) and logged with their paths
-(os_log, category `replace`). Nothing is moved or deleted. One notice names the newest
+(os_log, category `replace`). Copies still under the old Caches path
+(~/Library/Caches/net.mindtricks.tankard/replace-backup/) are listed with them. Nothing
+is moved or deleted. One notice names the newest
 safety copy ("Tankard kept a safety copy of <App> from <date>."). A `<name>.app.partial`
 or `<name>.app.partial-<n>` entry is what brew left behind, moved aside, and is not
 called a safety copy: the notice lists it separately ("Tankard kept what Homebrew left

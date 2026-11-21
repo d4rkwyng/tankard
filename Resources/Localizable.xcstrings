@@ -1717,6 +1717,58 @@
         }
       }
     },
+    "%@ finished with a warning": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ mit einer Warnung fertig"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ terminé avec un avertissement"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ terminado con una advertencia"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 完了 (警告あり)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@已完成，但有警告"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ concluído com um aviso"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ terminato con un avviso"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 완료 (경고 있음)"
+          }
+        }
+      }
+    },
     "%@ finished with problems": {
       "localizations": {
         "de": {
@@ -20651,6 +20703,58 @@
         }
       }
     },
+    "Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiere %@ zuerst beiseite, führe dann `brew uninstall --cask --force %@` aus und lege die App danach zurück."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiez %@ de côté d'abord, puis exécutez `brew uninstall --cask --force %@`, puis remettez l'app."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia %@ aparte primero, luego ejecuta `brew uninstall --cask --force %@` y vuelve a poner la app."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia %@ da parte prima, poi esegui `brew uninstall --cask --force %@` e rimetti l'app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず %@ を脇へコピーし、次に `brew uninstall --cask --force %@` を実行してから、アプリを戻してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 %@을(를) 옆으로 복사한 다음 `brew uninstall --cask --force %@`을(를) 실행하고, 앱을 다시 놓으세요."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copie %@ para o lado primeiro, depois execute `brew uninstall --cask --force %@` e coloque o app de volta."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先把 %@ 复制到别处，然后运行 `brew uninstall --cask --force %@`，再把应用放回去。"
+          }
+        }
+      }
+    },
     "Copy All": {
       "localizations": {
         "de": {
@@ -23923,6 +24027,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "已完成，跳过了一个步骤"
+          }
+        }
+      }
+    },
+    "Done, with a warning": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig, mit einer Warnung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé, avec un avertissement"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hecho, con una advertencia"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fatto, con un avviso"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了 (警告あり)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료, 경고 있음"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído, com um aviso"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成，但有警告"
           }
         }
       }

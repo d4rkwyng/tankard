@@ -643,7 +643,10 @@ touched, and from now on Homebrew manages the app. Quit the app first: if it is 
 Tankard says so and waits for you to click **Check Again**; it never quits the app for
 you. Then click **Replace**. Tankard runs `brew install --cask --force <cask>` in the
 activity sheet, asking for your password as for any cask install. Tankard keeps a copy of
-the app while brew runs. The copy is deleted only when brew finished, the app is a whole
+the app while brew runs. A copy that is kept lives in
+~/Library/Application Support/net.mindtricks.tankard/replace-backup/. Copies an earlier
+version left in ~/Library/Caches are still listed at the next launch; Tankard does not
+move or delete them. The copy is deleted only when brew finished, the app is a whole
 app (its Info.plist and its program are real files inside the app, not links), and that
 app is the cask's version. Otherwise the copy is kept. If brew stopped halfway (for
 example after **Stop Now**) and the app is missing or only partly there, what brew left
@@ -664,7 +667,9 @@ app can leave brew listing the cask as installed while the old app is back. Scan
 again still treats it as already from Homebrew, so Replace is not offered.
 To clear brew's record, first copy the app somewhere safe (or quit it and drag it to
 the Desktop), because `brew uninstall --cask --force <token>` deletes the app at the
-cask's path as well; then run it and put the app back. Tankard never offers this for a version that is
+cask's path as well; then run it and put the app back. When Stop Now has put the old
+app back, the result sheet gives that recovery, with the cask's token, and Tankard
+does not run it. Tankard never offers this for a version that is
 older or the same, or when the cask's version is a plain build number that is not newer
 than the app's (2.0 with build 200, against cask 199). A dotted newer version is offered,
 including when the app's short version is a plain number (2, and the cask is 2.1) and

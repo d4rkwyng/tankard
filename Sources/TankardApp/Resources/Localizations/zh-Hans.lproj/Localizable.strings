@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ 已退出，退出码 %d";
 "%@ exited %lld" = "%@ 已退出，退出码 %lld";
 "%@ exited %lld:\n%@" = "%@ 已退出，退出码 %lld：\n%@";
+"%@ finished with a warning" = "%@已完成，但有警告";
 "%@ finished with problems" = "%@已完成，但有问题";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
@@ -327,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "仅当你信任此文件的作者时才继续。";
 "Continue without relaunching" = "不重新启动，继续";
 "Copied" = "已拷贝";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "请先把 %@ 复制到别处，然后运行 `brew uninstall --cask --force %@`，再把应用放回去。";
 "Copy All" = "全部拷贝";
 "Copy Brewfile" = "拷贝 Brewfile";
 "Copy Command" = "拷贝命令";
@@ -390,6 +392,7 @@
 "Don't quit running apps during upgrades" = "升级期间不退出正在运行的 App";
 "Done" = "完成";
 "Done, with a step skipped" = "已完成，跳过了一个步骤";
+"Done, with a warning" = "完成，但有警告";
 "Done: %@" = "已完成：%@";
 "Download" = "下载";
 "Download cache" = "下载缓存";

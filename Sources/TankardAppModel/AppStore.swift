@@ -337,8 +337,9 @@ public final class AppStore {
     /// seconds. See `runQuick`.
     public internal(set) var busyNotice: String?
     @ObservationIgnored var busyNoticeToken = 0
-    /// 0.8.10: a safety copy an earlier Replace left in the cache. One
-    /// notice, with Show in Finder. Nothing is moved. Nil when there is none.
+    /// 0.8.10: a safety copy an earlier Replace left behind (Application
+    /// Support, or an older copy still under Caches). One notice, with
+    /// Show in Finder. Nothing is moved. Nil when there is none.
     public internal(set) var replaceLeftoverNotice: ReplaceLeftoverNotice?
     /// 0.8.2: what the last Refresh / Check Now found ("3 new upgrades"),
     /// shown in the status bar for a few seconds. See UserCheckFeedback.swift.

@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ è terminato con codice %d";
 "%@ exited %lld" = "%@ è terminato con codice %lld";
 "%@ exited %lld:\n%@" = "%@ è terminato con codice %lld:\n%@";
+"%@ finished with a warning" = "%@ terminato con un avviso";
 "%@ finished with problems" = "%@ terminato con problemi";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a %lld dipendenze (%@). Può richiedere molto tempo sui Mac meno recenti.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ non ha una bottle Intelbrew per questo Mac, quindi brew lo compila insieme a 1 dipendenza (%@). Può richiedere molto tempo sui Mac meno recenti.";
@@ -327,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "Continua solo se ti fidi di chi ha scritto questo file.";
 "Continue without relaunching" = "Continua senza riavviare";
 "Copied" = "Copiato";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "Copia %@ da parte prima, poi esegui `brew uninstall --cask --force %@` e rimetti l'app.";
 "Copy All" = "Copia tutto";
 "Copy Brewfile" = "Copia Brewfile";
 "Copy Command" = "Copia comando";
@@ -390,6 +392,7 @@
 "Don't quit running apps during upgrades" = "Non chiudere le app in esecuzione durante gli aggiornamenti";
 "Done" = "Fatto";
 "Done, with a step skipped" = "Fatto, con un passaggio saltato";
+"Done, with a warning" = "Fatto, con un avviso";
 "Done: %@" = "Fatto: %@";
 "Download" = "Scarica";
 "Download cache" = "Cache dei download";

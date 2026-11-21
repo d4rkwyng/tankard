@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ 종료됨(%d)";
 "%@ exited %lld" = "%@ 종료됨(%lld)";
 "%@ exited %lld:\n%@" = "%@ 종료됨(%lld):\n%@";
+"%@ finished with a warning" = "%@ 완료 (경고 있음)";
 "%@ finished with problems" = "%@ 완료 (문제 있음)";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다.";
@@ -327,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "이 파일을 작성한 사람을 신뢰하는 경우에만 계속하십시오.";
 "Continue without relaunching" = "다시 시작하지 않고 계속";
 "Copied" = "복사됨";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "먼저 %@을(를) 옆으로 복사한 다음 `brew uninstall --cask --force %@`을(를) 실행하고, 앱을 다시 놓으세요.";
 "Copy All" = "모두 복사";
 "Copy Brewfile" = "Brewfile 복사";
 "Copy Command" = "명령어 복사";
@@ -390,6 +392,7 @@
 "Don't quit running apps during upgrades" = "업그레이드 중 실행 중인 앱을 종료하지 않음";
 "Done" = "완료";
 "Done, with a step skipped" = "완료, 한 단계 건너뜀";
+"Done, with a warning" = "완료, 경고 있음";
 "Done: %@" = "완료: %@";
 "Download" = "다운로드";
 "Download cache" = "다운로드 캐시";

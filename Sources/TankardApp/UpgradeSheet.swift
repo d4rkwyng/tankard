@@ -82,7 +82,8 @@ struct UpgradeSheet: View {
                 FlowLayout(spacing: 6) {
                     ForEach(session.items) { item in
                         Chip(item: item, action: session.action, title: session.chipName(item),
-                             incomplete: session.sudoSkipped[item.id] != nil)
+                             incomplete: session.sudoSkipped[item.id] != nil,
+                             warning: session.replacedDespiteError.contains(item.id))
                             .contextMenu {
                                 // 0.8.3: one failed step again.
                                 if session.retryableItems.contains(where: { $0.id == item.id }) {
@@ -251,6 +252,8 @@ struct Chip: View {
     /// 0.8.8 (gauntlet 3, B2): done, but brew skipped the part that needed
     /// the password: a warning mark, not a ✓.
     var incomplete = false
+    /// 0.8.10: done, but brew reported an error after the app was replaced.
+    var warning = false
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -262,6 +265,10 @@ struct Chip: View {
                 Image(systemName: "exclamationmark").font(.system(size: 9, weight: .bold))
                     .foregroundStyle(.orange)
                     .accessibilityLabel(Text("Done, with a step skipped"))
+            case .done where warning:
+                Image(systemName: "exclamationmark").font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.orange)
+                    .accessibilityLabel(Text("Done, with a warning"))
             case .done:
                 Image(systemName: "checkmark").font(.system(size: 9, weight: .bold))
                     .accessibilityLabel(Text("Done"))

@@ -32,6 +32,7 @@
 "%@ exited %d" = "%@ exited %d";
 "%@ exited %lld" = "%@ exited %lld";
 "%@ exited %lld:\n%@" = "%@ exited %lld:\n%@";
+"%@ finished with a warning" = "%@ finished with a warning";
 "%@ finished with problems" = "%@ finished with problems";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.";
@@ -327,6 +328,7 @@
 "Continue only if you trust whoever wrote this file." = "Continue only if you trust whoever wrote this file.";
 "Continue without relaunching" = "Continue without relaunching";
 "Copied" = "Copied";
+"Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back." = "Copy %@ aside first, then run `brew uninstall --cask --force %@`, then put the app back.";
 "Copy All" = "Copy All";
 "Copy Brewfile" = "Copy Brewfile";
 "Copy Command" = "Copy Command";
@@ -390,6 +392,7 @@
 "Don't quit running apps during upgrades" = "Don't quit running apps during upgrades";
 "Done" = "Done";
 "Done, with a step skipped" = "Done, with a step skipped";
+"Done, with a warning" = "Done, with a warning";
 "Done: %@" = "Done: %@";
 "Download" = "Download";
 "Download cache" = "Download cache";
