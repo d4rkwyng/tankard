@@ -647,7 +647,7 @@ struct V0810ReplaceFixTests {
     /// record. The note names the safe recovery, with this cask's token.
     /// Tankard does not run it.
     @Test func stopNowAfterTheCopyIsRestoredNamesHowToClearBrewsRecord() async throws {
-        let recovery = "Copy Audacity aside first, then run `brew uninstall --cask --force audacity`, then put the app back."
+        let recovery = "Copy Audacity aside first, then run `brew uninstall --cask --force homebrew/cask/audacity`, then put the app back."
         let (back, args) = try await runReplace(hang: true) { _, ok in
             #expect(!ok)
             return .restored

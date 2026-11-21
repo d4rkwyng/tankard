@@ -152,6 +152,54 @@ struct V090ReplaceReviewTests {
         #expect(calls.withLock { $0 } == ["read", "backup"])
     }
 
+    /// A cask name with a space and a semicolon is quoted for the shell.
+    /// Tankard does not run the uninstall.
+    @Test func stopNowRecoveryQuotesAHostileCaskName() async throws {
+        let hostile = "bad name; echo hi"
+        let info = AppReplaceSafety.BundleInfo(bundleID: "com.example.weird", shortVersion: "1.0", bundleVersion: "1")
+        let plan = ReplaceAppPlan(token: hostile, qualifiedName: hostile, appName: "Weird",
+                                  appPath: "/Applications/Weird.app", bundleID: "com.example.weird",
+                                  installedVersion: "1.0", caskVersion: "2.0", bundleVersion: "1")
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        let runner = HangInstall(deps.streamRunner)
+        deps.streamRunner = runner
+        deps.appReplaceSafety = AppReplaceSafety(
+            backup: { _ in "/tmp/b/Weird.app" },
+            finish: { _, _, ok, _ in
+                #expect(!ok)
+                return .restored
+            },
+            readApp: { _ in info })
+        let store = AppStore(deps: deps)
+        store.settings.appManagementExplained = true
+        await store.start()
+        #expect(await store.startReplace(plan))
+        #expect(await waitUntil { store.upgrade?.current != nil })
+        store.upgrade?.stopNow()
+        #expect(await waitUntil { store.upgrade?.isFinished == true })
+        let lines = store.upgrade?.log.lines.joined(separator: "\n") ?? ""
+        let recovery = "Copy Weird aside first, then run `brew uninstall --cask --force 'bad name; echo hi'`, then put the app back."
+        #expect(lines.contains(recovery))
+        #expect(!lines.contains("brew uninstall --cask --force bad name;"))
+        #expect(!runner.args.withLock { $0 }.contains { $0.contains("uninstall") })
+    }
+
+    /// Hangs `brew install --cask --force` until Stop Now cancels it.
+    final class HangInstall: StreamingCommandRunning, @unchecked Sendable {
+        let inner: StreamingCommandRunning
+        let args = OSAllocatedUnfairLock<[[String]]>(initialState: [])
+        init(_ inner: StreamingCommandRunning) { self.inner = inner }
+        func stream(_ executable: String, _ arguments: [String], environment: [String: String],
+                    output: @escaping @Sendable (Data) -> Void) async throws -> Int32 {
+            args.withLock { $0.append(arguments) }
+            if arguments.contains("--force") {
+                try await sleepUntilCancelled()
+                return 0
+            }
+            return try await inner.stream(executable, arguments, environment: environment, output: output)
+        }
+    }
+
     private static func isSymlink(_ path: String) -> Bool {
         var st = stat()
         return lstat(path, &st) == 0 && (st.st_mode & S_IFMT) == S_IFLNK

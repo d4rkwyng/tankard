@@ -725,11 +725,14 @@ public extension AppStore {
             // Stop Now during brew's removal puts the old app back and leaves
             // brew's Caskroom record. Say the safe recovery. Do not run it:
             // `brew uninstall --cask --force` also deletes the app.
+            // The name is the qualified cask, quoted the way other copyable
+            // commands are (`BrewCommands.shellQuoted`). A token with a
+            // space or `;` must not be pasted raw.
             func noteClearRecord() {
                 guard item.state == .cancelled else { return }
                 let name = r.plan.appName
-                let token = r.plan.token
-                session.addNote(String(localized: "Copy \(name) aside first, then run `brew uninstall --cask --force \(token)`, then put the app back."))
+                let cask = BrewCommands.shellQuoted(r.plan.qualifiedName)
+                session.addNote(String(localized: "Copy \(name) aside first, then run `brew uninstall --cask --force \(cask)`, then put the app back."))
             }
             guard let backup = r.backup, let safety = deps.appReplaceSafety else {
                 explainFailure()
