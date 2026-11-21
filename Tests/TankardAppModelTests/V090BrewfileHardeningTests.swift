@@ -248,4 +248,57 @@ struct V090BrewfileHardeningTests {
         // Indented, so it is not a block comment: the require below is code.
         #expect(BrewfileStaticReader.loadsOtherFiles("  =begin\nrequire \"helper\"\n"))
     }
+
+    /// A pause cancellation does not cut short: the runner's stand-in for
+    /// waitpid during the kill grace.
+    private nonisolated static func uncancelledPause(_ milliseconds: Int) async {
+        await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
+            DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(milliseconds)) { c.resume() }
+        }
+    }
+
+    /// On a timeout brew is still shutting down. The private copy stays
+    /// until the runner returns, and the defer deletes it after that.
+    @Test func timeoutKeepsTheCopyUntilTheRunnerHasExited() async throws {
+        let dir = try scratch()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let file = dir.appendingPathComponent("Brewfile")
+        try Data("brew \"jq\"\n".utf8).write(to: file)
+        let paths = Paths()
+        let presentDuringShutdown = LockBox(false)
+        let s = BrewfileStore()
+        s.timeout = .milliseconds(150)
+        s.run = { args in
+            paths.record(args)
+            do {
+                try await Task.sleep(for: .seconds(30))
+            } catch {
+                await Self.uncancelledPause(200)
+                if let p = paths.files.first {
+                    presentDuringShutdown.set(FileManager.default.fileExists(atPath: p))
+                }
+                throw error
+            }
+            return Self.ok
+        }
+        s.check(path: file.path)
+        await s.waitForIdle()
+        guard case .failed(let why) = s.page else { Issue.record("not timed out: \(s.page)"); return }
+        #expect(why.contains("didn't finish"))
+        #expect(presentDuringShutdown.get)
+        let used = try #require(paths.files.first)
+        #expect(used != file.path)
+        #expect(!FileManager.default.fileExists(atPath: used))
+        #expect(!FileManager.default.fileExists(atPath: (used as NSString).deletingLastPathComponent))
+        #expect(FileManager.default.fileExists(atPath: file.path))
+    }
+}
+
+/// A Bool the runner closure can set from off the main actor.
+private final class LockBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value: Bool
+    init(_ value: Bool) { self.value = value }
+    func set(_ value: Bool) { lock.lock(); self.value = value; lock.unlock() }
+    var get: Bool { lock.lock(); defer { lock.unlock() }; return value }
 }

@@ -97,12 +97,23 @@ public enum BrewfileError: Error, Equatable, CustomStringConvertible {
 
 /// Runs `op`, cancelling it (ProcessRunner then stops brew's process
 /// group) when `timeout` passes first.
+///
+/// On a timeout the cancelled run is still shutting down. The runner has
+/// sent SIGTERM and reaps brew only when the process has exited; its kill
+/// grace bounds that (SIGKILL follows). Wait for the run to finish before
+/// returning, so a caller that deletes the private copy in a `defer` does
+/// it after brew has gone.
 func withBrewfileTimeout<T: Sendable>(_ timeout: Duration, _ op: @escaping @Sendable () async throws -> T) async throws -> T {
     let result: T? = try await withThrowingTaskGroup(of: T?.self) { group in
         group.addTask { try await op() }
         group.addTask { try await Task.sleep(for: timeout); return nil }
         let first = try await group.next() ?? nil
         group.cancelAll()
+        if first == nil {
+            while !group.isEmpty {
+                do { _ = try await group.next() } catch {}
+            }
+        }
         return first
     }
     guard let result else {
@@ -290,6 +301,8 @@ public final class BrewfileStore {
         checkedText = (path, text)
         let timeout = self.timeout
         start(String(localized: "Checking Brewfile…")) { run in
+            // On a timeout, withBrewfileTimeout waits for the runner to reap
+            // brew (bounded by its kill grace) before this defer runs.
             defer { copy.remove() }
             let r = try await withBrewfileTimeout(timeout) { try await run(BrewfileCommands.check(path: copy.path)) }
             let lines = (r.stdoutString + "\n" + r.stderrString).components(separatedBy: "\n")
