@@ -31,6 +31,22 @@ struct UpgradeSheet: View {
             }
             .font(.system(size: 12))
             .padding(.bottom, 6)
+            // Result notes (the recovery command, a kept copy, "Stop came
+            // too late") in full. The log below still has them, one orange
+            // line each, cut off at the sheet's width.
+            if session.isFinished, !session.sessionNotes.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(session.sessionNotes) { note in
+                        SessionNoteLine(note: note)
+                    }
+                }
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.10)))
+                .padding(.bottom, 8)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("session.notes")
+            }
             // 0.8.5: a build from source: time so far, and an estimate from
             // this Mac's earlier builds when there is one.
             if !session.compilingItems.isEmpty, !session.isFinished {
@@ -313,6 +329,51 @@ struct Chip: View {
         case .failed: return Color.red.opacity(0.12)
         default: return theme.chip
         }
+    }
+}
+
+/// One result note, wrapped and selectable. A note with a command gets
+/// a Copy button for that command (several: one per line). The command
+/// is the note's own field. The sentence is not scanned for backticks.
+struct SessionNoteLine: View {
+    var note: SessionNote
+    // `State(...)`, not `@State`: see CommandBox (the macro needs Xcode).
+    private let copiedState = State(initialValue: false)
+    private var copied: Bool {
+        get { copiedState.wrappedValue }
+        nonmutating set { copiedState.wrappedValue = newValue }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text(note.attributed)
+                .font(.system(size: 12))
+                .textSelection(.enabled)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let command = note.copyText {
+                Button {
+                    copyToPasteboard(command)
+                    copied = true
+                    Task {
+                        try? await Task.sleep(for: .seconds(1.5))
+                        copied = false
+                    }
+                } label: {
+                    Image(systemName: copied ? "checkmark" : "doc.on.doc")
+                        .frame(width: 14)
+                }
+                .buttonStyle(.borderless)
+                .help(note.commands.count > 1 ? Text("Copy the commands") : Text("Copy command"))
+                .accessibilityLabel(copyLabel)
+            }
+        }
+    }
+
+    private var copyLabel: Text {
+        if copied { return Text("Copied") }
+        if note.commands.count > 1 { return Text("Copy the commands") }
+        return Text("Copy command")
     }
 }
 

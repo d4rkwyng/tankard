@@ -75,6 +75,90 @@ public enum SessionAction: String, Sendable {
     }
 }
 
+/// A result note the sheet shows in full under the result line. `addNote`
+/// records these (Replace: the recovery command, a kept copy, "Stop came
+/// too late", "may be incomplete"). Running commentary stays in the log.
+///
+/// A command Copy should paste is stored beside the sentence. It is not
+/// found by scanning `text` for backticks: an app name or a path can
+/// contain one, and that would move the span.
+public struct SessionNote: Equatable, Sendable, Identifiable {
+    public let id: Int
+    public let text: String
+    /// Nil: Copy reads paired `code` spans in `text` (a sentence written
+    /// with those spans on purpose). Empty: nothing to copy, and a
+    /// backtick in `text` is a character. Otherwise the commands Copy
+    /// pastes, which are not found by scanning `text`.
+    private let givenCommands: [String]?
+
+    public init(id: Int, text: String) {
+        self.id = id
+        self.text = text
+        self.givenCommands = nil
+    }
+
+    /// `command` is what Copy pastes. A backtick in `text` cannot change it.
+    public init(id: Int, text: String, command: String) {
+        self.id = id
+        self.text = text
+        if command.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            self.givenCommands = []
+        } else {
+            self.givenCommands = [command]
+        }
+    }
+
+    /// A sentence with no command. Backticks in it are characters.
+    init(id: Int, literal text: String) {
+        self.id = id
+        self.text = text
+        self.givenCommands = []
+    }
+
+    /// Commands Copy pastes, in order. Empty when there is nothing to copy.
+    public var commands: [String] {
+        if let givenCommands { return givenCommands }
+        return NoticeText.codeSpans(text)
+    }
+
+    /// What Copy puts on the pasteboard: the commands, one per line.
+    /// Nil when `commands` is empty.
+    public var copyText: String? {
+        let cmds = commands
+        return cmds.isEmpty ? nil : cmds.joined(separator: "\n")
+    }
+
+    /// The sheet's text. A given command is styled where the sentence
+    /// quotes it, and the rest is shown as typed. A literal note is not
+    /// scanned, so a backtick in a name or a path is not a span.
+    public var attributed: AttributedString {
+        if let givenCommands {
+            return Self.styling(text, commands: givenCommands) ?? AttributedString(text)
+        }
+        return NoticeText.attributed(text)
+    }
+
+    /// Styles each command where `` `command` `` sits in `text`. The
+    /// surrounding characters are not scanned. Nil if a command is not
+    /// there as its own span, so the caller shows the sentence as typed
+    /// and Copy still has the command.
+    private static func styling(_ text: String, commands: [String]) -> AttributedString? {
+        var rest = Substring(text)
+        var out = AttributedString()
+        for command in commands {
+            let wrapped = "`\(command)`"
+            guard let range = rest.range(of: wrapped) else { return nil }
+            out += AttributedString(String(rest[..<range.lowerBound]))
+            var code = AttributedString(command)
+            code.inlinePresentationIntent = .code
+            out += code
+            rest = rest[range.upperBound...]
+        }
+        out += AttributedString(String(rest))
+        return out
+    }
+}
+
 /// One run of the upgrade sheet: a queued `brew upgrade` per package, the
 /// live log, and per-package state.
 ///
@@ -107,6 +191,9 @@ public final class UpgradeSession: Identifiable {
     public let id = UUID()
     public private(set) var items: [Item]
     public private(set) var log = LineAssembler()
+    /// Result notes, in the order `addNote` recorded them. The sheet shows
+    /// these in full under the result line. The log keeps the same words.
+    public private(set) var sessionNotes: [SessionNote] = []
     /// Set when a step failed because it needed sudo: the command to run in
     /// Terminal instead.
     public private(set) var sudoCommand: String?
@@ -1145,8 +1232,21 @@ public final class UpgradeSession: Identifiable {
     }
 
     /// 0.8.10: a line from the store after the run (Replace with
-    /// Homebrew's Version: whether the app was put back).
-    func addNote(_ s: String) { note(s) }
+    /// Homebrew's Version: whether the app was put back). Also one of
+    /// `sessionNotes`, so the sheet can show it in full: the log draws
+    /// each line on one row and cuts it off. The sentence is literal:
+    /// a backtick in an app name or a path is not a command.
+    func addNote(_ s: String) {
+        note(s)
+        sessionNotes.append(SessionNote(id: sessionNotes.count, literal: s))
+    }
+
+    /// Same as `addNote(_:)`, and `command` is what Copy pastes. Copy does
+    /// not scan `s`, so a backtick in the sentence cannot retarget it.
+    func addNote(_ s: String, command: String) {
+        note(s)
+        sessionNotes.append(SessionNote(id: sessionNotes.count, text: s, command: command))
+    }
 
     private func note(_ s: String) {
         log.feed("tankard: \(s)\n")

@@ -114,31 +114,134 @@ func makeClient(_ runner: CommandRunning, intelbrew: Bool = true) -> BrewClient 
 
 /// The UserDefaults suites tests create, and their removal. Swift Testing
 /// has no tearDown, so every helper that makes a suite registers its name
-/// here (`track`, `fresh`). Two things then remove them:
+/// here (`track`, `fresh`). Three things then remove them:
 /// - Scripts/test.sh, after the test process has exited: it sets
 ///   TANKARD_TEST_DEFAULTS_LIST to a file, `track` appends each name to it,
 ///   and the script runs `defaults delete` and removes the plist for each
-///   name listed. That is the reliable one: nothing in the tests can still
-///   write by then.
-/// - An `atexit` hook here, for a bare `swift test`: it removes each suite
-///   and then leaves a detached sweeper to delete the plists cfprefsd writes
-///   back once the process has gone (`sweepAfterExit`).
+///   name listed, twice (the second pass after a wait). That is the
+///   reliable one when the script itself exits: nothing in the tests can
+///   still write by then.
+/// - A sweeper started at the first `track`, in its own session. A crash,
+///   a timeout, or SIGKILL never runs `atexit` and can kill a sweeper that
+///   is still in this process group before its first delete; cfprefsd then
+///   flushes the emptied domain as a `{}` plist (seen from about 1s to
+///   about 8s later). The sweeper waits until this process is gone and
+///   deletes twice. It is started even when the test script's list is set,
+///   because that script's trap does not run if the script is killed.
+///   Its list is `tankard-test-defaults-<pid>-<uuid>.txt`. The uuid is
+///   chosen once, when the sweeper is armed, and the sweeper is given that
+///   path: a later process that is handed the same pid writes a different
+///   file and never opens this one. When the sweeper notices this process
+///   is gone it copies the bytes written so far, and both passes delete
+///   only names from that copy.
+/// - An `atexit` hook that removes each suite in-process. If the early
+///   sweeper could not be spawned, it also falls back to the same sweep
+///   (`sweepAfterExit`) for a normal exit.
 /// `Scoped` / `withTestDefaults` remove a suite as soon as the test is done.
 /// Before 0.8.4 nothing removed them and a busy Mac collected over 10,000
 /// plists in ~/Library/Preferences. Names are per-process (a UUID each), so
 /// neither ever touches another, concurrent test run's suites.
 enum TestDefaults {
+    /// Seconds after the test process is gone before the first
+    /// `defaults delete`, and the further wait before the second. A killed
+    /// process's cfprefsd flush landed anywhere from about 1s to about 8s
+    /// later. The first delete is early enough to drop the domain (it
+    /// prevents a flush that has not happened yet), and the second pass
+    /// runs after that 8s flush.
+    static let sweepFirstDelaySeconds = 4
+    static let sweepSecondGapSeconds = 8
+
+    /// A name this process may delete. The app's own domain and any
+    /// ephemeral suite are not sweepable, nor is a name containing `/` or
+    /// whitespace (that could escape the one-name-per-line list).
+    static func isSweepable(_ name: String) -> Bool {
+        guard !name.isEmpty else { return false }
+        if name == "net.mindtricks.tankard" || name == "net.mindtricks.tankard.ephemeral" { return false }
+        if name.contains("/") { return false }
+        if name.unicodeScalars.contains(where: { CharacterSet.whitespacesAndNewlines.contains($0) }) { return false }
+        if name.hasPrefix("net.mindtricks.tankard.ephemeral.") { return false }
+        return name.hasPrefix("net.mindtricks.tankard.tests.") || name.hasPrefix("tankard-test-")
+    }
+
+    /// Shell run by the sweeper. `$1` is the test process, `$2` the name
+    /// list, `$3` the first delay, `$4` the gap before the second pass,
+    /// `$5` `echo` to print sweepable names instead of deleting. The list
+    /// is read only after the test process is gone, so a name appended
+    /// while it was alive is still covered. The bytes on disk at that
+    /// moment are copied to `$2.frozen` before either sleep; both passes
+    /// read the copy, and a line appended later is ignored. `DEFAULTS`,
+    /// when set, replaces `/usr/bin/defaults` (the guard test points it
+    /// at a stub).
+    static let sweepScript = """
+        parent=$1
+        list=$2
+        delay=${3:-4}
+        gap=${4:-8}
+        mode=${5:-delete}
+        while kill -0 "$parent" 2>/dev/null; do
+            sleep 0.2
+        done
+        if [ -z "$HOME" ] || [ "$HOME" = / ]; then
+            exit 0
+        fi
+        if [ ! -f "$list" ]; then
+            exit 0
+        fi
+        # Owner is gone. Freeze the bytes written so far. A later writer
+        # (a pid reuse that somehow still had this path) must not add a
+        # name this sweep deletes. The copy is renamed into place so a
+        # reader never sees a half-written file.
+        limit=$(/usr/bin/stat -f %z "$list" 2>/dev/null | /usr/bin/tr -d '[:space:]')
+        case "$limit" in
+            ''|*[!0-9]*) exit 0 ;;
+        esac
+        partial="$list.frozen.partial"
+        snapshot="$list.frozen"
+        if [ "$limit" -eq 0 ]; then
+            : > "$partial"
+        else
+            /bin/dd if="$list" of="$partial" bs="$limit" count=1 2>/dev/null || {
+                rm -f "$partial"
+                exit 0
+            }
+        fi
+        /bin/mv -f "$partial" "$snapshot" || {
+            rm -f "$partial"
+            exit 0
+        }
+        for pass in 1 2; do
+            if [ "$pass" = 1 ]; then
+                sleep "$delay"
+            else
+                sleep "$gap"
+            fi
+            while IFS= read -r name || [ -n "$name" ]; do
+                case "$name" in
+                    net.mindtricks.tankard|net.mindtricks.tankard.ephemeral) continue ;;
+                    */*|*[[:space:]]*) continue ;;
+                    net.mindtricks.tankard.tests.*|tankard-test-*) ;;
+                    *) continue ;;
+                esac
+                if [ "$mode" = echo ]; then
+                    printf '%s\\n' "$name"
+                else
+                    ${DEFAULTS:-/usr/bin/defaults} delete "$name" >/dev/null 2>&1 || true
+                    rm -f "$HOME/Library/Preferences/$name.plist"
+                fi
+            done < "$snapshot"
+        done
+        rm -f "$snapshot" "$partial"
+        if [ "$mode" != echo ]; then
+            rm -f "$list"
+        fi
+        """
+
     private final class Registry: @unchecked Sendable {
         private let lock = NSLock()
         private var names: Set<String> = []
-        private let list: FileHandle? = ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"]
-            .flatMap { FileHandle(forWritingAtPath: $0) }
-        func add(_ name: String) {
-            lock.withLock {
-                guard names.insert(name).inserted, let list else { return }
-                list.seekToEndOfFile()
-                list.write(Data((name + "\n").utf8))
-            }
+        /// `true` the first time `name` is registered.
+        func insert(_ name: String) -> Bool {
+            lock.withLock { names.insert(name).inserted }
         }
         func drain() -> [String] {
             lock.withLock {
@@ -147,14 +250,127 @@ enum TestDefaults {
             }
         }
     }
+
+    /// One sweeper per process, spawned on the first tracked name. Its
+    /// standard streams are /dev/null and it is not in this process group:
+    /// a pipe inherited from the test runner kept `kill -0` true forever
+    /// (the runner never saw EOF, so it never reaped the zombie), and a
+    /// kill of the test's group must not take the sweeper with it.
+    private final class Sweeper: @unchecked Sendable {
+        private let lock = NSLock()
+        private var attempted = false
+        private var armed = false
+        let listPath: String
+
+        /// Pid plus a token chosen once, here. A later process that is
+        /// given the same pid builds a different path. The sweeper is
+        /// handed `listPath`; it does not derive the path itself, so it
+        /// cannot open that other file.
+        init() {
+            let token = UUID().uuidString
+            listPath = FileManager.default.temporaryDirectory
+                .appendingPathComponent("tankard-test-defaults-\(getpid())-\(token).txt").path
+        }
+
+        func arm() {
+            lock.lock()
+            defer { lock.unlock() }
+            guard !attempted else { return }
+            attempted = true
+            armed = TestDefaults.spawnSweeper(listPath: listPath)
+        }
+
+        var isArmed: Bool { lock.withLock { armed } }
+    }
+
     private static let registry = Registry()
+    private static let sweeper = Sweeper()
     private static let exitHook: Void = { atexit { TestDefaults.removeAll() } }()
 
-    /// Registers `name` for removal; returns it.
+    /// The name list the sweeper reads after this process exits. The file
+    /// name is this process's pid and the token chosen when the sweeper
+    /// was armed.
+    static var sweeperListPath: String { sweeper.listPath }
+
+    /// Registers `name` for removal; returns it. The name is on disk before
+    /// the caller creates the suite, so a kill in between still leaves the
+    /// sweeper something to delete.
     @discardableResult static func track(_ name: String) -> String {
         _ = exitHook
-        registry.add(name)
+        sweeper.arm()
+        if registry.insert(name) {
+            appendLine(name, to: sweeper.listPath)
+            if let list = ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"] {
+                appendLine(name, to: list)
+            }
+        }
         return name
+    }
+
+    /// Appends one sweepable name with `O_APPEND`, so two processes sharing
+    /// Scripts/test.sh's list cannot overwrite each other's lines.
+    private static func appendLine(_ name: String, to path: String) {
+        guard isSweepable(name) else { return }
+        let fd = path.withCString { open($0, O_WRONLY | O_CREAT | O_APPEND, mode_t(0o644)) }
+        guard fd >= 0 else { return }
+        defer { close(fd) }
+        var bytes = Array((name + "\n").utf8)
+        bytes.withUnsafeMutableBytes { buf in
+            guard let base = buf.baseAddress else { return }
+            var rest = buf.count
+            var cursor = base
+            while rest > 0 {
+                let n = write(fd, cursor, rest)
+                if n > 0 {
+                    rest -= n
+                    cursor = cursor.advanced(by: n)
+                } else if n < 0 && errno == EINTR {
+                    continue
+                } else {
+                    return
+                }
+            }
+        }
+    }
+
+    /// Starts the sweeper in its own session. False if it could not be
+    /// spawned; `sweepAfterExit` then covers a normal exit.
+    private static func spawnSweeper(listPath: String) -> Bool {
+        if !FileManager.default.fileExists(atPath: listPath) {
+            FileManager.default.createFile(atPath: listPath, contents: Data())
+        }
+        var actions: posix_spawn_file_actions_t?
+        guard posix_spawn_file_actions_init(&actions) == 0 else { return false }
+        defer { posix_spawn_file_actions_destroy(&actions) }
+        guard posix_spawn_file_actions_addopen(&actions, 0, "/dev/null", O_RDONLY, 0) == 0,
+              posix_spawn_file_actions_addopen(&actions, 1, "/dev/null", O_WRONLY, 0) == 0,
+              posix_spawn_file_actions_addopen(&actions, 2, "/dev/null", O_WRONLY, 0) == 0 else { return false }
+
+        var attr: posix_spawnattr_t?
+        guard posix_spawnattr_init(&attr) == 0 else { return false }
+        defer { posix_spawnattr_destroy(&attr) }
+        // Own session, and no inherited descriptors: the test runner's
+        // stdout pipe must not stay open in the sweeper.
+        let flags = Int16(POSIX_SPAWN_SETSID) | Int16(POSIX_SPAWN_SETSIGMASK) | Int16(POSIX_SPAWN_SETSIGDEF)
+            | Int16(POSIX_SPAWN_CLOEXEC_DEFAULT)
+        guard posix_spawnattr_setflags(&attr, flags) == 0 else { return false }
+        var noSignals = sigset_t()
+        sigemptyset(&noSignals)
+        posix_spawnattr_setsigmask(&attr, &noSignals)
+        var signalDefaults = sigset_t()
+        sigfillset(&signalDefaults)
+        posix_spawnattr_setsigdefault(&attr, &signalDefaults)
+
+        let arguments = ["/bin/sh", "-c", sweepScript, "sh", String(getpid()), listPath,
+                         String(sweepFirstDelaySeconds), String(sweepSecondGapSeconds)]
+        let argv = arguments.map { strdup($0) } + [nil]
+        let envp = ProcessInfo.processInfo.environment.map { strdup("\($0.key)=\($0.value)") } + [nil]
+        defer {
+            argv.forEach { free($0) }
+            envp.forEach { free($0) }
+        }
+        var pid: pid_t = 0
+        return posix_spawn(&pid, "/bin/sh", &actions, &attr, argv, envp) == 0
     }
 
     /// A new, empty suite named `name`, registered for removal.
@@ -181,39 +397,21 @@ enum TestDefaults {
     static func removeAll() {
         let names = registry.drain()
         names.forEach(remove)
-        sweepAfterExit(names)
+        sweepAfterExit()
     }
 
-    /// 0.8.9: cfprefsd writes an emptied domain back as a `{}` plist when
-    /// the process disconnects, after anything this process could delete
-    /// (a bare `swift test` left ~175 per run that way). So for a bare run,
-    /// a detached `sh` waits for this process to be gone and then, twice,
-    /// `defaults delete`s each listed domain and deletes its plist, the
-    /// exact path and only test-shaped names. Under
-    /// Scripts/test.sh (TANKARD_TEST_DEFAULTS_LIST set) the script does this.
-    private static func sweepAfterExit(_ names: [String]) {
+    /// Used only when the early sweeper could not be spawned, and only for
+    /// a normal exit (this runs from `atexit`, which a kill skips). Same
+    /// script and list. Not a new session: a kill of this process group
+    /// would take it too, which is the hole the early sweeper closes.
+    /// Under Scripts/test.sh the script's own two passes do this.
+    private static func sweepAfterExit() {
+        guard !sweeper.isArmed else { return }
         guard ProcessInfo.processInfo.environment["TANKARD_TEST_DEFAULTS_LIST"] == nil else { return }
-        let safe = names.filter {
-            ($0.hasPrefix("net.mindtricks.tankard.tests.") || $0.hasPrefix("tankard-test-")) && !$0.contains("/")
-        }
-        guard !safe.isEmpty else { return }
         let p = Process()
         p.executableURL = URL(fileURLWithPath: "/bin/sh")
-        // 0.9.0: `rm` alone wasn't enough: cfprefsd still held about a third
-        // of the domains and wrote them back as `{}` seconds after the sweep
-        // (~165 per bare run; ~1,900 had piled up). `defaults delete` first,
-        // as Scripts/test.sh does (that leaves none), makes cfprefsd drop
-        // the domain; a second pass catches any late write-back.
-        p.arguments = ["-c", """
-            while kill -0 "$1" 2>/dev/null; do sleep 0.2; done; shift
-            for pass in 1 2; do
-                sleep 3
-                for n; do
-                    /usr/bin/defaults delete "$n" >/dev/null 2>&1
-                    rm -f "$HOME/Library/Preferences/$n.plist"
-                done
-            done
-            """, "sh", String(getpid())] + safe
+        p.arguments = ["-c", sweepScript, "sh", String(getpid()), sweeper.listPath,
+                       String(sweepFirstDelaySeconds), String(sweepSecondGapSeconds)]
         p.standardInput = FileHandle.nullDevice
         p.standardOutput = FileHandle.nullDevice
         p.standardError = FileHandle.nullDevice
