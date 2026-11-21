@@ -42,14 +42,18 @@ public struct BrewfilePreview: Equatable, Sendable {
     /// 0.8.9 (security review F4): SHA-256 of the text shown, so brew runs
     /// only the file the user saw (`BrewfileStore.check(path:expectedDigest:)`).
     public var digest: String
+    /// 0.9.0: the text calls `require`, `require_relative`, `load`, `__dir__`
+    /// or `__FILE__`. A warning on the preview: the check still runs.
+    public var loadsOtherFiles: Bool
 
     public init(path: String, entries: [BrewfileEntry], notRead: [BrewfileUnreadLine], quarantined: Bool,
-                digest: String = "") {
+                digest: String = "", loadsOtherFiles: Bool = false) {
         self.path = path
         self.entries = entries
         self.notRead = notRead
         self.quarantined = quarantined
         self.digest = digest
+        self.loadsOtherFiles = loadsOtherFiles
     }
 
     public func names(_ kind: BrewfileKind?) -> [String] { entries.filter { $0.kind == kind }.map(\.name) }
@@ -74,7 +78,15 @@ public enum BrewfileStaticReader {
             }
         }
         return BrewfilePreview(path: path, entries: entries, notRead: notRead, quarantined: quarantined,
-                               digest: digest(text))
+                               digest: digest(text), loadsOtherFiles: loadsOtherFiles(text))
+    }
+
+    /// 0.9.0: `require`, `require_relative`, `load`, `__dir__` or `__FILE__`
+    /// as a Ruby token, outside comments and string literals. Tankard runs
+    /// a private copy, so a path relative to the Brewfile won't be found.
+    /// A warning, never a refusal.
+    public static func loadsOtherFiles(_ text: String) -> Bool {
+        BrewfileLoadScan.contains(text)
     }
 
     /// 0.8.9 (F4): hex SHA-256 of the file's text (its UTF-8 bytes).
@@ -219,5 +231,330 @@ public enum BrewfileStaticReader {
     /// macOS marked the file as downloaded (`com.apple.quarantine`).
     public static func isQuarantined(_ path: String) -> Bool {
         getxattr(path, "com.apple.quarantine", nil, 0, 0, 0) >= 0
+    }
+}
+
+/// `require` / `require_relative` / `load` / `__dir__` / `__FILE__` as Ruby
+/// tokens. Comments, string and symbol literals, and percent-literals don't
+/// count; `#{ }` interpolation is code and does. A word that only contains
+/// one of those names (`required`, `download`) is a different token.
+private enum BrewfileLoadScan {
+    static let tokens: Set<String> = ["require", "require_relative", "load", "__dir__", "__FILE__"]
+
+    static func contains(_ text: String) -> Bool {
+        var scanner = Scanner(chars: Array(text))
+        return scanner.scanFile()
+    }
+
+    struct Scanner {
+        var chars: [Character]
+        var i = 0
+        /// True only at column 0. Ruby's `=begin` is a comment only there.
+        var lineStart = true
+        /// Heredocs opened on the current line; their bodies follow the newline.
+        var heredocs: [Heredoc] = []
+
+        struct Heredoc {
+            var ident: String
+            var interpolate: Bool
+            var indented: Bool
+        }
+
+        mutating func scanFile() -> Bool {
+            scanCode(inInterpolation: false)
+        }
+
+        mutating func scanCode(inInterpolation: Bool) -> Bool {
+            var braces = 0
+            while i < chars.count {
+                if lineStart, skipBlockComment() { continue }
+                let c = chars[i]
+                if c == "\n" {
+                    i += 1
+                    lineStart = true
+                    if !inInterpolation, drainHeredocs() { return true }
+                    continue
+                }
+                if c == " " || c == "\t" || c == "\r" {
+                    i += 1
+                    lineStart = false
+                    continue
+                }
+                lineStart = false
+                if inInterpolation, braces == 0, c == "}" {
+                    i += 1
+                    return false
+                }
+                if c == "#" { skipLine(); continue }
+                if c == "'" { if scanQuoted(end: "'", interpolate: false) { return true }; continue }
+                if c == "\"" { if scanQuoted(end: "\"", interpolate: true) { return true }; continue }
+                if c == "`" { if scanQuoted(end: "`", interpolate: true) { return true }; continue }
+                if c == ":" { if scanSymbol() { return true }; continue }
+                if c == "@" { skipIvar(); continue }
+                if c == "$" { skipGlobal(); continue }
+                if c == "?" { skipCharacterLiteral(); continue }
+                if c == "%" { if scanPercent() { return true }; continue }
+                if c == "<", !inInterpolation, openHeredoc() { continue }
+                if c == "{" { braces += 1; i += 1; continue }
+                if c == "}" {
+                    if braces > 0 { braces -= 1; i += 1; continue }
+                    if inInterpolation { i += 1; return false }
+                    i += 1
+                    continue
+                }
+                if isIdentStart(c) {
+                    if BrewfileLoadScan.tokens.contains(readIdent()) { return true }
+                    continue
+                }
+                i += 1
+            }
+            return false
+        }
+
+        mutating func skipBlockComment() -> Bool {
+            guard match("=begin"), atBoundary(after: "=begin".count) else { return false }
+            skipLine()
+            if i < chars.count, chars[i] == "\n" { i += 1 }
+            while i < chars.count {
+                if match("=end"), atBoundary(after: "=end".count) {
+                    skipLine()
+                    if i < chars.count, chars[i] == "\n" { i += 1 }
+                    lineStart = true
+                    return true
+                }
+                skipLine()
+                if i < chars.count, chars[i] == "\n" { i += 1 }
+            }
+            return true
+        }
+
+        /// The character `n` ahead is whitespace, a comment, or the end: `=begin`
+        /// and `=end` aren't comments when more of an identifier follows.
+        func atBoundary(after n: Int) -> Bool {
+            let j = i + n
+            guard j < chars.count else { return true }
+            let c = chars[j]
+            return c == " " || c == "\t" || c == "\r" || c == "\n" || c == "#"
+        }
+
+        func match(_ s: String) -> Bool {
+            let want = Array(s)
+            guard i + want.count <= chars.count else { return false }
+            return chars[i..<(i + want.count)].elementsEqual(want)
+        }
+
+        mutating func skipLine() {
+            while i < chars.count, chars[i] != "\n" { i += 1 }
+        }
+
+        mutating func scanQuoted(end: Character, interpolate: Bool) -> Bool {
+            i += 1
+            while i < chars.count {
+                let c = chars[i]
+                if c == "\\" {
+                    i += 1
+                    if i < chars.count { i += 1 }
+                    continue
+                }
+                if interpolate, c == "#", peekNext("{") {
+                    i += 2
+                    if scanCode(inInterpolation: true) { return true }
+                    continue
+                }
+                if c == end { i += 1; return false }
+                i += 1
+            }
+            return false
+        }
+
+        /// `:name` and `:"..."` are symbols, not calls. `::` is scope, so the
+        /// name after it is still scanned as code.
+        mutating func scanSymbol() -> Bool {
+            i += 1
+            guard i < chars.count else { return false }
+            let c = chars[i]
+            if c == ":" { return false }
+            if c == "'" { return scanQuoted(end: "'", interpolate: false) }
+            if c == "\"" { return scanQuoted(end: "\"", interpolate: true) }
+            if isIdentStart(c) { _ = readIdent(); return false }
+            return false
+        }
+
+        mutating func skipIvar() {
+            i += 1
+            if i < chars.count, chars[i] == "@" { i += 1 }
+            if i < chars.count, isIdentStart(chars[i]) { _ = readIdent() }
+        }
+
+        mutating func skipGlobal() {
+            i += 1
+            if i < chars.count, isIdentStart(chars[i]) { _ = readIdent() }
+            else if i < chars.count { i += 1 }
+        }
+
+        /// `?a` and `?\n` are one character. A ternary's `?` is followed by
+        /// space, which is left for the next token.
+        mutating func skipCharacterLiteral() {
+            i += 1
+            guard i < chars.count else { return }
+            if chars[i] == "\\" {
+                i += 1
+                if i < chars.count { i += 1 }
+                return
+            }
+            if chars[i] != " " && chars[i] != "\t" && chars[i] != "\n" && chars[i] != "\r" { i += 1 }
+        }
+
+        /// `%q{}` and the other percent literals. Not `%` used as modulo.
+        /// Only `#{ }` inside an interpolating literal is code.
+        mutating func scanPercent() -> Bool {
+            let start = i
+            i += 1
+            guard i < chars.count else { return false }
+            var type: Character = "Q"
+            if "qQwWiIsSrRxX".contains(chars[i]) {
+                let next = i + 1 < chars.count ? chars[i + 1] : nil
+                if let next, isDelimiter(next) {
+                    type = chars[i]
+                    i += 1
+                }
+            }
+            guard i < chars.count, isDelimiter(chars[i]) else {
+                i = start + 1
+                return false
+            }
+            let open = chars[i]
+            i += 1
+            let close = closing(open)
+            let interpolate = "QWIrRx".contains(type)
+            return scanDelimited(open: open, close: close, interpolate: interpolate)
+        }
+
+        func isDelimiter(_ c: Character) -> Bool {
+            !(c.isLetter || c.isNumber || c == " " || c == "\t" || c == "\n" || c == "\r")
+        }
+
+        func closing(_ open: Character) -> Character {
+            switch open {
+            case "(": return ")"
+            case "[": return "]"
+            case "{": return "}"
+            case "<": return ">"
+            default: return open
+            }
+        }
+
+        mutating func scanDelimited(open: Character, close: Character, interpolate: Bool) -> Bool {
+            var depth = 1
+            while i < chars.count, depth > 0 {
+                let c = chars[i]
+                if c == "\\" {
+                    i += 1
+                    if i < chars.count { i += 1 }
+                    continue
+                }
+                if interpolate, c == "#", peekNext("{") {
+                    i += 2
+                    if scanCode(inInterpolation: true) { return true }
+                    continue
+                }
+                if open != close, c == open { depth += 1; i += 1; continue }
+                if c == close {
+                    depth -= 1
+                    i += 1
+                    continue
+                }
+                i += 1
+            }
+            return false
+        }
+
+        /// `<<EOF`, `<<-EOF`, `<<~EOF`, and quoted markers. The body is the
+        /// following lines; the rest of this line is still code.
+        mutating func openHeredoc() -> Bool {
+            guard peekNext("<") else { return false }
+            var j = i + 2
+            var indented = false
+            if j < chars.count, chars[j] == "-" || chars[j] == "~" {
+                indented = true
+                j += 1
+            }
+            var quoted: Character?
+            if j < chars.count, chars[j] == "'" || chars[j] == "\"" || chars[j] == "`" {
+                quoted = chars[j]
+                j += 1
+            }
+            guard j < chars.count, isIdentStart(chars[j]) else { return false }
+            var k = j + 1
+            while k < chars.count, isIdentCont(chars[k]) { k += 1 }
+            if let q = quoted {
+                guard k < chars.count, chars[k] == q else { return false }
+                k += 1
+            }
+            let ident = String(chars[j..<k])
+            let interpolate = quoted != "'"
+            heredocs.append(Heredoc(ident: ident, interpolate: interpolate, indented: indented))
+            i = k
+            return true
+        }
+
+        mutating func drainHeredocs() -> Bool {
+            while !heredocs.isEmpty {
+                let h = heredocs[0]
+                if i >= chars.count { heredocs.removeAll(); return false }
+                if isHeredocEnd(h) {
+                    skipLine()
+                    if i < chars.count, chars[i] == "\n" { i += 1 }
+                    heredocs.removeFirst()
+                    lineStart = true
+                    continue
+                }
+                if scanHeredocLine(interpolate: h.interpolate) { return true }
+            }
+            return false
+        }
+
+        func isHeredocEnd(_ h: Heredoc) -> Bool {
+            var j = i
+            if h.indented {
+                while j < chars.count, chars[j] == " " || chars[j] == "\t" { j += 1 }
+            }
+            let want = Array(h.ident)
+            guard j + want.count <= chars.count, chars[j..<(j + want.count)].elementsEqual(want) else { return false }
+            j += want.count
+            while j < chars.count, chars[j] == " " || chars[j] == "\t" || chars[j] == "\r" { j += 1 }
+            return j >= chars.count || chars[j] == "\n"
+        }
+
+        mutating func scanHeredocLine(interpolate: Bool) -> Bool {
+            while i < chars.count, chars[i] != "\n" {
+                if chars[i] == "\\" {
+                    i += 1
+                    if i < chars.count, chars[i] != "\n" { i += 1 }
+                    continue
+                }
+                if interpolate, chars[i] == "#", peekNext("{") {
+                    i += 2
+                    if scanCode(inInterpolation: true) { return true }
+                    continue
+                }
+                i += 1
+            }
+            if i < chars.count, chars[i] == "\n" { i += 1 }
+            return false
+        }
+
+        mutating func readIdent() -> String {
+            let start = i
+            i += 1
+            while i < chars.count, isIdentCont(chars[i]) { i += 1 }
+            if i < chars.count, chars[i] == "?" || chars[i] == "!" { i += 1 }
+            return String(chars[start..<i])
+        }
+
+        func peekNext(_ s: Character) -> Bool { i + 1 < chars.count && chars[i + 1] == s }
+
+        func isIdentStart(_ c: Character) -> Bool { c == "_" || c.isLetter }
+        func isIdentCont(_ c: Character) -> Bool { c == "_" || c.isLetter || ("0"..."9").contains(c) }
     }
 }

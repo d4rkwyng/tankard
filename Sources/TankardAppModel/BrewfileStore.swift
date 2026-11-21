@@ -240,6 +240,11 @@ public final class BrewfileStore {
         set(.preview(p))
     }
 
+    /// 0.9.0: the preview and the confirm page. Not a refusal.
+    public static var loadsOtherFilesWarning: String {
+        String(localized: "This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found.")
+    }
+
     /// The confirmation's words. `quarantined`: the louder warning first.
     public static func runWarning(quarantined: Bool) -> [String] {
         var out: [String] = []

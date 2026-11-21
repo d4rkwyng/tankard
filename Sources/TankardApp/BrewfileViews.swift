@@ -201,6 +201,18 @@ struct BrewfileSheet: View {
         }
     }
 
+    /// 0.9.0: a relative `require` won't be found from the private copy.
+    /// Shown on the preview and again on the confirm page. The check stays available.
+    @ViewBuilder
+    private func loadsOtherFilesNote(_ show: Bool) -> some View {
+        if show {
+            Text(verbatim: BrewfileStore.loadsOtherFilesWarning)
+                .font(.system(size: 11.5))
+                .foregroundStyle(.orange)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
     /// 0.8.8: the plain lines, read without running the file.
     private func preview(_ p: BrewfilePreview) -> some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -211,6 +223,7 @@ struct BrewfileSheet: View {
                 Label("Downloaded from the internet", systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 11.5, weight: .semibold)).foregroundStyle(.orange)
             }
+            loadsOtherFilesNote(p.loadsOtherFiles)
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(Self.groups.filter { $0.0 != nil }, id: \.1) { kind, title in
@@ -263,6 +276,7 @@ struct BrewfileSheet: View {
                     .foregroundStyle(p.quarantined && i == 0 ? Color.red : Color.primary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            loadsOtherFilesNote(p.loadsOtherFiles)
             HStack {
                 Spacer()
                 Button("Back") { brewfile.cancelBrewCheck() }.keyboardShortcut(.cancelAction)

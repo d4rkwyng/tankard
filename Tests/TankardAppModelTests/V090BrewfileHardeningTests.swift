@@ -177,4 +177,75 @@ struct V090BrewfileHardeningTests {
         #expect(s.page == .failed(BrewfileStore.changedMessage))
         #expect(paths.files.isEmpty)
     }
+
+    /// A relative require won't resolve from the private copy. Warn, and still check.
+    @Test func loadTokensAreWarnedAndTheCheckStillRuns() async throws {
+        let tokens = ["require \"helper\"", "require_relative \"helper\"", "load \"helper\"",
+                      "puts __dir__", "puts __FILE__", "Kernel.require \"helper\"",
+                      "brew \"jq#" + "{require 'x'}\""]
+        for text in tokens {
+            #expect(BrewfileStaticReader.loadsOtherFiles(text), "\(text)")
+        }
+        let text = "require \"helper\"\nbrew \"jq\"\n"
+        let preview = BrewfileStaticReader.preview(path: "/b", text: text, quarantined: false)
+        #expect(preview.loadsOtherFiles)
+        #expect(preview.names(.formula) == ["jq"])
+        #expect(BrewfileStore.loadsOtherFilesWarning == "This Brewfile loads other files. Tankard runs a private copy, so files it loads by a path relative to the Brewfile won't be found.")
+        let store = BrewfileStore()
+        store.readBytes = { _ in Data(text.utf8) }
+        store.run = { _ in Self.ok }
+        store.preview(path: "/b")
+        guard case .preview(let shown) = store.page else { Issue.record("no preview"); return }
+        #expect(shown.loadsOtherFiles)
+        store.requestBrewCheck()
+        guard case .confirmRun(let asked) = store.page else { Issue.record("no confirm"); return }
+        #expect(asked.loadsOtherFiles)
+        store.check(path: "/b", expectedDigest: shown.digest)
+        await store.waitForIdle()
+        #expect(store.page == .checked(BrewfileCheckResult(path: "/b", missing: [])))
+    }
+
+    /// Ordinary lines, a longer identifier, a string and a symbol are not that token.
+    @Test func ordinaryBrewfileIsNotWarned() {
+        let text = """
+        tap "user/repo"
+        brew "jq"
+        cask "firefox"
+        mas "Xcode", id: 497799835
+        required = 1
+        download "x"
+        preload "x"
+        puts __file__
+        puts __dirname
+        brew "require"
+        brew 'load'
+        :require
+        @require
+        $load
+        %q{require "x"}
+        <<EOF
+        require "inside a heredoc"
+        EOF
+        """
+        #expect(!BrewfileStaticReader.loadsOtherFiles(text))
+        #expect(!BrewfileStaticReader.preview(path: "/b", text: text, quarantined: false).loadsOtherFiles)
+    }
+
+    /// The same words in a comment, including a trailing one and a block comment, don't count.
+    @Test func aTokenInACommentIsNotWarned() {
+        #expect(!BrewfileStaticReader.loadsOtherFiles("# require \"helper\"\n"))
+        #expect(!BrewfileStaticReader.loadsOtherFiles("brew \"jq\" # require_relative \"helper\"\n"))
+        #expect(!BrewfileStaticReader.loadsOtherFiles("brew \"jq\" # __FILE__\n"))
+        let block = """
+        =begin
+        require "helper"
+        load __dir__
+        __FILE__
+        =end
+        brew "jq"
+        """
+        #expect(!BrewfileStaticReader.loadsOtherFiles(block))
+        // Indented, so it is not a block comment: the require below is code.
+        #expect(BrewfileStaticReader.loadsOtherFiles("  =begin\nrequire \"helper\"\n"))
+    }
 }
