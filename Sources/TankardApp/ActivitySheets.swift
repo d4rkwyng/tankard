@@ -147,6 +147,7 @@ struct PlanRow: View {
         HStack(spacing: 8) {
             Image(systemName: p.kind == .cask ? "macwindow" : "shippingbox")
                 .foregroundStyle(.secondary).frame(width: 16)
+                .accessibilityLabel(String(localized: p.kind == .cask ? "Cask" : "Formula"))
             VStack(alignment: .leading, spacing: 1) {
                 Text(p.name).font(.system(size: 12, weight: .medium)).strikethrough(skipped)
                 Text("\(p.installedVersion) → \(p.currentVersion ?? "?")" + (row.warning?.estimateText.map { " · \($0)" } ?? ""))

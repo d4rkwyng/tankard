@@ -4,6 +4,16 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.9.1]
+
+### Highlights
+- **Replace's result notes stay in the sheet.** The recovery command, kept-copy location, "Stop came too late" and "may be incomplete" used to appear only as orange log lines that could be cut off at the sheet's width. The log still keeps them; the sheet now shows them wrapped and selectable under the result headline, with Copy when a note contains a command.
+- **Copy copies only Replace's recovery command.** The app name and brew command shared a sentence, so Copy included the backtick spans. The command now has its own field and Copy pastes it. Other notes are literal, so a backtick in a path isn't treated as a command; the localized sentence is unchanged.
+
+### Fixed
+- **A killed test process still gets the two-pass defaults sweep.** The sweeper used a name list based on the process ID and reread it after the owner exited. If a new test process reused that ID, its suite names could be swept too. The list now includes a token chosen when the sweeper is armed, and the sweeper gets that exact path. After the owner exits, it copies the names written so far and both passes delete only those names.
+- **VoiceOver identifies the plan's package icons.** The cask and formula icons were read as "Window" and "Box"; they are now labeled "Cask" and "Formula".
+
 ## [0.9.0] - 2026-11-21
 
 ### Highlights
