@@ -4,7 +4,7 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.9.1]
+## [0.9.1] - 2026-11-22
 
 ### Highlights
 - **Replace's result notes stay in the sheet.** The recovery command, kept-copy location, "Stop came too late" and "may be incomplete" used to appear only as orange log lines that could be cut off at the sheet's width. The log still keeps them; the sheet now shows them wrapped and selectable under the result headline, with Copy when a note contains a command.
