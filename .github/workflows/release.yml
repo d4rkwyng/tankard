@@ -114,7 +114,8 @@ jobs:
           tag_name: ${{ env.TAG }}
           files: dist/Tankard.zip
           body_path: ${{ runner.temp }}/release-notes.md
-          # A tag with a suffix (v0.3.1-rc1) is a test build: a draft
-          # release, never "latest", so the cask and users don't see it.
-          draft: ${{ contains(env.TAG, '-') }}
+          # Every tag creates a draft so a final tag is never Latest
+          # until we publish it by hand after the VM checks. A suffix
+          # (v0.3.1-rc1) is also a prerelease. Notarization is unchanged.
+          draft: true
           prerelease: ${{ contains(env.TAG, '-') }}
