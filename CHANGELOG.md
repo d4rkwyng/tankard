@@ -4,11 +4,6 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [0.9.2]
-
-### Fixed
-- **The menu-bar check time stays current.** It could say "Checked just now" long after the window showed an older check. The menu now updates its relative time while it is open, so it stays in step with the window.
-
 ## [0.9.1]
 
 ### Highlights
@@ -16,6 +11,7 @@ are its section below (`Scripts/changelog-section.sh`).
 - **Copy copies only Replace's recovery command.** The app name and brew command shared a sentence, so Copy included the backtick spans. The command now has its own field and Copy pastes it. Other notes are literal, so a backtick in a path isn't treated as a command; the localized sentence is unchanged.
 
 ### Fixed
+- **The menu-bar check time stays current.** It could say "Checked just now" long after the window showed an older check. The menu now updates its relative time while it is open, so it stays in step with the window.
 - **A killed test process still gets the two-pass defaults sweep.** The sweeper used a name list based on the process ID and reread it after the owner exited. If a new test process reused that ID, its suite names could be swept too. The list now includes a token chosen when the sweeper is armed, and the sweeper gets that exact path. After the owner exits, it copies the names written so far and both passes delete only those names.
 - **VoiceOver identifies the plan's package icons.** The cask and formula icons were read as "Window" and "Box"; they are now labeled "Cask" and "Formula".
 - **The upgrade header includes upgrades left out of Upgrade All.** When every listed upgrade was pinned or held, the header said everything was up to date even though the Upgrades filter still showed them. It now says how many aren't included.
