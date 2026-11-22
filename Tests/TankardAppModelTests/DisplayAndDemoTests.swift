@@ -121,6 +121,7 @@ struct DisplayAndDemoTests {
         let now = Date()
         #expect(updatedAgo(now.addingTimeInterval(-20), now: now) == "just now")
         #expect(updatedAgo(now.addingTimeInterval(-125), now: now) == "2 min ago")
+        #expect(updatedAgo(now.addingTimeInterval(-48 * 60), now: now) == "48 min ago")
         #expect(updatedAgo(now.addingTimeInterval(-7300), now: now) == "2 h ago")
     }
 
