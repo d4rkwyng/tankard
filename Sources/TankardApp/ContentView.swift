@@ -407,7 +407,7 @@ struct SummaryStrip: View {
             if let (ready, detail) = SummaryText.upgrades(summary, targets: store.upgradable) {
                 Circle().fill(theme.upgrade).frame(width: 7, height: 7)
                 Text(ready).fontWeight(.semibold).foregroundStyle(theme.upgrade)
-                if showDetail { Text(detail).foregroundStyle(.secondary) }
+                if showDetail, !detail.isEmpty { Text(detail).foregroundStyle(.secondary) }
             } else if store.upgradeCheckFailed {
                 // 0.8.8 (gauntlet 3, B6): not "Everything is up to date"
                 // when the check failed.
