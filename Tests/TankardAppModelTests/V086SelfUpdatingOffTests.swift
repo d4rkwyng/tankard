@@ -77,6 +77,33 @@ struct V086SelfUpdatingOffTests {
         #expect(await waitUntil { store.packages.first { $0.name == "tailscale-app" }?.isUpgradeTarget == true })
     }
 
+    // 0.9.1 (HK-47 NO-GO on rc1): recovered info versions keep
+    // tailscale-app's upgrade visible (upgradeAvailable, selfUpdateHeld).
+    // Auto-update must still leave it to the app's own updater, with
+    // "Don't quit running apps" on or off, and say why in the log. Once the
+    // user chooses "Homebrew updates it", it runs again.
+    @Test func autoUpdateLeavesHeldSelfUpdatingCasksToTheirApp() async throws {
+        let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0), settings: testSettings())
+        await store.start()
+        #expect(!store.insights.settings.includeSelfUpdatingApps)
+        let ts = { store.packages.first { $0.name == "tailscale-app" } }
+        #expect(ts()?.upgradeAvailable == true && ts()?.selfUpdateHeld == true)
+        for dontQuit in [true, false] {
+            let plan = AutoUpdateSafeMode.plan(store.packages, classifier: store.deps.classifier, running: [],
+                                               dontQuitApps: dontQuit, rules: store.upgradeRules.snapshot)
+            #expect(!plan.run.contains { $0.name == "tailscale-app" }, "dontQuitApps: \(dontQuit)")
+            #expect(plan.skipped.contains { $0.package.name == "tailscale-app" && $0.reason == .appUpdatesItself },
+                    "dontQuitApps: \(dontQuit)")
+            #expect(plan.run.allSatisfy { $0.selfUpdateHeld != true })
+        }
+        // "Homebrew updates it": not held, so auto-update runs it.
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew)
+        #expect(await waitUntil { ts()?.isUpgradeTarget == true })
+        let plan = AutoUpdateSafeMode.plan(store.packages, classifier: store.deps.classifier, running: [],
+                                           dontQuitApps: true, rules: store.upgradeRules.snapshot)
+        #expect(plan.run.contains { $0.name == "tailscale-app" })
+    }
+
     @Test func theSettingSaysWhatItDoes() {
         #expect(SettingsHelp.includeSelfUpdatingApps.contains("Off, Tankard leaves them to their own updater"))
     }

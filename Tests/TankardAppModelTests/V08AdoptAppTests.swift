@@ -191,9 +191,11 @@ struct V08AdoptAppTests {
         let ts = { store.packages.first { $0.name == "tailscale-app" } }
         // Recovered info versions keep the upgrade visible while the app owns it.
         #expect(ts()?.upgradeAvailable == true && ts()?.selfUpdateHeld == true && ts()?.isUpgradeTarget == false)
-        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew) // re-reads with --greedy
-        #expect(await waitUntil { ts()?.upgradeAvailable == true })
-        #expect(ts()?.selfUpdatingUpgrade == true && ts()?.isUpgradeTarget == true)
+        // "Homebrew updates it": upgradeAvailable is already true (recovered
+        // above); what changes is the hold, so wait for it to become a target.
+        store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew)
+        #expect(await waitUntil { ts()?.isUpgradeTarget == true })
+        #expect(ts()?.upgradeAvailable == true && ts()?.selfUpdatingUpgrade == true && ts()?.selfUpdateHeld == nil)
         #expect(store.upgradable.contains { $0.name == "tailscale-app" })
         // "App updates itself": still listed by brew, but not a target.
         store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .app)
