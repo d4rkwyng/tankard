@@ -319,6 +319,7 @@ public final class InsightsStore {
     /// Idempotent: every field is set from scratch.
     public func decorate(_ report: StatusReport) -> StatusReport {
         var r = settings.includeSelfUpdatingApps ? report : SelfUpdatingCasks.unmark(report, keeping: keepSelfUpdating)
+        r = SelfUpdatingCasks.recoverFromInfoVersions(r)
         for i in r.packages.indices {
             r.packages[i].vulnerabilities = vulnerabilityScan?.vulnerabilities(for: r.packages[i])
             r.packages[i].diskBytes = sizes?.bytes(for: r.packages[i])

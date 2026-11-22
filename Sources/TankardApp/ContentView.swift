@@ -437,7 +437,9 @@ struct SummaryStrip: View {
     /// Everything the strip's left side says, unshortened, for its tooltip.
     private var fullText: String {
         guard let report = store.report else { return "" }
-        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map { "\($0.0) \($0.1)" }
+        var second = SummaryText.upgrades(report.summary, targets: store.upgradable).map {
+            $0.1.isEmpty ? $0.0 : "\($0.0) \($0.1)"
+        }
             ?? (store.upgradeCheckFailed ? String(localized: "Couldn't check for upgrades") : String(localized: "Everything is up to date"))
         if let total = store.totalDiskBytes {
             second += " " + String(localized: "· \(DiskSizes.format(total)) on disk (brew info --sizes: kegs and Caskroom folders, apps through their links)")

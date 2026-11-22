@@ -13,6 +13,9 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Fixed
 - **A killed test process still gets the two-pass defaults sweep.** The sweeper used a name list based on the process ID and reread it after the owner exited. If a new test process reused that ID, its suite names could be swept too. The list now includes a token chosen when the sweeper is armed, and the sweeper gets that exact path. After the owner exits, it copies the names written so far and both passes delete only those names.
 - **VoiceOver identifies the plan's package icons.** The cask and formula icons were read as "Window" and "Box"; they are now labeled "Cask" and "Formula".
+- **The upgrade header includes upgrades left out of Upgrade All.** When every listed upgrade was pinned or held, the header said everything was up to date even though the Upgrades filter still showed them. It now says how many aren't included.
+- **Self-updating casks show tap versions that Homebrew can upgrade to.** A newer version could appear in Available without an upgrade arrow or count when `brew outdated` omitted the cask. Tankard now compares installed and tap versions, keeps those upgrades visible and counted, and still leaves them out of Upgrade All unless requested.
+- **Long command paths wrap at path separators.** Fetch commands used to break inside paths such as `homebrew/core/libffi`. They now wrap at slashes, using invisible break points after each `/`. Copy and the tooltip keep the original command; the command text itself isn't selectable, so those break points don't end up on the pasteboard.
 
 ## [0.9.0] - 2026-11-21
 

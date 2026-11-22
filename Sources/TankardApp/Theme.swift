@@ -394,9 +394,9 @@ struct CommandBox: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            Text(command)
+            // Use the Copy button so inserted zero-width spaces aren't copied.
+            Text(CommandText.breakable(command))
                 .font(.system(size: 11, design: .monospaced))
-                .textSelection(.enabled)
                 // 0.8: wraps in full (up to 5 lines, then cut at the end).
                 // A 2-line limit with .middle drew one line cut mid-word
                 // ("brew ins…ll --cask --adopt") in the upgrade sheet.
@@ -404,6 +404,8 @@ struct CommandBox: View {
                 .truncationMode(.tail)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .help(command)
+                .accessibilityLabel(command)
             Button {
                 copyToPasteboard(command)
                 copied = true

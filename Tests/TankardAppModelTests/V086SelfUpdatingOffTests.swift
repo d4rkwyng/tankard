@@ -64,9 +64,17 @@ struct V086SelfUpdatingOffTests {
         let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0), settings: settings)
         await store.start()
         #expect(!store.insights.settings.includeSelfUpdatingApps)
+        let tailscale = try #require(store.packages.first { $0.name == "tailscale-app" })
+        #expect(tailscale.installedVersion == "1.104.5" && tailscale.currentVersion == "1.104.7")
+        #expect(tailscale.upgradeAvailable && tailscale.selfUpdateHeld == true)
+        #expect(!tailscale.isUpgradeTarget && tailscale.isManualUpgradeTarget)
+        let (header, _) = try #require(SummaryText.upgrades(StatusSummary(packages: [tailscale]), targets: []))
+        #expect(header == "1 upgrade not included")
         let selfUpdating = store.packages.filter { $0.kind == .cask && $0.autoUpdates == true && $0.upgradeAvailable }
         try #require(!selfUpdating.isEmpty)
         #expect(store.upgradable.allSatisfy { !($0.kind == .cask && $0.autoUpdates == true) })
+        store.insights.settings.includeSelfUpdatingApps = true
+        #expect(await waitUntil { store.packages.first { $0.name == "tailscale-app" }?.isUpgradeTarget == true })
     }
 
     @Test func theSettingSaysWhatItDoes() {

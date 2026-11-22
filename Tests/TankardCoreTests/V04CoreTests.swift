@@ -226,6 +226,32 @@ struct SelfUpdatingCaskTests {
         #expect(SelfUpdatingCasks.mark(report, greedy: greedy).packages[0].upgradeAvailable == false)
     }
 
+    @Test func infoVersionsRecoverOnlyOlderAutoUpdatingCasks() throws {
+        var report = try armReport()
+        let tailscale = try #require(report.packages.first { $0.name == "tailscale-app" })
+        let greedy = try Fixture.outdated("arm64-outdated-greedy")
+        let unmarked = SelfUpdatingCasks.unmark(SelfUpdatingCasks.mark(report, greedy: greedy))
+        report = SelfUpdatingCasks.recoverFromInfoVersions(unmarked)
+        let recovered = try #require(report.packages.first { $0.name == "tailscale-app" })
+        #expect(tailscale.installedVersion == "1.104.5" && tailscale.currentVersion == "1.104.7")
+        #expect(recovered.upgradeAvailable)
+        #expect(recovered.selfUpdatingUpgrade == true)
+
+        var current = tailscale
+        current.installedVersion = try #require(current.currentVersion)
+        current.upgradeAvailable = false
+        report.packages = [current]
+        #expect(!SelfUpdatingCasks.recoverFromInfoVersions(report).packages[0].upgradeAvailable)
+
+        var ahead = tailscale
+        ahead.installedVersion = "1.104.8"
+        ahead.currentVersion = "1.104.7"
+        ahead.status = .newer
+        ahead.upgradeAvailable = false
+        report.packages = [ahead]
+        #expect(!SelfUpdatingCasks.recoverFromInfoVersions(report).packages[0].upgradeAvailable)
+    }
+
     @Test func clientAsksForCasksOnly() async throws {
         let data = try Fixture.data("arm64-outdated-greedy")
         let runner = FakeRunner { _, _ in ok(data) }

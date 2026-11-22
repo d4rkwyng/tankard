@@ -189,7 +189,8 @@ struct V08AdoptAppTests {
         await store.start()
         #expect(store.insights.settings.includeSelfUpdatingApps == false)
         let ts = { store.packages.first { $0.name == "tailscale-app" } }
-        #expect(ts()?.upgradeAvailable == false)
+        // Recovered info versions keep the upgrade visible while the app owns it.
+        #expect(ts()?.upgradeAvailable == true && ts()?.selfUpdateHeld == true && ts()?.isUpgradeTarget == false)
         store.upgradeRules.setSelfUpdatePolicy("homebrew/cask/tailscale-app", .homebrew) // re-reads with --greedy
         #expect(await waitUntil { ts()?.upgradeAvailable == true })
         #expect(ts()?.selfUpdatingUpgrade == true && ts()?.isUpgradeTarget == true)

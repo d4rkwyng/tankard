@@ -94,4 +94,25 @@ public enum SelfUpdatingCasks {
         r.summary = StatusSummary(packages: r.packages)
         return r
     }
+
+    /// Restores auto-updating casks that brew's regular outdated flag omitted
+    /// when info still gives a newer tap version. This also covers the
+    /// initial status read before `outdated --greedy` has returned.
+    public static func recoverFromInfoVersions(_ report: StatusReport) -> StatusReport {
+        var r = report
+        for i in r.packages.indices {
+            let p = r.packages[i]
+            guard p.kind == .cask, p.autoUpdates == true, p.status != .newer,
+                  !p.upgradeAvailable,
+                  let current = p.currentVersion,
+                  !p.installedVersion.isEmpty,
+                  p.installedVersion != "latest", current != "latest",
+                  BrewVersion(p.installedVersion).compare(to: BrewVersion(current)) == -1
+            else { continue }
+            r.packages[i].upgradeAvailable = true
+            r.packages[i].selfUpdatingUpgrade = true
+        }
+        r.summary = StatusSummary(packages: r.packages)
+        return r
+    }
 }
