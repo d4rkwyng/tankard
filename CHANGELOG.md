@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.9.2]
+
+### Fixed
+- **The menu-bar check time stays current.** It could say "Checked just now" long after the window showed an older check. The menu now updates its relative time while it is open, so it stays in step with the window.
+
 ## [0.9.1]
 
 ### Highlights
