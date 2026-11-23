@@ -72,7 +72,7 @@ ZIP=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --seconds) SECONDS_UP=${2:?--seconds needs a value}; shift ;;
-        -h|--help) sed -n '2,53p' "$0"; exit 0 ;;
+        -h|--help) awk 'NR == 1 { next } /^#/ { print; next } { exit }' "$0"; exit 0 ;;
         -*) echo "smoke-launch.sh: unknown option $1" >&2; exit 2 ;;
         *) ZIP=$1 ;;
     esac
@@ -391,17 +391,21 @@ CRASH_WAIT=15   # ReportCrash can take several seconds; same on every path
 PID=$!
 LAUNCHED=$PID
 echo "launched pid $PID (TANKARD_DEMO=1, Homebrew sandboxed off); watching for ${SECONDS_UP}s"
+# The app must still be up after the last sleep too: an exit in the final
+# 0.25 s counts as an early exit, not a full run.
+early_exit() {
+    rc=0; wait "$PID" || rc=$?; PID=""
+    # Killed by a signal: give ReportCrash time to write its report.
+    if [ $rc -gt 128 ]; then wait_for_report "$LAUNCHED" $CRASH_WAIT; else wait_for_any_report $CRASH_WAIT; fi
+    echo "--- stderr ---" >&2; tail -40 "$TMP/stderr" >&2
+    crash=$(describe_reports "$LAUNCHED")
+    fail "Tankard exited within ${SECONDS_UP}s (exit $rc)${crash:+; crash report(s): $crash}"
+}
 for _ in $(seq 1 $((SECONDS_UP * 4))); do
-    if ! kill -0 "$PID" 2>/dev/null; then
-        rc=0; wait "$PID" || rc=$?; PID=""
-        # Killed by a signal: give ReportCrash time to write its report.
-        if [ $rc -gt 128 ]; then wait_for_report "$LAUNCHED" $CRASH_WAIT; else wait_for_any_report $CRASH_WAIT; fi
-        echo "--- stderr ---" >&2; tail -40 "$TMP/stderr" >&2
-        crash=$(describe_reports "$LAUNCHED")
-        fail "Tankard exited within ${SECONDS_UP}s (exit $rc)${crash:+; crash report(s): $crash}"
-    fi
+    kill -0 "$PID" 2>/dev/null || early_exit
     sleep 0.25
 done
+kill -0 "$PID" 2>/dev/null || early_exit
 with_alarm 10 osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($PID); if (a) a.terminate; ''" >/dev/null 2>&1 \
     || echo "note: the Quit event's osascript failed or hit its 10 s alarm" >&2
 quit=0

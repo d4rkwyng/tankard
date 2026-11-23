@@ -96,16 +96,15 @@ jobs:
       # this checkout's .build and resource folders renamed away (so a
       # Bundle.module fallback to the runner's build path can't mask a
       # missing resource bundle, First Light #22), launched for 10 s, quit
-      # with a Quit event, and no new crash report. TANKARD_DEMO=1 is set,
-      # but this Developer ID build ignores TANKARD_* (TestHooks), so the
+      # with a Quit event, and no new crash report. The script sets its own
+      # env (TANKARD_DEMO=1, HOMEBREW_NO_AUTO_UPDATE=1, every other
+      # TANKARD_*/HOMEBREW_* unset), so the step passes none. This
+      # Developer ID build ignores TANKARD_* anyway (TestHooks), so the
       # script also runs the app in a sandbox that denies /opt/homebrew and
       # /usr/local's Homebrew paths: the app never reads or starts brew.
       # It may show release.sh's launch-check status cache rather than the
       # no-Homebrew welcome; the gate does not depend on which window.
       - name: Launch smoke test
-        env:
-          TANKARD_DEMO: "1"
-          HOMEBREW_NO_AUTO_UPDATE: "1"
         run: ./Scripts/smoke-launch.sh --seconds 10 dist/Tankard.zip
 
       # Apple's notarization answer and log, kept also when the step above
