@@ -232,6 +232,9 @@ public final class AppStore {
     /// the read a finished session starts (in a Task, so `isRefreshing` is
     /// still false right after `isFinished`).
     @ObservationIgnored private(set) var refreshesCompleted = 0
+    /// How many status reads have begun (set on the main actor as each
+    /// read starts). Tests count it to see that a caller didn't start one.
+    @ObservationIgnored private(set) var refreshesStarted = 0
     /// What a running refresh is doing ("Running brew update…").
     public private(set) var refreshPhase: String?
     public internal(set) var error: StoreError?
@@ -692,6 +695,7 @@ public final class AppStore {
     }
 
     private func performRefresh(_ kind: RefreshKind) async {
+        refreshesStarted += 1
         isRefreshing = true
         defer {
             isRefreshing = false

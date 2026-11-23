@@ -64,6 +64,7 @@ struct V092RefreshJoinTests {
         await store.start()
         #expect(await waitUntil { !store.isRefreshing })
         runner.gating = true
+        let reads = store.refreshesStarted
 
         // Read A runs; B and C (both re-read after it, whatever it read)
         // wait for it.
@@ -77,7 +78,14 @@ struct V092RefreshJoinTests {
         #expect(await waitUntil(timeout: .seconds(10)) { done.value == 1 })
         try #require(await waitUntil(timeout: .seconds(10)) { runner.started >= 2 })
         // One of B and C reads; the other waits for it rather than reading too.
-        try await Task.sleep(for: .milliseconds(100))
+        // No sleep: A's end resumed B and C together on the main actor, so
+        // the other's resumption ran before the first's read began (the
+        // main actor runs jobs in order). Had it started a read too, that
+        // read's first job is queued already, and the yield lets it run
+        // before the count is checked.
+        try #require(await waitUntil(timeout: .seconds(10)) { store.refreshesStarted >= reads + 2 })
+        await Task.yield()
+        try #require(store.refreshesStarted == reads + 2, "B and C read at the same time")
         try #require(runner.started == 2, "B and C read at the same time")
         #expect(store.isRefreshing && store.refreshTask != nil)
         // A refresh asked for now joins the read that is running.

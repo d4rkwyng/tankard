@@ -44,8 +44,11 @@ extension AppStoreTests {
         while r.store.queue.runningID != session.items[1].id, ContinuousClock.now < held {
             usleep(1_000)
         }
-        #expect(r.store.queue.runningID == session.items[1].id)
-        #expect(session.items[1].state == .waiting)
+        // The race window: the queue runs the step the sheet still shows as
+        // waiting. Missed (`.started` already applied), the test stops here
+        // rather than passing without the race.
+        try #require(r.store.queue.runningID == session.items[1].id)
+        try #require(session.items[1].state == .waiting)
         session.stopAfterCurrent()
 
         second.release()
