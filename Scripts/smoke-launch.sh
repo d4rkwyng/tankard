@@ -41,10 +41,13 @@
 #      data, never Homebrew) and no window restoration, inside a sandbox
 #      profile that denies any read, write or exec under /opt/homebrew,
 #      /usr/local/Homebrew, /usr/local/Cellar, /usr/local/Caskroom and
-#      /usr/local/bin/brew. A Developer ID build ignores every TANKARD_*
-#      switch (TestHooks), so on the release runner the app launches as a
-#      user's would; the sandbox makes it see no Homebrew there, and it
-#      can't start brew either way. It must stay up N seconds, then quit
+#      /usr/local/bin/brew (self-tested first with a denied probe file in
+#      the temp folder, plus each of those paths that exists here), with
+#      HOMEBREW_* unset but HOMEBREW_NO_AUTO_UPDATE=1 and no brew on PATH.
+#      A Developer ID build ignores every TANKARD_* switch (TestHooks), so
+#      on the release runner the app launches as a user's would; the
+#      sandbox makes it see no Homebrew there, and it can't start brew
+#      either way. It must stay up N seconds, then quit
 #      with exit code 0 within 8 s of a Quit (terminate) event.
 #   5. No new crash report (.ips or .crash, new = a file name not in a
 #      listing taken before the launch; ReportCrash touches old reports'
@@ -259,7 +262,12 @@ echo "resources ok (fallbacks hidden): $loaded"
 
 # 4. A real launch, demo data only, Homebrew walled off.
 SANDBOX="$TMP/no-homebrew.sb"
-cat > "$SANDBOX" <<'SB'
+DENIED=(/opt/homebrew /usr/local/Homebrew /usr/local/Cellar /usr/local/Caskroom /usr/local/bin/brew)
+# A probe the profile also denies, so the self-test proves the profile
+# applies even on a machine with none of the Homebrew paths.
+PROBE="$TMP/deny-probe"
+mkdir "$PROBE" && : > "$PROBE/brew"
+cat > "$SANDBOX" <<SB
 (version 1)
 (allow default)
 (deny file-read* file-write* process-exec*
@@ -267,13 +275,41 @@ cat > "$SANDBOX" <<'SB'
     (subpath "/usr/local/Homebrew")
     (subpath "/usr/local/Cellar")
     (subpath "/usr/local/Caskroom")
-    (literal "/usr/local/bin/brew"))
+    (literal "/usr/local/bin/brew")
+    (subpath "$PROBE"))
 SB
-sandbox-exec -f "$SANDBOX" /bin/test -e /opt/homebrew/bin/brew \
-    && fail "the sandbox profile does not hide /opt/homebrew/bin/brew"
+# Self-test: sandbox-exec runs and allows the rest (else a failing probe
+# below would prove nothing), the probe is hidden, and so is every denied
+# path that exists on this machine.
+sandbox-exec -f "$SANDBOX" /bin/test -d "$TMP" \
+    || fail "sandbox-exec could not run /bin/test with the profile (or it denies more than Homebrew)"
+if sandbox-exec -f "$SANDBOX" /bin/test -e "$PROBE/brew"; then
+    fail "the sandbox profile does not apply (its probe $PROBE/brew is visible inside it)"
+fi
+if sandbox-exec -f "$SANDBOX" /bin/test -e "$PROBE"; then
+    fail "the sandbox profile does not hide the probe directory $PROBE"
+fi
+HB_PRESENT=()
+for d in "${DENIED[@]}"; do
+    [ -e "$d" ] || [ -L "$d" ] || continue
+    HB_PRESENT+=("$d")
+    if sandbox-exec -f "$SANDBOX" /bin/test -e "$d"; then fail "the sandbox profile does not hide $d"; fi
+done
+echo "sandbox ok: probe hidden; Homebrew path(s) present here and hidden inside: ${HB_PRESENT[*]:-none}"
+# The launched app's environment: no TANKARD_* but TANKARD_DEMO=1, no
+# HOMEBREW_* but HOMEBREW_NO_AUTO_UPDATE=1, and a PATH without any folder
+# under a denied path or holding a brew executable.
 ENV_CLEAN=(env)
-for v in $(env | sed -n 's/^\(TANKARD_[A-Z0-9_]*\)=.*/\1/p'); do ENV_CLEAN+=(-u "$v"); done
-ENV_CLEAN+=(TANKARD_DEMO=1 HOMEBREW_NO_AUTO_UPDATE=1)
+for v in $(env | sed -n 's/^\(TANKARD_[A-Za-z0-9_]*\)=.*/\1/p; s/^\(HOMEBREW_[A-Za-z0-9_]*\)=.*/\1/p'); do ENV_CLEAN+=(-u "$v"); done
+CLEAN_PATH=""
+IFS=: read -r -a PATH_DIRS <<< "$PATH"
+for p in ${PATH_DIRS[@]+"${PATH_DIRS[@]}"}; do
+    [ -n "$p" ] || continue
+    case "$p" in /opt/homebrew|/opt/homebrew/*|/usr/local/Homebrew|/usr/local/Homebrew/*|/usr/local/Cellar|/usr/local/Cellar/*|/usr/local/Caskroom|/usr/local/Caskroom/*) continue ;; esac
+    if [ -e "$p/brew" ]; then continue; fi
+    CLEAN_PATH="${CLEAN_PATH:+$CLEAN_PATH:}$p"
+done
+ENV_CLEAN+=(PATH="${CLEAN_PATH:-/usr/bin:/bin:/usr/sbin:/sbin}" TANKARD_DEMO=1 HOMEBREW_NO_AUTO_UPDATE=1)
 
 # Every name a crash report from this zip could carry: Tankard, the helper
 # (TankardPassword.app reports as TankardPassword or tankard-askpass), and
