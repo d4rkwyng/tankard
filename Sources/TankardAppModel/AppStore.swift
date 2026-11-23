@@ -426,7 +426,7 @@ public final class AppStore {
     /// 0.8.5: Electron apps on a Mac Pro 6,1 (ElectronGPU.swift).
     @ObservationIgnored public let electron: ElectronGPUStore
     @ObservationIgnored private var client: BrewClient?
-    @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private(set) var refreshTask: Task<Void, Never>?
 
     public init(deps: Dependencies, settings: AppSettings? = nil) {
         self.deps = deps
@@ -660,14 +660,21 @@ public final class AppStore {
         if kind == .scheduled { lastScheduledUpdate = nil }
         // 0.8.3: the bundle was replaced: the new instance reads status.
         if selfReplaced { return }
-        if let running = refreshTask {
+        // 0.9.2 (bug hunt): one read at a time. Two callers that waited on
+        // the same read used to start theirs together once it ended, and
+        // the first to finish cleared `refreshTask` and `isRefreshing`
+        // while the other still ran. A caller that isn't joining waits
+        // until no read is running, and clears only its own task.
+        while let running = refreshTask {
             await running.value
             if kind == .automatic { return }
+            // Its caller hasn't resumed to clear it yet.
+            if refreshTask == running { refreshTask = nil }
         }
         let task = Task { await performRefresh(kind) }
         refreshTask = task
         await task.value
-        refreshTask = nil
+        if refreshTask == task { refreshTask = nil }
     }
 
     /// 0.8.4: whether a path exists, through the client (demo mode's is
