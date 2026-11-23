@@ -328,7 +328,7 @@ extension AutoUpdateRunTests {
         // 0.9.1: the demo's outdated casks are all self-updating, which
         // auto-update leaves to their apps unless this setting is on.
         store.insights.settings.includeSelfUpdatingApps = true
-        _ = await waitUntil { store.packages.contains { $0.kind == .cask && $0.isUpgradeTarget } }
+        #expect(await waitUntil { store.packages.contains { $0.kind == .cask && $0.isUpgradeTarget } })
         store.autoUpdate.brewEnvFiles = { _ in files() }
         store.autoUpdate.settings.enabled = true
         return (store, envs, FakeNotifier())
