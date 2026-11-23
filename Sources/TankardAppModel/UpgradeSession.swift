@@ -720,8 +720,10 @@ public final class UpgradeSession: Identifiable {
     /// Lets the running command finish, then skips the rest.
     public func stopAfterCurrent() {
         stopRequested = true
-        queue.cancel(prefetchIDs.filter { fetchStates[$0] == .waiting })
-        queue.cancel(items.filter { $0.state == .waiting }.map(\.id))
+        // 0.9.2: only what the queue hasn't started. A step shown as
+        // waiting may be running already (its `.started` not applied yet).
+        queue.cancelIfWaiting(prefetchIDs.filter { fetchStates[$0] == .waiting })
+        queue.cancelIfWaiting(items.filter { $0.state == .waiting }.map(\.id))
     }
 
     /// Stops the running command too (its whole process group).

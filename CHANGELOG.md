@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Fixed
+- **Stop After Current no longer stops the next package.** When the next package had just started but the window hadn't shown it yet (for example while the "Quit anyway?" question was open), Stop After Current interrupted it like Stop Now, without asking. A package brew has started now always finishes; only the ones still waiting are skipped.
+
 ## [0.9.1] - 2026-11-22
 
 ### Highlights
