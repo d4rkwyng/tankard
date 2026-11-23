@@ -575,6 +575,35 @@ struct SettingsNote: View {
 
 // MARK: menu bar
 
+/// The menu-bar menu's notice: formulae built from source that newly have
+/// a bottle (the same list as the window's banner). Show opens Installed ▸
+/// Bottle available; replacing stays a click in the window.
+struct BottleMenuNotice: View {
+    var store: AppStore
+    var openMain: () -> Void
+
+    var body: some View {
+        if let text = store.bottleNoticeText {
+            Divider()
+            Button {
+                openMain()
+                store.showBottleAvailable()
+            } label: {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "shippingbox").foregroundStyle(.secondary)
+                    Text(text).font(.system(size: 12.5, weight: .semibold)).lineLimit(2)
+                    Spacer()
+                    Text("Show").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
+
 /// The menu-bar menu's notice: vulnerabilities found since the last look.
 struct VulnerabilityMenuNotice: View {
     var store: AppStore

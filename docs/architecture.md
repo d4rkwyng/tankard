@@ -118,7 +118,9 @@ TankardAppModel  no SwiftUI; everything the app does, tested on its own
                    WCAG contrast checks
   MenuBar          MenuBarSummary (the icon's count and list), BackgroundSchedule,
                    BackgroundChecker (the one timer: 0.3 notifications and 0.5
-                   auto-update), UpgradeNotificationDiff (0.3)
+                   auto-update), UpgradeNotificationDiff (0.3),
+                   BottleAvailableNotificationDiff (newly bottle-eligible
+                   source builds; banner in AppStore+BottleNotice)
   AutoUpdate       0.5: AutoUpdateSchedule and AutoUpdatePolicy (pure: due, AC,
                    idle, one run per slot), AutoUpdateSafeMode (the plan),
                    AutoUpdateSettings, AutoUpdateLog, AutoUpdater (one run).
@@ -817,6 +819,13 @@ Since 0.8.3 upgrade notifications carry a category with **Upgrade All…** and *
 actions; the delegate turns the response into a `NotificationRoute` (a click opens
 Installed ▸ Upgrades, Upgrade All… also opens the Upgrade All plan and never starts a run,
 Later does nothing, an automatic-update notification opens the Auto-update log).
+A formula built from source that newly passes `BottleReplacement.isEligible` after one of
+these updates (or the throttled background update) is compared the same way
+(`BottleAvailableNotificationDiff`, keys `id@version`, minus the list before the update and
+`notifiedBottles`). It always gets the window's banner; it is posted (kind
+`bottleAvailable`, `bottles-` identifier, Show / Later) only under the upgrade rules above.
+`notifiedBottles` is kept with notifications off too, and a click only opens Installed ▸
+Bottle available.
 
 **Automatic updates (0.5).** AC power comes from IOKit's power source (a battery or UPS
 waits); idle time from IOKit's `HIDIdleTime`. Never in the first 5 minutes after launch.

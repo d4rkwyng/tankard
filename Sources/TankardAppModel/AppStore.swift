@@ -341,6 +341,9 @@ public final class AppStore {
     /// Support, or an older copy still under Caches). One notice, with
     /// Show in Finder. Nothing is moved. Nil when there is none.
     public internal(set) var replaceLeftoverNotice: ReplaceLeftoverNotice?
+    /// Formulae built from source that newly have a bottle, named by the
+    /// window's banner and the menu-bar notice. See AppStore+BottleNotice.swift.
+    public internal(set) var bottleNotice: BottleNotice?
     /// 0.8.2: what the last Refresh / Check Now found ("3 new upgrades"),
     /// shown in the status bar for a few seconds. See UserCheckFeedback.swift.
     public internal(set) var checkNote: String?
@@ -1199,8 +1202,14 @@ public final class AppStore {
     /// `brew reinstall --force-bottle --formula <qualified>` for each
     /// eligible package, through the queue and the sheet.
     public func startReplaceWithBottle(_ targets: [Package]? = nil, fromActivity: Bool = false) {
-        startSession(.replaceBottle, packages: (targets ?? bottleReplaceable).filter(BottleReplacement.isEligible),
-                     fromActivity: fromActivity)
+        let chosen = (targets ?? bottleReplaceable).filter(BottleReplacement.isEligible)
+        let prior = upgrade
+        startSession(.replaceBottle, packages: chosen, fromActivity: fromActivity)
+        // Being replaced: the new-bottle banner stops naming them.
+        if let started = upgrade, started !== prior, var notice = bottleNotice {
+            notice.keys.subtract(chosen.map(BottleAvailableNotificationDiff.key))
+            bottleNotice = notice.keys.isEmpty ? nil : notice
+        }
     }
 
     // MARK: cleanup (0.3)

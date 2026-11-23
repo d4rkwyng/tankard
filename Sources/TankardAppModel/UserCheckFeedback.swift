@@ -21,18 +21,30 @@ public struct UserCheckFeedback: Equatable, Sendable {
     /// something new showed up, the window is in front and the hint wasn't
     /// shown before.
     public var showHint: Bool
+    /// Post the new-bottles notification: the same rule as `post`.
+    public var postBottles: Bool = false
 
-    public static func decide(newUpgrades: Int, notifyOn: Bool, windowInFront: Bool, hintShown: Bool) -> UserCheckFeedback {
-        let note: String
+    /// `newBottles`: the names of formulae built from source that newly
+    /// have a bottle. They get their own phrase after the upgrades one
+    /// (alone when no upgrades are new), and count as new for the hint.
+    public static func decide(newUpgrades: Int, newBottles: [String] = [], notifyOn: Bool, windowInFront: Bool,
+                              hintShown: Bool) -> UserCheckFeedback {
+        var note: String
         switch newUpgrades {
         case 0: note = String(localized: "No new upgrades")
         case 1: note = String(localized: "1 new upgrade")
         default: note = String(localized: "\(newUpgrades) new upgrades")
         }
+        if !newBottles.isEmpty {
+            let bottles = BottleAvailableNotificationDiff.phrase(newBottles)
+            note = newUpgrades == 0 ? bottles : note + " · " + bottles
+        }
+        let anythingNew = newUpgrades > 0 || !newBottles.isEmpty
         return UserCheckFeedback(
             note: note,
             post: notifyOn && !windowInFront && newUpgrades > 0,
-            showHint: !notifyOn && windowInFront && newUpgrades > 0 && !hintShown)
+            showHint: !notifyOn && windowInFront && anythingNew && !hintShown,
+            postBottles: notifyOn && !windowInFront && !newBottles.isEmpty)
     }
 
     public static let hint = String(localized: "Turn on notifications in Settings ▸ General")
@@ -47,13 +59,16 @@ extension AppStore {
     /// can take a while, and the user may have switched away).
     public func refreshFromUser(windowInFront: () -> Bool) async {
         let before = report == nil ? nil : UpgradeNotificationDiff.keys(packages)
+        let bottlesBefore = BottleAvailableNotificationDiff.keys(packages)
         await refresh(manual: true)
         // No list before (first load) or a failed refresh (the status bar
         // says so): nothing to compare.
         guard let before, report != nil, error == nil else { return }
         let after = UpgradeNotificationDiff.keys(packages)
+        let bottles = newBottles(before: bottlesBefore)
         let windowInFront = windowInFront()
         let feedback = UserCheckFeedback.decide(newUpgrades: after.subtracting(before).count,
+                                                newBottles: BottleAvailableNotificationDiff.names(bottles.added, in: packages),
                                                 notifyOn: settings.notifyNewUpgrades,
                                                 windowInFront: windowInFront,
                                                 hintShown: settings.notifyHintShown)
@@ -65,6 +80,9 @@ extension AppStore {
         // The user has now seen these: a later background check won't
         // announce them again.
         if settings.notifyNewUpgrades { settings.notifiedUpgrades = after }
+        // Bottles: the banner either way; recorded even with the setting
+        // off, since the banner was the announcement.
+        recordNewBottles(bottles, postTo: feedback.postBottles ? notifier : nil)
         if feedback.showHint { settings.notifyHintShown = true }
         showCheckNote(feedback.showHint ? feedback.note + " · " + UserCheckFeedback.hint : feedback.note,
                       seconds: feedback.showHint ? 15 : 8)

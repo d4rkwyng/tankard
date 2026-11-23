@@ -116,6 +116,7 @@ struct MenuBarContent: View {
                 .padding(.vertical, 2)
             }
             VulnerabilityMenuNotice(store: store, openMain: openMain)
+            BottleMenuNotice(store: store, openMain: openMain)
             AutoUpdateMenuLine(store: store, openLog: openAutoUpdateLog)
             AutoUpdateSnoozeMenuRow(updater: store.autoUpdate)
 
