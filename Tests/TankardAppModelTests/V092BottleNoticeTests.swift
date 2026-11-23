@@ -358,3 +358,174 @@ struct BottleNoticeBackgroundUpdateTests {
         #expect(r.stream.count("reinstall") == 0)
     }
 }
+
+extension BottleNoticeBackgroundUpdateTests {
+    /// The same tick with notifications on and no baseline yet: the first
+    /// comparison only records, but the window still names vim.
+    @Test func backgroundUpdateWithNotificationsOnAndNoBaselinePostsNothing() async throws {
+        let r = try await base.rig(info: vimWithoutBottle(), backgroundUpdates: true)
+        defer { try? FileManager.default.removeItem(at: r.dir) }
+        await r.store.start()
+        await r.store.insights.waitForIdle()
+        r.settings.notifyNewUpgrades = true
+        #expect(r.settings.notifiedBottles == nil)
+        #expect(!r.store.autoUpdate.settings.enabled)
+        let notifier = FakeNotifier()
+        let checker = BackgroundChecker(store: r.store, settings: r.settings, notifier: notifier, launchedAt: Date().addingTimeInterval(-60))
+        r.runner.info = demoIntelInfo()
+        await checker.tick()
+        #expect(r.stream.count("update") == 1)
+        #expect(notifier.posted.isEmpty)
+        #expect(r.store.bottleNoticePackages.map(\.name) == ["vim"])
+        #expect(r.settings.notifiedBottles?.contains("formula:homebrew/core/vim@9.2.1355") == true)
+        // Recorded: a later check doesn't announce vim.
+        await checker.runCheck()
+        #expect(notifier.posted.isEmpty)
+        #expect(r.stream.count("reinstall") == 0)
+    }
+}
+
+private let autoUpdateOfflineOutput = "fatal: unable to access 'https://github.com/Homebrew/brew/': Could not resolve host: github.com\n"
+
+/// Auto-update's `brew update` goes through the same bottle comparison as
+/// Refresh and the background check.
+@MainActor
+struct BottleNoticeAutoUpdateTests {
+    let base = BottleNoticeStoreTests()
+
+    func bottleMessages(_ n: FakeNotifier) -> [UpgradeNotificationDiff.Message] {
+        n.posted.filter { $0.kind == .bottleAvailable }
+    }
+
+    @Test func autoUpdatePostsOnceWithABaseline() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, log, notifier) = await base.rig(settings)
+        settings.notifiedBottles = []
+        store.autoUpdate.settings.enabled = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(log.count("update") == 1)
+        #expect(store.bottleNoticePackages.map(\.name) == ["vim"])
+        let posted = bottleMessages(notifier)
+        #expect(posted.count == 1)
+        #expect(posted.first?.newKeys == ["formula:homebrew/core/vim@9.2.1355"])
+        #expect(log.count("reinstall") == 0)
+        // A second run, then a background check: not again.
+        store.dismissBottleNotice()
+        _ = await store.autoUpdate.run(store: store, notifier: notifier)
+        let checker = BackgroundChecker(store: store, settings: settings, notifier: notifier, launchedAt: Date().addingTimeInterval(-3600))
+        await checker.runCheck()
+        #expect(bottleMessages(notifier).count == 1)
+        #expect(store.bottleNotice == nil)
+        #expect(log.count("reinstall") == 0)
+    }
+
+    @Test func autoUpdateWithNotificationsOffShowsTheBannerOnly() async throws {
+        let settings = testSettings()
+        #expect(!settings.notifyNewUpgrades)
+        let (store, runner, log, notifier) = await base.rig(settings)
+        store.autoUpdate.settings.enabled = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(store.bottleNoticePackages.map(\.name) == ["vim"])
+        #expect(bottleMessages(notifier).isEmpty)
+        #expect(settings.notifiedBottles?.contains("formula:homebrew/core/vim@9.2.1355") == true)
+        // Turning notifications on later doesn't announce vim.
+        settings.notifyNewUpgrades = true
+        settings.notifiedBottles = ["formula:homebrew/core/vim@9.2.1355"]
+        store.autoUpdate.settings.enabled = false
+        let checker = BackgroundChecker(store: store, settings: settings, notifier: notifier, launchedAt: Date().addingTimeInterval(-3600))
+        await checker.runCheck()
+        await checker.tick()
+        #expect(bottleMessages(notifier).isEmpty)
+        #expect(log.count("reinstall") == 0)
+    }
+
+    @Test func autoUpdateWithoutABaselinePostsNothing() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, log, notifier) = await base.rig(settings)
+        #expect(settings.notifiedBottles == nil)
+        store.autoUpdate.settings.enabled = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(bottleMessages(notifier).isEmpty)
+        #expect(store.bottleNoticePackages.map(\.name) == ["vim"])
+        #expect(settings.notifiedBottles?.contains("formula:homebrew/core/vim@9.2.1355") == true)
+        #expect(log.count("reinstall") == 0)
+    }
+
+    @Test func autoUpdateWithNothingToUpgradeStillCompares() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, log, notifier) = await base.rig(settings)
+        settings.notifiedBottles = []
+        store.autoUpdate.settings.enabled = true
+        store.autoUpdate.settings.defaults.set(["nothing-by-this-name"], forKey: "autoUpdateOnly")
+        runner.info = demoIntelInfo()
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(run.upgraded.isEmpty && run.failed.isEmpty)
+        #expect(log.count("upgrade") == 0)
+        #expect(store.bottleNoticePackages.map(\.name) == ["vim"])
+        #expect(bottleMessages(notifier).count == 1)
+    }
+
+    @Test func failedAutoUpdateKeepsTheBaseline() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, _, notifier) = await base.rig(settings, stream: { args, _ in args.first == "update" ? 1 : 0 })
+        settings.notifiedBottles = ["formula:homebrew/core/old@1"]
+        store.autoUpdate.settings.enabled = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(store.error != nil)
+        #expect(store.bottleNotice == nil)
+        #expect(bottleMessages(notifier).isEmpty)
+        #expect(settings.notifiedBottles == ["formula:homebrew/core/old@1"])
+    }
+
+    @Test func quietAutoUpdateKeepsTheBaseline() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, _, notifier) = await base.rig(settings, stream: { args, out in
+            out(Data(autoUpdateOfflineOutput.utf8))
+            return args.first == "update" ? 1 : 0
+        })
+        settings.notifiedBottles = ["formula:homebrew/core/old@1"]
+        store.autoUpdate.settings.enabled = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(store.lastScheduledUpdate?.quiet == .offline)
+        #expect(store.bottleNotice == nil)
+        #expect(bottleMessages(notifier).isEmpty)
+        #expect(settings.notifiedBottles == ["formula:homebrew/core/old@1"])
+    }
+
+    @Test func dryRunComparesNothing() async throws {
+        let settings = testSettings()
+        settings.notifyNewUpgrades = true
+        let (store, runner, log, notifier) = await base.rig(settings)
+        settings.notifiedBottles = ["formula:homebrew/core/old@1"]
+        store.autoUpdate.settings.enabled = true
+        store.autoUpdate.settings.dryRun = true
+        runner.info = demoIntelInfo()
+        _ = try #require(await store.autoUpdate.run(store: store, notifier: notifier))
+        #expect(log.count("update") == 0)
+        #expect(store.bottleNotice == nil)
+        #expect(settings.notifiedBottles == ["formula:homebrew/core/old@1"])
+    }
+}
+
+@MainActor
+struct BottleNoticeDemoTests {
+    /// TANKARD_DEMO_BOTTLE_NOTICE: Intelbrew's vim (already eligible) as
+    /// newly having a bottle; nothing replaced.
+    @Test func demoSeedsTheBannerForWhatIsEligible() async {
+        let (store, _, log, _) = await BottleNoticeStoreTests().rig(testSettings(), info: demoIntelInfo())
+        #expect(store.bottleNoticeText == nil)
+        store.demoBottleNotice()
+        #expect(store.bottleNoticeText == "A bottle is available for vim")
+        #expect(log.count("reinstall") == 0)
+    }
+}

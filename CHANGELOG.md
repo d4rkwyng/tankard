@@ -7,7 +7,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ## [Unreleased]
 
 ### Added
-- **Tankard says when a source build gets a bottle.** When a formula you built from source has a bottle after `brew update` (Refresh, Check Now or a background check), a banner at the top of the window says "A bottle is available for vim", with Show, Replace with Bottle and a close button; the menu-bar menu and the status bar's note after a Refresh say the same. With "Notify me about new upgrades" on, a notification follows the same rules as new upgrades: none while the window is in front for a Refresh, and none on the first check after turning it on. A click opens Installed ▸ Bottle available. Each formula and version is announced once, and Tankard never replaces a formula by itself: only your click on Replace with Bottle does.
+- **Tankard says when a source build gets a bottle.** When a formula you built from source has a bottle after `brew update` (Refresh, Check Now, a background check or Auto-update), a banner at the top of the window says "A bottle is available for vim", with Show, Replace with Bottle and a close button; the menu-bar menu and the status bar's note after a Refresh say the same. With "Notify me about new upgrades" on, a notification follows the same rules as new upgrades: none while the window is in front for a Refresh, and none on the first check after turning it on. A click opens Installed ▸ Bottle available. Each formula and version is announced once, and Tankard never replaces a formula by itself: only your click on Replace with Bottle does.
 
 ## [0.9.1] - 2026-11-22
 

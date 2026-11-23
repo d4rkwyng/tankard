@@ -272,6 +272,9 @@ struct ContentView: View {
             await store.insights.waitForIdle()
             store.insights.settings.seenVulnerabilities = []
         }
+        if options.demo != nil && options.demoBottleNotice {
+            store.demoBottleNotice()
+        }
         if options.demo != nil && options.demoNotes {
             // 0.4: upgrade, close the finished sheet, and the notes follow.
             store.startUpgrade()

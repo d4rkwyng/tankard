@@ -92,3 +92,12 @@ extension AppStore {
         if filter != .bottleAvailable { filter = .bottleAvailable }
     }
 }
+
+extension AppStore {
+    /// Demo and screenshots only (TANKARD_DEMO_BOTTLE_NOTICE): the banner
+    /// and menu-bar line for every formula that can take a bottle now.
+    public func demoBottleNotice() {
+        let keys = BottleAvailableNotificationDiff.keys(packages)
+        bottleNotice = keys.isEmpty ? nil : BottleNotice(keys: keys)
+    }
+}
