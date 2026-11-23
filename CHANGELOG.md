@@ -4,6 +4,21 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.9.1] - 2026-11-22
+
+### Highlights
+- **Replace's result notes stay in the sheet.** The recovery command, kept-copy location, "Stop came too late" and "may be incomplete" used to appear only as orange log lines that could be cut off at the sheet's width. The log still keeps them; the sheet now shows them wrapped and selectable under the result headline, with Copy when a note contains a command.
+- **Copy copies only Replace's recovery command.** The app name and brew command shared a sentence, so Copy included the backtick spans. The command now has its own field and Copy pastes it. Other notes are literal, so a backtick in a path isn't treated as a command; the localized sentence is unchanged.
+
+### Fixed
+- **The menu-bar check time stays current.** It could say "Checked just now" long after the window showed an older check. The menu now updates its relative time while it is open, so it stays in step with the window.
+- **A killed test process still gets the two-pass defaults sweep.** The sweeper used a name list based on the process ID and reread it after the owner exited. If a new test process reused that ID, its suite names could be swept too. The list now includes a token chosen when the sweeper is armed, and the sweeper gets that exact path. After the owner exits, it copies the names written so far and both passes delete only those names.
+- **VoiceOver identifies the plan's package icons.** The cask and formula icons were read as "Window" and "Box"; they are now labeled "Cask" and "Formula".
+- **The upgrade header includes upgrades left out of Upgrade All.** When every listed upgrade was pinned or held, the header said everything was up to date even though the Upgrades filter still showed them. It now says how many aren't included.
+- **Self-updating casks show tap versions that Homebrew can upgrade to.** A newer version could appear in Available without an upgrade arrow or count when `brew outdated` omitted the cask. Tankard now compares installed and tap versions, keeps those upgrades visible and counted, and still leaves them out of Upgrade All unless requested.
+- **Auto-update leaves self-updating casks to their own updater.** A scheduled or background Auto-update could upgrade a self-updating cask that was left to the app's own updater, even with "Don't quit running apps" on. This is the default when "Include self-updating apps" is off. It affected casks `brew outdated` lists by default, and the upgrades above that are now kept visible. Auto-update now skips those casks and logs "set to update itself". Casks you set to "Homebrew updates it" still upgrade.
+- **Long command paths wrap at path separators.** Fetch commands used to break inside paths such as `homebrew/core/libffi`. They now wrap at slashes, using invisible break points after each `/`. Copy and the tooltip keep the original command; the command text itself isn't selectable, so those break points don't end up on the pasteboard.
+
 ## [0.9.0] - 2026-11-21
 
 ### Highlights

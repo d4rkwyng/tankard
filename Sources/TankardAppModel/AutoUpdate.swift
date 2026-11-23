@@ -320,6 +320,10 @@ public enum AutoUpdateSafeMode {
         for p in outdated {
             if p.isHeld { skipped.append((p, .pinned)); continue }
             if isTankard(p) { skipped.append((p, .tankardItself)); continue }
+            // 0.9.1: a self-updating cask left to its app's own updater
+            // ("Include self-updating apps" off, no "Homebrew updates it").
+            // Recovered info versions keep its upgrade visible; it never runs here.
+            if p.selfUpdateHeld == true { skipped.append((p, .appUpdatesItself)); continue }
             // 0.8.3: its installer runs with sudo: nobody is there to type the password.
             if AdminPassword.required(p) { skipped.append((p, .needsPassword)); continue }
             // 0.6: skip this version, then the bump rule.

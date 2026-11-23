@@ -55,17 +55,22 @@ struct V089QuitAlertTests {
     // leaves the main actor free; entered from a main-actor task, it doesn't.
 
     /// Spins the main run loop for `seconds` (a modal loop's stand-in) and
-    /// counts the main-actor jobs that ran meanwhile.
-    static func nestedLoopCountsMainActorJobs(seconds: Double) -> Int {
+    /// counts the main-actor jobs that ran meanwhile. With `stopAt`, it
+    /// returns as soon as that many have run, so `seconds` is only a cap.
+    static func nestedLoopCountsMainActorJobs(seconds: Double, stopAt: Int = .max) -> Int {
         let ran = OSAllocatedUnfairLock(initialState: 0)
+        let end = Date().addingTimeInterval(seconds)
+        // Produce hops until the same deadline (or cancellation), so the
+        // `seconds` cap governs both the producer and the nested loop.
         let producer = Task.detached {
-            for _ in 0..<200 {
+            while !Task.isCancelled, Date() < end {
                 try? await Task.sleep(for: .milliseconds(10))
                 await MainActor.run { ran.withLock { $0 += 1 } }
             }
         }
-        let end = Date().addingTimeInterval(seconds)
-        while Date() < end { RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.02)) }
+        while Date() < end, ran.withLock({ $0 }) < stopAt {
+            RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.02))
+        }
         producer.cancel()
         return ran.withLock { $0 }
     }
@@ -73,12 +78,16 @@ struct V089QuitAlertTests {
     @Test func aModalLoopFromARunLoopBlockLeavesTheMainActorFree() async throws {
         // Only meaningful when the main run loop is running (it is under
         // `swift test`); the block is the one the quit event now uses.
+        // Runs until 5 jobs land (10 s cap), not a fixed 0.6 s: under the
+        // full suite on GitHub's macos-15 runner (3 slow cores, Swift 6.1.2,
+        // run 45036992170) only 4 hops landed in 0.6 s. A free main actor
+        // still has to let 5 through; a held one (below) lets none.
         let result = OSAllocatedUnfairLock<Int?>(initialState: nil)
         RunLoopPerform.onMain { @MainActor in
-            let n = Self.nestedLoopCountsMainActorJobs(seconds: 0.6)
+            let n = Self.nestedLoopCountsMainActorJobs(seconds: 10, stopAt: 5)
             result.withLock { $0 = n }
         }
-        await #expect(waitUntil(timeout: .seconds(10)) { result.withLock { $0 } != nil })
+        await #expect(waitUntil { result.withLock { $0 } != nil })
         let n = try #require(result.withLock { $0 })
         #expect(n >= 5, "main-actor jobs during the nested loop: \(n)")
     }

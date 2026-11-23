@@ -377,9 +377,16 @@ public enum SummaryText {
     /// (`targets`, the store's `upgradable`), like the Upgrade button and the
     /// menu bar; the upgrades it leaves out (pinned, a skipped version, an
     /// app left to its own updater) are named after the detail. nil when
-    /// none are ready.
+    /// nothing is listed as an upgrade.
     public static func upgrades(_ s: StatusSummary, targets: [Package]) -> (String, String)? {
         let left = max(0, s.upgrades - targets.count)
+        if targets.isEmpty {
+            guard s.upgrades > 0 else { return nil }
+            if s.upgrades == 1 {
+                return (String(localized: "1 upgrade not included", bundle: L10n.bundle), "")
+            }
+            return (String(localized: "\(s.upgrades) upgrades not included", bundle: L10n.bundle), "")
+        }
         guard let (ready, base) = upgrades(StatusSummary(packages: targets)) else { return nil }
         var detail = base
         if left > 0 { detail += " · " + String(localized: "\(left) not included") }

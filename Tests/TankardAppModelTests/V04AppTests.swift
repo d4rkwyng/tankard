@@ -312,7 +312,8 @@ struct SelfUpdatingAndNoQuitTests {
         let store = await armStore()
         #expect(!store.insights.settings.includeSelfUpdatingApps)
         #expect(!store.insights.settings.dontQuitAppsDuringUpgrade)
-        #expect(store.packages.first { $0.name == "tailscale-app" }?.upgradeAvailable == false)
+        let tailscale = store.packages.first { $0.name == "tailscale-app" }
+        #expect(tailscale?.upgradeAvailable == true && tailscale?.selfUpdateHeld == true && tailscale?.isUpgradeTarget == false)
     }
 
     @Test func greedyCasksAppearAndGoWithTheSetting() async throws {
@@ -326,8 +327,10 @@ struct SelfUpdatingAndNoQuitTests {
         let selfUpdating = store.upgradable.filter { $0.kind == .cask && ($0.autoUpdates == true || $0.selfUpdatingUpgrade == true) }.count
         #expect(selfUpdating > 1)
         store.insights.settings.includeSelfUpdatingApps = false
+        // The recovered greedy-only cask remains listed as a held upgrade, but
+        // only non-self-updating packages are still Upgrade All targets.
         #expect(store.upgradable.count == before - selfUpdating)
-        #expect(store.report?.summary.upgrades == before - 1) // brew's own list: only the greedy one goes
+        #expect(store.report?.summary.upgrades == before)
         store.insights.settings.includeSelfUpdatingApps = true // re-reads with --greedy
         #expect(await waitUntil { store.upgradable.count == before && !store.isRefreshing })
     }

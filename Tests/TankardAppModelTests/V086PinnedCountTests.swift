@@ -25,7 +25,21 @@ struct V086PinnedCountTests {
         let (ready, detail) = try #require(SummaryText.upgrades(s, targets: all.filter(\.isUpgradeTarget)))
         #expect(ready == "3 upgrades ready")
         #expect(detail == "(3 with bottles) · 2 not included")
-        #expect(SummaryText.upgrades(StatusSummary(packages: [pkg("a", pinned: true)]), targets: []) == nil)
+        // All listed upgrades are now named, even when none are Upgrade All targets.
+        #expect(SummaryText.upgrades(StatusSummary(packages: [pkg("a", pinned: true)]), targets: [])?.0 == "1 upgrade not included")
+    }
+
+    @Test func allExcludedAndTrulyUpToDateHeaders() throws {
+        var held = pkg("held")
+        held.selfUpdateHeld = true
+        let excluded = StatusSummary(packages: [pkg("pinned", pinned: true), held])
+        let (ready, detail) = try #require(SummaryText.upgrades(excluded, targets: []))
+        #expect(ready == "2 upgrades not included")
+        #expect(detail.isEmpty)
+
+        var current = pkg("current")
+        current.upgradeAvailable = false
+        #expect(SummaryText.upgrades(StatusSummary(packages: [current]), targets: []) == nil)
     }
 
     @Test func detailLineSaysWhyItIsLeftOut() {

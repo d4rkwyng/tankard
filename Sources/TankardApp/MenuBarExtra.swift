@@ -30,8 +30,10 @@ struct MenuBarContent: View {
                     VStack(alignment: .leading, spacing: 1) {
                         Text(summary.title).font(.system(size: 13, weight: .semibold))
                         if let updated = store.lastUpdated {
-                            Text(store.isRefreshing ? (store.refreshPhase ?? String(localized: "Checking…")) : String(localized: "Checked \(updatedAgo(updated, now: Date()))"))
-                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                            TimelineView(.periodic(from: .now, by: 30)) { ctx in
+                                Text(store.isRefreshing ? (store.refreshPhase ?? String(localized: "Checking…")) : String(localized: "Checked \(updatedAgo(updated, now: ctx.date))"))
+                                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                            }
                         } else if store.isRefreshing {
                             Text(store.refreshPhase ?? String(localized: "Checking…")).font(.system(size: 11)).foregroundStyle(.secondary)
                         }
