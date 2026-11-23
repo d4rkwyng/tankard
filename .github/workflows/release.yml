@@ -100,6 +100,8 @@ jobs:
       # but this Developer ID build ignores TANKARD_* (TestHooks), so the
       # script also runs the app in a sandbox that denies /opt/homebrew and
       # /usr/local's Homebrew paths: the app never reads or starts brew.
+      # It may show release.sh's launch-check status cache rather than the
+      # no-Homebrew welcome; the gate does not depend on which window.
       - name: Launch smoke test
         env:
           TANKARD_DEMO: "1"

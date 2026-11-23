@@ -46,8 +46,14 @@
 #      HOMEBREW_* unset but HOMEBREW_NO_AUTO_UPDATE=1 and no brew on PATH.
 #      A Developer ID build ignores every TANKARD_* switch (TestHooks), so
 #      on the release runner the app launches as a user's would; the
-#      sandbox makes it see no Homebrew there, and it can't start brew
-#      either way. It must stay up N seconds, then quit
+#      sandbox hides Homebrew from it, so it can't read or start brew.
+#      Which window it shows is not checked and not assumed: release.sh's
+#      launch-check runs the signed app earlier on the runner, outside
+#      this sandbox, and leaves a status cache
+#      (~/Library/Caches/net.mindtricks.tankard/status.json); within its
+#      hour the app shows that cached list rather than the no-Homebrew
+#      welcome. Either way it only has to stay up and quit cleanly. The
+#      script never deletes or moves that cache. It must stay up N seconds, then quit
 #      with exit code 0 within 8 s of a Quit (terminate) event.
 #   5. No new crash report (.ips or .crash, new = a file name not in a
 #      listing taken before the launch; ReportCrash touches old reports'
