@@ -232,6 +232,9 @@ public final class AppStore {
     /// the read a finished session starts (in a Task, so `isRefreshing` is
     /// still false right after `isFinished`).
     @ObservationIgnored private(set) var refreshesCompleted = 0
+    /// How many status reads have begun (set on the main actor as each
+    /// read starts). Tests count it to see that a caller didn't start one.
+    @ObservationIgnored private(set) var refreshesStarted = 0
     /// What a running refresh is doing ("Running brew update…").
     public private(set) var refreshPhase: String?
     public internal(set) var error: StoreError?
@@ -429,7 +432,7 @@ public final class AppStore {
     /// 0.8.5: Electron apps on a Mac Pro 6,1 (ElectronGPU.swift).
     @ObservationIgnored public let electron: ElectronGPUStore
     @ObservationIgnored private var client: BrewClient?
-    @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private(set) var refreshTask: Task<Void, Never>?
 
     public init(deps: Dependencies, settings: AppSettings? = nil) {
         self.deps = deps
@@ -663,14 +666,21 @@ public final class AppStore {
         if kind == .scheduled { lastScheduledUpdate = nil }
         // 0.8.3: the bundle was replaced: the new instance reads status.
         if selfReplaced { return }
-        if let running = refreshTask {
+        // 0.9.2 (bug hunt): one read at a time. Two callers that waited on
+        // the same read used to start theirs together once it ended, and
+        // the first to finish cleared `refreshTask` and `isRefreshing`
+        // while the other still ran. A caller that isn't joining waits
+        // until no read is running, and clears only its own task.
+        while let running = refreshTask {
             await running.value
             if kind == .automatic { return }
+            // Its caller hasn't resumed to clear it yet.
+            if refreshTask == running { refreshTask = nil }
         }
         let task = Task { await performRefresh(kind) }
         refreshTask = task
         await task.value
-        refreshTask = nil
+        if refreshTask == task { refreshTask = nil }
     }
 
     /// 0.8.4: whether a path exists, through the client (demo mode's is
@@ -688,6 +698,7 @@ public final class AppStore {
     }
 
     private func performRefresh(_ kind: RefreshKind) async {
+        refreshesStarted += 1
         isRefreshing = true
         defer {
             isRefreshing = false
@@ -1543,6 +1554,8 @@ public final class AppStore {
             },
             lockWait: deps.lockWait,
             upgradeCheck: action == .upgrade ? upgradedVersionsCheck(client, env: env, intelbrewMode: detection.detected) : nil,
+            // 0.9.2: in init, before the steps are enqueued (not after).
+            passwordFocus: deps.askpassFocus,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -1557,7 +1570,6 @@ public final class AppStore {
         }
         // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
         if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
-        upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
         // 0.8.5: time so far and an estimate for builds from source.
         if let u = upgrade {
@@ -1613,8 +1625,8 @@ public final class AppStore {
                                  precondition: precondition,
                                  downloads: downloadMonitorForCustomSession(),
                                  lockWait: deps.lockWait,
+                                 passwordFocus: deps.askpassFocus,
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
-        upgrade?.passwordFocus = deps.askpassFocus
         showUpgradeSheet = true
     }
 

@@ -159,6 +159,16 @@ public final class CommandQueue: Sendable {
         for id in ids { cancel(id) }
     }
 
+    /// 0.9.2: skips a command that hasn't started; one the queue is
+    /// running already runs to the end. For Stop After Current, whose
+    /// "waiting" comes from the main actor's copy of the states: the queue
+    /// may have started that command before its `.started` arrived there.
+    public func cancelIfWaiting(_ ids: some Sequence<UUID>) {
+        state.withLockUnchecked { s in
+            for id in ids where s.running?.id != id { s.cancelled.insert(id) }
+        }
+    }
+
     /// Ids waiting to run, in order (not including the running one).
     public var pendingIDs: [UUID] { state.withLockUnchecked { $0.pending } }
     public var runningID: UUID? { state.withLockUnchecked { $0.running?.id } }

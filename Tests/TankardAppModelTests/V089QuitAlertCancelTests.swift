@@ -51,6 +51,48 @@ struct V089QuitAlertTests {
         #expect(session.sudoSkipped[item.id] == ["com.google.keystone.agent"])
     }
 
+    /// 0.9.2 (CI run 45241315816, macos runner, 3 cores): the test above
+    /// failed with no `sudoSkipped`. The session enqueued its steps in its
+    /// init and the store gave it `passwordFocus` (the cancel count) only
+    /// after that: when the queue sent `.started` in between, the event
+    /// carried no count and the Cancel went unrecorded. Forced here: the
+    /// store's `upgrade` assignment (its init done, the steps enqueued)
+    /// holds the main actor until brew has exited.
+    @Test func aStepTheQueueStartsBeforeTheStoreReturnsStillHasItsCount() async throws {
+        let cancels = OSAllocatedUnfairLock(initialState: 3)
+        let brewExited = OSAllocatedUnfairLock(initialState: false)
+        let runner = FakeStreamRunner(log: CallLog()) { args, out in
+            guard args.first == "upgrade" else { return 0 }
+            out(Data("==> Removing launchctl service com.google.keystone.agent\n".utf8))
+            cancels.withLock { $0 += 1 }
+            brewExited.withLock { $0 = true }
+            return 0
+        }
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.askpassHelper = Self.helper
+        deps.streamRunner = runner
+        deps.askpassFocus = AskpassFocus(find: { nil }, yield: { _ in }, cancelCount: { cancels.withLock { $0 } })
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        let chrome = try #require(store.packages.first { $0.name == "google-chrome" })
+        let held = OSAllocatedUnfairLock(initialState: false)
+        // Called synchronously as `upgrade` is about to change: the new
+        // session exists and its steps are in the queue.
+        withObservationTracking { _ = store.upgrade } onChange: {
+            let deadline = Date().addingTimeInterval(10)
+            while !brewExited.withLock({ $0 }), Date() < deadline { usleep(2_000) }
+            held.withLock { $0 = true }
+        }
+        store.startUpgrade([chrome])
+        #expect(held.withLock { $0 } && brewExited.withLock { $0 }, "brew ran while the store was still setting up the session")
+        let session = try #require(store.upgrade)
+        await #expect(waitUntil { session.isFinished })
+        let item = try #require(session.items.first)
+        #expect(item.state == .done)
+        #expect(session.sudoSkipped[item.id] == ["com.google.keystone.agent"])
+    }
+
     // The quit question's alert: a modal loop entered from a run-loop block
     // leaves the main actor free; entered from a main-actor task, it doesn't.
 

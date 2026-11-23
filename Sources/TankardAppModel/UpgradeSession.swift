@@ -350,6 +350,7 @@ public final class UpgradeSession: Identifiable {
          prefetch: [PrefetchStep] = [],
          lockWait: BrewLockWait? = nil,
          upgradeCheck: (@Sendable ([Package]) async -> [String: InstalledNow]?)? = nil,
+         passwordFocus: AskpassFocus? = nil,
          onFinish: @escaping @MainActor (UpgradeSession) -> Void) {
         self.chainKey = chainKey
         self.upgradeCheck = upgradeCheck
@@ -370,6 +371,12 @@ public final class UpgradeSession: Identifiable {
 
         // 0.8.9: each event with the password dialog's cancel count as it
         // arrived (`cancelCounter`).
+        // 0.9.2 (CI run 45241315816): the cancel count is in place before
+        // the first step is enqueued. Set by the caller after init, a step
+        // the queue started in between sent `.started` with no count, and
+        // a Cancel during it went unrecorded (a plain ✓).
+        self.passwordFocus = passwordFocus
+        cancelCounter.withLock { $0 = passwordFocus?.cancelCount }
         let (stream, continuation) = AsyncStream.makeStream(of: (UUID, CommandEvent, Int?).self, bufferingPolicy: .unbounded)
         let counter = cancelCounter
         let send: @Sendable (UUID, CommandEvent) -> Void = { id, event in
@@ -720,8 +727,10 @@ public final class UpgradeSession: Identifiable {
     /// Lets the running command finish, then skips the rest.
     public func stopAfterCurrent() {
         stopRequested = true
-        queue.cancel(prefetchIDs.filter { fetchStates[$0] == .waiting })
-        queue.cancel(items.filter { $0.state == .waiting }.map(\.id))
+        // 0.9.2: only what the queue hasn't started. A step shown as
+        // waiting may be running already (its `.started` not applied yet).
+        queue.cancelIfWaiting(prefetchIDs.filter { fetchStates[$0] == .waiting })
+        queue.cancelIfWaiting(items.filter { $0.state == .waiting }.map(\.id))
     }
 
     /// Stops the running command too (its whole process group).

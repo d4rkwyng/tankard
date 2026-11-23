@@ -9,6 +9,11 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Added
 - **Tankard says when a source build gets a bottle.** When a formula you built from source has a bottle after `brew update` (Refresh, Check Now, a background check or Auto-update), a banner at the top of the window says "A bottle is available for vim", with Show, Replace with Bottle and a close button; the menu-bar menu and the status bar's note after a Refresh say the same. With "Notify me about new upgrades" on, a notification follows the same rules as new upgrades: none while the window is in front for a Refresh, and none on the first check after turning it on. A click opens Installed ▸ Bottle available. Each formula and version is announced once, and Tankard never replaces a formula by itself: only your click on Replace with Bottle does.
 
+### Fixed
+- **Stop After Current no longer stops the next package.** When the next package had just started but the window hadn't shown it yet (for example while the "Quit anyway?" question was open), Stop After Current interrupted it like Stop Now, without asking. A package brew has started now always finishes; only the ones still waiting are skipped.
+- **One package-list read at a time.** When a background `brew update` and a scheduled check both finished during a read, each started its own read afterwards and the two ran at once. The first to end cleared the "Refreshing" state while the other was still reading, so a later refresh could start a third read and Auto-update could treat Tankard as idle. They now read one after the other.
+- **A cancelled password dialog is always noted.** If brew started a package before Tankard had finished opening the run (more likely on a busy Mac), cancelling the administrator password dialog during that package could leave a plain ✓ instead of the note that brew skipped the part needing sudo (such as a background service it couldn't remove). The run is now fully set up before any package starts.
+
 ## [0.9.1] - 2026-11-22
 
 ### Highlights
