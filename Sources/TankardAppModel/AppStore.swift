@@ -1545,6 +1545,8 @@ public final class AppStore {
             },
             lockWait: deps.lockWait,
             upgradeCheck: action == .upgrade ? upgradedVersionsCheck(client, env: env, intelbrewMode: detection.detected) : nil,
+            // 0.9.2: in init, before the steps are enqueued (not after).
+            passwordFocus: deps.askpassFocus,
             onFinish: { [weak self] session in
                 self?.sessionFinished(session)
             })
@@ -1559,7 +1561,6 @@ public final class AppStore {
         }
         // 0.8.6 (walkthrough L7): dropped again if the run changes nothing.
         if let u = upgrade, let point = sessionPoint { sessionRestorePoints[u.id] = point.id }
-        upgrade?.passwordFocus = deps.askpassFocus
         upgrade?.foreignAskpass = foreign
         // 0.8.5: time so far and an estimate for builds from source.
         if let u = upgrade {
@@ -1615,8 +1616,8 @@ public final class AppStore {
                                  precondition: precondition,
                                  downloads: downloadMonitorForCustomSession(),
                                  lockWait: deps.lockWait,
+                                 passwordFocus: deps.askpassFocus,
                                  onFinish: { [weak self] session in self?.sessionFinished(session) })
-        upgrade?.passwordFocus = deps.askpassFocus
         showUpgradeSheet = true
     }
 

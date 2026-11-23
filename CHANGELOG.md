@@ -9,6 +9,7 @@ are its section below (`Scripts/changelog-section.sh`).
 ### Fixed
 - **Stop After Current no longer stops the next package.** When the next package had just started but the window hadn't shown it yet (for example while the "Quit anyway?" question was open), Stop After Current interrupted it like Stop Now, without asking. A package brew has started now always finishes; only the ones still waiting are skipped.
 - **One package-list read at a time.** When a background `brew update` and a scheduled check both finished during a read, each started its own read afterwards and the two ran at once. The first to end cleared the "Refreshing" state while the other was still reading, so a later refresh could start a third read and Auto-update could treat Tankard as idle. They now read one after the other.
+- **A cancelled password dialog is always noted.** If brew started a package before Tankard had finished opening the run (more likely on a busy Mac), cancelling the administrator password dialog during that package could leave a plain ✓ instead of the note that brew skipped the part needing sudo (such as a background service it couldn't remove). The run is now fully set up before any package starts.
 
 ## [0.9.1] - 2026-11-22
 
