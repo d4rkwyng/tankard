@@ -6039,6 +6039,58 @@
         }
       }
     },
+    "%lld formulae you built from source now have a bottle": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Formulae, die du aus Quellcode gebaut hast, haben jetzt eine Bottle"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld formules que vous avez compilées depuis les sources ont maintenant une bottle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld formulae que compilaste desde el código fuente ya tienen bottle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ソースからビルドした%lld個のformulaeにbottleが利用できるようになりました"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你从源码构建的 %lld 个 formula 现在有 bottle 了"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld formulae que você compilou do código-fonte agora têm bottle"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld formulae che hai compilato dai sorgenti ora hanno una bottle"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소스에서 빌드한 formula %lld개에 이제 bottle이 있습니다"
+          }
+        }
+      }
+    },
     "%lld from Apple": {
       "localizations": {
         "de": {
@@ -9983,6 +10035,58 @@
         }
       }
     },
+    "%lld upgrades not included": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Upgrades nicht enthalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mises à niveau non incluses"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld actualizaciones no incluidas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件のアップグレードは含まれません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个升级未包含"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld atualizações não incluídas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld aggiornamenti non inclusi"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드 %lld개 제외됨"
+          }
+        }
+      }
+    },
     "%lld upgrades ready": {
       "localizations": {
         "de": {
@@ -11167,6 +11271,58 @@
         }
       }
     },
+    "1 upgrade not included": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Upgrade nicht enthalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 mise à niveau non incluse"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 actualización no incluida"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1件のアップグレードは含まれません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 个升级未包含"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 atualização não incluída"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 aggiornamento non incluso"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업그레이드 1개 제외됨"
+          }
+        }
+      }
+    },
     "1. Remove the Intelbrew lines from your shell profile": {
       "localizations": {
         "de": {
@@ -11527,6 +11683,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Um comando do Terminal que você pode copiar para instalar tudo deste Brewfile. O Tankard não o executa."
+          }
+        }
+      }
+    },
+    "A bottle is available for %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ ist eine Bottle verfügbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une bottle est disponible pour %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hay un bottle disponible para %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ のbottleが利用できます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 有可用的 bottle"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Há um bottle disponível para %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È disponibile una bottle per %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 사용할 수 있는 bottle이 있습니다"
           }
         }
       }
@@ -16425,6 +16633,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bottle"
+          }
+        }
+      }
+    },
+    "Bottles are available for %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für %@ sind Bottles verfügbar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des bottles sont disponibles pour %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hay bottles disponibles para %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ のbottleが利用できます"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 有可用的 bottle"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Há bottles disponíveis para %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sono disponibili bottle per %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에 사용할 수 있는 bottle이 있습니다"
           }
         }
       }
@@ -44549,6 +44809,58 @@
         }
       }
     },
+    "Open Tankard to replace the source build. Nothing changes until you do.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne Tankard, um den Quellcode-Build zu ersetzen. Bis dahin ändert sich nichts."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez Tankard pour remplacer la version compilée. Rien ne change d’ici là."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre Tankard para reemplazar la compilación desde el código fuente. Nada cambia hasta que lo hagas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankardを開いてソースビルドを置き換えてください。それまで何も変更されません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 Tankard 以替换源码构建的版本。在你操作之前不会有任何更改。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abra o Tankard para substituir a compilação do código-fonte. Nada muda até você fazer isso."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri Tankard per sostituire la versione compilata dai sorgenti. Nulla cambia finché non lo fai."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard를 열어 소스 빌드를 교체하세요. 그 전에는 아무것도 바뀌지 않습니다."
+          }
+        }
+      }
+    },
     "Open Terminal": {
       "localizations": {
         "de": {
@@ -60023,58 +60335,6 @@
         }
       }
     },
-    "Tankard couldn't load Homebrew's list of packages. Try again in a moment.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard n’a pas pu charger la liste des paquets de Homebrew. Réessayez dans un instant."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Tankard não conseguiu carregar a lista de pacotes do Homebrew. Tente novamente daqui a pouco."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard non è riuscito a caricare l’elenco dei pacchetti di Homebrew. Riprova tra un momento."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요."
-          }
-        }
-      }
-    },
     "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it.": {
       "localizations": {
         "de": {
@@ -60123,6 +60383,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tankard가 %@의 안전 사본을 확인할 수 없어(파일이 너무 많음) 교체하지 않았습니다."
+          }
+        }
+      }
+    },
+    "Tankard couldn't load Homebrew's list of packages. Try again in a moment.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard n’a pas pu charger la liste des paquets de Homebrew. Réessayez dans un instant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tankard não conseguiu carregar a lista de pacotes do Homebrew. Tente novamente daqui a pouco."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard non è riuscito a caricare l’elenco dei pacchetti di Homebrew. Riprova tra un momento."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요."
           }
         }
       }

@@ -91,6 +91,7 @@
 "%lld errors" = "오류 %lld개";
 "%lld failed" = "실패 %lld개";
 "%lld formulae" = "formula %lld개";
+"%lld formulae you built from source now have a bottle" = "소스에서 빌드한 formula %lld개에 이제 bottle이 있습니다";
 "%lld from Apple" = "%lld개는 Apple 앱";
 "%lld from an untrusted tap" = "신뢰할 수 없는 tap에서 설치 %lld개";
 "%lld from source" = "소스에서 설치 %lld개";
@@ -135,6 +136,7 @@
 "%lld uninstalled (%lld version)" = "%lld개 제거됨 (%lld개 버전)";
 "%lld uninstalled (%lld versions)" = "%lld개 제거됨 (%lld개 버전)";
 "%lld upgraded" = "업그레이드됨 %lld개";
+"%lld upgrades not included" = "업그레이드 %lld개 제외됨";
 "%lld upgrades ready" = "업그레이드 %lld개 준비됨";
 "%lld vulnerable" = "취약 %lld개";
 "%lld vulnerable packages; more filters" = "취약한 패키지 %lld개; 필터 더 보기";
@@ -149,6 +151,7 @@
 ". From brew vulns (OSV.dev)." = ". brew vulns(OSV.dev) 기준.";
 ". brew printed these; they are also in each package's details." = ". brew가 출력한 내용이며, 각 패키지의 상세 정보에도 있습니다.";
 "1 new upgrade" = "새 업그레이드 1개";
+"1 upgrade not included" = "업그레이드 1개 제외됨";
 "1. Remove the Intelbrew lines from your shell profile" = "1. 셸 프로파일에서 Intelbrew 줄을 제거합니다";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. Homebrew/brew를 다시 upstream으로 지정한 다음 3. brew update";
 "30 days" = "30일";
@@ -156,6 +159,7 @@
 "90 days" = "90일";
 "A Brewfile is a Ruby program. Checking or installing it with brew bundle runs the code in it, with your permissions, before Tankard shows anything." = "Brewfile은 Ruby 프로그램입니다. brew bundle로 확인하거나 설치하면 Tankard가 무언가를 보여 주기 전에 그 안의 코드가 사용자 권한으로 실행됩니다.";
 "A Terminal command you can copy to install everything in this Brewfile. Tankard doesn't run it." = "이 Brewfile의 모든 항목을 설치하기 위해 복사할 수 있는 터미널 명령입니다. Tankard는 실행하지 않습니다.";
+"A bottle is available for %@" = "%@에 사용할 수 있는 bottle이 있습니다";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 파일에도 Intelbrew 변수가 설정되어 있습니다. Tankard는 brew.env를 편집하지 않습니다. 직접 제거하지 않으면 brew가 계속 포크를 사용합니다.\n";
 "A download didn't match its checksum" = "다운로드가 체크섬과 일치하지 않습니다";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "다운로드에 실패했습니다. 인터넷 연결(또는 VPN이나 프록시)을 확인한 후 다시 시도하세요.";
@@ -248,6 +252,7 @@
 "Bottle from" = "Bottle 출처";
 "Bottle tag" = "Bottle 태그";
 "Bottles" = "Bottle";
+"Bottles are available for %@" = "%@에 사용할 수 있는 bottle이 있습니다";
 "Bottles may be missing and Homebrew won't help with issues. Things often still work." = "bottle이 없을 수 있으며 Homebrew는 문제를 지원하지 않습니다. 대부분 여전히 작동합니다.";
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "bottle만: bottle이 없는 formula, 또는 업그레이드하면 bottle이 없는 종속 항목까지 업그레이드되는 formula는 건너뜁니다. 업그레이드하면 brew가 bottle이 없는 설치된 종속 항목을 업그레이드하거나 다시 빌드해야 하는 formula도 마찬가지입니다. 이런 항목은 업그레이드 목록에 남아 직접 업그레이드해야 합니다.";
 "Brewfile" = "Brewfile";
@@ -780,6 +785,7 @@
 "Open System Settings" = "시스템 설정 열기";
 "Open Tankard" = "Tankard 열기";
 "Open Tankard at login" = "로그인 시 Tankard 열기";
+"Open Tankard to replace the source build. Nothing changes until you do." = "Tankard를 열어 소스 빌드를 교체하세요. 그 전에는 아무것도 바뀌지 않습니다.";
 "Open Terminal" = "터미널 열기";
 "Open in Terminal" = "터미널에서 열기";
 "Open the Tankard window with this run in it" = "이 작업을 Tankard 윈도우에서 엽니다";
@@ -1071,8 +1077,8 @@
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "여기서는 암호를 물을 수 없으므로 시트에 터미널용 명령이 표시됩니다.";
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard는 여기서 암호를 물을 수 없습니다. 대신 할 일은 세부사항을 참고하세요.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard는 각 앱의 버전을 Homebrew의 버전과 비교합니다. 일치하면 앱을 옮기지 않고 Homebrew가 업데이트를 맡습니다.";
-"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard가 %@의 안전 사본을 확인할 수 없어(파일이 너무 많음) 교체하지 않았습니다.";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard가 Homebrew의 패키지 목록을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard가 %@의 신뢰할 수 있는 안전 사본을 만들 수 없어 교체하지 않았습니다.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard가 %1$@의 안전 사본을 만들 수 없어 교체하지 않았습니다: %2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard가 %1$@을(를) 되돌려 놓지 못했습니다(%2$@). 이전 버전의 사본은 %3$@에 있습니다.";

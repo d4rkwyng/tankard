@@ -91,6 +91,7 @@
 "%lld errors" = "%lld件のエラー";
 "%lld failed" = "%lld件が失敗";
 "%lld formulae" = "%lld個のformulae";
+"%lld formulae you built from source now have a bottle" = "ソースからビルドした%lld個のformulaeにbottleが利用できるようになりました";
 "%lld from Apple" = "%lld個は Apple 製";
 "%lld from an untrusted tap" = "%lld個が信頼されていないtapから";
 "%lld from source" = "%lld個がソースから";
@@ -135,6 +136,7 @@
 "%lld uninstalled (%lld version)" = "%lld 個アンインストール済み (%lld バージョン)";
 "%lld uninstalled (%lld versions)" = "%lld 個アンインストール済み (%lld バージョン)";
 "%lld upgraded" = "%lld個をアップグレード済み";
+"%lld upgrades not included" = "%lld件のアップグレードは含まれません";
 "%lld upgrades ready" = "%lld件のアップグレードが利用可能";
 "%lld vulnerable" = "%lld個が脆弱";
 "%lld vulnerable packages; more filters" = "脆弱なパッケージ%lld個、他のフィルタ";
@@ -149,6 +151,7 @@
 ". From brew vulns (OSV.dev)." = "。brew vulns(OSV.dev)より。";
 ". brew printed these; they are also in each package's details." = "。brewが出力した内容です。各パッケージの詳細にも表示されます。";
 "1 new upgrade" = "新しいアップグレード 1 件";
+"1 upgrade not included" = "1件のアップグレードは含まれません";
 "1. Remove the Intelbrew lines from your shell profile" = "1. シェルプロファイルからIntelbrewの行を削除する";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. Homebrew/brewをアップストリームに戻し、3. brew update を実行する";
 "30 days" = "30日";
@@ -156,6 +159,7 @@
 "90 days" = "90日";
 "A Brewfile is a Ruby program. Checking or installing it with brew bundle runs the code in it, with your permissions, before Tankard shows anything." = "BrewfileはRubyのプログラムです。brew bundleで確認やインストールをすると、Tankardが何かを表示する前に、その中のコードがあなたの権限で実行されます。";
 "A Terminal command you can copy to install everything in this Brewfile. Tankard doesn't run it." = "このBrewfileの内容をすべてインストールするために、コピーして使えるターミナルコマンドです。Tankardは実行しません。";
+"A bottle is available for %@" = "%@ のbottleが利用できます";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env ファイルにもIntelbrewの変数が設定されています。Tankardは brew.env を編集しません。手動で削除しないと、brewはフォークを使い続けます:\n";
 "A download didn't match its checksum" = "ダウンロードがチェックサムと一致しません";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "ダウンロードに失敗しました。インターネット接続(またはVPN、プロキシ)を確認して、再試行してください。";
@@ -248,6 +252,7 @@
 "Bottle from" = "Bottleの提供元";
 "Bottle tag" = "Bottleタグ";
 "Bottles" = "Bottle";
+"Bottles are available for %@" = "%@ のbottleが利用できます";
 "Bottles may be missing and Homebrew won't help with issues. Things often still work." = "bottleがない場合があり、Homebrewは問題への対応をしません。多くの場合は動作します。";
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "bottleのみ: bottleのないformula、またはアップグレードするとbottleのない依存先もアップグレードされるformulaはスキップされます。また、アップグレードによってbottleのないインストール済みの依存元をbrewがアップグレードまたは再ビルドすることになるformulaもスキップされます。これらは「アップグレード」に残るので、手動でアップグレードしてください。";
 "Brewfile" = "Brewfile";
@@ -780,6 +785,7 @@
 "Open System Settings" = "システム設定を開く";
 "Open Tankard" = "Tankardを開く";
 "Open Tankard at login" = "ログイン時にTankardを開く";
+"Open Tankard to replace the source build. Nothing changes until you do." = "Tankardを開いてソースビルドを置き換えてください。それまで何も変更されません。";
 "Open Terminal" = "ターミナルを開く";
 "Open in Terminal" = "ターミナルで開く";
 "Open the Tankard window with this run in it" = "この処理を Tankard のウインドウで開きます";
@@ -1071,8 +1077,8 @@
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "ここではパスワードを尋ねられないため、シートにターミナル用のコマンドが表示されます。";
 "Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
-"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankardは %@ の安全コピーを確認できませんでした（ファイルが多すぎます）。そのため置き換えませんでした。";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankardは %@ の信頼できる安全コピーを作成できなかったため、置き換えませんでした。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankardは %1$@ を元に戻せませんでした（%2$@）。古いバージョンのコピーは %3$@ にあります。";
