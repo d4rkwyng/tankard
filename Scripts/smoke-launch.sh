@@ -139,9 +139,25 @@ MODEL_BUNDLE="$RES/tankard_TankardAppModel.bundle"
 for b in "$APP_BUNDLE" "$MODEL_BUNDLE"; do
     [ -d "$b" ] || fail "missing Contents/Resources/$(basename "$b") (the app would fall back to Bundle.module's build path)"
 done
+# One array element per line, read by index (`plutil -extract KEY raw` on an
+# array prints its count). Not `-extract … json | tr | while read`: plutil's
+# JSON has no trailing newline, so `read` dropped the last language.
+plist_strings() { # plist key
+    local n i v
+    [ "$(plutil -type "$2" "$1" 2>/dev/null)" = array ] || return 1
+    n=$(plutil -extract "$2" raw -o - "$1") || return 1
+    for ((i = 0; i < n; i++)); do
+        v=$(plutil -extract "$2.$i" raw -o - "$1") || return 1
+        printf '%s\n' "$v"
+    done
+}
 LANGS=()
-while IFS= read -r l; do [ -n "$l" ] && LANGS+=("$l"); done < <(
-    plutil -extract CFBundleLocalizations json -o - "$APP/Contents/Info.plist" | tr -d '[]"' | tr ',' '\n')
+LANG_LIST=$(plist_strings "$APP/Contents/Info.plist" CFBundleLocalizations) || fail "CFBundleLocalizations in Info.plist is missing or not an array of strings"
+while IFS= read -r l; do
+    [ -n "$l" ] || continue
+    case "$l" in */*|.*) fail "odd CFBundleLocalizations entry '$l'" ;; esac
+    LANGS+=("$l")
+done <<< "$LANG_LIST"
 [ ${#LANGS[@]} -gt 0 ] || fail "Info.plist lists no CFBundleLocalizations"
 for l in "${LANGS[@]}"; do
     [ -s "$RES/$l.lproj/Localizable.strings" ] || fail "missing Contents/Resources/$l.lproj/Localizable.strings"
@@ -162,7 +178,7 @@ if [ -n "$TEAM" ]; then
     spctl -a -t exec -vv "$APP" 2>"$TMP/spctl" || { cat "$TMP/spctl" >&2; fail "Gatekeeper rejects the unzipped app"; }
     SIGNED="$SIGNED, stapled, Gatekeeper accepts"
 fi
-echo "layout ok: Tankard, TankardPassword.app/$HELPER_NAME, AppIcon.icns, 2 resource bundles in Contents/Resources, ${#LANGS[@]} localizations in app and helper; signature valid, $SIGNED"
+echo "layout ok: Tankard, TankardPassword.app/$HELPER_NAME, AppIcon.icns, 2 resource bundles in Contents/Resources, ${#LANGS[@]} localizations (${LANGS[*]}) in app and helper; signature valid, $SIGNED"
 
 # 2. Hide the build machine's fallbacks.
 ROOTS=()
