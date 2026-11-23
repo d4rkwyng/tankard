@@ -46,11 +46,15 @@
 #      user's would; the sandbox makes it see no Homebrew there, and it
 #      can't start brew either way. It must stay up N seconds, then quit
 #      with exit code 0 within 8 s of a Quit (terminate) event.
-#   5. No new crash report (.ips or .crash, new = not in a listing taken
-#      before the launch; ReportCrash touches old reports' mtimes) in
-#      ~/Library/Logs/DiagnosticReports whose name starts with Tankard or
-#      one of the bundle's executable names (any new one fails; the pid
-#      inside each says whether it was this launch or a helper/other run).
+#   5. No new crash report (.ips or .crash, new = a file name not in a
+#      listing taken before the launch; ReportCrash touches old reports'
+#      mtimes and moves some into Retired/) anywhere under
+#      ~/Library/Logs/DiagnosticReports or /Library/Logs/DiagnosticReports
+#      (Retired/ included) whose name starts with Tankard, TankardPassword,
+#      or any executable or bundle name in the zip. It waits up to 15 s for
+#      ReportCrash after the app exits, on every path. Any new one fails;
+#      the pid inside each says whether it was this launch or a helper or
+#      other run.
 # Exit 0 = SMOKE PASS. Needs a logged-in GUI session (CI runners have one).
 set -euo pipefail
 
@@ -271,24 +275,41 @@ ENV_CLEAN=(env)
 for v in $(env | sed -n 's/^\(TANKARD_[A-Z0-9_]*\)=.*/\1/p'); do ENV_CLEAN+=(-u "$v"); done
 ENV_CLEAN+=(TANKARD_DEMO=1 HOMEBREW_NO_AUTO_UPDATE=1)
 
-REPORTS="$HOME/Library/Logs/DiagnosticReports"
-NAMES=(Tankard "$EXE_NAME" "$HELPER_NAME")
-# Reports named after the app or a helper, one name per line, sorted. New
-# = not in the listing taken before the launch (by name, not mtime:
-# ReportCrash touches older reports when it trims the folder).
-matching_reports() {
-    local f n
-    [ -d "$REPORTS" ] || return 0
-    while IFS= read -r f; do
-        [ -n "$f" ] || continue
-        for n in "${NAMES[@]}"; do
-            case "$f" in "$n"[-_.]*.ips|"$n"[-_.]*.crash) echo "$f"; break ;; esac
+# Every name a crash report from this zip could carry: Tankard, the helper
+# (TankardPassword.app reports as TankardPassword or tankard-askpass), and
+# each bundle's CFBundleExecutable/CFBundleName plus every file in a
+# Contents/MacOS folder inside the unzipped app.
+NAMES=(Tankard TankardPassword "$EXE_NAME" "$HELPER_NAME")
+while IFS= read -r n; do [ -n "$n" ] && NAMES+=("$n"); done < <(
+    {
+        find "$APP" -path '*/Contents/Info.plist' -type f -print0 | while IFS= read -r -d '' pl; do
+            plutil -extract CFBundleExecutable raw -o - "$pl" 2>/dev/null || true
+            plutil -extract CFBundleName raw -o - "$pl" 2>/dev/null || true
         done
-    done < <(ls -1 "$REPORTS" 2>/dev/null) | sort
+        find "$APP" -path '*/Contents/MacOS/*' -type f -exec basename {} \;
+    } | sort -u)
+# ~/Library's and /Library's report folders, recursively (Retired/ too).
+echo "crash-report names: $(printf '%s\n' "${NAMES[@]}" | sort -u | paste -sd ' ' -)"
+REPORT_DIRS=("$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports)
+# "basename<TAB>path" for every report named after one of NAMES, sorted.
+# New = a basename not in the listing taken before the launch (by name, not
+# mtime: ReportCrash touches older reports, and moves some into Retired/,
+# when it trims the folder).
+matching_reports() {
+    local d f base n
+    for d in "${REPORT_DIRS[@]}"; do
+        [ -d "$d" ] || continue
+        while IFS= read -r -d '' f; do
+            base=${f##*/}
+            for n in "${NAMES[@]}"; do
+                case "$base" in "$n"[-_.]*) printf '%s\t%s\n' "$base" "$f"; break ;; esac
+            done
+        done < <(find "$d" \( -name '*.ips' -o -name '*.crash' \) -type f -print0 2>/dev/null)
+    done | sort
 }
 BEFORE="$TMP/reports-before"
-matching_reports > "$BEFORE"
-new_reports() { matching_reports | comm -13 "$BEFORE" - | sed "s#^#$REPORTS/#"; }
+matching_reports | cut -f1 | sort -u > "$BEFORE"
+new_reports() { matching_reports | awk -F '\t' 'NR == FNR { seen[$0] = 1; next } !($1 in seen) { print $2 }' "$BEFORE" -; }
 report_pid() { # file -> the crashed process's pid, or "?"
     local p
     p=$(sed -E -n 's/.*"pid" *: *([0-9]+).*/\1/p; s/^Process: .*\[([0-9]+)\].*/\1/p' "$1" 2>/dev/null | head -1)
@@ -313,6 +334,16 @@ wait_for_report() { # pid seconds
         sleep 0.25
     done
 }
+# Waits up to N s for any new report (a helper's, or a crash on quit), then
+# returns; it returns as soon as one shows up.
+wait_for_any_report() { # seconds
+    local i
+    for i in $(seq 1 $(($1 * 4))); do
+        [ -z "$(new_reports)" ] || return 0
+        sleep 0.25
+    done
+}
+CRASH_WAIT=15   # ReportCrash can take several seconds; same on every path
 
 "${ENV_CLEAN[@]}" sandbox-exec -f "$SANDBOX" "$EXE" -ApplePersistenceIgnoreState YES >"$TMP/stdout" 2>"$TMP/stderr" &
 PID=$!
@@ -322,7 +353,7 @@ for _ in $(seq 1 $((SECONDS_UP * 4))); do
     if ! kill -0 "$PID" 2>/dev/null; then
         rc=0; wait "$PID" || rc=$?; PID=""
         # Killed by a signal: give ReportCrash time to write its report.
-        if [ $rc -gt 128 ]; then wait_for_report "$LAUNCHED" 15; else sleep 3; fi
+        if [ $rc -gt 128 ]; then wait_for_report "$LAUNCHED" $CRASH_WAIT; else wait_for_any_report $CRASH_WAIT; fi
         echo "--- stderr ---" >&2; tail -40 "$TMP/stderr" >&2
         crash=$(describe_reports "$LAUNCHED")
         fail "Tankard exited within ${SECONDS_UP}s (exit $rc)${crash:+; crash report(s): $crash}"
@@ -343,7 +374,7 @@ if grep -E "could not load resource bundle|Fatal error" "$TMP/stderr" >&2; then 
 echo "launch ok: up ${SECONDS_UP}s, quit cleanly on a Quit event (exit 0)"
 
 # 5. Crash reports from any run above (also a helper's, or a crash on quit).
-sleep 5
+wait_for_any_report $CRASH_WAIT
 crash=$(describe_reports "$LAUNCHED")
 [ -z "$crash" ] || fail "new crash report(s): $crash"
 
