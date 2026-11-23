@@ -91,6 +91,7 @@
 "%lld errors" = "%lld errores";
 "%lld failed" = "%lld fallidos";
 "%lld formulae" = "%lld formulae";
+"%lld formulae you built from source now have a bottle" = "%lld formulae que compilaste desde el código fuente ya tienen bottle";
 "%lld from Apple" = "%lld de Apple";
 "%lld from an untrusted tap" = "%lld de un tap no confiable";
 "%lld from source" = "%lld desde el código fuente";
@@ -135,6 +136,7 @@
 "%lld uninstalled (%lld version)" = "%lld desinstalado(s) (%lld versión)";
 "%lld uninstalled (%lld versions)" = "%lld desinstalado(s) (%lld versiones)";
 "%lld upgraded" = "%lld actualizados";
+"%lld upgrades not included" = "%lld actualizaciones no incluidas";
 "%lld upgrades ready" = "%lld actualizaciones listas";
 "%lld vulnerable" = "%lld en riesgo";
 "%lld vulnerable packages; more filters" = "%lld paquetes vulnerables; más filtros";
@@ -149,6 +151,7 @@
 ". From brew vulns (OSV.dev)." = ". De brew vulns (OSV.dev).";
 ". brew printed these; they are also in each package's details." = ". brew imprimió esto; también aparece en los detalles de cada paquete.";
 "1 new upgrade" = "1 actualización nueva";
+"1 upgrade not included" = "1 actualización no incluida";
 "1. Remove the Intelbrew lines from your shell profile" = "1. Quita las líneas de Intelbrew de tu perfil de shell";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. Vuelve a apuntar Homebrew/brew al repositorio original y luego 3. brew update";
 "30 days" = "30 días";
@@ -156,6 +159,7 @@
 "90 days" = "90 días";
 "A Brewfile is a Ruby program. Checking or installing it with brew bundle runs the code in it, with your permissions, before Tankard shows anything." = "Un Brewfile es un programa de Ruby. Comprobarlo o instalarlo con brew bundle ejecuta su código, con tus permisos, antes de que Tankard muestre nada.";
 "A Terminal command you can copy to install everything in this Brewfile. Tankard doesn't run it." = "Un comando de Terminal que puedes copiar para instalar todo lo de este Brewfile. Tankard no lo ejecuta.";
+"A bottle is available for %@" = "Hay un bottle disponible para %@";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "Un archivo brew.env también define una variable de Intelbrew. Tankard no edita brew.env; quítala manualmente o brew seguirá usando el fork:\n";
 "A download didn't match its checksum" = "Una descarga no coincide con su suma de verificación";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "Falló una descarga. Comprueba la conexión a internet (o una VPN o proxy) y reintenta.";
@@ -248,6 +252,7 @@
 "Bottle from" = "Bottle de";
 "Bottle tag" = "Etiqueta del bottle";
 "Bottles" = "Bottles";
+"Bottles are available for %@" = "Hay bottles disponibles para %@";
 "Bottles may be missing and Homebrew won't help with issues. Things often still work." = "Puede que falten bottles y Homebrew no ayudará con problemas. A menudo todo sigue funcionando.";
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "Solo bottles: se omite una formula sin bottle, o cuya actualización también actualizaría una dependencia que no tiene. También una formula cuya actualización haría que brew actualice o recompile un dependiente instalado que no tiene: se queda en Actualizaciones para actualizarla manualmente.";
 "Brewfile" = "Brewfile";
@@ -780,6 +785,7 @@
 "Open System Settings" = "Abrir Ajustes del Sistema";
 "Open Tankard" = "Abrir Tankard";
 "Open Tankard at login" = "Abrir Tankard al iniciar sesión";
+"Open Tankard to replace the source build. Nothing changes until you do." = "Abre Tankard para reemplazar la compilación desde el código fuente. Nada cambia hasta que lo hagas.";
 "Open Terminal" = "Abrir Terminal";
 "Open in Terminal" = "Abrir en Terminal";
 "Open the Tankard window with this run in it" = "Abrir la ventana de Tankard con esta operación";
@@ -1071,8 +1077,8 @@
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard no puede pedirla aquí, así que la hoja mostrará el comando para Terminal.";
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard no puede pedirla aquí. En Detalles se explica qué hacer.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard compara la versión de cada app con la de Homebrew. Cuando coinciden, Homebrew se encarga de las actualizaciones sin mover la app.";
-"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento.";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard no pudo comprobar la copia de seguridad de la app %@ (tiene demasiados archivos), así que no la reemplazó.";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento.";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard no pudo hacer una copia de seguridad fiable de la app %@, así que no la reemplazó.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard no pudo hacer una copia de seguridad de %@, así que no la reemplazó: %@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard no pudo volver a poner %1$@ (%2$@). Hay una copia de la versión anterior en %3$@.";

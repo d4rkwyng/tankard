@@ -22,11 +22,17 @@ public enum NotificationRoute: Equatable, Sendable {
     /// 0.8.5 (review): a click on a hidden progress-panel run's "The
     /// upgrade finished…": its results, in the main window.
     case showUpgradeResults
+    /// A click on "A bottle is available for vim", or its Show action:
+    /// Installed ▸ Bottle available. It never starts a replace.
+    case showBottleAvailable
 
     /// The category with the Upgrade All… and Later actions.
     public static let upgradesCategory = "net.mindtricks.tankard.upgrades"
     public static let upgradeAllAction = "net.mindtricks.tankard.upgrade-all"
     public static let laterAction = "net.mindtricks.tankard.later"
+    /// The category with the Show and Later actions, for new bottles.
+    public static let bottlesCategory = "net.mindtricks.tankard.bottles"
+    public static let showBottlesAction = "net.mindtricks.tankard.show-bottles"
     /// userInfo key holding `UpgradeNotificationDiff.Message.Kind.rawValue`.
     public static let kindKey = "tankardKind"
     /// UNNotificationDismissActionIdentifier (only sent with
@@ -41,11 +47,13 @@ public enum NotificationRoute: Equatable, Sendable {
         switch action {
         case laterAction, dismissAction: return .later
         case upgradeAllAction: return .upgradeAll
+        case showBottlesAction: return .showBottleAvailable
         default:
             switch kind {
             case UpgradeNotificationDiff.Message.Kind.autoUpdate.rawValue: return .showAutoUpdateLog
             case UpgradeNotificationDiff.Message.Kind.upgradeDone.rawValue: return .showHistory
             case UpgradeNotificationDiff.Message.Kind.upgradeResults.rawValue: return .showUpgradeResults
+            case UpgradeNotificationDiff.Message.Kind.bottleAvailable.rawValue: return .showBottleAvailable
             default: return .showUpgrades
             }
         }
@@ -100,6 +108,8 @@ extension AppStore {
             showActivity(windowInFront: true)
         case .showUpgrades:
             showUpgrades()
+        case .showBottleAvailable:
+            showBottleAvailable()
         case .upgradeAll:
             showUpgrades()
             let clock = ContinuousClock()

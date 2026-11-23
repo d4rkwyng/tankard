@@ -6,6 +6,8 @@ import TankardAppModel
 /// 0.8.3: clicking a notification. "N upgrades ready" opens the window on
 /// Installed ▸ Upgrades, and has Upgrade All… (the plan sheet, never a
 /// silent upgrade) and Later. An auto-update result opens the Auto-update log.
+/// "A bottle is available for vim" opens Installed ▸ Bottle available, with
+/// Show and Later; it never replaces anything.
 @MainActor
 enum NotificationActions {
     /// Set at launch (TankardApp.init).
@@ -22,13 +24,18 @@ enum NotificationActions {
                                          title: String(localized: "Later"), options: [])
         let category = UNNotificationCategory(identifier: NotificationRoute.upgradesCategory,
                                               actions: [upgradeAll, later], intentIdentifiers: [], options: [])
-        center.setNotificationCategories([category])
+        let showBottles = UNNotificationAction(identifier: NotificationRoute.showBottlesAction,
+                                               title: String(localized: "Show"), options: [.foreground])
+        let bottles = UNNotificationCategory(identifier: NotificationRoute.bottlesCategory,
+                                             actions: [showBottles, later], intentIdentifiers: [], options: [])
+        center.setNotificationCategories([category, bottles])
     }
 
     /// Fills the content's category and kind for `message`.
     static func configure(_ content: UNMutableNotificationContent, for message: UpgradeNotificationDiff.Message) {
         content.userInfo = [NotificationRoute.kindKey: message.kind.rawValue]
         if message.kind == .upgrades { content.categoryIdentifier = NotificationRoute.upgradesCategory }
+        if message.kind == .bottleAvailable { content.categoryIdentifier = NotificationRoute.bottlesCategory }
     }
 
     static func handle(_ route: NotificationRoute) {

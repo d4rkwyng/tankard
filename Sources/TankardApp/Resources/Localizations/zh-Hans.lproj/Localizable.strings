@@ -91,6 +91,7 @@
 "%lld errors" = "%lld 个错误";
 "%lld failed" = "%lld 个失败";
 "%lld formulae" = "%lld 个 formula";
+"%lld formulae you built from source now have a bottle" = "你从源码构建的 %lld 个 formula 现在有 bottle 了";
 "%lld from Apple" = "%lld 个来自 Apple";
 "%lld from an untrusted tap" = "%lld 个来自不受信任的 tap";
 "%lld from source" = "%lld 个来自源码";
@@ -135,6 +136,7 @@
 "%lld uninstalled (%lld version)" = "已卸载 %lld 个 (%lld 个版本)";
 "%lld uninstalled (%lld versions)" = "已卸载 %lld 个 (%lld 个版本)";
 "%lld upgraded" = "%lld 个已升级";
+"%lld upgrades not included" = "%lld 个升级未包含";
 "%lld upgrades ready" = "%lld 个可升级";
 "%lld vulnerable" = "%lld 个有漏洞";
 "%lld vulnerable packages; more filters" = "%lld 个存在漏洞的软件包；更多筛选";
@@ -149,6 +151,7 @@
 ". From brew vulns (OSV.dev)." = "。来自 brew vulns（OSV.dev）。";
 ". brew printed these; they are also in each package's details." = "。以下是 brew 的输出；它们也在每个软件包的详细信息中。";
 "1 new upgrade" = "1 个新升级";
+"1 upgrade not included" = "1 个升级未包含";
 "1. Remove the Intelbrew lines from your shell profile" = "1. 从你的 shell 配置文件中移除 Intelbrew 相关行";
 "2. Point Homebrew/brew back at upstream, then 3. brew update" = "2. 将 Homebrew/brew 指回上游，然后 3. brew update";
 "30 days" = "30 天";
@@ -156,6 +159,7 @@
 "90 days" = "90 天";
 "A Brewfile is a Ruby program. Checking or installing it with brew bundle runs the code in it, with your permissions, before Tankard shows anything." = "Brewfile 是一个 Ruby 程序。用 brew bundle 检查或安装它时，其中的代码会以你的权限运行，早于 Tankard 显示任何内容。";
 "A Terminal command you can copy to install everything in this Brewfile. Tankard doesn't run it." = "一条可拷贝的终端命令，用于安装此 Brewfile 中的所有内容。Tankard 不会运行它。";
+"A bottle is available for %@" = "%@ 有可用的 bottle";
 "A brew.env file also sets an Intelbrew variable. Tankard doesn't edit brew.env; remove it by hand, or brew keeps using the fork:\n" = "brew.env 文件也设置了一个 Intelbrew 变量。Tankard 不会编辑 brew.env；请手动移除，否则 brew 会继续使用该分支：\n";
 "A download didn't match its checksum" = "下载内容与校验和不符";
 "A download failed. Check the internet connection (or a VPN or proxy), then retry." = "下载失败。请检查网络连接（或 VPN、代理），然后重试。";
@@ -248,6 +252,7 @@
 "Bottle from" = "Bottle 来自";
 "Bottle tag" = "Bottle 标签";
 "Bottles" = "Bottle";
+"Bottles are available for %@" = "%@ 有可用的 bottle";
 "Bottles may be missing and Homebrew won't help with issues. Things often still work." = "bottle 可能缺失，Homebrew 也不会协助处理问题。通常仍可正常使用。";
 "Bottles only: a formula with no bottle, or one whose upgrade would also upgrade a dependency that has none, is skipped. So is a formula whose upgrade would make brew upgrade or rebuild an installed dependent that has none: it stays in Upgrades to upgrade by hand." = "仅限 bottle：没有 bottle 的 formula，或升级时会连带升级一个没有 bottle 的依赖项的 formula，会被跳过。如果某个 formula 的升级会让 brew 升级或重建一个没有 bottle 的已安装依赖方，也会被跳过：它会留在“升级”中，需手动升级。";
 "Brewfile" = "Brewfile";
@@ -780,6 +785,7 @@
 "Open System Settings" = "打开系统设置";
 "Open Tankard" = "打开 Tankard";
 "Open Tankard at login" = "登录时打开 Tankard";
+"Open Tankard to replace the source build. Nothing changes until you do." = "打开 Tankard 以替换源码构建的版本。在你操作之前不会有任何更改。";
 "Open Terminal" = "打开“终端”";
 "Open in Terminal" = "在“终端”中打开";
 "Open the Tankard window with this run in it" = "在 Tankard 窗口中打开此操作";
@@ -1071,8 +1077,8 @@
 "Tankard can't ask for it here, so the sheet will show the command for Terminal." = "Tankard 无法在这里询问密码，因此表单会显示用于“终端”的命令。";
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
-"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard 无法检查 %@ 的安全副本（文件太多），因此没有替换它。";
+"Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard 无法为 %@ 创建可靠的安全副本，因此没有替换它。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";
 "Tankard couldn't put %@ back (%@). A copy of the old version is at %@." = "Tankard 无法放回 %1$@（%2$@）。旧版本的副本位于 %3$@。";

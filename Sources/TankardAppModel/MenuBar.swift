@@ -152,14 +152,18 @@ public enum UpgradeNotificationDiff {
             /// 0.8.5 (review): a hidden progress panel's run finished with
             /// problems or notes (opens the results).
             case upgradeResults
+            /// A formula built from source now has a bottle (opens
+            /// Installed ▸ Bottle available; never replaces it).
+            case bottleAvailable
         }
 
         /// "upgrades-<sha256 of the sorted keys>": the same set gives the
         /// same id in every launch, so the system replaces rather than
-        /// stacks a repeat.
+        /// stacks a repeat. Bottles: "bottles-…", so the two never replace
+        /// each other.
         public var identifier: String {
             let digest = SHA256.hash(data: Data(newKeys.sorted().joined(separator: "\n").utf8))
-            return "upgrades-" + digest.map { String(format: "%02x", $0) }.joined()
+            return (kind == .bottleAvailable ? "bottles-" : "upgrades-") + digest.map { String(format: "%02x", $0) }.joined()
         }
     }
 
@@ -177,6 +181,50 @@ public enum UpgradeNotificationDiff {
             ? String(localized: "New: \(shown) and \(names.count - 4) more")
             : String(localized: "New: \(shown)")
         return Message(title: title, body: body, newKeys: added)
+    }
+}
+
+/// A formula built from source that newly has a bottle after `brew update`:
+/// the same diff as upgrades, over `BottleReplacement.isEligible`.
+public enum BottleAvailableNotificationDiff {
+    /// The formula and its installed version (equal to the current one when
+    /// eligible), so a later version built from source counts as new.
+    public static func key(_ p: Package) -> String { "\(p.id)@\(p.installedVersion)" }
+
+    public static func keys(_ packages: [Package]) -> Set<String> {
+        Set(packages.filter(BottleReplacement.isEligible).map(key))
+    }
+
+    /// "A bottle is available for vim", "Bottles are available for vim,
+    /// ruby", or "5 formulae you built from source now have a bottle".
+    public static func phrase(_ names: [String]) -> String {
+        switch names.count {
+        case 0: return ""
+        case 1: return String(localized: "A bottle is available for \(names[0])")
+        case 2...3: return String(localized: "Bottles are available for \(names.joined(separator: ", "))")
+        default: return String(localized: "\(names.count) formulae you built from source now have a bottle")
+        }
+    }
+
+    /// The names of `keys` among `packages`, sorted.
+    public static func names(_ keys: Set<String>, in packages: [Package]) -> [String] {
+        packages.filter { BottleReplacement.isEligible($0) && keys.contains(key($0)) }.map(\.name).sorted()
+    }
+
+    /// nil = post nothing (no baseline yet, or nothing new).
+    public static func decide(previous: Set<String>?, current: Set<String>, packages: [Package]) -> UpgradeNotificationDiff.Message? {
+        guard let previous else { return nil }
+        let added = current.subtracting(previous)
+        guard !added.isEmpty else { return nil }
+        let names = names(added, in: packages)
+        let body: String
+        if names.count > 3 {
+            let shown = names.prefix(4).joined(separator: ", ")
+            body = names.count > 4 ? String(localized: "\(shown) and \(names.count - 4) more") : shown
+        } else {
+            body = String(localized: "Open Tankard to replace the source build. Nothing changes until you do.")
+        }
+        return UpgradeNotificationDiff.Message(title: phrase(names), body: body, newKeys: added, kind: .bottleAvailable)
     }
 }
 
@@ -219,6 +267,7 @@ public final class AppSettings {
         static let notifyNewUpgrades = "notifyNewUpgrades"
         static let checkIntervalHours = "checkIntervalHours"
         static let notifiedUpgrades = "notifiedUpgrades"
+        static let notifiedBottles = "notifiedBottles"
         static let lastBackgroundCheck = "lastBackgroundCheck"
         static let appManagementExplained = "appManagementExplained"
         static let backgroundUpdate = "backgroundUpdate"
@@ -261,7 +310,10 @@ public final class AppSettings {
             defaults.set(notifyNewUpgrades, forKey: Key.notifyNewUpgrades)
             // Turning it on starts from a fresh baseline (turning it off
             // keeps the set; runCheck checks the toggle before posting).
-            if notifyNewUpgrades && !oldValue { notifiedUpgrades = nil }
+            if notifyNewUpgrades && !oldValue {
+                notifiedUpgrades = nil
+                notifiedBottles = nil
+            }
         }
     }
     /// Hours between background checks (1–48). Default 6.
@@ -275,6 +327,12 @@ public final class AppSettings {
     /// The upgrade keys the last background check saw (nil: no baseline yet).
     public var notifiedUpgrades: Set<String>? {
         didSet { defaults.set(notifiedUpgrades.map { Array($0).sorted() }, forKey: Key.notifiedUpgrades) }
+    }
+    /// The bottle-eligible keys already announced or seen
+    /// (`BottleAvailableNotificationDiff`); nil: no baseline yet. Kept with
+    /// notifications off too, since the window's banner uses it.
+    public var notifiedBottles: Set<String>? {
+        didSet { defaults.set(notifiedBottles.map { Array($0).sorted() }, forKey: Key.notifiedBottles) }
     }
     public var lastBackgroundCheck: Date? { didSet { defaults.set(lastBackgroundCheck, forKey: Key.lastBackgroundCheck) } }
     /// The App Management explainer was shown and dismissed once.
@@ -327,6 +385,7 @@ public final class AppSettings {
         let h = defaults.integer(forKey: Key.checkIntervalHours)
         checkIntervalHours = BackgroundSchedule(intervalHours: h == 0 ? BackgroundSchedule.defaultHours : h).intervalHours
         notifiedUpgrades = (defaults.array(forKey: Key.notifiedUpgrades) as? [String]).map(Set.init)
+        notifiedBottles = (defaults.array(forKey: Key.notifiedBottles) as? [String]).map(Set.init)
         lastBackgroundCheck = defaults.object(forKey: Key.lastBackgroundCheck) as? Date
         appManagementExplained = defaults.bool(forKey: Key.appManagementExplained)
         backgroundUpdate = defaults.object(forKey: Key.backgroundUpdate) as? Bool ?? true
@@ -428,6 +487,7 @@ public final class BackgroundChecker {
             waits.append(wait)
         }
         if store.deps.backgroundUpdates {
+            let bottlesBefore = store.report == nil ? nil : BottleAvailableNotificationDiff.keys(store.packages)
             let (wait, attempted, updated) = await backgroundUpdateStep()
             waits.append(wait)
             // That update was the notification check's brew update too.
@@ -435,6 +495,8 @@ public final class BackgroundChecker {
                 settings.lastBackgroundCheck = now()
                 postIfNewUpgrades()
             }
+            // New bottles show in the window even with notifications off.
+            if updated { postIfNewBottles(before: bottlesBefore) }
             // 0.8.5: it didn't finish (offline, brew busy, slept): no second
             // `brew update` right behind it from the notification check
             // (Derek's History: a lock failure 0.2 s after each network one).
@@ -494,12 +556,24 @@ public final class BackgroundChecker {
 
     /// `brew update` (through the queue), re-read, compare, maybe notify.
     public func runCheck() async {
+        let bottlesBefore = store.report == nil ? nil : BottleAvailableNotificationDiff.keys(store.packages)
         // 0.8.5: a scheduled refresh: time limit, sleep, quiet "try later".
         await store.refresh(.scheduled)
         settings.lastBackgroundCheck = now()
         if store.lastScheduledUpdate?.quiet != nil { return } // keep the old baseline
         guard store.report != nil, store.error == nil else { return } // keep the old baseline on failure
         postIfNewUpgrades()
+        postIfNewBottles(before: bottlesBefore)
+    }
+
+    /// Formulae that newly have a bottle: the window's banner always; a
+    /// notification only with the setting on and a baseline from an
+    /// earlier check (the first check after turning it on only records).
+    func postIfNewBottles(before: Set<String>?) {
+        let news = store.newBottles(before: before)
+        let post = settings.notifyNewUpgrades && settings.notifiedBottles != nil
+        AppStore.notificationLog.notice("background check: \(news.added.count, privacy: .public) new bottles, post=\(post, privacy: .public)")
+        store.recordNewBottles(news, postTo: post ? notifier : nil)
     }
 
     /// Compares the upgrades on screen with the last set seen; posts when

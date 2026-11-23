@@ -875,6 +875,7 @@ public final class AutoUpdater {
 
         if !settings.dryRun {
             activity = String(localized: "Auto-update: brew update")
+            let bottlesBefore = store.report == nil ? nil : BottleAvailableNotificationDiff.keys(store.packages)
             // 0.8.5: a scheduled refresh (time limit, sleep, quiet failures).
             await store.refresh(.scheduled)
             if let quiet = store.lastScheduledUpdate?.quiet {
@@ -889,6 +890,10 @@ public final class AutoUpdater {
                 record.note = "\(e.title)" + (e.detail.isEmpty ? "" : ": \(e.detail.split(separator: "\n").last ?? "")")
                 return finish(record, store: store, notifier: notifier, now: now)
             }
+            // A bottle that appeared with this update is announced now, as
+            // after Refresh or a background check: later it would already
+            // look eligible. Recorded, so the re-read below won't repeat it.
+            if store.report != nil { noteNewBottles(before: bottlesBefore, store: store, notifier: notifier) }
         }
         guard store.report != nil else {
             record.note = String(localized: "No Homebrew status to work from")
@@ -1006,6 +1011,14 @@ public final class AutoUpdater {
             record.failed += notDone.map { .init(name: $0.name, isCask: $0.isCask, detail: String(localized: "still outdated after brew upgrade")) }
         }
         return finish(record, store: store, notifier: notifier, now: now)
+    }
+
+    /// The background check's rule: the banner always; a notification only
+    /// with the setting on and a baseline from an earlier check.
+    private func noteNewBottles(before: Set<String>?, store: AppStore, notifier: UpgradeNotifying?) {
+        let news = store.newBottles(before: before)
+        let post = store.settings.notifyNewUpgrades && store.settings.notifiedBottles != nil
+        store.recordNewBottles(news, postTo: post ? notifier : nil)
     }
 
     private func finish(_ r: AutoUpdateRun, store: AppStore, notifier: UpgradeNotifying?, now: () -> Date) -> AutoUpdateRun {

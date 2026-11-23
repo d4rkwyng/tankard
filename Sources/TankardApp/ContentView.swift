@@ -139,6 +139,10 @@ struct ContentView: View {
                 ReplaceLeftoverBanner(store: store, notice: notice)
                 Divider()
             }
+            if let text = store.bottleNoticeText {
+                BottleNoticeBanner(store: store, text: text)
+                Divider()
+            }
             if store.tab == .installed {
                 SummaryStrip(store: store)
                 Divider()
@@ -267,6 +271,9 @@ struct ContentView: View {
             store.insights.settings.notifyNewVulnerabilities = true
             await store.insights.waitForIdle()
             store.insights.settings.seenVulnerabilities = []
+        }
+        if options.demo != nil && options.demoBottleNotice {
+            store.demoBottleNotice()
         }
         if options.demo != nil && options.demoNotes {
             // 0.4: upgrade, close the finished sheet, and the notes follow.
@@ -469,6 +476,40 @@ struct ReplaceLeftoverBanner: View {
             .controlSize(.small)
             Button {
                 store.dismissReplaceLeftoverNotice()
+            } label: {
+                Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
+            }
+            .buttonStyle(.borderless)
+            .help(String(localized: "Hide this message"))
+            .accessibilityLabel(Text("Hide this message"))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.secondary.opacity(0.08))
+    }
+}
+
+/// Formulae built from source that newly have a bottle (after Refresh or a
+/// background check). Replace with Bottle runs only on this click, for the
+/// formulae named here.
+struct BottleNoticeBanner: View {
+    var store: AppStore
+    var text: String
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: "shippingbox").foregroundStyle(.secondary)
+            Text(text)
+                .font(.system(size: 12))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Button("Show") { store.showBottleAvailable() }
+                .controlSize(.small)
+            Button("Replace with Bottle") { store.replaceNoticedBottles() }
+                .controlSize(.small)
+                .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
+            Button {
+                store.dismissBottleNotice()
             } label: {
                 Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
             }

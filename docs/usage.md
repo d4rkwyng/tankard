@@ -457,6 +457,14 @@ now has a bottle says **Bottle available** under its name and gets a **Replace w
 button.
 The Bottle available filter has **Replace all**.
 
+When one of those gains a bottle after `brew update` (Refresh, Check Now, a background
+check or Auto-update), Tankard says so once: a banner at the top of the window ("A bottle is available
+for vim") with **Show**, **Replace with Bottle** and a close button, the same line in the
+menu-bar menu, and the status bar's note after a Refresh. With **Notify me about new
+upgrades** on, it also posts a notification, under the same rules as new upgrades; a
+click opens Installed ▸ Bottle available. Nothing is replaced until you click **Replace
+with Bottle**. The same formula and version isn't announced again.
+
 **Casks that need your password.** Some casks run a `.pkg` installer (Windows App,
 Microsoft Office, drivers), and brew runs that installer with `sudo`. Before such an
 upgrade starts, the sheet says "<name> needs your administrator password" and waits for you

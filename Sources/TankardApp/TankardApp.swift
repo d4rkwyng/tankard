@@ -59,6 +59,9 @@ struct LaunchOptions {
     /// 0.4, demo only: TANKARD_DEMO_VULN_NOTICE=1 turns the menu-bar
     /// vulnerability notice on with an empty baseline (everything is new).
     var demoVulnNotice = false
+    /// 0.9.2, demo only: TANKARD_DEMO_BOTTLE_NOTICE=1 shows Intelbrew's vim
+    /// as newly having a bottle (the banner and the menu-bar line).
+    var demoBottleNotice = false
     /// 0.4, demo only: TANKARD_SELF_UPDATING=1 turns "Include self-updating apps" on.
     var demoSelfUpdating = false
     /// 0.5, demo only: TANKARD_DEMO_AUTOUPDATE=1 turns auto-update on with
@@ -95,6 +98,7 @@ struct LaunchOptions {
             o.demoInstallConfirm = env["TANKARD_DEMO_INSTALL_CONFIRM"] == "1"
             o.demoNotes = env["TANKARD_DEMO_NOTES"] == "1"
             o.demoVulnNotice = env["TANKARD_DEMO_VULN_NOTICE"] == "1"
+            o.demoBottleNotice = env["TANKARD_DEMO_BOTTLE_NOTICE"] == "1"
             o.demoSelfUpdating = env["TANKARD_SELF_UPDATING"] == "1"
             o.demoSheet = env["TANKARD_DEMO_SHEET"].flatMap { ToolSheet(rawValue: $0.lowercased()) }
             o.demoMenuBarShow = env["TANKARD_DEMO_MENUBAR_SHOW"].flatMap { $0.isEmpty ? nil : $0 }
