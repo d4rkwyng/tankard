@@ -53,8 +53,12 @@
 #      (~/Library/Caches/net.mindtricks.tankard/status.json); within its
 #      hour the app shows that cached list rather than the no-Homebrew
 #      welcome. Either way it only has to stay up and quit cleanly. The
-#      script never deletes or moves that cache. It must stay up N seconds, then quit
-#      with exit code 0 within 8 s of a Quit (terminate) event.
+#      script never deletes or moves that cache. The app must stay up N
+#      seconds, then quit with exit code 0 within 8 s of a Quit
+#      (NSRunningApplication.terminate, an Apple Event from osascript). A
+#      missed Quit fails (no kill fallback) and prints osascript's exit
+#      code, stdout and stderr: the event may not have been delivered
+#      (Automation/TCC).
 #   5. No new crash report (.ips or .crash, new = a file name not in a
 #      listing taken before the launch; ReportCrash touches old reports'
 #      mtimes and moves some into Retired/) anywhere under
@@ -406,18 +410,27 @@ for _ in $(seq 1 $((SECONDS_UP * 4))); do
     sleep 0.25
 done
 kill -0 "$PID" 2>/dev/null || early_exit
-with_alarm 10 osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($PID); if (a) a.terminate; ''" >/dev/null 2>&1 \
-    || echo "note: the Quit event's osascript failed or hit its 10 s alarm" >&2
+# The Quit: NSRunningApplication.terminate from osascript sends the app a
+# quit Apple Event (the same call Owlink's release gate uses; it landed on
+# a GitHub macos-26 runner and in a fresh macOS 15 VM). No kill fallback:
+# a missed Quit fails, with osascript's exit code and output, since a
+# missing Automation (TCC) grant is the likeliest cause.
+QUIT_RC=0
+with_alarm 10 osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($PID); (!a || a.isNil()) ? 'no NSRunningApplication for pid $PID' : 'terminate returned ' + a.terminate" \
+    >"$TMP/quit.out" 2>"$TMP/quit.err" || QUIT_RC=$?
+QUIT_NOTE=""; [ "$QUIT_RC" != 142 ] || QUIT_NOTE=" (its 10 s alarm fired)"
+QUIT_SAID="osascript exit $QUIT_RC$QUIT_NOTE; stdout: $(tr '\n' ' ' < "$TMP/quit.out"); stderr: $(tr '\n' ' ' < "$TMP/quit.err")"
+[ "$QUIT_RC" = 0 ] || echo "note: the Quit event's osascript failed: $QUIT_SAID" >&2
 quit=0
 for _ in $(seq 1 32); do kill -0 "$PID" 2>/dev/null || { quit=1; break; }; sleep 0.25; done
 if [ $quit = 0 ]; then
     kill -9 "$PID" 2>/dev/null || true; wait "$PID" 2>/dev/null || true; PID=""
-    fail "Tankard was up ${SECONDS_UP}s but did not quit within 8 s of a Quit event (a prompt?)"
+    fail "Tankard was up ${SECONDS_UP}s but did not quit within 8 s of a Quit event. The quit Apple Event may not have been delivered (osascript may lack Automation/TCC permission to control Tankard on this machine), or the app ignored it (a prompt or sheet?). $QUIT_SAID"
 fi
 rc=0; wait "$PID" || rc=$?; PID=""
 [ $rc = 0 ] || { tail -40 "$TMP/stderr" >&2; fail "Tankard quit with exit code $rc"; }
 if grep -E "could not load resource bundle|Fatal error" "$TMP/stderr" >&2; then fail "Tankard logged a fatal resource error (above)"; fi
-echo "launch ok: up ${SECONDS_UP}s, quit cleanly on a Quit event (exit 0)"
+echo "launch ok: up ${SECONDS_UP}s, quit cleanly on a Quit event (exit 0; $QUIT_SAID)"
 
 # 5. Crash reports from any run above (also a helper's, or a crash on quit).
 wait_for_any_report $CRASH_WAIT
