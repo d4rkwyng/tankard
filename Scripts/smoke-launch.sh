@@ -16,7 +16,9 @@
 #      the mug and mark images; tankard_TankardAppModel.bundle: the demo
 #      data), Localizable.strings for every CFBundleLocalizations language
 #      in the app and in the helper, nothing at the .app root, no *.bundle
-#      outside Contents/Resources, and `codesign --verify --deep --strict`.
+#      outside Contents/Resources, and `codesign --verify --deep --strict`;
+#      for a Team ID (Developer ID) build also `stapler validate` and
+#      `spctl -a -t exec`.
 #   2. Hides the build machine's fallbacks while the checks below run. A
 #      SwiftPM Bundle.module accessor falls back to the absolute .build
 #      path it was compiled with, and on the machine (or CI runner) that
@@ -25,7 +27,8 @@
 #      the executables (absolute …/Sources/<Target>/….swift paths) plus its
 #      own checkout, and renames each root's .build, Resources,
 #      Sources/TankardApp/Resources and Sources/TankardAppModel/Resources,
-#      and any other absolute *.bundle path compiled in, to
+#      and any other absolute *.bundle path compiled in under one of those
+#      roots, to
 #      "<path>.smoke-hidden". A trap renames them back on every exit
 #      (pass, failure, Ctrl-C); if one can't be restored the script says
 #      what to `mv` and exits non-zero. Don't run it while a build or test
@@ -56,7 +59,7 @@ ZIP=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --seconds) SECONDS_UP=${2:?--seconds needs a value}; shift ;;
-        -h|--help) sed -n '2,54p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,53p' "$0"; exit 0 ;;
         -*) echo "smoke-launch.sh: unknown option $1" >&2; exit 2 ;;
         *) ZIP=$1 ;;
     esac
@@ -152,6 +155,13 @@ codesign --verify --deep --strict "$APP" 2>"$TMP/codesign" || { cat "$TMP/codesi
 TEAM=$(codesign -dv "$APP" 2>&1 | sed -n 's/^TeamIdentifier=//p')
 case "$TEAM" in ''|"not set") SIGNED="ad-hoc/unsigned (TANKARD_* switches honoured)" ; TEAM="" ;;
     *) SIGNED="Team ID $TEAM (TANKARD_* switches ignored by design)" ;; esac
+if [ -n "$TEAM" ]; then
+    # A Developer ID release: the zip's copy must carry the notarization
+    # ticket and pass Gatekeeper as it is.
+    xcrun stapler validate "$APP" >"$TMP/stapler" 2>&1 || { cat "$TMP/stapler" >&2; fail "the unzipped app has no valid notarization ticket"; }
+    spctl -a -t exec -vv "$APP" 2>"$TMP/spctl" || { cat "$TMP/spctl" >&2; fail "Gatekeeper rejects the unzipped app"; }
+    SIGNED="$SIGNED, stapled, Gatekeeper accepts"
+fi
 echo "layout ok: Tankard, TankardPassword.app/$HELPER_NAME, AppIcon.icns, 2 resource bundles in Contents/Resources, ${#LANGS[@]} localizations in app and helper; signature valid, $SIGNED"
 
 # 2. Hide the build machine's fallbacks.
@@ -165,7 +175,14 @@ for r in "${ROOTS[@]}"; do
     TARGETS+=("$r/.build" "$r/Resources" "$r/Sources/TankardApp/Resources" "$r/Sources/TankardAppModel/Resources")
 done
 MODULE_PATHS=()
-while IFS= read -r b; do [ -n "$b" ] && MODULE_PATHS+=("$b"); done < <(
+# Only build paths inside a checkout root: a system *.bundle literal must
+# never be renamed.
+while IFS= read -r b; do
+    [ -n "$b" ] || continue
+    for r in "${ROOTS[@]}"; do
+        case "$b" in "$r"/*) MODULE_PATHS+=("${b%/}"); break ;; esac
+    done
+done < <(
     strings -a "$EXE" "$HELPER_EXE" | grep -E '^/.+\.bundle/?$' | sort -u || true)
 TARGETS+=(${MODULE_PATHS[@]+"${MODULE_PATHS[@]}"})
 echo "checkout root(s): ${ROOTS[*]}; Bundle.module build path(s) compiled in: ${#MODULE_PATHS[@]}"
@@ -176,8 +193,8 @@ done
 for d in "${TARGETS[@]}"; do
     case "$d" in "$TMP"/*) continue ;; esac
     if [ -e "$d" ]; then
+        HIDDEN+=("$d")   # first: restore() skips a path that was never moved
         mv "$d" "$d.smoke-hidden"
-        HIDDEN+=("$d")
         echo "hid build-machine fallback $d (restored on exit)"
     fi
 done
