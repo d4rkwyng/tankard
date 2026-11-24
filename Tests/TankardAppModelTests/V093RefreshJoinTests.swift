@@ -46,37 +46,93 @@ struct V093RefreshJoinTests {
     /// update's re-read (.afterUpdate) all wait on one automatic read: each
     /// then reads in turn, never two at once, and a Refresh asked for
     /// meanwhile joins nothing but waits too.
+    ///
+    /// The three waiters run with a task executor preference
+    /// (`HeldResumption`): a task waiting on another wakes on its preferred
+    /// executor before it hops back to the main actor, so each wake-up is a
+    /// job there, and holding the executor collects them. That count is the
+    /// witness that a caller was registered on a read before it ended: a
+    /// caller that reaches `Task.value` after the read ended takes the
+    /// completed-future path and never comes back through the executor, so
+    /// the count would stay short and the test fails.
+    ///
+    /// Before read 0 opens: each waiter enters refresh and reaches
+    /// `Task.value` in one main-actor job (the one that counts it), and any
+    /// hop into `Task.value` it queued on the executor has run after a
+    /// fence, so all three are registered; the three wake-ups after read 0
+    /// confirm it. After each read the test sees every wake-up, runs them
+    /// together while the next read is gated, and waits for that read's
+    /// caller to return and for the next read to reach its gate. The next
+    /// round's wake-up count then shows every caller that didn't read was
+    /// registered on that read before it ended: it ran its check, with the
+    /// chance to start a competing read, while the read was gated.
+    @available(macOS 15.0, *)
     @Test(.timeLimit(.minutes(1))) func mixedCallersWaitingOnOneReadReadOneAfterAnother() async throws {
         let (store, runner, log, overlaps) = await rig()
-        // A failed #require must not leave reads held at closed gates.
-        defer { runner.openAll() }
+        let held = HeldResumption()
+        // A failed #require must not leave reads (or wake-ups) held.
+        defer { held.open(); runner.openAll() }
         let reads = store.refreshesStarted
         let done = Box(0), entered = Box(0)
         Task { await store.refresh(.automatic); done.value += 1 }
         try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 1 })
         // Each counts itself in the same main-actor job that enters refresh
-        // and reaches its wait on the running read (the read can't end yet:
-        // its gate is closed). All three must be waiting before it opens.
-        Task { entered.value += 1; await store.refresh(.manual); done.value += 1 }
-        Task { entered.value += 1; await store.refresh(.scheduled); done.value += 1 }
-        Task { entered.value += 1; await store.refresh(.afterUpdate); done.value += 1 }
+        // and reaches `Task.value` on the running read.
+        let waiter: @MainActor @Sendable (AppStore.RefreshKind) async -> Void = { kind in
+            entered.value += 1
+            await store.refresh(kind)
+            done.value += 1
+        }
+        Task(executorPreference: held) { await waiter(.manual) }
+        Task(executorPreference: held) { await waiter(.scheduled) }
+        Task(executorPreference: held) { await waiter(.afterUpdate) }
         try #require(await waitUntil(timeout: .seconds(10)) { entered.value == 3 },
-                     "the three callers didn't all reach their wait on the read")
-        await Task.yield()
+                     "the three callers didn't all enter refresh")
+        // Each reached `Task.value` in the job that counted it; any hop
+        // into `Task.value` queued on the executor has run after the fence.
+        // So all three are registered on the gated read; the wake-up count
+        // after release(0) witnesses it.
+        held.hold()
+        held.fence()
+        try #require(held.count == 0, "a waiter came back to the executor before the read ended")
         #expect(done.value == 0, "a waiting caller returned before the read ended")
         #expect(store.refreshesStarted == reads + 1)
         #expect(log.count("update") == 0, "a waiting Refresh hasn't run brew update yet")
 
-        // Each release lets exactly one waiter read.
+        // After read i: the callers it wakes (the waiters, plus read i's
+        // own caller from read 1 on).
+        let woken = [3, 3, 2]
         for i in 0..<3 {
             let before = store.refreshesStarted
             runner.release(i)
-            try await expectOneMoreRead(store, before, "two waiting callers read at the same time")
+            try #require(await waitUntil(timeout: .seconds(10)) { held.count == woken[i] },
+                         "not every caller waiting on read \(i) was registered on it before it ended")
+            // All of them resume together while read i + 1 is gated.
+            held.runHeld()
+            held.fence()
+            // Read i's caller returns; from read 1 on it is a waiter, and in
+            // the same main-actor job its task queues its end on the
+            // executor. Let that run so only wake-ups are counted.
+            try #require(await waitUntil(timeout: .seconds(10)) { done.value == i + 1 },
+                         "read \(i)'s caller didn't return once it ended")
+            if i > 0 {
+                try #require(held.count == 1, "read \(i)'s caller didn't end on the executor")
+                held.runHeld()
+                held.fence()
+            }
             try #require(await waitUntil(timeout: .seconds(10)) { runner.started == i + 2 })
+            await Task.yield()
+            #expect(store.refreshesStarted == before + 1, "two waiting callers read at the same time")
             #expect(store.isRefreshing && store.refreshTask != nil)
             #expect(runner.running == 1)
+            #expect(held.count == 0, "a caller woke while read \(i + 1) was gated")
         }
         runner.release(3)
+        // Read 3's caller was registered on it.
+        try #require(await waitUntil(timeout: .seconds(10)) { held.count == 1 },
+                     "read 3's caller wasn't registered on it before it ended")
+        runner.release(3)
+        held.open()
         #expect(await waitUntil(timeout: .seconds(10)) { done.value == 4 })
         #expect(runner.started == 4)
         #expect(runner.maxInFlight == 1)
@@ -127,6 +183,13 @@ struct V093RefreshJoinTests {
         try #require(store.isRefreshing)
         // From here every wake-up of the first caller is held until opened.
         held.hold()
+        // Its hop into `Task.value` may have been dispatched before the
+        // hold and not run yet. The fence runs it now, while read 0 is
+        // still gated, so it registers its wait (no completed-future fast
+        // path) and the read's completion wakes it through the held
+        // executor.
+        held.fence()
+        try #require(held.count == 0 && !firstDone.value)
         // The follower counts itself in the job that enters refresh and
         // reaches its wait on the first read.
         Task {
@@ -281,8 +344,19 @@ final class HeldResumption: TaskExecutor, @unchecked Sendable {
         if now { run(job) }
     }
 
-    /// Jobs enqueued from now on wait for `open()`.
+    /// Jobs enqueued from now on wait for `open()` (or `runHeld()`).
     func hold() { lock.withLock { holding = true } }
+    /// Returns once every job already dispatched to the serial queue has
+    /// run (to its next suspension). Call from outside the queue.
+    func fence() { queue.sync {} }
+    /// Runs the jobs held so far (in order) and keeps holding new ones.
+    func runHeld() {
+        let jobs: [UnownedJob] = lock.withLock {
+            defer { held = [] }
+            return held
+        }
+        for job in jobs { run(job) }
+    }
     /// How many jobs are being held.
     var count: Int { lock.withLock { held.count } }
     /// Runs the held jobs (in order) and stops holding. Safe to call twice.
