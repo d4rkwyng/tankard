@@ -43,23 +43,30 @@ extension CommandQueueTests {
     }
 
     /// A command whose skip check is running hasn't started: it's still
-    /// waiting, so cancelIfWaiting skips it (its brew never runs).
+    /// waiting, so cancelIfWaiting skips it (its brew never runs). Every
+    /// wait is bounded (a latch or an event arrival ignores `.timeLimit`):
+    /// if the skip check never runs, or the command ends some other way,
+    /// the test fails instead of hanging.
     @Test(.timeLimit(.minutes(1))) func cancelIfWaitingSkipsACommandStillInItsSkipCheck() async throws {
         let log = CallLog()
-        let checking = Latch(), answer = Latch()
+        let checking = OSAllocatedUnfairLock(initialState: false)
+        let answer = Latch()
+        // A failed wait below must not leave the skip check suspended.
+        defer { answer.release() }
         let runner = FakeStreamRunner(log: log) { _, _ in 0 }
         let queue = CommandQueue(runner: runner)
         let events = Events()
         let id = queue.enqueue(cmd("checked"), skipCheck: {
-            checking.release()
+            checking.withLock { $0 = true }
             await answer.wait()
             return nil
         }) { events.add("checked", $0) }
-        await checking.wait()
+        try await waitFor(timeout: .seconds(10)) { checking.withLock { $0 } }
         #expect(queue.runningID == nil)
         queue.cancelIfWaiting([id])
         answer.release()
-        await events.arrival { $0 == .cancelled }
+        // Any terminal event, then which one.
+        try await waitFor(timeout: .seconds(10)) { events.terminal("checked") != nil }
         #expect(events.terminal("checked") == .cancelled)
         #expect(!events.all.contains { $0.1 == .started })
         #expect(log.calls.isEmpty)
