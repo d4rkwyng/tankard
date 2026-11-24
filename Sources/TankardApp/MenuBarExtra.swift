@@ -260,7 +260,9 @@ struct MenuRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Image(systemName: systemImage).frame(width: 16)
+                // 0.9.3: decoration; otherwise the symbol's name is part
+                // of the button's name, before the title.
+                Image(systemName: systemImage).frame(width: 16).accessibilityHidden(true)
                 Text(title)
                 Spacer()
                 if let shortcut { Text(verbatim: "⌘\(shortcut)").foregroundStyle(.secondary) }

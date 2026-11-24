@@ -1016,6 +1016,7 @@
 "Show vulnerable packages in Tankard" = "Afficher les paquets vulnérables dans Tankard";
 "Showing the last data Tankard read." = "Affichage des dernières données lues par Tankard.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Affiche une chope avec le nombre de mises à niveau prêtes. Tant qu’elle est affichée, fermer la fenêtre laisse Tankard ouvert.";
+"Shows the Bottle available list" = "Affiche la liste « Bottle disponible »";
 "Shows what a Brewfile lists, without running it" = "Affiche ce que liste un Brewfile, sans l’exécuter";
 "Shows what will change first" = "Montre d’abord ce qui va changer";
 "Size" = "Taille";
@@ -1293,6 +1294,7 @@
 "Version %@ is skipped" = "La version %@ est ignorée";
 "Version %@ to %@" = "Version %@ vers %@";
 "View" = "Présentation";
+"Vulnerabilities: %@" = "Vulnérabilités : %@";
 "Vulnerability scan" = "Analyse des vulnérabilités";
 "Vulnerable" = "Vulnérable";
 "Wait for the running task to finish" = "Attendez la fin de la tâche en cours";
