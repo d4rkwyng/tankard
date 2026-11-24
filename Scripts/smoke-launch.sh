@@ -67,7 +67,9 @@
 #      or any executable or bundle name in the zip. It waits up to 15 s for
 #      ReportCrash after the app exits, on every path. Any new one fails;
 #      the pid inside each says whether it was this launch or a helper or
-#      other run.
+#      other run. Test-only: SMOKE_REPORT_DIRS (colon-separated folders),
+#      if set and non-empty, replaces those two folders; it is ignored
+#      unless set, and the release workflow never sets it.
 # Exit 0 = SMOKE PASS. Needs a logged-in GUI session (CI runners have one).
 set -euo pipefail
 
@@ -337,6 +339,11 @@ while IFS= read -r n; do [ -n "$n" ] && NAMES+=("$n"); done < <(
 # ~/Library's and /Library's report folders, recursively (Retired/ too).
 echo "crash-report names: $(printf '%s\n' "${NAMES[@]}" | sort -u | paste -sd ' ' -)"
 REPORT_DIRS=("$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports)
+# Test-only override (see the header); unset in the release workflow.
+if [ -n "${SMOKE_REPORT_DIRS:-}" ]; then
+    IFS=: read -r -a REPORT_DIRS <<< "$SMOKE_REPORT_DIRS"
+    echo "note: SMOKE_REPORT_DIRS set; crash reports read only from: ${REPORT_DIRS[*]}"
+fi
 # "basename<TAB>path" for every report named after one of NAMES, sorted.
 # New = a basename not in the listing taken before the launch (by name, not
 # mtime: ReportCrash touches older reports, and moves some into Retired/,
@@ -355,7 +362,13 @@ matching_reports() {
 }
 BEFORE="$TMP/reports-before"
 matching_reports | cut -f1 | sort -u > "$BEFORE"
-new_reports() { matching_reports | awk -F '\t' 'NR == FNR { seen[$0] = 1; next } !($1 in seen) { print $2 }' "$BEFORE" -; }
+# The before-list is read in BEGIN, not as awk's first file: with NR == FNR
+# an empty list (a clean runner) would swallow every new report.
+new_reports() {
+    matching_reports | awk -F '\t' -v before="$BEFORE" '
+        BEGIN { while ((getline l < before) > 0) seen[l] = 1; close(before) }
+        !($1 in seen) { print $2 }'
+}
 report_pid() { # file -> the crashed process's pid, or "?"
     local p
     p=$(sed -E -n 's/.*"pid" *: *([0-9]+).*/\1/p; s/^Process: .*\[([0-9]+)\].*/\1/p' "$1" 2>/dev/null | head -1)
