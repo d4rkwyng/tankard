@@ -51,13 +51,19 @@ struct V093RefreshJoinTests {
         // A failed #require must not leave reads held at closed gates.
         defer { runner.openAll() }
         let reads = store.refreshesStarted
-        let done = Box(0)
+        let done = Box(0), entered = Box(0)
         Task { await store.refresh(.automatic); done.value += 1 }
         try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 1 })
-        Task { await store.refresh(.manual); done.value += 1 }
-        Task { await store.refresh(.scheduled); done.value += 1 }
-        Task { await store.refresh(.afterUpdate); done.value += 1 }
-        try await Task.sleep(for: .milliseconds(50)) // they reach their wait (the read can't end yet)
+        // Each counts itself in the same main-actor job that enters refresh
+        // and reaches its wait on the running read (the read can't end yet:
+        // its gate is closed). All three must be waiting before it opens.
+        Task { entered.value += 1; await store.refresh(.manual); done.value += 1 }
+        Task { entered.value += 1; await store.refresh(.scheduled); done.value += 1 }
+        Task { entered.value += 1; await store.refresh(.afterUpdate); done.value += 1 }
+        try #require(await waitUntil(timeout: .seconds(10)) { entered.value == 3 },
+                     "the three callers didn't all reach their wait on the read")
+        await Task.yield()
+        #expect(done.value == 0, "a waiting caller returned before the read ended")
         #expect(store.refreshesStarted == reads + 1)
         #expect(log.count("update") == 0, "a waiting Refresh hasn't run brew update yet")
 
@@ -86,59 +92,86 @@ struct V093RefreshJoinTests {
     /// task. While it runs, an automatic refresh joins it (no new read) and
     /// returns only when it ends; a scheduled check waits for it.
     ///
-    /// The order is forced, not left to a sleep: the follower is started
-    /// from the read's last main-actor step (as `isRefreshing` goes false,
-    /// before the read's task completes), so its job is on the main actor
-    /// ahead of the first caller's resumption. It finds the read's task
-    /// done, clears it and installs its own before the first caller gets
-    /// to its cleanup. The first caller then checks, as it returns, that
-    /// the follower had entered and that the follower's task is still set.
+    /// The order is forced by a gate, not left to the main actor: the first
+    /// caller runs with a task executor preference (`HeldResumption`), and
+    /// when its read's task completes the runtime wakes it there (a waiter
+    /// on a task resumes on the generic executor, which for a task with a
+    /// preference is that executor), before it hops back to the main actor
+    /// for its cleanup. The executor holds that wake-up. The follower, an
+    /// ordinary task, waited on the same read; it resumes, clears the read's
+    /// task and installs its own while the first caller is held. The test
+    /// sees both (the follower's read at its gate, the first caller's
+    /// wake-up held and its refresh not returned) and only then lets the
+    /// first caller go: its cleanup runs, and in the same main-actor job it
+    /// records `refreshTask`. Nothing here waits on the follower from inside
+    /// the first read, so neither side waits on the other.
+    @available(macOS 15.0, *)
     @Test(.timeLimit(.minutes(1))) func theCallerOfAFinishedReadLeavesTheNextReadsTask() async throws {
         let (store, runner, _, _) = await rig()
-        defer { runner.openAll() }
+        let held = HeldResumption()
+        defer { held.open(); runner.openAll() }
         let reads = store.refreshesStarted
         let firstDone = Box(false), followerDone = Box(false), followerEntered = Box(false)
-        let firstSaw = Box<(followerEntered: Bool, task: Task<Void, Never>?)?>(nil)
-        Task {
+        let followerInstalled = Box(false)
+        let firstSaw = Box<(followerInstalled: Bool, task: Task<Void, Never>?)?>(nil)
+        let first: @MainActor @Sendable () async -> Void = {
             await store.refresh(.automatic)
-            // Same main-actor job as the first caller's cleanup.
-            firstSaw.value = (followerEntered.value, store.refreshTask)
+            // Same main-actor job as the first caller's cleanup (and the
+            // follower's read is held at its gate, so its task can't end).
+            firstSaw.value = (followerInstalled.value, store.refreshTask)
             firstDone.value = true
         }
+        Task(executorPreference: held) { await first() }
         try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 1 })
         let firstTask = try #require(store.refreshTask)
         try #require(store.isRefreshing)
-        // Fires on the read's `isRefreshing = false` (its defer), on the
-        // main actor, before its task completes and wakes its caller.
-        withObservationTracking { _ = store.isRefreshing } onChange: {
-            Task { @MainActor in
-                followerEntered.value = true
-                await store.refresh(.afterUpdate)
-                followerDone.value = true
-            }
+        // From here every wake-up of the first caller is held until opened.
+        held.hold()
+        // The follower counts itself in the job that enters refresh and
+        // reaches its wait on the first read.
+        Task {
+            followerEntered.value = true
+            await store.refresh(.afterUpdate)
+            followerDone.value = true
         }
+        try #require(await waitUntil(timeout: .seconds(10)) { followerEntered.value })
+        #expect(store.refreshesStarted == reads + 1)
         runner.release(0)
+
+        // The follower has installed its task and started its read; the
+        // first caller's wake-up is held and its refresh hasn't returned.
         try await expectOneMoreRead(store, reads + 1, "the follower read twice")
+        try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 2 })
+        try #require(await waitUntil(timeout: .seconds(10)) { held.count >= 1 },
+                     "the first caller's wake-up didn't reach the gate")
+        try #require(!firstDone.value, "the first caller resumed past the gate")
+        let followerTask = try #require(store.refreshTask, "the follower's task isn't installed")
+        try #require(followerTask != firstTask)
+        followerInstalled.value = true
+
+        // Now the first caller resumes and cleans up.
+        held.open()
         #expect(await waitUntil(timeout: .seconds(10)) { firstDone.value })
         let saw = try #require(firstSaw.value)
-        // The witness: the follower was in before the first caller's cleanup.
-        try #require(saw.followerEntered, "the follower didn't enter before the first caller resumed")
+        // The witness: the follower's task was in before the first caller's cleanup.
+        try #require(saw.followerInstalled, "the follower didn't install its task before the first caller resumed")
         #expect(saw.task != nil, "the first read's caller cleared the follower's task")
         #expect(saw.task != firstTask)
-        try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 2 })
-        // The first caller has resumed (and cleared what it may clear).
+        #expect(saw.task == followerTask)
+        #expect(runner.started == 2)
         #expect(store.isRefreshing)
         #expect(store.refreshTask != nil, "the first read's caller cleared the follower's task")
-        #expect(store.refreshTask == saw.task)
+        #expect(store.refreshTask == followerTask)
 
-        let joined = Box(false), scheduled = Box(false)
-        Task { await store.refresh(.automatic); joined.value = true }
-        Task { await store.refresh(.scheduled); scheduled.value = true }
-        try await Task.sleep(for: .milliseconds(50))
+        let joined = Box(false), scheduled = Box(false), entered = Box(0)
+        Task { entered.value += 1; await store.refresh(.automatic); joined.value = true }
+        Task { entered.value += 1; await store.refresh(.scheduled); scheduled.value = true }
+        try #require(await waitUntil(timeout: .seconds(10)) { entered.value == 2 })
         await Task.yield()
         #expect(store.refreshesStarted == reads + 2, "a refresh started a read beside the follower's")
         #expect(runner.running == 1)
         #expect(!joined.value, "the automatic refresh returned before the read it joined ended")
+        #expect(!scheduled.value, "the scheduled check returned before the follower's read ended")
 
         runner.release(1)
         #expect(await waitUntil(timeout: .seconds(10)) { joined.value && followerDone.value })
@@ -163,8 +196,9 @@ struct V093RefreshJoinTests {
         let firstDone = Box(false), followerDone = Box(false)
         Task { await store.refresh(.automatic); firstDone.value = true }
         try #require(await waitUntil(timeout: .seconds(10)) { runner.started == 1 })
-        Task { await store.refresh(.afterUpdate); followerDone.value = true }
-        try await Task.sleep(for: .milliseconds(50))
+        let followerEntered = Box(false)
+        Task { followerEntered.value = true; await store.refresh(.afterUpdate); followerDone.value = true }
+        try #require(await waitUntil(timeout: .seconds(10)) { followerEntered.value })
         runner.release(0)
         #expect(await waitUntil(timeout: .seconds(10)) { firstDone.value })
         #expect(store.error != nil, "the failed read is reported")
@@ -225,6 +259,45 @@ struct V093RefreshJoinTests {
         #expect(store.refreshesStarted == reads + 1)
         #expect(runner.started == 1)
         #expect(!store.isRefreshing && store.refreshTask == nil)
+    }
+}
+
+/// A task executor that, once told to hold, keeps every job enqueued on
+/// it until opened. A task started with it as its preference wakes on it
+/// from a wait on another task, so holding it holds that task's resumption
+/// (before it hops to its actor) without touching the main actor.
+@available(macOS 15.0, *)
+final class HeldResumption: TaskExecutor, @unchecked Sendable {
+    private let lock = NSLock()
+    private let queue = DispatchQueue(label: "V093RefreshJoinTests.HeldResumption")
+    private var holding = false
+    private var held: [UnownedJob] = []
+
+    func enqueue(_ job: UnownedJob) {
+        let now: Bool = lock.withLock {
+            if holding { held.append(job); return false }
+            return true
+        }
+        if now { run(job) }
+    }
+
+    /// Jobs enqueued from now on wait for `open()`.
+    func hold() { lock.withLock { holding = true } }
+    /// How many jobs are being held.
+    var count: Int { lock.withLock { held.count } }
+    /// Runs the held jobs (in order) and stops holding. Safe to call twice.
+    func open() {
+        let jobs: [UnownedJob] = lock.withLock {
+            holding = false
+            defer { held = [] }
+            return held
+        }
+        for job in jobs { run(job) }
+    }
+
+    private func run(_ job: UnownedJob) {
+        let executor = asUnownedTaskExecutor()
+        queue.async { job.runSynchronously(on: executor) }
     }
 }
 
