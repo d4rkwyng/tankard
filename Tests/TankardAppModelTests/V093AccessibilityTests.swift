@@ -37,6 +37,103 @@ private func catalog() throws -> [String: [String: String]] {
 
 private let shippedLanguages = ["de", "fr", "es", "ja", "zh-Hans", "pt-BR", "it", "ko"]
 
+/// One view expression in a view's source: `head` is the view from its
+/// first character to the end of that line's expression (closures and
+/// same-line modifiers included); `modifiers` are the lines after it that
+/// start with `.` (comment lines skipped), i.e. the modifiers applied to
+/// that view and not to a sibling or a child. Checking a modifier here,
+/// not anywhere in the declaration, is what pins it to the right control.
+private struct ViewChain {
+    var head: String
+    var modifiers: String
+    var whole: String { head + modifiers }
+}
+
+/// The index of the newline that ends the expression starting at `start`
+/// (brackets balanced; strings, interpolations and `//` comments skipped).
+private func expressionEnd(_ c: [Character], from start: Int) -> Int {
+    var stack: [Character] = [] // open brackets, and `"` for a string
+    var i = start
+    while i < c.count {
+        let ch = c[i], next: Character? = i + 1 < c.count ? c[i + 1] : nil
+        if stack.last == "\"" {
+            if ch == "\\" {
+                if next == "(" { stack.append("(") }
+                i += 2
+                continue
+            }
+            if ch == "\"" { stack.removeLast() }
+            i += 1
+            continue
+        }
+        if ch == "/", next == "/" {
+            while i < c.count, c[i] != "\n" { i += 1 }
+            continue
+        }
+        switch ch {
+        case "\"", "(", "{", "[": stack.append(ch)
+        case ")", "}", "]": if !stack.isEmpty { stack.removeLast() }
+        case "\n" where stack.isEmpty: return i
+        default: break
+        }
+        i += 1
+    }
+    return c.count
+}
+
+/// Every view in `src` that starts with `anchor`, with its modifiers.
+private func chains(_ anchor: String, in src: String) -> [ViewChain] {
+    let c = Array(src)
+    var out: [ViewChain] = []
+    var from = src.startIndex
+    while let r = src.range(of: anchor, range: from..<src.endIndex) {
+        let start = src.distance(from: src.startIndex, to: r.lowerBound)
+        let headEnd = expressionEnd(c, from: start)
+        var mods = ""
+        var j = headEnd
+        while j < c.count {
+            var k = j + 1
+            while k < c.count, c[k] == " " || c[k] == "\t" { k += 1 }
+            if k < c.count, c[k] == "." {
+                j = expressionEnd(c, from: k)
+                mods += String(c[k..<j]) + "\n"
+            } else if k + 1 < c.count, c[k] == "/", c[k + 1] == "/" {
+                j = k
+                while j < c.count, c[j] != "\n" { j += 1 }
+            } else {
+                break
+            }
+        }
+        out.append(ViewChain(head: String(c[start..<headEnd]), modifiers: mods))
+        from = r.upperBound
+    }
+    return out
+}
+
+/// The one view starting with `anchor` whose head contains `containing`.
+private func chain(_ anchor: String, containing: String? = nil, in src: String,
+                   sourceLocation: SourceLocation = #_sourceLocation) throws -> ViewChain {
+    let found = chains(anchor, in: src).filter { containing.map($0.head.contains) ?? true }
+    try #require(found.count == 1, "\(found.count) views start with \(anchor)", sourceLocation: sourceLocation)
+    return found[0]
+}
+
+/// The format specifiers in a translation (`%@`, `%1$@`, `%d`, …; not `%%`).
+private func formatSpecifiers(_ s: String) -> [String] {
+    let re = try! NSRegularExpression(pattern: "%(?:[0-9]+\\$)?(?:l{0,2})[@dDiuUxXoOfFeEgGcCsSpaA%]")
+    return re.matches(in: s, range: NSRange(s.startIndex..., in: s))
+        .map { String(s[Range($0.range, in: s)!]) }
+        .filter { $0 != "%%" }
+}
+
+/// A shipped language's generated Localizable.strings (key -> value).
+private func shippedStrings(_ lang: String) throws -> [String: String] {
+    let url = packageRoot.appendingPathComponent("Sources/TankardApp/Resources/Localizations/\(lang).lproj/Localizable.strings")
+    let data = try Data(contentsOf: url)
+    let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
+    return try #require(plist as? [String: String], "\(lang).lproj/Localizable.strings")
+}
+
 // MARK: the words
 
 struct V093AccessibilityTextTests {
@@ -108,24 +205,44 @@ struct V093BottleBannerAccessibilityTests {
     }
 
     /// Show and Replace with Bottle keep their visible names (Voice
-    /// Control) and get hints; the close button keeps its label.
+    /// Control) and get hints; the close button keeps its label. Each on
+    /// its own button's modifiers (swapping them would mislead VoiceOver).
     @Test func buttonsHaveNamesHintsAndIdentifiers() throws {
         let b = try Self.banner()
-        #expect(b.contains("Button(\"Show\")"))
-        #expect(b.contains("Button(\"Replace with Bottle\")"))
-        #expect(b.contains(".accessibilityHint(Text(AccessibilityText.showBottleAvailableHint))"))
-        #expect(b.contains(".accessibilityHint(Text(AccessibilityText.replaceWithBottleHint))"))
-        #expect(b.contains(".accessibilityLabel(Text(\"Hide this message\"))"))
-        for id in ["bottleNotice", "bottleNoticeShow", "bottleNoticeReplace", "bottleNoticeClose"] {
-            #expect(b.contains(".accessibilityIdentifier(AccessibilityText.ID.\(id))"), "\(id)")
-        }
+        let showHint = ".accessibilityHint(Text(AccessibilityText.showBottleAvailableHint))"
+        let replaceHint = ".accessibilityHint(Text(AccessibilityText.replaceWithBottleHint))"
+        let id = { (name: String) in ".accessibilityIdentifier(AccessibilityText.ID.\(name))" }
+
+        let show = try chain("Button(\"Show\")", in: b).modifiers
+        #expect(show.contains(showHint))
+        #expect(show.contains(id("bottleNoticeShow")))
+        #expect(!show.contains(replaceHint))
+        #expect(!show.contains("accessibilityLabel"))
+
+        let replace = try chain("Button(\"Replace with Bottle\")", in: b).modifiers
+        #expect(replace.contains(replaceHint))
+        #expect(replace.contains(id("bottleNoticeReplace")))
+        #expect(!replace.contains(showHint))
+        #expect(!replace.contains("accessibilityLabel"))
+
+        let close = try chain("Button {", containing: "store.dismissBottleNotice()", in: b).modifiers
+        #expect(close.contains(".accessibilityLabel(Text(\"Hide this message\"))"))
+        #expect(close.contains(id("bottleNoticeClose")))
+        #expect(!close.contains("accessibilityHint"))
+
+        let banner = try chain("HStack(alignment: .center, spacing: 10) {", in: b).modifiers
+        #expect(banner.contains(id("bottleNotice")))
     }
 
     /// One group for VoiceOver, its children in reading order: the
-    /// sentence, Show, Replace with Bottle, close (also Tab's order).
+    /// sentence, Show, Replace with Bottle, close (also Tab's order). The
+    /// group is the banner's own HStack, not one of its children.
     @Test func groupedInReadingOrder() throws {
         let b = try Self.banner()
-        #expect(b.contains(".accessibilityElement(children: .contain)"))
+        let banner = try chain("HStack(alignment: .center, spacing: 10) {", in: b)
+        #expect(b.contains("var body: some View {\n        HStack(alignment: .center, spacing: 10) {"))
+        #expect(banner.modifiers.contains(".accessibilityElement(children: .contain)"))
+        #expect(!banner.head.contains(".accessibilityElement("))
         let order = ["Text(text)", "Button(\"Show\")", "Button(\"Replace with Bottle\")", "store.dismissBottleNotice()"]
         let positions = try order.map { try #require(b.range(of: $0)).lowerBound }
         #expect(positions == positions.sorted())
@@ -136,21 +253,27 @@ struct V093BottleBannerAccessibilityTests {
 
 struct V093MenuBarAccessibilityTests {
     /// The bottle notice is named by its sentence, not "Shipping box, …, Show".
+    /// On the notice's button itself (not the Divider above it).
     @Test func bottleMenuNoticeIsNamedBySentence() throws {
         let n = try source("InsightsViews.swift", from: "struct BottleMenuNotice: View")
-        #expect(n.contains(".accessibilityLabel(Text(text))"))
-        #expect(n.contains(".accessibilityHint(Text(AccessibilityText.showBottleAvailableHint))"))
-        #expect(n.contains(".accessibilityIdentifier(AccessibilityText.ID.bottleMenuNotice)"))
+        let button = try chain("Button {", containing: "store.showBottleAvailable()", in: n).modifiers
+        #expect(button.contains(".accessibilityLabel(Text(text))"))
+        #expect(button.contains(".accessibilityHint(Text(AccessibilityText.showBottleAvailableHint))"))
+        #expect(button.contains(".accessibilityIdentifier(AccessibilityText.ID.bottleMenuNotice)"))
+        #expect(try chain("Divider()", in: n).modifiers.isEmpty)
     }
 
     /// The vulnerability notice: icon and trailing "Show" hidden, a hint.
     @Test func vulnerabilityMenuNoticeHidesIconAndShow() throws {
         let n = try source("InsightsViews.swift", from: "struct VulnerabilityMenuNotice: View")
-        let icon = try #require(n.range(of: "Image(systemName: \"exclamationmark.triangle.fill\")"))
-        #expect(n[icon.upperBound...].prefix(120).contains(".accessibilityHidden(true)"))
-        let show = try #require(n.range(of: "Text(\"Show\")"))
-        #expect(n[show.upperBound...].prefix(160).contains(".accessibilityHidden(true)"))
-        #expect(n.contains(".accessibilityHint(Text(AccessibilityText.showVulnerableHint))"))
+        #expect(try chain("Image(systemName: \"exclamationmark.triangle.fill\")", in: n).whole.contains(".accessibilityHidden(true)"))
+        #expect(try chain("Text(\"Show\")", in: n).whole.contains(".accessibilityHidden(true)"))
+        // The title and the names stay readable.
+        #expect(!(try chain("Text(\"New vulnerabilities\")", in: n).whole.contains("accessibilityHidden")))
+        let button = try chain("Button {", containing: "store.showVulnerable()", in: n).modifiers
+        #expect(button.contains(".accessibilityHint(Text(AccessibilityText.showVulnerableHint))"))
+        #expect(button.contains(".accessibilityIdentifier(AccessibilityText.ID.vulnerabilityMenuNotice)"))
+        #expect(try chain("Divider()", in: n).modifiers.isEmpty)
     }
 
     /// The panel's menu rows (Upgrade All, Check Now, Open Tankard, Quit):
@@ -160,12 +283,16 @@ struct V093MenuBarAccessibilityTests {
         #expect(row.contains("Image(systemName: systemImage).frame(width: 16).accessibilityHidden(true)"))
     }
 
-    /// The Auto-update line's icons are decoration.
+    /// The Auto-update line's icons are decoration; the status and the
+    /// version beside them are not.
     @Test func autoUpdateMenuLineIconsAreHidden() throws {
         let line = try source("AutoUpdateViews.swift", from: "struct AutoUpdateMenuLine: View")
-        for symbol in ["\"clock.arrow.circlepath\")", "Image(systemName: \"arrow.down.circle\")"] {
-            let at = try #require(line.range(of: symbol), "\(symbol)")
-            #expect(line[at.upperBound...].prefix(220).contains(".accessibilityHidden(true)"), "\(symbol)")
+        for icon in ["Image(systemName: updater.isRunning ? \"arrow.triangle.2.circlepath\" : \"clock.arrow.circlepath\")",
+                     "Image(systemName: \"arrow.down.circle\")"] {
+            #expect(try chain(icon, in: line).whole.contains(".accessibilityHidden(true)"), "\(icon)")
+        }
+        for text in ["Text(line)", "Text(selfUpdate)"] {
+            #expect(!(try chain(text, in: line).whole.contains("accessibilityHidden")), "\(text)")
         }
     }
 }
@@ -175,18 +302,33 @@ struct V093MenuBarAccessibilityTests {
 struct V093MainWindowAccessibilityTests {
     /// The Available column's upgrade arrow and version: one element named
     /// like its tooltip.
+    /// The modifiers sit on the upgrading branch's HStack (arrow and
+    /// version together), not on the arrow alone or the unchanged branch.
     @Test func availableCellIsOneNamedElement() throws {
         let cell = try source("ContentView.swift", from: "struct AvailableCell: View")
-        #expect(cell.contains(".help(\"Upgrade available: \\(v)\")"))
-        #expect(cell.contains(".accessibilityElement(children: .ignore)"))
-        #expect(cell.contains(".accessibilityLabel(Text(AccessibilityText.upgradeAvailable(v)))"))
+        let upgrading = try #require(cell.range(of: "if package.upgradeAvailable {"))
+        let otherwise = try #require(cell.range(of: "} else {", range: upgrading.upperBound..<cell.endIndex))
+        let branch = String(cell[upgrading.upperBound..<otherwise.lowerBound])
+        let stack = try chain("HStack(spacing: 3) {", in: branch)
+        #expect(stack.head.contains("Image(systemName: \"arrow.up\")"))
+        #expect(stack.head.contains("Text(v)"))
+        #expect(!stack.head.contains("accessibility"))
+        #expect(stack.modifiers.contains(".help(\"Upgrade available: \\(v)\")"))
+        #expect(stack.modifiers.contains(".accessibilityElement(children: .ignore)"))
+        #expect(stack.modifiers.contains(".accessibilityLabel(Text(AccessibilityText.upgradeAvailable(v)))"))
+        // An unchanged package says nothing about an upgrade.
+        #expect(!cell[otherwise.upperBound...].contains("accessibility"))
     }
 
-    /// The toolbar's spinner while refreshing has a name.
+    /// The toolbar's spinner while refreshing has a name (on the spinner,
+    /// not the idle Refresh button, which is named by its Label).
     @Test func refreshSpinnerIsNamed() throws {
         let view = try source("ContentView.swift", from: "struct ContentView: View")
-        #expect(view.contains(".accessibilityLabel(Text(AccessibilityText.refreshing(phase: store.refreshPhase)))"))
-        #expect(view.contains(".accessibilityIdentifier(AccessibilityText.ID.refreshProgress)"))
+        let spinner = try chain("ProgressView().controlSize(.small)", in: view).modifiers
+        #expect(spinner.contains(".accessibilityLabel(Text(AccessibilityText.refreshing(phase: store.refreshPhase)))"))
+        #expect(spinner.contains(".accessibilityIdentifier(AccessibilityText.ID.refreshProgress)"))
+        let refresh = try chain("Button {", containing: "store.refreshFromUser", in: view).modifiers
+        #expect(!refresh.contains("accessibility"))
     }
 
     /// The status bar's "·" separators and the busy notice's hourglass are
@@ -211,9 +353,27 @@ struct V093SettingsLocalizationTests {
         let settings = try source("InsightsViews.swift", from: "struct UpgradeSettings: View")
         #expect(!settings.contains("Text(\"Vulnerabilities: \" +"))
         #expect(settings.contains("Text(\"Vulnerabilities: \\(VulnerabilityText.scanLine(scan))\")"))
+        // The view passes one argument: every translation takes exactly one
+        // object, in the catalog and in each shipped Localizable.strings.
+        let takesOne = { (value: String?) in
+            guard let value else { return false }
+            let specs = formatSpecifiers(value)
+            return specs.count == 1 && specs[0].hasSuffix("@")
+        }
         let entry = try #require(try catalog()["Vulnerabilities: %@"])
         for lang in shippedLanguages {
-            #expect((entry[lang] ?? "").contains("%@"), "\(lang)")
+            #expect(takesOne(entry[lang]), "catalog \(lang): \(entry[lang] ?? "missing")")
+        }
+        let hint = AccessibilityText.showBottleAvailableHint
+        for lang in ["en"] + shippedLanguages {
+            let strings = try shippedStrings(lang)
+            #expect(takesOne(strings["Vulnerabilities: %@"]), "\(lang).lproj: \(strings["Vulnerabilities: %@"] ?? "missing")")
+            #expect(!(strings[hint] ?? "").isEmpty, "\(lang).lproj: \(hint) missing")
+            #expect(formatSpecifiers(strings[hint] ?? "").isEmpty, "\(lang).lproj: \(hint)")
+            if lang == "en" {
+                #expect(strings["Vulnerabilities: %@"] == "Vulnerabilities: %@")
+                #expect(strings[hint] == hint)
+            }
         }
     }
 
