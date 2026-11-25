@@ -274,6 +274,12 @@ public final class InsightsStore {
     /// while the list still marked the packages. nil while a scan runs,
     /// after a failed one, and before any scan.
     public var shownScanOutcome: ScanOutcome? {
+        // 0.9.4 (bug hunt): counted against what is installed now, as the
+        // Vulnerable list is: an upgrade or uninstall since the scan ended
+        // left "2 vulnerable" when the list showed fewer.
+        if case .done(let checked, _, let complete)? = scanOutcome, let scan = vulnerabilityScan {
+            return .done(checked: checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()), complete: complete)
+        }
         if let scanOutcome { return scanOutcome }
         guard scanState == .idle, let scan = vulnerabilityScan else { return nil }
         return .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()), complete: scan.complete)

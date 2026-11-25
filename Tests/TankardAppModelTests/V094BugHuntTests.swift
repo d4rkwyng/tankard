@@ -141,3 +141,46 @@ struct V094LockWaitTimeoutTests {
         #expect(s.nextStep != nil)
     }
 }
+
+// MARK: the scan line's count follows upgrades
+
+// "Scanned 55 · 2 vulnerable" (status bar, menu bar, Settings) was
+// counted once, when the scan ended. After an upgrade or uninstall of a
+// vulnerable formula (and no rescan: scan-on-refresh is off by default)
+// it kept saying 2 while the Vulnerable list and its header, which
+// recount against what is installed, said fewer.
+@MainActor
+struct V094ScanCountTests {
+    static func formula(_ name: String, _ version: String) -> Package {
+        var p = Package.command(name)
+        p.id = name
+        p.name = name
+        p.fullName = name
+        p.installedVersion = version
+        p.installedVersions = [version]
+        return p
+    }
+
+    @Test func theCountFollowsWhatIsInstalled() throws {
+        let store = InsightsStore(settings: InsightSettings(defaults: TestDefaults.fresh()), cache: nil, ttl: 3600, now: { Date() })
+        var installed = [Self.formula("openssl@3", "3.5.9"), Self.formula("libssh2", "1.11.0"), Self.formula("xz", "5.6.2")]
+        store.installedPackages = { installed }
+        var scan = VulnerabilityScan(json: try BrewVulnsJSON.decode(stdout: Data(#"{"findings":[]}"#.utf8)), scannedAt: Date())
+        scan.checked = 55
+        scan.complete = true
+        scan.findings = ["openssl@3": [PackageVulnerability(id: "CVE-1", severity: .high)],
+                         "libssh2": [PackageVulnerability(id: "CVE-2", severity: .high)]]
+        scan.versions = ["openssl@3": "3.5.9", "libssh2": "1.11.0"]
+        store.scanFinished(scan)
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 2, complete: true))
+
+        // openssl@3 upgraded: the scan's version no longer matches.
+        installed[0].installedVersion = "3.6.0"
+        installed[0].installedVersions = ["3.6.0"]
+        #expect(VulnerabilityCount.installed(scan, packages: installed) == 1)
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 1, complete: true))
+        // libssh2 uninstalled.
+        installed.remove(at: 1)
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 0, complete: true))
+    }
+}
