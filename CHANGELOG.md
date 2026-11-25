@@ -4,7 +4,7 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
-## [Unreleased]
+## [0.9.3] - 2026-11-24
 
 ### Fixed
 - **VoiceOver reads the bottle notice clearly.** In the window's "A bottle is available" banner, the box icon is no longer read, and Show and Replace with Bottle say what they do ("Shows the Bottle available list"). In the menu-bar menu, the bottle and new-vulnerabilities notices are read as their sentence followed by where they go, instead of an icon name and a trailing "Show". The menu-bar menu's scan line, above them, is read as the scan result it shows ("Scanned 11 · 2 vulnerable") followed by where it goes, not only as "Show vulnerable packages in Tankard".
