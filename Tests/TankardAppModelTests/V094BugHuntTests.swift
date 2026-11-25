@@ -106,3 +106,38 @@ struct V094AutoUpdateBlocksUpgradeTests {
         #expect(!store.windowBrewActionsBlocked)
     }
 }
+
+// MARK: a lock wait that runs out says brew was busy
+
+// A step that found brew's lock held waits for it (BrewLockWait). When
+// the wait ran out, the step failed with brew's "already locked" output
+// thrown away (cleared when the wait began), so the sheet said only "The
+// log below shows what brew printed", with no "Another Homebrew command
+// is running" and no next step. History, which keeps that output, said
+// it was locked.
+@MainActor
+struct V094LockWaitTimeoutTests {
+    @Test func aWaitThatRunsOutFailsAsLocked() async throws {
+        let calls = CallLog()
+        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let runner = FakeStreamRunner(log: calls, behaviour: { args, out in
+            guard args.first == "upgrade" else { return 0 }
+            out(Data(V083LockWaitTests.lockedLine.utf8))
+            return 1
+        })
+        var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil)
+        deps.lockWait = BrewLockWait(interval: .milliseconds(10), limit: .milliseconds(150), maxAttempts: 5,
+                                     holders: { _ in ["4312 /bin/bash /opt/homebrew/Library/Homebrew/brew.sh install ffmpeg"] })
+        let store = AppStore(deps: deps)
+        await store.start()
+        let pkg = try #require(store.upgradable.first)
+        store.startUpgrade([pkg])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.lockWait != nil })
+        #expect(await waitUntil { s.isFinished })
+        #expect(calls.count("upgrade") == 1, "the lock never came free: brew ran once")
+        #expect(s.items[0].state == .failed(1))
+        #expect(s.failureKinds == [.locked])
+        #expect(s.nextStep != nil)
+    }
+}

@@ -895,7 +895,9 @@ public final class UpgradeSession: Identifiable {
             note(reason)
         case .lockWait(let holder):
             flush()
-            commandLines = []
+            // 0.9.4 (bug hunt): the locked attempt's output stays until
+            // brew runs again, so a wait that runs out fails as locked.
+            if holder == nil { commandLines = [] }
             if let holder {
                 lockWait = holder
                 note(holder.isEmpty ? "Another Homebrew command holds brew's lock. Waiting for it to finish, then running this again."
