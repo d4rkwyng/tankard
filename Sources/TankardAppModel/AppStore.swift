@@ -1126,7 +1126,9 @@ public final class AppStore {
     /// `skipCompiling`: the plan starts with "Skip packages that would
     /// compile" ticked (the Upgrades filter's button).
     func requestUpgradeInActivity(_ packages: [Package]? = nil, skipCompiling: Bool = false) {
-        guard !isUpgrading else { return }
+        // 0.9.4 (bug hunt): nor while an automatic update has the queue
+        // (startSession refuses then; a plan opened now couldn't start).
+        guard !isUpgrading, !autoUpdate.isRunning else { return }
         let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
         guard !targets.isEmpty else { return }
         var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
@@ -1166,6 +1168,10 @@ public final class AppStore {
     /// Start on the plan page.
     public func confirmUpgradePlan() {
         guard let plan = upgradePlan else { return }
+        // 0.9.4 (bug hunt): an automatic update started while the plan
+        // was open. startSession would refuse, leaving an empty sheet with
+        // no buttons; the plan stays (its Upgrade button waits) instead.
+        guard !autoUpdate.isRunning else { return }
         upgradePlan = nil
         let run = plan.toRun
         if run.isEmpty {

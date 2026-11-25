@@ -46,3 +46,63 @@ extension AppStoreTests {
         #expect(!r.store.upgradeCheckFailed)
     }
 }
+
+// MARK: Upgrade while an automatic update runs
+
+// An Auto-update run has the queue, so startSession refuses a new run.
+// The window's Upgrade buttons stayed on (a click did nothing), and an
+// upgrade plan confirmed meanwhile was cleared before the refused start:
+// the sheet stayed up with no plan and no run, so no buttons at all.
+@MainActor
+struct V094AutoUpdateBlocksUpgradeTests {
+    func runningAutoUpdate() async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>) {
+        let gate = Latch()
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        let demo = deps.streamRunner
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "fetch" { await gate.wait() }
+            return try await demo.stream("/usr/local/bin/brew", args, environment: [:], output: out)
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.autoUpdate.settings.enabled = true
+        let u = store.autoUpdate
+        let task = Task { await u.run(store: store, notifier: nil) }
+        try #require(await waitUntil { u.isRunning && u.activity?.hasPrefix("Auto-update: downloading") == true })
+        return (store, gate, task)
+    }
+
+    @Test func aPlanConfirmedDuringAutoUpdateStaysOnScreen() async throws {
+        let (store, gate, task) = try await runningAutoUpdate()
+        let targets = store.upgradable
+        try #require(!targets.isEmpty && !store.isUpgrading)
+        // The plan was open before the automatic run started.
+        store.upgradePlan = UpgradePlan(packages: targets, classifier: store.deps.classifier)
+        store.showUpgradeSheet = true
+        store.confirmUpgradePlan()
+        #expect(store.upgrade == nil)
+        // Not an empty sheet: the plan is still what it shows.
+        #expect(store.upgradePlan != nil)
+        #expect(store.showUpgradeSheet)
+        gate.release()
+        _ = await task.value
+        #expect(await waitUntil { !store.autoUpdate.isRunning && !store.isRefreshing })
+        // Once it's done, the same plan starts.
+        store.confirmUpgradePlan()
+        #expect(store.upgradePlan == nil)
+        #expect(store.upgrade != nil)
+    }
+
+    @Test func theWindowsUpgradeButtonsWaitForAutoUpdate() async throws {
+        let (store, gate, task) = try await runningAutoUpdate()
+        #expect(!store.isUpgrading)
+        #expect(store.windowBrewActionsBlocked)
+        // A click that got through anyway opens nothing it can't start.
+        store.requestUpgrade()
+        #expect(store.upgradePlan == nil && store.upgrade == nil && !store.showUpgradeSheet)
+        gate.release()
+        _ = await task.value
+        #expect(await waitUntil { !store.autoUpdate.isRunning })
+        #expect(!store.windowBrewActionsBlocked)
+    }
+}

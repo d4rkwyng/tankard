@@ -124,7 +124,8 @@ struct UpgradePlanView: View {
                 }
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
-                .disabled(plan.toRun.isEmpty)
+                // 0.9.4 (bug hunt): an automatic update has the queue.
+                .disabled(plan.toRun.isEmpty || store.autoUpdate.isRunning)
             }
             .panelButtonRow("plan.buttons")
             .padding(.top, 14)

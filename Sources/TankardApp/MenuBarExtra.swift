@@ -135,7 +135,7 @@ struct MenuBarContent: View {
                     }
                 } else {
                     MenuRow(title: String(localized: "Upgrade All"), systemImage: "arrow.up.circle", shortcut: nil,
-                            enabled: summary.count > 0 && !store.isUpgrading && !store.isRefreshing) {
+                            enabled: summary.count > 0 && !store.isUpgrading && !store.autoUpdate.isRunning && !store.isRefreshing) {
                         upgradeFromMenu(nil)
                     }
                 }

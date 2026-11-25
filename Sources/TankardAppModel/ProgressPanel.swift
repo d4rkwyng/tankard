@@ -119,8 +119,9 @@ public extension AppStore {
 
     /// 0.8.5 (review): the main window's buttons that start brew: off
     /// while brew runs (as before) or the progress panel holds the
-    /// activity.
-    var windowBrewActionsBlocked: Bool { isUpgrading || progressPanelHoldsActivity }
+    /// activity. 0.9.4 (bug hunt): and while an automatic update runs
+    /// (startSession refuses then, so a click did nothing).
+    var windowBrewActionsBlocked: Bool { isUpgrading || autoUpdate.isRunning || progressPanelHoldsActivity }
 
     /// 0.8.5 (HK-47 review): the progress panel holds the activity, so a
     /// new run from anywhere else would replace it: says why (the busy
