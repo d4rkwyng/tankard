@@ -101,8 +101,10 @@ struct MenuBarContent: View {
                 Divider()
                 // 0.8.3: once it has ended, the line opens the Vulnerable
                 // list (while it runs, it holds the Stop button).
+                // 0.9.3: named by the scan sentence it shows; where it
+                // goes is the hint (it was the name, hiding the sentence).
                 MenuPanelLink(enabled: store.insights.scanState != .running,
-                              accessibilityLabel: String(localized: "Show vulnerable packages in Tankard"),
+                              accessibilityHint: String(localized: "Show vulnerable packages in Tankard"),
                               action: { show(.vulnerable) }) {
                     HStack(spacing: 6) {
                         Image(systemName: "checkmark.shield")
@@ -220,23 +222,35 @@ extension MenuBarContent {
 /// at the same size, as plain text.
 struct MenuPanelLink<Label: View>: View {
     var enabled = true
-    var accessibilityLabel: String
+    /// Replaces the name VoiceOver takes from `label`; also the tooltip.
+    var accessibilityLabel: String? = nil
+    /// 0.9.3: for a line named by what it shows: where it goes, as the
+    /// hint and the tooltip. Pass this or `accessibilityLabel`.
+    var accessibilityHint: String? = nil
     var action: () -> Void
     @ViewBuilder var label: () -> Label
     private let hover = State(initialValue: false)
 
     var body: some View {
         if enabled {
-            Button(action: action) {
-                content(highlighted: hover.wrappedValue)
+            if let accessibilityLabel {
+                button.help(accessibilityLabel)
+                    .accessibilityLabel(Text(accessibilityLabel))
+            } else {
+                button.help(accessibilityHint ?? "")
+                    .accessibilityHint(Text(accessibilityHint ?? ""))
             }
-            .buttonStyle(.plain)
-            .onHover { hover.wrappedValue = $0 }
-            .help(accessibilityLabel)
-            .accessibilityLabel(Text(accessibilityLabel))
         } else {
             content(highlighted: false)
         }
+    }
+
+    private var button: some View {
+        Button(action: action) {
+            content(highlighted: hover.wrappedValue)
+        }
+        .buttonStyle(.plain)
+        .onHover { hover.wrappedValue = $0 }
     }
 
     private func content(highlighted: Bool) -> some View {

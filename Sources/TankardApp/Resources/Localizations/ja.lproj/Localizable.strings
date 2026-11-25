@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@には管理者パスワードが必要です";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
+"%@ on disk" = "ディスク上 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ がTankardで読み取れないJSONを出力しました: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ は %@ として実行されます: %@ にはsudoが必要です";
 "%@ s" = "%@ 秒";
@@ -1429,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOSが%@を停止しました。許可後、Tankardがもう一度試します。";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOSがアプリを変更する手順を停止しました。許可してから、もう一度実行してください。";
 "macOS will ask when you turn this on" = "オンにするとmacOSが確認します";
+"measuring…" = "計測中…";
 "needs administrator rights" = "管理者権限が必要です";
 "needs your administrator password; upgrade it by hand" = "管理者パスワードが必要です。手動でアップグレードしてください";
 "newer" = "新しい";

@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@ braucht dein Admin-Passwort";
 "%@ of %@ %@ (%lld%%)" = "%@ von %@ %@ (%lld %%)";
 "%@ of %@ bottled" = "%@ von %@ mit Bottle";
+"%@ on disk" = "%@ auf dem Datenträger";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ hat JSON ausgegeben, das Tankard nicht lesen konnte: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ läuft als %@: %@ braucht sudo";
 "%@ s" = "%@ s";
@@ -1429,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS hat %@ gestoppt. Tankard versucht es noch einmal, nachdem du es erlaubt hast.";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS hat einen Schritt blockiert, der eine App ändert. Erlaube es, dann erneut ausführen.";
 "macOS will ask when you turn this on" = "macOS fragt nach, wenn du dies einschaltest";
+"measuring…" = "wird gemessen…";
 "needs administrator rights" = "benötigt Administratorrechte";
 "needs your administrator password; upgrade it by hand" = "braucht dein Admin-Passwort; von Hand aktualisieren";
 "newer" = "neuer";

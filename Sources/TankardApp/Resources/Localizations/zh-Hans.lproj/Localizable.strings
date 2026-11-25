@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@ 需要你的管理员密码";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
+"%@ on disk" = "磁盘上 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ 输出了 Tankard 无法读取的 JSON：%@";
 "%@ runs as %@: %@ needs sudo" = "%@ 以 %@ 身份运行：%@ 需要 sudo";
 "%@ s" = "%@ 秒";
@@ -1429,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS 已停止 %@。你允许后，Tankard 会再试一次。";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS 停止了一个会更改 App 的步骤。请允许后再次运行。";
 "macOS will ask when you turn this on" = "开启时 macOS 会询问";
+"measuring…" = "正在测量…";
 "needs administrator rights" = "需要管理员权限";
 "needs your administrator password; upgrade it by hand" = "需要你的管理员密码；请手动升级";
 "newer" = "较新";

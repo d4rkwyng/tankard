@@ -150,7 +150,8 @@ struct V093AccessibilityTextTests {
         #expect(filterActions.contains(".help(\"\(AccessibilityText.replaceWithBottleHint)\")"))
     }
 
-    /// The vulnerability notice's hint is the panel's scan-line label.
+    /// The vulnerability notice's hint is the panel's scan-line hint,
+    /// word for word.
     @Test func showVulnerableHintIsThePanelsLinkLabel() throws {
         #expect(AccessibilityText.showVulnerableHint == "Show vulnerable packages in Tankard")
         let panel = try String(contentsOf: packageRoot.appendingPathComponent("Sources/TankardApp/MenuBarExtra.swift"), encoding: .utf8)
@@ -263,7 +264,8 @@ struct V093MenuBarAccessibilityTests {
         #expect(try chain("Divider()", in: n).modifiers.isEmpty)
     }
 
-    /// The vulnerability notice: icon and trailing "Show" hidden, a hint.
+    /// The vulnerability notice (its own row, below the scan line): named
+    /// by its sentence, icon and trailing "Show" hidden, a hint.
     @Test func vulnerabilityMenuNoticeHidesIconAndShow() throws {
         let n = try source("InsightsViews.swift", from: "struct VulnerabilityMenuNotice: View")
         #expect(try chain("Image(systemName: \"exclamationmark.triangle.fill\")", in: n).whole.contains(".accessibilityHidden(true)"))
@@ -271,9 +273,46 @@ struct V093MenuBarAccessibilityTests {
         // The title and the names stay readable.
         #expect(!(try chain("Text(\"New vulnerabilities\")", in: n).whole.contains("accessibilityHidden")))
         let button = try chain("Button {", containing: "store.showVulnerable()", in: n).modifiers
+        #expect(button.contains(".accessibilityLabel(Text(verbatim: String(localized: \"New vulnerabilities\") + \", \" + list))"))
+        // The name's list is the one on screen.
+        #expect(!(try chain("Text(list)", in: n).whole.contains("accessibility")))
         #expect(button.contains(".accessibilityHint(Text(AccessibilityText.showVulnerableHint))"))
         #expect(button.contains(".accessibilityIdentifier(AccessibilityText.ID.vulnerabilityMenuNotice)"))
         #expect(try chain("Divider()", in: n).modifiers.isEmpty)
+    }
+
+    /// The panel's scan line (the row above the notice) is named by the
+    /// scan sentence it shows; where it goes is its hint, not its name.
+    @Test func scanLineIsNamedByTheScanSentence() throws {
+        let panel = try source("MenuBarExtra.swift", from: "struct MenuBarContent: View")
+        let line = try chain("MenuPanelLink(", containing: "show(.vulnerable)", in: panel)
+        #expect(line.head.contains("accessibilityHint: String(localized: \"\(AccessibilityText.showVulnerableHint)\")"))
+        #expect(!line.head.contains("accessibilityLabel"))
+        #expect(!line.modifiers.contains("accessibility"))
+        // The sentence stays readable; only the shield is hidden.
+        #expect(!(try chain("ScanProgressView(store: store)", in: line.head).whole.contains("accessibility")))
+        #expect(try chain("Image(systemName: \"checkmark.shield\")", in: line.head).whole.contains(".accessibilityHidden(true)"))
+    }
+
+    /// MenuPanelLink: a button either way. With a label (the other rows),
+    /// that is its name and tooltip; with only a hint, the name comes from
+    /// what the row shows, and nothing replaces it.
+    @Test func menuPanelLinkHintKeepsTheVisibleName() throws {
+        let link = try source("MenuBarExtra.swift", from: "struct MenuPanelLink<Label: View>: View")
+        let labelled = try chain("button.help(accessibilityLabel)", in: link).modifiers
+        #expect(labelled.contains(".accessibilityLabel(Text(accessibilityLabel))"))
+        #expect(!labelled.contains("accessibilityHint"))
+        let hinted = try chain("button.help(accessibilityHint ?? \"\")", in: link).modifiers
+        #expect(hinted.contains(".accessibilityHint(Text(accessibilityHint ?? \"\"))"))
+        #expect(!hinted.contains("accessibilityLabel"))
+        let button = try chain("Button(action: action)", in: link)
+        #expect(button.modifiers.contains(".buttonStyle(.plain)"))
+        #expect(!button.whole.contains("accessibility"))
+        // The package rows and the two "all upgrades" links keep their names.
+        let panel = try source("MenuBarExtra.swift", from: "struct MenuBarContent: View")
+        let others = chains("MenuPanelLink(", in: panel).filter { !$0.head.contains("show(.vulnerable)") }
+        #expect(others.count == 3)
+        #expect(others.allSatisfy { $0.head.contains("accessibilityLabel: String(localized: ") && !$0.head.contains("accessibilityHint:") })
     }
 
     /// The panel's menu rows (Upgrade All, Check Now, Open Tankard, Quit):
@@ -318,6 +357,36 @@ struct V093MainWindowAccessibilityTests {
         #expect(stack.modifiers.contains(".accessibilityLabel(Text(AccessibilityText.upgradeAvailable(v)))"))
         // An unchanged package says nothing about an upgrade.
         #expect(!cell[otherwise.upperBound...].contains("accessibility"))
+    }
+
+    /// The summary strip's size total keeps its "·" on screen; VoiceOver
+    /// gets the same words without it. On DiskTotalText's two texts.
+    @Test func diskTotalIsSpokenWithoutTheSeparator() throws {
+        let disk = try source("InsightsViews.swift", from: "struct DiskTotalText: View")
+        let total = try chain("Text(\"· \\(DiskSizes", in: disk)
+        #expect(total.head == "Text(\"· \\(DiskSizes.format(total)) on disk\")")
+        #expect(total.modifiers.contains(".accessibilityLabel(Text(\"\\(DiskSizes.format(total)) on disk\"))"))
+        let measuring = try chain("Text(\"· measuring…\")", in: disk)
+        #expect(measuring.whole.contains(".accessibilityLabel(Text(\"measuring…\"))"))
+        #expect(!measuring.whole.contains("on disk"))
+        #expect(!total.modifiers.contains("measuring"))
+    }
+
+    /// In every language, what is spoken is what is shown minus "· ".
+    @Test func diskTotalSpokenStringsAreTheVisibleOnesWithoutTheSeparator() throws {
+        let cat = try catalog()
+        for (visible, spoken) in [("· %@ on disk", "%@ on disk"), ("· measuring…", "measuring…")] {
+            for lang in shippedLanguages {
+                let shown = try #require(cat[visible]?[lang], "\(lang): \(visible)")
+                #expect(cat[spoken]?[lang].map { "· " + $0 } == shown, "catalog \(lang): \(spoken)")
+            }
+            for lang in ["en"] + shippedLanguages {
+                let strings = try shippedStrings(lang)
+                let said = try #require(strings[spoken], "\(lang).lproj: \(spoken)")
+                #expect(!said.contains("·"), "\(lang).lproj: \(spoken)")
+                #expect(strings[visible] == "· " + said, "\(lang).lproj: \(spoken)")
+            }
+        }
     }
 
     /// The toolbar's spinner while refreshing has a name (on the spinner,

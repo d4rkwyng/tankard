@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@에는 관리자 암호가 필요합니다";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
+"%@ on disk" = "디스크 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@이(가) Tankard에서 읽을 수 없는 JSON을 출력했습니다: %@";
 "%@ runs as %@: %@ needs sudo" = "%@은(는) %@ 권한으로 실행됩니다: %@에는 sudo가 필요합니다";
 "%@ s" = "%@초";
@@ -1429,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS가 %@을(를) 중지했습니다. 허용하면 Tankard가 한 번 더 시도합니다.";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS가 앱을 변경하는 단계를 중단했습니다. 허용한 다음 다시 실행하세요.";
 "macOS will ask when you turn this on" = "이것을 켜면 macOS가 확인을 요청합니다";
+"measuring…" = "측정 중…";
 "needs administrator rights" = "관리자 권한이 필요함";
 "needs your administrator password; upgrade it by hand" = "관리자 암호가 필요합니다. 직접 업그레이드하세요";
 "newer" = "더 새로움";

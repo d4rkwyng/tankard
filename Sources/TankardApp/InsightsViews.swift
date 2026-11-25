@@ -222,6 +222,7 @@ struct ExplainedRow<Content: View>: View {
 
 /// The summary strip's size total: "· 4.1 GB on disk". Its explanation is
 /// in the strip's tooltip, which also has the full text when the strip is short.
+/// 0.9.3: the leading "·" is for the eye; VoiceOver gets the words without it.
 struct DiskTotalText: View {
     var store: AppStore
 
@@ -230,8 +231,10 @@ struct DiskTotalText: View {
             Text("· \(DiskSizes.format(total)) on disk")
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+                .accessibilityLabel(Text("\(DiskSizes.format(total)) on disk"))
         } else if store.insights.sizesState == .running {
             Text("· measuring…").foregroundStyle(.tertiary).lineLimit(1)
+                .accessibilityLabel(Text("measuring…"))
         }
     }
 }
@@ -621,6 +624,7 @@ struct VulnerabilityMenuNotice: View {
     var body: some View {
         let names = store.insights.newVulnerableFormulae
         if !names.isEmpty {
+            let list = names.prefix(4).joined(separator: ", ") + (names.count > 4 ? String(localized: " and \(names.count - 4) more") : "")
             Divider()
             Button {
                 openMain()
@@ -631,7 +635,7 @@ struct VulnerabilityMenuNotice: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 1) {
                         Text("New vulnerabilities").font(.system(size: 12.5, weight: .semibold))
-                        Text(names.prefix(4).joined(separator: ", ") + (names.count > 4 ? String(localized: " and \(names.count - 4) more") : ""))
+                        Text(list)
                             .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
                     }
                     Spacer()
@@ -643,9 +647,10 @@ struct VulnerabilityMenuNotice: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            // 0.9.3: like the bottle notice, the title and the names, then
-            // where it goes as the hint (the icon and the trailing "Show"
-            // are hidden from VoiceOver above).
+            // 0.9.3: like the bottle notice, named by its sentence (the
+            // title and the names), then where it goes as the hint. The icon
+            // and the trailing "Show" are also hidden from VoiceOver above.
+            .accessibilityLabel(Text(verbatim: String(localized: "New vulnerabilities") + ", " + list))
             .accessibilityHint(Text(AccessibilityText.showVulnerableHint))
             .accessibilityIdentifier(AccessibilityText.ID.vulnerabilityMenuNotice)
         }
