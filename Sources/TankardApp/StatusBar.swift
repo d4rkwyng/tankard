@@ -54,6 +54,7 @@ struct StatusBar: View {
             if let notice = store.busyNotice {
                 separator
                 Image(systemName: "hourglass").foregroundStyle(.orange)
+                    .accessibilityHidden(true) // 0.9.3: decoration; the notice says it
                 Text(notice).lineLimit(1).truncationMode(.middle).help(notice)
             }
             Spacer()
@@ -115,8 +116,10 @@ struct StatusBar: View {
         .background(theme.bar)
     }
 
+    /// 0.9.3: for the eye only, hidden from VoiceOver (otherwise each
+    /// dot is a text element of its own between the status bar's parts).
     private var separator: some View {
-        Text(verbatim: "·").foregroundStyle(.tertiary)
+        Text(verbatim: "·").foregroundStyle(.tertiary).accessibilityHidden(true)
     }
 
     private func color(_ l: ForkSummary.Level) -> Color {

@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@에는 관리자 암호가 필요합니다";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
+"%@ on disk" = "디스크 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@이(가) Tankard에서 읽을 수 없는 JSON을 출력했습니다: %@";
 "%@ runs as %@: %@ needs sudo" = "%@은(는) %@ 권한으로 실행됩니다: %@에는 sudo가 필요합니다";
 "%@ s" = "%@초";
@@ -1016,6 +1017,7 @@
 "Show vulnerable packages in Tankard" = "Tankard에서 취약한 패키지 보기";
 "Showing the last data Tankard read." = "Tankard가 마지막으로 읽은 데이터를 표시하고 있습니다.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "업그레이드 준비된 개수를 tankard 아이콘으로 보여줍니다. 켜져 있는 동안에는 윈도우를 닫아도 Tankard가 계속 실행됩니다.";
+"Shows the Bottle available list" = "“bottle 사용 가능” 목록을 보여 줍니다";
 "Shows what a Brewfile lists, without running it" = "Brewfile을 실행하지 않고 나열된 내용을 보여 줌";
 "Shows what will change first" = "무엇이 바뀌는지 먼저 보여 줍니다";
 "Size" = "크기";
@@ -1293,6 +1295,7 @@
 "Version %@ is skipped" = "버전 %@ 건너뜀";
 "Version %@ to %@" = "버전 %1$@에서 %2$@(으)로";
 "View" = "보기";
+"Vulnerabilities: %@" = "취약점: %@";
 "Vulnerability scan" = "취약점 검사";
 "Vulnerable" = "취약함";
 "Wait for the running task to finish" = "실행 중인 작업이 끝날 때까지 기다리세요";
@@ -1427,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS가 %@을(를) 중지했습니다. 허용하면 Tankard가 한 번 더 시도합니다.";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS가 앱을 변경하는 단계를 중단했습니다. 허용한 다음 다시 실행하세요.";
 "macOS will ask when you turn this on" = "이것을 켜면 macOS가 확인을 요청합니다";
+"measuring…" = "측정 중…";
 "needs administrator rights" = "관리자 권한이 필요함";
 "needs your administrator password; upgrade it by hand" = "관리자 암호가 필요합니다. 직접 업그레이드하세요";
 "newer" = "더 새로움";

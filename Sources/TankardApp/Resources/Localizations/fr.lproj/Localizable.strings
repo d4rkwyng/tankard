@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@ nécessite votre mot de passe administrateur";
 "%@ of %@ %@ (%lld%%)" = "%@ sur %@ %@ (%lld %%)";
 "%@ of %@ bottled" = "%@ sur %@ en bottles";
+"%@ on disk" = "%@ sur le disque";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ a produit du JSON que Tankard n’a pas pu lire : %@";
 "%@ runs as %@: %@ needs sudo" = "%@ s’exécute en tant que %@ : %@ nécessite sudo";
 "%@ s" = "%@ s";
@@ -1016,6 +1017,7 @@
 "Show vulnerable packages in Tankard" = "Afficher les paquets vulnérables dans Tankard";
 "Showing the last data Tankard read." = "Affichage des dernières données lues par Tankard.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Affiche une chope avec le nombre de mises à niveau prêtes. Tant qu’elle est affichée, fermer la fenêtre laisse Tankard ouvert.";
+"Shows the Bottle available list" = "Affiche la liste « Bottle disponible »";
 "Shows what a Brewfile lists, without running it" = "Affiche ce que liste un Brewfile, sans l’exécuter";
 "Shows what will change first" = "Montre d’abord ce qui va changer";
 "Size" = "Taille";
@@ -1293,6 +1295,7 @@
 "Version %@ is skipped" = "La version %@ est ignorée";
 "Version %@ to %@" = "Version %@ vers %@";
 "View" = "Présentation";
+"Vulnerabilities: %@" = "Vulnérabilités : %@";
 "Vulnerability scan" = "Analyse des vulnérabilités";
 "Vulnerable" = "Vulnérable";
 "Wait for the running task to finish" = "Attendez la fin de la tâche en cours";
@@ -1427,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS a arrêté %@. Tankard réessaiera une fois après votre autorisation.";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS a arrêté une étape qui modifie une app. Autorisez-la, puis réessayez.";
 "macOS will ask when you turn this on" = "macOS vous demandera confirmation à l’activation";
+"measuring…" = "mesure en cours…";
 "needs administrator rights" = "nécessite des droits d’administrateur";
 "needs your administrator password; upgrade it by hand" = "nécessite votre mot de passe administrateur ; mettez-le à jour à la main";
 "newer" = "plus récent";

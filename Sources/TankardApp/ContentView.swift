@@ -46,6 +46,9 @@ struct ContentView: View {
                     if store.isRefreshing {
                         ProgressView().controlSize(.small).frame(width: 28)
                             .help(store.refreshPhase ?? String(localized: "Refreshing"))
+                            // 0.9.3: named like its tooltip (without a label it had no name).
+                            .accessibilityLabel(Text(AccessibilityText.refreshing(phase: store.refreshPhase)))
+                            .accessibilityIdentifier(AccessibilityText.ID.refreshProgress)
                     } else {
                         Button {
                             Task { await store.refreshFromUser(windowInFront: { MainWindowState.inFront }) }
@@ -492,6 +495,10 @@ struct ReplaceLeftoverBanner: View {
 /// Formulae built from source that newly have a bottle (after Refresh or a
 /// background check). Replace with Bottle runs only on this click, for the
 /// formulae named here.
+/// 0.9.3: the icon is decoration (hidden from VoiceOver, like 0.8.9's boxes);
+/// Show and Replace with Bottle say where they go and what they do as
+/// hints, keeping their visible names as labels. One group, so VoiceOver
+/// reads the sentence and then its buttons, in Tab's order.
 struct BottleNoticeBanner: View {
     var store: AppStore
     var text: String
@@ -499,15 +506,20 @@ struct BottleNoticeBanner: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Image(systemName: "shippingbox").foregroundStyle(.secondary)
+                .accessibilityHidden(true)
             Text(text)
                 .font(.system(size: 12))
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 8)
             Button("Show") { store.showBottleAvailable() }
                 .controlSize(.small)
+                .accessibilityHint(Text(AccessibilityText.showBottleAvailableHint))
+                .accessibilityIdentifier(AccessibilityText.ID.bottleNoticeShow)
             Button("Replace with Bottle") { store.replaceNoticedBottles() }
                 .controlSize(.small)
                 .disabled(store.windowBrewActionsBlocked || store.isRefreshing)
+                .accessibilityHint(Text(AccessibilityText.replaceWithBottleHint))
+                .accessibilityIdentifier(AccessibilityText.ID.bottleNoticeReplace)
             Button {
                 store.dismissBottleNotice()
             } label: {
@@ -516,10 +528,13 @@ struct BottleNoticeBanner: View {
             .buttonStyle(.borderless)
             .help(String(localized: "Hide this message"))
             .accessibilityLabel(Text("Hide this message"))
+            .accessibilityIdentifier(AccessibilityText.ID.bottleNoticeClose)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(Color.secondary.opacity(0.08))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityText.ID.bottleNotice)
     }
 }
 
@@ -1019,6 +1034,10 @@ struct AvailableCell: View {
             .foregroundStyle(prominence == .increased && !theme.isCustom ? Color.white : theme.upgrade)
             .lineLimit(1)
             .help("Upgrade available: \(v)")
+            // 0.9.3: one element with the tooltip's words; otherwise the
+            // arrow is named by its symbol, not as "upgrade available".
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(AccessibilityText.upgradeAvailable(v)))
         } else {
             VersionText(text: v, same: true)
         }

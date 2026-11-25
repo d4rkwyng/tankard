@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@には管理者パスワードが必要です";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
+"%@ on disk" = "ディスク上 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ がTankardで読み取れないJSONを出力しました: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ は %@ として実行されます: %@ にはsudoが必要です";
 "%@ s" = "%@ 秒";
@@ -1016,6 +1017,7 @@
 "Show vulnerable packages in Tankard" = "脆弱性のあるパッケージをTankardで表示";
 "Showing the last data Tankard read." = "Tankardが最後に読み込んだデータを表示しています。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "アップグレード可能な数をTankardアイコンで表示します。オンの間は、ウインドウを閉じてもTankardは実行され続けます。";
+"Shows the Bottle available list" = "「Bottleあり」のリストを表示します";
 "Shows what a Brewfile lists, without running it" = "Brewfileを実行せずに、記載内容を表示します";
 "Shows what will change first" = "変更内容を先に表示します";
 "Size" = "サイズ";
@@ -1293,6 +1295,7 @@
 "Version %@ is skipped" = "バージョン%@はスキップされています";
 "Version %@ to %@" = "バージョン %1$@ から %2$@";
 "View" = "表示";
+"Vulnerabilities: %@" = "脆弱性: %@";
 "Vulnerability scan" = "脆弱性スキャン";
 "Vulnerable" = "脆弱性あり";
 "Wait for the running task to finish" = "実行中の作業が終わるまでお待ちください";
@@ -1427,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOSが%@を停止しました。許可後、Tankardがもう一度試します。";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOSがアプリを変更する手順を停止しました。許可してから、もう一度実行してください。";
 "macOS will ask when you turn this on" = "オンにするとmacOSが確認します";
+"measuring…" = "計測中…";
 "needs administrator rights" = "管理者権限が必要です";
 "needs your administrator password; upgrade it by hand" = "管理者パスワードが必要です。手動でアップグレードしてください";
 "newer" = "新しい";

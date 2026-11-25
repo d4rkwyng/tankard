@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@ 需要你的管理员密码";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
+"%@ on disk" = "磁盘上 %@";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ 输出了 Tankard 无法读取的 JSON：%@";
 "%@ runs as %@: %@ needs sudo" = "%@ 以 %@ 身份运行：%@ 需要 sudo";
 "%@ s" = "%@ 秒";
@@ -1016,6 +1017,7 @@
 "Show vulnerable packages in Tankard" = "在 Tankard 中显示有漏洞的软件包";
 "Showing the last data Tankard read." = "显示 Tankard 上次读取的数据。";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "显示带有待升级数量的 tankard 图标。开启时，关闭窗口后 Tankard 仍会继续运行。";
+"Shows the Bottle available list" = "显示“有可用 bottle”列表";
 "Shows what a Brewfile lists, without running it" = "显示 Brewfile 列出的内容，而不运行它";
 "Shows what will change first" = "先显示将要更改的内容";
 "Size" = "大小";
@@ -1293,6 +1295,7 @@
 "Version %@ is skipped" = "版本 %@ 已跳过";
 "Version %@ to %@" = "版本 %1$@ 到 %2$@";
 "View" = "显示";
+"Vulnerabilities: %@" = "漏洞：%@";
 "Vulnerability scan" = "漏洞扫描";
 "Vulnerable" = "存在漏洞";
 "Wait for the running task to finish" = "等待正在运行的任务完成";
@@ -1427,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS 已停止 %@。你允许后，Tankard 会再试一次。";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS 停止了一个会更改 App 的步骤。请允许后再次运行。";
 "macOS will ask when you turn this on" = "开启时 macOS 会询问";
+"measuring…" = "正在测量…";
 "needs administrator rights" = "需要管理员权限";
 "needs your administrator password; upgrade it by hand" = "需要你的管理员密码；请手动升级";
 "newer" = "较新";

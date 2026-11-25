@@ -364,6 +364,7 @@ struct AutoUpdateMenuLine: View {
                         HStack(alignment: .firstTextBaseline, spacing: 6) {
                             Image(systemName: updater.isRunning ? "arrow.triangle.2.circlepath" : "clock.arrow.circlepath")
                                 .font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
+                                .accessibilityHidden(true) // 0.9.3: decoration
                             Text(line).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
                             Spacer(minLength: 0)
@@ -376,6 +377,7 @@ struct AutoUpdateMenuLine: View {
                 if let selfUpdate {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.down.circle").font(.system(size: 11)).foregroundStyle(.secondary).frame(width: 14)
+                            .accessibilityHidden(true) // 0.9.3: decoration
                         Text(selfUpdate).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                     }
                     .help("Upgrade Tankard now. Automatic updates never upgrade Tankard itself.")

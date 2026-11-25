@@ -52,6 +52,7 @@
 "%@ needs your administrator password" = "%@ necesita tu contraseña de administrador";
 "%@ of %@ %@ (%lld%%)" = "%@ de %@ %@ (%lld %%)";
 "%@ of %@ bottled" = "%@ de %@ con bottle";
+"%@ on disk" = "%@ en disco";
 "%@ printed JSON Tankard couldn't read: %@" = "%@ imprimió JSON que Tankard no pudo leer: %@";
 "%@ runs as %@: %@ needs sudo" = "%@ se ejecuta como %@: %@ necesita sudo";
 "%@ s" = "%@ s";
@@ -1016,6 +1017,7 @@
 "Show vulnerable packages in Tankard" = "Mostrar paquetes vulnerables en Tankard";
 "Showing the last data Tankard read." = "Se muestran los últimos datos que leyó Tankard.";
 "Shows a tankard icon with the number of upgrades ready. While it's on, closing the window keeps Tankard running." = "Muestra una jarra con el número de actualizaciones listas. Mientras está activado, al cerrar la ventana Tankard sigue abierto.";
+"Shows the Bottle available list" = "Muestra la lista “Bottle disponible”";
 "Shows what a Brewfile lists, without running it" = "Muestra lo que lista un Brewfile, sin ejecutarlo";
 "Shows what will change first" = "Primero muestra lo que va a cambiar";
 "Size" = "Tamaño";
@@ -1293,6 +1295,7 @@
 "Version %@ is skipped" = "La versión %@ está omitida";
 "Version %@ to %@" = "Versión %@ a %@";
 "View" = "Visualización";
+"Vulnerabilities: %@" = "Vulnerabilidades: %@";
 "Vulnerability scan" = "Análisis de vulnerabilidades";
 "Vulnerable" = "Vulnerable";
 "Wait for the running task to finish" = "Espera a que termine la tarea en curso";
@@ -1427,6 +1430,7 @@
 "macOS stopped %@. Tankard will try once more after you allow it." = "macOS detuvo %@. Tankard lo intentará una vez más cuando lo permitas.";
 "macOS stopped a step that changes an app. Allow it, then run it again." = "macOS detuvo un paso que cambia una app. Permítelo y vuelve a ejecutarlo.";
 "macOS will ask when you turn this on" = "macOS preguntará cuando lo actives";
+"measuring…" = "midiendo…";
 "needs administrator rights" = "requiere derechos de administrador";
 "needs your administrator password; upgrade it by hand" = "necesita tu contraseña de administrador; actualízalo a mano";
 "newer" = "más reciente";

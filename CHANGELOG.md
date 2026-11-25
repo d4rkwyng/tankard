@@ -4,6 +4,13 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Fixed
+- **VoiceOver reads the bottle notice clearly.** In the window's "A bottle is available" banner, the box icon is no longer read, and Show and Replace with Bottle say what they do ("Shows the Bottle available list"). In the menu-bar menu, the bottle and new-vulnerabilities notices are read as their sentence followed by where they go, instead of an icon name and a trailing "Show". The menu-bar menu's scan line, above them, is read as the scan result it shows ("Scanned 11 · 2 vulnerable") followed by where it goes, not only as "Show vulnerable packages in Tankard".
+- **Fewer stray words for VoiceOver in the menu bar and main window.** The menu-bar menu's rows (Upgrade All, Check Now, Open Tankard, Quit Tankard) and its Auto-update line no longer read their icons. In the main window, the Available column reads "Upgrade available: 2.1" instead of an arrow's name, the spinner shown during a refresh says what is happening, and the status bar no longer reads its "·" separators. The size total in the summary strip above the list is read as "289 MB on disk" (or "measuring…") without its leading "·".
+- **Settings ▸ Upgrades shows the last scan in your language.** The line under Scan Now began with "Vulnerabilities:" in English in every language.
+
 ## [0.9.2] - 2026-11-23
 
 ### Added
