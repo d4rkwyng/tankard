@@ -737,7 +737,11 @@ public final class AppStore {
             updateError = r.error
         }
         switch kind {
-        case .manual, .scheduled: updateFailure = updateError
+        case .manual: updateFailure = updateError
+        // 0.9.4 (bug hunt): a quiet scheduled failure (offline, brew busy,
+        // slept, timed out) ran no update either: it keeps the last one's
+        // failure instead of clearing it.
+        case .scheduled: if lastScheduledUpdate?.quiet == nil { updateFailure = updateError }
         case .afterUpdate: updateFailure = nil
         case .automatic: break
         }
