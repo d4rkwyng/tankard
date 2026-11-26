@@ -118,3 +118,26 @@ struct V094DiscoverTermTests {
         #expect(view.contains("if discover.searchedNothing {"))
     }
 }
+
+// MARK: the Taps sheet's Trust reads the status again
+
+// Trust Tap… from a package's "can't be read" box runs `brew trust --tap`
+// and reads the status again. The Taps sheet's own Trust… / Stop Trusting
+// re-read only the Taps list: a package from that tap stayed "can't be
+// read" (and Remove blocked) until the next Refresh.
+@MainActor
+struct V094TapsTrustRereadsTests {
+    @Test func trustFromTheSheetReadsTheStatus() async throws {
+        let store = AppStore(deps: Demo.dependencies(.arm64, pace: 0))
+        await store.start()
+        store.openTaps()
+        #expect(await waitUntil { store.taps.phase == .ready })
+        let mull = try #require(store.taps.taps.first { $0.name == "mull-project/mull" })
+        let reads = store.refreshesCompleted
+        store.taps.requestTrust(mull)
+        store.confirmTrustTap()
+        #expect(await waitUntil { store.taps.taps.first { $0.name == "mull-project/mull" }?.trusted == true })
+        #expect(await waitUntil { store.refreshesCompleted > reads })
+        #expect(store.error == nil)
+    }
+}

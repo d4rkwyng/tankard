@@ -251,7 +251,13 @@ public extension AppStore {
             await taps.load()
             if r.failed {
                 error = Self.quickError(verb: trusted ? String(localized: "Trust") : String(localized: "Untrust"), name: tap.name, args: args, result: r)
+                return
             }
+            // 0.9.4 (bug hunt): the status again, as Trust Tap… does: a
+            // package from the tap becomes readable (or, untrusted, can't
+            // be read). The list kept "can't be read", the tap row its
+            // count, and Remove stayed blocked until the next Refresh.
+            await refresh(manual: false)
         }
     }
 
