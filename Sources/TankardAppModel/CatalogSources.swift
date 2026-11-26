@@ -305,7 +305,8 @@ public final class TapCatalog: CatalogProviding {
     /// One `brew info` for the batch. brew prints no JSON at all when one
     /// name is unknown, so the names it complains about are dropped and the
     /// rest asked again once; anything still unanswered comes back marked
-    /// loaded with no details, so it isn't asked for again.
+    /// loaded with no details, so it isn't asked for again. 0.9.4 (bug hunt
+    /// R3): and marked failed (`detailsFailed`): its bottle stays unknown.
     func fill(_ batch: [CatalogEntry], kind: PackageKind) async -> [CatalogEntry] {
         var names = batch.map(\.qualifiedName)
         // 0.8.6 (VM test L4): taps brew refused as untrusted (their names
@@ -325,6 +326,7 @@ public final class TapCatalog: CatalogProviding {
                     if let d = byID[e.id] { return e.merging(d) }
                     var none = mark(e)
                     none.detailsLoaded = true
+                    none.detailsFailed = true
                     return none
                 }
             } catch {
@@ -340,7 +342,7 @@ public final class TapCatalog: CatalogProviding {
                 names = kept
             }
         }
-        return batch.map { var e = mark($0); e.detailsLoaded = true; return e }
+        return batch.map { var e = mark($0); e.detailsLoaded = true; e.detailsFailed = true; return e }
     }
 
     /// Names in brew's `No available formula with the name "x"` lines.

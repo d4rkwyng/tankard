@@ -59,6 +59,11 @@ public struct CatalogEntry: Sendable, Identifiable, Equatable {
     /// 0.8.6 (VM test L4): brew refused to read it: its tap isn't trusted
     /// (installing it by its full name trusts the formula).
     public var untrustedTap = false
+    /// 0.9.4 (bug hunt R3): `brew info` was asked and gave no details
+    /// (it failed, or left this name out). `detailsLoaded` is then true too
+    /// (it isn't asked again), but a formula's bottle stays `.unknown`:
+    /// whether it compiles isn't known.
+    public var detailsFailed = false
 
     // Lower-cased once, for search.
     var keyName: String
@@ -244,6 +249,10 @@ public enum CatalogSearch {
         return base - (e.deprecated || e.disabled ? 50 : 0)
     }
 
+    /// 0.9.4 (bug hunt R3): above any short-name match: the entry a
+    /// qualified official name ("homebrew/cask/firefox") names exactly.
+    static let qualifiedBonus = 500
+
     /// 0.9.4 (bug hunt): "homebrew/core/wget", "homebrew/cask/firefox"
     /// (the form Tankard's own Copy Install Command gives) searches for the
     /// short name: the official taps' entries carry it as their full name,
@@ -274,14 +283,22 @@ public enum CatalogSearch {
         // 0.8.3: a pasted "brew install x" searches for x.
         // 0.8.5 (bug hunt L5): no package name or description is anywhere
         // near this long; a 100,000-character paste took 30 s per search.
-        let q = officialShortName(String(PastedCommand.searchTerm(String(query.prefix(maxQueryLength * 2))).lowercased().prefix(maxQueryLength)))
+        let typed = String(PastedCommand.searchTerm(String(query.prefix(maxQueryLength * 2))).lowercased().prefix(maxQueryLength))
+        let q = officialShortName(typed)
         guard !q.isEmpty else { return [] }
+        // 0.9.4 (bug hunt R3): the tap (and so the kind) asked for stays:
+        // "homebrew/core/wget" is the formula, not a cask or another tap's
+        // "wget" that ties on the short name and sorts first.
+        let qualified = q != typed ? typed : nil
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
         var hits: [(Int, CatalogEntry)] = []
         for (i, e) in entries.enumerated() where kind.includes(e.kind) && !(bottledOnly && e.bottle == .fromSource) {
             // 0.8.5 (L5): a newer search replaces this one; stop early.
             if i % 512 == 0, Task.isCancelled { return [] }
-            if let s = score(e, query: q, words: words) { hits.append((s, e)) }
+            if var s = score(e, query: q, words: words) {
+                if let qualified, e.qualifiedName.lowercased() == qualified { s += qualifiedBonus }
+                hits.append((s, e))
+            }
         }
         hits.sort { a, b in
             if a.0 != b.0 { return a.0 > b.0 }

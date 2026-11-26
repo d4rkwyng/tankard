@@ -29,10 +29,19 @@ struct V094DiscoverInstallWaitsTests {
         #expect(item.title == "Install (checking…)")
     }
 
+    /// 0.9.4 (bug hunt R3): details in with the bottle still unknown
+    /// (brew info failed or left it out): it may compile, so Install asks
+    /// first. With a bottle answer it installs at once.
     @Test func afterDetailsItInstalls() {
         let item = ContextMenus.discoverInstall(Self.entry(loaded: true), compileWarning: nil, busy: false)
         #expect(item.isEnabled)
-        #expect(item.action == .install(confirmCompile: false))
+        #expect(item.action == .install(confirmCompile: true))
+        #expect(item.title == "Install foo (compiles)…")
+        var bottled = Self.entry(loaded: true)
+        bottled.bottle = .forThisMac
+        let plain = ContextMenus.discoverInstall(bottled, compileWarning: nil, busy: false)
+        #expect(plain.isEnabled)
+        #expect(plain.action == .install(confirmCompile: false))
         #expect(!ContextMenus.discoverInstall(Self.entry(loaded: true), compileWarning: nil, busy: true).isEnabled)
     }
 

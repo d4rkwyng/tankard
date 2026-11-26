@@ -95,6 +95,9 @@ struct ContentView: View {
             if store.tab == .discover { openDiscover() }
             if store.tab == .services { store.openServices() }
         }
+        // 0.9.4 (bug hunt R3): and a window opened with the tab already
+        // chosen and the status already in (neither changes then).
+        .onAppear { if store.report != nil { openSelectedTabStore() } }
         .onChange(of: store.intelbrewMode, initial: true) { _, intelbrew in
             AppResources.updateDockIcon(intelbrew: intelbrew)
         }
@@ -241,6 +244,12 @@ struct ContentView: View {
     }
 
     /// Discover loads its catalog when first opened, never at launch.
+    /// The selected tab's store (Discover, Services), once the status is in.
+    private func openSelectedTabStore() {
+        if store.tab == .discover { openDiscover() }
+        if store.tab == .services { store.openServices() }
+    }
+
     private func openDiscover() {
         guard let d = store.openDiscover() else { return }
         Task { await d.activate() }

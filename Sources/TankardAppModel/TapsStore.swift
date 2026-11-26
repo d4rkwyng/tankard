@@ -237,7 +237,8 @@ public extension AppStore {
                 return
             }
             if !taps.taps.isEmpty { await taps.load() }
-            await refresh(manual: false)
+            // 0.9.4 (bug hunt R3): a read begun after the trust change.
+            await refreshAfterChange()
         }
     }
 
@@ -257,7 +258,10 @@ public extension AppStore {
             // package from the tap becomes readable (or, untrusted, can't
             // be read). The list kept "can't be read", the tap row its
             // count, and Remove stayed blocked until the next Refresh.
-            await refresh(manual: false)
+            // 0.9.4 (bug hunt R3): a read of its own, begun after the
+            // change: joining one already running (begun before it) kept
+            // the old readability.
+            await refreshAfterChange()
         }
     }
 

@@ -164,10 +164,19 @@ public enum ContextMenus {
             return MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
                                  action: .install(confirmCompile: false), isEnabled: false)
         }
-        let compiles = compileWarning != nil
+        // 0.9.4 (bug hunt R3): a formula whose bottle is still unknown once
+        // the lookup is over (`brew info` failed or left it out) may
+        // compile: Install asks first, as for one that does.
+        let compiles = compileWarning != nil || bottleUnknown(e)
         return MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
                              systemImage: compiles ? "hammer" : "arrow.down.circle",
                              action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
+    }
+
+    /// 0.9.4 (bug hunt R3): whether brew can't say if installing `e`
+    /// compiles: a formula with no bottle answer.
+    static func bottleUnknown(_ e: CatalogEntry) -> Bool {
+        e.kind == .formula && e.bottle == .unknown
     }
 
     /// Discover's row menu.

@@ -492,9 +492,31 @@ struct V094AppManagementWaitsTests {
     func rig(relaunch: (@MainActor @Sendable () -> Bool)? = nil) async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>, [Package]) {
         var deps = Demo.dependencies(.arm64, pace: 0)
         deps.relaunch = relaunch
-        let (store, gate, task) = try await v094GatedAutoUpdate(deps)
-        let cask = try #require(store.packages.first { $0.kind == .cask }, "a cask in the fixture")
-        let formula = try #require(store.packages.first { $0.kind == .formula }, "a formula in the fixture")
+        // (R3 review) the automatic update leaves the targets as they were
+        // (its upgrade of the formula fails): one it upgraded makes the
+        // prompt's run buttons show the plan again first, which
+        // V094AppManagementHandoffTests covers.
+        let failing = V094AutoUpdateBlocksUpgradeTests.Failing()
+        let demo = deps.streamRunner
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "upgrade", let q = args.last, failing.contains(q.split(separator: "/").last.map(String.init) ?? q) {
+                out(Data("Error: simulated failure\n".utf8))
+                return 1
+            }
+            return try await demo.stream("/opt/homebrew/bin/brew", args, environment: [:], output: out)
+        }
+        let (store, gate, task) = try await v094GatedAutoUpdate(deps) { store in
+            if let f = store.packages.first(where: { $0.kind == .formula }) { failing.set([f.name]) }
+        }
+        // (R3 review) a failed #require here, before the caller's defer,
+        // can't leave the fetch suspended.
+        guard let cask = store.packages.first(where: { $0.kind == .cask }),
+              let formula = store.packages.first(where: { $0.kind == .formula }) else {
+            gate.release()
+            _ = await task.value
+            Issue.record("a cask and a formula in the fixture")
+            throw CancellationError()
+        }
         return (store, gate, task, [cask, formula])
     }
 
@@ -637,10 +659,12 @@ struct V094RunButtonsWaitTests {
             let p = try #require(store.upgradable.first { $0.kind == .formula })
             name = p.name
             failing.set([name])
+            let reads = store.refreshesCompleted
             store.startUpgrade([p])
             let s = try #require(store.upgrade)
             #expect(await waitUntil { s.isFinished })
-            #expect(await waitUntil { !store.isRefreshing })
+            // (R3 review) the session's own read, not a moment before it began.
+            #expect(await waitForRead(store, after: reads))
             try #require(!s.retryableItems.isEmpty)
             first = s
         }

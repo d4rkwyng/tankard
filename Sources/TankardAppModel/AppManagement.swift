@@ -339,6 +339,10 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
     public var action: SessionAction
     /// The packages to run (firstUse) or retry (blocked).
     public var packages: [Package]
+    /// 0.9.4 (bug hunt R3): an upgrade's casks whose open app the plan
+    /// named before this prompt (package ids). One open now and not among
+    /// these shows the plan again before the run.
+    public var acknowledgedRunningApps: Set<String> = []
 
     public init(reason: Reason, action: SessionAction, packages: [Package]) {
         self.reason = reason

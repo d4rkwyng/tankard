@@ -981,6 +981,10 @@ public final class AutoUpdater {
             }
         }
         step = nil
+        // 0.9.4 (bug hunt R3): brew changed packages after the read on
+        // screen began. Until a read started after this succeeds, an open
+        // upgrade plan, an App Management handoff and Clean Up wait.
+        if !plan.run.isEmpty { store.markStatusStale() }
         if quitRequested {
             // 0.8.4: quit mid-run. The steps not run are logged, the slot is
             // opened again (lastRun back to the run before), and the next
@@ -1004,7 +1008,10 @@ public final class AutoUpdater {
         // Reconcile with what brew now says: an upgrade that "succeeded" but
         // is still outdated counts as failed.
         if !plan.run.isEmpty {
-            await store.refresh(manual: false)
+            // 0.9.4 (bug hunt R3): a read of its own, begun now: joining one
+            // already running (begun before the last upgrade) read the old
+            // versions, and a plan confirmed then ran against them.
+            await store.refreshAfterChange()
             let still = Set(store.packages.filter(\.upgradeAvailable).map(\.name))
             let notDone = record.upgraded.filter { still.contains($0.name) }
             record.upgraded.removeAll { still.contains($0.name) }

@@ -135,7 +135,8 @@ struct UpgradePlanView: View {
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
                 // 0.9.4 (bug hunt): an automatic update has the queue.
-                .disabled(plan.toRun.isEmpty || store.autoUpdate.isRunning)
+                // 0.9.4 (bug hunt R3): and until a read after its upgrades.
+                .disabled(plan.toRun.isEmpty || store.autoUpdate.isRunning || store.statusStale)
             }
             .panelButtonRow("plan.buttons")
             .padding(.top, 14)
@@ -558,14 +559,14 @@ struct CleanupSheet: View {
                     }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
+                    .disabled(cleanup.phase != .ready || store.statusStale || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 } else {
                     Button {
                         store.startCleanup()
                     } label: {
                         Text("Clean Up")
                     }
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
+                    .disabled(cleanup.phase != .ready || store.statusStale || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 }
             }
         }

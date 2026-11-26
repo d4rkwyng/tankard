@@ -23,12 +23,20 @@ public final class ServicesStore {
     /// 0.9.4 (bug hunt): another service selected clears the last
     /// action's problem (postgresql's "needs sudo" showed under redis).
     public var selection: BrewService.ID? {
-        didSet { if selection != oldValue { actionError = nil } }
+        didSet { if selection != oldValue { actionProblem = nil } }
     }
     /// The toolbar search, on this tab: filters by name.
     public var query = ""
     /// The last action's problem (sudo, or brew's error), shown in the pane.
-    public private(set) var actionError: StoreError?
+    /// 0.9.4 (bug hunt R3): only under the service it is about. An action
+    /// still running when another row was selected wrote its problem back
+    /// after the selection had cleared it, under the other service.
+    public var actionError: StoreError? {
+        guard let p = actionProblem, selection == nil || selection == p.service else { return nil }
+        return p.error
+    }
+    /// The last action's problem and the service it ran on.
+    private var actionProblem: (service: BrewService.ID, error: StoreError)?
     public private(set) var loadedAt: Date?
 
     @ObservationIgnored let client: BrewClient
@@ -105,17 +113,17 @@ public final class ServicesStore {
     /// re-read the list. A root service never reaches brew: the pane shows
     /// the sudo command instead.
     public func perform(_ action: ServiceAction, on s: BrewService, store: AppStore) async {
-        actionError = nil
+        actionProblem = nil
         if needsSudo(s) {
-            actionError = Self.sudoError(action, s, command: sudoCommand(action, s))
+            actionProblem = (s.id, Self.sudoError(action, s, command: sudoCommand(action, s)))
             return
         }
         let args = BrewServices.arguments(action, s.name)
         guard let r = await store.runQuick(args) else { return }
         if r.failed {
             let sudo = Self.outputNeedsSudo(r.lines, currentUser: currentUser) ? sudoCommand(action, s) : nil
-            actionError = sudo.map { Self.sudoError(action, s, command: $0) }
-                ?? AppStore.quickError(verb: action.title, name: s.name, args: args, result: r)
+            actionProblem = (s.id, sudo.map { Self.sudoError(action, s, command: $0) }
+                ?? AppStore.quickError(verb: action.title, name: s.name, args: args, result: r))
         }
         info[s.name] = nil
         await load()
