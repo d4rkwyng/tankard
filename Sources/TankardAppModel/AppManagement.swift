@@ -340,9 +340,12 @@ public struct AppManagementPrompt: Equatable, Sendable, Identifiable {
     /// The packages to run (firstUse) or retry (blocked).
     public var packages: [Package]
     /// 0.9.4 (bug hunt R3): an upgrade's casks whose open app the plan
-    /// named before this prompt (package ids). One open now and not among
-    /// these shows the plan again before the run.
-    public var acknowledgedRunningApps: Set<String> = []
+    /// named before this prompt (package ids).
+    public var acknowledgedRunningApps: Set<String> { Set(acknowledgedApps.map(\.packageID)) }
+    /// 0.9.4 (bug hunt R4): each open app the plan named, by identity. An
+    /// app open now and not among these (another app of the same cask
+    /// among them) shows the plan again before the run.
+    public var acknowledgedApps: Set<RunningCaskApp> = []
 
     public init(reason: Reason, action: SessionAction, packages: [Package]) {
         self.reason = reason

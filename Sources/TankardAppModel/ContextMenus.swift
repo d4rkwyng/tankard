@@ -167,16 +167,26 @@ public enum ContextMenus {
         // 0.9.4 (bug hunt R3): a formula whose bottle is still unknown once
         // the lookup is over (`brew info` failed or left it out) may
         // compile: Install asks first, as for one that does.
-        let compiles = compileWarning != nil || bottleUnknown(e)
-        return MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
+        let unverified = bottleUnverified(e, compileWarning: compileWarning)
+        let compiles = compileWarning != nil || unverified
+        // 0.9.4 (bug hunt R4): the lookup established no bottle either way:
+        // "may compile", not "compiles".
+        let title = unverified ? String(localized: "Install \(e.name) (may compile)…") : installTitle(e.name, compiles: compiles)
+        return MenuItemModel(id: "install", title: title,
                              systemImage: compiles ? "hammer" : "arrow.down.circle",
                              action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
     }
 
     /// 0.9.4 (bug hunt R3): whether brew can't say if installing `e`
     /// compiles: a formula with no bottle answer.
-    static func bottleUnknown(_ e: CatalogEntry) -> Bool {
+    public static func bottleUnknown(_ e: CatalogEntry) -> Bool {
         e.kind == .formula && e.bottle == .unknown
+    }
+
+    /// 0.9.4 (bug hunt R4): Install asks first only because the bottle is
+    /// unknown (nothing says it compiles): its copy says it may.
+    public static func bottleUnverified(_ e: CatalogEntry, compileWarning: CompileWarning?) -> Bool {
+        compileWarning == nil && bottleUnknown(e)
     }
 
     /// Discover's row menu.

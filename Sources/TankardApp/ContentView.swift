@@ -311,6 +311,8 @@ struct ContentView: View {
             store.openCleanup()
             if options.demoCleanupRun {
                 try? await Task.sleep(for: .seconds(2))
+                // 0.9.4 (bug hunt R4): Clean Up runs only a finished preview.
+                for _ in 0..<50 where store.cleanup?.phase != .ready { try? await Task.sleep(for: .milliseconds(100)) }
                 store.startCleanup()
             }
         }

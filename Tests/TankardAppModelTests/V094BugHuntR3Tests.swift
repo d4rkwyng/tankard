@@ -311,7 +311,7 @@ struct V094FailedInfoInstallTests {
         let warning = { (e: CatalogEntry) in CompileClassifier().installWarning(e) }
         let ghostInstall = ContextMenus.discoverInstall(ghost, compileWarning: warning(ghost), busy: false)
         #expect(ghostInstall.action == .install(confirmCompile: true), "no plain Install without a bottle answer")
-        #expect(ghostInstall.title == "Install ghost (compiles)…")
+        #expect(ghostInstall.title == "Install ghost (may compile)…", "R4: an unknown bottle may compile")
         #expect(ContextMenus.discoverInstall(xz, compileWarning: warning(xz), busy: false).action == .install(confirmCompile: false))
     }
 
@@ -551,7 +551,9 @@ struct V094TrustFreshReadTests {
         try #require((tap.trusted ?? false) != trusted)
         let hold = reads.arm()
         let reading = Task { await store.refresh(manual: false) }
-        await hold.sampled.wait()
+        // 0.9.4 (bug hunt R4): bounded: a read that never reaches the fake
+        // fails here, and the caller's cleanup (releaseAll) still runs.
+        try #require(await waitUntil { hold.sampled.isOpen }, "the read reached brew info")
         let done = store.refreshesCompleted
         store.taps.requestTrust(tap)
         store.confirmTrustTap()

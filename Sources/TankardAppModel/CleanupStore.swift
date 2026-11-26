@@ -102,13 +102,17 @@ public final class CleanupStore {
 }
 
 /// 0.8.5: a cask in an upgrade whose app is open now.
-public struct RunningCaskApp: Equatable, Sendable {
+public struct RunningCaskApp: Hashable, Sendable {
     public var packageID: String
     /// The app's name as Finder shows it ("Google Chrome").
     public var name: String
-    public init(packageID: String, name: String) {
+    /// 0.9.4 (bug hunt R4): which running app this is (its path, else its
+    /// bundle id): a cask with two apps has one of these for each open one.
+    public var identity: String
+    public init(packageID: String, name: String, identity: String? = nil) {
         self.packageID = packageID
         self.name = name
+        self.identity = identity ?? name
     }
 }
 
@@ -194,9 +198,12 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     /// it on disk while it keeps running, and Tankard then offers to
     /// relaunch (`selfUpgradeNote`); the sheet said it would be "closed
     /// during the upgrade and opened again afterwards".
-    public var runningAppsToRun: [String] {
+    public var runningAppsToRun: [String] { runningCaskAppsToRun.map(\.name) }
+
+    /// 0.9.4 (bug hunt R4): the same, each app with its identity.
+    public var runningCaskAppsToRun: [RunningCaskApp] {
         let run = Set(toRun.filter { !SelfInstall.isTankardCask($0) }.map(\.id))
-        return runningApps.filter { run.contains($0.packageID) }.map(\.name)
+        return runningApps.filter { run.contains($0.packageID) }
     }
 
     /// 0.8.9: what happens to Tankard when the plan upgrades its own cask

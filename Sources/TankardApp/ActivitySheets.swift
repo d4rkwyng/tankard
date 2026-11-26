@@ -121,6 +121,12 @@ struct UpgradePlanView: View {
                     .padding(.top, 12)
             }
 
+            // 0.9.4 (bug hunt R4): Upgrade waits for a fresh read, and the
+            // sheet turns the menu's Refresh off: the way to it is here.
+            if store.statusStale {
+                StaleStatusNote(store: store).padding(.top, 12)
+            }
+
             HStack {
                 Text("Each runs as its own brew upgrade, one at a time.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -145,6 +151,30 @@ struct UpgradePlanView: View {
         .frame(width: 600)
         .background(theme.window ?? .clear)
         .task { store.compileWarningShown() }
+    }
+}
+
+/// 0.9.4 (bug hunt R4): the status is older than brew's last change: the
+/// sheet's confirmation is off until a fresh read, and this asks for one.
+struct StaleStatusNote: View {
+    @Bindable var store: AppStore
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Label {
+                Text("Homebrew changed packages after this list was read. Refresh it before continuing.")
+                    .fixedSize(horizontal: false, vertical: true)
+            } icon: {
+                Image(systemName: "arrow.clockwise.circle").foregroundStyle(.orange)
+            }
+            .font(.system(size: 12))
+            Spacer()
+            if store.isRefreshing {
+                ProgressView().controlSize(.small)
+            }
+            Button("Refresh") { store.refreshStaleStatus() }
+                .disabled(store.isRefreshing)
+        }
     }
 }
 
@@ -544,6 +574,10 @@ struct CleanupSheet: View {
             }
 
             Spacer(minLength: 0)
+            // 0.9.4 (bug hunt R4): Clean Up waits for a fresh read; the way to it.
+            if store.statusStale {
+                StaleStatusNote(store: store)
+            }
             HStack {
                 Text("Preview from \(cleanup.dryRunCommand) (changes nothing).").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
@@ -673,13 +707,21 @@ struct CompileInstallConfirm: View {
     var body: some View {
         let _ = store.buildTimesRevision
         let deps = discover.dependenciesThatCompile(entry, installedIDs: store.installedIDs).compiling
-        let estimate = store.deps.classifier.installWarning(entry)?.estimateText
+        let warning = store.deps.classifier.installWarning(entry)
+        let estimate = warning?.estimateText
+        // 0.9.4 (bug hunt R4): asked only because the bottle is unknown:
+        // the copy says it may compile, not that it will.
+        let unverified = ContextMenus.bottleUnverified(entry, compileWarning: warning)
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "hammer.circle.fill").font(.system(size: 34)).foregroundStyle(theme.badge(.source).dot)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Install \(entry.name) from source?").font(.system(size: 14, weight: .bold))
-                    Text(Self.message(entry, intelbrew: discover.isLocalTaps, deps: deps, estimate: estimate))
+                    Text(unverified ? String(localized: "Install \(entry.name)? It may compile.")
+                                    : String(localized: "Install \(entry.name) from source?"))
+                        .font(.system(size: 14, weight: .bold))
+                    Text(unverified
+                         ? InstallCompileText.unverifiedMessage(name: entry.name, intelbrew: discover.isLocalTaps)
+                         : Self.message(entry, intelbrew: discover.isLocalTaps, deps: deps, estimate: estimate))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -697,7 +739,7 @@ struct CompileInstallConfirm: View {
                 Spacer()
                 Button("Cancel") { discover.confirmInstall = nil }
                     .keyboardShortcut(.cancelAction)
-                Button("Install (compiles)") {
+                Button(unverified ? String(localized: "Install (may compile)") : String(localized: "Install (compiles)")) {
                     store.confirmCompileInstall(entry)
                 }
                 .buttonStyle(.primaryAction)

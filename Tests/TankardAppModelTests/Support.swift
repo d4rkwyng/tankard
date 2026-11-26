@@ -85,6 +85,9 @@ final class Latch: @unchecked Sendable {
         w.forEach { $0.resume() }
     }
 
+    /// Whether it was released (a bounded wait polls this).
+    var isOpen: Bool { lock.withLock { open } }
+
     func wait() async {
         await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
             let resumeNow: Bool = lock.withLock {

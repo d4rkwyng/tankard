@@ -36,7 +36,8 @@ struct V094DiscoverInstallWaitsTests {
         let item = ContextMenus.discoverInstall(Self.entry(loaded: true), compileWarning: nil, busy: false)
         #expect(item.isEnabled)
         #expect(item.action == .install(confirmCompile: true))
-        #expect(item.title == "Install foo (compiles)…")
+        // 0.9.4 (bug hunt R4): nothing says it compiles: it may.
+        #expect(item.title == "Install foo (may compile)…")
         var bottled = Self.entry(loaded: true)
         bottled.bottle = .forThisMac
         let plain = ContextMenus.discoverInstall(bottled, compileWarning: nil, busy: false)

@@ -695,6 +695,9 @@ struct V094RunButtonsWaitTests {
         #expect(store.showCleanupSheet, "the dry run stays on screen")
         #expect(store.upgrade == nil)
         await finish(store, gate, task)
+        // 0.9.4 (bug hunt R4): the upgrades changed the inventory, so the
+        // open preview was worked out again; Clean Up runs once it is in.
+        #expect(await waitUntil { store.cleanup?.phase == .ready })
         store.startCleanup()
         #expect(!store.showCleanupSheet)
         #expect(store.upgrade?.action == .cleanup)
