@@ -11,7 +11,7 @@ struct TestDefaultsTests {
         #expect(CFPreferencesAppSynchronize(name as CFString))
         let plist = TestDefaults.plistURL(name)
         #expect(FileManager.default.fileExists(atPath: plist.path))
-        TestDefaults.remove(name)
+        #expect(TestDefaults.remove(name))
         #expect(!FileManager.default.fileExists(atPath: plist.path))
         // 0.9.4: nothing left for cfprefsd to write back. Forcing its
         // pending write now finds no `{}` to put back.
@@ -29,6 +29,23 @@ struct TestDefaultsTests {
         let name = "tankard-test-flush-\(UUID().uuidString)"
         #expect(TestDefaults.flushPendingWrite(name))
         #expect(!FileManager.default.fileExists(atPath: TestDefaults.plistURL(name).path))
+    }
+
+    /// 0.9.4 review: the flush counts only a `defaults` that exited 0, and
+    /// a stuck one is stopped within its timeout plus a few seconds.
+    @Test func flushSucceedsOnlyOnExitZeroAndIsBounded() throws {
+        #expect(TestDefaults.runToSuccess("/usr/bin/true", [], timeout: 10))
+        #expect(!TestDefaults.runToSuccess("/usr/bin/false", [], timeout: 10))
+        #expect(!TestDefaults.runToSuccess("/bin/sh", ["-c", "exit 3"], timeout: 10))
+        #expect(!TestDefaults.runToSuccess("/nonexistent/defaults", [], timeout: 10))
+        let start = Date()
+        #expect(!TestDefaults.runToSuccess("/bin/sleep", ["30"], timeout: 0.3))
+        // SIGTERM ends sleep at once; the SIGKILL fallback adds at most 4s.
+        #expect(Date().timeIntervalSince(start) < 5)
+        // Ignoring SIGTERM is not enough to hang it either.
+        let stubborn = Date()
+        #expect(!TestDefaults.runToSuccess("/bin/sh", ["-c", "trap '' TERM; /bin/sleep 30 & wait"], timeout: 0.3))
+        #expect(Date().timeIntervalSince(stubborn) < 6)
     }
 
     /// 0.8.9: a Scoped suite leaves no plist for its UUID once released,

@@ -1236,7 +1236,10 @@ With no APP it builds `dist/Tankard.app` first; give it the downloaded release
 ships. `release.sh` runs it on the notarized, stapled app right before zipping it (0.9.4;
 before that it ran before notarizing, so the stapled app was never launched). It copies
 `~/Library/Caches/net.mindtricks.tankard` first and puts it back as it was on exit
-(0.9.4), so a check leaves no `status.json` behind. 0.3.0 crashed at
+(0.9.4), so a check leaves no `status.json` behind. It puts the copy back only into the
+folder it came from (same device and inode, same link). If that folder was replaced
+during the check, it deletes nothing, keeps the copy and fails. It only ever signals the
+app it launched itself, and a crash while quitting counts. 0.3.0 crashed at
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule
 that came out of it: **App.body is pure**. It reads no @Observable state that changes and

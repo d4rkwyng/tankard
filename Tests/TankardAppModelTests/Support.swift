@@ -392,10 +392,22 @@ enum TestDefaults {
     /// check after the 0.5s wait). `flushPendingWrite` makes cfprefsd write
     /// the `{}` now; once it is written, nothing is pending, and the unlink
     /// is the last change to that path.
-    static func remove(_ name: String) {
+    ///
+    /// If the flush fails (`defaults` could not run, exited nonzero, or was
+    /// stopped), cfprefsd may still write the `{}` back after the unlink.
+    /// That is said on stderr and returned as `false`; the plist is still
+    /// unlinked and the name stays registered, so `removeAll` and the
+    /// sweeper after exit delete it again. Never traps: `Scoped.deinit`
+    /// calls this.
+    @discardableResult static func remove(_ name: String) -> Bool {
         removeInProcess(name)
-        flushPendingWrite(name)
+        let flushed = flushPendingWrite(name)
         try? FileManager.default.removeItem(at: plistURL(name))
+        if !flushed {
+            FileHandle.standardError.write(Data(
+                "TestDefaults.remove: could not flush \(name) before unlinking its plist; a late write-back is left to the exit sweep\n".utf8))
+        }
+        return flushed
     }
 
     /// The pre-0.9.4 `remove`, without the flush: `removeAll` runs it for
@@ -412,24 +424,39 @@ enum TestDefaults {
     /// a dirty domain before it answers), so `defaults export <name>
     /// /dev/null` is enough: read-only, and the file it writes is
     /// /dev/null. Only test-shaped names, so a caller's mistake can never
-    /// point it at the app's own domain. False if `defaults` could not be
-    /// run or was stopped after 30s; true once it ran to the end (its exit
-    /// status is 0 even for a domain with no file).
-    @discardableResult static func flushPendingWrite(_ name: String) -> Bool {
+    /// point it at the app's own domain. True only when `defaults` exited
+    /// with status 0 (it does even for a domain with no file) within
+    /// `timeout` seconds; false if it could not run, exited nonzero or was
+    /// stopped.
+    @discardableResult static func flushPendingWrite(_ name: String, timeout: TimeInterval = 10) -> Bool {
         guard isSweepable(name) else { return false }
+        return runToSuccess("/usr/bin/defaults", ["export", name, "/dev/null"], timeout: timeout)
+    }
+
+    /// Runs `executable` with no input or output and reports whether it
+    /// exited with status 0 within `timeout` seconds. A process still
+    /// running then gets SIGTERM, 2s later SIGKILL, and at most 2s more:
+    /// a stuck cfprefsd fails the caller's check instead of hanging the
+    /// run. Never reads the status of a process that has not exited.
+    static func runToSuccess(_ executable: String, _ arguments: [String], timeout: TimeInterval) -> Bool {
         let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/usr/bin/defaults")
-        p.arguments = ["export", name, "/dev/null"]
+        p.executableURL = URL(fileURLWithPath: executable)
+        p.arguments = arguments
         p.standardInput = FileHandle.nullDevice
         p.standardOutput = FileHandle.nullDevice
         p.standardError = FileHandle.nullDevice
+        let exited = DispatchSemaphore(value: 0)
+        p.terminationHandler = { _ in exited.signal() }
         guard (try? p.run()) != nil else { return false }
-        // A stuck cfprefsd fails the caller's check instead of hanging the run.
-        let killer = DispatchWorkItem { if p.isRunning { p.terminate() } }
-        DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: killer)
-        p.waitUntilExit()
-        killer.cancel()
-        return p.terminationReason == .exit
+        if exited.wait(timeout: .now() + timeout) == .timedOut {
+            p.terminate()
+            if exited.wait(timeout: .now() + 2) == .timedOut {
+                if p.isRunning { kill(p.processIdentifier, SIGKILL) }
+                _ = exited.wait(timeout: .now() + 2)
+            }
+            return false
+        }
+        return p.terminationReason == .exit && p.terminationStatus == 0
     }
 
     static func plistURL(_ name: String) -> URL {
