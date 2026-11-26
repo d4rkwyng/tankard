@@ -1,12 +1,15 @@
+import AppKit
 import Foundation
 import Testing
 @testable import TankardAppModel
+@testable import TankardCore
 
 // 0.9.4 (PR #8 leftovers): Esc closes the bottle banner, and VoiceOver
 // announces it when it appears. The rules are BottleBannerEscape and
-// BottleNoticeAnnouncer (checked here); the window's key monitor and the
-// announcement are SwiftUI/AppKit, so their wiring is checked in
-// ContentView.swift's source, as V093BottleBannerAccessibilityTests does.
+// BottleNoticeAnnouncer; the key monitor (BottleBannerEscapeMonitor) and
+// the announcement (BottleNoticeAnnouncementCoordinator) are driven here
+// with real NSEvents and a real NSWindow, their AppKit hooks (installing
+// the monitor, posting to VoiceOver) swapped for recorders.
 
 private let packageRoot = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
@@ -83,27 +86,6 @@ struct V094BottleBannerEscapeTests {
         }
     }
 
-    /// Esc does what the close button does: the store's dismissBottleNotice.
-    @MainActor @Test func escapeIsTheCloseButton() throws {
-        let key = try source("ContentView.swift", from: "struct BottleBannerEscapeKey: NSViewRepresentable")
-        #expect(key.contains("BottleBannerEscape.dismisses("))
-        #expect(key.contains("NSEvent.addLocalMonitorForEvents(matching: .keyDown)"))
-        #expect(key.contains("NSEvent.removeMonitor("))
-        #expect(key.contains("static func dismantleNSView"))
-        // What it reads from the window for the rule.
-        #expect(key.contains("event.window === w && w.isKeyWindow"))
-        #expect(key.contains("w.attachedSheet != nil"))
-        #expect(key.contains("NSApp.modalWindow != nil"))
-        #expect(key.contains("childWindows"))
-        #expect(key.contains("w.firstResponder is NSText"))
-        #expect(key.contains("[.command, .control, .option, .shift]"))
-        // A handled Esc is taken (nothing else beeps or acts on it).
-        #expect(key.contains("return handled ? nil : event"))
-
-        let main = try source("ContentView.swift", from: "private func main(_ theme: Theme) -> some View {")
-        #expect(main.contains(".background(BottleBannerEscapeKey(bannerShown: store.bottleNoticeText != nil) { store.dismissBottleNotice() })"))
-    }
-
     /// The monitor isn't in the banner, so the banner's VoiceOver group
     /// (V093BottleBannerAccessibilityTests) has only its own children.
     @Test func monitorIsOutsideTheBannersGroup() throws {
@@ -113,72 +95,397 @@ struct V094BottleBannerEscapeTests {
     }
 }
 
-// MARK: the announcement
+// MARK: the Esc monitor (behavior)
+
+/// A key-down event as AppKit delivers it (no window: the tests give the
+/// window's side through `readWindow`).
+@MainActor
+private func keyDown(_ code: UInt16, _ flags: NSEvent.ModifierFlags = []) throws -> NSEvent {
+    let ch = code == BottleBannerEscape.escapeKeyCode ? "\u{1b}" : "a"
+    return try #require(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: flags, timestamp: 0,
+                                         windowNumber: 0, context: nil, characters: ch,
+                                         charactersIgnoringModifiers: ch, isARepeat: false, keyCode: code))
+}
+
+/// A BottleBannerEscapeMonitor whose monitor is recorded, not installed.
+@MainActor
+private final class EscapeRig {
+    var handlers: [@MainActor (NSEvent) -> NSEvent?] = []
+    var removed: [Int] = []
+    var dismissed = 0
+    var window: BottleBannerEscapeMonitor.WindowState? = .init(inBannerWindow: true, overlayOpen: false, editingText: false)
+    let monitor: BottleBannerEscapeMonitor
+
+    init(bannerShown: Bool = true) {
+        var install: BottleBannerEscapeMonitor.Install = { _ in nil }
+        var remove: @MainActor (Any) -> Void = { _ in }
+        monitor = BottleBannerEscapeMonitor(install: { install($0) }, remove: { remove($0) })
+        install = { [unowned self] h in self.handlers.append(h); return self.handlers.count }
+        remove = { [unowned self] token in self.removed.append(token as! Int) }
+        monitor.bannerShown = bannerShown
+        monitor.dismiss = { [unowned self] in self.dismissed += 1 }
+        monitor.readWindow = { [unowned self] _, _ in self.window }
+    }
+}
+
+@MainActor
+struct V094BottleBannerEscapeMonitorTests {
+    /// A plain Esc through the installed monitor closes the banner and is
+    /// taken (nil: nothing else sees it, nothing beeps).
+    @Test func escapeIsTakenAndDismisses() throws {
+        let rig = EscapeRig()
+        rig.monitor.attach()
+        #expect(rig.handlers.count == 1)
+        #expect(rig.monitor.monitor != nil)
+        #expect(rig.handlers[0](try keyDown(53)) == nil)
+        #expect(rig.dismissed == 1)
+        #expect(rig.monitor.handle(try keyDown(53)) == nil)
+        #expect(rig.dismissed == 2)
+    }
+
+    /// Anything the rule doesn't give the banner goes on untouched, and the
+    /// banner stays.
+    @Test func otherPressesPassThrough() throws {
+        let rig = EscapeRig()
+        rig.monitor.attach()
+        let other = try keyDown(36)
+        #expect(rig.handlers[0](other) === other)
+        let shifted = try keyDown(53, .shift)
+        #expect(rig.monitor.handle(shifted) === shifted)
+        let commanded = try keyDown(53, .command)
+        #expect(rig.monitor.handle(commanded) === commanded)
+
+        rig.window = .init(inBannerWindow: true, overlayOpen: true, editingText: false)
+        let overlay = try keyDown(53)
+        #expect(rig.monitor.handle(overlay) === overlay)
+        rig.window = .init(inBannerWindow: true, overlayOpen: false, editingText: true)
+        let editing = try keyDown(53)
+        #expect(rig.monitor.handle(editing) === editing)
+        rig.window = .init(inBannerWindow: false, overlayOpen: false, editingText: false)
+        let elsewhere = try keyDown(53)
+        #expect(rig.monitor.handle(elsewhere) === elsewhere)
+        rig.window = nil // not in a window yet
+        let nowhere = try keyDown(53)
+        #expect(rig.monitor.handle(nowhere) === nowhere)
+
+        rig.window = .init(inBannerWindow: true, overlayOpen: false, editingText: false)
+        rig.monitor.bannerShown = false
+        let noBanner = try keyDown(53)
+        #expect(rig.monitor.handle(noBanner) === noBanner)
+        #expect(rig.dismissed == 0)
+    }
+
+    /// Without a window the default reader leaves every key alone.
+    @Test func defaultReaderNeedsAWindow() throws {
+        #expect(BottleBannerEscapeMonitor.windowState(try keyDown(53), nil) == nil)
+        #expect(BottleBannerEscapeMonitor.windowState(try keyDown(53), NSView(frame: .zero)) == nil)
+    }
+
+    /// Tearing the view down (dismantleNSView) removes the monitor it
+    /// installed, once; attaching again replaces the old one.
+    @Test func dismantleRemovesTheMonitor() throws {
+        let rig = EscapeRig()
+        rig.monitor.attach()
+        rig.monitor.attach()
+        #expect(rig.removed == [1])
+        BottleBannerEscapeKey.dismantleNSView(NSView(frame: .zero), coordinator: rig.monitor)
+        #expect(rig.removed == [1, 2])
+        #expect(rig.monitor.monitor == nil)
+        rig.monitor.detach()
+        #expect(rig.removed == [1, 2])
+    }
+
+    /// The monitor's handler doesn't keep the coordinator alive; once it's
+    /// gone, keys pass.
+    @Test func handlerDoesNotOwnTheMonitor() throws {
+        var handler: (@MainActor (NSEvent) -> NSEvent?)?
+        do {
+            let m = BottleBannerEscapeMonitor(install: { handler = $0; return 1 }, remove: { _ in })
+            m.bannerShown = true
+            m.readWindow = { _, _ in .init(inBannerWindow: true, overlayOpen: false, editingText: false) }
+            m.attach()
+        }
+        let esc = try keyDown(53)
+        let h = try #require(handler)
+        let out = h(esc)
+        #expect(out === esc)
+    }
+}
+
+// MARK: the announcement (rules)
 
 struct V094BottleBannerAnnouncementTests {
-    static let vim = "vim gains a bottle"
-    static let both = "vim and lua gain a bottle"
+    static let vim = BottleNoticeAnnouncer.Notice(text: "vim gains a bottle", ids: ["vim"])
+    static let both = BottleNoticeAnnouncer.Notice(text: "vim and lua gain a bottle", ids: ["lua", "vim"])
+    static let four = BottleNoticeAnnouncer.Notice(text: "4 formulae you built from source now have a bottle", ids: ["a", "b", "c", "d"])
+    static let swapped = BottleNoticeAnnouncer.Notice(text: four.text, ids: ["a", "b", "c", "e"])
 
     @Test func announcesWhenTheBannerAppears() {
         var a = BottleNoticeAnnouncer()
-        #expect(a.update(text: nil, names: []) == nil)
-        #expect(a.update(text: Self.vim, names: ["vim"]) == Self.vim)
+        #expect(a.update(nil, windowReady: true) == nil)
+        #expect(a.update(Self.vim, windowReady: true) == Self.vim.text)
         #expect(a.announced == ["vim"])
+        #expect(!a.isPending)
     }
 
     /// A re-render with the same banner says nothing (once per appearance).
     @Test func sameBannerAgainIsSilent() {
         var a = BottleNoticeAnnouncer()
-        #expect(a.update(text: Self.vim, names: ["vim"]) == Self.vim)
-        for _ in 0..<3 { #expect(a.update(text: Self.vim, names: ["vim"]) == nil) }
+        #expect(a.update(Self.vim, windowReady: true) == Self.vim.text)
+        for _ in 0..<3 { #expect(a.update(Self.vim, windowReady: true) == nil) }
+        #expect(a.windowReadinessChanged(true) == nil)
     }
 
     /// A later bottle added to the banner: the new sentence, once.
     @Test func aNewNameIsAnnounced() {
         var a = BottleNoticeAnnouncer()
-        _ = a.update(text: Self.vim, names: ["vim"])
-        #expect(a.update(text: Self.both, names: ["lua", "vim"]) == Self.both)
-        #expect(a.update(text: Self.both, names: ["lua", "vim"]) == nil)
+        _ = a.update(Self.vim, windowReady: true)
+        #expect(a.update(Self.both, windowReady: true) == Self.both.text)
+        #expect(a.update(Self.both, windowReady: true) == nil)
     }
 
     /// A formula leaving the banner (its replace started) is silent; if it
     /// comes back, that's news again.
     @Test func aNameLeavingIsSilent() {
         var a = BottleNoticeAnnouncer()
-        _ = a.update(text: Self.both, names: ["lua", "vim"])
-        #expect(a.update(text: Self.vim, names: ["vim"]) == nil)
-        #expect(a.update(text: Self.both, names: ["lua", "vim"]) == Self.both)
+        _ = a.update(Self.both, windowReady: true)
+        #expect(a.update(Self.vim, windowReady: true) == nil)
+        #expect(a.update(Self.both, windowReady: true) == Self.both.text)
     }
 
     /// Closed (button, Esc) or emptied: the next banner is announced, even
     /// with the same words.
     @Test func eachAppearanceIsAnnounced() {
         var a = BottleNoticeAnnouncer()
-        _ = a.update(text: Self.vim, names: ["vim"])
-        #expect(a.update(text: nil, names: []) == nil)
+        _ = a.update(Self.vim, windowReady: true)
+        #expect(a.update(nil, windowReady: true) == nil)
         #expect(a.announced.isEmpty)
-        #expect(a.update(text: Self.vim, names: ["vim"]) == Self.vim)
-        // Text without names (can't happen: no names, no text) is no banner.
-        #expect(a.update(text: Self.vim, names: []) == nil)
+        #expect(a.update(Self.vim, windowReady: true) == Self.vim.text)
+        // A notice without formulae is no banner.
+        #expect(a.update(.init(text: Self.vim.text, ids: []), windowReady: true) == nil)
         #expect(a.announced.isEmpty)
+        #expect(a.current == nil)
     }
 
-    /// The window follows bottleNoticeText (not every render) and posts
-    /// what the announcer returns, as an announcement VoiceOver speaks.
-    @MainActor @Test func windowAnnouncesThroughTheAnnouncer() throws {
-        let main = try source("ContentView.swift", from: "private func main(_ theme: Theme) -> some View {")
-        #expect(main.contains(".onChange(of: store.bottleNoticeText, initial: true) { _, text in announceBottleNotice(text) }"))
+    /// Four or more: the sentence is just the count, so one formula swapped
+    /// for another reads the same, and is still news.
+    @Test func aSwapAtFourIsNewsWithTheSameSentence() {
+        var a = BottleNoticeAnnouncer()
+        #expect(Self.four.text == Self.swapped.text)
+        #expect(a.update(Self.four, windowReady: true) == Self.four.text)
+        #expect(a.update(Self.swapped, windowReady: true) == Self.swapped.text)
+        #expect(a.update(Self.swapped, windowReady: true) == nil)
+    }
 
-        let content = try source("ContentView.swift", from: "struct ContentView: View")
-        #expect(content.contains("@State private var bottleAnnouncer = BottleNoticeAnnouncer()"))
+    /// The window isn't ready (minimized, starting up, not key): nothing is
+    /// spoken or marked heard; once it is, the banner as it is then.
+    @Test func waitsForTheWindow() {
+        var a = BottleNoticeAnnouncer()
+        #expect(a.update(Self.vim, windowReady: false) == nil)
+        #expect(a.isPending)
+        #expect(a.announced.isEmpty)
+        #expect(a.windowReadinessChanged(false) == nil)
+        // It grew meanwhile: the latest sentence, once.
+        #expect(a.update(Self.both, windowReady: false) == nil)
+        #expect(a.windowReadinessChanged(true) == Self.both.text)
+        #expect(!a.isPending)
+        #expect(a.windowReadinessChanged(true) == nil)
+    }
 
-        let announce = try source("ContentView.swift", from: "private func announceBottleNotice(_ text: String?)")
-        #expect(announce.contains("bottleAnnouncer.update(text: text, names: store.bottleNoticePackages.map(\\.name))"))
-        #expect(announce.contains("BottleNoticeAnnouncement.post("))
+    /// News that went away before the window was ready isn't spoken.
+    @Test func newsGoneBeforeTheWindowIsSilent() {
+        var a = BottleNoticeAnnouncer()
+        _ = a.update(Self.vim, windowReady: true)
+        #expect(a.update(Self.both, windowReady: false) == nil)
+        #expect(a.isPending)
+        #expect(a.update(Self.vim, windowReady: false) == nil)
+        #expect(!a.isPending)
+        #expect(a.windowReadinessChanged(true) == nil)
+        // Closed while the window was away: nothing pending either.
+        _ = a.update(Self.both, windowReady: false)
+        _ = a.update(nil, windowReady: false)
+        #expect(a.windowReadinessChanged(true) == nil)
+    }
+}
 
-        let post = try source("ContentView.swift", from: "enum BottleNoticeAnnouncement")
-        #expect(post.contains("notification: .announcementRequested"))
-        #expect(post.contains(".announcement: text"))
-        #expect(post.contains(".priority: NSAccessibilityPriorityLevel.medium.rawValue"))
+// MARK: the announcement (window)
+
+/// A coordinator with a real window, its own notification center, and its
+/// readiness and VoiceOver post recorded.
+@MainActor
+private final class AnnouncementRig {
+    let center = NotificationCenter()
+    let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 100, height: 100), styleMask: [.titled],
+                          backing: .buffered, defer: true)
+    var ready = false
+    var posts: [(String, NSWindow)] = []
+    let coordinator: BottleNoticeAnnouncementCoordinator
+
+    init() {
+        window.isReleasedWhenClosed = false
+        var isReady: @MainActor (NSWindow) -> Bool = { _ in false }
+        var post: @MainActor (String, NSWindow) -> Void = { _, _ in }
+        coordinator = BottleNoticeAnnouncementCoordinator(center: center, isReady: { isReady($0) }, post: { post($0, $1) })
+        isReady = { [unowned self] w in w === self.window && self.ready }
+        post = { [unowned self] in self.posts.append(($0, $1)) }
+    }
+
+    var spoken: [String] { posts.map(\.0) }
+
+    func becomes(_ name: Notification.Name, ready: Bool = true) {
+        self.ready = ready
+        center.post(name: name, object: window)
+    }
+}
+
+@MainActor
+struct V094BottleNoticeAnnouncementWindowTests {
+    typealias T = V094BottleBannerAnnouncementTests
+
+    /// A background check while the window is minimized: pending, then
+    /// spoken from that window when it comes back from the Dock.
+    @Test func minimizedThenDeminiaturized() {
+        let rig = AnnouncementRig()
+        rig.coordinator.windowChanged(rig.window)
+        #expect(rig.coordinator.isObserving)
+        rig.coordinator.noticeChanged(T.vim)
+        #expect(rig.posts.isEmpty)
+        #expect(rig.coordinator.announcer.isPending)
+        rig.becomes(NSWindow.didDeminiaturizeNotification)
+        #expect(rig.spoken == [T.vim.text])
+        #expect(rig.posts.first?.1 === rig.window)
+        // Becoming key afterwards says nothing new.
+        rig.becomes(NSWindow.didBecomeKeyNotification)
+        #expect(rig.spoken == [T.vim.text])
+    }
+
+    /// At startup the banner can come before the window: spoken once the
+    /// view is in it and the window is key.
+    @Test func startupWaitsForTheWindowToBecomeKey() {
+        let rig = AnnouncementRig()
+        rig.coordinator.noticeChanged(T.vim)
+        #expect(rig.posts.isEmpty)
+        rig.coordinator.windowChanged(rig.window) // attached, not key yet
+        #expect(rig.posts.isEmpty)
+        rig.becomes(NSWindow.didBecomeKeyNotification, ready: false)
+        #expect(rig.posts.isEmpty)
+        rig.becomes(NSWindow.didBecomeKeyNotification)
+        #expect(rig.spoken == [T.vim.text])
+    }
+
+    /// Attached to a window that's already ready: spoken right away.
+    @Test func attachedToAReadyWindow() {
+        let rig = AnnouncementRig()
+        rig.ready = true
+        rig.coordinator.noticeChanged(T.both)
+        rig.coordinator.windowChanged(rig.window)
+        #expect(rig.spoken == [T.both.text])
+    }
+
+    /// Another window's notifications don't count.
+    @Test func onlyItsOwnWindow() {
+        let rig = AnnouncementRig()
+        let other = NSWindow(contentRect: .zero, styleMask: [], backing: .buffered, defer: true)
+        other.isReleasedWhenClosed = false
+        rig.coordinator.windowChanged(rig.window)
+        rig.coordinator.noticeChanged(T.vim)
+        rig.ready = true
+        rig.center.post(name: NSWindow.didBecomeKeyNotification, object: other)
+        #expect(rig.posts.isEmpty)
+        rig.center.post(name: NSWindow.didBecomeKeyNotification, object: rig.window)
+        #expect(rig.spoken == [T.vim.text])
+    }
+
+    /// Four or more formulae, one swapped: same sentence, announced again;
+    /// SwiftUI's repeated updates with the same banner say nothing.
+    @Test func swapAtFourIsAnnouncedAgain() {
+        let rig = AnnouncementRig()
+        rig.ready = true
+        rig.coordinator.windowChanged(rig.window)
+        rig.coordinator.noticeChanged(T.four)
+        rig.coordinator.noticeChanged(T.four)
+        rig.coordinator.noticeChanged(T.swapped)
+        rig.coordinator.noticeChanged(T.swapped)
+        #expect(rig.spoken == [T.four.text, T.four.text])
+    }
+
+    /// Torn down (dismantleNSView): no more observing, nothing spoken.
+    @Test func dismantleStopsObserving() {
+        let rig = AnnouncementRig()
+        let view = WindowWatchingView(frame: .zero)
+        view.onWindowChange = { _ in }
+        rig.coordinator.windowChanged(rig.window)
+        rig.coordinator.noticeChanged(T.vim)
+        BottleNoticeAnnouncementKey.dismantleNSView(view, coordinator: rig.coordinator)
+        #expect(!rig.coordinator.isObserving)
+        #expect(rig.coordinator.window == nil)
+        #expect(view.onWindowChange == nil)
+        rig.becomes(NSWindow.didBecomeKeyNotification)
+        #expect(rig.posts.isEmpty)
+    }
+
+    /// The view reports joining a window.
+    @Test func watchingViewReportsItsWindow() throws {
+        let rig = AnnouncementRig()
+        let view = WindowWatchingView(frame: .zero)
+        var seen: [NSWindow?] = []
+        view.onWindowChange = { seen.append($0) }
+        let content = try #require(rig.window.contentView)
+        content.addSubview(view)
+        view.removeFromSuperview()
+        #expect(seen.count == 2)
+        #expect(seen.first! === rig.window)
+        #expect(seen.last! == nil)
+    }
+
+    /// What counts as ready: visible, not minimized, key. A window that
+    /// was never shown isn't.
+    @Test func readinessNeedsAVisibleKeyWindow() {
+        let w = NSWindow(contentRect: .zero, styleMask: [], backing: .buffered, defer: true)
+        w.isReleasedWhenClosed = false
+        #expect(!BottleNoticeAnnouncementCoordinator.windowIsReady(w))
+        #expect(BottleNoticeAnnouncementCoordinator.readinessNotifications.contains(NSWindow.didBecomeKeyNotification))
+        #expect(BottleNoticeAnnouncementCoordinator.readinessNotifications.contains(NSWindow.didDeminiaturizeNotification))
+    }
+}
+
+// MARK: the store's side
+
+struct V094BottleNoticeAnnouncementStoreTests {
+    /// The store's notice for VoiceOver names the formulae, so a swap at
+    /// four reads the same sentence but is a different notice.
+    @MainActor @Test func noticeFollowsTheFormulae() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let make = { (name: String) in BottleNoticeDiffTests().source(name) }
+        let all = ["a1", "a2", "a3", "a4", "a5"].map(make)
+        var report = try #require(store.report)
+        report.packages += all
+        store.report = report
+        store.bottleNotice = BottleNotice(keys: Set(all.prefix(4).map(BottleAvailableNotificationDiff.key)))
+        let first = try #require(store.bottleNoticeAnnouncement)
+        #expect(first.text == store.bottleNoticeText)
+        #expect(first.ids == all.prefix(4).map(\.id).sorted())
+        store.bottleNotice = BottleNotice(keys: Set((all.prefix(3) + [all[4]]).map(BottleAvailableNotificationDiff.key)))
+        let second = try #require(store.bottleNoticeAnnouncement)
+        #expect(second.text == first.text)
+        #expect(second != first)
+        store.dismissBottleNotice()
+        #expect(store.bottleNoticeAnnouncement == nil)
+    }
+}
+
+// MARK: wiring
+
+/// The window uses both bridges (single names, so wrapping the call
+/// doesn't matter); what they do is tested above.
+struct V094BottleBannerWiringTests {
+    @Test func contentViewUsesTheBridges() throws {
+        let src = try String(contentsOf: packageRoot.appendingPathComponent("Sources/TankardApp/ContentView.swift"), encoding: .utf8)
+        #expect(src.contains("BottleBannerEscapeKey("))
+        #expect(src.contains("store.dismissBottleNotice()"))
+        #expect(src.contains("BottleNoticeAnnouncementKey("))
+        #expect(src.contains("store.bottleNoticeAnnouncement"))
+        #expect(!src.contains("onChange(of: store.bottleNoticeText"))
     }
 }

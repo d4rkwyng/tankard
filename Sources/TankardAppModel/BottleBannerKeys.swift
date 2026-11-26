@@ -58,28 +58,75 @@ public enum BottleBannerEscape {
 
 /// What VoiceOver hears when the bottle banner appears: its sentence, once
 /// per appearance, and again only when it names a formula it hadn't named
-/// (a later bottle added to it). A re-render, the same sentence again, or
-/// a formula leaving it (a replace started, a bottle withdrawn) says
-/// nothing; once the banner goes (closed, Esc, all replaced), its next
-/// appearance is announced.
+/// (a later bottle added to it). A re-render, the same banner again, or a
+/// formula leaving it (a replace started, a bottle withdrawn) says nothing;
+/// once the banner goes (closed, Esc, all replaced), its next appearance is
+/// announced.
+///
+/// It follows the formulae, not the sentence: from four formulae on the
+/// sentence is only their count, so one swapped for another reads the same
+/// but is still news.
+///
+/// News waits for the banner's window: while it's minimized, hidden or not
+/// key (a background check, the app starting up), the announcement stays
+/// pending, and `windowReadinessChanged(true)` speaks the banner as it is
+/// then.
 public struct BottleNoticeAnnouncer: Equatable, Sendable {
-    /// The formulae of the last announcement while the banner stays up.
+    /// The banner as VoiceOver should hear it: its sentence, and the
+    /// formulae it names (their ids, in order).
+    public struct Notice: Equatable, Sendable {
+        public var text: String
+        public var ids: [String]
+        public init(text: String, ids: [String]) {
+            self.text = text
+            self.ids = ids
+        }
+    }
+
+    /// The formulae VoiceOver has heard while the banner stays up.
     public private(set) var announced: Set<String> = []
+    /// The banner on screen now (nil: none).
+    public private(set) var current: Notice?
 
     public init() {}
 
-    /// The banner now shows `text` naming `names` (nil or no names: no
-    /// banner). Returns the sentence to announce, or nil.
-    public mutating func update(text: String?, names: [String]) -> String? {
-        guard let text, !names.isEmpty else {
+    /// The banner has news VoiceOver hasn't heard yet (waiting for its
+    /// window).
+    public var isPending: Bool {
+        guard let current else { return false }
+        return !Set(current.ids).isSubset(of: announced)
+    }
+
+    /// The banner now shows `notice` (nil or no formulae: no banner), and
+    /// its window is `windowReady` or not. Returns the sentence to
+    /// announce, or nil.
+    public mutating func update(_ notice: Notice?, windowReady: Bool) -> String? {
+        guard let notice, !notice.ids.isEmpty else {
             announced = []
+            current = nil
             return nil
         }
-        let current = Set(names)
-        let isNew = !current.isSubset(of: announced)
-        // What's on the banner now, so a name that leaves and comes back
-        // is announced again.
-        announced = current
-        return isNew ? text : nil
+        current = notice
+        return evaluate(windowReady: windowReady)
+    }
+
+    /// The banner's window became ready (or stopped being). Returns the
+    /// pending sentence, as the banner reads now, or nil.
+    public mutating func windowReadinessChanged(_ ready: Bool) -> String? {
+        evaluate(windowReady: ready)
+    }
+
+    private mutating func evaluate(windowReady: Bool) -> String? {
+        guard let current else { return nil }
+        let ids = Set(current.ids)
+        guard windowReady || ids.isSubset(of: announced) else {
+            // Keep only what's still shown, so a formula that leaves and
+            // comes back is news again; the rest waits.
+            announced.formIntersection(ids)
+            return nil
+        }
+        let isNew = !ids.isSubset(of: announced)
+        announced = ids
+        return isNew ? current.text : nil
     }
 }
