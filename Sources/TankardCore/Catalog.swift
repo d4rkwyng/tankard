@@ -244,6 +244,18 @@ public enum CatalogSearch {
         return base - (e.deprecated || e.disabled ? 50 : 0)
     }
 
+    /// 0.9.4 (bug hunt): "homebrew/core/wget", "homebrew/cask/firefox"
+    /// (the form Tankard's own Copy Install Command gives) searches for the
+    /// short name: the official taps' entries carry it as their full name,
+    /// so the pasted command found nothing.
+    static func officialShortName(_ q: String) -> String {
+        for tap in ["homebrew/core/", "homebrew/cask/"] where q.hasPrefix(tap) {
+            let rest = q.dropFirst(tap.count)
+            if !rest.isEmpty, !rest.contains("/"), !rest.contains(where: \.isWhitespace) { return String(rest) }
+        }
+        return q
+    }
+
     /// The best `limit` matches, best first. Ties: shorter name, then
     /// alphabetical, then formula before cask.
     /// `preferBottled` (0.3): within the same relevance tier, formulae with
@@ -262,7 +274,7 @@ public enum CatalogSearch {
         // 0.8.3: a pasted "brew install x" searches for x.
         // 0.8.5 (bug hunt L5): no package name or description is anywhere
         // near this long; a 100,000-character paste took 30 s per search.
-        let q = String(PastedCommand.searchTerm(String(query.prefix(maxQueryLength * 2))).lowercased().prefix(maxQueryLength))
+        let q = officialShortName(String(PastedCommand.searchTerm(String(query.prefix(maxQueryLength * 2))).lowercased().prefix(maxQueryLength)))
         guard !q.isEmpty else { return [] }
         let words = q.split(whereSeparator: \.isWhitespace).map(String.init)
         var hits: [(Int, CatalogEntry)] = []

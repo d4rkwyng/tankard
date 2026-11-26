@@ -47,3 +47,36 @@ struct V094DiscoverInstallWaitsTests {
     }
 }
 
+// MARK: a pasted homebrew/core/… or homebrew/cask/… name finds it
+
+// Tankard's own Copy Install Command gives `brew install --formula
+// homebrew/core/wget` / `brew install --cask homebrew/cask/firefox`.
+// Pasted into Discover it found nothing: the official taps' entries carry
+// the short name as their full name.
+struct V094QualifiedSearchTests {
+    static let entries = [
+        CatalogEntry(kind: .formula, name: "wget", fullName: "wget", tap: "homebrew/core", desc: "Internet file retriever", bottle: .forThisMac),
+        CatalogEntry(kind: .cask, name: "firefox", fullName: "firefox", tap: "homebrew/cask", desc: "Web browser", bottle: .cask),
+        CatalogEntry(kind: .formula, name: "probe", fullName: "walktest/probe/probe", tap: "walktest/probe", desc: nil, bottle: .forThisMac),
+    ]
+
+    @Test func officialTapNamesFindTheShortName() {
+        #expect(CatalogSearch.search("homebrew/core/wget", in: Self.entries).map(\.name) == ["wget"])
+        #expect(CatalogSearch.search("brew install --cask homebrew/cask/firefox", in: Self.entries).map(\.name) == ["firefox"])
+        #expect(CatalogSearch.search("Homebrew/Core/WGET", in: Self.entries).map(\.name) == ["wget"])
+    }
+
+    @Test func tankardsOwnInstallCommandRoundTrips() {
+        for e in Self.entries {
+            #expect(CatalogSearch.search(e.installDisplay, in: Self.entries).first?.id == e.id, "\(e.installDisplay)")
+        }
+    }
+
+    @Test func otherTapsAndPlainWordsAreUnchanged() {
+        #expect(CatalogSearch.search("walktest/probe/probe", in: Self.entries).map(\.name) == ["probe"])
+        #expect(CatalogSearch.search("homebrew/core/", in: Self.entries).isEmpty)
+        #expect(CatalogSearch.officialShortName("homebrew/core/a/b") == "homebrew/core/a/b")
+        #expect(CatalogSearch.officialShortName("wget") == "wget")
+    }
+}
+
