@@ -152,6 +152,24 @@ public enum ContextMenus {
         return String(localized: "Uninstall… (needed by \(names)\(more))")
     }
 
+    /// Discover's Install (the row menu's and, 0.9.4, the detail pane's
+    /// button): off until `brew info` details are in, since whether it
+    /// compiles isn't known before, and the "Install (compiles)"
+    /// confirmation must not be skipped. 0.9.4 (bug hunt): the detail
+    /// pane's button didn't wait: in Intelbrew mode a formula with no bottle
+    /// block read "Install foo" while "Asking brew info…" and started a
+    /// source build at once.
+    public static func discoverInstall(_ e: CatalogEntry, compileWarning: CompileWarning?, busy: Bool) -> MenuItemModel {
+        guard e.detailsLoaded else {
+            return MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
+                                 action: .install(confirmCompile: false), isEnabled: false)
+        }
+        let compiles = compileWarning != nil
+        return MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
+                             systemImage: compiles ? "hammer" : "arrow.down.circle",
+                             action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
+    }
+
     /// Discover's row menu.
     ///
     /// Install waits for `brew info` details: until they're in, whether it
@@ -161,14 +179,8 @@ public enum ContextMenus {
         if installed {
             install = MenuItemModel(id: "show-installed", title: String(localized: "Show in Installed"), systemImage: "checkmark.circle",
                                     action: .showInInstalled)
-        } else if !e.detailsLoaded {
-            install = MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
-                                    action: .install(confirmCompile: false), isEnabled: false)
         } else {
-            let compiles = compileWarning != nil
-            install = MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
-                                    systemImage: compiles ? "hammer" : "arrow.down.circle",
-                                    action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
+            install = discoverInstall(e, compileWarning: compileWarning, busy: busy)
         }
         let copy = [
             MenuItemModel(id: "copy-name", title: String(localized: "Copy Name"), systemImage: "doc.on.doc", action: .copy(e.name)),

@@ -472,14 +472,17 @@ struct DiscoverDetail: View {
                     }
                     .font(.system(size: 12))
                 } else {
-                    let compiles = store.deps.classifier.installWarning(e) != nil
+                    // 0.9.4 (bug hunt): the row menu's rule: waits for brew info.
+                    let install = ContextMenus.discoverInstall(e, compileWarning: store.deps.classifier.installWarning(e),
+                                                               busy: store.windowBrewActionsBlocked)
+                    let compiles = install.action == .install(confirmCompile: true)
                     Button {
                         if compiles { discover.confirmInstall = e.id } else { store.startInstall(e) }
                     } label: {
-                        Label(ContextMenus.installTitle(e.name, compiles: compiles), systemImage: compiles ? "hammer" : "arrow.down.circle")
+                        Label(install.title, systemImage: install.systemImage)
                     }
                     .buttonStyle(.primaryAction)
-                    .disabled(store.windowBrewActionsBlocked || e.disabled)
+                    .disabled(!install.isEnabled)
                     .help(store.isUpgrading ? String(localized: "Wait for the running task to finish") : store.windowBrewActionsNote ?? String(localized: "Install \(e.name)"))
                 }
             }
