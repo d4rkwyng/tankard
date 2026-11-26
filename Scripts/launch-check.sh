@@ -28,7 +28,10 @@
 # Homebrew's metadata, as `brew update` in Terminal), which takes brew's
 # lock and moves its FETCH_HEAD. So launch-check sets
 # HOMEBREW_NO_AUTO_UPDATE=1 (the app honours it and skips the update)
-# unless --allow-brew-update is given.
+# unless --allow-brew-update is given. It puts the app's cache folder
+# (~/Library/Caches/net.mindtricks.tankard: status.json and the caches next
+# to it) back as it found it (0.9.4), so a check leaves no status cache
+# for a later launch.
 #
 # Why it exists: 0.3.0 shipped a launch crash (App.body re-evaluated in a
 # loop until the stack overflowed) that every demo and snapshot run hid.
@@ -39,7 +42,9 @@
 #
 #   Scripts/launch-check.sh --runs 5 path/to/downloaded/Tankard.app
 #
-# release.sh runs it on the signed app before notarizing.
+# release.sh runs it on the notarized, stapled app (0.9.4; the signed one
+# with --skip-notarize), right before making Tankard.zip. In CI that is the
+# runner's own Homebrew, read-only, never a user's.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -59,7 +64,7 @@ while [ $# -gt 0 ]; do
         --lang) LANG_ARGS=(-AppleLanguages "($2)"); shift ;;
         --allow-brew-update) ALLOW_UPDATE=1 ;;
         --log) LOG_DIR=$2; shift ;;
-        -h|--help) sed -n '2,29p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
         *.app|*.app/) APP=${1%/}; BUILD=0 ;;
         *) echo "launch-check.sh: unknown option $1" >&2; exit 2 ;;
     esac
@@ -95,8 +100,58 @@ if pgrep -f "^$BIN_ABS" >/dev/null; then
 fi
 
 [ -n "$LOG_DIR" ] && mkdir -p "$LOG_DIR"
-TMP_LOG=$(mktemp -t tankard-launch-check)
-trap 'rm -f "$TMP_LOG"' EXIT
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/tankard-launch-check.XXXXXX")
+TMP_LOG="$WORK/run.log"
+
+# 0.9.4: the app's cache folder (status.json, insights.json, the build-time
+# cache) is copied before the first launch and put back as it was on every
+# exit, or removed if there was none. The app still reads the real cache
+# and real brew, as a user's launch does; it just leaves nothing behind.
+# Before 0.9.4, release.sh's run on the CI runner left a status.json that
+# release.yml's later smoke step (Scripts/smoke-launch.sh) then showed.
+# The folder itself is never removed or replaced when it was there: it may
+# be a symlink (to another volume, say), and that link stays. Its contents
+# are copied through it and put back through it.
+CACHE_DIR="$HOME/Library/Caches/net.mindtricks.tankard"
+CACHE_SAVED=0
+if [ -e "$CACHE_DIR" ] || [ -L "$CACHE_DIR" ]; then
+    if [ ! -d "$CACHE_DIR" ]; then
+        rm -rf "$WORK"
+        echo "launch-check.sh: $CACHE_DIR is not a folder (or its link is broken); nothing was launched" >&2
+        exit 1
+    fi
+    mkdir "$WORK/cache"
+    ditto "$CACHE_DIR/" "$WORK/cache/" || { rm -rf "$WORK"; echo "launch-check.sh: could not copy $CACHE_DIR; nothing was launched" >&2; exit 1; }
+    CACHE_SAVED=1
+fi
+pid=""
+finish() {
+    local rc=$?
+    trap - EXIT INT TERM HUP
+    # The launched app must be gone before the cache goes back (an
+    # interrupted run can leave it up).
+    if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+        kill -9 "$pid" 2>/dev/null || true
+        wait "$pid" 2>/dev/null || true
+    fi
+    if [ $CACHE_SAVED = 1 ]; then
+        if ! { [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"; } \
+            || ! find "$CACHE_DIR/" -mindepth 1 -maxdepth 1 -exec rm -rf {} + \
+            || ! ditto "$WORK/cache/" "$CACHE_DIR/"; then
+            echo "launch-check.sh: could not put back $CACHE_DIR; the copy is in $WORK/cache" >&2
+            exit 1
+        fi
+    else
+        # None before: whatever the launches made goes. Not through a link.
+        if [ -L "$CACHE_DIR" ]; then rm -f "$CACHE_DIR"; else rm -rf "$CACHE_DIR"; fi
+    fi
+    rm -rf "$WORK"
+    exit $rc
+}
+trap finish EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
 REENTRANT="reentrant operation in its NSTableView delegate"
 
 failed=0

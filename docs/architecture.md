@@ -1233,7 +1233,10 @@ from yours and deleted at exit; your `net.mindtricks.tankard` is only read.
 if it doesn't stay up or leaves a new crash report in `~/Library/Logs/DiagnosticReports`.
 With no APP it builds `dist/Tankard.app` first; give it the downloaded release
 (`Scripts/launch-check.sh --runs 5 ~/Downloads/Tankard.app`) to check what actually
-ships. `release.sh` runs it on the signed app before notarizing. 0.3.0 crashed at
+ships. `release.sh` runs it on the notarized, stapled app right before zipping it (0.9.4;
+before that it ran before notarizing, so the stapled app was never launched). It copies
+`~/Library/Caches/net.mindtricks.tankard` first and puts it back as it was on exit
+(0.9.4), so a check leaves no `status.json` behind. 0.3.0 crashed at
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule
 that came out of it: **App.body is pure**. It reads no @Observable state that changes and
@@ -1388,10 +1391,16 @@ upload date, the zip's sha256, the cdhash of every signed binary Apple ticketed 
 and `tankard-askpass`) and the issues list (path, message and help link for each); no
 Apple ID, password or certificate. An Invalid submission still fails the release, after
 its log is printed; an Accepted one whose log can't be fetched (three tries) only warns.
-`--skip-notarize` stops after signing. Before notarizing it real-launches the signed app
-five times with `Scripts/launch-check.sh` and stops if it crashes (`--skip-launch-check`
-only on a Mac with no GUI session; then run the check on the downloaded zip before
-publishing the draft).
+`--skip-notarize` stops after signing. Right before making `Tankard.zip` it real-launches
+the app five times with `Scripts/launch-check.sh` and stops if it crashes. That is the
+stapled app, after `stapler validate` and `spctl` (0.9.4; before, the check ran before
+notarizing), or the signed one with `--skip-notarize`. `--skip-launch-check` is only for a
+Mac with no GUI session; then run the check on the downloaded zip before publishing the
+draft. On the GitHub runner the check reads that runner's own Homebrew, read-only
+(`HOMEBREW_NO_AUTO_UPDATE=1`), never a user's, and puts the app's cache folder back as it
+found it, so the workflow's later smoke step (`Scripts/smoke-launch.sh`, Homebrew
+sandboxed off) does not show a status cache from it. The unit tests never run it on
+Tankard: they drive it with a stub app and a throwaway `HOME`.
 
 The hardened runtime needs no entitlements: the app is plain Swift with no third-party
 libraries, plug-ins or JIT, and brew is a child process started with `posix_spawn`, which
