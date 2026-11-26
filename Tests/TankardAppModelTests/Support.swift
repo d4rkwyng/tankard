@@ -383,10 +383,48 @@ enum TestDefaults {
 
     /// Removes one suite now: its contents, then its plist (cfprefsd leaves
     /// an emptied domain behind as a `{}` file).
+    ///
+    /// 0.9.4: `CFPreferencesAppSynchronize` does not put a removed domain
+    /// on disk. The old plist (with its keys) stays until cfprefsd's own
+    /// flush, which came 0.2s to 4s later, so a plist unlinked here could
+    /// come back as `{}` afterwards. That was the TestDefaultsTests flake
+    /// (scopedSuiteLeavesNoPlist and withTestDefaultsLeavesNoPlist, on the
+    /// check after the 0.5s wait). `flushPendingWrite` makes cfprefsd write
+    /// the `{}` now; once it is written, nothing is pending, and the unlink
+    /// is the last change to that path.
     static func remove(_ name: String) {
+        removeInProcess(name)
+        flushPendingWrite(name)
+        try? FileManager.default.removeItem(at: plistURL(name))
+    }
+
+    /// The pre-0.9.4 `remove`, without the flush: `removeAll` runs it for
+    /// every suite at exit (hundreds), where spawning `defaults` for each
+    /// would be slow, and the sweeper's two passes after exit already cover
+    /// a late write-back.
+    private static func removeInProcess(_ name: String) {
         UserDefaults(suiteName: name)?.removePersistentDomain(forName: name)
         CFPreferencesAppSynchronize(name as CFString)
-        try? FileManager.default.removeItem(at: plistURL(name))
+    }
+
+    /// Has cfprefsd write anything it still holds for `name` to disk before
+    /// this returns. A read from another process does that (cfprefsd writes
+    /// a dirty domain before it answers), so `defaults export <name>
+    /// /dev/null` is enough: read-only, and the file it writes is
+    /// /dev/null. Only test-shaped names, so a caller's mistake can never
+    /// point it at the app's own domain. False if `defaults` could not be
+    /// run.
+    @discardableResult static func flushPendingWrite(_ name: String) -> Bool {
+        guard isSweepable(name) else { return false }
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/defaults")
+        p.arguments = ["export", name, "/dev/null"]
+        p.standardInput = FileHandle.nullDevice
+        p.standardOutput = FileHandle.nullDevice
+        p.standardError = FileHandle.nullDevice
+        guard (try? p.run()) != nil else { return false }
+        p.waitUntilExit()
+        return true
     }
 
     static func plistURL(_ name: String) -> URL {
@@ -396,7 +434,10 @@ enum TestDefaults {
 
     static func removeAll() {
         let names = registry.drain()
-        names.forEach(remove)
+        for name in names {
+            removeInProcess(name)
+            try? FileManager.default.removeItem(at: plistURL(name))
+        }
         sweepAfterExit()
     }
 

@@ -13,7 +13,22 @@ struct TestDefaultsTests {
         #expect(FileManager.default.fileExists(atPath: plist.path))
         TestDefaults.remove(name)
         #expect(!FileManager.default.fileExists(atPath: plist.path))
+        // 0.9.4: nothing left for cfprefsd to write back. Forcing its
+        // pending write now finds no `{}` to put back.
+        #expect(TestDefaults.flushPendingWrite(name))
+        #expect(!FileManager.default.fileExists(atPath: plist.path))
         #expect(UserDefaults(suiteName: name)!.object(forKey: "x") == nil)
+    }
+
+    /// 0.9.4: the flush is read-only, and never reaches a name that is
+    /// not test-shaped.
+    @Test func flushPendingWriteOnlyReadsTestShapedNames() throws {
+        #expect(!TestDefaults.flushPendingWrite("net.mindtricks.tankard"))
+        #expect(!TestDefaults.flushPendingWrite("net.mindtricks.tankard.ephemeral"))
+        #expect(!TestDefaults.flushPendingWrite("tankard-test-bad \(UUID().uuidString)"))
+        let name = "tankard-test-flush-\(UUID().uuidString)"
+        #expect(TestDefaults.flushPendingWrite(name))
+        #expect(!FileManager.default.fileExists(atPath: TestDefaults.plistURL(name).path))
     }
 
     /// 0.8.9: a Scoped suite leaves no plist for its UUID once released,
@@ -258,8 +273,8 @@ struct TestDefaultsTests {
         return FileManager.default.fileExists(atPath: url.path)
     }
 
-    /// No file for this suite's UUID, now or once cfprefsd has had a moment
-    /// to write back anything it still held.
+    /// No file for this suite's UUID, now, once cfprefsd has been made to
+    /// write anything it still held, and after a moment more.
     private func assertNoPlist(_ name: String) throws {
         let uuid = try #require(name.split(separator: ".").last.map(String.init))
         #expect(UUID(uuidString: uuid) != nil)
@@ -267,6 +282,12 @@ struct TestDefaultsTests {
             let dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Preferences")
             return ((try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? []).filter { $0.contains(uuid) }
         }
+        #expect(leftovers().isEmpty)
+        // 0.9.4: cfprefsd's own flush of a removed domain came 0.2s to 4s
+        // later, so the 0.5s wait alone caught a late `{}` only sometimes.
+        // Have it write whatever it still holds now; a write-back
+        // `remove` left pending is on disk before the next check.
+        #expect(TestDefaults.flushPendingWrite(name))
         #expect(leftovers().isEmpty)
         Thread.sleep(forTimeInterval: 0.5)
         #expect(leftovers().isEmpty)
