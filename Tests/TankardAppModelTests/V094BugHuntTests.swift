@@ -5,6 +5,18 @@ import TankardCore
 
 // 0.9.4 bug hunt (item 1): user-facing bugs found against fake Homebrew.
 
+// (R1 review) `makeClient` (Support.swift, used by 78 existing tests) keeps
+// BrewClient's default Caskroom timestamps and unreadable-keg scan, which
+// read /usr/local on this Mac: a real local package could enter a fixture
+// report. These rigs use a client with both hooks off (as Demo does), and
+// the shared helper stays as it is for the tests that already use it.
+func makeIsolatedClient(_ runner: CommandRunning, intelbrew: Bool = true) -> BrewClient {
+    var client = makeClient(runner, intelbrew: intelbrew)
+    client.caskFolderTime = nil
+    client.unreadableScan = nil
+    return client
+}
+
 // MARK: a quiet scheduled check keeps the refresh failure
 
 // A Refresh whose brew update failed (offline) shows "Last refresh failed"
@@ -14,6 +26,20 @@ import TankardCore
 // just now" / "Everything is up to date" although no update had succeeded,
 // and the saved failure record was deleted.
 extension AppStoreTests {
+    /// `rig(stream:)` with `makeIsolatedClient`.
+    func isolatedRig(stream: @escaping @Sendable ([String], @escaping @Sendable (Data) -> Void) async throws -> Int32) throws -> Rig {
+        let now = Date()
+        let dir = try tempDir()
+        let log = CallLog()
+        let info = FakeInfoRunner(log: log, info: demoIntelInfo())
+        let client = makeIsolatedClient(info)
+        let cache = StatusCache(url: dir.appendingPathComponent("cache/status.json"))
+        let runner = FakeStreamRunner(log: log, behaviour: stream)
+        let deps = AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: cache,
+                                         logURL: dir.appendingPathComponent("Logs/upgrade.log"), ttl: 3600, now: { now })
+        return Rig(store: AppStore(deps: deps), log: log, info: info, dir: dir, cache: cache)
+    }
+
     static let unreachableUpdate: @Sendable ([String], @escaping @Sendable (Data) -> Void) async throws -> Int32 = { args, output in
         guard args.first == "update" else { output(Data("ok\n".utf8)); return 0 }
         output(Data("fatal: unable to access 'https://github.com/Homebrew/brew/': Failed to connect to 127.0.0.1 port 3128\n".utf8))
@@ -21,7 +47,7 @@ extension AppStoreTests {
     }
 
     @Test func aQuietScheduledCheckKeepsTheRefreshFailure() async throws {
-        let r = try rig(stream: Self.unreachableUpdate)
+        let r = try isolatedRig(stream: Self.unreachableUpdate)
         defer { try? FileManager.default.removeItem(at: r.dir) }
         await r.store.refresh(manual: true)
         let failed = try #require(r.store.error)
@@ -38,7 +64,7 @@ extension AppStoreTests {
 
     /// Without an earlier failure a quiet scheduled check still shows nothing.
     @Test func aQuietScheduledCheckAloneShowsNoError() async throws {
-        let r = try rig(stream: Self.unreachableUpdate)
+        let r = try isolatedRig(stream: Self.unreachableUpdate)
         defer { try? FileManager.default.removeItem(at: r.dir) }
         await r.store.refresh(.scheduled)
         #expect(r.store.lastScheduledUpdate?.quiet == .offline)
@@ -83,7 +109,13 @@ struct V094AutoUpdateBlocksUpgradeTests {
         store.autoUpdate.settings.enabled = true
         let u = store.autoUpdate
         let task = Task { await u.run(store: store, notifier: nil) }
-        try #require(await waitUntil { u.isRunning && u.activity?.hasPrefix("Auto-update: downloading") == true })
+        // (R1 review) a failed wait can't leave the fetch suspended.
+        guard await waitUntil({ u.isRunning && u.activity?.hasPrefix("Auto-update: downloading") == true }) else {
+            gate.release()
+            _ = await task.value
+            Issue.record("the automatic update never reached its download step")
+            throw CancellationError()
+        }
         return (store, gate, task)
     }
 
@@ -162,22 +194,31 @@ struct V094AutoUpdateBlocksUpgradeTests {
 struct V094LockWaitTimeoutTests {
     @Test func aWaitThatRunsOutFailsAsLocked() async throws {
         let calls = CallLog()
-        let client = makeClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
+        let client = makeIsolatedClient(FakeInfoRunner(log: calls, info: demoIntelInfo()))
         let runner = FakeStreamRunner(log: calls, behaviour: { args, out in
             guard args.first == "upgrade" else { return 0 }
             out(Data(V083LockWaitTests.lockedLine.utf8))
             return 1
         })
         var deps = AppStore.Dependencies(makeClient: { client }, streamRunner: runner, cache: nil, logURL: nil)
+        // (R1 review) a durable record of the wait: lockWait itself is
+        // only set for those 150 ms, which a busy main actor can miss.
+        let asked = CallLog()
         deps.lockWait = BrewLockWait(interval: .milliseconds(10), limit: .milliseconds(150), maxAttempts: 5,
-                                     holders: { _ in ["4312 /bin/bash /opt/homebrew/Library/Homebrew/brew.sh install ffmpeg"] })
+                                     holders: { _ in
+                                         asked.add(["holders"])
+                                         return ["4312 /bin/bash /opt/homebrew/Library/Homebrew/brew.sh install ffmpeg"]
+                                     })
         let store = AppStore(deps: deps)
         await store.start()
         let pkg = try #require(store.upgradable.first)
         store.startUpgrade([pkg])
         let s = try #require(store.upgrade)
-        #expect(await waitUntil { s.lockWait != nil })
         #expect(await waitUntil { s.isFinished })
+        // It waited: the holder was looked up, and the log says so.
+        #expect(asked.count("holders") >= 1)
+        #expect(s.log.lines.contains { $0.hasPrefix("tankard: Another Homebrew command holds brew's lock") && $0.contains("Waiting for it to finish") })
+        #expect(s.lockWait == nil)
         #expect(calls.count("upgrade") == 1, "the lock never came free: brew ran once")
         #expect(s.items[0].state == .failed(1))
         #expect(s.failureKinds == [.locked])
@@ -439,6 +480,8 @@ func v094GatedAutoUpdate(_ deps: AppStore.Dependencies, settings: AppSettings = 
     let task = Task { await u.run(store: store, notifier: nil) }
     guard await waitUntil({ u.isRunning && u.activity?.hasPrefix("Auto-update: downloading") == true }) else {
         gate.release()
+        _ = await task.value
+        Issue.record("the automatic update never reached its download step")
         throw CancellationError()
     }
     return (store, gate, task)
@@ -666,5 +709,14 @@ struct V094RunButtonsWaitTests {
         #expect(!activity.contains("discover.confirmInstall = nil\n                    store.startInstall(entry)"))
         #expect(activity.contains(".disabled(store.appManagementRunsBlocked)"))
         #expect(activity.components(separatedBy: ".disabled(runBlocked)").count - 1 == 2)
+    }
+}
+
+// (R1 review) the rigs above read nothing from this Mac's disk.
+struct V094IsolatedClientTests {
+    @Test func theIsolatedClientHasNoFilesystemHooks() {
+        let c = makeIsolatedClient(FakeInfoRunner(log: CallLog(), info: demoIntelInfo()))
+        #expect(c.caskFolderTime == nil)
+        #expect(c.unreadableScan == nil)
     }
 }
