@@ -119,11 +119,14 @@ fi
 
 [ -n "$LOG_DIR" ] && mkdir -p "$LOG_DIR"
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/tankard-launch-check.XXXXXX")
+# Absolute (a relative TMPDIR gives a relative path): restore_cache works
+# from inside the cache folder, where a relative $WORK/cache is not the copy.
+WORK=$(cd "$WORK" && pwd)
 TMP_LOG="$WORK/run.log"
 
 # 0.9.4: the app's cache folder (status.json, insights.json, the build-time
 # cache) is copied before the first launch and put back as it was on every
-# exit, or removed if there was none. The app still reads the real cache
+# exit. The app still reads the real cache
 # and real brew, as a user's launch does; it just leaves nothing behind.
 # Before 0.9.4, release.sh's run on the CI runner left a status.json that
 # release.yml's later smoke step (Scripts/smoke-launch.sh) then showed.
@@ -132,8 +135,14 @@ TMP_LOG="$WORK/run.log"
 # are copied through it and put back through it, and only into the same
 # folder: if the folder (or where its link points) is a different one by
 # the end, nothing in it is touched and the copy is kept.
+# When there was no folder, the check makes an empty one before the first
+# launch (the app writes into it, as it would into one it made itself) and
+# removes it on exit, but only that folder: if another one (a link, or a
+# folder that is not the one made here) is in its place by then, it is left
+# as it is and the check fails.
 CACHE_DIR="$HOME/Library/Caches/net.mindtricks.tankard"
 CACHE_SAVED=0
+CACHE_MADE=0     # 1: there was none; the folder at CACHE_ID was made here
 CACHE_LINK=      # the link's text, when the folder is a symlink
 CACHE_ID=        # device:inode of the folder (through the link)
 cache_id() { stat -L -f '%d:%i' "$CACHE_DIR" 2>/dev/null; }
@@ -153,18 +162,29 @@ if [ -e "$CACHE_DIR" ] || [ -L "$CACHE_DIR" ]; then
         exit 1
     fi
     CACHE_SAVED=1
+else
+    mkdir -p "$(dirname "$CACHE_DIR")" && mkdir "$CACHE_DIR" && CACHE_ID=$(cache_id) && [ -n "$CACHE_ID" ] || {
+        rm -rf "$WORK"
+        echo "launch-check.sh: could not make $CACHE_DIR (or it appeared meanwhile); nothing was launched" >&2
+        exit 1
+    }
+    mkdir "$WORK/cache"
+    CACHE_MADE=1
 fi
 
 # Puts the copy back into the folder it came from. Returns 3, having
 # deleted nothing, when that folder is not the one at $CACHE_DIR any more:
 # a plain folder that became a link or the other way round, a link that
 # now says something else, or another folder (device:inode) in its place.
-# A folder that is simply gone is made again (nothing to lose there). Any
-# other failure (emptying it, or copying back) returns that status. The
-# work happens inside the checked folder (`cd`, then relative paths), so a
-# swap after the check can't redirect it.
+# A folder that is simply gone is made again (nothing to lose there), or,
+# when it was made here (CACHE_MADE), left gone. Any other failure
+# (emptying it, or copying back) returns that status. The work happens
+# inside the checked folder (`cd`, then relative paths), so a swap after the
+# check can't redirect it. A folder made here is emptied the same way and
+# then removed with rmdir, which removes only an empty folder.
 restore_cache() (
     if [ ! -e "$CACHE_DIR" ] && [ ! -L "$CACHE_DIR" ] && [ -z "$CACHE_LINK" ]; then
+        [ $CACHE_MADE = 1 ] && exit 0
         mkdir "$CACHE_DIR" && cd "$CACHE_DIR" && ditto "$WORK/cache/" ./
         exit
     fi
@@ -175,7 +195,12 @@ restore_cache() (
     fi
     [ -d "$CACHE_DIR" ] && cd "$CACHE_DIR" || exit 3
     [ "$(stat -f '%d:%i' .)" = "$CACHE_ID" ] || exit 3
-    find . -mindepth 1 -maxdepth 1 -exec rm -rf {} + && ditto "$WORK/cache/" ./
+    find . -mindepth 1 -maxdepth 1 -exec rm -rf {} + || exit
+    if [ $CACHE_MADE = 1 ]; then
+        cd .. && rmdir "$(basename "$CACHE_DIR")"
+    else
+        ditto "$WORK/cache/" ./
+    fi
 )
 
 # pid: the launched app while it may still be running; emptied once it has
@@ -189,6 +214,14 @@ launched_pid=""
 holding=0
 held=""
 on_signal() { if [ $holding = 1 ]; then held=$1; else exit "$1"; fi; }
+# True while the launched app is still bash's own running child (`jobs -rp`
+# is bash's list of them). Once it has exited bash may reap it, and its
+# number may be reused, so every Quit and every signal checks this first.
+child_running() { [ -n "$pid" ] && jobs -rp | grep -qx "$pid"; }
+# Sends signal $1 to the launched app, only while child_running. (What is
+# left is the instant between that check and the kill builtin; outside it a
+# number bash has reaped is never signalled.)
+signal_child() { child_running && kill "$1" "$pid" 2>/dev/null; }
 hold() { holding=1; }
 release() { holding=0; [ -z "$held" ] || exit "$held"; }
 finish() {
@@ -198,16 +231,22 @@ finish() {
     trap '' INT TERM HUP
     trap - EXIT
     # The launched app must be gone before the cache goes back (an
-    # interrupted run can leave it up). Only the child this run started:
-    # `jobs -rp` is bash's own list of its children still running, so a
-    # number already reaped (and maybe reused) is never signalled.
-    if [ -n "$pid" ] && jobs -rp | grep -qx "$pid"; then
-        kill -9 "$pid" 2>/dev/null || true
-        wait "$pid" 2>/dev/null || true
-    fi
+    # interrupted run can leave it up).
+    if signal_child -9; then wait "$pid" 2>/dev/null || true; fi
     pid=""
-    if [ $CACHE_SAVED = 1 ]; then
-        local restored=0
+    local restored=0
+    if [ $CACHE_MADE = 1 ]; then
+        restore_cache || restored=$?
+        # No copy to keep: the folder was empty when the check made it.
+        [ $restored = 0 ] || rm -rf "$WORK"
+        if [ $restored = 3 ]; then
+            echo "launch-check.sh: did not remove $CACHE_DIR: there was none before the check, and what is there now is not the folder the check made (it was replaced, or is a link); nothing in it was deleted" >&2
+            exit 1
+        elif [ $restored != 0 ]; then
+            echo "launch-check.sh: could not remove $CACHE_DIR, made for the check (there was none before); it may be partly emptied" >&2
+            exit 1
+        fi
+    else
         restore_cache || restored=$?
         if [ $restored = 3 ]; then
             echo "launch-check.sh: did not put back $CACHE_DIR: it is not the folder that was copied (it was replaced, or its link changed); nothing in it was deleted. The copy from before the check is in $WORK/cache" >&2
@@ -216,9 +255,6 @@ finish() {
             echo "launch-check.sh: could not put back $CACHE_DIR (it may be empty or partly restored). The copy from before the check is in $WORK/cache" >&2
             exit 1
         fi
-    else
-        # None before: whatever the launches made goes. Not through a link.
-        if [ -L "$CACHE_DIR" ]; then rm -f "$CACHE_DIR"; else rm -rf "$CACHE_DIR"; fi
     fi
     rm -rf "$WORK"
     exit $rc
@@ -241,19 +277,35 @@ for run in $(seq 1 "$RUNS"); do
     alive=1
     for _ in $(seq 1 "$SECONDS_UP"); do
         sleep 1
-        if ! kill -0 "$pid" 2>/dev/null; then alive=0; break; fi
+        if ! child_running; then alive=0; break; fi
     done
     status=running
+    stopped_ok=1
     if [ $alive = 1 ]; then
         # Quit it the way a user does (a Quit Apple event to this pid only), so
-        # macOS doesn't offer to "reopen windows" next time; kill as a fallback.
-        osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($pid); if (a) a.terminate; ''" >/dev/null 2>&1 || true
-        for _ in 1 2 3 4 5; do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
-        kill "$pid" 2>/dev/null || true
-        for _ in 1 2 3 4 5; do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
-        kill -9 "$pid" 2>/dev/null || true
+        # macOS doesn't offer to "reopen windows" next time; SIGTERM, then
+        # SIGKILL, only if it is still up. `stop` says which one ended it.
+        stop=quit
+        if child_running; then
+            osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($pid); if (a) a.terminate; ''" >/dev/null 2>&1 || true
+        fi
+        for _ in $(seq 1 25); do child_running || break; sleep 0.2; done
+        if signal_child -TERM; then
+            stop=TERM
+            for _ in $(seq 1 25); do child_running || break; sleep 0.2; done
+            signal_child -KILL && stop=KILL
+        fi
         hold
-        wait "$pid" 2>/dev/null || true
+        rc=0
+        wait "$pid" 2>/dev/null || rc=$?
+        # Told to quit, it must exit 0. After the fallback, the signal sent
+        # (143 or 137) or 0 is expected; anything else is a failure too.
+        case "$stop:$rc" in
+            quit:0|TERM:0|TERM:143|KILL:137) ;;
+            quit:*) status="running, then exited $rc when told to quit"; stopped_ok=0 ;;
+            TERM:*) status="running, then exited $rc after SIGTERM"; stopped_ok=0 ;;
+            *) status="running, then exited $rc after SIGTERM and SIGKILL"; stopped_ok=0 ;;
+        esac
     else
         hold
         wait "$pid" && status="exited 0" || status="exited $?"
@@ -267,7 +319,7 @@ for run in $(seq 1 "$RUNS"); do
     new=$(reports_for "$launched_pid" "$before" | tr '\n' ' ')
     [ -n "$LOG_DIR" ] && cp "$TMP_LOG" "$LOG_DIR/run-$run.log"
     reentrant=$(grep -c "$REENTRANT" "$TMP_LOG" || true)
-    if [ $alive = 1 ] && [ -z "$new" ] && [ "$reentrant" = 0 ]; then
+    if [ $alive = 1 ] && [ $stopped_ok = 1 ] && [ -z "$new" ] && [ "$reentrant" = 0 ]; then
         echo "launch-check: run $run/$RUNS OK (up ${SECONDS_UP}s, no crash report, no NSTableView reentrancy warning)"
     else
         echo "launch-check: run $run/$RUNS FAILED ($status${new:+, new report: $new}$([ "$reentrant" != 0 ] && echo ", NSTableView reentrancy warning x$reentrant"))" >&2

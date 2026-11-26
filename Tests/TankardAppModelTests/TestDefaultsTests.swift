@@ -4,53 +4,78 @@ import Testing
 // 0.8.4: the suites tests make must not pile up in ~/Library/Preferences.
 
 struct TestDefaultsTests {
-    @Test func removeDeletesTheDomainAndItsPlist() throws {
+    @Test func removeDeletesTheDomainAndItsPlist() async throws {
         let name = "tankard-test-cleanup-\(UUID().uuidString)"
         let d = TestDefaults.fresh(name)
         d.set(true, forKey: "x")
         #expect(CFPreferencesAppSynchronize(name as CFString))
         let plist = TestDefaults.plistURL(name)
         #expect(FileManager.default.fileExists(atPath: plist.path))
-        #expect(TestDefaults.remove(name))
+        // remove and the flush wait on `defaults`: off the test pool.
+        #expect(await offCooperativePool { TestDefaults.remove(name) })
         #expect(!FileManager.default.fileExists(atPath: plist.path))
         // 0.9.4: nothing left for cfprefsd to write back. Forcing its
         // pending write now finds no `{}` to put back.
-        #expect(TestDefaults.flushPendingWrite(name))
+        #expect(await offCooperativePool { TestDefaults.flushPendingWrite(name) })
         #expect(!FileManager.default.fileExists(atPath: plist.path))
         #expect(UserDefaults(suiteName: name)!.object(forKey: "x") == nil)
     }
 
     /// 0.9.4: the flush is read-only, and never reaches a name that is
     /// not test-shaped.
-    @Test func flushPendingWriteOnlyReadsTestShapedNames() throws {
+    @Test func flushPendingWriteOnlyReadsTestShapedNames() async throws {
         #expect(!TestDefaults.flushPendingWrite("net.mindtricks.tankard"))
         #expect(!TestDefaults.flushPendingWrite("net.mindtricks.tankard.ephemeral"))
         #expect(!TestDefaults.flushPendingWrite("tankard-test-bad \(UUID().uuidString)"))
         let name = "tankard-test-flush-\(UUID().uuidString)"
-        #expect(TestDefaults.flushPendingWrite(name))
+        #expect(await offCooperativePool { TestDefaults.flushPendingWrite(name) })
         #expect(!FileManager.default.fileExists(atPath: TestDefaults.plistURL(name).path))
     }
 
     /// 0.9.4 review: the flush counts only a `defaults` that exited 0, and
     /// a stuck one is stopped within its timeout plus a few seconds.
-    @Test func flushSucceedsOnlyOnExitZeroAndIsBounded() throws {
-        #expect(TestDefaults.runToSuccess("/usr/bin/true", [], timeout: 10))
-        #expect(!TestDefaults.runToSuccess("/usr/bin/false", [], timeout: 10))
-        #expect(!TestDefaults.runToSuccess("/bin/sh", ["-c", "exit 3"], timeout: 10))
-        #expect(!TestDefaults.runToSuccess("/nonexistent/defaults", [], timeout: 10))
+    /// Each run waits on its process, so it runs off the test pool.
+    @Test func flushSucceedsOnlyOnExitZeroAndIsBounded() async throws {
+        func run(_ executable: String, _ arguments: [String], timeout: TimeInterval) async -> Bool {
+            await offCooperativePool { TestDefaults.runToSuccess(executable, arguments, timeout: timeout) }
+        }
+        #expect(await run("/usr/bin/true", [], timeout: 10))
+        #expect(!(await run("/usr/bin/false", [], timeout: 10)))
+        #expect(!(await run("/bin/sh", ["-c", "exit 3"], timeout: 10)))
+        #expect(!(await run("/nonexistent/defaults", [], timeout: 10)))
         let start = Date()
-        #expect(!TestDefaults.runToSuccess("/bin/sleep", ["30"], timeout: 0.3))
+        #expect(!(await run("/bin/sleep", ["30"], timeout: 0.3)))
         // SIGTERM ends sleep at once; the SIGKILL fallback adds at most 4s.
         #expect(Date().timeIntervalSince(start) < 5)
-        // Ignoring SIGTERM is not enough to hang it either.
+        // Ignoring SIGTERM is not enough to hang it either. `exec`: one
+        // process, the one runToSuccess signals, ignoring TERM (an ignored
+        // signal stays ignored across exec), so SIGKILL is what ends it,
+        // and no `sleep 30` is left behind when it does.
         let stubborn = Date()
-        #expect(!TestDefaults.runToSuccess("/bin/sh", ["-c", "trap '' TERM; /bin/sleep 30 & wait"], timeout: 0.3))
-        #expect(Date().timeIntervalSince(stubborn) < 6)
+        let marker = "tankard-test-stubborn-\(UUID().uuidString)"
+        #expect(!(await run("/bin/sh", ["-c", "trap '' TERM; exec -a \(marker) /bin/sleep 30"], timeout: 0.3)))
+        let elapsed = Date().timeIntervalSince(stubborn)
+        // SIGTERM ignored: it took the 2s wait and the SIGKILL.
+        #expect(elapsed >= 2)
+        #expect(elapsed < 6)
+        let left = await offCooperativePool { () -> String in
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/bin/ps")
+            p.arguments = ["-axww", "-o", "args="]
+            let out = Pipe()
+            p.standardOutput = out
+            p.standardError = FileHandle.nullDevice
+            guard (try? p.run()) != nil else { return "ps did not run" }
+            let data = out.fileHandleForReading.readDataToEndOfFile()
+            p.waitUntilExit()
+            return String(data: data, encoding: .utf8) ?? ""
+        }
+        #expect(!left.contains(marker))
     }
 
     /// 0.8.9: a Scoped suite leaves no plist for its UUID once released,
     /// even after a write was flushed to disk.
-    @Test func scopedSuiteLeavesNoPlist() throws {
+    @Test func scopedSuiteLeavesNoPlist() async throws {
         var name = ""
         do {
             let scoped = TestDefaults.Scoped()
@@ -60,16 +85,16 @@ struct TestDefaultsTests {
             #expect(FileManager.default.fileExists(atPath: TestDefaults.plistURL(name).path))
         }
         #expect(name.hasPrefix("net.mindtricks.tankard.tests."))
-        try assertNoPlist(name)
+        try await assertNoPlist(name)
     }
 
-    @Test func withTestDefaultsLeavesNoPlist() throws {
+    @Test func withTestDefaultsLeavesNoPlist() async throws {
         let name = withTestDefaults { d, name in
             d.set(1, forKey: "k")
             #expect(CFPreferencesAppSynchronize(name as CFString))
             return name
         }
-        try assertNoPlist(name)
+        try await assertNoPlist(name)
     }
 
     /// The app's domain is not a test suite, whatever a list file might say.
@@ -292,7 +317,7 @@ struct TestDefaultsTests {
 
     /// No file for this suite's UUID, now, once cfprefsd has been made to
     /// write anything it still held, and after a moment more.
-    private func assertNoPlist(_ name: String) throws {
+    private func assertNoPlist(_ name: String) async throws {
         let uuid = try #require(name.split(separator: ".").last.map(String.init))
         #expect(UUID(uuidString: uuid) != nil)
         func leftovers() -> [String] {
@@ -304,9 +329,9 @@ struct TestDefaultsTests {
         // later, so the 0.5s wait alone caught a late `{}` only sometimes.
         // Have it write whatever it still holds now; a write-back
         // `remove` left pending is on disk before the next check.
-        #expect(TestDefaults.flushPendingWrite(name))
+        #expect(await offCooperativePool { TestDefaults.flushPendingWrite(name) })
         #expect(leftovers().isEmpty)
-        Thread.sleep(forTimeInterval: 0.5)
+        try await Task.sleep(for: .milliseconds(500))
         #expect(leftovers().isEmpty)
         #expect(UserDefaults(suiteName: name)!.object(forKey: "k") == nil)
     }

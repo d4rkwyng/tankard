@@ -1238,8 +1238,12 @@ before that it ran before notarizing, so the stapled app was never launched). It
 `~/Library/Caches/net.mindtricks.tankard` first and puts it back as it was on exit
 (0.9.4), so a check leaves no `status.json` behind. It puts the copy back only into the
 folder it came from (same device and inode, same link). If that folder was replaced
-during the check, it deletes nothing, keeps the copy and fails. It only ever signals the
-app it launched itself, and a crash while quitting counts. 0.3.0 crashed at
+during the check, it deletes nothing, keeps the copy and fails. With no folder before, it
+makes an empty one for the launches and removes only that one (same device and inode, not
+a link); anything else in its place is left alone and the check fails. It only ever
+signals the app it launched itself, and only while that app is still its running child, so
+a process number that has been reused is never signalled. A crash while quitting counts,
+and so does an exit other than 0 when told to quit. 0.3.0 crashed at
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule
 that came out of it: **App.body is pure**. It reads no @Observable state that changes and

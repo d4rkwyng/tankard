@@ -515,6 +515,26 @@ func withTestDefaults<R>(_ body: (UserDefaults, String) throws -> R) rethrows ->
     return try body(scoped.defaults, scoped.name)
 }
 
+/// 0.9.4: Swift Testing runs tests on Swift's cooperative thread pool,
+/// which has one thread per core: three on a GitHub `macos-15` runner. A
+/// test that blocks one of them (a semaphore wait, `Thread.sleep`,
+/// `waitUntilExit`) while a subprocess runs holds it from every other
+/// test, and a dozen such tests at once starved the async ones into their
+/// timeouts (PR #12's CI run). A blocking wait goes on this queue instead:
+/// its threads are GCD's own, not the pool's, and the test awaits it.
+private let blockingWaits = DispatchQueue(label: "net.mindtricks.tankard.tests.blocking-waits",
+                                          attributes: .concurrent)
+
+/// Runs `body` on `blockingWaits` and awaits its result.
+func offCooperativePool<T: Sendable>(_ body: @escaping @Sendable () -> T) async -> T {
+    await withCheckedContinuation { c in blockingWaits.async { c.resume(returning: body()) } }
+}
+
+/// `offCooperativePool` for a body that throws.
+func offCooperativePoolThrowing<T: Sendable>(_ body: @escaping @Sendable () throws -> T) async throws -> T {
+    try await withCheckedThrowingContinuation { c in blockingWaits.async { c.resume(with: Result { try body() }) } }
+}
+
 func tempDir() throws -> URL {
     let dir = FileManager.default.temporaryDirectory.appendingPathComponent("tankard-test-\(UUID().uuidString)")
     try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
