@@ -69,6 +69,13 @@ public final class DiscoverStore {
     /// 0.8.4: what the header names: `resultsQuery` without a pasted
     /// `brew install …` around it ("wget", not "brew install wget").
     public var resultsTerm: String { PastedCommand.searchTerm(resultsQuery) }
+    /// 0.9.4 (bug hunt): the field's term the same way, for the empty
+    /// states ("Nothing matches “foo”", not "“brew install --cask foo”").
+    public var queryTerm: String { PastedCommand.searchTerm(query) }
+    /// 0.9.4 (bug hunt): the results answer no search (an empty or
+    /// spaces-only field): the header says "Search N packages", not
+    /// "0 results for “”".
+    public var searchedNothing: Bool { resultsTerm.isEmpty }
     public private(set) var source = ""
     public private(set) var warning: String?
     public private(set) var casksEnabled = true

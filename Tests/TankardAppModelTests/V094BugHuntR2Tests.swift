@@ -80,3 +80,41 @@ struct V094QualifiedSearchTests {
     }
 }
 
+// MARK: Discover's header and empty state name the searched term
+
+// Spaces alone in the search field said "0 results for “”" (the table
+// said "Search Homebrew"). A pasted command with no match said "Nothing
+// matches “brew install --cask foo”" under "0 results for “foo”".
+@MainActor
+struct V094DiscoverTermTests {
+    func store() async -> DiscoverStore {
+        let d = DiscoverStore(provider: FixedAPICatalog(entries: V094QualifiedSearchTests.entries), debounce: .zero)
+        await d.activate()
+        return d
+    }
+
+    @Test func spacesSearchNothing() async {
+        let d = await store()
+        #expect(d.searchedNothing)
+        d.query = "   "
+        await d.searchNow()
+        #expect(d.results.isEmpty)
+        #expect(d.searchedNothing)
+        d.query = "wget"
+        await d.searchNow()
+        #expect(!d.searchedNothing)
+    }
+
+    @Test func noMatchesNamesThePackage() async throws {
+        let d = await store()
+        d.query = "brew install --cask nothere"
+        await d.searchNow()
+        #expect(d.results.isEmpty)
+        #expect(d.queryTerm == "nothere")
+        #expect(d.noMatchesDetail(d.queryTerm).contains("“nothere”"))
+        let view = try v094Source("TankardApp/DiscoverView.swift")
+        #expect(view.contains("discover.noMatchesDetail(discover.queryTerm)"))
+        #expect(view.contains("CasksBanner.noMatchesDetail(discover.queryTerm)"))
+        #expect(view.contains("if discover.searchedNothing {"))
+    }
+}

@@ -127,7 +127,8 @@ struct DiscoverStrip: View {
         case .idle, .loading: return discover.isLocalTaps ? String(localized: "Reading the local taps…") : String(localized: "Loading Homebrew's catalog…")
         case .failed: return String(localized: "Couldn't load the catalog")
         case .ready:
-            if discover.resultsQuery.isEmpty { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
+            // 0.9.4 (bug hunt): spaces alone searched nothing ("0 results for “”").
+            if discover.searchedNothing { return String(localized: "Search \(discover.totalCount.formatted()) packages") }
             let n = discover.results.count
             if n == 200 { return String(localized: "Top 200 results for “\(discover.resultsTerm)”") }
         return String(localized: "\(n) results for “\(discover.resultsTerm)”", bundle: L10n.bundle)
@@ -284,7 +285,7 @@ struct DiscoverTable: View {
                 ContentUnavailableView {
                     Label(CasksBanner.noMatchesTitle, systemImage: "shippingbox")
                 } description: {
-                    Text(CasksBanner.noMatchesDetail(discover.query))
+                    Text(CasksBanner.noMatchesDetail(discover.queryTerm))
                 } actions: {
                     Button("Turn On Apps…") { store.requestEnableCasks() }
                         .disabled(store.isBusy)
@@ -295,7 +296,8 @@ struct DiscoverTable: View {
                 ContentUnavailableView {
                     Label("No matches", systemImage: "magnifyingglass")
                 } description: {
-                    Text(discover.noMatchesDetail(discover.query))
+                    // 0.9.4 (bug hunt): the package, not the pasted command around it.
+                    Text(discover.noMatchesDetail(discover.queryTerm))
                 } actions: {
                     if !discover.isLocalTaps {
                         Button("Taps…") { store.openTaps() }
