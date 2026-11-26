@@ -181,14 +181,14 @@ struct V094BottleBannerEscapeMonitorTests {
         #expect(BottleBannerEscapeMonitor.windowState(try keyDown(53), NSView(frame: .zero)) == nil)
     }
 
-    /// Tearing the view down (dismantleNSView) removes the monitor it
-    /// installed, once; attaching again replaces the old one.
+    /// Tearing the view down (dismantleNSView calls detach) removes the
+    /// monitor it installed, once; attaching again replaces the old one.
     @Test func dismantleRemovesTheMonitor() throws {
         let rig = EscapeRig()
         rig.monitor.attach()
         rig.monitor.attach()
         #expect(rig.removed == [1])
-        BottleBannerEscapeKey.dismantleNSView(NSView(frame: .zero), coordinator: rig.monitor)
+        rig.monitor.detach()
         #expect(rig.removed == [1, 2])
         #expect(rig.monitor.monitor == nil)
         rig.monitor.detach()
@@ -318,6 +318,8 @@ private final class AnnouncementRig {
     let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 100, height: 100), styleMask: [.titled],
                           backing: .buffered, defer: true)
     var ready = false
+    /// The window that can be ready (nil: `window`).
+    var readyWindow: NSWindow?
     var posts: [(String, NSWindow)] = []
     let coordinator: BottleNoticeAnnouncementCoordinator
 
@@ -326,7 +328,7 @@ private final class AnnouncementRig {
         var isReady: @MainActor (NSWindow) -> Bool = { _ in false }
         var post: @MainActor (String, NSWindow) -> Void = { _, _ in }
         coordinator = BottleNoticeAnnouncementCoordinator(center: center, isReady: { isReady($0) }, post: { post($0, $1) })
-        isReady = { [unowned self] w in w === self.window && self.ready }
+        isReady = { [unowned self] w in w === (self.readyWindow ?? self.window) && self.ready }
         post = { [unowned self] in self.posts.append(($0, $1)) }
     }
 
@@ -409,14 +411,80 @@ struct V094BottleNoticeAnnouncementWindowTests {
         #expect(rig.spoken == [T.four.text, T.four.text])
     }
 
-    /// Torn down (dismantleNSView): no more observing, nothing spoken.
+    /// The view's window changes reach the coordinator (makeNSView calls
+    /// attach(to:)): joining a window observes it, leaving stops.
+    @Test func attachedViewDrivesTheCoordinator() throws {
+        let rig = AnnouncementRig()
+        let view = WindowWatchingView(frame: .zero)
+        rig.coordinator.attach(to: view)
+        rig.coordinator.noticeChanged(T.vim)
+        try #require(rig.window.contentView).addSubview(view)
+        #expect(rig.coordinator.window === rig.window)
+        #expect(rig.coordinator.isObserving)
+        rig.becomes(NSWindow.didBecomeKeyNotification)
+        #expect(rig.spoken == [T.vim.text])
+        view.removeFromSuperview()
+        #expect(rig.coordinator.window == nil)
+        #expect(!rig.coordinator.isObserving)
+    }
+
+    /// A pending banner follows the view to another window: the old
+    /// window's notifications no longer count, the new one's do, and it's
+    /// spoken from the new window.
+    @Test func pendingMovesToTheNewWindow() {
+        let rig = AnnouncementRig()
+        let other = NSWindow(contentRect: .zero, styleMask: [], backing: .buffered, defer: true)
+        other.isReleasedWhenClosed = false
+        rig.coordinator.windowChanged(rig.window)
+        rig.coordinator.noticeChanged(T.vim)
+        #expect(rig.coordinator.announcer.isPending)
+        rig.coordinator.windowChanged(nil)
+        #expect(!rig.coordinator.isObserving)
+        rig.coordinator.windowChanged(other)
+        #expect(rig.coordinator.window === other)
+        #expect(rig.coordinator.isObserving)
+        rig.readyWindow = other
+        rig.becomes(NSWindow.didBecomeKeyNotification) // the old window
+        #expect(rig.posts.isEmpty)
+        rig.center.post(name: NSWindow.didBecomeKeyNotification, object: other)
+        #expect(rig.spoken == [T.vim.text])
+        #expect(rig.posts.first?.1 === other)
+    }
+
+    /// Out of a window after the old one was freed (the weak reference is
+    /// already nil): windowChanged(nil) still drops its observers.
+    @Test func noWindowClearsObserversAfterTheWindowIsFreed() {
+        let rig = AnnouncementRig()
+        weak var freed: NSWindow?
+        autoreleasepool {
+            let w = NSWindow(contentRect: .zero, styleMask: [], backing: .buffered, defer: true)
+            w.isReleasedWhenClosed = false
+            freed = w
+            rig.coordinator.windowChanged(w)
+        }
+        #expect(freed == nil)
+        #expect(rig.coordinator.window == nil)
+        #expect(rig.coordinator.isObserving)
+        rig.coordinator.noticeChanged(T.vim)
+        rig.coordinator.windowChanged(nil)
+        #expect(!rig.coordinator.isObserving)
+        #expect(rig.coordinator.announcer.isPending)
+        // Into a window again: pending, spoken once it's ready.
+        rig.ready = true
+        rig.coordinator.windowChanged(rig.window)
+        #expect(rig.spoken == [T.vim.text])
+    }
+
+    /// Torn down (dismantleNSView calls detach(from:)): no more observing,
+    /// nothing spoken.
     @Test func dismantleStopsObserving() {
         let rig = AnnouncementRig()
         let view = WindowWatchingView(frame: .zero)
-        view.onWindowChange = { _ in }
+        rig.coordinator.attach(to: view)
+        #expect(view.onWindowChange != nil)
         rig.coordinator.windowChanged(rig.window)
         rig.coordinator.noticeChanged(T.vim)
-        BottleNoticeAnnouncementKey.dismantleNSView(view, coordinator: rig.coordinator)
+        rig.coordinator.detach(from: view)
         #expect(!rig.coordinator.isObserving)
         #expect(rig.coordinator.window == nil)
         #expect(view.onWindowChange == nil)
@@ -487,5 +555,25 @@ struct V094BottleBannerWiringTests {
         #expect(src.contains("BottleNoticeAnnouncementKey("))
         #expect(src.contains("store.bottleNoticeAnnouncement"))
         #expect(!src.contains("onChange(of: store.bottleNoticeText"))
+    }
+
+    /// The SwiftUI wrappers are TankardApp's; TankardAppModel stays free
+    /// of SwiftUI (Package.swift, docs/architecture.md).
+    @Test func wrappersAreInTheApp() throws {
+        let views = try String(contentsOf: packageRoot.appendingPathComponent("Sources/TankardApp/BottleBannerViews.swift"), encoding: .utf8)
+        #expect(views.contains("struct BottleBannerEscapeKey: NSViewRepresentable"))
+        #expect(views.contains("struct BottleNoticeAnnouncementKey: NSViewRepresentable"))
+        #expect(views.contains("coordinator.attach(to: view)"))
+        #expect(views.contains("coordinator.detach(from: view)"))
+        #expect(views.contains("coordinator.detach()"))
+        let dir = packageRoot.appendingPathComponent("Sources/TankardAppModel")
+        let files = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+            .filter { $0.pathExtension == "swift" }
+        #expect(!files.isEmpty)
+        for f in files {
+            let src = try String(contentsOf: f, encoding: .utf8)
+            #expect(!src.contains("import SwiftUI"), "\(f.lastPathComponent)")
+            #expect(!src.contains("NSViewRepresentable {"), "\(f.lastPathComponent)")
+        }
     }
 }

@@ -2,8 +2,8 @@ import Foundation
 
 // 0.9.4: the bottle banner's Esc and its VoiceOver announcement. The rules
 // live here (tested in TankardAppModelTests); the window's key monitor and
-// the announcement itself are in ContentView.swift (BottleBannerEscapeKey,
-// ContentView.announceBottleNotice).
+// the announcement are in BottleBannerBridges.swift, put in the window by
+// TankardApp's BottleBannerViews.swift.
 
 /// Whether a key press in the main window is the bottle banner's Esc (its
 /// close button, `AppStore.dismissBottleNotice()`).

@@ -1,10 +1,11 @@
 import AppKit
-import SwiftUI
 
 // 0.9.4: the bottle banner's window plumbing: its Esc key monitor and its
-// VoiceOver announcement. They live here, not in TankardApp, so the tests
-// can drive them (TankardAppModelTests links this target only). Two small
-// NSViewRepresentables, no visible views; the rules they follow are
+// VoiceOver announcement, AppKit only. They live here, not in TankardApp,
+// so the tests can drive them (TankardAppModelTests links this target
+// only); the two thin NSViewRepresentables that put them in the window are
+// in TankardApp (BottleBannerViews.swift: BottleBannerEscapeKey,
+// BottleNoticeAnnouncementKey). The rules they follow are
 // BottleBannerEscape and BottleNoticeAnnouncer (BottleBannerKeys.swift).
 
 // MARK: Esc
@@ -17,39 +18,9 @@ import SwiftUI
 /// ones BottleBannerEscape gives the banner; the rest go on as before. A
 /// sheet, alert or popover is its own key window (or attached to this one),
 /// so its Esc is left to it.
-public struct BottleBannerEscapeKey: NSViewRepresentable {
-    public var bannerShown: Bool
-    public var dismiss: @MainActor () -> Void
-
-    public init(bannerShown: Bool, dismiss: @escaping @MainActor () -> Void) {
-        self.bannerShown = bannerShown
-        self.dismiss = dismiss
-    }
-
-    public func makeCoordinator() -> BottleBannerEscapeMonitor { BottleBannerEscapeMonitor() }
-
-    public func makeNSView(context: Context) -> NSView {
-        let view = NSView(frame: .zero)
-        let c = context.coordinator
-        c.view = view
-        c.bannerShown = bannerShown
-        c.dismiss = dismiss
-        c.attach()
-        return view
-    }
-
-    public func updateNSView(_ view: NSView, context: Context) {
-        context.coordinator.bannerShown = bannerShown
-        context.coordinator.dismiss = dismiss
-    }
-
-    public static func dismantleNSView(_ view: NSView, coordinator: BottleBannerEscapeMonitor) {
-        coordinator.detach()
-    }
-}
-
-/// BottleBannerEscapeKey's coordinator: installs the key monitor and
-/// decides each key press.
+///
+/// BottleBannerEscapeKey's coordinator (TankardApp): installs the key
+/// monitor and decides each key press.
 @MainActor
 public final class BottleBannerEscapeMonitor {
     /// What the banner's window says about a key press (nil: no window).
@@ -140,35 +111,6 @@ public final class BottleBannerEscapeMonitor {
 
 // MARK: the announcement
 
-/// VoiceOver speaks the bottle banner's sentence when it appears (a banner
-/// shows up without taking the focus, so it went unheard), once its own
-/// window is on screen and key. It follows the banner's formulae, not only
-/// its sentence (BottleNoticeAnnouncer).
-public struct BottleNoticeAnnouncementKey: NSViewRepresentable {
-    public var notice: BottleNoticeAnnouncer.Notice?
-
-    public init(notice: BottleNoticeAnnouncer.Notice?) { self.notice = notice }
-
-    public func makeCoordinator() -> BottleNoticeAnnouncementCoordinator { BottleNoticeAnnouncementCoordinator() }
-
-    public func makeNSView(context: Context) -> WindowWatchingView {
-        let view = WindowWatchingView(frame: .zero)
-        let c = context.coordinator
-        view.onWindowChange = { [weak c] in c?.windowChanged($0) }
-        c.noticeChanged(notice)
-        return view
-    }
-
-    public func updateNSView(_ view: WindowWatchingView, context: Context) {
-        context.coordinator.noticeChanged(notice)
-    }
-
-    public static func dismantleNSView(_ view: WindowWatchingView, coordinator: BottleNoticeAnnouncementCoordinator) {
-        view.onWindowChange = nil
-        coordinator.detach()
-    }
-}
-
 /// An empty view that says when it joins or leaves a window.
 public final class WindowWatchingView: NSView {
     public var onWindowChange: ((NSWindow?) -> Void)?
@@ -179,9 +121,14 @@ public final class WindowWatchingView: NSView {
     }
 }
 
-/// BottleNoticeAnnouncementKey's coordinator: feeds the banner and its
-/// window's readiness to a BottleNoticeAnnouncer, and posts what it
-/// returns to that window.
+/// VoiceOver speaks the bottle banner's sentence when it appears (a banner
+/// shows up without taking the focus, so it went unheard), once its own
+/// window is on screen and key. It follows the banner's formulae, not only
+/// its sentence (BottleNoticeAnnouncer).
+///
+/// BottleNoticeAnnouncementKey's coordinator (TankardApp): feeds the
+/// banner and its window's readiness to a BottleNoticeAnnouncer, and posts
+/// what it returns to that window.
 @MainActor
 public final class BottleNoticeAnnouncementCoordinator {
     public private(set) var announcer = BottleNoticeAnnouncer()
@@ -230,16 +177,35 @@ public final class BottleNoticeAnnouncementCoordinator {
         speak(announcer.update(notice, windowReady: ready))
     }
 
+    /// Watches `view`: its window changes reach windowChanged (the
+    /// representable's makeNSView).
+    public func attach(to view: WindowWatchingView) {
+        view.onWindowChange = { [weak self] in self?.windowChanged($0) }
+    }
+
+    /// Stops watching `view` and its window (dismantleNSView).
+    public func detach(from view: WindowWatchingView) {
+        view.onWindowChange = nil
+        detach()
+    }
+
     /// The view joined (or left) a window.
     public func windowChanged(_ w: NSWindow?) {
-        if w === window && (w == nil || isObserving) { return }
+        // Out of a window: stop observing whatever was registered, even if
+        // the weak `window` has already gone nil (the old window freed), so
+        // the identity check below can't keep stale observers.
+        guard let w else {
+            stopObserving()
+            window = nil
+            readinessChanged()
+            return
+        }
+        if w === window && isObserving { return }
         stopObserving()
         window = w
-        if let w {
-            observers = Self.readinessNotifications.map { name in
-                center.addObserver(forName: name, object: w, queue: .main) { [weak self] _ in
-                    MainActor.assumeIsolated { self?.readinessChanged() }
-                }
+        observers = Self.readinessNotifications.map { name in
+            center.addObserver(forName: name, object: w, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.readinessChanged() }
             }
         }
         readinessChanged()
