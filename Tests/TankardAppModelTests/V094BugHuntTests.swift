@@ -410,3 +410,142 @@ struct V094StalePlanTests {
         #expect(store.upgradePlan?.rows.map(\.package.id) == UpgradePlan(packages: targets, classifier: store.deps.classifier).rows.map(\.package.id))
     }
 }
+
+// MARK: (R1 review) App Management prompts wait for Auto-update
+
+// An automatic update can start while the App Management explainer or its
+// relaunch page is open. "Continue Without It", "Skip Apps", "I've done
+// this" (no relaunch) and "Continue without relaunching" cleared the
+// prompt, then startSession refused the run: a first-use upgrade with no
+// run before it left a blank sheet. They wait now; the prompt stays.
+
+/// A store whose automatic update is held at its download step.
+@MainActor
+func v094GatedAutoUpdate(_ deps: AppStore.Dependencies, settings: AppSettings = testSettings())
+    async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>) {
+    let gate = Latch()
+    var deps = deps
+    let demo = deps.streamRunner
+    deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+        if args.first == "fetch" { await gate.wait() }
+        return try await demo.stream("/usr/local/bin/brew", args, environment: [:], output: out)
+    }
+    let store = AppStore(deps: deps, settings: settings)
+    await store.start()
+    store.autoUpdate.settings.enabled = true
+    let u = store.autoUpdate
+    let task = Task { await u.run(store: store, notifier: nil) }
+    guard await waitUntil({ u.isRunning && u.activity?.hasPrefix("Auto-update: downloading") == true }) else {
+        gate.release()
+        throw CancellationError()
+    }
+    return (store, gate, task)
+}
+
+@MainActor
+struct V094AppManagementWaitsTests {
+    func rig(relaunch: (@MainActor @Sendable () -> Bool)? = nil) async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>, [Package]) {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.relaunch = relaunch
+        let (store, gate, task) = try await v094GatedAutoUpdate(deps)
+        let cask = try #require(store.packages.first { $0.kind == .cask }, "a cask in the fixture")
+        let formula = try #require(store.packages.first { $0.kind == .formula }, "a formula in the fixture")
+        return (store, gate, task, [cask, formula])
+    }
+
+    func finish(_ store: AppStore, _ gate: Latch, _ task: Task<AutoUpdateRun?, Never>) async {
+        gate.release()
+        _ = await task.value
+        #expect(await waitUntil { !store.autoUpdate.isRunning && !store.isRefreshing })
+    }
+
+    func expectPromptKept(_ store: AppStore, stage: AppManagementPrompt.Stage) {
+        #expect(store.appManagementPrompt?.stage == stage)
+        #expect(store.upgrade == nil)
+        #expect(store.showUpgradeSheet)
+    }
+
+    @Test func continueWithoutItWaits() async throws {
+        let (store, gate, task, targets) = try await rig()
+        defer { gate.release() }
+        store.showAppManagementExplainer(packages: targets)
+        #expect(store.appManagementRunsBlocked)
+        store.appManagementNotNow()
+        expectPromptKept(store, stage: .explain)
+        #expect(!store.settings.appManagementExplained)
+        await finish(store, gate, task)
+        #expect(!store.appManagementRunsBlocked)
+        store.appManagementNotNow()
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade != nil)
+    }
+
+    @Test func skipAppsWaits() async throws {
+        let (store, gate, task, targets) = try await rig()
+        defer { gate.release() }
+        store.showAppManagementExplainer(packages: targets)
+        try #require(store.appManagementPrompt?.others.isEmpty == false)
+        store.appManagementSkipApps()
+        expectPromptKept(store, stage: .explain)
+        await finish(store, gate, task)
+        store.appManagementSkipApps()
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade?.items.map(\.package.id) == [targets[1].id])
+    }
+
+    /// No relaunch: "I've done this" runs at once, so it waits too.
+    @Test func doneWithoutRelaunchWaits() async throws {
+        let (store, gate, task, targets) = try await rig()
+        defer { gate.release() }
+        store.showAppManagementExplainer(packages: targets)
+        store.appManagementDone()
+        expectPromptKept(store, stage: .explain)
+        await finish(store, gate, task)
+        store.appManagementDone()
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade != nil)
+    }
+
+    /// With a relaunch: "I've done this" turns the page (runs nothing);
+    /// "Continue without relaunching" waits.
+    @Test func continueWithoutRelaunchingWaits() async throws {
+        let (store, gate, task, targets) = try await rig(relaunch: { true })
+        defer { gate.release() }
+        store.showAppManagementExplainer(packages: targets)
+        store.appManagementDone()
+        #expect(store.appManagementPrompt?.stage == .relaunch)
+        #expect(!store.canRelaunch)
+        store.appManagementContinue()
+        expectPromptKept(store, stage: .relaunch)
+        await finish(store, gate, task)
+        store.appManagementContinue()
+        #expect(store.appManagementPrompt == nil)
+        #expect(store.upgrade != nil)
+    }
+
+    /// After a block (nothing to retry): Close still just closes.
+    @Test func closingStillCloses() async throws {
+        let (store, gate, task, _) = try await rig()
+        defer { gate.release() }
+        store.showAppManagementExplainer(packages: [], reason: .blocked)
+        store.appManagementNotNow()
+        #expect(store.appManagementPrompt == nil)
+        #expect(!store.showUpgradeSheet)
+        await finish(store, gate, task)
+    }
+
+    /// The Run Again offer after a relaunch waits as well.
+    @Test func runAgainWaits() async throws {
+        let (store, gate, task, _) = try await rig()
+        defer { gate.release() }
+        let cask = try #require(store.packages.first { $0.kind == .cask && $0.upgradeAvailable }, "an outdated cask")
+        store.appManagementResume = AppManagementResume(action: .upgrade, packages: [cask], dropped: [])
+        store.showUpgradeSheet = true
+        store.appManagementResumeConfirm()
+        #expect(store.appManagementResume != nil)
+        #expect(store.showUpgradeSheet)
+        await finish(store, gate, task)
+        store.appManagementResumeConfirm()
+        #expect(store.appManagementResume == nil)
+    }
+}

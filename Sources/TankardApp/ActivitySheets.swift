@@ -289,9 +289,18 @@ struct AppManagementSheet: View {
     var prompt: AppManagementPrompt
     @Environment(\.theme) private var theme
 
+    /// 0.9.4 (bug hunt R1 review): the buttons that would start brew now
+    /// wait while an automatic update runs; the prompt stays.
+    private var runBlocked: Bool { prompt.canRetry && store.appManagementRunsBlocked }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             if prompt.stage == .relaunch { relaunchPage } else { explainPage }
+            if runBlocked {
+                Text("Homebrew is busy with an automatic update. This can run once it finishes.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(20)
         .frame(width: 480)
@@ -341,6 +350,8 @@ struct AppManagementSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                // 0.9.4 (bug hunt R1 review): it would run now; brew is busy.
+                .disabled(store.deps.relaunch == nil && runBlocked)
             }
             if prompt.reason == .firstUse, prompt.canRetry {
                 // Without the permission: the rest only, or everything
@@ -355,6 +366,8 @@ struct AppManagementSheet: View {
                         .help(String(localized: "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so."))
                 }
                 .controlSize(.small)
+                // 0.9.4 (bug hunt R1 review): an automatic update has the queue.
+                .disabled(runBlocked)
             }
         }
     }
@@ -387,6 +400,7 @@ struct AppManagementSheet: View {
                     .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Continue without relaunching") { store.appManagementContinue() }
+                    .disabled(runBlocked)
                 Button {
                     store.appManagementRelaunch()
                 } label: {
@@ -436,6 +450,8 @@ struct AppManagementResumeSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                // 0.9.4 (bug hunt R1 review): the offer waits while brew runs.
+                .disabled(store.appManagementRunsBlocked)
             }
         }
         .padding(20)

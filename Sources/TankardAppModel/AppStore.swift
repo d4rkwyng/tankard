@@ -1311,19 +1311,33 @@ public final class AppStore {
     /// run the pending operation (first use) or retry the blocked one once.
     public func appManagementDone() {
         guard var p = appManagementPrompt else { return }
-        settings.appManagementExplained = true
         if deps.relaunch != nil, p.stage == .explain {
+            settings.appManagementExplained = true
             p.stage = .relaunch
             appManagementPrompt = p
             return
         }
+        // 0.9.4 (bug hunt R1 review): it would run now; it waits instead.
+        guard !appManagementRunBlocked(p) else { return }
+        settings.appManagementExplained = true
         appManagementContinue()
+    }
+
+    /// 0.9.4 (bug hunt R1 review): the prompt's buttons that start brew
+    /// wait while brew runs (an automatic update started after the prompt
+    /// opened): startSession refuses then, and the prompt, already
+    /// cleared, left a blank sheet (first use, no run before it).
+    public var appManagementRunsBlocked: Bool { isUpgrading || autoUpdate.isRunning || selfReplaced }
+
+    /// Whether `p`'s run-now buttons would start brew and can't now.
+    func appManagementRunBlocked(_ p: AppManagementPrompt) -> Bool {
+        p.canRetry && appManagementRunsBlocked
     }
 
     /// 0.8.1: carry on in this process ("Continue without relaunching"):
     /// first use runs what was asked for; a block is retried once.
     public func appManagementContinue() {
-        guard let p = appManagementPrompt else { return }
+        guard let p = appManagementPrompt, !appManagementRunBlocked(p) else { return }
         settings.appManagementExplained = true
         appManagementPrompt = nil
         guard p.canRetry else {
@@ -1384,6 +1398,7 @@ public final class AppStore {
         guard let p = appManagementPrompt, p.reason == .firstUse, p.canRetry else { return appManagementCancel() }
         let rest = p.others
         guard !rest.isEmpty else { return appManagementCancel() }
+        guard !appManagementRunsBlocked else { return }
         appManagementPrompt = nil
         startSession(p.action, packages: rest, skipGate: true, fromActivity: true)
     }
@@ -1422,7 +1437,8 @@ public final class AppStore {
     /// dependencies again and rechecks each before it runs), an install or
     /// adopt through startSession's own checks.
     public func appManagementResumeConfirm() {
-        guard let r = appManagementResume else { return }
+        // 0.9.4 (bug hunt R1 review): the offer stays while brew runs.
+        guard let r = appManagementResume, !appManagementRunsBlocked else { return }
         appManagementResume = nil
         switch r.action {
         case .upgrade:
@@ -1466,6 +1482,7 @@ public final class AppStore {
     /// ("Close"), just closes.
     public func appManagementNotNow() {
         guard let p = appManagementPrompt else { return }
+        if p.reason == .firstUse, appManagementRunBlocked(p) { return }
         settings.appManagementExplained = true
         appManagementPrompt = nil
         if p.reason == .firstUse, p.canRetry {
