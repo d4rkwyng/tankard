@@ -504,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew はこのパッケージを読み込めません";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。brew の表示：%@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "このリストを読み込んだ後にHomebrewがパッケージを変更しました。続ける前にリストを更新してください。";
 "Homebrew couldn't reach the network" = "Homebrewがネットワークに接続できませんでした";
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "HomebrewにはまだTankard %@ がありません。リリース後、tapへの反映には少し時間がかかることがあります。後でもう一度試すか、ダウンロードしてください。";
@@ -562,9 +563,12 @@
 "Install" = "インストール";
 "Install %@" = "%@をインストール";
 "Install %@ (compiles)…" = "%@をインストール（コンパイル）…";
+"Install %@ (may compile)…" = "%@をインストール（コンパイルの可能性あり）…";
 "Install %@ from source?" = "%@をソースからインストールしますか?";
+"Install %@? It may compile." = "%@をインストールしますか？コンパイルされる可能性があります。";
 "Install (checking…)" = "インストール(確認中…)";
 "Install (compiles)" = "インストール(コンパイル)";
+"Install (may compile)" = "インストール（コンパイルの可能性あり）";
 "Install Intelbrew (recommended for Intel Macs)" = "Intelbrewをインストール(Intel Mac推奨)";
 "Install again from Discover or the package's details." = "「見つける」またはパッケージの詳細からもう一度インストールしてください。";
 "Install command" = "インストールコマンド";
@@ -1084,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankardは %@ の安全コピーを確認できませんでした（ファイルが多すぎます）。そのため置き換えませんでした。";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankardは、%@にこのMac用のボトルがあるか確認できませんでした。ない場合はbrewがコンパイルするため、古いMacでは時間がかかることがあります。";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankardは、%@にこのMac用のIntelbrewボトルがあるか確認できませんでした。ない場合はbrewがコンパイルするため、古いMacでは時間がかかることがあります。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankardは %@ の信頼できる安全コピーを作成できなかったため、置き換えませんでした。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@";

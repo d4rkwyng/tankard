@@ -504,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew 无法读取此软件包";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew 已无法读取此软件包，因此不会升级它。";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew 已无法读取此软件包，因此不会升级它。brew 提示：%@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "读取此列表后，Homebrew 更改了软件包。请先刷新再继续。";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。";
@@ -562,9 +563,12 @@
 "Install" = "安装";
 "Install %@" = "安装 %@";
 "Install %@ (compiles)…" = "安装 %@（需编译）…";
+"Install %@ (may compile)…" = "安装 %@（可能需编译）…";
 "Install %@ from source?" = "从源码安装 %@？";
+"Install %@? It may compile." = "安装 %@？它可能需要编译。";
 "Install (checking…)" = "安装（正在检查…）";
 "Install (compiles)" = "安装（需编译）";
+"Install (may compile)" = "安装（可能需编译）";
 "Install Intelbrew (recommended for Intel Macs)" = "安装 Intelbrew（推荐用于 Intel Mac）";
 "Install again from Discover or the package's details." = "请从“探索”或软件包详细信息中重新安装。";
 "Install command" = "安装命令";
@@ -1084,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard 无法检查 %@ 的安全副本（文件太多），因此没有替换它。";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard 无法确认 %@ 是否有适用于这台 Mac 的 bottle。如果没有，brew 会编译它，在较旧的 Mac 上可能需要很长时间。";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard 无法确认 %@ 是否有适用于这台 Mac 的 Intelbrew bottle。如果没有，brew 会编译它，在较旧的 Mac 上可能需要很长时间。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard 无法为 %@ 创建可靠的安全副本，因此没有替换它。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";

@@ -504,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew no puede leer este paquete";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew ya no puede leer este paquete, así que no lo actualizará.";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew ya no puede leer este paquete, así que no lo actualizará. brew dice: %@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "Homebrew cambió paquetes después de leer esta lista. Actualízala antes de continuar.";
 "Homebrew couldn't reach the network" = "Homebrew no pudo acceder a la red";
 "Homebrew couldn't write to its folders" = "Homebrew no pudo escribir en sus carpetas";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew aún no muestra Tankard %@: el tap puede tardar un poco tras una versión. Inténtalo más tarde o descárgalo.";
@@ -562,9 +563,12 @@
 "Install" = "Instalar";
 "Install %@" = "Instalar %@";
 "Install %@ (compiles)…" = "Instalar %@ (compila)…";
+"Install %@ (may compile)…" = "Instalar %@ (puede compilar)…";
 "Install %@ from source?" = "¿Instalar %@ desde el código fuente?";
+"Install %@? It may compile." = "¿Instalar %@? Puede que se compile.";
 "Install (checking…)" = "Instalar (comprobando…)";
 "Install (compiles)" = "Instalar (compila)";
+"Install (may compile)" = "Instalar (puede compilar)";
 "Install Intelbrew (recommended for Intel Macs)" = "Instalar Intelbrew (recomendado para Macs Intel)";
 "Install again from Discover or the package's details." = "Vuelve a instalar desde Descubrir o desde los detalles del paquete.";
 "Install command" = "Comando de instalación";
@@ -1084,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard no puede pedirla aquí. En Detalles se explica qué hacer.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard compara la versión de cada app con la de Homebrew. Cuando coinciden, Homebrew se encarga de las actualizaciones sin mover la app.";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard no pudo comprobar la copia de seguridad de la app %@ (tiene demasiados archivos), así que no la reemplazó.";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard no pudo comprobar si %@ tiene un bottle para este Mac. Si no lo tiene, brew lo compila, lo que puede tardar mucho en Macs antiguos.";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard no pudo comprobar si %@ tiene un bottle de Intelbrew para este Mac. Si no lo tiene, brew lo compila, lo que puede tardar mucho en Macs antiguos.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard no pudo cargar la lista de paquetes de Homebrew. Inténtalo de nuevo en un momento.";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard no pudo hacer una copia de seguridad fiable de la app %@, así que no la reemplazó.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard no pudo hacer una copia de seguridad de %@, así que no la reemplazó: %@";
