@@ -20,7 +20,11 @@ public final class ServicesStore {
     public private(set) var services: [BrewService] = []
     /// `brew services info` results by name (the detail pane's extras).
     public private(set) var info: [String: BrewService] = [:]
-    public var selection: BrewService.ID?
+    /// 0.9.4 (bug hunt): another service selected clears the last
+    /// action's problem (postgresql's "needs sudo" showed under redis).
+    public var selection: BrewService.ID? {
+        didSet { if selection != oldValue { actionError = nil } }
+    }
     /// The toolbar search, on this tab: filters by name.
     public var query = ""
     /// The last action's problem (sudo, or brew's error), shown in the pane.

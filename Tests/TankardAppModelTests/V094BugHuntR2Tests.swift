@@ -141,3 +141,29 @@ struct V094TapsTrustRereadsTests {
         #expect(store.error == nil)
     }
 }
+
+// MARK: a service's action problem stays with that service
+
+// The pane's problem line (unbound runs as root: restart needs sudo, with
+// the sudo command) was cleared only by the next action, so selecting
+// redis showed unbound's problem and its sudo command under redis's own
+// Start / Stop buttons.
+@MainActor
+struct V094ServiceErrorScopeTests {
+    @Test func selectingAnotherServiceClearsTheProblem() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0))
+        await store.start()
+        let services = try #require(store.openServices())
+        await services.load()
+        let unbound = try #require(services.services.first { $0.name == "unbound" })
+        let redis = try #require(services.services.first { $0.name == "redis" })
+        services.selection = unbound.id
+        await services.perform(.restart, on: unbound, store: store)
+        #expect(services.actionError?.terminalCommand == "sudo brew services restart unbound")
+        services.selection = unbound.id // the same one: stays
+        #expect(services.actionError != nil)
+        services.selection = redis.id
+        #expect(services.actionError == nil)
+    }
+}
+
