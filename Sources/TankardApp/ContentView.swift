@@ -8,6 +8,8 @@ struct ContentView: View {
     var options: LaunchOptions
     var appearance: AppearanceSettings
     @Environment(\.controlActiveState) private var activeState
+    /// 0.9.4: what VoiceOver last heard of the bottle banner.
+    @State private var bottleAnnouncer = BottleNoticeAnnouncer()
 
     var body: some View {
         let theme = Theme.of(appearance.theme)
@@ -178,6 +180,14 @@ struct ContentView: View {
             Divider()
             StatusBar(store: store)
         }
+        // 0.9.4: Esc closes the bottle banner, as its close button does,
+        // unless a sheet, an alert or a popover is in front or text is
+        // being edited (BottleBannerEscape). On the window's content, not
+        // in the banner, so the banner's VoiceOver group stays as it is.
+        .background(BottleBannerEscapeKey(bannerShown: store.bottleNoticeText != nil) { store.dismissBottleNotice() })
+        // 0.9.4: VoiceOver announces the banner when it appears or names a
+        // new formula; a re-render doesn't (it follows the text only).
+        .onChange(of: store.bottleNoticeText, initial: true) { _, text in announceBottleNotice(text) }
         .sheet(item: $store.uninstallCandidate) { p in
             UninstallSheet(store: store, package: p).themed(theme)
         }
@@ -206,6 +216,13 @@ struct ContentView: View {
         // Here, not on the window: the welcome screen has nothing to search.
         .searchable(text: searchBinding, placement: .toolbar,
                     prompt: store.tab == .installed ? String(localized: "Search installed") : store.tab == .services ? String(localized: "Search services") : String(localized: "Search Homebrew"))
+    }
+
+    /// 0.9.4: the banner's sentence for VoiceOver, once per appearance
+    /// (BottleNoticeAnnouncer).
+    private func announceBottleNotice(_ text: String?) {
+        guard let sentence = bottleAnnouncer.update(text: text, names: store.bottleNoticePackages.map(\.name)) else { return }
+        BottleNoticeAnnouncement.post(sentence)
     }
 
     /// The toolbar search field searches the tab on screen.
@@ -535,6 +552,92 @@ struct BottleNoticeBanner: View {
         .background(Color.secondary.opacity(0.08))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(AccessibilityText.ID.bottleNotice)
+    }
+}
+
+/// 0.9.4: Esc in the main window closes the bottle banner. A key monitor
+/// (as TableSelection's type-select), not a `.cancelAction` button: a
+/// SwiftUI shortcut is a key equivalent, which the window handles before
+/// its first responder, so it would take Esc from the toolbar search field
+/// (Esc clears it). The monitor sees every key press first and takes only
+/// the ones BottleBannerEscape gives the banner; the rest go on as before.
+/// A sheet, alert or popover is its own key window (or attached to this
+/// one), so its Esc is left to it.
+struct BottleBannerEscapeKey: NSViewRepresentable {
+    var bannerShown: Bool
+    var dismiss: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView(frame: .zero)
+        let c = context.coordinator
+        c.view = view
+        c.bannerShown = bannerShown
+        c.dismiss = dismiss
+        c.attach()
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        context.coordinator.bannerShown = bannerShown
+        context.coordinator.dismiss = dismiss
+    }
+
+    static func dismantleNSView(_ view: NSView, coordinator: Coordinator) {
+        coordinator.detach()
+    }
+
+    @MainActor
+    final class Coordinator {
+        weak var view: NSView?
+        var bannerShown = false
+        var dismiss: () -> Void = {}
+        nonisolated(unsafe) private var monitor: Any?
+
+        func attach() {
+            detach()
+            monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+                // Key events arrive on the main thread.
+                nonisolated(unsafe) let e = event
+                let handled = MainActor.assumeIsolated { self?.handle(e) ?? false }
+                return handled ? nil : event
+            }
+        }
+
+        func detach() {
+            if let m = monitor { NSEvent.removeMonitor(m) }
+            monitor = nil
+        }
+
+        /// true: the banner closed and the key is taken.
+        private func handle(_ event: NSEvent) -> Bool {
+            guard let w = view?.window else { return false }
+            let press = BottleBannerEscape.Press(
+                bannerShown: bannerShown,
+                keyCode: event.keyCode,
+                hasModifiers: !event.modifierFlags.intersection([.command, .control, .option, .shift]).isEmpty,
+                inBannerWindow: event.window === w && w.isKeyWindow,
+                overlayOpen: w.attachedSheet != nil || NSApp.modalWindow != nil
+                    || (w.childWindows ?? []).contains(where: \.isVisible),
+                // The field editor (an NSTextView) of the search field or
+                // any text field, or a text view.
+                editingText: w.firstResponder is NSText)
+            guard BottleBannerEscape.dismisses(press) else { return false }
+            dismiss()
+            return true
+        }
+    }
+}
+
+/// 0.9.4: VoiceOver speaks the bottle banner's sentence when it appears
+/// (a banner shows up without taking the focus, so it went unheard).
+@MainActor
+enum BottleNoticeAnnouncement {
+    static func post(_ text: String) {
+        let element: Any = NSApp.mainWindow ?? NSApp.keyWindow ?? NSApp as Any
+        NSAccessibility.post(element: element, notification: .announcementRequested,
+                             userInfo: [.announcement: text, .priority: NSAccessibilityPriorityLevel.medium.rawValue])
     }
 }
 
