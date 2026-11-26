@@ -278,11 +278,11 @@ public final class InsightsStore {
         // Vulnerable list is: an upgrade or uninstall since the scan ended
         // left "2 vulnerable" when the list showed fewer.
         if case .done(let checked, _, let complete)? = scanOutcome, let scan = vulnerabilityScan {
-            return .done(checked: checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()), complete: complete)
+            return .done(checked: checked, found: VulnerabilityCount.installed(scan, inventory: installedPackages()), complete: complete)
         }
         if let scanOutcome { return scanOutcome }
         guard scanState == .idle, let scan = vulnerabilityScan else { return nil }
-        return .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()), complete: scan.complete)
+        return .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, inventory: installedPackages()), complete: scan.complete)
     }
     /// The post-install notes sheet.
     public var postInstallNotes: PostInstallNotes?
@@ -338,7 +338,9 @@ public final class InsightsStore {
     @ObservationIgnored public var keepSelfUpdating: (Package) -> Bool = { _ in false }
 
     /// 0.8.6 (UI M7): what is installed, for the scan's count.
-    @ObservationIgnored public var installedPackages: () -> [Package] = { [] }
+    /// 0.9.4 (bug hunt): nil before the first report is read; an empty
+    /// list is an installation with nothing in it.
+    @ObservationIgnored public var installedPackages: () -> [Package]? = { nil }
 
     /// 0.6: laid over after the insights (skipped versions).
     @ObservationIgnored public var extraDecoration: ((StatusReport) -> StatusReport)?
@@ -454,7 +456,7 @@ public final class InsightsStore {
 
     func scanFinished(_ scan: VulnerabilityScan) {
         vulnerabilityScan = scan
-        scanEnded(.idle, outcome: .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installedPackages()),
+        scanEnded(.idle, outcome: .done(checked: scan.checked, found: VulnerabilityCount.installed(scan, inventory: installedPackages()),
                                         complete: scan.complete))
         if settings.notifyNewVulnerabilities, settings.seenVulnerabilities == nil {
             // First scan after turning the notice on: the baseline.
@@ -486,10 +488,9 @@ public final class InsightsStore {
         // 0.9.4 (bug hunt): only formulae still vulnerable as installed now
         // (upgraded or uninstalled since the scan: the notice led to an
         // empty Vulnerable list). No list yet: the scan's word.
-        let installed = installedPackages()
-        guard !names.isEmpty, !installed.isEmpty, let scan = vulnerabilityScan else { return names }
-        let still = Set(installed.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.map(\.fullName))
-        return names.filter(still.contains)
+        // An installation read empty (the last package uninstalled): none.
+        guard !names.isEmpty, let scan = vulnerabilityScan else { return names }
+        return VulnerabilityCount.stillVulnerable(names, scan: scan, inventory: installedPackages())
     }
 
     /// The user looked (opened the Vulnerable list from the notice).

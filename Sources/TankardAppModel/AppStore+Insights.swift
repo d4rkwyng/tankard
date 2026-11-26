@@ -6,7 +6,7 @@ import TankardCore
 
 extension AppStore {
     func wireInsights() {
-        insights.installedPackages = { [weak self] in self?.report?.packages ?? [] }
+        insights.installedPackages = { [weak self] in self?.report?.packages }
         insights.onUpdate = { [weak self] in self?.applyInsights() }
         insights.settings.onChange = { [weak self] change in
             guard let self else { return }

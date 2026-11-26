@@ -216,3 +216,58 @@ struct V094NewVulnerabilityNoticeTests {
         #expect(store.newVulnerableFormulae.isEmpty)
     }
 }
+
+// MARK: (R1 review) the last package uninstalled: none vulnerable
+
+// The inventory said [] both before the first report and after reading an
+// installation with nothing in it. With the last package uninstalled the
+// count went back to the scan's total and the notice to its names (the
+// ⚠ again, leading to an empty Vulnerable list). nil is "not read yet".
+@MainActor
+struct V094EmptyInventoryTests {
+    func scanned(_ installed: @escaping () -> [Package]?) throws -> InsightsStore {
+        let store = InsightsStore(settings: InsightSettings(defaults: TestDefaults.fresh()), cache: nil, ttl: 3600, now: { Date() })
+        store.installedPackages = installed
+        store.settings.notifyNewVulnerabilities = true
+        store.settings.seenVulnerabilities = []
+        var scan = VulnerabilityScan(json: try BrewVulnsJSON.decode(stdout: Data(#"{"findings":[]}"#.utf8)), scannedAt: Date())
+        scan.checked = 55
+        scan.complete = true
+        scan.findings = ["openssl@3": [PackageVulnerability(id: "CVE-1", severity: .high)],
+                         "libssh2": [PackageVulnerability(id: "CVE-2", severity: .high)]]
+        scan.versions = ["openssl@3": "3.5.9", "libssh2": "1.11.0"]
+        store.scanFinished(scan)
+        return store
+    }
+
+    @Test func uninstallingEverythingLeavesNoneVulnerable() throws {
+        var installed: [Package] = [V094ScanCountTests.formula("openssl@3", "3.5.9"), V094ScanCountTests.formula("libssh2", "1.11.0")]
+        let store = try scanned { installed }
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 2, complete: true))
+        #expect(store.newVulnerableFormulae == ["libssh2", "openssl@3"])
+        installed.removeAll()
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 0, complete: true))
+        #expect(store.newVulnerableFormulae == [])
+        let scan = try #require(store.vulnerabilityScan)
+        let header = VulnerableScanStatus(state: .idle, scan: scan, installed: installed)
+        #expect(header.line(now: scan.scannedAt) == "Scanned 55 · 0 vulnerable · just now")
+    }
+
+    /// Before any report is read: the scan's own word.
+    @Test func noReportYetIsTheScansWord() throws {
+        let store = try scanned { nil }
+        #expect(store.shownScanOutcome == .done(checked: 55, found: 2, complete: true))
+        #expect(store.newVulnerableFormulae == ["libssh2", "openssl@3"])
+    }
+
+    /// Through the store: a report read with no packages counts none.
+    @Test func anEmptyReportCountsNone() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        #expect(store.insights.installedPackages() == nil)
+        await store.start()
+        let r = try #require(store.report)
+        #expect(store.insights.installedPackages()?.count == r.packages.count)
+        store.report?.packages = []
+        #expect(store.insights.installedPackages()?.isEmpty == true)
+    }
+}

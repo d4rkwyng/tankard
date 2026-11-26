@@ -104,4 +104,21 @@ public enum VulnerabilityCount {
         guard !packages.isEmpty else { return scan.vulnerableCount }
         return packages.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.count
     }
+
+    /// 0.9.4 (bug hunt): nil is "no report read yet" (the scan's word);
+    /// an empty list is a read installation with nothing in it (none
+    /// vulnerable). Uninstalling the last package used to bring back the
+    /// scan's total.
+    public static func installed(_ scan: VulnerabilityScan, inventory: [Package]?) -> Int {
+        guard let inventory else { return scan.vulnerableCount }
+        return inventory.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.count
+    }
+
+    /// The formulae of `names` still vulnerable as installed (nil: no
+    /// report yet, all of them).
+    public static func stillVulnerable(_ names: [String], scan: VulnerabilityScan, inventory: [Package]?) -> [String] {
+        guard let inventory else { return names }
+        let still = Set(inventory.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.map(\.fullName))
+        return names.filter(still.contains)
+    }
 }
