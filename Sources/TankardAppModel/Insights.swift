@@ -482,7 +482,14 @@ public final class InsightsStore {
     /// the notice is on.
     public var newVulnerableFormulae: [String] {
         guard settings.notifyNewVulnerabilities else { return [] }
-        return VulnerabilityNotice.newFormulae(seen: settings.seenVulnerabilities, scan: vulnerabilityScan)
+        let names = VulnerabilityNotice.newFormulae(seen: settings.seenVulnerabilities, scan: vulnerabilityScan)
+        // 0.9.4 (bug hunt): only formulae still vulnerable as installed now
+        // (upgraded or uninstalled since the scan: the notice led to an
+        // empty Vulnerable list). No list yet: the scan's word.
+        let installed = installedPackages()
+        guard !names.isEmpty, !installed.isEmpty, let scan = vulnerabilityScan else { return names }
+        let still = Set(installed.filter { !(scan.vulnerabilities(for: $0) ?? []).isEmpty }.map(\.fullName))
+        return names.filter(still.contains)
     }
 
     /// The user looked (opened the Vulnerable list from the notice).

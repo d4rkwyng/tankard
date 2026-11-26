@@ -184,3 +184,35 @@ struct V094ScanCountTests {
         #expect(store.shownScanOutcome == .done(checked: 55, found: 0, complete: true))
     }
 }
+
+// MARK: the new-vulnerabilities notice follows upgrades
+
+// The menu bar's "New vulnerabilities: openssl@3" (and the ⚠ on its icon)
+// came from the scan's findings alone. Once the user upgraded or
+// uninstalled openssl@3 from the window, the notice stayed, and clicking
+// it opened an empty Vulnerable list, until a rescan or that click.
+@MainActor
+struct V094NewVulnerabilityNoticeTests {
+    @Test func aFormulaNoLongerVulnerableLeavesTheNotice() throws {
+        let store = InsightsStore(settings: InsightSettings(defaults: TestDefaults.fresh()), cache: nil, ttl: 3600, now: { Date() })
+        var installed = [V094ScanCountTests.formula("openssl@3", "3.5.9"), V094ScanCountTests.formula("libssh2", "1.11.0"),
+                         V094ScanCountTests.formula("xz", "5.6.2")]
+        store.installedPackages = { installed }
+        store.settings.notifyNewVulnerabilities = true
+        store.settings.seenVulnerabilities = []
+        var scan = VulnerabilityScan(json: try BrewVulnsJSON.decode(stdout: Data(#"{"findings":[]}"#.utf8)), scannedAt: Date())
+        scan.checked = 55
+        scan.complete = true
+        scan.findings = ["openssl@3": [PackageVulnerability(id: "CVE-1", severity: .high)],
+                         "libssh2": [PackageVulnerability(id: "CVE-2", severity: .high)]]
+        scan.versions = ["openssl@3": "3.5.9", "libssh2": "1.11.0"]
+        store.scanFinished(scan)
+        #expect(store.newVulnerableFormulae == ["libssh2", "openssl@3"])
+
+        installed[0].installedVersion = "3.6.0"
+        installed[0].installedVersions = ["3.6.0"]
+        #expect(store.newVulnerableFormulae == ["libssh2"])
+        installed.remove(at: 1)
+        #expect(store.newVulnerableFormulae.isEmpty)
+    }
+}
