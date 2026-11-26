@@ -36,20 +36,28 @@ private func runTool(_ executable: String, _ arguments: [String], environment: [
     p.standardInput = FileHandle.nullDevice
     try p.run()
     // Drain both pipes while it runs, so a chatty script can't block.
-    var outData = Data(), errData = Data()
+    let outBox = DataBox(), errBox = DataBox()
     let group = DispatchGroup()
     group.enter()
-    DispatchQueue.global().async { outData = out.fileHandleForReading.readDataToEndOfFile(); group.leave() }
+    DispatchQueue.global().async { outBox.set(out.fileHandleForReading.readDataToEndOfFile()); group.leave() }
     group.enter()
-    DispatchQueue.global().async { errData = err.fileHandleForReading.readDataToEndOfFile(); group.leave() }
+    DispatchQueue.global().async { errBox.set(err.fileHandleForReading.readDataToEndOfFile()); group.leave() }
     let killer = DispatchWorkItem { if p.isRunning { p.terminate() } }
     DispatchQueue.global().asyncAfter(deadline: .now() + timeout, execute: killer)
     p.waitUntilExit()
     killer.cancel()
     group.wait()
     return Ran(status: p.terminationStatus,
-               stdout: String(data: outData, encoding: .utf8) ?? "",
-               stderr: String(data: errData, encoding: .utf8) ?? "")
+               stdout: String(data: outBox.get(), encoding: .utf8) ?? "",
+               stderr: String(data: errBox.get(), encoding: .utf8) ?? "")
+}
+
+/// One pipe's bytes, handed from the reading queue to the test.
+private final class DataBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var data = Data()
+    func set(_ d: Data) { lock.withLock { data = d } }
+    func get() -> Data { lock.withLock { data } }
 }
 
 struct V094ReleaseOrderTests {

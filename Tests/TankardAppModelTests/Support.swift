@@ -413,7 +413,8 @@ enum TestDefaults {
     /// /dev/null` is enough: read-only, and the file it writes is
     /// /dev/null. Only test-shaped names, so a caller's mistake can never
     /// point it at the app's own domain. False if `defaults` could not be
-    /// run.
+    /// run or was stopped after 30s; true once it ran to the end (its exit
+    /// status is 0 even for a domain with no file).
     @discardableResult static func flushPendingWrite(_ name: String) -> Bool {
         guard isSweepable(name) else { return false }
         let p = Process()
@@ -423,8 +424,12 @@ enum TestDefaults {
         p.standardOutput = FileHandle.nullDevice
         p.standardError = FileHandle.nullDevice
         guard (try? p.run()) != nil else { return false }
+        // A stuck cfprefsd fails the caller's check instead of hanging the run.
+        let killer = DispatchWorkItem { if p.isRunning { p.terminate() } }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: killer)
         p.waitUntilExit()
-        return true
+        killer.cancel()
+        return p.terminationReason == .exit
     }
 
     static func plistURL(_ name: String) -> URL {

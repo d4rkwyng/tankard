@@ -127,13 +127,20 @@ fi
 pid=""
 finish() {
     local rc=$?
-    trap - EXIT INT TERM HUP
+    # Not interruptible: a second Ctrl-C (or a cancelled job's follow-up
+    # signal) must not land between emptying the folder and refilling it.
+    trap '' INT TERM HUP
+    trap - EXIT
     # The launched app must be gone before the cache goes back (an
-    # interrupted run can leave it up).
+    # interrupted run can leave it up). By path too, not only $pid: a
+    # signal just after a launch can come before `pid=$!`. Nothing else
+    # runs from this path (checked before the first launch).
     if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
         kill -9 "$pid" 2>/dev/null || true
         wait "$pid" 2>/dev/null || true
     fi
+    pkill -9 -f "^$BIN_ABS" 2>/dev/null || true
+    for _ in 1 2 3 4 5; do pgrep -f "^$BIN_ABS" >/dev/null 2>&1 || break; sleep 1; done
     if [ $CACHE_SAVED = 1 ]; then
         if ! { [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"; } \
             || ! find "$CACHE_DIR/" -mindepth 1 -maxdepth 1 -exec rm -rf {} + \
@@ -178,6 +185,8 @@ for run in $(seq 1 "$RUNS"); do
     else
         wait "$pid" && status="exited 0" || status="exited $?"
     fi
+    # Reaped: finish must not signal that number again.
+    pid=""
     # Crash reports are written a moment after the process dies.
     sleep 3
     new=$(reports_for "$pid" "$before" | tr '\n' ' ')
