@@ -15,7 +15,7 @@ extension AppStore {
                 self.applyInsights()
                 // Turned on: ask brew (`brew outdated --greedy`). Off needs no brew.
                 if self.insights.settings.includeSelfUpdatingApps, self.report != nil {
-                    Task { await self.refresh(manual: false) }
+                    Task { await self.refreshForGreedyList() }
                 }
             case .notifyVulnerabilities:
                 if self.insights.settings.notifyNewVulnerabilities { self.insights.noticeTurnedOn() }

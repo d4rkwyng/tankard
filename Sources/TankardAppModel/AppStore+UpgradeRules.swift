@@ -30,7 +30,7 @@ extension AppStore {
             // A cask newly set to "Homebrew updates it" needs brew's --greedy list.
             if !self.insights.settings.includeSelfUpdatingApps, self.report != nil,
                self.packages.contains(where: { SelfUpdateRule.keptByHomebrew($0, homebrewTokens: rules.homebrewUpdatedTokens) && $0.selfUpdatingUpgrade == nil && !$0.upgradeAvailable }) {
-                Task { await self.refresh(manual: false) }
+                Task { await self.refreshForGreedyList() }
             }
         }
     }

@@ -246,3 +246,57 @@ struct V094PlanRunningAppsTests {
         #expect(await waitUntil { s.isFinished })
     }
 }
+
+// MARK: "Include self-updating apps" turned on during a read
+
+// Turning the setting on starts a re-read with `brew outdated --greedy`.
+// A re-read joins one already running, and that one had decided before
+// the change not to ask brew: the self-updating apps (Chrome…) didn't
+// show until the next Refresh.
+final class V094GatedInfoRunner: CommandRunning, @unchecked Sendable {
+    let inner: FakeInfoRunner
+    let gate = Latch()
+    private let lock = NSLock()
+    private var armed = false
+    private var _entered = 0
+    var entered: Int { lock.withLock { _entered } }
+    init(_ inner: FakeInfoRunner) { self.inner = inner }
+    func arm() { lock.withLock { armed = true } }
+
+    func run(_ executable: String, _ arguments: [String], environment: [String: String]) async throws -> ProcessResult {
+        let hold = lock.withLock { () -> Bool in
+            guard armed, arguments == ["info", "--json=v2", "--installed"] else { return false }
+            armed = false
+            _entered += 1
+            return true
+        }
+        if hold { await gate.wait() }
+        return try await inner.run(executable, arguments, environment: environment)
+    }
+}
+
+@MainActor
+struct V094GreedyDuringReadTests {
+    @Test func turningItOnDuringAReadStillAsksBrew() async throws {
+        let log = CallLog()
+        let info = FakeInfoRunner(log: log, info: demoIntelInfo())
+        let gated = V094GatedInfoRunner(info)
+        let client = makeIsolatedClient(gated)
+        let store = AppStore(deps: AppStore.Dependencies(makeClient: { client }, streamRunner: FakeStreamRunner(log: log) { _, _ in 0 },
+                                                         cache: nil, logURL: nil), settings: testSettings())
+        await store.start()
+        defer { gated.gate.release() }
+        let greedyBefore = info.insightLog.calls.filter { $0 == BrewClient.greedyOutdatedArguments }.count
+        try #require(!store.insights.settings.includeSelfUpdatingApps)
+        gated.arm()
+        let reading = Task { await store.refresh(manual: false) }
+        try #require(await waitUntil { gated.entered == 1 }, "the read is waiting on brew info")
+        let reads = store.refreshesCompleted
+        store.insights.settings.includeSelfUpdatingApps = true
+        gated.gate.release()
+        await reading.value
+        #expect(await waitUntil { store.refreshesCompleted >= reads + 2 })
+        #expect(await waitUntil { info.insightLog.calls.filter { $0 == BrewClient.greedyOutdatedArguments }.count > greedyBefore })
+        #expect(store.lastReadAskedGreedy)
+    }
+}

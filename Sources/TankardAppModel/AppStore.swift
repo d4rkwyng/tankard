@@ -666,6 +666,32 @@ public final class AppStore {
         case scheduled
     }
 
+    /// 0.8: `brew outdated --greedy` is read with the status ("Include
+    /// self-updating apps", or a cask set to "Homebrew updates it").
+    var wantsGreedyList: Bool { insights.settings.includeSelfUpdatingApps || !upgradeRules.homebrewUpdatedTokens.isEmpty }
+
+    /// 0.9.4 (bug hunt): whether the last status read on screen asked brew
+    /// for its --greedy list.
+    @ObservationIgnored var lastReadAskedGreedy = false
+
+    /// 0.9.4 (bug hunt): a re-read for brew's --greedy list after a setting
+    /// asked for it. A re-read joins one already running, and that one
+    /// decided before the change whether to ask brew: "Include self-updating
+    /// apps" turned on during a Refresh showed no self-updating apps until
+    /// the next Refresh. Reads again once it ends, if it didn't ask.
+    func refreshForGreedyList() async {
+        await refresh(.automatic)
+        guard wantsGreedyList, !lastReadAskedGreedy else { return }
+        // Not straight into another automatic read: the one that just
+        // ended may still be `refreshTask` (its caller hasn't resumed to
+        // clear it), and it would join that and read nothing.
+        while let running = refreshTask {
+            await running.value
+            if refreshTask == running { refreshTask = nil }
+        }
+        if !lastReadAskedGreedy { await refresh(.automatic) }
+    }
+
     func refresh(_ kind: RefreshKind) async {
         // 0.8.5 (HK-47 review): a scheduled refresh's caller reads this
         // run's result, never the last one's (brew not found returns early).
@@ -763,12 +789,13 @@ public final class AppStore {
         let measureSizes = kind != .afterUpdate
         if measureSizes { insights.measureSizes(client: client, env: env) }
         // 0.8: also when a cask is set to "Homebrew updates it" (Adopt).
-        let wantsGreedy = insights.settings.includeSelfUpdatingApps || !upgradeRules.homebrewUpdatedTokens.isEmpty
+        let wantsGreedy = wantsGreedyList
         async let greedy = wantsGreedy ? Self.readGreedy(client, env: env) : nil
         do {
             let fresh = Self.markSelfUpdating(try await client.status(detection: detection), greedy: await greedy)
             report = insights.decorate(fresh)
             reportFromCache = false
+            lastReadAskedGreedy = wantsGreedy
             LaunchTiming.mark("list (brew)", once: true)
             LaunchTiming.note("status read " + fresh.timingsMs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: " "))
             try? deps.cache?.save(fresh)
