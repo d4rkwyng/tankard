@@ -434,6 +434,7 @@
 "Every installed version, one brew uninstall each" = "Every installed version, one brew uninstall each";
 "Every week" = "Every week";
 "Everything in this Brewfile is installed" = "Everything in this Brewfile is installed";
+"Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade." = "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.";
 "Everything is up to date" = "Everything is up to date";
 "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew." = "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew.";
 "Exit" = "Exit";
@@ -514,6 +515,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installs from this catalog without adding it. Nothing to do.";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched.";
+"Homebrew is busy with an automatic update. This can run once it finishes." = "Homebrew is busy with an automatic update. This can run once it finishes.";
 "Homebrew is busy; try again in a moment." = "Homebrew is busy; try again in a moment.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew is still upgrading %@ (%lld of %lld).";
@@ -542,6 +544,7 @@
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew's anonymous install analytics (formulae.brew.sh), to %@";
 "Homebrew's check-up found %lld things to look at" = "Homebrew's check-up found %lld things to look at";
 "Homebrew's check-up has %lld notes" = "Homebrew's check-up has %lld notes";
+"Homebrew's list changed while this was open. The plan now shows what is still outdated." = "Homebrew's list changed while this was open. The plan now shows what is still outdated.";
 "Homebrew's official uninstaller" = "Homebrew's official uninstaller";
 "Homebrew's own check-up. Looking changes nothing." = "Homebrew's own check-up. Looking changes nothing.";
 "Homebrew's own files have local changes" = "Homebrew's own files have local changes";
@@ -977,6 +980,7 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sends your installed formula names and versions to OSV.dev (via brew vulns).";
 "Service" = "Service";
 "Services" = "Services";
+"Services needs Homebrew's status first" = "Services needs Homebrew's status first";
 "Set by Intelbrew mode." = "Set by Intelbrew mode.";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Set by Tankard for checks and upgrades: Tankard decides when brew update runs.";
 "Set by Tankard: it reads brew's output." = "Set by Tankard: it reads brew's output.";

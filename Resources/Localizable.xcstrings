@@ -26215,6 +26215,58 @@
         }
       }
     },
+    "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles in diesem Plan wurde inzwischen aktualisiert oder entfernt. Es bleibt nichts zu aktualisieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout ce plan a été mis à jour ou supprimé entre-temps. Il ne reste rien à mettre à jour."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo lo de este plan se actualizó o se eliminó mientras tanto. No queda nada por actualizar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このプランの項目はすべて、その間にアップグレードまたは削除されました。アップグレードするものは残っていません。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此计划中的所有项目在此期间已升级或移除。没有需要升级的了。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tudo neste plano foi atualizado ou removido nesse meio-tempo. Não resta nada para atualizar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nel frattempo tutto ciò che era in questo piano è stato aggiornato o rimosso. Non resta nulla da aggiornare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그 사이에 이 계획의 모든 항목이 업그레이드되었거나 제거되었습니다. 업그레이드할 항목이 남아 있지 않습니다."
+          }
+        }
+      }
+    },
     "Everything is up to date": {
       "localizations": {
         "de": {
@@ -30375,6 +30427,58 @@
         }
       }
     },
+    "Homebrew is busy with an automatic update. This can run once it finishes.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew ist mit einer automatischen Aktualisierung beschäftigt. Dies kann laufen, sobald sie fertig ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew est occupé par une mise à jour automatique. Ceci pourra s’exécuter une fois qu’elle sera terminée."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew está ocupado con una actualización automática. Esto podrá ejecutarse cuando termine."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrewは自動アップデート中です。完了すると実行できます。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew 正在进行自动更新。完成后即可运行。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Homebrew está ocupado com uma atualização automática. Isto poderá ser executado quando ela terminar."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew è occupato con un aggiornamento automatico. Potrà essere eseguito quando sarà terminato."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homebrew가 자동 업데이트 중입니다. 완료되면 실행할 수 있습니다."
+          }
+        }
+      }
+    },
     "Homebrew is busy; try again in a moment.": {
       "localizations": {
         "de": {
@@ -32055,6 +32159,58 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Homebrew's list changed while this was open. The plan now shows what is still outdated.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Liste von Homebrew hat sich geändert, während dies geöffnet war. Der Plan zeigt jetzt, was noch veraltet ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La liste de Homebrew a changé pendant que ceci était ouvert. Le plan montre maintenant ce qui est encore obsolète."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La lista de Homebrew cambió mientras esto estaba abierto. El plan muestra ahora lo que sigue desactualizado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これを開いている間にHomebrewのリストが変わりました。プランには、まだ古いものが表示されています。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此窗口打开期间 Homebrew 的列表发生了变化。计划现在显示仍然过时的项目。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A lista do Homebrew mudou enquanto isto estava aberto. O plano agora mostra o que ainda está desatualizado."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’elenco di Homebrew è cambiato mentre questo era aperto. Il piano ora mostra ciò che è ancora da aggiornare."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 창이 열려 있는 동안 Homebrew 목록이 바뀌었습니다. 이제 계획에는 아직 오래된 항목이 표시됩니다."
           }
         }
       }
@@ -55131,6 +55287,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "서비스"
+          }
+        }
+      }
+    },
+    "Services needs Homebrew's status first": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Dienste“ braucht zuerst den Status von Homebrew"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Services a besoin de l’état de Homebrew d’abord"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Servicios necesita primero el estado de Homebrew"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「サービス」にはまずHomebrewの状態が必要です"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“服务”需要先获取 Homebrew 的状态"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serviços precisa primeiro do status do Homebrew"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Servizi richiede prima lo stato di Homebrew"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서비스에는 먼저 Homebrew 상태가 필요합니다"
           }
         }
       }

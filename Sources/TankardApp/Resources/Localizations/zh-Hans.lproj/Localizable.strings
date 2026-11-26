@@ -434,6 +434,7 @@
 "Every installed version, one brew uninstall each" = "每个已安装版本各运行一次 brew uninstall";
 "Every week" = "每周";
 "Everything in this Brewfile is installed" = "此 Brewfile 中的所有内容均已安装";
+"Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade." = "此计划中的所有项目在此期间已升级或移除。没有需要升级的了。";
 "Everything is up to date" = "一切均为最新";
 "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew." = "一切正常？那就可以忽略这些。它们主要面向开发软件或向 Homebrew 报告问题的人。";
 "Exit" = "退出";
@@ -514,6 +515,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew 无需添加此目录即可从中安装。无需任何操作。";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew 会用 cask 的较新版本替换这个 App，此后由 Homebrew 管理。你在 ~/Library 中的设置和数据不会被改动。";
+"Homebrew is busy with an automatic update. This can run once it finishes." = "Homebrew 正在进行自动更新。完成后即可运行。";
 "Homebrew is busy; try again in a moment." = "Homebrew 正忙，请稍后再试。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。";
@@ -542,6 +544,7 @@
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew 匿名安装统计（formulae.brew.sh），截至 %@";
 "Homebrew's check-up found %lld things to look at" = "Homebrew 的检查发现 %lld 个需要留意的问题";
 "Homebrew's check-up has %lld notes" = "Homebrew 的检查有 %lld 条说明";
+"Homebrew's list changed while this was open. The plan now shows what is still outdated." = "此窗口打开期间 Homebrew 的列表发生了变化。计划现在显示仍然过时的项目。";
 "Homebrew's official uninstaller" = "Homebrew 官方卸载程序";
 "Homebrew's own check-up. Looking changes nothing." = "Homebrew 自带的检查。查看不会更改任何内容。";
 "Homebrew's own files have local changes" = "Homebrew 自身文件有本地改动";
@@ -977,6 +980,7 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";
 "Services" = "服务";
+"Services needs Homebrew's status first" = "“服务”需要先获取 Homebrew 的状态";
 "Set by Intelbrew mode." = "由 Intelbrew 模式设置。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "由 Tankard 为检查和升级设置：何时运行 brew update 由 Tankard 决定。";
 "Set by Tankard: it reads brew's output." = "由 Tankard 设置：它需要读取 brew 的输出。";
