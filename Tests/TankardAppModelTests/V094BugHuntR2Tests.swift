@@ -167,3 +167,27 @@ struct V094ServiceErrorScopeTests {
     }
 }
 
+// MARK: Services or Discover chosen before the first read
+
+// ⌘3 (Services) during the first "Reading installed packages…" showed
+// "Discover needs Homebrew's status first" on the Services tab, and stayed:
+// the tab's store was made only on a tab change. The view now makes it
+// once the status is in, and names the tab it is on.
+@MainActor
+struct V094TabBeforeStatusTests {
+    @Test func theTabsStoreNeedsTheStatus() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0))
+        #expect(store.openServices() == nil)
+        await store.start()
+        #expect(store.openServices() != nil)
+    }
+
+    @Test func theViewOpensItOnceTheStatusIsIn() throws {
+        let view = try v094Source("TankardApp/ContentView.swift")
+        let start = try #require(view.range(of: ".onChange(of: store.report != nil) { _, ready in"))
+        let block = String(view[start.lowerBound...].prefix(260))
+        #expect(block.contains("if store.tab == .discover { openDiscover() }"))
+        #expect(block.contains("if store.tab == .services { store.openServices() }"))
+        #expect(view.contains("ContentUnavailableView(\"Services needs Homebrew's status first\""))
+    }
+}

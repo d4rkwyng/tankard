@@ -87,6 +87,14 @@ struct ContentView: View {
             if tab == .discover { openDiscover() }
             if tab == .services { store.openServices() }
         }
+        // 0.9.4 (bug hunt): a tab chosen before brew's status was in (⌘3
+        // during the first read) waited for it forever: its store is made
+        // only on a tab change. Made now, once the status is in.
+        .onChange(of: store.report != nil) { _, ready in
+            guard ready else { return }
+            if store.tab == .discover { openDiscover() }
+            if store.tab == .services { store.openServices() }
+        }
         .onChange(of: store.intelbrewMode, initial: true) { _, intelbrew in
             AppResources.updateDockIcon(intelbrew: intelbrew)
         }
@@ -170,6 +178,11 @@ struct ContentView: View {
                 ServicesView(store: store, services: services)
             } else if store.tab == .discover, let discover = store.discover {
                 DiscoverView(store: store, discover: discover)
+            } else if store.tab == .services {
+                // 0.9.4 (bug hunt): it said "Discover…" on the Services tab.
+                ContentUnavailableView("Services needs Homebrew's status first", systemImage: "gearshape.2",
+                                       description: Text("Waiting for brew…"))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ContentUnavailableView("Discover needs Homebrew's status first", systemImage: "magnifyingglass",
                                        description: Text("Waiting for brew…"))
