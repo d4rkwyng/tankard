@@ -1195,9 +1195,16 @@ public final class AppStore {
         fresh.id = plan.id
         fresh.skipCompiling = plan.skipCompiling
         fresh.runningApps = plan.runningApps.filter { a in kept.contains { $0.id == a.packageID } }
+        // 0.9.4 (bug hunt): and the apps open now. "Don't quit running apps
+        // during upgrades" turned off (or an app opened) while the plan was
+        // up: brew quit the app the plan never named.
+        let known = Set(fresh.runningApps.map(\.packageID))
+        fresh.runningApps += runningCaskApps(kept).filter { !known.contains($0.packageID) }
         fresh.changedNote = plan.changedNote
-        let changed = !fresh.sameTargets(as: plan)
-        if changed {
+        let targetsChanged = !fresh.sameTargets(as: plan)
+        let newlyOpen = !Set(fresh.runningAppsToRun).isSubset(of: Set(plan.runningAppsToRun))
+        let changed = targetsChanged || newlyOpen
+        if targetsChanged {
             fresh.changedNote = kept.isEmpty
                 ? String(localized: "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.")
                 : String(localized: "Homebrew's list changed while this was open. The plan now shows what is still outdated.")

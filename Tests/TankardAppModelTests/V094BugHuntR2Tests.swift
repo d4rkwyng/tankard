@@ -191,3 +191,58 @@ struct V094TabBeforeStatusTests {
         #expect(view.contains("ContentUnavailableView(\"Services needs Homebrew's status first\""))
     }
 }
+
+// MARK: an app open now is named before Upgrade runs
+
+// The plan's "These apps will be closed…" note was worked out once, when
+// the plan opened. With "Don't quit running apps during upgrades" on it
+// names none (brew leaves them open). Turned off while the plan was up
+// (or the app opened meanwhile), Upgrade ran without the note, and brew
+// quit the app.
+@MainActor
+struct V094PlanRunningAppsTests {
+    @Test func turningDontQuitOffNamesTheAppFirst() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let settings = testSettings()
+        InsightSettings(defaults: settings.defaults).includeSelfUpdatingApps = true
+        let store = AppStore(deps: deps, settings: settings)
+        store.autoUpdate.conditions = FixedConditions(ac: nil, idle: nil, apps: [V085RunningAppsTests.chrome])
+        await store.start()
+        try #require(store.packages.contains { $0.name == "google-chrome" && $0.isManualUpgradeTarget })
+        store.insights.settings.dontQuitAppsDuringUpgrade = true
+        store.requestUpgradeAllPlan()
+        let opened = try #require(store.upgradePlan)
+        #expect(opened.runningAppsToRun.isEmpty)
+
+        store.insights.settings.dontQuitAppsDuringUpgrade = false
+        store.confirmUpgradePlan()
+        #expect(store.upgrade == nil, "shows the open app first")
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.runningAppsToRun == ["Google Chrome"])
+        #expect(plan.runningAppsNote?.contains("Google Chrome") == true)
+        #expect(plan.changedNote == nil, "the packages didn't change")
+        store.confirmUpgradePlan()
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+    }
+
+    /// Turned on meanwhile: nothing new to name, Upgrade runs at once.
+    @Test func turningDontQuitOnRunsAtOnce() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let settings = testSettings()
+        InsightSettings(defaults: settings.defaults).includeSelfUpdatingApps = true
+        let store = AppStore(deps: deps, settings: settings)
+        store.autoUpdate.conditions = FixedConditions(ac: nil, idle: nil, apps: [V085RunningAppsTests.chrome])
+        await store.start()
+        store.requestUpgradeAllPlan()
+        #expect(store.upgradePlan?.runningAppsToRun == ["Google Chrome"])
+        store.insights.settings.dontQuitAppsDuringUpgrade = true
+        store.confirmUpgradePlan()
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished })
+    }
+}
