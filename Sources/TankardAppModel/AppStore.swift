@@ -223,7 +223,13 @@ public final class AppStore {
 
     public internal(set) var report: StatusReport? {
         // 0.8.5: a no-op unless the casks changed (and on an affected Mac).
-        didSet { electron.update(packages: report?.packages ?? []) }
+        didSet {
+            electron.update(packages: report?.packages ?? [])
+            // 0.9.4 (bug hunt R1 review): an open plan follows the new read
+            // (an automatic update upgraded some of it, or brew update moved
+            // a version), so Upgrade runs what the sheet shows now.
+            if upgradePlan != nil { revalidateUpgradePlan() }
+        }
     }
     /// Where `report` came from on screen: the disk cache or a live read.
     public private(set) var reportFromCache = false
@@ -1165,13 +1171,41 @@ public final class AppStore {
         upgradePlan?.skipCompiling = skip
     }
 
+    /// 0.9.4 (bug hunt R1 review): the open plan against the packages on
+    /// screen now: what was upgraded (by an automatic update) or
+    /// uninstalled meanwhile leaves it, and the rest carry brew's current
+    /// versions and bottles. Returns whether what it runs changed (the plan
+    /// then says so, and Upgrade shows it before running).
+    @discardableResult
+    func revalidateUpgradePlan() -> Bool {
+        guard let plan = upgradePlan else { return false }
+        let now = Dictionary(packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let kept = plan.rows.compactMap { now[$0.package.id] }.filter(\.isManualUpgradeTarget)
+        var fresh = UpgradePlan(packages: kept, classifier: deps.classifier)
+        fresh.id = plan.id
+        fresh.skipCompiling = plan.skipCompiling
+        fresh.runningApps = plan.runningApps.filter { a in kept.contains { $0.id == a.packageID } }
+        fresh.changedNote = plan.changedNote
+        let changed = !fresh.sameTargets(as: plan)
+        if changed {
+            fresh.changedNote = kept.isEmpty
+                ? String(localized: "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.")
+                : String(localized: "Homebrew's list changed while this was open. The plan now shows what is still outdated.")
+        }
+        if fresh != plan { upgradePlan = fresh }
+        return changed
+    }
+
     /// Start on the plan page.
     public func confirmUpgradePlan() {
-        guard let plan = upgradePlan else { return }
+        guard upgradePlan != nil else { return }
         // 0.9.4 (bug hunt): an automatic update started while the plan
         // was open. startSession would refuse, leaving an empty sheet with
         // no buttons; the plan stays (its Upgrade button waits) instead.
         guard !autoUpdate.isRunning else { return }
+        // 0.9.4 (bug hunt R1 review): a plan gone stale since the last
+        // read shows its new targets first; the next Upgrade runs them.
+        guard !revalidateUpgradePlan(), let plan = upgradePlan else { return }
         upgradePlan = nil
         let run = plan.toRun
         if run.isEmpty {

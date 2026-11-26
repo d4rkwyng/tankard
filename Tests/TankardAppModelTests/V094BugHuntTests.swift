@@ -55,16 +55,31 @@ extension AppStoreTests {
 // the sheet stayed up with no plan and no run, so no buttons at all.
 @MainActor
 struct V094AutoUpdateBlocksUpgradeTests {
-    func runningAutoUpdate() async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>) {
+    /// (R1 review) upgrades of these names fail while set (one the
+    /// automatic update leaves outdated).
+    final class Failing: @unchecked Sendable {
+        private let lock = NSLock()
+        private var names: Set<String> = []
+        func set(_ n: Set<String>) { lock.withLock { names = n } }
+        func contains(_ n: String) -> Bool { lock.withLock { names.contains(n) } }
+    }
+
+    func runningAutoUpdate(failing: Failing = Failing(), pick: (AppStore) -> Set<String> = { _ in [] })
+        async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>) {
         let gate = Latch()
         var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
         let demo = deps.streamRunner
         deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
             if args.first == "fetch" { await gate.wait() }
+            if args.first == "upgrade", let q = args.last, failing.contains(q.split(separator: "/").last.map(String.init) ?? q) {
+                out(Data("Error: simulated failure\n".utf8))
+                return 1
+            }
             return try await demo.stream("/usr/local/bin/brew", args, environment: [:], output: out)
         }
         let store = AppStore(deps: deps, settings: testSettings())
         await store.start()
+        failing.set(pick(store))
         store.autoUpdate.settings.enabled = true
         let u = store.autoUpdate
         let task = Task { await u.run(store: store, notifier: nil) }
@@ -73,7 +88,14 @@ struct V094AutoUpdateBlocksUpgradeTests {
     }
 
     @Test func aPlanConfirmedDuringAutoUpdateStaysOnScreen() async throws {
-        let (store, gate, task) = try await runningAutoUpdate()
+        let failing = Failing()
+        var left = ""
+        let (store, gate, task) = try await runningAutoUpdate(failing: failing) { store in
+            left = store.upgradable.first { $0.kind == .formula }?.name ?? ""
+            return [left]
+        }
+        // (R1 review) an early failed #require can't leave the fetch waiting.
+        defer { gate.release() }
         let targets = store.upgradable
         try #require(!targets.isEmpty && !store.isUpgrading)
         // The plan was open before the automatic run started.
@@ -87,14 +109,35 @@ struct V094AutoUpdateBlocksUpgradeTests {
         gate.release()
         _ = await task.value
         #expect(await waitUntil { !store.autoUpdate.isRunning && !store.isRefreshing })
+        // (R1 review) the read after the run updated the plan on screen:
+        // what the automatic update upgraded left it, the rest are brew's
+        // current snapshots.
+        let still = store.upgradable.filter { p in targets.contains { $0.id == p.id } }
+        try #require(!still.isEmpty, "the fixture leaves something for the plan")
+        #expect(still.map(\.name) == [left], "the automatic update upgraded the rest")
+        failing.set([])
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.rows.map(\.package.id) == UpgradePlan(packages: still, classifier: store.deps.classifier).rows.map(\.package.id))
+        if still.count < targets.count { #expect(plan.changedNote != nil) }
         // Once it's done, the same plan starts.
         store.confirmUpgradePlan()
         #expect(store.upgradePlan == nil)
         #expect(store.upgrade != nil)
+        // (R1 review) with what is still outdated now, not the snapshots
+        // taken before the automatic update.
+        let session = try #require(store.upgrade)
+        let fresh = Dictionary(store.packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        #expect(Set(session.items.map(\.package.id)) == Set(still.map(\.id)))
+        for item in session.items {
+            #expect(item.package.installedVersion == fresh[item.package.id]?.installedVersion)
+            #expect(item.package.upgradeAvailable)
+        }
+        #expect(await waitUntil { session.isFinished })
     }
 
     @Test func theWindowsUpgradeButtonsWaitForAutoUpdate() async throws {
         let (store, gate, task) = try await runningAutoUpdate()
+        defer { gate.release() }
         #expect(!store.isUpgrading)
         #expect(store.windowBrewActionsBlocked)
         // A click that got through anyway opens nothing it can't start.
@@ -269,5 +312,101 @@ struct V094EmptyInventoryTests {
         #expect(store.insights.installedPackages()?.count == r.packages.count)
         store.report?.packages = []
         #expect(store.insights.installedPackages()?.isEmpty == true)
+    }
+}
+
+// MARK: (R1 review) a stale plan shows its new targets before running
+
+// A read while the plan is open (an automatic update upgraded part of it,
+// brew update moved a version) changes the plan on screen. Upgrade on a
+// plan that went stale since the last look shows the change first, then
+// runs brew's current targets, never the snapshots taken when it opened.
+@MainActor
+struct V094StalePlanTests {
+    @Test func aReadWhileOpenUpdatesThePlan() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let targets = Array(store.upgradable.filter { $0.kind == .formula }.prefix(3))
+        try #require(targets.count == 3)
+        store.upgradePlan = UpgradePlan(packages: targets, classifier: store.deps.classifier)
+        store.showUpgradeSheet = true
+        let shown = try #require(store.upgradePlan)
+
+        // Elsewhere: the first was upgraded, the second's new version moved on.
+        var r = try #require(store.report)
+        let i0 = try #require(r.packages.firstIndex { $0.id == targets[0].id })
+        r.packages[i0].upgradeAvailable = false
+        r.packages[i0].installedVersion = r.packages[i0].currentVersion ?? "new"
+        let i1 = try #require(r.packages.firstIndex { $0.id == targets[1].id })
+        r.packages[i1].currentVersion = "99.0"
+        store.report = r
+
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.id == shown.id)
+        #expect(Set(plan.rows.map(\.package.id)) == [targets[1].id, targets[2].id])
+        #expect(plan.rows.first { $0.package.id == targets[1].id }?.package.currentVersion == "99.0")
+        #expect(plan.changedNote != nil)
+        #expect(!plan.sameTargets(as: shown))
+
+        store.confirmUpgradePlan()
+        let s = try #require(store.upgrade)
+        #expect(Set(s.items.map(\.package.id)) == [targets[1].id, targets[2].id])
+        #expect(s.items.first { $0.package.id == targets[1].id }?.package.currentVersion == "99.0")
+        #expect(await waitUntil { s.isFinished })
+    }
+
+    /// A plan set before the read it missed (not yet revalidated):
+    /// Upgrade shows the new plan first instead of starting.
+    @Test func upgradeOnAStalePlanShowsItFirst() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let targets = Array(store.upgradable.filter { $0.kind == .formula }.prefix(2))
+        try #require(targets.count == 2)
+        var stale = targets
+        stale[0].currentVersion = "0.0.1-old"
+        store.upgradePlan = UpgradePlan(packages: stale, classifier: store.deps.classifier)
+        store.showUpgradeSheet = true
+        store.confirmUpgradePlan()
+        #expect(store.upgrade == nil)
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.changedNote != nil)
+        #expect(plan.rows.first { $0.package.id == targets[0].id }?.package.currentVersion == targets[0].currentVersion)
+        #expect(store.showUpgradeSheet)
+        store.confirmUpgradePlan()
+        let s = try #require(store.upgrade)
+        #expect(s.items.map(\.package.currentVersion) == plan.toRun.map(\.currentVersion))
+        #expect(await waitUntil { s.isFinished })
+    }
+
+    /// Everything upgraded meanwhile: the plan says so and runs nothing.
+    @Test func aPlanWithNothingLeftRunsNothing() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let target = try #require(store.upgradable.first { $0.kind == .formula })
+        store.upgradePlan = UpgradePlan(packages: [target], classifier: store.deps.classifier)
+        store.showUpgradeSheet = true
+        var r = try #require(store.report)
+        let i = try #require(r.packages.firstIndex { $0.id == target.id })
+        r.packages[i].upgradeAvailable = false
+        store.report = r
+        let plan = try #require(store.upgradePlan)
+        #expect(plan.rows.isEmpty && plan.toRun.isEmpty)
+        #expect(plan.changedNote?.contains("Nothing is left") == true)
+        store.confirmUpgradePlan()
+        #expect(store.upgrade == nil)
+        #expect(!store.showUpgradeSheet)
+    }
+
+    /// An unrelated read (sizes, vulnerabilities) leaves the plan as it was.
+    @Test func aReadThatChangesNothingLeavesNoNote() async throws {
+        let store = AppStore(deps: Demo.dependencies(.intelbrew, pace: 0), settings: testSettings())
+        await store.start()
+        let targets = Array(store.upgradable.prefix(2))
+        store.upgradePlan = UpgradePlan(packages: targets, classifier: store.deps.classifier)
+        var r = try #require(store.report)
+        r.packages[0].diskBytes = 12345
+        store.report = r
+        #expect(store.upgradePlan?.changedNote == nil)
+        #expect(store.upgradePlan?.rows.map(\.package.id) == UpgradePlan(packages: targets, classifier: store.deps.classifier).rows.map(\.package.id))
     }
 }

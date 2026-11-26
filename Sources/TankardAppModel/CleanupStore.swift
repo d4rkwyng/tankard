@@ -169,6 +169,9 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
     /// cask, so the plan page says so before starting. Empty when nothing is
     /// open or "Don't quit running apps during upgrades" is on.
     public var runningApps: [RunningCaskApp] = []
+    /// 0.9.4 (bug hunt R1 review): set when a read while the plan was open
+    /// changed what it runs (an automatic update upgraded some of it).
+    public var changedNote: String?
 
     public init(packages: [Package], classifier: CompileClassifier) {
         // 0.8.5: in the order the run takes (password casks last).
@@ -213,6 +216,19 @@ public struct UpgradePlan: Equatable, Sendable, Identifiable {
         return names.count == 1
             ? String(localized: "This app will be closed during the upgrade and opened again afterwards: \(list). Save your work in it first.")
             : String(localized: "These apps will be closed during the upgrade and opened again afterwards: \(list). Save your work in them first.")
+    }
+
+    /// 0.9.4 (bug hunt R1 review): the same packages, versions, bottles and
+    /// compile marks (the brew commands Start runs), whatever the rest of
+    /// the snapshots (sizes, vulnerabilities) say.
+    public func sameTargets(as other: UpgradePlan) -> Bool {
+        guard rows.count == other.rows.count else { return false }
+        return zip(rows, other.rows).allSatisfy { a, b in
+            a.package.id == b.package.id && a.package.installedVersion == b.package.installedVersion
+                && a.package.currentVersion == b.package.currentVersion
+                && a.package.upgradeHasBottle == b.package.upgradeHasBottle
+                && (a.warning == nil) == (b.warning == nil)
+        }
     }
 
     /// What Start runs.

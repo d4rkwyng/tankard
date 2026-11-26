@@ -81,6 +81,16 @@ struct UpgradePlanView: View {
                 .font(.system(size: 12))
                 .padding(.top, 12)
             }
+            // 0.9.4 (bug hunt R1 review): a read while it was open changed it.
+            if let note = plan.changedNote {
+                Label {
+                    Text(note).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "arrow.triangle.2.circlepath").foregroundStyle(.secondary)
+                }
+                .font(.system(size: 12))
+                .padding(.top, 12)
+            }
             // 0.8.5: say before starting that brew closes open apps.
             if let note = plan.runningAppsNote {
                 Label {
