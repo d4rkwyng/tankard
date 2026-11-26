@@ -558,14 +558,14 @@ struct CleanupSheet: View {
                     }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
+                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 } else {
                     Button {
                         store.startCleanup()
                     } label: {
                         Text("Clean Up")
                     }
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
+                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 }
             }
         }
@@ -697,12 +697,12 @@ struct CompileInstallConfirm: View {
                 Button("Cancel") { discover.confirmInstall = nil }
                     .keyboardShortcut(.cancelAction)
                 Button("Install (compiles)") {
-                    discover.confirmInstall = nil
-                    store.startInstall(entry)
+                    store.confirmCompileInstall(entry)
                 }
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
-                .disabled(store.isUpgrading)
+                // 0.9.4 (bug hunt R1 review): and while an automatic update runs.
+                .disabled(store.newRunBlocked)
             }
         }
         .padding(20)

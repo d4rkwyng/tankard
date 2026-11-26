@@ -60,6 +60,16 @@ public extension AppStore {
     /// (0.5) an automatic update.
     var isBusy: Bool { isUpgrading || quickAction != nil || autoUpdate.isRunning || selfReplaced }
 
+    /// 0.9.4 (bug hunt R1 review): startSession refuses a new run now (a
+    /// run going, an automatic update, Tankard replaced on disk). The
+    /// buttons that start one from a sheet (Retry, App Management's run
+    /// buttons, Clean Up, Install) wait instead of doing nothing.
+    var newRunBlocked: Bool { isUpgrading || autoUpdate.isRunning || selfReplaced }
+
+    /// 0.9.4 (bug hunt R1 review): the menu-bar row's Upgrade is off while
+    /// brew runs, an automatic update among them (as Upgrade All).
+    var menuBarRowBusy: Bool { isUpgrading || autoUpdate.isRunning || isRefreshing }
+
     /// 0.8.4: a sheet is up in the main window (each `.sheet` ContentView,
     /// DiscoverView and selfUpdateSheets attach), so it is modal and a menu
     /// item that opens another sheet or starts brew must wait.

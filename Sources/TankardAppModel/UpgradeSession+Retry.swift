@@ -58,7 +58,9 @@ extension AppStore {
     /// Retry (one failed step) or Retry Failed (all of them), through the
     /// action's normal path.
     public func retryInSheet(_ items: [UpgradeSession.Item]? = nil) {
-        guard let s = upgrade, s.isFinished else { return }
+        // 0.9.4 (bug hunt R1 review): not while an automatic update runs
+        // (its button waits; the run would be refused).
+        guard let s = upgrade, s.isFinished, !newRunBlocked else { return }
         let chosen = items ?? s.retryableItems
         let ids = Set(s.retryableItems.map(\.id))
         // The package as brew lists it now (the run's copy may be stale).

@@ -883,6 +883,16 @@ public final class AppStore {
         startSession(.install, packages: [entry.asPackage()])
     }
 
+    /// The "Install (compiles)" confirmation's button. 0.9.4 (bug hunt R1
+    /// review): while an automatic update runs it waits (the button is
+    /// off); the confirmation used to close first, then startSession
+    /// refused, so the user had to find the package and click again.
+    public func confirmCompileInstall(_ entry: CatalogEntry) {
+        guard !newRunBlocked else { return }
+        discover?.confirmInstall = nil
+        startInstall(entry)
+    }
+
     /// Installed packages that need `p` (uninstall is blocked while any do).
     public func dependents(of p: Package) -> [Package] {
         Dependents.of(p, among: packages)
@@ -1286,6 +1296,9 @@ public final class AppStore {
 
     /// The real `brew cleanup`, through the queue and the live log.
     public func startCleanup() {
+        // 0.9.4 (bug hunt R1 review): the sheet (and its dry run) stays
+        // while an automatic update runs; startSession would refuse.
+        guard !newRunBlocked else { return }
         showCleanupSheet = false
         startSession(.cleanup, packages: [Package.command("brew cleanup")])
     }
@@ -1327,7 +1340,7 @@ public final class AppStore {
     /// wait while brew runs (an automatic update started after the prompt
     /// opened): startSession refuses then, and the prompt, already
     /// cleared, left a blank sheet (first use, no run before it).
-    public var appManagementRunsBlocked: Bool { isUpgrading || autoUpdate.isRunning || selfReplaced }
+    public var appManagementRunsBlocked: Bool { newRunBlocked }
 
     /// Whether `p`'s run-now buttons would start brew and can't now.
     func appManagementRunBlocked(_ p: AppManagementPrompt) -> Bool {

@@ -205,7 +205,7 @@ extension MenuBarContent {
     func menuBarRowMenu(_ row: MenuBarSummary.Row) -> some View {
         if let p = store.packages.first(where: { $0.id == row.id }) {
             MenuEntries(entries: ContextMenus.menuBarRow(p, compileWarning: store.deps.classifier.upgradeWarning(p),
-                                                         busy: store.isUpgrading || store.isRefreshing)) { action in
+                                                         busy: store.menuBarRowBusy)) { action in
                 switch action {
                 case .upgrade:
                     upgradeFromMenu([p])

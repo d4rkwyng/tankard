@@ -421,7 +421,8 @@ struct V094StalePlanTests {
 
 /// A store whose automatic update is held at its download step.
 @MainActor
-func v094GatedAutoUpdate(_ deps: AppStore.Dependencies, settings: AppSettings = testSettings())
+func v094GatedAutoUpdate(_ deps: AppStore.Dependencies, settings: AppSettings = testSettings(),
+                         before: (AppStore) async throws -> Void = { _ in })
     async throws -> (AppStore, Latch, Task<AutoUpdateRun?, Never>) {
     let gate = Latch()
     var deps = deps
@@ -432,6 +433,7 @@ func v094GatedAutoUpdate(_ deps: AppStore.Dependencies, settings: AppSettings = 
     }
     let store = AppStore(deps: deps, settings: settings)
     await store.start()
+    do { try await before(store) } catch { gate.release(); throw error }
     store.autoUpdate.settings.enabled = true
     let u = store.autoUpdate
     let task = Task { await u.run(store: store, notifier: nil) }
@@ -547,5 +549,122 @@ struct V094AppManagementWaitsTests {
         await finish(store, gate, task)
         store.appManagementResumeConfirm()
         #expect(store.appManagementResume == nil)
+    }
+}
+
+// MARK: (R1 review) the other run buttons wait for Auto-update
+
+// The menu-bar row's Upgrade, the results sheet's Retry, Clean Up and
+// "Install (compiles)" stayed on while an automatic update ran. The run
+// was refused, and Clean Up and Install had already closed their
+// confirmation (the dry run, the compile warning) first.
+@MainActor
+struct V094RunButtonsWaitTests {
+    func finish(_ store: AppStore, _ gate: Latch, _ task: Task<AutoUpdateRun?, Never>) async {
+        gate.release()
+        _ = await task.value
+        #expect(await waitUntil { !store.autoUpdate.isRunning && !store.isRefreshing })
+    }
+
+    @Test func theMenuBarRowsUpgradeWaits() async throws {
+        let (store, gate, task) = try await v094GatedAutoUpdate(Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"]))
+        defer { gate.release() }
+        let p = try #require(store.packages.first { $0.upgradeAvailable })
+        #expect(!store.isUpgrading && store.menuBarRowBusy && store.newRunBlocked)
+        let entries = ContextMenus.menuBarRow(p, compileWarning: nil, busy: store.menuBarRowBusy)
+        #expect(entries.contains { if case .item(let m) = $0 { return m.id == "upgrade" && !m.isEnabled }; return false })
+        await finish(store, gate, task)
+        #expect(!store.menuBarRowBusy && !store.newRunBlocked)
+    }
+
+    @Test func retryWaits() async throws {
+        let failing = V094AutoUpdateBlocksUpgradeTests.Failing()
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        let demo = deps.streamRunner
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            if args.first == "upgrade", let q = args.last, failing.contains(q.split(separator: "/").last.map(String.init) ?? q) {
+                out(Data("Error: simulated failure\n".utf8))
+                return 1
+            }
+            return try await demo.stream("/usr/local/bin/brew", args, environment: [:], output: out)
+        }
+        var name = ""
+        var first: UpgradeSession?
+        let (store, gate, task) = try await v094GatedAutoUpdate(deps) { store in
+            let p = try #require(store.upgradable.first { $0.kind == .formula })
+            name = p.name
+            failing.set([name])
+            store.startUpgrade([p])
+            let s = try #require(store.upgrade)
+            #expect(await waitUntil { s.isFinished })
+            #expect(await waitUntil { !store.isRefreshing })
+            try #require(!s.retryableItems.isEmpty)
+            first = s
+        }
+        defer { gate.release() }
+        let s = try #require(first)
+        #expect(store.newRunBlocked)
+        store.retryInSheet()
+        #expect(store.upgrade === s)
+        #expect(store.upgradePlan == nil)
+        await finish(store, gate, task)
+        failing.set([])
+        store.retryInSheet()
+        let again = try #require(store.upgrade)
+        #expect(again !== s)
+        #expect(again.items.map(\.package.name) == [name])
+        #expect(await waitUntil { again.isFinished })
+    }
+
+    @Test func cleanUpKeepsItsSheet() async throws {
+        let (store, gate, task) = try await v094GatedAutoUpdate(Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])) { store in
+            store.openCleanup()
+            let c = try #require(store.cleanup)
+            #expect(await waitUntil { c.phase == .ready && !c.measuringCache })
+        }
+        defer { gate.release() }
+        #expect(store.showCleanupSheet)
+        store.startCleanup()
+        #expect(store.showCleanupSheet, "the dry run stays on screen")
+        #expect(store.upgrade == nil)
+        await finish(store, gate, task)
+        store.startCleanup()
+        #expect(!store.showCleanupSheet)
+        #expect(store.upgrade?.action == .cleanup)
+    }
+
+    @Test func installCompilesKeepsItsConfirmation() async throws {
+        let (store, gate, task) = try await v094GatedAutoUpdate(Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"]))
+        defer { gate.release() }
+        let d = try #require(store.openDiscover())
+        let e = CatalogEntry(kind: .formula, name: "node-red", fullName: "node-red", tap: "homebrew/core", desc: nil, bottle: .fromSource)
+        try #require(!store.installedIDs.contains(e.id))
+        d.confirmInstall = e.id
+        store.confirmCompileInstall(e)
+        #expect(d.confirmInstall == e.id)
+        #expect(store.upgrade == nil)
+        await finish(store, gate, task)
+        store.confirmCompileInstall(e)
+        #expect(d.confirmInstall == nil)
+        #expect(store.upgrade?.action == .install)
+    }
+
+    /// The views use these gates (a view can't be inspected from here).
+    @Test func theViewsUseTheGates() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        func src(_ f: String) throws -> String {
+            try String(contentsOf: root.appendingPathComponent("Sources/TankardApp/\(f)"), encoding: .utf8)
+        }
+        let menu = try src("MenuBarExtra.swift")
+        #expect(menu.contains("busy: store.menuBarRowBusy"))
+        let sheet = try src("UpgradeSheet.swift")
+        #expect(sheet.components(separatedBy: "store.retryInSheet(").count - 1 == 2)
+        #expect(sheet.components(separatedBy: ".disabled(store.newRunBlocked)").count - 1 >= 2)
+        let activity = try src("ActivitySheets.swift")
+        #expect(activity.components(separatedBy: "(cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)").count - 1 == 2)
+        #expect(activity.contains("store.confirmCompileInstall(entry)"))
+        #expect(!activity.contains("discover.confirmInstall = nil\n                    store.startInstall(entry)"))
+        #expect(activity.contains(".disabled(store.appManagementRunsBlocked)"))
+        #expect(activity.components(separatedBy: ".disabled(runBlocked)").count - 1 == 2)
     }
 }
