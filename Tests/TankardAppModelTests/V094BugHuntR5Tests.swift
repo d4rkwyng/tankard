@@ -370,3 +370,59 @@ struct V094R5NoPreviewTests {
     }
 }
 
+// MARK: SHOULD-FIX: reconciliation by package, not short name
+
+/// The formulae fake brew upgraded so far.
+final class V094R5Names: @unchecked Sendable {
+    private let lock = NSLock()
+    private var names: [String] = []
+    var all: [String] { lock.withLock { names } }
+    func add(_ n: String) { lock.withLock { names.append(n) } }
+}
+
+@MainActor
+struct V094R5ReconcileByIDTests {
+    /// Auto-update upgrades formula `n`; the read after it also lists an
+    /// outdated cask named `n`. The formula's upgrade stands.
+    @Test func aSameNameCaskDoesntFailTheFormula() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        let reads = try v094WrapStatus(&deps)
+        let demo = deps.streamRunner
+        let names = V094R5Names()
+        reads.transform = { data in names.all.reduce(data) { V094R5ReconcileByIDTests.addOutdatedCask(named: $1, to: $0) } }
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            let code = try await demo.stream("/usr/local/bin/brew", args, environment: [:], output: out)
+            if args.first == "upgrade", args.contains("--formula"), code == 0, let q = args.last {
+                names.add(q.split(separator: "/").last.map(String.init) ?? q)
+            }
+            return code
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.autoUpdate.settings.enabled = true
+        let run = try #require(await store.autoUpdate.run(store: store, notifier: nil))
+        let name = try #require(run.upgraded.first { !$0.isCask }?.name ?? run.failed.first { !$0.isCask }?.name)
+        #expect(store.packages.contains { $0.kind == .cask && $0.name == name && $0.upgradeAvailable },
+                "the read lists the same-name cask as outdated")
+        #expect(store.packages.contains { $0.kind == .formula && $0.name == name && !$0.upgradeAvailable })
+        #expect(run.upgraded.contains { $0.name == name && !$0.isCask })
+        #expect(!run.failed.contains { $0.name == name && $0.detail == "still outdated after brew upgrade" })
+    }
+
+    /// The JSON with an outdated cask whose token is `name`.
+    nonisolated static func addOutdatedCask(named name: String, to data: Data) -> Data {
+        guard var json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return data }
+        var casks = json["casks"] as? [[String: Any]] ?? []
+        guard !casks.contains(where: { $0["token"] as? String == name }) else { return data }
+        let cask: [String: Any] = [
+            "token": name, "full_token": name, "tap": "homebrew/cask", "name": [name], "desc": NSNull(),
+            "homepage": "https://example.com", "url": "https://example.com/\(name).dmg",
+            "version": "2.0", "installed": "1.0", "installed_time": 1_700_000_000, "outdated": true,
+            "auto_updates": false, "deprecated": false, "disabled": false, "artifacts": [[String: Any]](),
+            "depends_on": [String: Any](), "conflicts_with": NSNull(), "caveats": NSNull(),
+        ]
+        casks.append(cask)
+        json["casks"] = casks
+        return (try? JSONSerialization.data(withJSONObject: json)) ?? data
+    }
+}
