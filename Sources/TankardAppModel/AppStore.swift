@@ -1244,6 +1244,18 @@ public final class AppStore {
         startSession(.upgrade, packages: packages?.filter(\.isManualUpgradeTarget) ?? upgradable, fromActivity: fromActivity)
     }
 
+    /// 0.9.4 (bug hunt R5): explicit upgrade targets as the list on screen
+    /// has them now, by package ID: a captured copy (an interrupted run's
+    /// offer, a failed step, a menu built earlier) of a package upgraded or
+    /// removed since isn't queued, and the rest carry brew's current
+    /// versions. nil: everything upgradable.
+    func upgradeTargets(_ packages: [Package]?) -> [Package] {
+        guard let packages else { return upgradable }
+        let now = Dictionary(self.packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        var seen = Set<String>()
+        return packages.compactMap { now[$0.id] }.filter { seen.insert($0.id).inserted && $0.isManualUpgradeTarget }
+    }
+
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
     /// first shows the plan with the compile warnings and "Skip packages
     /// that would compile"; otherwise it starts at once, as before.
@@ -1268,7 +1280,7 @@ public final class AppStore {
         // after them failed): the targets and the plan would be the old
         // ones. A fresh read is asked for; the next Upgrade uses it.
         guard !statusStale else { return rereadStaleStatus() }
-        let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
+        let targets = upgradeTargets(packages)
         guard !targets.isEmpty else { return }
         var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
         plan.skipCompiling = skipCompiling

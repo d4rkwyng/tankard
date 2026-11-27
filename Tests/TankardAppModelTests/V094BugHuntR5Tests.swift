@@ -135,3 +135,106 @@ private func v094R4RigForR5() async -> AppStore {
     return store
 }
 
+// MARK: MUST-FIX 2: explicit targets as the list says now
+
+@MainActor
+struct V094R5CapturedTargetTests {
+    func rig() async -> AppStore {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        return store
+    }
+
+    func markUpgraded(_ store: AppStore, _ p: Package) throws {
+        var r = try #require(store.report)
+        let i = try #require(r.packages.firstIndex { $0.id == p.id })
+        r.packages[i].installedVersion = p.currentVersion ?? "9"
+        r.packages[i].installedVersions = [r.packages[i].installedVersion]
+        r.packages[i].upgradeAvailable = false
+        store.report = r
+    }
+
+    func remove(_ store: AppStore, _ p: Package) throws {
+        var r = try #require(store.report)
+        r.packages.removeAll { $0.id == p.id }
+        store.report = r
+    }
+
+    /// "Upgrade the Remaining": one target upgraded meanwhile, one removed:
+    /// neither is queued; the one still outdated is.
+    @Test func upgradeTheRemainingUsesTheListNow() async throws {
+        let store = await rig()
+        let fs = store.upgradable.filter {
+            $0.kind == .formula && !UpgradePlan(packages: [$0], classifier: store.deps.classifier).needsConfirmation
+        }
+        try #require(fs.count >= 3)
+        store.interruptedRun = InterruptedRunOffer(packages: Array(fs.prefix(3)), total: 3)
+        try markUpgraded(store, fs[0])
+        try remove(store, fs[1])
+        try #require(!store.statusStale)
+        store.interruptedRunConfirm()
+        let ids = store.upgrade?.items.map(\.package.id) ?? store.upgradePlan?.rows.map(\.package.id) ?? []
+        #expect(ids == [fs[2].id])
+    }
+
+    /// Every captured target gone: nothing runs.
+    @Test func upgradeTheRemainingWithNothingLeft() async throws {
+        let store = await rig()
+        let f = try v094R5PlainFormula(store)
+        store.interruptedRun = InterruptedRunOffer(packages: [f], total: 1)
+        try markUpgraded(store, f)
+        store.interruptedRunConfirm()
+        #expect(store.upgrade == nil)
+        #expect(store.upgradePlan == nil)
+    }
+
+    /// The Upgrade button with a captured package removed since.
+    @Test func theUpgradeButtonUsesTheListNow() async throws {
+        let store = await rig()
+        let f = try v094R5PlainFormula(store)
+        try remove(store, f)
+        store.requestUpgrade([f])
+        #expect(store.upgrade == nil, "a removed package isn't queued")
+        #expect(store.upgradePlan == nil)
+    }
+
+    /// The list's current copy is the one queued (its versions now).
+    @Test func theQueuedPackageIsTheCurrentCopy() async throws {
+        let store = await rig()
+        var f = try v094R5PlainFormula(store)
+        let current = f.currentVersion
+        f.currentVersion = "0.0.0-captured"
+        store.requestUpgrade([f])
+        let s = try #require(store.upgrade)
+        #expect(s.items.map(\.package.currentVersion) == [current])
+        #expect(await waitUntil { s.isFinished })
+    }
+
+    /// Sheet Retry: the failed package was removed meanwhile: it isn't
+    /// queued from the failed step's copy.
+    @Test func retryDoesntFallBackToTheFailedStepsCopy() async throws {
+        var deps = Demo.dependencies(.arm64, pace: 0)
+        deps.appManagementGate = false
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { args, out in
+            guard args.first == "upgrade" else { return 0 }
+            out(Data("Error: simulated failure\n".utf8))
+            return 1
+        }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        let f = try v094R5PlainFormula(store)
+        store.startUpgrade([f])
+        let s = try #require(store.upgrade)
+        #expect(await waitUntil { s.isFinished && !store.isRefreshing })
+        try #require(s.retryableItems.map(\.package.id) == [f.id])
+        try remove(store, f)
+        store.retryInSheet()
+        #expect(store.upgrade === s, "nothing new was queued")
+        #expect(store.upgradePlan == nil)
+        #expect(store.error?.title == "Nothing to retry")
+    }
+}
+

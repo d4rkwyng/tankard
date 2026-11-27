@@ -68,7 +68,9 @@ extension AppStore {
         guard !pkgs.isEmpty else { return }
         switch s.action {
         case .upgrade:
-            let targets = pkgs.filter(\.isManualUpgradeTarget)
+            // 0.9.4 (bug hunt R5): only what the list has now, by ID (a
+            // package removed meanwhile isn't run from the step's copy).
+            let targets = upgradeTargets(pkgs)
             guard !targets.isEmpty else {
                 error = StoreError(title: String(localized: "Nothing to retry"),
                                    detail: String(localized: "\(pkgs.map(\.name).joined(separator: ", ")) has nothing left to upgrade."))
