@@ -809,9 +809,6 @@ public final class AppStore {
         // multi-selection stays), then the primary as before.
         let gone = selectedIDs.subtracting(installedIDs)
         if !gone.isEmpty { selectRows(selectedIDs.subtracting(gone), order: visiblePackages.map(\.id)) }
-        // 0.9.4 (review): rows still installed that the filter or search
-        // no longer shows (a changed vulnerability, an upgrade) go too.
-        reconcileSelectionWithVisibleRows()
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
 

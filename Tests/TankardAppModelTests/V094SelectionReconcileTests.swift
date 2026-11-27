@@ -89,30 +89,6 @@ struct V094SelectionReconcileTests {
         #expect(s.selection == ups[1].id)
     }
 
-    // MARK: refresh
-
-    @Test func aRefreshDropsRowsTheFilterNoLongerShows() async throws {
-        let s = try await store()
-        s.filter = .upgrades
-        let ups = Array(s.upgradable.filter { s.visiblePackages.contains($0) }.prefix(3))
-        #expect(ups.count == 3)
-        cmdClick(s, ups)
-        #expect(s.selection == ups[2].id)
-        // ups[2] is upgraded: still installed, but the Upgrades filter
-        // hides it once the read lands.
-        let reads = s.refreshesCompleted
-        s.startUpgrade([ups[2]])
-        let session = try #require(s.upgrade)
-        #expect(await waitUntil { session.isFinished })
-        #expect(await waitForRead(s, after: reads))
-        await s.refresh(manual: false)
-        #expect(s.packages.contains { $0.id == ups[2].id })
-        #expect(!s.visiblePackages.contains { $0.id == ups[2].id })
-        #expect(s.selectedIDs == [ups[0].id, ups[1].id])
-        let order = s.visiblePackages.map(\.id)
-        #expect(s.selection == order.first { [ups[0].id, ups[1].id].contains($0) })
-    }
-
     // MARK: single-package navigation
 
     @Test func aMenuBarPackageRowCollapsesASelectionOnItsPrimary() async throws {
