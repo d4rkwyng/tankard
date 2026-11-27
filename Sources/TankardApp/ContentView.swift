@@ -702,6 +702,7 @@ struct PackageTable: View {
         // 0.9.4: Esc clears the selection (the table's; a sheet, the plan
         // and the progress panel keep theirs: see clearSelection).
         .onExitCommand { store.clearSelection() }
+        .accessibilityIdentifier(AccessibilityText.ID.packageList)
         // One configuration in every theme: changing it makes AppKit drop
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.
@@ -838,6 +839,8 @@ struct PackageNameCell: View {
             TrailingRowMarks(store: store, package: p)
         }
         .frame(maxHeight: PackageRow.content)
+        // 0.9.4: test hook for Cmd-click / Esc scripting; not spoken.
+        .accessibilityIdentifier(AccessibilityText.ID.packageRow(p.id))
     }
 
     /// The width of the name's first NameFit.nameChars characters (the

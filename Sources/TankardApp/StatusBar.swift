@@ -110,6 +110,7 @@ struct StatusBar: View {
             .disabled(button.isUpToDate || store.windowBrewActionsBlocked || store.isRefreshing)
             .help(button.help)
             .accessibilityLabel(Text(button.accessibilityLabel))
+            .accessibilityIdentifier(AccessibilityText.ID.upgradeBar)
         }
         .font(.system(size: 11.5))
         .foregroundStyle(.secondary)
