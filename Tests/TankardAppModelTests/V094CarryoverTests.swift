@@ -295,9 +295,13 @@ struct V094LaunchCheckCacheTests {
         /// Where `retarget` points the cache link.
         var other: URL { directory.appendingPathComponent("other/net.mindtricks.tankard") }
         var reports: URL { home.appendingPathComponent("Library/Logs/DiagnosticReports") }
+        /// Another build's executable (a link to /bin/sleep), which
+        /// `start-other` starts.
+        var otherTankard: URL { directory.appendingPathComponent("Other.app/Contents/MacOS/Tankard") }
         var environment: [String: String] {
             ["HOME": home.path, "PATH": bin.path + ":/usr/bin:/bin:/usr/sbin:/sbin", "TMPDIR": directory.path + "/",
-             "STUB_MARK": mark.path, "STUB_MODE": mode, "STUB_OTHER": other.path, "TANKARD_DEMO": "1"]
+             "STUB_MARK": mark.path, "STUB_MODE": mode, "STUB_OTHER": other.path, "TANKARD_DEMO": "1",
+             "STUB_OTHER_TANKARD": otherTankard.path]
         }
         /// launch-check's work folders left in TMPDIR.
         func workFolders() throws -> [String] {
@@ -312,7 +316,12 @@ struct V094LaunchCheckCacheTests {
     /// `ignore-quit` (the stub osascript sends nothing, so only SIGTERM
     /// stops it), `replace` (puts another folder where the cache folder
     /// was) or `retarget` (points the cache link, or the folder's place,
-    /// at `Fixture.other`).
+    /// at `Fixture.other`), `stall-quit` (the stub osascript takes no
+    /// notice of its alarm or SIGTERM and sleeps 60s), `exit-unasked`
+    /// (the stub osascript has the app exit 0 on its own, records the
+    /// app's process state a moment later, then returns after 1s), or
+    /// `start-other` (once it has written the cache, the app starts
+    /// `Fixture.otherTankard`, another Tankard that outlives it).
     ///
     /// The stub installs its traps first, so a Quit can't arrive before it
     /// can take it, and holds a Quit that comes before it has written its
@@ -354,6 +363,7 @@ struct V094LaunchCheckCacheTests {
             ready=0 pending=0
             asked() { if [ $ready = 1 ]; then quit; else pending=1; fi; }
             trap asked USR1
+            trap 'echo self > "$STUB_MARK/exited"; exit 0' USR2
             trap term TERM
             c="$HOME/Library/Caches/net.mindtricks.tankard"
             if [ -f "$c/status.json" ]; then cat "$c/status.json" > "$STUB_MARK/seen.tmp"; else echo none > "$STUB_MARK/seen.tmp"; fi
@@ -365,6 +375,7 @@ struct V094LaunchCheckCacheTests {
             case "$STUB_MODE" in
                 replace) mv "$c" "$c.moved" && mkdir "$c" && echo replacement > "$c/mine.txt" ;;
                 retarget) { if [ -L "$c" ]; then rm "$c"; else mv "$c" "$c.moved"; fi; } && ln -s "$STUB_OTHER" "$c" ;;
+                start-other) "$STUB_OTHER_TANKARD" 60 </dev/null >/dev/null 2>&1 & echo $! > "$STUB_MARK/otherpid" ;;
             esac
             mv "$STUB_MARK/seen.tmp" "$STUB_MARK/seen"
             ready=1
@@ -379,7 +390,19 @@ struct V094LaunchCheckCacheTests {
             #!/bin/sh
             printf '%s\\n' "$*" >> "$STUB_MARK/osascript"
             [ "$STUB_MODE" = ignore-quit ] && exit 0
+            if [ "$STUB_MODE" = stall-quit ]; then
+                echo $$ > "$STUB_MARK/osapid"
+                trap '' ALRM TERM
+                exec /bin/sleep 60
+            fi
             pid=$(printf '%s\\n' "$*" | sed -n 's/.*runningApplicationWithProcessIdentifier(\\([0-9][0-9]*\\)).*/\\1/p')
+            if [ "$STUB_MODE" = exit-unasked ]; then
+                [ -n "$pid" ] && kill -USR2 "$pid"
+                /bin/sleep 0.5
+                ps -o stat= -p "$pid" > "$STUB_MARK/state"
+                /bin/sleep 0.5
+                exit 0
+            fi
             [ -n "$pid" ] && kill -USR1 "$pid"
             exit 0
             """
@@ -403,18 +426,41 @@ struct V094LaunchCheckCacheTests {
 
     /// A process whose executable path is `path` (a link to /bin/sleep; a
     /// copy of it would not run), sleeping `seconds`.
-    private func startSleeper(at path: URL, seconds: Int = 60) async throws -> Process {
+    /// `home`: its HOME (otherwise this test process's). `target`: what
+    /// the link points at (a platform binary, as /bin/sleep, keeps its
+    /// environment from `ps -E`; see `buildSleeper` for one that doesn't).
+    private func startSleeper(at path: URL, seconds: Int = 60, home: URL? = nil,
+                              target: URL = URL(fileURLWithPath: "/bin/sleep")) async throws -> Process {
         try FileManager.default.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try FileManager.default.createSymbolicLink(at: path, withDestinationURL: URL(fileURLWithPath: "/bin/sleep"))
+        try FileManager.default.createSymbolicLink(at: path, withDestinationURL: target)
         let p = Process()
         p.executableURL = path
         p.arguments = [String(seconds)]
+        if let home {
+            var environment = ProcessInfo.processInfo.environment
+            environment["HOME"] = home.path
+            p.environment = environment
+        }
         p.standardInput = FileHandle.nullDevice
         p.standardOutput = FileHandle.nullDevice
         p.standardError = FileHandle.nullDevice
         try p.run()
         _ = await waitUntilTrue(within: 5) { await processTable().contains(path.path) }
         return p
+    }
+
+    /// A sleep(1) of our own, built into `directory`: not a platform
+    /// binary, so `ps -E` shows its environment (HOME), as for Tankard.
+    private func buildSleeper(in directory: URL) async throws -> URL {
+        let source = directory.appendingPathComponent("sleeper.c")
+        let binary = directory.appendingPathComponent("sleeper")
+        try "#include <stdlib.h>\n#include <unistd.h>\nint main(int c, char **v) { sleep(c > 1 ? atoi(v[1]) : 60); return 0; }\n"
+            .write(to: source, atomically: true, encoding: .utf8)
+        var environment = ["PATH": "/usr/bin:/bin"]
+        environment["DEVELOPER_DIR"] = ProcessInfo.processInfo.environment["DEVELOPER_DIR"]
+        let ran = try await runTool("/usr/bin/cc", ["-o", binary.path, source.path], environment: environment, timeout: 120)
+        try #require(ran.status == 0, "cc: \(ran.stderr)")
+        return binary
     }
 
     private func processTable() async -> String {
@@ -559,24 +605,225 @@ struct V094LaunchCheckCacheTests {
         let pid = try #require(read(f.mark.appendingPathComponent("pid"))?.trimmingCharacters(in: .whitespacesAndNewlines))
         #expect(read(f.mark.appendingPathComponent("osascript"))?.contains("runningApplicationWithProcessIdentifier(\(pid))") == true)
         #expect(signals(f) == ["term"])
+        #expect(ran.stderr.contains("was still up 5s after the Quit; sent it SIGTERM"))
+        #expect(!ran.stderr.contains("SIGKILL"))
         #expect(!FileManager.default.fileExists(atPath: f.cache.path))
     }
 
-    /// 0.9.4 review (round 2): the Quit and every signal go to the launched
-    /// app only while it is still bash's running child, so a number bash
-    /// has reaped (and the system may have reused) is never signalled.
-    @Test func everySignalIsBoundToTheRunningChild() throws {
+    /// 0.9.4 review (round 3): an osascript that stalls (and takes no
+    /// notice of its alarm or of SIGTERM) can't hold the check. It is
+    /// stopped after 12s at most, and the fallback SIGTERM then stops the
+    /// app. Before, the Quit ran unbounded, ahead of the fallback, and the
+    /// check waited out the whole 60s stall.
+    @Test func aStalledQuitDoesNotHangTheCheckAndTheFallbackRuns() async throws {
+        let f = try makeFixture(mode: "stall-quit")
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let start = Date()
+        let ran = try await launchCheck(f)
+        let elapsed = Date().timeIntervalSince(start)
+        #expect(ran.status == 0, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stdout.contains("launch-check: run 1/1 OK"))
+        // 1s up, 12s for the osascript, 5s for the app, SIGTERM, 3s for a
+        // crash report: well under the stall's 60s.
+        #expect(elapsed < 40, "took \(elapsed)s")
+        #expect(ran.stderr.contains("the Quit's osascript did not finish within 10s; it was stopped"))
+        #expect(ran.stderr.contains("was still up 5s after the Quit; sent it SIGTERM"))
+        #expect(signals(f) == ["term"])
+        let osa = try #require(Int32(read(f.mark.appendingPathComponent("osapid"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""))
+        #expect(!alive(osa))
+        #expect(!FileManager.default.fileExists(atPath: f.cache.path))
+        #expect(try f.workFolders().isEmpty)
+    }
+
+    /// 0.9.4 review (round 3): the app exits on its own while the Quit's
+    /// osascript is still running (the instant the old `jobs -rp` check
+    /// could miss). Its pid stays reserved, a zombie not yet reaped, until
+    /// the check has decided to send it nothing more; it is then reaped
+    /// with no SIGTERM or SIGKILL, and the run counts as a normal quit.
+    @Test func anAppThatExitsDuringTheQuitIsReapedAndNeverSignalled() async throws {
+        let f = try makeFixture(mode: "exit-unasked")
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let ran = try await launchCheck(f)
+        #expect(ran.status == 0, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stdout.contains("launch-check: run 1/1 OK"))
+        #expect(read(f.mark.appendingPathComponent("exited")) == "self\n")
+        // Half a second after it exited, its pid was still its own: a
+        // zombie, not reaped while the Quit was under way.
+        let state = read(f.mark.appendingPathComponent("state"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        #expect(state.hasPrefix("Z"), "process state: '\(state)'")
+        #expect(!ran.stderr.contains("SIGTERM"))
+        #expect(!ran.stderr.contains("SIGKILL"))
+        #expect(signals(f).isEmpty)
+        let pid = try #require(Int32(read(f.mark.appendingPathComponent("pid"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""))
+        #expect(!alive(pid))
+        #expect(!FileManager.default.fileExists(atPath: f.cache.path))
+    }
+
+    /// 0.9.4 review (round 3): only the helper signals the app, and only
+    /// while it has not reaped it. The script itself has no `kill` and
+    /// no `jobs`, and runs no osascript.
+    @Test func theScriptLeavesEverySignalToTheSupervisor() throws {
         let text = try String(contentsOf: repoRoot.appendingPathComponent("Scripts/launch-check.sh"), encoding: .utf8)
         let code = text.split(separator: "\n").map(String.init).filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("#") }
-        // `kill` only in signal_child, which checks child_running first.
-        let kills = code.filter { $0.range(of: #"(^|[\s;&|(])kill\s"#, options: .regularExpression) != nil }
-        #expect(kills == [#"signal_child() { child_running && kill "$1" "$pid" 2>/dev/null; }"#])
-        #expect(code.contains(#"child_running() { [ -n "$pid" ] && jobs -rp | grep -qx "$pid"; }"#))
-        // The Quit is sent only while it runs, and SIGKILL only after a
-        // SIGTERM that found it running.
-        #expect(text.contains("        if child_running; then\n            osascript -l JavaScript"))
-        #expect(text.contains("        if signal_child -TERM; then\n            stop=TERM\n"))
-        #expect(!text.contains("kill -0"))
+        #expect(code.filter { $0.range(of: #"(^|[\s;&|(])(kill|jobs|osascript)(\s|$)"#, options: .regularExpression) != nil }.isEmpty)
+        #expect(text.contains(#"/usr/bin/perl "$HELPER" supervise "$WORK/result" "$WORK/stop""#))
+    }
+
+    /// The helper's scripts pass perl's own syntax check.
+    @Test func helperPassesPerlSyntaxCheck() async throws {
+        let ran = try await runTool("/usr/bin/perl", ["-c", "Scripts/launch-check-helper.pl"], environment: ["PATH": "/usr/bin:/bin"])
+        #expect(ran.status == 0, "\(ran.stderr)")
+    }
+
+    /// 0.9.4 review (round 3): every build of Tankard shares the cache
+    /// folder, so another build running (not only this app) stops the
+    /// check before the cache is copied or anything is launched, and that
+    /// process is left alone.
+    @Test func anotherTankardBuildRunningStopsTheCheck() async throws {
+        let f = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        try FileManager.default.createDirectory(at: f.cache, withIntermediateDirectories: true)
+        let original = #"{"written":"before the check"}"#
+        try original.write(to: f.cache.appendingPathComponent("status.json"), atomically: true, encoding: .utf8)
+        let other = try await startSleeper(at: f.otherTankard, home: f.home, target: try await buildSleeper(in: f.directory))
+        defer { killNow(other) }
+        #expect(other.isRunning)
+
+        let ran = try await launchCheck(f, timeout: 30)
+        #expect(ran.status == 1, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stderr.contains("launch-check.sh: another Tankard is running (pid \(other.processIdentifier) \(f.otherTankard.path))"))
+        #expect(!FileManager.default.fileExists(atPath: f.mark.appendingPathComponent("pid").path))
+        #expect(try FileManager.default.contentsOfDirectory(atPath: f.cache.path) == ["status.json"])
+        #expect(read(f.cache.appendingPathComponent("status.json")) == original)
+        #expect(try f.workFolders().isEmpty)
+        #expect(other.isRunning)
+        await stop(other)
+    }
+
+    /// The same for a `swift run TankardApp` build (`.build/…/TankardApp`,
+    /// not in a bundle): same bundle id, same cache folder.
+    @Test func aSwiftRunBuildRunningStopsTheCheck() async throws {
+        let f = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let path = f.directory.appendingPathComponent("pkg/.build/debug/TankardApp")
+        let other = try await startSleeper(at: path, home: f.home, target: try await buildSleeper(in: f.directory))
+        defer { killNow(other) }
+
+        let ran = try await launchCheck(f, timeout: 30)
+        #expect(ran.status == 1, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stderr.contains("launch-check.sh: another Tankard is running (pid \(other.processIdentifier) \(path.path))"))
+        #expect(!FileManager.default.fileExists(atPath: f.mark.appendingPathComponent("pid").path))
+        #expect(!FileManager.default.fileExists(atPath: f.cache.path))
+        #expect(try f.workFolders().isEmpty)
+        #expect(other.isRunning)
+        await stop(other)
+    }
+
+    /// A Tankard of another HOME (the Mac's own, while a test runs under a
+    /// throwaway one) has its own cache folder: it does not stop the check,
+    /// and is left alone.
+    @Test func aTankardOfAnotherHomeDoesNotStopTheCheck() async throws {
+        let f = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let elsewhere = f.directory.appendingPathComponent("elsewhere-home")
+        try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
+        let other = try await startSleeper(at: f.otherTankard, home: elsewhere, target: try await buildSleeper(in: f.directory))
+        defer { killNow(other) }
+
+        let ran = try await launchCheck(f)
+        #expect(ran.status == 0, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stdout.contains("launch-check: run 1/1 OK"))
+        #expect(other.isRunning)
+        await stop(other)
+    }
+
+    /// One whose environment can't be read (here a platform binary, which
+    /// `ps -E` shows without it) may share the cache, so it counts.
+    @Test func aTankardWhoseHomeCantBeReadStopsTheCheck() async throws {
+        let f = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let elsewhere = f.directory.appendingPathComponent("elsewhere-home")
+        try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
+        let other = try await startSleeper(at: f.otherTankard, home: elsewhere)
+        defer { killNow(other) }
+
+        let ran = try await launchCheck(f, timeout: 30)
+        #expect(ran.status == 1, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stderr.contains("launch-check.sh: another Tankard is running (pid \(other.processIdentifier) "))
+        #expect(!FileManager.default.fileExists(atPath: f.mark.appendingPathComponent("pid").path))
+        #expect(other.isRunning)
+        await stop(other)
+    }
+
+    /// 0.9.4 review (round 3): another Tankard that starts during the check
+    /// writes into the same folder, so nothing in it is deleted at the end:
+    /// the check fails, saying so, and keeps the copy.
+    @Test func aTankardStartedDuringTheCheckKeepsTheCacheAndTheCopy() async throws {
+        let f = try makeFixture(mode: "start-other")
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        try FileManager.default.createDirectory(at: f.otherTankard.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: f.otherTankard, withDestinationURL: URL(fileURLWithPath: "/bin/sleep"))
+        try FileManager.default.createDirectory(at: f.cache, withIntermediateDirectories: true)
+        let original = #"{"written":"before the check"}"#
+        try original.write(to: f.cache.appendingPathComponent("status.json"), atomically: true, encoding: .utf8)
+
+        let ran = try await launchCheck(f)
+        let otherPid = Int32(read(f.mark.appendingPathComponent("otherpid"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+        defer { if let otherPid { kill(otherPid, SIGKILL) } }
+        #expect(ran.status == 1, "\(ran.stdout)\n\(ran.stderr)")
+        #expect(ran.stdout.contains("launch-check: run 1/1 OK"))
+        #expect(ran.stderr.contains("did not put back \(f.cache.path): another Tankard is running"))
+        #expect(ran.stderr.contains("nothing in it was deleted"))
+        let otherRunning = try #require(otherPid)
+        #expect(alive(otherRunning))
+        // What the launch wrote is still there; the copy has what was before.
+        #expect(read(f.cache.appendingPathComponent("status.json"))?.contains("by the launch") == true)
+        let copy = try #require(keptCopy(ran.stderr))
+        #expect(read(copy.appendingPathComponent("status.json")) == original)
+    }
+
+    /// 0.9.4 review (round 3): the helper makes the cache folder as one
+    /// step. Something already there (a folder, a link) is never taken for
+    /// the folder it made, and is left as it is; the id it prints is the
+    /// folder at that path, empty, with the usual mode.
+    @Test func theCacheFolderIsMadeInOneStep() async throws {
+        let f = try makeFixture()
+        defer { try? FileManager.default.removeItem(at: f.directory) }
+        let parent = f.directory.appendingPathComponent("caches")
+        try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+        func mkcache(_ url: URL) async throws -> Ran {
+            try await runTool("/bin/sh", ["-c", "umask 022; exec /usr/bin/perl Scripts/launch-check-helper.pl mkcache \"$1\"", "sh", url.path],
+                              environment: ["PATH": "/usr/bin:/bin"], timeout: 30)
+        }
+        let made = parent.appendingPathComponent("made")
+        let ran = try await mkcache(made)
+        #expect(ran.status == 0, "\(ran.stderr)")
+        let attrs = try FileManager.default.attributesOfItem(atPath: made.path)
+        #expect(attrs[.type] as? FileAttributeType == .typeDirectory)
+        #expect((attrs[.posixPermissions] as? NSNumber)?.intValue == 0o755)
+        let dev = (attrs[.systemNumber] as? NSNumber)?.intValue ?? -1
+        let ino = (attrs[.systemFileNumber] as? NSNumber)?.intValue ?? -1
+        #expect(ran.stdout == "\(dev):\(ino)\n")
+        #expect(try FileManager.default.contentsOfDirectory(atPath: made.path).isEmpty)
+
+        let existing = parent.appendingPathComponent("existing")
+        try FileManager.default.createDirectory(at: existing, withIntermediateDirectories: true)
+        try "theirs".write(to: existing.appendingPathComponent("keep.txt"), atomically: true, encoding: .utf8)
+        let emptyExisting = parent.appendingPathComponent("empty-existing")
+        try FileManager.default.createDirectory(at: emptyExisting, withIntermediateDirectories: true)
+        let link = parent.appendingPathComponent("link")
+        try FileManager.default.createSymbolicLink(at: link, withDestinationURL: existing)
+        for url in [existing, emptyExisting, link] {
+            let r = try await mkcache(url)
+            #expect(r.status == 1, "\(url.lastPathComponent): \(r.stdout)")
+            #expect(r.stdout.isEmpty)
+            #expect(r.stderr.contains("it appeared meanwhile"), "\(url.lastPathComponent): \(r.stderr)")
+        }
+        #expect(try FileManager.default.contentsOfDirectory(atPath: existing.path) == ["keep.txt"])
+        #expect(try FileManager.default.contentsOfDirectory(atPath: emptyExisting.path).isEmpty)
+        #expect(try FileManager.default.destinationOfSymbolicLink(atPath: link.path) == existing.path)
+        // No private folder left behind next to them.
+        #expect(try FileManager.default.contentsOfDirectory(atPath: parent.path).sorted() == ["empty-existing", "existing", "link", "made"])
     }
 
     /// The cache folder can be a symlink (this build Mac keeps it on another

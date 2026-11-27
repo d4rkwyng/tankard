@@ -410,6 +410,12 @@ enum TestDefaults {
         return flushed
     }
 
+    /// `remove`, awaited off Swift's cooperative pool (it waits on
+    /// `defaults`; see `offCooperativePool`). For async tests.
+    @discardableResult static func removeAsync(_ name: String) async -> Bool {
+        await offCooperativePool { remove(name) }
+    }
+
     /// The pre-0.9.4 `remove`, without the flush: `removeAll` runs it for
     /// every suite at exit (hundreds), where spawning `defaults` for each
     /// would be slow, and the sweeper's two passes after exit already cover
@@ -430,7 +436,27 @@ enum TestDefaults {
     /// stopped.
     @discardableResult static func flushPendingWrite(_ name: String, timeout: TimeInterval = 10) -> Bool {
         guard isSweepable(name) else { return false }
+        if onCooperativePool() { poolFlushes.insert(name) }
         return runToSuccess("/usr/bin/defaults", ["export", name, "/dev/null"], timeout: timeout)
+    }
+
+    /// 0.9.4 review (round 3): the names whose flush (a wait on
+    /// `defaults`) ran on a cooperative pool thread, holding it from every
+    /// other test. TestDefaultsTests checks its own suites are not here.
+    private static let poolFlushes = NameSet()
+    static func flushedOnCooperativePool(_ name: String) -> Bool { poolFlushes.contains(name) }
+
+    /// True on one of Swift concurrency's cooperative threads (on Darwin a
+    /// dispatch root queue labelled `com.apple.root.<qos>.cooperative`).
+    static func onCooperativePool() -> Bool {
+        String(cString: __dispatch_queue_get_label(nil)).hasSuffix(".cooperative")
+    }
+
+    final class NameSet: @unchecked Sendable {
+        private let lock = NSLock()
+        private var names: Set<String> = []
+        func insert(_ name: String) { lock.withLock { _ = names.insert(name) } }
+        func contains(_ name: String) -> Bool { lock.withLock { names.contains(name) } }
     }
 
     /// Runs `executable` with no input or output and reports whether it

@@ -1239,10 +1239,17 @@ before that it ran before notarizing, so the stapled app was never launched). It
 (0.9.4), so a check leaves no `status.json` behind. It puts the copy back only into the
 folder it came from (same device and inode, same link). If that folder was replaced
 during the check, it deletes nothing, keeps the copy and fails. With no folder before, it
-makes an empty one for the launches and removes only that one (same device and inode, not
-a link); anything else in its place is left alone and the check fails. It only ever
-signals the app it launched itself, and only while that app is still its running child, so
-a process number that has been reused is never signalled. A crash while quitting counts,
+makes an empty one for the launches, in one step (`Scripts/launch-check-helper.pl`: a
+private folder renamed into place with `renameatx_np(RENAME_EXCL)`), and removes only that
+one (same device and inode, not a link); anything else in its place is left alone and the
+check fails. Every build of Tankard shares that folder, so any other running Tankard
+(any `…/Contents/MacOS/Tankard` with this cache) stops the check before the copy and
+before each launch, and one that started meanwhile leaves the folder untouched at the end.
+Each launch is supervised by the helper (Perl), which alone sends the Quit and any
+SIGTERM/SIGKILL, and reaps the app only once it will send it nothing more: until then the
+app's pid stays reserved (a zombie if it has exited), so a reused pid is never signalled.
+The Quit's `osascript` is bounded (an alarm at 10s, SIGKILL at 12s), so a stalled one
+can't hold the release gate before the fallback. A crash while quitting counts,
 and so does an exit other than 0 when told to quit. 0.3.0 crashed at
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule

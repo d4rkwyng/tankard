@@ -104,16 +104,22 @@ for v in $(env | sed -n 's/^\(TANKARD_[A-Z_]*\)=.*/\1/p'); do ENV_CLEAN+=(-u "$v
 
 BIN_ABS=$(cd "$(dirname "$BIN")" && pwd)/Tankard
 BIN_PHYS=$(cd "$(dirname "$BIN")" && pwd -P)/Tankard
-# PIDs whose executable is exactly this app's (either spelling of its
-# path). A plain string compare, not a pattern: an app next to this one
-# (Build1app/…/Tankard-helper, say) is someone else's.
-running_from_app() {
-    ps -axww -o pid= -o comm= | P1="$BIN_ABS" P2="$BIN_PHYS" awk '
-        { pid = $1; sub(/^[ \t]*[0-9]+[ \t]/, "") }
-        $0 == ENVIRON["P1"] || $0 == ENVIRON["P2"] { print pid }'
-}
-if [ -n "$(running_from_app)" ]; then
+# The process checks, the cache folder's making and the launches
+# themselves (see the helper's header).
+HELPER="$PWD/Scripts/launch-check-helper.pl"
+# Every running Tankard that shares this user's cache folder, "pid path"
+# per line: this app (either spelling of its path) and any other build
+# (any …/Contents/MacOS/Tankard: all builds read and write the same
+# ~/Library/Caches/net.mindtricks.tankard, so one running would write into
+# what the check puts back). An exact path compare and a name compare,
+# not a prefix: Build1app/…/Tankard-helper is someone else's.
+running_tankard() { /usr/bin/perl "$HELPER" running "$BIN_ABS" "$BIN_PHYS"; }
+others=$(running_tankard) || { echo "launch-check.sh: could not list the running processes" >&2; exit 1; }
+if printf '%s\n' "$others" | awk -v a="$BIN_ABS" -v p="$BIN_PHYS" '{ sub(/^[0-9]+ /, "") } $0 == a || $0 == p { f = 1 } END { exit !f }'; then
     echo "launch-check.sh: $APP is already running; quit it first" >&2
+    exit 1
+elif [ -n "$others" ]; then
+    echo "launch-check.sh: another Tankard is running (pid $(printf '%s\n' "$others" | head -1)), and it shares $HOME/Library/Caches/net.mindtricks.tankard; quit it first" >&2
     exit 1
 fi
 
@@ -140,6 +146,10 @@ TMP_LOG="$WORK/run.log"
 # removes it on exit, but only that folder: if another one (a link, or a
 # folder that is not the one made here) is in its place by then, it is left
 # as it is and the check fails.
+# Every build of Tankard shares this folder, so no other Tankard may run:
+# one found before the copy, or before a launch, stops the check; one found
+# at the end (it started meanwhile) leaves the folder as it is (nothing in
+# it deleted, the copy kept) and fails the check.
 CACHE_DIR="$HOME/Library/Caches/net.mindtricks.tankard"
 CACHE_SAVED=0
 CACHE_MADE=0     # 1: there was none; the folder at CACHE_ID was made here
@@ -163,7 +173,10 @@ if [ -e "$CACHE_DIR" ] || [ -L "$CACHE_DIR" ]; then
     fi
     CACHE_SAVED=1
 else
-    mkdir -p "$(dirname "$CACHE_DIR")" && mkdir "$CACHE_DIR" && CACHE_ID=$(cache_id) && [ -n "$CACHE_ID" ] || {
+    # One step (the helper's mkcache): CACHE_ID is the folder made here,
+    # taken from its open handle, and nothing that appears at CACHE_DIR
+    # meanwhile (a folder, a link) can be taken for it.
+    mkdir -p "$(dirname "$CACHE_DIR")" && CACHE_ID=$(/usr/bin/perl "$HELPER" mkcache "$CACHE_DIR") && [ -n "$CACHE_ID" ] || {
         rm -rf "$WORK"
         echo "launch-check.sh: could not make $CACHE_DIR (or it appeared meanwhile); nothing was launched" >&2
         exit 1
@@ -203,27 +216,14 @@ restore_cache() (
     fi
 )
 
-# pid: the launched app while it may still be running; emptied once it has
-# been reaped, so finish never signals a number that may be reused.
-# launched_pid: the same app, kept after that to match its crash reports.
-pid=""
-launched_pid=""
-# INT/TERM/HUP while `pid` is being set or cleared (holding=1) are held
-# until that is done: an exit in between would leave the app running with
-# no pid for finish, or have finish signal a pid already reaped.
-holding=0
-held=""
-on_signal() { if [ $holding = 1 ]; then held=$1; else exit "$1"; fi; }
-# True while the launched app is still bash's own running child (`jobs -rp`
-# is bash's list of them). Once it has exited bash may reap it, and its
-# number may be reused, so every Quit and every signal checks this first.
-child_running() { [ -n "$pid" ] && jobs -rp | grep -qx "$pid"; }
-# Sends signal $1 to the launched app, only while child_running. (What is
-# left is the instant between that check and the kill builtin; outside it a
-# number bash has reaped is never signalled.)
-signal_child() { child_running && kill "$1" "$pid" 2>/dev/null; }
-hold() { holding=1; }
-release() { holding=0; [ -z "$held" ] || exit "$held"; }
+# sup: the helper supervising the current launch (bash's own child; bash
+# only ever waits for it, never signals it). The helper alone launches,
+# Quits and signals the app, and reaps it only once nothing more will be
+# sent to it, so no Quit or signal can reach a reused pid (see its header).
+# finish stops a launch by making $WORK/stop: the helper then SIGKILLs and
+# reaps the app and exits. If this script dies without finish (SIGKILL),
+# the helper sees its parent gone and does the same.
+sup=""
 finish() {
     local rc=$?
     # Not interruptible: a second Ctrl-C (or a cancelled job's follow-up
@@ -232,8 +232,24 @@ finish() {
     trap - EXIT
     # The launched app must be gone before the cache goes back (an
     # interrupted run can leave it up).
-    if signal_child -9; then wait "$pid" 2>/dev/null || true; fi
-    pid=""
+    if [ -n "$sup" ]; then
+        : > "$WORK/stop"
+        wait "$sup" 2>/dev/null || true
+        sup=""
+    fi
+    # Another Tankard started meanwhile (it would not be refused before
+    # the launch) writes into this same folder: nothing is deleted then.
+    local others
+    others=$(running_tankard) || others="(could not list the running processes)"
+    if [ -n "$others" ]; then
+        if [ $CACHE_MADE = 1 ]; then
+            echo "launch-check.sh: did not remove $CACHE_DIR: another Tankard is running (pid $(printf '%s\n' "$others" | head -1)) and shares it; nothing in it was deleted" >&2
+            rm -rf "$WORK"
+        else
+            echo "launch-check.sh: did not put back $CACHE_DIR: another Tankard is running (pid $(printf '%s\n' "$others" | head -1)) and shares it; nothing in it was deleted. The copy from before the check is in $WORK/cache" >&2
+        fi
+        exit 1
+    fi
     local restored=0
     if [ $CACHE_MADE = 1 ]; then
         restore_cache || restored=$?
@@ -260,63 +276,57 @@ finish() {
     exit $rc
 }
 trap finish EXIT
-trap 'on_signal 130' INT
-trap 'on_signal 143' TERM
-trap 'on_signal 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
 REENTRANT="reentrant operation in its NSTableView delegate"
 
 failed=0
 for run in $(seq 1 "$RUNS"); do
-    before=$(crash_reports)
-    # A normal launch, window restoration included: that is what users get.
-    hold
-    "${ENV_CLEAN[@]}" "$BIN_ABS" ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} >"$TMP_LOG" 2>&1 &
-    pid=$!
-    launched_pid=$pid
-    release
-    alive=1
-    for _ in $(seq 1 "$SECONDS_UP"); do
-        sleep 1
-        if ! child_running; then alive=0; break; fi
-    done
-    status=running
-    stopped_ok=1
-    if [ $alive = 1 ]; then
-        # Quit it the way a user does (a Quit Apple event to this pid only), so
-        # macOS doesn't offer to "reopen windows" next time; SIGTERM, then
-        # SIGKILL, only if it is still up. `stop` says which one ended it.
-        stop=quit
-        if child_running; then
-            osascript -l JavaScript -e "ObjC.import('AppKit'); var a = \$.NSRunningApplication.runningApplicationWithProcessIdentifier($pid); if (a) a.terminate; ''" >/dev/null 2>&1 || true
-        fi
-        for _ in $(seq 1 25); do child_running || break; sleep 0.2; done
-        if signal_child -TERM; then
-            stop=TERM
-            for _ in $(seq 1 25); do child_running || break; sleep 0.2; done
-            signal_child -KILL && stop=KILL
-        fi
-        hold
-        rc=0
-        wait "$pid" 2>/dev/null || rc=$?
-        # Told to quit, it must exit 0. After the fallback, the signal sent
-        # (143 or 137) or 0 is expected; anything else is a failure too.
-        case "$stop:$rc" in
-            quit:0|TERM:0|TERM:143|KILL:137) ;;
-            quit:*) status="running, then exited $rc when told to quit"; stopped_ok=0 ;;
-            TERM:*) status="running, then exited $rc after SIGTERM"; stopped_ok=0 ;;
-            *) status="running, then exited $rc after SIGTERM and SIGKILL"; stopped_ok=0 ;;
-        esac
-    else
-        hold
-        wait "$pid" && status="exited 0" || status="exited $?"
+    # Again before every launch: a Tankard started since the first check
+    # (while the cache was copied, or during the last run) would share it.
+    others=$(running_tankard) || { echo "launch-check.sh: could not list the running processes" >&2; exit 1; }
+    if [ -n "$others" ]; then
+        echo "launch-check.sh: another Tankard is running (pid $(printf '%s\n' "$others" | head -1)), and it shares $CACHE_DIR; quit it first (run $run/$RUNS was not launched)" >&2
+        exit 1
     fi
-    # Reaped: finish must not signal that number again. Its crash reports
-    # are still looked up by launched_pid (a crash while quitting counts).
-    pid=""
-    release
+    before=$(crash_reports)
+    rm -f "$WORK/result"
+    # A normal launch, window restoration included: that is what users get.
+    # Up SECONDS_UP, then Quit the way a user does (a Quit Apple event to
+    # this pid only, so macOS doesn't offer to "reopen windows" next time);
+    # SIGTERM, then SIGKILL, only if it is still up.
+    /usr/bin/perl "$HELPER" supervise "$WORK/result" "$WORK/stop" "$SECONDS_UP" "$TMP_LOG" -- \
+        "${ENV_CLEAN[@]}" "$BIN_ABS" ${LANG_ARGS[@]+"${LANG_ARGS[@]}"} &
+    sup=$!
+    # Returns early on INT/TERM/HUP (their traps exit, and finish stops it).
+    sup_rc=0
+    wait "$sup" || sup_rc=$?
+    sup=""
+    result=$(cat "$WORK/result" 2>/dev/null || true)
+    launched_pid=$(printf '%s\n' "$result" | sed -n 's/^pid \([0-9][0-9]*\)$/\1/p')
+    outcome=$(printf '%s\n' "$result" | sed -n '/^pid /!p' | tail -1)
+    alive=0
+    stopped_ok=1
+    case "$outcome" in
+        "exited "*) status="exited ${outcome#exited }" ;;
+        "stopped "*)
+            alive=1
+            set -- $outcome
+            # Told to quit, it must exit 0. After the fallback, the signal sent
+            # (143 or 137) or 0 is expected; anything else is a failure too.
+            case "$2:$3" in
+                quit:0|TERM:0|TERM:143|KILL:137) status=running ;;
+                quit:*) status="running, then exited $3 when told to quit"; stopped_ok=0 ;;
+                TERM:*) status="running, then exited $3 after SIGTERM"; stopped_ok=0 ;;
+                *) status="running, then exited $3 after SIGTERM and SIGKILL"; stopped_ok=0 ;;
+            esac ;;
+        *) status="not supervised to the end (helper exit $sup_rc)" ;;
+    esac
     # Crash reports are written a moment after the process dies.
     sleep 3
-    new=$(reports_for "$launched_pid" "$before" | tr '\n' ' ')
+    new=""
+    [ -z "$launched_pid" ] || new=$(reports_for "$launched_pid" "$before" | tr '\n' ' ')
     [ -n "$LOG_DIR" ] && cp "$TMP_LOG" "$LOG_DIR/run-$run.log"
     reentrant=$(grep -c "$REENTRANT" "$TMP_LOG" || true)
     if [ $alive = 1 ] && [ $stopped_ok = 1 ] && [ -z "$new" ] && [ "$reentrant" = 0 ]; then
