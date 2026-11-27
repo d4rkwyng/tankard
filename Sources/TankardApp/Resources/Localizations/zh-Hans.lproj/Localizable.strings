@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "没有 Homebrew cask 会安装这些 App。";
 "No Homebrew status to work from" = "没有可用的 Homebrew 状态";
 "No Intelbrew bottle yet." = "暂无 Intelbrew bottle。";
+"No Upgrades Selected" = "未选择可升级项";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "没有可接管的 App：“应用程序”中的所有内容都来自 Homebrew、App Store 或 Apple。";
 "No automatic runs yet." = "尚无自动运行记录。";
 "No bottle" = "无 bottle";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "升级 %@…";
 "Upgrade %lld" = "升级 %lld";
 "Upgrade %lld (skip %lld)" = "升级 %lld（跳过 %lld）";
+"Upgrade %lld Selected" = "升级所选的 %lld 个";
 "Upgrade %lld packages?" = "升级 %lld 个软件包？";
 "Upgrade %lld without building from source" = "升级 %lld 个（不从源码构建）";
 "Upgrade All" = "全部升级";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "升级计划";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "立即升级 Tankard。自动更新从不会升级 Tankard 本身。";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "按常规方式再次升级：编译警告、固定项和已跳过的版本仍然适用";
+"Upgrade all %lld packages" = "升级全部 %lld 个软件包";
 "Upgrade available: %@" = "有可用升级：%@";
 "Upgrade builds from source" = "升级会从源码构建";
 "Upgrade command" = "升级命令";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "升级除需从源码构建之外的全部：%@。会先显示计划。";
 "Upgrade finished" = "升级已完成";
 "Upgrade finished with problems" = "升级已完成，但有问题";
+"Upgrade only the %lld selected packages that have a newer version" = "仅升级所选的、有新版本的 %lld 个软件包";
 "Upgrade packages automatically" = "自动升级软件包";
 "Upgrade ready: %@ → %@" = "升级已就绪：%@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "逐个升级有新版本的 %lld 个软件包";

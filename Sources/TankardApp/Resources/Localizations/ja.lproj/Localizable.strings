@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "これらのアプリをインストールする Homebrew の cask はありません。";
 "No Homebrew status to work from" = "作業に使えるHomebrewの状態がありません";
 "No Intelbrew bottle yet." = "Intelbrew bottleはまだありません。";
+"No Upgrades Selected" = "アップグレードが選択されていません";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "引き継ぐアプリはありません。アプリケーション内はすべて Homebrew、App Store、または Apple のものです。";
 "No automatic runs yet." = "自動実行はまだありません。";
 "No bottle" = "Bottle なし";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "%@をアップグレード…";
 "Upgrade %lld" = "%lld件をアップグレード";
 "Upgrade %lld (skip %lld)" = "%lld件をアップグレード（%lld件をスキップ）";
+"Upgrade %lld Selected" = "選択した%lld個をアップグレード";
 "Upgrade %lld packages?" = "%lld個のパッケージをアップグレードしますか？";
 "Upgrade %lld without building from source" = "ソースからビルドせずに%lld件をアップグレード";
 "Upgrade All" = "すべてアップグレード";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "アップグレードの計画";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "今すぐTankardをアップグレードします。自動アップデートでTankard自体がアップグレードされることはありません。";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "通常の方法でもう一度アップグレード: コンパイルの警告、ピン留め、スキップしたバージョンは引き続き適用されます";
+"Upgrade all %lld packages" = "%lld個のパッケージをすべてアップグレード";
 "Upgrade available: %@" = "アップグレードあり: %@";
 "Upgrade builds from source" = "ソースからビルドしてアップグレード";
 "Upgrade command" = "アップグレードコマンド";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "ソースからビルドが必要なもの以外をすべてアップグレード: %@。最初にプランを表示します。";
 "Upgrade finished" = "アップグレード完了";
 "Upgrade finished with problems" = "アップグレード完了 (問題あり)";
+"Upgrade only the %lld selected packages that have a newer version" = "選択したうち新しいバージョンがある%lld個のパッケージだけをアップグレードします";
 "Upgrade packages automatically" = "パッケージを自動でアップグレード";
 "Upgrade ready: %@ → %@" = "アップグレードの準備完了：%@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "新しいバージョンがある%lld個のパッケージを1つずつアップグレードします";

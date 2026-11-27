@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "Aucun cask Homebrew n'installe ces apps.";
 "No Homebrew status to work from" = "Aucun état Homebrew exploitable";
 "No Intelbrew bottle yet." = "Pas encore de bottle Intelbrew.";
+"No Upgrades Selected" = "Aucune mise à niveau sélectionnée";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "Aucune app à adopter : tout le contenu d'Applications vient de Homebrew, de l'App Store ou d'Apple.";
 "No automatic runs yet." = "Aucune exécution automatique pour l’instant.";
 "No bottle" = "Pas de bottle";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "Mettre à niveau %@…";
 "Upgrade %lld" = "Mettre à niveau %lld";
 "Upgrade %lld (skip %lld)" = "Mettre à niveau %lld (ignorer %lld)";
+"Upgrade %lld Selected" = "Mettre à niveau %lld sélectionnés";
 "Upgrade %lld packages?" = "Mettre à niveau %lld paquets ?";
 "Upgrade %lld without building from source" = "Mettre à jour %lld sans compiler depuis les sources";
 "Upgrade All" = "Tout mettre à niveau";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "Plan de mise à jour";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "Mettre à niveau Tankard maintenant. Les mises à jour automatiques ne mettent jamais Tankard lui-même à niveau.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Mettre à niveau de nouveau normalement : les avertissements de compilation, les épingles et les versions ignorées s’appliquent toujours";
+"Upgrade all %lld packages" = "Mettre à niveau les %lld paquets";
 "Upgrade available: %@" = "Mise à niveau disponible : %@";
 "Upgrade builds from source" = "La mise à niveau compile depuis les sources";
 "Upgrade command" = "Commande de mise à niveau";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "Tout mettre à jour sauf ce qui serait compilé depuis les sources : %@. Affiche d’abord le plan.";
 "Upgrade finished" = "Mise à jour terminée";
 "Upgrade finished with problems" = "Mise à jour terminée avec des problèmes";
+"Upgrade only the %lld selected packages that have a newer version" = "Mettre à niveau uniquement les %lld paquets sélectionnés qui ont une version plus récente";
 "Upgrade packages automatically" = "Mettre à niveau les paquets automatiquement";
 "Upgrade ready: %@ → %@" = "Mise à niveau prête : %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Mettre à niveau les %lld paquets qui ont une version plus récente, un à la fois";

@@ -206,7 +206,7 @@ extension ScriptRunner {
             c.check("\(name) gone", c.package(name, kind: kind) == nil)
             c.check("no error", c.store.error == nil, c.store.error?.detail)
         },
-        "upgrade": ScriptStepDef("upgrade <name> [<name>...]  (the detail pane's Upgrade; several: Upgrade on a selection, 0.8.3: with the prefetch; a compile plan is confirmed)") { c in
+        "upgrade": ScriptStepDef("upgrade <name> [<name>...]  (a row's Upgrade; several: Upgrade N Selected, 0.8.3: with the prefetch; a compile plan is confirmed)") { c in
             _ = try c.arg(0, "name")
             let ps = try c.args.map { try c.requirePackage($0) }
             for p in ps {

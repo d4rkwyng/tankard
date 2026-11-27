@@ -16,7 +16,6 @@ struct DetailPane: View {
                           // The sheet opens with "Also remove these" on: its commands.
                           uninstallCommand: AppStore.uninstallDisplay(p, orphans: store.uninstallOrphans(of: p)),
                           compileWarning: store.deps.classifier.upgradeWarning(p),
-                          upgrade: { store.requestUpgrade([p]) },
                           uninstall: { store.requestUninstall(p) },
                           replaceWithBottle: { store.startReplaceWithBottle([p]) },
                           insights: store.insights, prefix: store.report?.host.prefix,
@@ -52,7 +51,6 @@ struct PackageDetail: View {
     /// The uninstall's commands, as the sheet shows them (the button's tooltip).
     var uninstallCommand: String? = nil
     var compileWarning: CompileWarning?
-    var upgrade: () -> Void
     var uninstall: () -> Void
     var replaceWithBottle: () -> Void
     /// 0.4: the scan behind the vulnerability list, and brew's prefix for caveats.
@@ -183,13 +181,9 @@ struct PackageDetail: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Upgrade command").font(.system(size: 11)).foregroundStyle(.secondary)
                         let command = insights?.upgradeDisplay(for: p) ?? BrewCommands.upgradeDisplay(for: p)
+                        // 0.9.4: no Upgrade button here: the status bar's
+                        // (with this row selected) and the row menu upgrade it.
                         CommandBox(command: command)
-                        Button(action: upgrade) {
-                            Label("Upgrade \(p.name)", systemImage: "arrow.up")
-                        }
-                        .buttonStyle(.primaryAction)
-                        .disabled(!canUpgrade || p.isHeld)
-                        .help(p.isHeld ? String(localized: "Pinned: unpin it first") : blockedNote ?? command)
                         if let skipVersion, !p.isHeld, let v = p.currentVersion {
                             SkipVersionRow(skipped: p.versionSkipped == true, version: v, toggle: skipVersion)
                         }

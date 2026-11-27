@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "No Homebrew cask installs these apps.";
 "No Homebrew status to work from" = "No Homebrew status to work from";
 "No Intelbrew bottle yet." = "No Intelbrew bottle yet.";
+"No Upgrades Selected" = "No Upgrades Selected";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple.";
 "No automatic runs yet." = "No automatic runs yet.";
 "No bottle" = "No bottle";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "Upgrade %@…";
 "Upgrade %lld" = "Upgrade %lld";
 "Upgrade %lld (skip %lld)" = "Upgrade %lld (skip %lld)";
+"Upgrade %lld Selected" = "Upgrade %lld Selected";
 "Upgrade %lld packages?" = "Upgrade %lld packages?";
 "Upgrade %lld without building from source" = "Upgrade %lld without building from source";
 "Upgrade All" = "Upgrade All";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "Upgrade Plan";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "Upgrade Tankard now. Automatic updates never upgrade Tankard itself.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Upgrade again the usual way: compile warnings, pins and skipped versions still apply";
+"Upgrade all %lld packages" = "Upgrade all %lld packages";
 "Upgrade available: %@" = "Upgrade available: %@";
 "Upgrade builds from source" = "Upgrade builds from source";
 "Upgrade command" = "Upgrade command";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "Upgrade everything except what would build from source: %@. Shows the plan first.";
 "Upgrade finished" = "Upgrade finished";
 "Upgrade finished with problems" = "Upgrade finished with problems";
+"Upgrade only the %lld selected packages that have a newer version" = "Upgrade only the %lld selected packages that have a newer version";
 "Upgrade packages automatically" = "Upgrade packages automatically";
 "Upgrade ready: %@ → %@" = "Upgrade ready: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Upgrade the %lld packages that have a newer version, one at a time";

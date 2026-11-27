@@ -4,6 +4,14 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [Unreleased]
+
+### Added
+- **Upgrade only the packages you pick.** In Installed, ⌘-click (or ⇧-click) to select several packages; the status bar's Upgrade button then reads "Upgrade 3 Selected" and upgrades only those, through the same plan and confirmation as before. Rows without an upgrade and pinned ones don't count. With nothing upgradable selected the button upgrades everything, as before. Right-clicking the selection offers the same, and Homebrew ▸ Upgrade (⌘U) follows the selection. Esc clears the selection. The detail pane shows the last package you clicked.
+
+### Changed
+- **No Upgrade button in the detail pane.** Select a package and use the status bar's "Upgrade 1 Selected", its right-click menu or ⌘U. The pane still shows the upgrade command and Skip Version.
+
 ## [0.9.3] - 2026-11-24
 
 ### Fixed

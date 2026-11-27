@@ -403,7 +403,22 @@ public final class AppStore {
         didSet { if filter != oldValue { dropSelectionHiddenByFilter() } }
     }
     public var search = ""
-    public var selection: Package.ID?
+    /// The primary selection: the package the detail pane shows (0.9.4:
+    /// the last clicked row of a multi-selection). Setting it directly
+    /// selects that one row (`selectedIDs` follows); the table sets both
+    /// through `selectRows` (MultiSelect.swift).
+    public var selection: Package.ID? {
+        didSet {
+            guard !adoptingRowSelection else { return }
+            let ids: Set<Package.ID> = selection.map { [$0] } ?? []
+            if selectedIDs != ids { selectedIDs = ids }
+        }
+    }
+    /// 0.9.4: every selected row in the Installed table (Cmd- and
+    /// Shift-click); it contains `selection` when that is set.
+    public internal(set) var selectedIDs: Set<Package.ID> = []
+    /// 0.9.4: `selectRows` is setting `selection`; `selectedIDs` is already right.
+    @ObservationIgnored var adoptingRowSelection = false
     /// 0.8.3: bumped when something asks the Installed table to scroll its
     /// selection into view (a menu-bar package row; see MenuBarNavigation).
     public internal(set) var revealRequest = 0
@@ -532,6 +547,12 @@ public final class AppStore {
     /// selection not in the list yet (Show in Installed right after an
     /// install) stays: it shows when the read lands.
     func dropSelectionHiddenByFilter() {
+        // 0.9.4: the other rows of a multi-selection the filter hides go too.
+        let hidden = Set(packages.filter { selectedIDs.contains($0.id) && !filter.includes($0) }.map(\.id))
+        if !hidden.isEmpty, selectedIDs.count > 1 {
+            selectRows(selectedIDs.subtracting(hidden), order: visiblePackages.map(\.id))
+            return
+        }
         guard let s = selection, let p = packages.first(where: { $0.id == s }), !filter.includes(p) else { return }
         selection = nil
     }
@@ -781,6 +802,10 @@ public final class AppStore {
                 homebrewState = .ready
             }
         }
+        // 0.9.4: the selected rows that are gone (the rest of a
+        // multi-selection stays), then the primary as before.
+        let gone = selectedIDs.subtracting(installedIDs)
+        if !gone.isEmpty { selectRows(selectedIDs.subtracting(gone), order: visiblePackages.map(\.id)) }
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
 

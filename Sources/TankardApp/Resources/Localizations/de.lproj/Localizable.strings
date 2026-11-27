@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "Kein Homebrew-Cask installiert diese Apps.";
 "No Homebrew status to work from" = "Kein Homebrew-Status vorhanden";
 "No Intelbrew bottle yet." = "Noch keine Intelbrew-Bottle.";
+"No Upgrades Selected" = "Keine Upgrades ausgewählt";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "Nichts zu übernehmen: Alles unter Programme stammt von Homebrew, aus dem App Store oder von Apple.";
 "No automatic runs yet." = "Noch keine automatischen Läufe.";
 "No bottle" = "Keine Bottle";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "%@ upgraden…";
 "Upgrade %lld" = "%lld upgraden";
 "Upgrade %lld (skip %lld)" = "%lld upgraden (%lld überspringen)";
+"Upgrade %lld Selected" = "%lld ausgewählte upgraden";
 "Upgrade %lld packages?" = "%lld Pakete upgraden?";
 "Upgrade %lld without building from source" = "%lld ohne Bauen aus Quellcode aktualisieren";
 "Upgrade All" = "Alle upgraden";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "Upgrade-Plan";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "Tankard jetzt upgraden. Automatische Updates upgraden Tankard selbst nie.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "Auf dem üblichen Weg erneut upgraden: Compile-Warnungen, Fixierungen und übersprungene Versionen gelten weiterhin";
+"Upgrade all %lld packages" = "Alle %lld Pakete upgraden";
 "Upgrade available: %@" = "Upgrade verfügbar: %@";
 "Upgrade builds from source" = "Upgrade baut aus dem Quellcode";
 "Upgrade command" = "Upgrade-Befehl";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "Alles aktualisieren außer dem, was aus Quellcode gebaut würde: %@. Zeigt zuerst den Plan.";
 "Upgrade finished" = "Upgrade fertig";
 "Upgrade finished with problems" = "Upgrade mit Problemen fertig";
+"Upgrade only the %lld selected packages that have a newer version" = "Nur die %lld ausgewählten Pakete mit neuerer Version upgraden";
 "Upgrade packages automatically" = "Pakete automatisch upgraden";
 "Upgrade ready: %@ → %@" = "Upgrade bereit: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "Die %lld Pakete mit neuerer Version upgraden, eins nach dem anderen";

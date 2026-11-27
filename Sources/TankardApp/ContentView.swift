@@ -649,16 +649,19 @@ struct PackageTable: View {
     private var rowsToken: Int {
         var h = Hasher()
         h.combine(store.selection)
+        // 0.9.4: every selected row is painted (Cmd/Shift-click).
+        h.combine(store.selectedIDs)
         h.combine(rows.map(\.id))
         h.combine(gateState.wrappedValue.ready)
         return h.finalize()
     }
 
     /// The selection, kept while the table holds its rows back (an empty
-    /// table must not clear it).
-    private var selection: Binding<Package.ID?> {
-        Binding(get: { store.selection },
-                set: { v in if gateState.wrappedValue.ready { store.selection = v } })
+    /// table must not clear it). 0.9.4: a set (Cmd- and Shift-click);
+    /// the store keeps the last clicked row as the detail pane's package.
+    private var selection: Binding<Set<Package.ID>> {
+        Binding(get: { store.selectedIDs },
+                set: { v in if gateState.wrappedValue.ready { store.selectRows(v, order: rows.map(\.id)) } })
     }
 
     var body: some View {
@@ -696,6 +699,9 @@ struct PackageTable: View {
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)
         }
+        // 0.9.4: Esc clears the selection (the table's; a sheet, the plan
+        // and the progress panel keep theirs: see clearSelection).
+        .onExitCommand { store.clearSelection() }
         // One configuration in every theme: changing it makes AppKit drop
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.

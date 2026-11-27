@@ -46,10 +46,17 @@ enum ContextMenuActions {
         NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)])
     }
 
-    /// The Installed table's row menu (single selection: the clicked row).
+    /// The Installed table's row menu: the clicked row, or (0.9.4) a
+    /// right-click on a multi-selection: Upgrade N Selected.
     @ViewBuilder
     static func installed(store: AppStore, ids: Set<Package.ID>) -> some View {
-        if let id = ids.first, let p = store.packages.first(where: { $0.id == id }) {
+        if ids.count > 1 {
+            let targets = store.upgradeTargets(ids)
+            MenuEntries(entries: ContextMenus.installedSelection(
+                targets: targets, busy: store.isBusy || store.progressPanelHoldsActivity)) { action in
+                    if case .upgradeSelected = action, !targets.isEmpty { store.requestUpgrade(targets) }
+                }
+        } else if let id = ids.first, let p = store.packages.first(where: { $0.id == id }) {
             MenuEntries(entries: ContextMenus.installed(
                 p,
                 dependents: store.dependents(of: p),
@@ -85,6 +92,7 @@ enum ContextMenuActions {
         case .unpin: store.setPinned(p, false)
         case .skipVersion(let on): store.setVersionSkipped(p, on)
         case .install, .showInInstalled: break // Discover only
+        case .upgradeSelected: break // a multi-selection's (installed(store:ids:))
         }
     }
 
