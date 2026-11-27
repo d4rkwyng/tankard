@@ -620,7 +620,6 @@ struct PackageTable: View {
     // `State(...)` rather than `@State`: in the macOS 27 SDK `@State` is a
     // macro whose plugin (SwiftUIMacros) ships with Xcode, not the Command
     // Line Tools. The struct itself works the same way everywhere.
-    private let sortState = State(initialValue: [KeyPathComparator(\Package.name, comparator: .localizedStandard)])
     /// 0.8.4: the table shows all its rows (see `firstFill`).
     private let filledState = State(initialValue: false)
     /// 0.8.8: no rows until the table measures none (RowHeightGate).
@@ -642,9 +641,9 @@ struct PackageTable: View {
     /// sure of (a table made with rows kept measuring them).
     static let firstFill = 40
 
-    var rows: [Package] {
-        store.visiblePackages.sorted(using: sortState.wrappedValue)
-    }
+    /// 0.9.4 (review): the store sorts (`tableSortOrder`), so a
+    /// multi-selection's fallback primary is the first survivor on screen.
+    var rows: [Package] { store.tableRows }
 
     private var rowsToken: Int {
         var h = Hasher()
@@ -670,7 +669,7 @@ struct PackageTable: View {
         let all = rows
         let staged = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
         let shown = gateState.wrappedValue.rows(staged)
-        Table(shown, selection: selection, sortOrder: sortState.projectedValue) {
+        Table(shown, selection: selection, sortOrder: $store.tableSortOrder) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 PackageNameCell(store: store, package: p, intelbrew: intelbrew)
             }

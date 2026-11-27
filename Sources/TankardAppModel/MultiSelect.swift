@@ -30,15 +30,36 @@ extension AppStore {
         if selection != primary { selection = primary }
     }
 
+    /// The Installed table's sort before a column header is clicked: by
+    /// name, as the Finder sorts.
+    public nonisolated static let defaultTableSort = [KeyPathComparator(\Package.name, comparator: .localizedStandard)]
+
+    /// `packages` in the order the table shows them with `sort`. The
+    /// table and the selection's fallback primary both use it.
+    public nonisolated static func tableOrder(_ packages: [Package], sort: [KeyPathComparator<Package>]) -> [Package] {
+        packages.sorted(using: sort)
+    }
+
+    /// The Installed table's rows, top down: the visible packages in the
+    /// table's sort order.
+    public var tableRows: [Package] { Self.tableOrder(visiblePackages, sort: tableSortOrder) }
+
     /// 0.9.4 (review): the rows a multi-selection keeps when the list
-    /// changes (search, filter, refresh): only those still visible. The
-    /// primary stays if it is visible, else the first kept row in the
-    /// table's order, else none. A lone selection is left as it was (Show
-    /// in Installed may select a package before its row arrives; Show
-    /// Dependencies lists rows other than the selected one).
+    /// changes (search, filter, refresh, a scan landing): only those the
+    /// table still shows, so the status bar and ⌘U never upgrade a hidden
+    /// row. The primary stays if it is visible, else the first kept row in
+    /// the table's sort order (`tableRows`), else none. A lone selection is
+    /// left as it was (Show in Installed may select a package before its row
+    /// arrives; Show Dependencies lists rows other than the selected one).
+    ///
+    /// One pass, and the only one: it tells a multi-selection from a lone
+    /// one by the count before it prunes anything, so removed rows and
+    /// hidden ones go together. (A refresh that first dropped removed rows
+    /// could shrink two selected rows to one hidden row, which the
+    /// lone-selection rule then kept.)
     func reconcileSelectionWithVisibleRows() {
         guard selectedIDs.count > 1 else { return }
-        let order = visiblePackages.map(\.id)
+        let order = tableRows.map(\.id)
         let kept = selectedIDs.intersection(order)
         guard kept != selectedIDs else { return }
         selectRows(kept, order: order)

@@ -402,6 +402,10 @@ public final class AppStore {
         // new filter hides; the selection goes with it.
         didSet { if filter != oldValue { dropSelectionHiddenByFilter() } }
     }
+    /// 0.9.4 (review): the Installed table's column sort (the table binds
+    /// to it), so a multi-selection's fallback primary is the first
+    /// survivor on screen (`tableRows`, MultiSelect.swift).
+    public var tableSortOrder: [KeyPathComparator<Package>] = AppStore.defaultTableSort
     public var search = "" {
         // 0.9.4 (review): a search that hides rows of a multi-selection
         // drops them, so the status bar and ⌘U never upgrade hidden rows.
@@ -805,10 +809,10 @@ public final class AppStore {
                 homebrewState = .ready
             }
         }
-        // 0.9.4: the selected rows that are gone (the rest of a
-        // multi-selection stays), then the primary as before.
-        let gone = selectedIDs.subtracting(installedIDs)
-        if !gone.isEmpty { selectRows(selectedIDs.subtracting(gone), order: visiblePackages.map(\.id)) }
+        // 0.9.4 (review): a multi-selection keeps only the rows still
+        // shown (removed ones, and ones the filter or search now hides),
+        // in one pass; then a lone selection that is gone, as before.
+        reconcileSelectionWithVisibleRows()
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
 

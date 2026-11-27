@@ -25,9 +25,13 @@ extension AppStore {
         }
     }
 
-    /// Lays the latest insights over the report on screen.
+    /// Lays the latest insights over the report on screen. 0.9.4 (review):
+    /// then prunes a multi-selection to the rows still shown, as a refresh
+    /// does (a scan that clears a selected row's vulnerability hides it
+    /// from Vulnerable; its upgrade must leave the batch with it).
     func applyInsights() {
         if let r = report { report = insights.decorate(r) }
+        reconcileSelectionWithVisibleRows()
     }
 
     /// Starts the background reads for this brew (sizes; the vulnerability
