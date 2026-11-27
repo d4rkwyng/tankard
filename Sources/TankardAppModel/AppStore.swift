@@ -1492,6 +1492,11 @@ public final class AppStore {
         /// list wins over Tankard's); nil when none does.
         var brewEnvKeep: String?
         var brewEnvSetsKeep: Bool { brewEnvKeep != nil }
+        /// 0.9.4 (bug hunt R5): HOMEBREW_NO_CLEANUP_FORMULAE in the
+        /// environment Tankard gives brew (the app's or a shell profile's,
+        /// which a Refresh reads again): Tankard's list is added to it, so
+        /// the command carries it. nil when unset.
+        var inheritedKeep: String?
     }
 
     @ObservationIgnored var cleanupInputs: CleanupInputs?
@@ -1503,11 +1508,12 @@ public final class AppStore {
 
     /// The inputs a Clean Up preview made now would use (nil: no client).
     func currentCleanupInputs() -> CleanupInputs? {
-        guard let client = try? resolvedClient() else { return nil }
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
         return CleanupInputs(
             inventory: Self.cleanupInventory(packages),
             keepPrevious: restorePoints.settings.keepPreviousVersion,
-            brewEnvKeep: EnvironmentSources.brewEnvSetting(CleanupKeep.key, files: deps.brewEnvFiles(client))?.value)
+            brewEnvKeep: EnvironmentSources.brewEnvSetting(CleanupKeep.key, files: deps.brewEnvFiles(client))?.value,
+            inheritedKeep: client.environment(for: detection)[CleanupKeep.key])
     }
 
     /// 0.9.4 (bug hunt R3): the open Clean Up preview was worked out from

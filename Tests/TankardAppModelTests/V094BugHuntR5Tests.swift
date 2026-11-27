@@ -238,3 +238,96 @@ struct V094R5CapturedTargetTests {
     }
 }
 
+// MARK: MUST-FIX 3: Clean Up compares the inherited keep list too
+
+/// The client's inherited HOMEBREW_NO_CLEANUP_FORMULAE (the app's
+/// environment), changed by the next Refresh's settings reload.
+final class V094R5InheritedKeep: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _value: String
+    init(_ v: String) { _value = v }
+    var value: String {
+        get { lock.withLock { _value } }
+        set { lock.withLock { _value = newValue } }
+    }
+}
+
+@MainActor
+struct V094R5InheritedKeepListTests {
+    /// `f` with an old version on disk in every read.
+    func rig() async throws -> (AppStore, V094R5InheritedKeep, kept: String, added: String) {
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let inherited = V094R5InheritedKeep("tankard-r5-a")
+        let reads = try v094WrapStatus(&deps) { c in
+            c.sources.process[CleanupKeep.key] = inherited.value
+        }
+        deps.reloadSources = { c in
+            var s = c.sources
+            s.process[CleanupKeep.key] = inherited.value
+            return s
+        }
+        deps.brewEnvFiles = { _ in [] }
+        // Two of the demo's formulae: `f` has an old version on disk.
+        let f = "xz", added = "sqlite"
+        reads.transform = { data in Self.addOldVersion(of: f, to: data) }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.restorePoints.settings.keepPreviousVersion = true
+        return (store, inherited, f, added)
+    }
+
+    /// The info JSON with a second (older) installed version of `name`.
+    nonisolated static func addOldVersion(of name: String, to data: Data) -> Data {
+        guard var json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              var formulae = json["formulae"] as? [[String: Any]],
+              let i = formulae.firstIndex(where: { $0["name"] as? String == name }),
+              var installed = formulae[i]["installed"] as? [[String: Any]], var old = installed.first
+        else { return data }
+        old["version"] = "0.0.1"
+        installed.insert(old, at: 0)
+        formulae[i]["installed"] = installed
+        json["formulae"] = formulae
+        return (try? JSONSerialization.data(withJSONObject: json)) ?? data
+    }
+
+    @Test func theInheritedListIsAnInput() async throws {
+        let (store, inherited, f, added) = try await rig()
+        let before = try #require(store.currentCleanupInputs())
+        inherited.value = "tankard-r5-a,\(added)"
+        await store.refresh(manual: true)
+        try #require(store.packages.first { $0.name == f }?.installedVersions.count == 2)
+        let after = try #require(store.currentCleanupInputs())
+        #expect(before.inventory == after.inventory)
+        #expect(before != after, "the keep list brew gets changed")
+    }
+
+    /// The preview was made with the old inherited list; a Refresh added a
+    /// formula to it. Clean Up works the preview out again, and the run
+    /// protects that formula (and Tankard's own kept one).
+    @Test func cleanUpKeepsTheNewlyInheritedFormula() async throws {
+        let (store, inherited, f, added) = try await rig()
+        store.openCleanup()
+        let old = try #require(store.cleanup)
+        #expect(await waitUntil { old.phase == .ready })
+        #expect(old.kept == [f])
+        inherited.value = "tankard-r5-a,\(added)"
+        await store.refresh(manual: true)
+        #expect(!store.statusStale)
+        store.startCleanup()
+        if store.upgrade == nil {
+            let fresh = try #require(store.cleanup)
+            #expect(fresh !== old)
+            #expect(await waitUntil { fresh.phase == .ready })
+            store.startCleanup()
+        }
+        let s = try #require(store.upgrade)
+        #expect(s.action == .cleanup)
+        let keep = try #require(s.items.first?.command.environment[CleanupKeep.key])
+        let names = Set(keep.split(separator: ",").map(String.init))
+        #expect(names.contains(added), "the newly protected formula's old version stays")
+        #expect(names.contains(f))
+        #expect(names.contains("tankard-r5-a"))
+    }
+}
+
