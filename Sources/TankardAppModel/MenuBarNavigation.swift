@@ -42,7 +42,9 @@ extension AppStore {
         // does; All only for a package Upgrades wouldn't show.
         let target: PackageFilter = PackageFilter.upgrades.includes(p) ? .upgrades : .all
         if filter != target { filter = target }
-        if selection != p.id { selection = p.id }
+        // 0.9.4 (review): one package, even when it is already the
+        // primary of a multi-selection.
+        if selection != p.id || selectedIDs != [p.id] { selection = p.id }
         revealRequest &+= 1
     }
 
@@ -58,7 +60,9 @@ extension AppStore {
     /// package but the list didn't.
     public func showInInstalled(_ id: Package.ID) {
         if tab != .installed { tab = .installed }
-        if selection != id { selection = id }
+        // 0.9.4 (review): just this package, even when it is already the
+        // primary of a multi-selection.
+        if selection != id || selectedIDs != [id] { selection = id }
         if packages.contains(where: { $0.id == id }) {
             func hidden() -> Bool { !visiblePackages.contains { $0.id == id } }
             if hidden(), !search.isEmpty { search = "" }

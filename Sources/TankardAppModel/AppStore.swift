@@ -402,7 +402,11 @@ public final class AppStore {
         // new filter hides; the selection goes with it.
         didSet { if filter != oldValue { dropSelectionHiddenByFilter() } }
     }
-    public var search = ""
+    public var search = "" {
+        // 0.9.4 (review): a search that hides rows of a multi-selection
+        // drops them, so the status bar and ⌘U never upgrade hidden rows.
+        didSet { if search != oldValue { reconcileSelectionWithVisibleRows() } }
+    }
     /// The primary selection: the package the detail pane shows (0.9.4:
     /// the last clicked row of a multi-selection). Setting it directly
     /// selects that one row (`selectedIDs` follows); the table sets both
@@ -548,9 +552,8 @@ public final class AppStore {
     /// install) stays: it shows when the read lands.
     func dropSelectionHiddenByFilter() {
         // 0.9.4: the other rows of a multi-selection the filter hides go too.
-        let hidden = Set(packages.filter { selectedIDs.contains($0.id) && !filter.includes($0) }.map(\.id))
-        if !hidden.isEmpty, selectedIDs.count > 1 {
-            selectRows(selectedIDs.subtracting(hidden), order: visiblePackages.map(\.id))
+        if selectedIDs.count > 1 {
+            reconcileSelectionWithVisibleRows()
             return
         }
         guard let s = selection, let p = packages.first(where: { $0.id == s }), !filter.includes(p) else { return }
@@ -806,6 +809,9 @@ public final class AppStore {
         // multi-selection stays), then the primary as before.
         let gone = selectedIDs.subtracting(installedIDs)
         if !gone.isEmpty { selectRows(selectedIDs.subtracting(gone), order: visiblePackages.map(\.id)) }
+        // 0.9.4 (review): rows still installed that the filter or search
+        // no longer shows (a changed vulnerability, an upgrade) go too.
+        reconcileSelectionWithVisibleRows()
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
 

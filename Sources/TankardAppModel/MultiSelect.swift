@@ -30,6 +30,20 @@ extension AppStore {
         if selection != primary { selection = primary }
     }
 
+    /// 0.9.4 (review): the rows a multi-selection keeps when the list
+    /// changes (search, filter, refresh): only those still visible. The
+    /// primary stays if it is visible, else the first kept row in the
+    /// table's order, else none. A lone selection is left as it was (Show
+    /// in Installed may select a package before its row arrives; Show
+    /// Dependencies lists rows other than the selected one).
+    func reconcileSelectionWithVisibleRows() {
+        guard selectedIDs.count > 1 else { return }
+        let order = visiblePackages.map(\.id)
+        let kept = selectedIDs.intersection(order)
+        guard kept != selectedIDs else { return }
+        selectRows(kept, order: order)
+    }
+
     /// Esc in the Installed table: back to no selection. Not while a
     /// sheet, a plan or the progress panel's activity is up (Esc is
     /// theirs). Returns whether it cleared anything. Starts nothing.
