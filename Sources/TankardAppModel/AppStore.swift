@@ -692,6 +692,17 @@ public final class AppStore {
         staleBeforeRead = max(staleBeforeRead, read)
     }
 
+    /// The newest read that succeeded.
+    @ObservationIgnored private var lastSucceededRead = 0
+
+    /// 0.9.4 (bug hunt R5): brew changed what is installed once the reads
+    /// up to `read` had begun, and the read after the change failed: stale,
+    /// unless a read begun since has succeeded.
+    func markStatusStale(afterFailedReadSince read: Int) {
+        guard lastSucceededRead <= read else { return }
+        markStatusStale(beforeRead: read)
+    }
+
     /// 0.9.4 (bug hunt R4): the sheets' Refresh while the status is stale
     /// (their confirmation waits for it, and the modal sheet turns the
     /// menu's Refresh off): a read begun now.
@@ -825,21 +836,24 @@ public final class AppStore {
         }
 
         var updateError: StoreError?
+        var updated = false
         if kind == .manual {
             refreshPhase = String(localized: "Running brew update…")
             updateError = await runUpdate(client)
+            updated = updateError == nil
         } else if kind == .scheduled {
             refreshPhase = String(localized: "Running brew update…")
             let r = await runScheduledUpdate(client)
             lastScheduledUpdate = r
             updateError = r.error
-            // 0.9.4 (bug hunt R4): brew update moved the metadata (versions,
-            // bottles) the list on screen was read from. Until this read or
-            // a later one succeeds, an upgrade plan, an App Management
-            // handoff and Clean Up wait: Auto-update gave up when this read
-            // failed, and the open plan ran against the old versions.
-            if r.succeeded { markStatusStale(beforeRead: readID - 1) }
+            updated = r.succeeded
         }
+        // 0.9.4 (bug hunt R4): brew update moved the metadata (versions,
+        // bottles) the list on screen was read from. Until this read or a
+        // later one succeeds, an upgrade plan, an App Management handoff and
+        // Clean Up wait: Auto-update gave up when this read failed, and the
+        // open plan ran against the old versions. R5: a Refresh's update too.
+        if updated { markStatusStale(beforeRead: readID - 1) }
         switch kind {
         case .manual: updateFailure = updateError
         // 0.9.4 (bug hunt): a quiet scheduled failure (offline, brew busy,
@@ -867,6 +881,7 @@ public final class AppStore {
             let fresh = Self.markSelfUpdating(try await client.status(detection: detection), greedy: await greedy)
             // 0.9.4 (bug hunt R3): a read begun after the change is current.
             if readID > staleBeforeRead { statusStale = false }
+            lastSucceededRead = max(lastSucceededRead, readID)
             succeeded = true
             report = insights.decorate(fresh)
             reportFromCache = false
@@ -2013,9 +2028,15 @@ public final class AppStore {
             }
         }
         // Reconcile: what brew now says, not what we assume. Then (0.4)
-        // the caveats of what changed, once.
+        // the caveats of what changed, once. 0.9.4 (bug hunt R5): a read of
+        // its own (one already running began before the change), and when
+        // it fails, the pre-run list stays marked stale: an upgrade plan and
+        // Clean Up (whose keep list needs the version an upgrade left) wait
+        // for a read that succeeds. (Not before the read: the run's own
+        // Retry and App Management retry start from its result at once.)
+        let changedAt = refreshesStarted
         Task {
-            await self.refresh(manual: false)
+            if !(await self.refreshAfterChange()) { self.markStatusStale(afterFailedReadSince: changedAt) }
             self.offerPostInstallNotes(for: session)
             // 0.8.5 (review): a progress-panel run closes, or notifies,
             // only now that its notes are known.
