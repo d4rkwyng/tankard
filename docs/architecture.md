@@ -1233,7 +1233,24 @@ from yours and deleted at exit; your `net.mindtricks.tankard` is only read.
 if it doesn't stay up or leaves a new crash report in `~/Library/Logs/DiagnosticReports`.
 With no APP it builds `dist/Tankard.app` first; give it the downloaded release
 (`Scripts/launch-check.sh --runs 5 ~/Downloads/Tankard.app`) to check what actually
-ships. `release.sh` runs it on the signed app before notarizing. 0.3.0 crashed at
+ships. `release.sh` runs it on the notarized, stapled app right before zipping it (0.9.4;
+before that it ran before notarizing, so the stapled app was never launched). It copies
+`~/Library/Caches/net.mindtricks.tankard` first and puts it back as it was on exit
+(0.9.4), so a check leaves no `status.json` behind. It puts the copy back only into the
+folder it came from (same device and inode, same link). If that folder was replaced
+during the check, it deletes nothing, keeps the copy and fails. With no folder before, it
+makes an empty one for the launches, in one step (`Scripts/launch-check-helper.pl`: a
+private folder renamed into place with `renameatx_np(RENAME_EXCL)`), and removes only that
+one (same device and inode, not a link); anything else in its place is left alone and the
+check fails. Every build of Tankard shares that folder, so any other running Tankard
+(any `…/Contents/MacOS/Tankard` with this cache) stops the check before the copy and
+before each launch, and one that started meanwhile leaves the folder untouched at the end.
+Each launch is supervised by the helper (Perl), which alone sends the Quit and any
+SIGTERM/SIGKILL, and reaps the app only once it will send it nothing more: until then the
+app's pid stays reserved (a zombie if it has exited), so a reused pid is never signalled.
+The Quit's `osascript` is bounded (an alarm at 10s, SIGKILL at 12s), so a stalled one
+can't hold the release gate before the fallback. A crash while quitting counts,
+and so does an exit other than 0 when told to quit. 0.3.0 crashed at
 launch (App.body re-ran in a loop until the stack overflowed) and every demo, snapshot
 and local build missed it: it needed the release toolchain and the signed app. The rule
 that came out of it: **App.body is pure**. It reads no @Observable state that changes and
@@ -1388,10 +1405,16 @@ upload date, the zip's sha256, the cdhash of every signed binary Apple ticketed 
 and `tankard-askpass`) and the issues list (path, message and help link for each); no
 Apple ID, password or certificate. An Invalid submission still fails the release, after
 its log is printed; an Accepted one whose log can't be fetched (three tries) only warns.
-`--skip-notarize` stops after signing. Before notarizing it real-launches the signed app
-five times with `Scripts/launch-check.sh` and stops if it crashes (`--skip-launch-check`
-only on a Mac with no GUI session; then run the check on the downloaded zip before
-publishing the draft).
+`--skip-notarize` stops after signing. Right before making `Tankard.zip` it real-launches
+the app five times with `Scripts/launch-check.sh` and stops if it crashes. That is the
+stapled app, after `stapler validate` and `spctl` (0.9.4; before, the check ran before
+notarizing), or the signed one with `--skip-notarize`. `--skip-launch-check` is only for a
+Mac with no GUI session; then run the check on the downloaded zip before publishing the
+draft. On the GitHub runner the check reads that runner's own Homebrew, read-only
+(`HOMEBREW_NO_AUTO_UPDATE=1`), never a user's, and puts the app's cache folder back as it
+found it, so the workflow's later smoke step (`Scripts/smoke-launch.sh`, Homebrew
+sandboxed off) does not show a status cache from it. The unit tests never run it on
+Tankard: they drive it with a stub app and a throwaway `HOME`.
 
 The hardened runtime needs no entitlements: the app is plain Swift with no third-party
 libraries, plug-ins or JIT, and brew is a child process started with `posix_spawn`, which

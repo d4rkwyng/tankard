@@ -10,8 +10,10 @@
 #   --host-arch      build only this Mac's architecture (default: universal)
 #   --skip-notarize  sign and verify only
 #   --skip-launch-check
-#                    don't real-launch the signed app (Scripts/launch-check.sh);
-#                    only for a Mac with no logged-in GUI session
+#                    don't real-launch the app (Scripts/launch-check.sh, which
+#                    otherwise runs on the stapled app, or the signed one with
+#                    --skip-notarize, right before the zip); only for a Mac
+#                    with no logged-in GUI session
 #
 # Settings (environment):
 #   TANKARD_SIGN_ID          signing identity; default: the first
@@ -45,7 +47,7 @@ for a in "$@"; do
         --host-arch) UNIVERSAL=0 ;;
         --skip-notarize) NOTARIZE=0 ;;
         --skip-launch-check) LAUNCH_CHECK=0 ;;
-        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,36p' "$0"; exit 0 ;;
         *) echo "release.sh: unknown option $a" >&2; exit 2 ;;
     esac
 done
@@ -161,18 +163,27 @@ run "${SIGN[@]}" "$APP"
 run codesign --verify --strict --deep --verbose=2 "$APP"
 run codesign --verify --strict --verbose=2 "$HELPER"
 
-# 4b. Launch the signed app for real (no demo, no snapshot) and fail the
-#     release if it crashes or quits. 0.3.0 shipped a launch crash that only
-#     the signed release build showed, and only on a real launch; the local
-#     build and every demo/snapshot run looked fine. Several runs, because
-#     that crash hit about half of all launches.
-if [ $LAUNCH_CHECK = 1 ]; then
-    run Scripts/launch-check.sh "$APP" --runs 5 --seconds 10
-else
-    echo "NOTE: --skip-launch-check: the signed app was not launched. Run Scripts/launch-check.sh $APP before publishing." >&2
-fi
+# Launch the app for real (no demo, no snapshot) and fail the release if
+# it crashes or quits. 0.3.0 shipped a launch crash that only the signed
+# release build showed, and only on a real launch; the local build and every
+# demo/snapshot run looked fine. Several runs, because that crash hit about
+# half of all launches.
+# 0.9.4: run on the app as it ships, so right before the distribution zip:
+# after stapling and Gatekeeper (step 5), or after signing and
+# verification with --skip-notarize. Before 0.9.4 it ran before notarizing,
+# so the stapled app that went into the zip was never launched.
+# launch-check.sh puts the app's cache folder back as it found it, so it
+# leaves no status.json behind for release.yml's later smoke step.
+launch_check() {
+    if [ $LAUNCH_CHECK = 1 ]; then
+        run Scripts/launch-check.sh "$APP" --runs 5 --seconds 10
+    else
+        echo "NOTE: --skip-launch-check: the $1 app was not launched. Run Scripts/launch-check.sh $APP before publishing." >&2
+    fi
+}
 
 if [ $NOTARIZE = 0 ]; then
+    launch_check signed
     run ditto -c -k --keepParent "$APP" "$ZIP"
     echo "Signed but not notarized: $ZIP"
     exit 0
@@ -231,6 +242,9 @@ fi
 run xcrun stapler staple "$APP"
 run xcrun stapler validate "$APP"
 run spctl -a -vv -t exec "$APP"
+
+# 5b. The launch check, on the notarized, stapled, Gatekeeper-accepted app.
+launch_check stapled
 
 # 6. The distribution zip (stapled app).
 run rm -f "$ZIP" "$SUBMIT_ZIP"

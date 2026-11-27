@@ -47,13 +47,16 @@
 #      A Developer ID build ignores every TANKARD_* switch (TestHooks), so
 #      on the release runner the app launches as a user's would; the
 #      sandbox hides Homebrew from it, so it can't read or start brew.
-#      Which window it shows is not checked and not assumed: release.sh's
-#      launch-check runs the signed app earlier on the runner, outside
-#      this sandbox, and leaves a status cache
-#      (~/Library/Caches/net.mindtricks.tankard/status.json); within its
-#      hour the app shows that cached list rather than the no-Homebrew
-#      welcome. Either way it only has to stay up and quit cleanly. The
-#      script never deletes or moves that cache. The app must stay up N
+#      Which window it shows is not checked and not assumed. release.sh's
+#      launch-check runs the stapled app earlier on the runner, outside
+#      this sandbox, against the runner's own Homebrew (read-only); since
+#      0.9.4 it puts the app's cache folder back as it found it, so it
+#      leaves no status cache
+#      (~/Library/Caches/net.mindtricks.tankard/status.json) for this run.
+#      A cache that was already there (a local run on a Mac that uses
+#      Tankard) is shown, within its hour, instead of the no-Homebrew
+#      welcome. Either way the app only has to stay up and quit cleanly.
+#      The script never deletes or moves that cache. The app must stay up N
 #      seconds, then quit with exit code 0 within 8 s of a Quit
 #      (NSRunningApplication.terminate, an Apple Event from osascript). A
 #      missed Quit fails (no kill fallback) and prints osascript's exit
