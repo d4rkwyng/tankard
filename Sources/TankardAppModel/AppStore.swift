@@ -695,6 +695,27 @@ public final class AppStore {
     /// The newest read that succeeded.
     @ObservationIgnored private var lastSucceededRead = 0
 
+    /// 0.9.4 (bug hunt R6): a run of Tankard's own changed what is
+    /// installed, and no read begun after it has succeeded yet (its
+    /// follow-up read may still be out). Unlike `statusStale`, the run's
+    /// own retries (Retry, App Management's) start from its result at
+    /// once; only what deletes previous versions (Clean Up, whose keep list
+    /// needs the version an upgrade left) waits. Clean Up started while the
+    /// read was queued used the pre-upgrade list and removed that version.
+    public private(set) var inventoryUnsettled = false
+    /// The reads begun up to this one started before the change.
+    @ObservationIgnored private var unsettledBeforeRead = 0
+
+    /// Marks the list on screen as older than a run that just finished.
+    func markInventoryUnsettled() {
+        inventoryUnsettled = true
+        unsettledBeforeRead = max(unsettledBeforeRead, refreshesStarted)
+    }
+
+    /// 0.9.4 (bug hunt R6): Clean Up waits for a read that succeeds after
+    /// the last change: a stale list, or a run's read still out.
+    public var cleanupWaitsForRead: Bool { statusStale || inventoryUnsettled }
+
     /// 0.9.4 (bug hunt R5): brew changed what is installed once the reads
     /// up to `read` had begun, and the read after the change failed: stale,
     /// unless a read begun since has succeeded.
@@ -721,7 +742,7 @@ public final class AppStore {
     /// read is already running (it ends in a fresh one when it started
     /// after the change; else the caller's next try asks again).
     func rereadStaleStatus() {
-        guard statusStale, !isRefreshing else { return }
+        guard statusStale || inventoryUnsettled, !isRefreshing else { return }
         Task { await refreshAfterChange() }
     }
 
@@ -810,6 +831,12 @@ public final class AppStore {
         var succeeded = false
         isRefreshing = true
         defer {
+            // 0.9.4 (bug hunt R6): a read begun after a run's change failed:
+            // the pre-run list is stale, marked as the read ends (the
+            // caller's continuation runs a hop after `isRefreshing` goes false).
+            if !succeeded, inventoryUnsettled, readID > unsettledBeforeRead {
+                markStatusStale(afterFailedReadSince: unsettledBeforeRead)
+            }
             isRefreshing = false
             refreshPhase = nil
             refreshesCompleted += 1
@@ -881,6 +908,7 @@ public final class AppStore {
             let fresh = Self.markSelfUpdating(try await client.status(detection: detection), greedy: await greedy)
             // 0.9.4 (bug hunt R3): a read begun after the change is current.
             if readID > staleBeforeRead { statusStale = false }
+            if readID > unsettledBeforeRead { inventoryUnsettled = false }
             lastSucceededRead = max(lastSucceededRead, readID)
             succeeded = true
             report = insights.decorate(fresh)
@@ -1570,7 +1598,12 @@ public final class AppStore {
         // 0.9.4 (bug hunt R3): not against a list older than Auto-update's
         // upgrades, nor with a preview of another inventory: it shows
         // again, worked out afresh, and the next Clean Up runs that.
-        guard !statusStale else { return rereadStaleStatus() }
+        // R6: nor while a run's follow-up read is still out (the list on
+        // screen is the one before it; a stale mark after the read fails
+        // comes too late for a command already queued). The progress
+        // panel's unread run says why first, as startSession would.
+        guard !progressPanelBlocksNewRun() else { return }
+        guard !cleanupWaitsForRead else { return rereadStaleStatus() }
         // 0.9.4 (bug hunt R4): only a finished preview's Clean Up runs (a
         // replacement dry run still pending has shown nothing yet), and
         // only one worked out from the inventory and retention settings
@@ -2025,6 +2058,9 @@ public final class AppStore {
     private func sessionFinished(_ session: UpgradeSession) {
         // 0.8.5: after the rest (it may open the App Management page).
         defer { progressPanelSessionFinished(session) }
+        // 0.9.4 (bug hunt R6): the change boundary. Until a read begun from
+        // here succeeds, Clean Up waits (the run's own retries don't).
+        markInventoryUnsettled()
         if session.action == .adopt { adoptSessionFinished(session) }
         // A Replace settled its copy before this, in `setReplaceCheck`:
         // the signature read is awaited there, off the main actor.
@@ -2070,9 +2106,10 @@ public final class AppStore {
         // Clean Up (whose keep list needs the version an upgrade left) wait
         // for a read that succeeds. (Not before the read: the run's own
         // Retry and App Management retry start from its result at once.)
-        let changedAt = refreshesStarted
+        // R6: the failed read marks it stale itself (performRefresh), as the
+        // read ends; Clean Up has waited since the change boundary above.
         Task {
-            if !(await self.refreshAfterChange()) { self.markStatusStale(afterFailedReadSince: changedAt) }
+            await self.refreshAfterChange()
             self.offerPostInstallNotes(for: session)
             // 0.8.5 (review): a progress-panel run closes, or notifies,
             // only now that its notes are known.

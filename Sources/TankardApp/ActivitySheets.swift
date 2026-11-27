@@ -593,14 +593,14 @@ struct CleanupSheet: View {
                     }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(cleanup.phase != .ready || store.statusStale || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
+                    .disabled(cleanup.phase != .ready || store.statusStale || store.inventoryUnsettled || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 } else {
                     Button {
                         store.startCleanup()
                     } label: {
                         Text("Clean Up")
                     }
-                    .disabled(cleanup.phase != .ready || store.statusStale || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
+                    .disabled(cleanup.phase != .ready || store.statusStale || store.inventoryUnsettled || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 }
             }
         }
