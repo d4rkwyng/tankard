@@ -331,3 +331,42 @@ struct V094R5InheritedKeepListTests {
     }
 }
 
+// MARK: MUST-FIX 4: no preview is no excuse to drop the keep list
+
+@MainActor
+struct V094R5NoPreviewTests {
+    @Test func aDirectStartStillKeepsRetainedVersions() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.restorePoints.settings.keepPreviousVersion = true
+        var r = try #require(store.report)
+        let i = try #require(r.packages.firstIndex { $0.kind == .formula && Set($0.installedVersions).count == 1 })
+        r.packages[i].installedVersions = ["0.0.1", r.packages[i].installedVersion]
+        store.report = r
+        let f = r.packages[i]
+        try #require(store.cleanup == nil)
+        store.startCleanup()
+        let s = try #require(store.upgrade, "the direct start still runs")
+        #expect(s.action == .cleanup)
+        let keep = s.items.first?.command.environment[CleanupKeep.key] ?? ""
+        #expect(keep.split(separator: ",").map(String.init).contains(f.name),
+                "with no preview, “Keep the previous version” still keeps it")
+        #expect(s.items.first?.command.display.contains(CleanupKeep.key) == true, "and the command shown says so")
+    }
+
+    /// The setting off: a direct start adds nothing (as before).
+    @Test func aDirectStartWithKeepOffAddsNothing() async throws {
+        var deps = Demo.dependencies(.intelbrew, pace: 0, pinned: ["ruby"])
+        deps.streamRunner = FakeStreamRunner(log: CallLog()) { _, _ in 0 }
+        let store = AppStore(deps: deps, settings: testSettings())
+        await store.start()
+        store.restorePoints.settings.keepPreviousVersion = false
+        store.startCleanup()
+        let s = try #require(store.upgrade)
+        #expect(s.items.first?.command.environment[CleanupKeep.key] == nil)
+        #expect(s.items.first?.command.display == "brew cleanup")
+    }
+}
+

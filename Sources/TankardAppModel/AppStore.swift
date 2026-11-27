@@ -1531,18 +1531,35 @@ public final class AppStore {
     /// The Cleanup store (keep list, brew.env) for the packages now, and its dry run.
     @discardableResult
     private func makeCleanupPreview() -> Bool {
+        guard let (c, inputs) = cleanupStoreNow() else { return false }
+        cleanup = c
+        cleanupInputs = inputs
+        Task { await c.load() }
+        return true
+    }
+
+    /// A Cleanup store (not loaded) for the packages, settings and
+    /// environment now, and the inputs it was made from.
+    private func cleanupStoreNow() -> (CleanupStore, CleanupInputs)? {
         guard let client = try? resolvedClient(), let detection = report?.intelbrew,
-              let inputs = currentCleanupInputs() else { return false }
+              let inputs = currentCleanupInputs() else { return nil }
         // 0.8.5 (M1): the old versions kept for Restore Points stay.
         let keep = inputs.keepPrevious
         // 0.8.5 (HK-47 review): brew.env's own list wins over Tankard's.
         let c = CleanupStore(client: client, env: client.environment(for: detection),
                              kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep,
                              brewEnvSetsKeep: inputs.brewEnvSetsKeep)
-        cleanup = c
-        cleanupInputs = inputs
-        Task { await c.load() }
-        return true
+        return (c, inputs)
+    }
+
+    /// 0.9.4 (bug hunt R5): the keep list a Clean Up run gives brew: the
+    /// preview's (startCleanup has checked it matches the inputs now), else
+    /// one worked out now exactly as a preview would. A start with no
+    /// preview used to pass none, and removed the versions "Keep the
+    /// previous version" keeps.
+    func cleanupKeepForRun() -> [String: String] {
+        if let c = cleanup { return c.extraEnvironment }
+        return cleanupStoreNow()?.0.extraEnvironment ?? [:]
     }
 
     /// The real `brew cleanup`, through the queue and the live log.
@@ -1558,8 +1575,9 @@ public final class AppStore {
         // replacement dry run still pending has shown nothing yet), and
         // only one worked out from the inventory and retention settings
         // now ("Keep the previous version" turned on with the sheet open
-        // left a preview that removed what the setting now keeps). (No
-        // preview at all: the plain `brew cleanup` start, as before.)
+        // left a preview that removed what the setting now keeps).
+        // R5: no preview at all (a direct start) still keeps what a preview
+        // would: its keep list is worked out now (cleanupKeepForRun).
         if let c = cleanup, c.phase != .ready { return }
         guard !rebuildCleanupIfInventoryChanged() else { return }
         showCleanupSheet = false
@@ -1888,7 +1906,7 @@ public final class AppStore {
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
                             askpass = deps.askpassHelper, foreign,
-                            cleanupKeep = action == .cleanup ? (cleanup?.extraEnvironment ?? [:]) : [:]] p in
+                            cleanupKeep = action == .cleanup ? cleanupKeepForRun() : [:]] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
