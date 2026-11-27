@@ -79,11 +79,18 @@ sub running {
         next if $uid != $< && $uid != 0;
         if (!$is_own_home) {
             my $env = env_of($pid);
-            next if defined $env && $env =~ /(?:^| )HOME=(\S+)/ && !same_path($1, $home);
+            # HOME runs to the next " KEY=" or the end, so a path with
+            # spaces is not cut short and wrongly dropped.
+            if (defined $env && $env =~ /(?:^| )HOME=(.*?)(?= [A-Za-z_][A-Za-z0-9_]*=|\z)/s) {
+                next unless same_path($1, $home);
+            }
         }
         push @found, "$pid $path";
     }
-    close $ps;
+    close $ps or do {
+        print STDERR "launch-check-helper.pl: ps failed\n";
+        exit 1;
+    };
     print "$_\n" for @found;
 }
 

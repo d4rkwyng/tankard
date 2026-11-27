@@ -478,6 +478,23 @@ struct V094LaunchCheckCacheTests {
 
     private func alive(_ pid: Int32) -> Bool { kill(pid, 0) == 0 }
 
+    /// SIGKILL `pid` only when `ps` still shows it as `path`. A pid that
+    /// has already exited, or been reused by something else, is left alone.
+    private func killIfStill(pid: Int32, path: String) {
+        let ps = Process()
+        ps.executableURL = URL(fileURLWithPath: "/bin/ps")
+        ps.arguments = ["-p", String(pid), "-o", "comm="]
+        let out = Pipe()
+        ps.standardOutput = out
+        ps.standardError = Pipe()
+        do { try ps.run() } catch { return }
+        ps.waitUntilExit()
+        let comm = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard comm == path else { return }
+        kill(pid, SIGKILL)
+    }
+
     @Test func anExistingCacheIsPutBackAsItWas() async throws {
         let f = try makeFixture()
         defer { try? FileManager.default.removeItem(at: f.directory) }
@@ -769,7 +786,7 @@ struct V094LaunchCheckCacheTests {
 
         let ran = try await launchCheck(f)
         let otherPid = Int32(read(f.mark.appendingPathComponent("otherpid"))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
-        defer { if let otherPid { kill(otherPid, SIGKILL) } }
+        defer { if let otherPid { killIfStill(pid: otherPid, path: f.otherTankard.path) } }
         #expect(ran.status == 1, "\(ran.stdout)\n\(ran.stderr)")
         #expect(ran.stdout.contains("launch-check: run 1/1 OK"))
         #expect(ran.stderr.contains("did not put back \(f.cache.path): another Tankard is running"))
