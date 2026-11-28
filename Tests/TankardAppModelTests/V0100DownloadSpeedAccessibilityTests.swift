@@ -7,6 +7,10 @@ import TankardCore
 // The spoken words live in AccessibilityText (checked here); the view's
 // wiring is checked in its source, as V093AccessibilityTests does (the
 // helpers below are that file's, which keeps them private).
+//
+// The source-text tests verify wiring only: that the label, the trait and
+// no announcement are in the view's code. What VoiceOver actually reads
+// and announces is checked by hand with VoiceOver, not here.
 
 private let packageRoot = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
@@ -334,15 +338,24 @@ struct V0100StatusLineAccessibilityTests {
         #expect(flat.contains([
             "if session.download != nil {",
             "TimelineView(.periodic(from: .now, by: 1)) { context in",
-            "SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, date: context.date)",
+            "SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, tick: context.date)",
             "}",
             "} else {",
-            "SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, date: nil)",
+            "SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, tick: nil)",
             "}",
         ].joined(separator: "\n")))
         #expect(sheet.components(separatedBy: "SessionStatusText(").count - 1 == 2)
         #expect(!sheet.contains("Text(session.statusLine("))
+    }
+
+    /// 0.10 (review): one time per render, the session's clock, for both
+    /// the visible line and the label; the timeline's date only triggers
+    /// the redraw and is never read as the time.
+    @Test func oneTimePerRender() throws {
         let status = try Self.statusText()
-        #expect(status.contains("let at = date ?? session.now()"))
+        #expect(status.components(separatedBy: "session.now()").count - 1 == 1)
+        #expect(status.contains("let at = session.now()"))
+        #expect(status.components(separatedBy: "at: at").count - 1 == 2)
+        #expect(!status.contains("tick ??") && !status.contains("at: tick") && !status.contains("context.date"))
     }
 }

@@ -1149,7 +1149,10 @@ public final class UpgradeSession: Identifiable {
         }
     }
 
-    private func showDownload(_ p: DownloadProgress?) {
+    /// One poll's result. The poll loop above calls this; the 0.10 speed
+    /// tests call it directly to deliver each poll themselves (internal,
+    /// not public: the app has no other caller).
+    func showDownload(_ p: DownloadProgress?) {
         if p != nil { downloadObservations += 1 }
         // 0.10: every poll counts, also one with the same bytes (that is
         // how the speed falls and a stall shows). A count that went
