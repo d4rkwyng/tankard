@@ -3,11 +3,11 @@ import Testing
 import TankardCore
 @testable import TankardAppModel
 
-// 0.10: the sheet's download speed and time left (Derek: on a slow
+// 0.9.4: the sheet's download speed and time left (Derek: on a slow
 // connection "2.1 of 2.3 GB (91%)" barely moves, and he couldn't tell
 // whether it was still working). brew is a fake; the download is a fake
 // file in a fake folder; the session's clock is the test's, moved by hand.
-// 0.10 (review): polls are delivered by the test, not by the session's
+// 0.9.4 (review): polls are delivered by the test, not by the session's
 // poll loop: the session watches nothing here (no DownloadMonitor), and
 // the test hands each poll of a real DownloadWatcher over the fake folder
 // to `showDownload`, the method the loop calls. No poll cadence and no

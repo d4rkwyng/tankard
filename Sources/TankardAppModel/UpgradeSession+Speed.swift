@@ -1,7 +1,7 @@
 import Foundation
 import TankardCore
 
-// 0.10: the download's speed and time left on the sheet's status line
+// 0.9.4: the download's speed and time left on the sheet's status line
 // (Derek: on a slow connection "2.1 of 2.3 GB (91%)" barely moves, and he
 // couldn't tell whether it was still working). The tracker is
 // TankardCore's DownloadSpeed, fed by each download poll with the
@@ -50,7 +50,7 @@ extension UpgradeSession {
         ratePieces(at: date).map { " · " + $0 }.joined()
     }
 
-    /// 0.10: the status line as VoiceOver reads it. While a download runs:
+    /// 0.9.4: the status line as VoiceOver reads it. While a download runs:
     /// the same sentence with commas for the dots and the units in words
     /// ("Downloading 10 of 11, 2.1 of 2.3 GB, 91 percent, 4.2 megabytes per
     /// second, about 1 minute left"); otherwise the visible line.

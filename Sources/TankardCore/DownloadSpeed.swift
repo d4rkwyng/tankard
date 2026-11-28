@@ -1,6 +1,6 @@
 import Foundation
 
-// 0.10: download speed and time left for the install/upgrade sheet (Derek:
+// 0.9.4: download speed and time left for the install/upgrade sheet (Derek:
 // on a slow connection "2.1 of 2.3 GB (91%)" barely moves, and nothing
 // says whether it is still working).
 //
@@ -302,7 +302,7 @@ public enum DownloadSpeedFormat {
     }
 
     /// "about 20 sec left", "about 1 hr 5 min left", "a few seconds left".
-    /// 0.10 (review): plural variations (L10n.bundle's stringsdict), so a
+    /// 0.9.4 (review): plural variations (L10n.bundle's stringsdict), so a
     /// language that agrees with the number says 1 in the singular
     /// (Spanish "queda alrededor de 1 min", "quedan unos 12 min").
     public static func timeLeftText(_ seconds: TimeInterval) -> String {

@@ -2,7 +2,7 @@ import Foundation
 import os
 import TankardCore
 
-// 0.10, demo only: a download to show the sheet's speed and time left
+// 0.9.4, demo only: a download to show the sheet's speed and time left
 // (screenshots). TANKARD_DEMO_DOWNLOAD=slow|stall, with TANKARD_DEMO=1 and
 // TANKARD_DEMO_UPGRADE=1. The first command of the demo upgrade that
 // downloads (the prefetch, or the first upgrade) holds while a fake file

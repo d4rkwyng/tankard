@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import TankardCore
 
-// 0.10: the sheet's download speed and time left (Derek: on a slow
+// 0.9.4: the sheet's download speed and time left (Derek: on a slow
 // connection "2.1 of 2.3 GB (91%)" barely moves). The tracker gets every
 // time from the test: polls every 250 ms, as the sheet's.
 
@@ -216,7 +216,7 @@ struct V0100DownloadSpeedTests {
         #expect(Self.near(s.speed(at: Self.t0 + 19_999 * Self.poll), 4_000))
     }
 
-    /// 0.10 (review): a drop (a partial file deleted) restarts the
+    /// 0.9.4 (review): a drop (a partial file deleted) restarts the
     /// average but is not growth: stalled before, stalled after.
     @Test func aDropKeepsTheStallClock() {
         var s = DownloadSpeed()

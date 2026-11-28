@@ -22,7 +22,7 @@ struct UpgradeSheet: View {
             .padding(.bottom, 14)
 
             HStack {
-                // 0.10: while brew downloads, the line carries the speed and
+                // 0.9.4: while brew downloads, the line carries the speed and
                 // time left, which change with no new bytes (a stall), so
                 // it is redrawn every second then; otherwise as before.
                 // The timeline only triggers the redraw: the time read is
@@ -274,7 +274,7 @@ struct SessionStatusText: View {
     var behindBrewUpdate: Bool
     /// The TimelineView's date while a download runs, nil otherwise. Only
     /// a change of input, so SwiftUI redraws each second; never read as
-    /// the time (0.10 review: a poll can land after it, and the newest
+    /// the time (0.9.4 review: a poll can land after it, and the newest
     /// bytes would go with an older rate).
     var tick: Date?
 
@@ -285,7 +285,7 @@ struct SessionStatusText: View {
             .monospacedDigit()
             .lineLimit(1)
             .truncationMode(.middle)
-            // 0.10: read as a sentence (commas, units in words); VoiceOver
+            // 0.9.4: read as a sentence (commas, units in words); VoiceOver
             // reads it again when asked, nothing is announced each second.
             .accessibilityLabel(Text(session.statusAccessibilityLabel(behindBrewUpdate: behindBrewUpdate, at: at)))
             .accessibilityAddTraits(.updatesFrequently)

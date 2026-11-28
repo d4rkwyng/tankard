@@ -40,7 +40,7 @@ public enum AccessibilityText {
         phase ?? String(localized: "Refreshing")
     }
 
-    // MARK: 0.10, the sheet's download speed (UpgradeSession+Speed.swift)
+    // MARK: 0.9.4, the sheet's download speed (UpgradeSession+Speed.swift)
 
     /// "Downloading font-inter" (the visible line's "Downloading font-inter…"
     /// without the ellipsis, as a comma follows).
@@ -73,7 +73,7 @@ public enum AccessibilityText {
         }
     }
 
-    /// 0.10 (review): the time left as VoiceOver reads it, the units in
+    /// 0.9.4 (review): the time left as VoiceOver reads it, the units in
     /// full words and in the number's plural form ("about 1 minute left",
     /// "about 20 seconds left", "about 1 hour and 5 minutes left"); the
     /// visible "min"/"sec" would be read as abbreviations.

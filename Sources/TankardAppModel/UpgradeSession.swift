@@ -239,7 +239,7 @@ public final class UpgradeSession: Identifiable {
     public private(set) var pouringItems: Set<UUID> = []
     /// The clock for `itemStartedAt` (tests set it).
     @ObservationIgnored public var now: @Sendable () -> Date = { Date() }
-    /// 0.10: the download's speed, fed by each poll with `now()`
+    /// 0.9.4: the download's speed, fed by each poll with `now()`
     /// (UpgradeSession+Speed.swift).
     @ObservationIgnored var downloadSpeed = DownloadSpeed()
 
@@ -659,7 +659,7 @@ public final class UpgradeSession: Identifiable {
     /// 0.8: `behindBrewUpdate` (AppStore.sessionWaitsForBrewUpdate): the
     /// first step is queued behind a background `brew update`, which can take
     /// a minute or two; say so instead of a bare "Waiting for brew…".
-    /// 0.10: `date` (the sheet's TimelineView) is when the download's speed
+    /// 0.9.4: `date` (the sheet's TimelineView) is when the download's speed
     /// and time left are read; a download that stops still updates.
     public func statusLine(behindBrewUpdate: Bool, at date: Date) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
@@ -669,7 +669,7 @@ public final class UpgradeSession: Identifiable {
         if isFetching {
             // 0.8.3: "Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"
             let head = String(localized: "Downloading \(fetchedCount) of \(fetchTotal)")
-            // 0.10: "… (29%) · 4.2 MB/s · about 1 min left"
+            // 0.9.4: "… (29%) · 4.2 MB/s · about 1 min left"
             return download.map { head + " · " + $0.detail + rateSuffix(at: date) } ?? head + "…"
         }
         if let c = current, let d = download {
@@ -1149,14 +1149,14 @@ public final class UpgradeSession: Identifiable {
         }
     }
 
-    /// One poll's result. The poll loop above calls this; the 0.10 speed
+    /// One poll's result. The poll loop above calls this; the 0.9.4 speed
     /// tests call it directly to deliver each poll themselves (internal,
     /// not public: the app has no other caller).
     func showDownload(_ poll: DownloadPoll) {
         let p = poll.progress
         if p != nil { downloadObservations += 1 }
-        // 0.10: every poll counts, also one with the same bytes (that is
-        // how the speed falls and a stall shows). 0.10 (review): the
+        // 0.9.4: every poll counts, also one with the same bytes (that is
+        // how the speed falls and a stall shows). 0.9.4 (review): the
         // tracker gets the bytes written (`traffic`), not the bytes shown:
         // those fall when a partial file is deleted, and a fall restarted
         // the tracker and kept a stall although another file grew on that

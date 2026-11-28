@@ -3,7 +3,7 @@ import Testing
 import TankardCore
 @testable import TankardAppModel
 
-// 0.10: VoiceOver and the string catalog for the sheet's download speed.
+// 0.9.4: VoiceOver and the string catalog for the sheet's download speed.
 // The spoken words live in AccessibilityText (checked here); the view's
 // wiring is checked in its source, as V093AccessibilityTests does (the
 // helpers below are that file's, which keeps them private).
@@ -205,7 +205,7 @@ struct V0100DownloadSpeedAccessibilityTextTests {
                     "about %lld hr left", "about %lld hr %lld min left", "Waiting for data…", "Downloading %@",
                     "%@ of %@ %@", "%lld percent", "%@ kilobytes per second", "%@ megabytes per second",
                     "%@ gigabytes per second", "%@ %@",
-                    // 0.10 (review): the spoken time left (plural; the .strings get the "other" form).
+                    // 0.9.4 (review): the spoken time left (plural; the .strings get the "other" form).
                     "about %lld seconds left", "about %lld minutes left", "about %lld hours left",
                     "about %lld hours and %@ left", "%lld minutes"]
         for lang in shippedLanguages {
@@ -348,7 +348,7 @@ struct V0100StatusLineAccessibilityTests {
         #expect(!sheet.contains("Text(session.statusLine("))
     }
 
-    /// 0.10 (review): one time per render, the session's clock, for both
+    /// 0.9.4 (review): one time per render, the session's clock, for both
     /// the visible line and the label; the timeline's date only triggers
     /// the redraw and is never read as the time.
     @Test func oneTimePerRender() throws {

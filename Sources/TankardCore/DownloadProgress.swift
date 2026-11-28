@@ -191,7 +191,7 @@ public struct DownloadPoll: Equatable, Sendable {
     /// the rest a renamed one got before its rename). It never falls: a
     /// deleted file takes its bytes off `progress`, not off this. The
     /// speed is measured on this count, so a deleted file isn't read as a
-    /// slow-down, nor an old file as new bytes (0.10, review). Stops at
+    /// slow-down, nor an old file as new bytes (0.9.4, review). Stops at
     /// Int64.max.
     public var traffic: Int64
 
@@ -281,7 +281,7 @@ public actor DownloadWatcher {
                 written = Self.sum(written, Self.growth(from: last.size, to: file.size))
                 continue
             }
-            // 0.10 (review): a file that was growing and is gone was either
+            // 0.9.4 (review): a file that was growing and is gone was either
             // renamed (done: its real size counts) or deleted after a
             // failure (nothing counts: its bytes are gone). Before, it
             // counted with its expected total, so a deleted partial file
@@ -305,7 +305,7 @@ public actor DownloadWatcher {
         if !now.isEmpty { seen = true }
         guard !now.isEmpty else { return DownloadPoll(progress: nil, traffic: traffic) }
 
-        // 0.10 (review): checked sums. A total past Int64.max is unknown;
+        // 0.9.4 (review): checked sums. A total past Int64.max is unknown;
         // bytes past it stop there (and the total is unknown too). Before,
         // a finished file's real size, added to a total already at
         // Int64.max, trapped.
@@ -334,7 +334,7 @@ public actor DownloadWatcher {
 
     /// Whether the file under `done` (the final name) is the partial file
     /// `last` renamed, and not an older download of the same file left in
-    /// the folder (0.10, review: a file under the final name is no proof).
+    /// the folder (0.9.4, review: a file under the final name is no proof).
     /// Either it is the same file (the same file number: a rename keeps
     /// it), or the name wasn't there at the last poll and appears now, as
     /// the partial file goes, at least as large as that was. An old file

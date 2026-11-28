@@ -172,7 +172,7 @@ if [ "${SET:-all}" = v0.4 ]; then v04a; v04b; exit 0; fi
 shot intelbrew-demo-light 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=light
 shot intelbrew-demo-dark 3 TANKARD_DEMO=1 TANKARD_SELECT=python@3.15 TANKARD_APPEARANCE=dark
 shot upgrade-sheet-demo-dark 8.5 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=1 TANKARD_APPEARANCE=dark
-# 0.10: a slow download's speed and time left (a fake download in memory, Demo+Download.swift)
+# 0.9.4: a slow download's speed and time left (a fake download in memory, Demo+Download.swift)
 shot upgrade-sheet-download-speed-dark 12 TANKARD_DEMO=1 TANKARD_DEMO_UPGRADE=1 TANKARD_DEMO_DOWNLOAD=slow TANKARD_APPEARANCE=dark
 shot arm64-demo-dark 3 TANKARD_DEMO=arm64 TANKARD_SELECT=google-chrome TANKARD_APPEARANCE=dark
 
