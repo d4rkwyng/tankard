@@ -34,6 +34,7 @@
 "%@ exited %lld:\n%@" = "%@ 종료됨(%lld):\n%@";
 "%@ finished with a warning" = "%@ 완료 (경고 있음)";
 "%@ finished with problems" = "%@ 완료 (문제 있음)";
+"%@ gigabytes per second" = "초당 %@기가바이트";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 %lld개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 의존성 1개(%@)와 함께 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@은(는) 이 Mac용 Intelbrew bottle이 없어 brew가 컴파일합니다. 오래된 Mac에서는 오래 걸릴 수 있습니다.";
@@ -49,7 +50,10 @@
 "%@ is running" = "%@ 실행 중";
 "%@ is there but doesn't run. It said:" = "%@이(가) 있지만 실행되지 않습니다. 출력:";
 "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@은(는) 아직 신뢰되지 않았습니다. 터미널에서 `%@`을(를) 실행하거나 'Tap 신뢰…'를 클릭한 다음 다시 시도하십시오.";
+"%@ kilobytes per second" = "초당 %@킬로바이트";
+"%@ megabytes per second" = "초당 %@메가바이트";
 "%@ needs your administrator password" = "%@에는 관리자 암호가 필요합니다";
+"%@ of %@ %@" = "%@ / %@ %@";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@/%@ bottle 제공";
 "%@ on disk" = "디스크 %@";
@@ -124,6 +128,7 @@
 "%lld of %lld versions" = "%lld/%lld 버전";
 "%lld of them Homebrew can't read" = "그중 %lld개는 Homebrew가 읽을 수 없음";
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld개 패키지는 이 Mac용 bottle이 없어 소스에서 컴파일되며, 오래 걸릴 수 있습니다.";
+"%lld percent" = "%lld퍼센트";
 "%lld pinned upgrades not included (%@)" = "고정된 업그레이드 %lld개 제외됨(%@)";
 "%lld ready-made programs" = "미리 빌드된 프로그램 %lld개";
 "%lld results for “%@”" = "“%2$@” 결과 %1$lld개";
@@ -404,6 +409,7 @@
 "Download" = "다운로드";
 "Download cache" = "다운로드 캐시";
 "Downloaded from the internet" = "인터넷에서 다운로드함";
+"Downloading %@" = "%@ 다운로드 중";
 "Downloading %@…" = "%@ 다운로드 중…";
 "Downloading %lld of %lld" = "다운로드 중 %lld/%lld";
 "Downloads" = "다운로드";
@@ -479,6 +485,7 @@
 "Full log saved to %@" = "전체 로그가 %@에 저장됨";
 "Full scan" = "전체 검사";
 "GB" = "GB";
+"GB/s" = "GB/s";
 "General" = "일반";
 "GitHub answered HTTP %lld." = "GitHub 응답: HTTP %lld.";
 "GitHub lists no release of Tankard." = "GitHub에 Tankard 릴리스가 없습니다.";
@@ -607,6 +614,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "종속 항목은 설치된 채로 남습니다(brew autoremove가 사용하지 않는 항목을 제거)";
 "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "이 Tap에는 이 Mac용 bottle이 없어 다시 설치하거나 업그레이드하면 소스에서 빌드합니다.";
 "KB" = "KB";
+"KB/s" = "KB/s";
 "Keep Old Versions" = "이전 버전 유지";
 "Keep Open" = "열어 두기";
 "Keep Running" = "계속 실행";
@@ -642,6 +650,7 @@
 "Look at the last upgrade's results first: click its button at the bottom right of this window." = "먼저 지난 업그레이드 결과를 확인하세요. 이 윈도우 오른쪽 아래의 버튼을 클릭하세요.";
 "Low" = "낮음";
 "MB" = "MB";
+"MB/s" = "MB/s";
 "Made by d4rkwyng" = "d4rkwyng 제작";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "cask의 pkg 아티팩트로 표시됩니다. 다른 cask도 암호를 요청할 수 있습니다.";
 "Matched by app ID" = "앱 ID로 일치";
@@ -1303,6 +1312,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "시스템 설정 → 일반 → 로그인 항목에서 승인을 기다리는 중입니다.";
 "Waiting for brew update to finish…" = "brew update가 끝나기를 기다리는 중…";
 "Waiting for brew…" = "brew를 기다리는 중…";
+"Waiting for data…" = "데이터를 기다리는 중…";
 "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Tankard 대화상자에서 암호를 기다리는 중입니다. 보이지 않나요? 취소하고 터미널에서 다음을 실행하세요:";
 "Welcome to Tankard" = "Tankard에 오신 것을 환영합니다";
 "What %@ needs, and what those need in turn" = "%@에 필요한 항목과 그 항목들에 다시 필요한 항목";
@@ -1331,7 +1341,12 @@
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Homebrew 설정에서 다른 암호 프로그램을 사용하므로, Tankard가 여기서 암호를 요청할 수 없습니다. 이 단계를 터미널에서 실행하세요:";
 "Your PATH finds other tools before Homebrew's" = "PATH에서 Homebrew의 도구보다 다른 도구가 먼저 발견됩니다";
 "Your settings and data in ~/Library are not touched." = "~/Library에 있는 설정과 데이터는 건드리지 않습니다.";
+"a few seconds left" = "몇 초 남음";
 "a symlink to %@: that file is backed up and edited" = "%@에 대한 심볼릭 링크: 해당 파일이 백업된 후 편집됩니다";
+"about %lld hr %lld min left" = "약 %lld시간 %lld분 남음";
+"about %lld hr left" = "약 %lld시간 남음";
+"about %lld min left" = "약 %lld분 남음";
+"about %lld sec left" = "약 %lld초 남음";
 "adopted" = "가져옴";
 "and %lld more" = "외 %lld개";
 "and %lld more…" = "외 %lld개…";

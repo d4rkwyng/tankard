@@ -22,10 +22,16 @@ struct UpgradeSheet: View {
             .padding(.bottom, 14)
 
             HStack {
-                Text(session.statusLine(behindBrewUpdate: store.sessionWaitsForBrewUpdate))
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                // 0.10: while brew downloads, the line carries the speed and
+                // time left, which change with no new bytes (a stall), so
+                // it is redrawn every second then; otherwise as before.
+                if session.download != nil {
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, date: context.date)
+                    }
+                } else {
+                    SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, date: nil)
+                }
                 Spacer()
                 Text(session.countLine).foregroundStyle(.secondary).monospacedDigit()
             }
@@ -256,6 +262,27 @@ struct UpgradeSheet: View {
         } message: {
             Text(session.stopNowWarning)
         }
+    }
+}
+
+/// The sheet's status line ("Downloading 10 of 11 · 2.1 of 2.3 GB (91%) ·
+/// 4.2 MB/s · about 1 min left"). `date`: the TimelineView's, while a
+/// download runs; nil otherwise (the session's clock).
+struct SessionStatusText: View {
+    var session: UpgradeSession
+    var behindBrewUpdate: Bool
+    var date: Date?
+
+    var body: some View {
+        let at = date ?? session.now()
+        Text(session.statusLine(behindBrewUpdate: behindBrewUpdate, at: at))
+            .monospacedDigit()
+            .lineLimit(1)
+            .truncationMode(.middle)
+            // 0.10: read as a sentence (commas, units in words); VoiceOver
+            // reads it again when asked, nothing is announced each second.
+            .accessibilityLabel(Text(session.statusAccessibilityLabel(behindBrewUpdate: behindBrewUpdate, at: at)))
+            .accessibilityAddTraits(.updatesFrequently)
     }
 }
 

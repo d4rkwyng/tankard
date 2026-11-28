@@ -239,6 +239,9 @@ public final class UpgradeSession: Identifiable {
     public private(set) var pouringItems: Set<UUID> = []
     /// The clock for `itemStartedAt` (tests set it).
     @ObservationIgnored public var now: @Sendable () -> Date = { Date() }
+    /// 0.10: the download's speed, fed by each poll with `now()`
+    /// (UpgradeSession+Speed.swift).
+    @ObservationIgnored var downloadSpeed = DownloadSpeed()
 
     func setBuildProgress(compiling: Set<UUID>, estimates: [UUID: TimeInterval]) {
         compilingItems = compiling
@@ -646,6 +649,8 @@ public final class UpgradeSession: Identifiable {
     /// "Upgrading python@3.15…" / "Done: 4 upgraded, 1 failed"
     public var statusLine: String { statusLine(behindBrewUpdate: false) }
 
+    public func statusLine(behindBrewUpdate: Bool) -> String { statusLine(behindBrewUpdate: behindBrewUpdate, at: now()) }
+
     /// Nothing has started yet: the queue is still running something else.
     public var notStarted: Bool {
         !isFinished && items.allSatisfy { $0.state == .waiting } && fetchStates.values.allSatisfy { $0 == .waiting }
@@ -654,7 +659,9 @@ public final class UpgradeSession: Identifiable {
     /// 0.8: `behindBrewUpdate` (AppStore.sessionWaitsForBrewUpdate): the
     /// first step is queued behind a background `brew update`, which can take
     /// a minute or two; say so instead of a bare "Waiting for brew…".
-    public func statusLine(behindBrewUpdate: Bool) -> String {
+    /// 0.10: `date` (the sheet's TimelineView) is when the download's speed
+    /// and time left are read; a download that stops still updates.
+    public func statusLine(behindBrewUpdate: Bool, at date: Date) -> String {
         if behindBrewUpdate && notStarted { return String(localized: "Waiting for brew update to finish…") }
         if stoppingNow, let c = current { return String(localized: "Stopping \(c.package.name)…") }
         if lockWait != nil, current != nil { return String(localized: "Waiting for another Homebrew command to finish…") }
@@ -662,12 +669,13 @@ public final class UpgradeSession: Identifiable {
         if isFetching {
             // 0.8.3: "Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"
             let head = String(localized: "Downloading \(fetchedCount) of \(fetchTotal)")
-            return download.map { head + " · " + $0.detail } ?? head + "…"
+            // 0.10: "… (29%) · 4.2 MB/s · about 1 min left"
+            return download.map { head + " · " + $0.detail + rateSuffix(at: date) } ?? head + "…"
         }
         if let c = current, let d = download {
             // 0.8: "Downloading font-inter… 12.3 of 33.7 MB (36%)"; a
             // dependency's bottle by its own name.
-            return String(localized: "Downloading \(d.name ?? c.package.name)…") + " " + d.detail
+            return String(localized: "Downloading \(d.name ?? c.package.name)…") + " " + d.detail + rateSuffix(at: date)
         }
         if let c = current { return String(localized: "\(action.gerund) \(c.package.name)…") }
         if checkingNewApp { return String(localized: "Checking the new app…") }
@@ -1124,6 +1132,7 @@ public final class UpgradeSession: Identifiable {
 
     private func watchDownloads(of packages: [Package]) {
         stopWatchingDownloads()
+        downloadSpeed.reset()
         guard let m = downloads else { return }
         let since = m.now()
         downloadTask = Task { [weak self] in
@@ -1142,6 +1151,10 @@ public final class UpgradeSession: Identifiable {
 
     private func showDownload(_ p: DownloadProgress?) {
         if p != nil { downloadObservations += 1 }
+        // 0.10: every poll counts, also one with the same bytes (that is
+        // how the speed falls and a stall shows). A count that went
+        // backwards restarts the tracker by itself.
+        if let p { downloadSpeed.record(bytes: p.bytes, at: now()) } else { downloadSpeed.reset() }
         if download != p {
             download = p
             lastActivityAt = now()
@@ -1186,6 +1199,7 @@ public final class UpgradeSession: Identifiable {
         downloadTask?.cancel()
         downloadTask = nil
         download = nil
+        downloadSpeed.reset()
     }
 
     private func noteChainSkipped(after i: Int) {
