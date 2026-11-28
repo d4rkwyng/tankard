@@ -409,8 +409,10 @@ The upgrade sheet shows each package, the exact command and brew's live output. 
 upgrade one at a time; a failure doesn't stop the rest.
 
 When several packages need downloading, one `brew fetch` downloads them all first, in
-parallel ("Downloading 4 of 9 · 120.0 of 410.0 MB (29%)"); each upgrade then installs from brew's
-cache. A download that fails there is tried again by that package's own upgrade, and
+parallel ("Downloading 4 of 9 · 120.0 of 410.0 MB (29%) · 4.2 MB/s · about 1 min left"); each
+upgrade then installs from brew's cache. The speed is an average over the last few seconds; the
+time left appears once the speed is steady and the total size is known. When no new data has
+arrived for about 5 seconds, the line says "Waiting for data…" instead. A download that fails there is tried again by that package's own upgrade, and
 `HOMEBREW_DOWNLOAD_CONCURRENCY=1` makes brew download one at a time.
 
 - **Stop Now** stops brew straight away, for one package or many. brew undoes the step it
