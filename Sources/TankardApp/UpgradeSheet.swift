@@ -104,6 +104,8 @@ struct UpgradeSheet: View {
                                 // 0.8.3: one failed step again.
                                 if session.retryableItems.contains(where: { $0.id == item.id }) {
                                     Button("Retry \(item.package.name)") { store.retryInSheet([item]) }
+                                        // 0.9.4 (bug hunt R1 review): an automatic update has the queue.
+                                        .disabled(store.newRunBlocked)
                                 }
                             }
                     }
@@ -204,6 +206,8 @@ struct UpgradeSheet: View {
                             store.retryInSheet()
                         }
                         .help("Run the failed steps again (the same checks as the Upgrade and Install buttons apply)")
+                        // 0.9.4 (bug hunt R1 review): an automatic update has the queue.
+                        .disabled(store.newRunBlocked)
                     }
                     if inPanel {
                         Button("Show in Tankard") { ProgressPanelController.showInTankard(store) }

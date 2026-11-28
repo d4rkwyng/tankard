@@ -13,14 +13,14 @@ public enum VulnerableScanStatus: Equatable, Sendable {
     case unsupported(String)
 
     @MainActor
-    public init(state: InsightState, scan: VulnerabilityScan?, installed: [Package] = []) {
+    public init(state: InsightState, scan: VulnerabilityScan?, installed: [Package]? = nil) {
         switch state {
         case .running: self = .running
         case .failed(let s): self = .failed(s, timedOut: s == InsightsStore.scanTimedOutMessage)
         case .unsupported(let s): self = .unsupported(s)
         case .idle:
             if let scan {
-                self = .scanned(checked: scan.checked, found: VulnerabilityCount.installed(scan, packages: installed), complete: scan.complete,
+                self = .scanned(checked: scan.checked, found: VulnerabilityCount.installed(scan, inventory: installed), complete: scan.complete,
                                 partialReason: scan.partialReason, at: scan.scannedAt)
             } else {
                 self = .notScanned

@@ -483,6 +483,14 @@ public enum InstallCompileText {
         if let estimate { m += " " + String(localized: "It took \(estimate).") }
         return m
     }
+
+    /// 0.9.4 (bug hunt R4): `brew info` didn't say whether `name` has a
+    /// bottle (it failed or left it out): it may compile, or may not.
+    public static func unverifiedMessage(name: String, intelbrew: Bool) -> String {
+        intelbrew
+            ? String(localized: "Tankard couldn't check whether \(name) has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs.")
+            : String(localized: "Tankard couldn't check whether \(name) has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs.")
+    }
 }
 
 /// The Intelbrew fork line in the status bar.

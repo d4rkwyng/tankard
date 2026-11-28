@@ -6,7 +6,7 @@ import TankardCore
 
 extension AppStore {
     func wireInsights() {
-        insights.installedPackages = { [weak self] in self?.report?.packages ?? [] }
+        insights.installedPackages = { [weak self] in self?.report?.packages }
         insights.onUpdate = { [weak self] in self?.applyInsights() }
         insights.settings.onChange = { [weak self] change in
             guard let self else { return }
@@ -14,8 +14,11 @@ extension AppStore {
             case .selfUpdating:
                 self.applyInsights()
                 // Turned on: ask brew (`brew outdated --greedy`). Off needs no brew.
-                if self.insights.settings.includeSelfUpdatingApps, self.report != nil {
-                    Task { await self.refresh(manual: false) }
+                // 0.9.4 (bug hunt R3): also while the launch's first read
+                // runs with no report yet (no cache): it decided without
+                // the list, and the follow-up was skipped on `report == nil`.
+                if self.insights.settings.includeSelfUpdatingApps, self.report != nil || self.isRefreshing {
+                    self.greedyFollowUp = Task { await self.refreshForGreedyList() }
                 }
             case .notifyVulnerabilities:
                 if self.insights.settings.notifyNewVulnerabilities { self.insights.noticeTurnedOn() }

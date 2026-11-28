@@ -85,6 +85,9 @@ final class Latch: @unchecked Sendable {
         w.forEach { $0.resume() }
     }
 
+    /// Whether it was released (a bounded wait polls this).
+    var isOpen: Bool { lock.withLock { open } }
+
     func wait() async {
         await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
             let resumeNow: Bool = lock.withLock {
@@ -383,10 +386,106 @@ enum TestDefaults {
 
     /// Removes one suite now: its contents, then its plist (cfprefsd leaves
     /// an emptied domain behind as a `{}` file).
-    static func remove(_ name: String) {
+    ///
+    /// 0.9.4: `CFPreferencesAppSynchronize` does not put a removed domain
+    /// on disk. The old plist (with its keys) stays until cfprefsd's own
+    /// flush, which came 0.2s to 4s later, so a plist unlinked here could
+    /// come back as `{}` afterwards. That was the TestDefaultsTests flake
+    /// (scopedSuiteLeavesNoPlist and withTestDefaultsLeavesNoPlist, on the
+    /// check after the 0.5s wait). `flushPendingWrite` makes cfprefsd write
+    /// the `{}` now; once it is written, nothing is pending, and the unlink
+    /// is the last change to that path.
+    ///
+    /// If the flush fails (`defaults` could not run, exited nonzero, or was
+    /// stopped), cfprefsd may still write the `{}` back after the unlink.
+    /// That is said on stderr and returned as `false`; the plist is still
+    /// unlinked and the name stays registered, so `removeAll` and the
+    /// sweeper after exit delete it again. Never traps: `Scoped.deinit`
+    /// calls this.
+    @discardableResult static func remove(_ name: String) -> Bool {
+        removeInProcess(name)
+        let flushed = flushPendingWrite(name)
+        try? FileManager.default.removeItem(at: plistURL(name))
+        if !flushed {
+            FileHandle.standardError.write(Data(
+                "TestDefaults.remove: could not flush \(name) before unlinking its plist; a late write-back is left to the exit sweep\n".utf8))
+        }
+        return flushed
+    }
+
+    /// `remove`, awaited off Swift's cooperative pool (it waits on
+    /// `defaults`; see `offCooperativePool`). For async tests.
+    @discardableResult static func removeAsync(_ name: String) async -> Bool {
+        await offCooperativePool { remove(name) }
+    }
+
+    /// The pre-0.9.4 `remove`, without the flush: `removeAll` runs it for
+    /// every suite at exit (hundreds), where spawning `defaults` for each
+    /// would be slow, and the sweeper's two passes after exit already cover
+    /// a late write-back.
+    private static func removeInProcess(_ name: String) {
         UserDefaults(suiteName: name)?.removePersistentDomain(forName: name)
         CFPreferencesAppSynchronize(name as CFString)
-        try? FileManager.default.removeItem(at: plistURL(name))
+    }
+
+    /// Has cfprefsd write anything it still holds for `name` to disk before
+    /// this returns. A read from another process does that (cfprefsd writes
+    /// a dirty domain before it answers), so `defaults export <name>
+    /// /dev/null` is enough: read-only, and the file it writes is
+    /// /dev/null. Only test-shaped names, so a caller's mistake can never
+    /// point it at the app's own domain. True only when `defaults` exited
+    /// with status 0 (it does even for a domain with no file) within
+    /// `timeout` seconds; false if it could not run, exited nonzero or was
+    /// stopped.
+    @discardableResult static func flushPendingWrite(_ name: String, timeout: TimeInterval = 10) -> Bool {
+        guard isSweepable(name) else { return false }
+        if onCooperativePool() { poolFlushes.insert(name) }
+        return runToSuccess("/usr/bin/defaults", ["export", name, "/dev/null"], timeout: timeout)
+    }
+
+    /// 0.9.4 review (round 3): the names whose flush (a wait on
+    /// `defaults`) ran on a cooperative pool thread, holding it from every
+    /// other test. TestDefaultsTests checks its own suites are not here.
+    private static let poolFlushes = NameSet()
+    static func flushedOnCooperativePool(_ name: String) -> Bool { poolFlushes.contains(name) }
+
+    /// True on one of Swift concurrency's cooperative threads (on Darwin a
+    /// dispatch root queue labelled `com.apple.root.<qos>.cooperative`).
+    static func onCooperativePool() -> Bool {
+        String(cString: __dispatch_queue_get_label(nil)).hasSuffix(".cooperative")
+    }
+
+    final class NameSet: @unchecked Sendable {
+        private let lock = NSLock()
+        private var names: Set<String> = []
+        func insert(_ name: String) { lock.withLock { _ = names.insert(name) } }
+        func contains(_ name: String) -> Bool { lock.withLock { names.contains(name) } }
+    }
+
+    /// Runs `executable` with no input or output and reports whether it
+    /// exited with status 0 within `timeout` seconds. A process still
+    /// running then gets SIGTERM, 2s later SIGKILL, and at most 2s more:
+    /// a stuck cfprefsd fails the caller's check instead of hanging the
+    /// run. Never reads the status of a process that has not exited.
+    static func runToSuccess(_ executable: String, _ arguments: [String], timeout: TimeInterval) -> Bool {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: executable)
+        p.arguments = arguments
+        p.standardInput = FileHandle.nullDevice
+        p.standardOutput = FileHandle.nullDevice
+        p.standardError = FileHandle.nullDevice
+        let exited = DispatchSemaphore(value: 0)
+        p.terminationHandler = { _ in exited.signal() }
+        guard (try? p.run()) != nil else { return false }
+        if exited.wait(timeout: .now() + timeout) == .timedOut {
+            p.terminate()
+            if exited.wait(timeout: .now() + 2) == .timedOut {
+                if p.isRunning { kill(p.processIdentifier, SIGKILL) }
+                _ = exited.wait(timeout: .now() + 2)
+            }
+            return false
+        }
+        return p.terminationReason == .exit && p.terminationStatus == 0
     }
 
     static func plistURL(_ name: String) -> URL {
@@ -396,7 +495,10 @@ enum TestDefaults {
 
     static func removeAll() {
         let names = registry.drain()
-        names.forEach(remove)
+        for name in names {
+            removeInProcess(name)
+            try? FileManager.default.removeItem(at: plistURL(name))
+        }
         sweepAfterExit()
     }
 
@@ -440,6 +542,26 @@ func withTestDefaults<R>(_ body: (UserDefaults, String) throws -> R) rethrows ->
     let scoped = TestDefaults.Scoped()
     defer { withExtendedLifetime(scoped) {} }
     return try body(scoped.defaults, scoped.name)
+}
+
+/// 0.9.4: Swift Testing runs tests on Swift's cooperative thread pool,
+/// which has one thread per core: three on a GitHub `macos-15` runner. A
+/// test that blocks one of them (a semaphore wait, `Thread.sleep`,
+/// `waitUntilExit`) while a subprocess runs holds it from every other
+/// test, and a dozen such tests at once starved the async ones into their
+/// timeouts (PR #12's CI run). A blocking wait goes on this queue instead:
+/// its threads are GCD's own, not the pool's, and the test awaits it.
+private let blockingWaits = DispatchQueue(label: "net.mindtricks.tankard.tests.blocking-waits",
+                                          attributes: .concurrent)
+
+/// Runs `body` on `blockingWaits` and awaits its result.
+func offCooperativePool<T: Sendable>(_ body: @escaping @Sendable () -> T) async -> T {
+    await withCheckedContinuation { c in blockingWaits.async { c.resume(returning: body()) } }
+}
+
+/// `offCooperativePool` for a body that throws.
+func offCooperativePoolThrowing<T: Sendable>(_ body: @escaping @Sendable () throws -> T) async throws -> T {
+    try await withCheckedThrowingContinuation { c in blockingWaits.async { c.resume(with: Result { try body() }) } }
 }
 
 func tempDir() throws -> URL {

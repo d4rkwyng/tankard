@@ -152,6 +152,43 @@ public enum ContextMenus {
         return String(localized: "Uninstall… (needed by \(names)\(more))")
     }
 
+    /// Discover's Install (the row menu's and, 0.9.4, the detail pane's
+    /// button): off until `brew info` details are in, since whether it
+    /// compiles isn't known before, and the "Install (compiles)"
+    /// confirmation must not be skipped. 0.9.4 (bug hunt): the detail
+    /// pane's button didn't wait: in Intelbrew mode a formula with no bottle
+    /// block read "Install foo" while "Asking brew info…" and started a
+    /// source build at once.
+    public static func discoverInstall(_ e: CatalogEntry, compileWarning: CompileWarning?, busy: Bool) -> MenuItemModel {
+        guard e.detailsLoaded else {
+            return MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
+                                 action: .install(confirmCompile: false), isEnabled: false)
+        }
+        // 0.9.4 (bug hunt R3): a formula whose bottle is still unknown once
+        // the lookup is over (`brew info` failed or left it out) may
+        // compile: Install asks first, as for one that does.
+        let unverified = bottleUnverified(e, compileWarning: compileWarning)
+        let compiles = compileWarning != nil || unverified
+        // 0.9.4 (bug hunt R4): the lookup established no bottle either way:
+        // "may compile", not "compiles".
+        let title = unverified ? String(localized: "Install \(e.name) (may compile)…") : installTitle(e.name, compiles: compiles)
+        return MenuItemModel(id: "install", title: title,
+                             systemImage: compiles ? "hammer" : "arrow.down.circle",
+                             action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
+    }
+
+    /// 0.9.4 (bug hunt R3): whether brew can't say if installing `e`
+    /// compiles: a formula with no bottle answer.
+    public static func bottleUnknown(_ e: CatalogEntry) -> Bool {
+        e.kind == .formula && e.bottle == .unknown
+    }
+
+    /// 0.9.4 (bug hunt R4): Install asks first only because the bottle is
+    /// unknown (nothing says it compiles): its copy says it may.
+    public static func bottleUnverified(_ e: CatalogEntry, compileWarning: CompileWarning?) -> Bool {
+        compileWarning == nil && bottleUnknown(e)
+    }
+
     /// Discover's row menu.
     ///
     /// Install waits for `brew info` details: until they're in, whether it
@@ -161,14 +198,8 @@ public enum ContextMenus {
         if installed {
             install = MenuItemModel(id: "show-installed", title: String(localized: "Show in Installed"), systemImage: "checkmark.circle",
                                     action: .showInInstalled)
-        } else if !e.detailsLoaded {
-            install = MenuItemModel(id: "install", title: String(localized: "Install (checking…)"), systemImage: "arrow.down.circle",
-                                    action: .install(confirmCompile: false), isEnabled: false)
         } else {
-            let compiles = compileWarning != nil
-            install = MenuItemModel(id: "install", title: installTitle(e.name, compiles: compiles),
-                                    systemImage: compiles ? "hammer" : "arrow.down.circle",
-                                    action: .install(confirmCompile: compiles), isEnabled: !busy && !e.disabled)
+            install = discoverInstall(e, compileWarning: compileWarning, busy: busy)
         }
         let copy = [
             MenuItemModel(id: "copy-name", title: String(localized: "Copy Name"), systemImage: "doc.on.doc", action: .copy(e.name)),

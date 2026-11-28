@@ -434,6 +434,7 @@
 "Every installed version, one brew uninstall each" = "每个已安装版本各运行一次 brew uninstall";
 "Every week" = "每周";
 "Everything in this Brewfile is installed" = "此 Brewfile 中的所有内容均已安装";
+"Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade." = "此计划中的所有项目在此期间已升级或移除。没有需要升级的了。";
 "Everything is up to date" = "一切均为最新";
 "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew." = "一切正常？那就可以忽略这些。它们主要面向开发软件或向 Homebrew 报告问题的人。";
 "Exit" = "退出";
@@ -503,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew 无法读取此软件包";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew 已无法读取此软件包，因此不会升级它。";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew 已无法读取此软件包，因此不会升级它。brew 提示：%@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "读取此列表后，Homebrew 更改了软件包。请先刷新再继续。";
 "Homebrew couldn't reach the network" = "Homebrew 无法连接网络";
 "Homebrew couldn't write to its folders" = "Homebrew 无法写入其文件夹";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew 尚未列出 Tankard %@：发布后 tap 可能需要一点时间更新。请稍后重试，或直接下载。";
@@ -514,6 +516,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "此副本由 Homebrew 安装，因此由 Homebrew 通过队列升级。brew 替换应用时 Tankard 会继续运行，完成后提示重新启动。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew 无需添加此目录即可从中安装。无需任何操作。";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew 会用 cask 的较新版本替换这个 App，此后由 Homebrew 管理。你在 ~/Library 中的设置和数据不会被改动。";
+"Homebrew is busy with an automatic update. This can run once it finishes." = "Homebrew 正在进行自动更新。完成后即可运行。";
 "Homebrew is busy; try again in a moment." = "Homebrew 正忙，请稍后再试。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew 正在更改 %1$@。如果停止,Homebrew 会撤销未完成的步骤,%2$@ 保持原样。如有残留,重新运行通常即可修复。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew 仍在升级 %@(第 %lld 个,共 %lld 个)。";
@@ -542,6 +545,7 @@
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew 匿名安装统计（formulae.brew.sh），截至 %@";
 "Homebrew's check-up found %lld things to look at" = "Homebrew 的检查发现 %lld 个需要留意的问题";
 "Homebrew's check-up has %lld notes" = "Homebrew 的检查有 %lld 条说明";
+"Homebrew's list changed while this was open. The plan now shows what is still outdated." = "此窗口打开期间 Homebrew 的列表发生了变化。计划现在显示仍然过时的项目。";
 "Homebrew's official uninstaller" = "Homebrew 官方卸载程序";
 "Homebrew's own check-up. Looking changes nothing." = "Homebrew 自带的检查。查看不会更改任何内容。";
 "Homebrew's own files have local changes" = "Homebrew 自身文件有本地改动";
@@ -559,9 +563,12 @@
 "Install" = "安装";
 "Install %@" = "安装 %@";
 "Install %@ (compiles)…" = "安装 %@（需编译）…";
+"Install %@ (may compile)…" = "安装 %@（可能需编译）…";
 "Install %@ from source?" = "从源码安装 %@？";
+"Install %@? It may compile." = "安装 %@？它可能需要编译。";
 "Install (checking…)" = "安装（正在检查…）";
 "Install (compiles)" = "安装（需编译）";
+"Install (may compile)" = "安装（可能需编译）";
 "Install Intelbrew (recommended for Intel Macs)" = "安装 Intelbrew（推荐用于 Intel Mac）";
 "Install again from Discover or the package's details." = "请从“探索”或软件包详细信息中重新安装。";
 "Install command" = "安装命令";
@@ -977,6 +984,7 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "将你已安装的 formula 名称和版本发送到 OSV.dev（通过 brew vulns）。";
 "Service" = "服务";
 "Services" = "服务";
+"Services needs Homebrew's status first" = "“服务”需要先获取 Homebrew 的状态";
 "Set by Intelbrew mode." = "由 Intelbrew 模式设置。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "由 Tankard 为检查和升级设置：何时运行 brew update 由 Tankard 决定。";
 "Set by Tankard: it reads brew's output." = "由 Tankard 设置：它需要读取 brew 的输出。";
@@ -1080,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard 无法在这里询问密码。请在“详细信息”中查看替代做法。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard 会将每个 App 的版本与 Homebrew 的版本对比。版本一致时，Homebrew 会接管更新，而不移动该 App。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard 无法检查 %@ 的安全副本（文件太多），因此没有替换它。";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard 无法确认 %@ 是否有适用于这台 Mac 的 bottle。如果没有，brew 会编译它，在较旧的 Mac 上可能需要很长时间。";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard 无法确认 %@ 是否有适用于这台 Mac 的 Intelbrew bottle。如果没有，brew 会编译它，在较旧的 Mac 上可能需要很长时间。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard 无法加载 Homebrew 的软件包列表。请稍后重试。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard 无法为 %@ 创建可靠的安全副本，因此没有替换它。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard 无法为 %1$@ 创建安全副本，因此没有替换它：%2$@";

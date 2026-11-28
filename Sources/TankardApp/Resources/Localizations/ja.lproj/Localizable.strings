@@ -434,6 +434,7 @@
 "Every installed version, one brew uninstall each" = "インストール済みの各バージョンを brew uninstall で1つずつ削除";
 "Every week" = "毎週";
 "Everything in this Brewfile is installed" = "このBrewfileの内容はすべてインストール済みです";
+"Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade." = "このプランの項目はすべて、その間にアップグレードまたは削除されました。アップグレードするものは残っていません。";
 "Everything is up to date" = "すべて最新です";
 "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew." = "問題なく動いていますか? それならこれらは無視してかまいません。主にソフトウェアを開発する人や、Homebrewに問題を報告する人向けです。";
 "Exit" = "終了";
@@ -503,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew はこのパッケージを読み込めません";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew はこのパッケージをもう読み込めないため、アップグレードしません。brew の表示：%@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "このリストを読み込んだ後にHomebrewがパッケージを変更しました。続ける前にリストを更新してください。";
 "Homebrew couldn't reach the network" = "Homebrewがネットワークに接続できませんでした";
 "Homebrew couldn't write to its folders" = "Homebrewが自身のフォルダに書き込めませんでした";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "HomebrewにはまだTankard %@ がありません。リリース後、tapへの反映には少し時間がかかることがあります。後でもう一度試すか、ダウンロードしてください。";
@@ -514,6 +516,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "このコピーはHomebrewでインストールされたため、Homebrewがキューを通じてアップグレードします。brewがアプリを置き換える間もTankardは動作し続け、完了後に再起動を提案します。";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew はこのカタログを追加せずにインストールできます。操作は不要です。";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew が cask の新しいバージョンをこのアプリの代わりにインストールし、以降は Homebrew が管理します。~/Library 内の設定とデータには触れません。";
+"Homebrew is busy with an automatic update. This can run once it finishes." = "Homebrewは自動アップデート中です。完了すると実行できます。";
 "Homebrew is busy; try again in a moment." = "Homebrewがビジー状態です。しばらくしてからもう一度お試しください。";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew は今 %1$@ を変更しています。停止すると、Homebrew は途中の手順を元に戻し、%2$@ は元のままです。中途半端に残った場合も、もう一度実行すれば通常は直ります。";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew はまだ %@ をアップグレード中です(%lld/%lld)。";
@@ -542,6 +545,7 @@
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrew の匿名インストール統計（formulae.brew.sh）、%@ まで";
 "Homebrew's check-up found %lld things to look at" = "Homebrewの点検で確認すべき項目が%lld件見つかりました";
 "Homebrew's check-up has %lld notes" = "Homebrewの点検に%lld件のメモがあります";
+"Homebrew's list changed while this was open. The plan now shows what is still outdated." = "これを開いている間にHomebrewのリストが変わりました。プランには、まだ古いものが表示されています。";
 "Homebrew's official uninstaller" = "Homebrew公式のアンインストーラ";
 "Homebrew's own check-up. Looking changes nothing." = "Homebrew自身の点検です。確認するだけで何も変更されません。";
 "Homebrew's own files have local changes" = "Homebrew自身のファイルにローカルの変更があります";
@@ -559,9 +563,12 @@
 "Install" = "インストール";
 "Install %@" = "%@をインストール";
 "Install %@ (compiles)…" = "%@をインストール（コンパイル）…";
+"Install %@ (may compile)…" = "%@をインストール（コンパイルの可能性あり）…";
 "Install %@ from source?" = "%@をソースからインストールしますか?";
+"Install %@? It may compile." = "%@をインストールしますか？コンパイルされる可能性があります。";
 "Install (checking…)" = "インストール(確認中…)";
 "Install (compiles)" = "インストール(コンパイル)";
+"Install (may compile)" = "インストール（コンパイルの可能性あり）";
 "Install Intelbrew (recommended for Intel Macs)" = "Intelbrewをインストール(Intel Mac推奨)";
 "Install again from Discover or the package's details." = "「見つける」またはパッケージの詳細からもう一度インストールしてください。";
 "Install command" = "インストールコマンド";
@@ -977,6 +984,7 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "インストール済みformulaの名前とバージョンをOSV.dev（brew vulns経由）に送信します。";
 "Service" = "サービス";
 "Services" = "サービス";
+"Services needs Homebrew's status first" = "「サービス」にはまずHomebrewの状態が必要です";
 "Set by Intelbrew mode." = "Intelbrew モードで設定。";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "チェックとアップグレード用に Tankard が設定：brew update の実行時期は Tankard が決めます。";
 "Set by Tankard: it reads brew's output." = "Tankard が設定：brew の出力を読み取るためです。";
@@ -1080,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankardはここではパスワードを尋ねられません。代わりの方法は「詳細」を参照してください。";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankardは各アプリのバージョンをHomebrewのものと照合します。一致すれば、アプリを移動せずにHomebrewがアップデートを引き継ぎます。";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankardは %@ の安全コピーを確認できませんでした（ファイルが多すぎます）。そのため置き換えませんでした。";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankardは、%@にこのMac用のボトルがあるか確認できませんでした。ない場合はbrewがコンパイルするため、古いMacでは時間がかかることがあります。";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankardは、%@にこのMac用のIntelbrewボトルがあるか確認できませんでした。ない場合はbrewがコンパイルするため、古いMacでは時間がかかることがあります。";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "TankardはHomebrewのパッケージ一覧を読み込めませんでした。少し待ってからもう一度お試しください。";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankardは %@ の信頼できる安全コピーを作成できなかったため、置き換えませんでした。";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankardは %1$@ の安全コピーを作成できなかったため、置き換えませんでした: %2$@";

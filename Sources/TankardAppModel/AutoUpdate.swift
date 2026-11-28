@@ -300,6 +300,24 @@ public enum AutoUpdateSafeMode {
         return nil
     }
 
+    /// 0.9.4 (bug hunt R4): every running app of a cask (a cask can ship
+    /// more than one), each once: its file name ("Cursor.app") and an
+    /// identity (its standardized path, else its bundle id) that tells two
+    /// apps of the same cask apart.
+    public static func runningApps(_ p: Package, running: [RunningApp]) -> [(name: String, identity: String)] {
+        let paths = Set((p.appPaths ?? []).map { ($0 as NSString).standardizingPath })
+        let ids = Set(p.quitBundleIDs ?? [])
+        var seen = Set<String>()
+        var out: [(name: String, identity: String)] = []
+        for app in running {
+            let path = app.path.map { ($0 as NSString).standardizingPath }
+            let match = (path.map(paths.contains) ?? false) || (app.bundleID.map(ids.contains) ?? false)
+            guard match, let identity = path ?? app.bundleID, seen.insert(identity).inserted else { continue }
+            out.append((path.map { ($0 as NSString).lastPathComponent } ?? identity, identity))
+        }
+        return out
+    }
+
     /// Every package with an upgrade waiting, split into run and skipped.
     /// Upgrade targets are what Upgrade all uses (`isUpgradeTarget`: not
     /// pinned; self-updating casks only when that setting lists them); a
@@ -925,6 +943,10 @@ public final class AutoUpdater {
         // sheet's steps do; after one wait runs out, the rest don't wait again
         // (whatever holds it is long-running: one bounded wait per run).
         var lockWait = store.deps.lockWait
+        // 0.9.4 (bug hunt R5): the package ID of each `record.upgraded`
+        // item, in order: reconciliation compares packages, not short names
+        // (a formula and a cask can share one).
+        var upgradedIDs: [String] = []
         for (n, p) in plan.run.enumerated() {
             guard settings.enabled else {
                 record.note = String(localized: "Stopped: auto-update was turned off during the run")
@@ -959,6 +981,7 @@ public final class AutoUpdater {
             } else if code == 0 {
                 if result.waited { item.detail += " · " + String(localized: "waited for another Homebrew command") }
                 record.upgraded.append(item)
+                upgradedIDs.append(p.id)
             } else if BrewFailure.classify(lines) == .locked {
                 // The lock wait ran out (or there was none): skipped, not failed.
                 if result.waited { lockWait = nil }
@@ -981,6 +1004,10 @@ public final class AutoUpdater {
             }
         }
         step = nil
+        // 0.9.4 (bug hunt R3): brew changed packages after the read on
+        // screen began. Until a read started after this succeeds, an open
+        // upgrade plan, an App Management handoff and Clean Up wait.
+        if !plan.run.isEmpty { store.markStatusStale() }
         if quitRequested {
             // 0.8.4: quit mid-run. The steps not run are logged, the slot is
             // opened again (lastRun back to the run before), and the next
@@ -1004,11 +1031,21 @@ public final class AutoUpdater {
         // Reconcile with what brew now says: an upgrade that "succeeded" but
         // is still outdated counts as failed.
         if !plan.run.isEmpty {
-            await store.refresh(manual: false)
-            let still = Set(store.packages.filter(\.upgradeAvailable).map(\.name))
-            let notDone = record.upgraded.filter { still.contains($0.name) }
-            record.upgraded.removeAll { still.contains($0.name) }
-            record.failed += notDone.map { .init(name: $0.name, isCask: $0.isCask, detail: String(localized: "still outdated after brew upgrade")) }
+            // 0.9.4 (bug hunt R3): a read of its own, begun now: joining one
+            // already running (begun before the last upgrade) read the old
+            // versions, and a plan confirmed then ran against them.
+            // 0.9.4 (bug hunt R4): only a read that succeeded can say an
+            // upgrade is still outdated; a failed one leaves the old report,
+            // which lists every package it upgraded as outdated.
+            if await store.refreshAfterChange() {
+                let still = Set(store.packages.filter(\.upgradeAvailable).map(\.id))
+                var done: [AutoUpdateRun.Item] = [], notDone: [AutoUpdateRun.Item] = []
+                for (item, id) in zip(record.upgraded, upgradedIDs) {
+                    if still.contains(id) { notDone.append(item) } else { done.append(item) }
+                }
+                record.upgraded = done
+                record.failed += notDone.map { .init(name: $0.name, isCask: $0.isCask, detail: String(localized: "still outdated after brew upgrade")) }
+            }
         }
         return finish(record, store: store, notifier: notifier, now: now)
     }

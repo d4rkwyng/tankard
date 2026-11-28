@@ -223,7 +223,15 @@ public final class AppStore {
 
     public internal(set) var report: StatusReport? {
         // 0.8.5: a no-op unless the casks changed (and on an affected Mac).
-        didSet { electron.update(packages: report?.packages ?? []) }
+        didSet {
+            electron.update(packages: report?.packages ?? [])
+            // 0.9.4 (bug hunt R1 review): an open plan follows the new read
+            // (an automatic update upgraded some of it, or brew update moved
+            // a version), so Upgrade runs what the sheet shows now.
+            if upgradePlan != nil { revalidateUpgradePlan() }
+            // 0.9.4 (bug hunt R3): and an open Clean Up preview.
+            if showCleanupSheet { rebuildCleanupIfInventoryChanged() }
+        }
     }
     /// Where `report` came from on screen: the disk cache or a live read.
     public private(set) var reportFromCache = false
@@ -658,30 +666,149 @@ public final class AppStore {
         /// when the Mac sleeps, and a "try later" failure (offline, brew
         /// busy) is quiet: no error on screen, one quiet History line.
         case scheduled
+        /// 0.9.4 (bug hunt R3): as `.automatic`, but never joins a read
+        /// already running: one that started before a change Tankard just
+        /// made (Auto-update's upgrades, Trust) read the old state.
+        case afterChange
     }
 
-    func refresh(_ kind: RefreshKind) async {
+    /// 0.9.4 (bug hunt R3): brew changed what is installed (Auto-update
+    /// upgraded packages) after the read on screen started, and no read
+    /// started since has succeeded. An upgrade plan, an App Management
+    /// handoff and Clean Up wait for one instead of running against the
+    /// old list.
+    public private(set) var statusStale = false
+    /// The reads begun up to this one started before the change.
+    @ObservationIgnored private var staleBeforeRead = 0
+
+    /// Marks the status on screen as older than a change brew just made.
+    func markStatusStale() {
+        markStatusStale(beforeRead: refreshesStarted)
+    }
+
+    /// 0.9.4 (bug hunt R4): stale until a read later than `read` succeeds.
+    private func markStatusStale(beforeRead read: Int) {
+        statusStale = true
+        staleBeforeRead = max(staleBeforeRead, read)
+    }
+
+    /// The newest read that succeeded.
+    @ObservationIgnored private var lastSucceededRead = 0
+
+    /// 0.9.4 (bug hunt R6): a run of Tankard's own changed what is
+    /// installed, and no read begun after it has succeeded yet (its
+    /// follow-up read may still be out). Unlike `statusStale`, the run's
+    /// own retries (Retry, App Management's) start from its result at
+    /// once; only what deletes previous versions (Clean Up, whose keep list
+    /// needs the version an upgrade left) waits. Clean Up started while the
+    /// read was queued used the pre-upgrade list and removed that version.
+    public private(set) var inventoryUnsettled = false
+    /// The reads begun up to this one started before the change.
+    @ObservationIgnored private var unsettledBeforeRead = 0
+
+    /// Marks the list on screen as older than a run that just finished.
+    func markInventoryUnsettled() {
+        inventoryUnsettled = true
+        unsettledBeforeRead = max(unsettledBeforeRead, refreshesStarted)
+    }
+
+    /// 0.9.4 (bug hunt R6): Clean Up waits for a read that succeeds after
+    /// the last change: a stale list, or a run's read still out.
+    public var cleanupWaitsForRead: Bool { statusStale || inventoryUnsettled }
+
+    /// 0.9.4 (bug hunt R5): brew changed what is installed once the reads
+    /// up to `read` had begun, and the read after the change failed: stale,
+    /// unless a read begun since has succeeded.
+    func markStatusStale(afterFailedReadSince read: Int) {
+        guard lastSucceededRead <= read else { return }
+        markStatusStale(beforeRead: read)
+    }
+
+    /// 0.9.4 (bug hunt R4): the sheets' Refresh while the status is stale
+    /// (their confirmation waits for it, and the modal sheet turns the
+    /// menu's Refresh off): a read begun now.
+    public func refreshStaleStatus() {
+        rereadStaleStatus()
+    }
+
+    /// 0.9.4 (bug hunt R3): a status read started after the caller's
+    /// change (never joining one already running). True when it read status.
+    @discardableResult
+    func refreshAfterChange() async -> Bool {
+        await refresh(.afterChange)
+    }
+
+    /// 0.9.4 (bug hunt R3): the status is stale: read it again, unless a
+    /// read is already running (it ends in a fresh one when it started
+    /// after the change; else the caller's next try asks again).
+    func rereadStaleStatus() {
+        guard statusStale || inventoryUnsettled, !isRefreshing else { return }
+        Task { await refreshAfterChange() }
+    }
+
+    /// 0.8: `brew outdated --greedy` is read with the status ("Include
+    /// self-updating apps", or a cask set to "Homebrew updates it").
+    var wantsGreedyList: Bool { insights.settings.includeSelfUpdatingApps || !upgradeRules.homebrewUpdatedTokens.isEmpty }
+
+    /// 0.9.4 (bug hunt): whether the last status read on screen asked brew
+    /// for its --greedy list.
+    @ObservationIgnored var lastReadAskedGreedy = false
+    /// 0.9.4 (bug hunt R3): the re-read the setting started (tests await it).
+    @ObservationIgnored var greedyFollowUp: Task<Void, Never>?
+    /// How many callers are waiting on a read already running (tests wait
+    /// on it to know a caller joined before letting the read end).
+    @ObservationIgnored private(set) var refreshWaiters = 0
+
+    /// 0.9.4 (bug hunt): a re-read for brew's --greedy list after a setting
+    /// asked for it. A re-read joins one already running, and that one
+    /// decided before the change whether to ask brew: "Include self-updating
+    /// apps" turned on during a Refresh showed no self-updating apps until
+    /// the next Refresh. Reads again once it ends, if it didn't ask.
+    func refreshForGreedyList() async {
+        await refresh(.automatic)
+        guard wantsGreedyList, !lastReadAskedGreedy else { return }
+        // Not straight into another automatic read: the one that just
+        // ended may still be `refreshTask` (its caller hasn't resumed to
+        // clear it), and it would join that and read nothing.
+        while let running = refreshTask {
+            await running.value
+            if refreshTask == running { refreshTask = nil }
+        }
+        if !lastReadAskedGreedy { await refresh(.automatic) }
+    }
+
+    /// Returns whether this call's own read succeeded (false when it
+    /// joined another, or didn't read).
+    @discardableResult
+    func refresh(_ kind: RefreshKind) async -> Bool {
         // 0.8.5 (HK-47 review): a scheduled refresh's caller reads this
         // run's result, never the last one's (brew not found returns early).
         if kind == .scheduled { lastScheduledUpdate = nil }
         // 0.8.3: the bundle was replaced: the new instance reads status.
-        if selfReplaced { return }
+        if selfReplaced { return false }
         // 0.9.2 (bug hunt): one read at a time. Two callers that waited on
         // the same read used to start theirs together once it ended, and
         // the first to finish cleared `refreshTask` and `isRefreshing`
         // while the other still ran. A caller that isn't joining waits
         // until no read is running, and clears only its own task.
         while let running = refreshTask {
+            refreshWaiters += 1
             await running.value
-            if kind == .automatic { return }
+            refreshWaiters -= 1
+            if kind == .automatic { return false }
             // Its caller hasn't resumed to clear it yet.
             if refreshTask == running { refreshTask = nil }
         }
-        let task = Task { await performRefresh(kind) }
+        let outcome = ReadOutcome()
+        let task = Task { outcome.succeeded = await performRefresh(kind) }
         refreshTask = task
         await task.value
         if refreshTask == task { refreshTask = nil }
+        return outcome.succeeded
     }
+
+    /// One read's result, set by its task.
+    @MainActor private final class ReadOutcome { var succeeded = false }
 
     /// 0.8.4: whether a path exists, through the client (demo mode's is
     /// a fake; this Mac's disk is never asked). The context menu's Show in
@@ -697,10 +824,19 @@ public final class AppStore {
         return c
     }
 
-    private func performRefresh(_ kind: RefreshKind) async {
+    @discardableResult
+    private func performRefresh(_ kind: RefreshKind) async -> Bool {
         refreshesStarted += 1
+        let readID = refreshesStarted
+        var succeeded = false
         isRefreshing = true
         defer {
+            // 0.9.4 (bug hunt R6): a read begun after a run's change failed:
+            // the pre-run list is stale, marked as the read ends (the
+            // caller's continuation runs a hop after `isRefreshing` goes false).
+            if !succeeded, inventoryUnsettled, readID > unsettledBeforeRead {
+                markStatusStale(afterFailedReadSince: unsettledBeforeRead)
+            }
             isRefreshing = false
             refreshPhase = nil
             refreshesCompleted += 1
@@ -723,23 +859,36 @@ public final class AppStore {
             } else {
                 homebrewState = .missing(searched: BrewInstallation.candidates)
             }
-            return
+            return false
         }
 
         var updateError: StoreError?
+        var updated = false
         if kind == .manual {
             refreshPhase = String(localized: "Running brew update…")
             updateError = await runUpdate(client)
+            updated = updateError == nil
         } else if kind == .scheduled {
             refreshPhase = String(localized: "Running brew update…")
             let r = await runScheduledUpdate(client)
             lastScheduledUpdate = r
             updateError = r.error
+            updated = r.succeeded
         }
+        // 0.9.4 (bug hunt R4): brew update moved the metadata (versions,
+        // bottles) the list on screen was read from. Until this read or a
+        // later one succeeds, an upgrade plan, an App Management handoff and
+        // Clean Up wait: Auto-update gave up when this read failed, and the
+        // open plan ran against the old versions. R5: a Refresh's update too.
+        if updated { markStatusStale(beforeRead: readID - 1) }
         switch kind {
-        case .manual, .scheduled: updateFailure = updateError
+        case .manual: updateFailure = updateError
+        // 0.9.4 (bug hunt): a quiet scheduled failure (offline, brew busy,
+        // slept, timed out) ran no update either: it keeps the last one's
+        // failure instead of clearing it.
+        case .scheduled: if lastScheduledUpdate?.quiet == nil { updateFailure = updateError }
         case .afterUpdate: updateFailure = nil
-        case .automatic: break
+        case .automatic, .afterChange: break
         }
 
         refreshPhase = String(localized: "Reading installed packages…")
@@ -753,12 +902,18 @@ public final class AppStore {
         let measureSizes = kind != .afterUpdate
         if measureSizes { insights.measureSizes(client: client, env: env) }
         // 0.8: also when a cask is set to "Homebrew updates it" (Adopt).
-        let wantsGreedy = insights.settings.includeSelfUpdatingApps || !upgradeRules.homebrewUpdatedTokens.isEmpty
+        let wantsGreedy = wantsGreedyList
         async let greedy = wantsGreedy ? Self.readGreedy(client, env: env) : nil
         do {
             let fresh = Self.markSelfUpdating(try await client.status(detection: detection), greedy: await greedy)
+            // 0.9.4 (bug hunt R3): a read begun after the change is current.
+            if readID > staleBeforeRead { statusStale = false }
+            if readID > unsettledBeforeRead { inventoryUnsettled = false }
+            lastSucceededRead = max(lastSucceededRead, readID)
+            succeeded = true
             report = insights.decorate(fresh)
             reportFromCache = false
+            lastReadAskedGreedy = wantsGreedy
             LaunchTiming.mark("list (brew)", once: true)
             LaunchTiming.note("status read " + fresh.timingsMs.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: " "))
             try? deps.cache?.save(fresh)
@@ -782,6 +937,7 @@ public final class AppStore {
             }
         }
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
+        return succeeded
     }
 
     /// `brew update` through the queue. nil on success.
@@ -871,6 +1027,16 @@ public final class AppStore {
     public func startInstall(_ entry: CatalogEntry) {
         guard !installedIDs.contains(entry.id) else { return }
         startSession(.install, packages: [entry.asPackage()])
+    }
+
+    /// The "Install (compiles)" confirmation's button. 0.9.4 (bug hunt R1
+    /// review): while an automatic update runs it waits (the button is
+    /// off); the confirmation used to close first, then startSession
+    /// refused, so the user had to find the package and click again.
+    public func confirmCompileInstall(_ entry: CatalogEntry) {
+        guard !newRunBlocked else { return }
+        discover?.confirmInstall = nil
+        startInstall(entry)
     }
 
     /// Installed packages that need `p` (uninstall is blocked while any do).
@@ -1106,6 +1272,18 @@ public final class AppStore {
         startSession(.upgrade, packages: packages?.filter(\.isManualUpgradeTarget) ?? upgradable, fromActivity: fromActivity)
     }
 
+    /// 0.9.4 (bug hunt R5): explicit upgrade targets as the list on screen
+    /// has them now, by package ID: a captured copy (an interrupted run's
+    /// offer, a failed step, a menu built earlier) of a package upgraded or
+    /// removed since isn't queued, and the rest carry brew's current
+    /// versions. nil: everything upgradable.
+    func upgradeTargets(_ packages: [Package]?) -> [Package] {
+        guard let packages else { return upgradable }
+        let now = Dictionary(self.packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        var seen = Set<String>()
+        return packages.compactMap { now[$0.id] }.filter { seen.insert($0.id).inserted && $0.isManualUpgradeTarget }
+    }
+
     /// The Upgrade buttons (0.3): when any upgrade would compile, the sheet
     /// first shows the plan with the compile warnings and "Skip packages
     /// that would compile"; otherwise it starts at once, as before.
@@ -1122,8 +1300,15 @@ public final class AppStore {
     /// `skipCompiling`: the plan starts with "Skip packages that would
     /// compile" ticked (the Upgrades filter's button).
     func requestUpgradeInActivity(_ packages: [Package]? = nil, skipCompiling: Bool = false) {
-        guard !isUpgrading else { return }
-        let targets = packages?.filter(\.isManualUpgradeTarget) ?? upgradable
+        // 0.9.4 (bug hunt): nor while an automatic update has the queue
+        // (startSession refuses then; a plan opened now couldn't start).
+        guard !isUpgrading, !autoUpdate.isRunning else { return }
+        // 0.9.4 (bug hunt R4): nor from a list older than brew's last
+        // change (Auto-update's upgrades or its brew update, and the read
+        // after them failed): the targets and the plan would be the old
+        // ones. A fresh read is asked for; the next Upgrade uses it.
+        guard !statusStale else { return rereadStaleStatus() }
+        let targets = upgradeTargets(packages)
         guard !targets.isEmpty else { return }
         var plan = UpgradePlan(packages: targets, classifier: deps.classifier)
         plan.skipCompiling = skipCompiling
@@ -1148,9 +1333,12 @@ public final class AppStore {
         guard !casks.isEmpty else { return [] }
         let running = autoUpdate.conditions.runningApps()
         guard !running.isEmpty else { return [] }
-        return casks.compactMap { p in
-            AutoUpdateSafeMode.runningApp(p, running: running).map {
-                RunningCaskApp(packageID: p.id, name: $0.hasSuffix(".app") ? String($0.dropLast(4)) : p.name)
+        // 0.9.4 (bug hunt R4): every open app of each cask, not only the
+        // first: one acknowledged app no longer stands for the others.
+        return casks.flatMap { p in
+            AutoUpdateSafeMode.runningApps(p, running: running).map {
+                RunningCaskApp(packageID: p.id, name: $0.name.hasSuffix(".app") ? String($0.name.dropLast(4)) : p.name,
+                               identity: $0.identity)
             }
         }
     }
@@ -1159,16 +1347,106 @@ public final class AppStore {
         upgradePlan?.skipCompiling = skip
     }
 
+    /// 0.9.4 (bug hunt R1 review): the open plan against the packages on
+    /// screen now: what was upgraded (by an automatic update) or
+    /// uninstalled meanwhile leaves it, and the rest carry brew's current
+    /// versions and bottles. Returns whether what it runs changed (the plan
+    /// then says so, and Upgrade shows it before running).
+    @discardableResult
+    func revalidateUpgradePlan() -> Bool {
+        guard let plan = upgradePlan else { return false }
+        let now = Dictionary(packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let kept = plan.rows.compactMap { now[$0.package.id] }.filter(\.isManualUpgradeTarget)
+        var fresh = UpgradePlan(packages: kept, classifier: deps.classifier)
+        fresh.id = plan.id
+        fresh.skipCompiling = plan.skipCompiling
+        fresh.runningApps = plan.runningApps.filter { a in kept.contains { $0.id == a.packageID } }
+        // 0.9.4 (bug hunt): and the apps open now. "Don't quit running apps
+        // during upgrades" turned off (or an app opened) while the plan was
+        // up: brew quit the app the plan never named.
+        // 0.9.4 (bug hunt R4): by app, not by cask: a second app of a cask
+        // the plan names, opened since, is named too.
+        let known = Set(fresh.runningApps)
+        fresh.runningApps += runningCaskApps(kept).filter { !known.contains($0) }
+        fresh.changedNote = plan.changedNote
+        let targetsChanged = !fresh.sameTargets(as: plan)
+        let newlyOpen = !Set(fresh.runningCaskAppsToRun).isSubset(of: Set(plan.runningCaskAppsToRun))
+        let changed = targetsChanged || newlyOpen
+        if targetsChanged {
+            fresh.changedNote = kept.isEmpty
+                ? String(localized: "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.")
+                : String(localized: "Homebrew's list changed while this was open. The plan now shows what is still outdated.")
+        }
+        if fresh != plan { upgradePlan = fresh }
+        return changed
+    }
+
     /// Start on the plan page.
     public func confirmUpgradePlan() {
-        guard let plan = upgradePlan else { return }
+        guard upgradePlan != nil else { return }
+        // 0.9.4 (bug hunt): an automatic update started while the plan
+        // was open. startSession would refuse, leaving an empty sheet with
+        // no buttons; the plan stays (its Upgrade button waits) instead.
+        guard !autoUpdate.isRunning else { return }
+        // 0.9.4 (bug hunt R3): Auto-update changed packages and no read
+        // begun since has succeeded (its own re-read joined an older one or
+        // failed): the plan would be checked against the old list. It waits
+        // for a fresh read (the button is off meanwhile).
+        guard !statusStale else { return rereadStaleStatus() }
+        // 0.9.4 (bug hunt R1 review): a plan gone stale since the last
+        // read shows its new targets first; the next Upgrade runs them.
+        guard !revalidateUpgradePlan(), let plan = upgradePlan else { return }
         upgradePlan = nil
         let run = plan.toRun
         if run.isEmpty {
             showUpgradeSheet = false
             return
         }
+        let prompt = appManagementPrompt?.id
         startSession(.upgrade, packages: run, fromActivity: true)
+        // 0.9.4 (bug hunt R3): the App Management explainer took over: it
+        // remembers the open apps this plan named, so its Continue can tell
+        // an app opened since.
+        if let p = appManagementPrompt, p.id != prompt {
+            let ids = Set(run.map(\.id))
+            appManagementPrompt?.acknowledgedApps = Set(plan.runningApps.filter { ids.contains($0.packageID) })
+        }
+    }
+
+    /// 0.9.4 (bug hunt R3): the App Management prompt's run-now buttons
+    /// (Continue without relaunching, Continue Without It, Skip Apps) on
+    /// an upgrade check what they run against the status now: Auto-update
+    /// may have upgraded some of it while the prompt was up, and an app may
+    /// have opened that brew would quit. Anything new shows as the plan
+    /// first (its Upgrade runs it); a stale status waits for a fresh read.
+    /// Returns false when the caller must not start `run` now.
+    func appManagementUpgradeStillHolds(_ p: AppManagementPrompt, run: [Package]) -> Bool {
+        guard p.action == .upgrade else { return true }
+        guard !statusStale else {
+            rereadStaleStatus()
+            return false
+        }
+        // What it asked to upgrade, against the same packages now (one
+        // that wasn't outdated then and isn't now changes nothing).
+        let asked = UpgradePlan(packages: run.filter(\.isManualUpgradeTarget), classifier: deps.classifier)
+        let now = Dictionary(packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let kept = run.compactMap { now[$0.id] }.filter(\.isManualUpgradeTarget)
+        var fresh = UpgradePlan(packages: kept, classifier: deps.classifier)
+        fresh.runningApps = runningCaskApps(kept)
+        let targetsChanged = !fresh.sameTargets(as: asked)
+        // 0.9.4 (bug hunt R4): each open app by identity: a second app of
+        // a cask whose first app was acknowledged isn't covered by it.
+        let newlyOpen = !Set(fresh.runningApps).isSubset(of: p.acknowledgedApps)
+        guard targetsChanged || newlyOpen else { return true }
+        if targetsChanged {
+            fresh.changedNote = kept.isEmpty
+                ? String(localized: "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.")
+                : String(localized: "Homebrew's list changed while this was open. The plan now shows what is still outdated.")
+        }
+        appManagementPrompt = nil
+        upgradePlan = fresh
+        showUpgradeSheet = true
+        return false
     }
 
     public func cancelUpgradePlan() {
@@ -1227,21 +1505,114 @@ public final class AppStore {
 
     /// Opens the Cleanup sheet and runs the dry run.
     public func openCleanup() {
-        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return }
+        guard makeCleanupPreview() else { return }
+        showCleanupSheet = true
+    }
+
+    /// 0.9.4 (bug hunt R3): what the open Clean Up preview was worked out
+    /// from: each package's installed versions. R4: and the retention
+    /// settings that decide its keep list.
+    struct CleanupInputs: Equatable {
+        var inventory: [String: [String]]
+        /// "Keep the previous version after upgrades".
+        var keepPrevious: Bool
+        /// HOMEBREW_NO_CLEANUP_FORMULAE as a brew.env file sets it (its
+        /// list wins over Tankard's); nil when none does.
+        var brewEnvKeep: String?
+        var brewEnvSetsKeep: Bool { brewEnvKeep != nil }
+        /// 0.9.4 (bug hunt R5): HOMEBREW_NO_CLEANUP_FORMULAE in the
+        /// environment Tankard gives brew (the app's or a shell profile's,
+        /// which a Refresh reads again): Tankard's list is added to it, so
+        /// the command carries it. nil when unset.
+        var inheritedKeep: String?
+    }
+
+    @ObservationIgnored var cleanupInputs: CleanupInputs?
+
+    static func cleanupInventory(_ packages: [Package]) -> [String: [String]] {
+        Dictionary(packages.map { ($0.id, Set($0.installedVersions + [$0.installedVersion]).sorted()) },
+                   uniquingKeysWith: { a, _ in a })
+    }
+
+    /// The inputs a Clean Up preview made now would use (nil: no client).
+    func currentCleanupInputs() -> CleanupInputs? {
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew else { return nil }
+        return CleanupInputs(
+            inventory: Self.cleanupInventory(packages),
+            keepPrevious: restorePoints.settings.keepPreviousVersion,
+            brewEnvKeep: EnvironmentSources.brewEnvSetting(CleanupKeep.key, files: deps.brewEnvFiles(client))?.value,
+            inheritedKeep: client.environment(for: detection)[CleanupKeep.key])
+    }
+
+    /// 0.9.4 (bug hunt R3): the open Clean Up preview was worked out from
+    /// another inventory (Auto-update upgraded a formula, which left a
+    /// second version on disk): its keep list and dry run are made again.
+    /// Clean Up used to run with the old list and remove the version
+    /// "Keep the previous version" keeps, which the preview never showed.
+    /// Returns whether it did.
+    @discardableResult
+    func rebuildCleanupIfInventoryChanged() -> Bool {
+        guard cleanup != nil, cleanupInputs != currentCleanupInputs() else { return false }
+        return makeCleanupPreview()
+    }
+
+    /// The Cleanup store (keep list, brew.env) for the packages now, and its dry run.
+    @discardableResult
+    private func makeCleanupPreview() -> Bool {
+        guard let (c, inputs) = cleanupStoreNow() else { return false }
+        cleanup = c
+        cleanupInputs = inputs
+        Task { await c.load() }
+        return true
+    }
+
+    /// A Cleanup store (not loaded) for the packages, settings and
+    /// environment now, and the inputs it was made from.
+    private func cleanupStoreNow() -> (CleanupStore, CleanupInputs)? {
+        guard let client = try? resolvedClient(), let detection = report?.intelbrew,
+              let inputs = currentCleanupInputs() else { return nil }
         // 0.8.5 (M1): the old versions kept for Restore Points stay.
-        let keep = restorePoints.settings.keepPreviousVersion
+        let keep = inputs.keepPrevious
         // 0.8.5 (HK-47 review): brew.env's own list wins over Tankard's.
-        let brewEnvSets = EnvironmentSources.brewEnvSetting(CleanupKeep.key, files: deps.brewEnvFiles(client)) != nil
         let c = CleanupStore(client: client, env: client.environment(for: detection),
                              kept: CleanupKeep.keptFormulae(packages, keepPrevious: keep), keepPrevious: keep,
-                             brewEnvSetsKeep: brewEnvSets)
-        cleanup = c
-        showCleanupSheet = true
-        Task { await c.load() }
+                             brewEnvSetsKeep: inputs.brewEnvSetsKeep)
+        return (c, inputs)
+    }
+
+    /// 0.9.4 (bug hunt R5): the keep list a Clean Up run gives brew: the
+    /// preview's (startCleanup has checked it matches the inputs now), else
+    /// one worked out now exactly as a preview would. A start with no
+    /// preview used to pass none, and removed the versions "Keep the
+    /// previous version" keeps.
+    func cleanupKeepForRun() -> [String: String] {
+        if let c = cleanup { return c.extraEnvironment }
+        return cleanupStoreNow()?.0.extraEnvironment ?? [:]
     }
 
     /// The real `brew cleanup`, through the queue and the live log.
     public func startCleanup() {
+        // 0.9.4 (bug hunt R1 review): the sheet (and its dry run) stays
+        // while an automatic update runs; startSession would refuse.
+        guard !newRunBlocked else { return }
+        // 0.9.4 (bug hunt R3): not against a list older than Auto-update's
+        // upgrades, nor with a preview of another inventory: it shows
+        // again, worked out afresh, and the next Clean Up runs that.
+        // R6: nor while a run's follow-up read is still out (the list on
+        // screen is the one before it; a stale mark after the read fails
+        // comes too late for a command already queued). The progress
+        // panel's unread run says why first, as startSession would.
+        guard !progressPanelBlocksNewRun() else { return }
+        guard !cleanupWaitsForRead else { return rereadStaleStatus() }
+        // 0.9.4 (bug hunt R4): only a finished preview's Clean Up runs (a
+        // replacement dry run still pending has shown nothing yet), and
+        // only one worked out from the inventory and retention settings
+        // now ("Keep the previous version" turned on with the sheet open
+        // left a preview that removed what the setting now keeps).
+        // R5: no preview at all (a direct start) still keeps what a preview
+        // would: its keep list is worked out now (cleanupKeepForRun).
+        if let c = cleanup, c.phase != .ready { return }
+        guard !rebuildCleanupIfInventoryChanged() else { return }
         showCleanupSheet = false
         startSession(.cleanup, packages: [Package.command("brew cleanup")])
     }
@@ -1267,20 +1638,35 @@ public final class AppStore {
     /// run the pending operation (first use) or retry the blocked one once.
     public func appManagementDone() {
         guard var p = appManagementPrompt else { return }
-        settings.appManagementExplained = true
         if deps.relaunch != nil, p.stage == .explain {
+            settings.appManagementExplained = true
             p.stage = .relaunch
             appManagementPrompt = p
             return
         }
+        // 0.9.4 (bug hunt R1 review): it would run now; it waits instead.
+        guard !appManagementRunBlocked(p) else { return }
+        settings.appManagementExplained = true
         appManagementContinue()
+    }
+
+    /// 0.9.4 (bug hunt R1 review): the prompt's buttons that start brew
+    /// wait while brew runs (an automatic update started after the prompt
+    /// opened): startSession refuses then, and the prompt, already
+    /// cleared, left a blank sheet (first use, no run before it).
+    public var appManagementRunsBlocked: Bool { newRunBlocked }
+
+    /// Whether `p`'s run-now buttons would start brew and can't now.
+    func appManagementRunBlocked(_ p: AppManagementPrompt) -> Bool {
+        p.canRetry && appManagementRunsBlocked
     }
 
     /// 0.8.1: carry on in this process ("Continue without relaunching"):
     /// first use runs what was asked for; a block is retried once.
     public func appManagementContinue() {
-        guard let p = appManagementPrompt else { return }
+        guard let p = appManagementPrompt, !appManagementRunBlocked(p) else { return }
         settings.appManagementExplained = true
+        guard !p.canRetry || appManagementUpgradeStillHolds(p, run: p.packages) else { return }
         appManagementPrompt = nil
         guard p.canRetry else {
             if upgrade == nil || upgrade?.isFinished == true { showUpgradeSheet = false }
@@ -1340,6 +1726,8 @@ public final class AppStore {
         guard let p = appManagementPrompt, p.reason == .firstUse, p.canRetry else { return appManagementCancel() }
         let rest = p.others
         guard !rest.isEmpty else { return appManagementCancel() }
+        guard !appManagementRunsBlocked else { return }
+        guard appManagementUpgradeStillHolds(p, run: rest) else { return }
         appManagementPrompt = nil
         startSession(p.action, packages: rest, skipGate: true, fromActivity: true)
     }
@@ -1378,16 +1766,40 @@ public final class AppStore {
     /// dependencies again and rechecks each before it runs), an install or
     /// adopt through startSession's own checks.
     public func appManagementResumeConfirm() {
-        guard let r = appManagementResume else { return }
+        // 0.9.4 (bug hunt R1 review): the offer stays while brew runs.
+        guard let r = appManagementResume, !appManagementRunsBlocked else { return }
+        // 0.9.4 (bug hunt R4): the offer resolved its targets at launch.
+        // An upgrade waits for a read later than brew's last change, and
+        // runs what the list says now: Auto-update may have upgraded some
+        // of it while the offer was up (Run Again used to forward the
+        // captured packages, and the upgrade checked those).
+        if r.action == .upgrade, statusStale { return rereadStaleStatus() }
         appManagementResume = nil
+        let now = Dictionary(packages.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         switch r.action {
         case .upgrade:
+            let asked = UpgradePlan(packages: r.packages.filter(\.isManualUpgradeTarget), classifier: deps.classifier)
+            let kept = r.packages.compactMap { now[$0.id] }.filter(\.isManualUpgradeTarget)
+            var fresh = UpgradePlan(packages: kept, classifier: deps.classifier)
+            guard fresh.sameTargets(as: asked) else {
+                // What changed shows first, with the apps open now; its
+                // Upgrade runs it.
+                fresh.runningApps = runningCaskApps(kept)
+                fresh.changedNote = kept.isEmpty
+                    ? String(localized: "Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade.")
+                    : String(localized: "Homebrew's list changed while this was open. The plan now shows what is still outdated.")
+                upgradePlan = fresh
+                showUpgradeSheet = true
+                return
+            }
             showUpgradeSheet = false
-            requestUpgrade(r.packages)
+            // The plan (an app open now, a compile, a password) or the run.
+            requestUpgrade(kept)
         case .uninstall:
             showUpgradeSheet = false
             // Single root: the uninstall sheet takes one package today; a future multi-select uninstall would need a loop here.
-            guard let p = r.packages.first else { return }
+            // 0.9.4 (bug hunt R4): as the list shows it now (gone: nothing to remove).
+            guard let first = r.packages.first, let p = now[first.id] else { return }
             Task { @MainActor in
                 // The activity sheet closes first; the confirmation follows.
                 try? await Task.sleep(for: .milliseconds(450))
@@ -1422,7 +1834,9 @@ public final class AppStore {
     /// ("Close"), just closes.
     public func appManagementNotNow() {
         guard let p = appManagementPrompt else { return }
+        if p.reason == .firstUse, appManagementRunBlocked(p) { return }
         settings.appManagementExplained = true
+        if p.reason == .firstUse, p.canRetry, !appManagementUpgradeStillHolds(p, run: p.packages) { return }
         appManagementPrompt = nil
         if p.reason == .firstUse, p.canRetry {
             startSession(p.action, packages: p.packages, skipGate: true, fromActivity: true)
@@ -1498,6 +1912,10 @@ public final class AppStore {
         // 0.5: an automatic run has the queue; its commands go first.
         guard !isUpgrading, !autoUpdate.isRunning, !selfReplaced, let client = try? resolvedClient() else { return }
         guard !targets.isEmpty, let detection = report?.intelbrew else { return }
+        // 0.9.4 (bug hunt R4): every upgrade, planned or not (a selected
+        // package's or the menu bar's Upgrade starts without a plan), waits
+        // for a status read later than brew's last change.
+        guard action != .upgrade || !statusStale else { return rereadStaleStatus() }
         if deps.appManagementGate, !skipGate, !isRetry, !settings.appManagementExplained,
            targets.contains(where: { AppManagement.modifiesApps(action, $0) }) {
             appManagementPrompt = AppManagementPrompt(reason: .firstUse, action: action, packages: targets)
@@ -1521,7 +1939,7 @@ public final class AppStore {
             makeCommand: { [dontQuit = insights.settings.dontQuitAppsDuringUpgrade,
                             keep = restorePoints.settings.keepPreviousVersion,
                             askpass = deps.askpassHelper, foreign,
-                            cleanupKeep = action == .cleanup ? (cleanup?.extraEnvironment ?? [:]) : [:]] p in
+                            cleanupKeep = action == .cleanup ? cleanupKeepForRun() : [:]] p in
                 let args = BrewCommands.arguments(action, for: p)
                 // 0.4: "Don't quit running apps" adds brew's own variable for cask upgrades.
                 // 0.7: "Keep the previous version" adds HOMEBREW_NO_INSTALL_CLEANUP to every
@@ -1640,6 +2058,9 @@ public final class AppStore {
     private func sessionFinished(_ session: UpgradeSession) {
         // 0.8.5: after the rest (it may open the App Management page).
         defer { progressPanelSessionFinished(session) }
+        // 0.9.4 (bug hunt R6): the change boundary. Until a read begun from
+        // here succeeds, Clean Up waits (the run's own retries don't).
+        markInventoryUnsettled()
         if session.action == .adopt { adoptSessionFinished(session) }
         // A Replace settled its copy before this, in `setReplaceCheck`:
         // the signature read is awaited there, off the main actor.
@@ -1679,9 +2100,16 @@ public final class AppStore {
             }
         }
         // Reconcile: what brew now says, not what we assume. Then (0.4)
-        // the caveats of what changed, once.
+        // the caveats of what changed, once. 0.9.4 (bug hunt R5): a read of
+        // its own (one already running began before the change), and when
+        // it fails, the pre-run list stays marked stale: an upgrade plan and
+        // Clean Up (whose keep list needs the version an upgrade left) wait
+        // for a read that succeeds. (Not before the read: the run's own
+        // Retry and App Management retry start from its result at once.)
+        // R6: the failed read marks it stale itself (performRefresh), as the
+        // read ends; Clean Up has waited since the change boundary above.
         Task {
-            await self.refresh(manual: false)
+            await self.refreshAfterChange()
             self.offerPostInstallNotes(for: session)
             // 0.8.5 (review): a progress-panel run closes, or notifies,
             // only now that its notes are known.

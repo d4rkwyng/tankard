@@ -127,6 +127,10 @@ extension AppStore {
             return false
         }
         lastBackgroundUpdateFailure = nil
+        // 0.9.4 (bug hunt R5): the list on screen is older than brew's
+        // metadata until a read begun now succeeds (the follow-up below,
+        // or the user's run's own).
+        markStatusStale()
         LaunchTiming.mark("brew update")
         // The user started something meanwhile (it queued behind the
         // update): its own re-read at the end covers this one.

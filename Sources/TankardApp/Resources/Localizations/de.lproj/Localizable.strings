@@ -434,6 +434,7 @@
 "Every installed version, one brew uninstall each" = "Jede Version, je ein brew uninstall";
 "Every week" = "Jede Woche";
 "Everything in this Brewfile is installed" = "Alles in diesem Brewfile ist installiert";
+"Everything in this plan was upgraded or removed meanwhile. Nothing is left to upgrade." = "Alles in diesem Plan wurde inzwischen aktualisiert oder entfernt. Es bleibt nichts zu aktualisieren.";
 "Everything is up to date" = "Alles ist auf dem neuesten Stand";
 "Everything works? Then you can ignore these. They are mostly for people who build software or report problems to Homebrew." = "Funktioniert alles? Dann kannst du diese ignorieren. Sie sind vor allem für Leute, die Software entwickeln oder Probleme an Homebrew melden.";
 "Exit" = "Exit";
@@ -503,6 +504,7 @@
 "Homebrew can't read this package" = "Homebrew kann dieses Paket nicht lesen";
 "Homebrew can't read this package any more, so it won't upgrade it." = "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht.";
 "Homebrew can't read this package any more, so it won't upgrade it. brew says: %@" = "Homebrew kann dieses Paket nicht mehr lesen und aktualisiert es deshalb nicht. brew meldet: %@";
+"Homebrew changed packages after this list was read. Refresh it before continuing." = "Homebrew hat nach dem Lesen dieser Liste Pakete geändert. Aktualisiere sie, bevor du fortfährst.";
 "Homebrew couldn't reach the network" = "Homebrew konnte das Netzwerk nicht erreichen";
 "Homebrew couldn't write to its folders" = "Homebrew konnte nicht in seine Ordner schreiben";
 "Homebrew doesn't list Tankard %@ yet: the tap can take a little while after a release. Try again later, or download it." = "Homebrew führt Tankard %@ noch nicht: Der Tap braucht nach einem Release etwas Zeit. Versuche es später erneut oder lade es herunter.";
@@ -514,6 +516,7 @@
 "Homebrew installed this copy, so Homebrew upgrades it, through the queue. Tankard keeps running while brew replaces the app, then offers to relaunch." = "Homebrew hat diese Kopie installiert, also aktualisiert Homebrew sie über die Warteschlange. Tankard läuft weiter, während brew die App ersetzt, und bietet dann einen Neustart an.";
 "Homebrew installs from this catalog without adding it. Nothing to do." = "Homebrew installiert aus diesem Katalog, ohne ihn hinzuzufügen. Nichts zu tun.";
 "Homebrew installs the cask's newer version in place of this app, and manages it from then on. Your settings and data in ~/Library are not touched." = "Homebrew installiert die neuere Version des Casks an Stelle dieser App und verwaltet sie ab dann. Deine Einstellungen und Daten in ~/Library bleiben unberührt.";
+"Homebrew is busy with an automatic update. This can run once it finishes." = "Homebrew ist mit einer automatischen Aktualisierung beschäftigt. Dies kann laufen, sobald sie fertig ist.";
 "Homebrew is busy; try again in a moment." = "Homebrew ist ausgelastet; versuche es gleich noch einmal.";
 "Homebrew is changing %@ now. If you stop, Homebrew undoes the unfinished step and %@ stays as it was. If anything is left half done, running it again usually fixes it." = "Homebrew ändert gerade %1$@. Beim Stoppen macht Homebrew den offenen Schritt rückgängig, %2$@ bleibt wie es war. Bleibt etwas halb fertig, hilft meist ein erneuter Lauf.";
 "Homebrew is still upgrading %@ (%lld of %lld)." = "Homebrew aktualisiert noch %@ (%lld von %lld).";
@@ -542,6 +545,7 @@
 "Homebrew's anonymous install analytics (formulae.brew.sh), to %@" = "Homebrews anonyme Installationsstatistik (formulae.brew.sh), bis %@";
 "Homebrew's check-up found %lld things to look at" = "Der Check-up von Homebrew hat %lld Punkte zum Ansehen gefunden";
 "Homebrew's check-up has %lld notes" = "Der Check-up von Homebrew hat %lld Hinweise";
+"Homebrew's list changed while this was open. The plan now shows what is still outdated." = "Die Liste von Homebrew hat sich geändert, während dies geöffnet war. Der Plan zeigt jetzt, was noch veraltet ist.";
 "Homebrew's official uninstaller" = "Offizielles Deinstallationsprogramm von Homebrew";
 "Homebrew's own check-up. Looking changes nothing." = "Der eigene Check-up von Homebrew. Ansehen ändert nichts.";
 "Homebrew's own files have local changes" = "Dateien von Homebrew haben lokale Änderungen";
@@ -559,9 +563,12 @@
 "Install" = "Installieren";
 "Install %@" = "%@ installieren";
 "Install %@ (compiles)…" = "%@ installieren (kompiliert)…";
+"Install %@ (may compile)…" = "%@ installieren (kompiliert evtl.)…";
 "Install %@ from source?" = "%@ aus Quellcode installieren?";
+"Install %@? It may compile." = "%@ installieren? Es wird eventuell kompiliert.";
 "Install (checking…)" = "Installieren (wird geprüft…)";
 "Install (compiles)" = "Installieren (kompiliert)";
+"Install (may compile)" = "Installieren (kompiliert evtl.)";
 "Install Intelbrew (recommended for Intel Macs)" = "Intelbrew installieren (empfohlen für Intel-Macs)";
 "Install again from Discover or the package's details." = "Erneut über „Entdecken“ oder die Details des Pakets installieren.";
 "Install command" = "Installationsbefehl";
@@ -977,6 +984,7 @@
 "Sends your installed formula names and versions to OSV.dev (via brew vulns)." = "Sendet die Namen und Versionen deiner installierten Formulae an OSV.dev (über brew vulns).";
 "Service" = "Dienst";
 "Services" = "Dienste";
+"Services needs Homebrew's status first" = "„Dienste“ braucht zuerst den Status von Homebrew";
 "Set by Intelbrew mode." = "Vom Intelbrew-Modus gesetzt.";
 "Set by Tankard for checks and upgrades: Tankard decides when brew update runs." = "Von Tankard für Prüfungen und Upgrades gesetzt: Tankard entscheidet, wann brew update läuft.";
 "Set by Tankard: it reads brew's output." = "Von Tankard gesetzt: es liest die Ausgabe von brew.";
@@ -1080,6 +1088,8 @@
 "Tankard can't ask for it here. Details says what to do instead." = "Tankard kann hier nicht danach fragen. Unter „Details“ steht, was stattdessen zu tun ist.";
 "Tankard checks each app's version against Homebrew's. When they match, Homebrew takes over updates without moving the app." = "Tankard vergleicht die Version jeder App mit der von Homebrew. Stimmen sie überein, übernimmt Homebrew die Updates, ohne die App zu verschieben.";
 "Tankard couldn't check the safety copy of %@ (it has too many files), so it didn't replace it." = "Tankard konnte die Sicherheitskopie von %@ nicht prüfen (zu viele Dateien) und hat die App daher nicht ersetzt.";
+"Tankard couldn't check whether %@ has a bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard konnte nicht prüfen, ob es für %@ ein Bottle für diesen Mac gibt. Gibt es keins, kompiliert brew es, was auf älteren Macs lange dauern kann.";
+"Tankard couldn't check whether %@ has an Intelbrew bottle for this Mac. If it has none, brew compiles it, which can take a long time on older Macs." = "Tankard konnte nicht prüfen, ob es für %@ ein Intelbrew-Bottle für diesen Mac gibt. Gibt es keins, kompiliert brew es, was auf älteren Macs lange dauern kann.";
 "Tankard couldn't load Homebrew's list of packages. Try again in a moment." = "Tankard konnte die Paketliste von Homebrew nicht laden. Versuche es gleich noch einmal.";
 "Tankard couldn't make a reliable safety copy of %@, so it didn't replace it." = "Tankard konnte keine zuverlässige Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt.";
 "Tankard couldn't make a safety copy of %@, so it didn't replace it: %@" = "Tankard konnte keine Sicherheitskopie von %@ anlegen und hat die App daher nicht ersetzt: %@";

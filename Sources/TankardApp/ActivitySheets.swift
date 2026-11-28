@@ -81,6 +81,16 @@ struct UpgradePlanView: View {
                 .font(.system(size: 12))
                 .padding(.top, 12)
             }
+            // 0.9.4 (bug hunt R1 review): a read while it was open changed it.
+            if let note = plan.changedNote {
+                Label {
+                    Text(note).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "arrow.triangle.2.circlepath").foregroundStyle(.secondary)
+                }
+                .font(.system(size: 12))
+                .padding(.top, 12)
+            }
             // 0.8.5: say before starting that brew closes open apps.
             if let note = plan.runningAppsNote {
                 Label {
@@ -111,6 +121,12 @@ struct UpgradePlanView: View {
                     .padding(.top, 12)
             }
 
+            // 0.9.4 (bug hunt R4): Upgrade waits for a fresh read, and the
+            // sheet turns the menu's Refresh off: the way to it is here.
+            if store.statusStale {
+                StaleStatusNote(store: store).padding(.top, 12)
+            }
+
             HStack {
                 Text("Each runs as its own brew upgrade, one at a time.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -124,7 +140,9 @@ struct UpgradePlanView: View {
                 }
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
-                .disabled(plan.toRun.isEmpty)
+                // 0.9.4 (bug hunt): an automatic update has the queue.
+                // 0.9.4 (bug hunt R3): and until a read after its upgrades.
+                .disabled(plan.toRun.isEmpty || store.autoUpdate.isRunning || store.statusStale)
             }
             .panelButtonRow("plan.buttons")
             .padding(.top, 14)
@@ -133,6 +151,30 @@ struct UpgradePlanView: View {
         .frame(width: 600)
         .background(theme.window ?? .clear)
         .task { store.compileWarningShown() }
+    }
+}
+
+/// 0.9.4 (bug hunt R4): the status is older than brew's last change: the
+/// sheet's confirmation is off until a fresh read, and this asks for one.
+struct StaleStatusNote: View {
+    @Bindable var store: AppStore
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Label {
+                Text("Homebrew changed packages after this list was read. Refresh it before continuing.")
+                    .fixedSize(horizontal: false, vertical: true)
+            } icon: {
+                Image(systemName: "arrow.clockwise.circle").foregroundStyle(.orange)
+            }
+            .font(.system(size: 12))
+            Spacer()
+            if store.isRefreshing {
+                ProgressView().controlSize(.small)
+            }
+            Button("Refresh") { store.refreshStaleStatus() }
+                .disabled(store.isRefreshing)
+        }
     }
 }
 
@@ -278,9 +320,18 @@ struct AppManagementSheet: View {
     var prompt: AppManagementPrompt
     @Environment(\.theme) private var theme
 
+    /// 0.9.4 (bug hunt R1 review): the buttons that would start brew now
+    /// wait while an automatic update runs; the prompt stays.
+    private var runBlocked: Bool { prompt.canRetry && store.appManagementRunsBlocked }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             if prompt.stage == .relaunch { relaunchPage } else { explainPage }
+            if runBlocked {
+                Text("Homebrew is busy with an automatic update. This can run once it finishes.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(20)
         .frame(width: 480)
@@ -330,6 +381,8 @@ struct AppManagementSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                // 0.9.4 (bug hunt R1 review): it would run now; brew is busy.
+                .disabled(store.deps.relaunch == nil && runBlocked)
             }
             if prompt.reason == .firstUse, prompt.canRetry {
                 // Without the permission: the rest only, or everything
@@ -344,6 +397,8 @@ struct AppManagementSheet: View {
                         .help(String(localized: "Starts now without the permission. macOS may stop the steps that change apps; Tankard then says so."))
                 }
                 .controlSize(.small)
+                // 0.9.4 (bug hunt R1 review): an automatic update has the queue.
+                .disabled(runBlocked)
             }
         }
     }
@@ -376,6 +431,7 @@ struct AppManagementSheet: View {
                     .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Continue without relaunching") { store.appManagementContinue() }
+                    .disabled(runBlocked)
                 Button {
                     store.appManagementRelaunch()
                 } label: {
@@ -425,6 +481,8 @@ struct AppManagementResumeSheet: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
+                // 0.9.4 (bug hunt R1 review): the offer waits while brew runs.
+                .disabled(store.appManagementRunsBlocked)
             }
         }
         .padding(20)
@@ -516,6 +574,10 @@ struct CleanupSheet: View {
             }
 
             Spacer(minLength: 0)
+            // 0.9.4 (bug hunt R4): Clean Up waits for a fresh read; the way to it.
+            if store.statusStale {
+                StaleStatusNote(store: store)
+            }
             HStack {
                 Text("Preview from \(cleanup.dryRunCommand) (changes nothing).").font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer()
@@ -531,14 +593,14 @@ struct CleanupSheet: View {
                     }
                     .buttonStyle(.primaryAction)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
+                    .disabled(cleanup.phase != .ready || store.statusStale || store.inventoryUnsettled || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 } else {
                     Button {
                         store.startCleanup()
                     } label: {
                         Text("Clean Up")
                     }
-                    .disabled(cleanup.phase != .ready || (cleanup.dryRun?.items.isEmpty ?? true) || store.isUpgrading)
+                    .disabled(cleanup.phase != .ready || store.statusStale || store.inventoryUnsettled || (cleanup.dryRun?.items.isEmpty ?? true) || store.newRunBlocked)
                 }
             }
         }
@@ -645,13 +707,21 @@ struct CompileInstallConfirm: View {
     var body: some View {
         let _ = store.buildTimesRevision
         let deps = discover.dependenciesThatCompile(entry, installedIDs: store.installedIDs).compiling
-        let estimate = store.deps.classifier.installWarning(entry)?.estimateText
+        let warning = store.deps.classifier.installWarning(entry)
+        let estimate = warning?.estimateText
+        // 0.9.4 (bug hunt R4): asked only because the bottle is unknown:
+        // the copy says it may compile, not that it will.
+        let unverified = ContextMenus.bottleUnverified(entry, compileWarning: warning)
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "hammer.circle.fill").font(.system(size: 34)).foregroundStyle(theme.badge(.source).dot)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Install \(entry.name) from source?").font(.system(size: 14, weight: .bold))
-                    Text(Self.message(entry, intelbrew: discover.isLocalTaps, deps: deps, estimate: estimate))
+                    Text(unverified ? String(localized: "Install \(entry.name)? It may compile.")
+                                    : String(localized: "Install \(entry.name) from source?"))
+                        .font(.system(size: 14, weight: .bold))
+                    Text(unverified
+                         ? InstallCompileText.unverifiedMessage(name: entry.name, intelbrew: discover.isLocalTaps)
+                         : Self.message(entry, intelbrew: discover.isLocalTaps, deps: deps, estimate: estimate))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -669,13 +739,13 @@ struct CompileInstallConfirm: View {
                 Spacer()
                 Button("Cancel") { discover.confirmInstall = nil }
                     .keyboardShortcut(.cancelAction)
-                Button("Install (compiles)") {
-                    discover.confirmInstall = nil
-                    store.startInstall(entry)
+                Button(unverified ? String(localized: "Install (may compile)") : String(localized: "Install (compiles)")) {
+                    store.confirmCompileInstall(entry)
                 }
                 .buttonStyle(.primaryAction)
                 .keyboardShortcut(.defaultAction)
-                .disabled(store.isUpgrading)
+                // 0.9.4 (bug hunt R1 review): and while an automatic update runs.
+                .disabled(store.newRunBlocked)
             }
         }
         .padding(20)
