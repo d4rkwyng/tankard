@@ -285,3 +285,95 @@ struct V0100DownloadSpeedFormatTests {
         #expect(DownloadSpeedFormat.timeLeft(23) == .seconds(25))
     }
 }
+
+// MARK: round 1 review (Sol): what the watcher credits a file that is gone
+
+/// A file that leaves the downloads folder counts with its real size when
+/// brew renamed it (done), and not at all when it was deleted (a failure);
+/// a retry counts once. Before, a gone file counted with its expected
+/// total, so a deleted partial file read as new bytes.
+struct V0100DownloadWatcherTests {
+    let start = Date(timeIntervalSince1970: 1_000_000)
+    static let a = "\(hashA)--aaa--1.0.sonoma.bottle.tar.gz"
+    static let b = "\(hashB)--bbb--2.0.sonoma.bottle.tar.gz"
+
+    /// A folder with the manifests for a (100 bytes) and b (300 bytes).
+    func folder() -> FakeDownloadFolder {
+        let dir = FakeDownloadFolder()
+        dir.set("\(hashA)--aaa-1.0.bottle_manifest.json", size: 1, modified: start, data: manifestJSON([("1.0.sonoma", 100)]))
+        dir.set("\(hashB)--bbb-2.0.bottle_manifest.json", size: 1, modified: start, data: manifestJSON([("2.0.sonoma", 300)]))
+        return dir
+    }
+
+    /// Renamed: the finished file's real size, not the expected total.
+    @Test func renamedFileCountsItsRealSize() async throws {
+        let dir = folder()
+        dir.set(Self.a + ".incomplete", size: 50, modified: start)
+        dir.set(Self.b + ".incomplete", size: 10, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll() == DownloadProgress(name: nil, bytes: 60, total: 400, files: 2))
+        dir.remove(Self.a + ".incomplete")
+        dir.set(Self.a, size: 98, modified: start) // what curl wrote, a little under the manifest's size
+        let p = try #require(await w.poll())
+        #expect(p == DownloadProgress(name: "bbb", bytes: 108, total: 398, files: 1))
+    }
+
+    /// Deleted after a failure: its bytes no longer count, nor its total.
+    @Test func deletedPartialFileCountsNothing() async throws {
+        let dir = folder()
+        dir.set(Self.a + ".incomplete", size: 20, modified: start)
+        dir.set(Self.b + ".incomplete", size: 10, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll()?.bytes == 30)
+        dir.remove(Self.a + ".incomplete")
+        let p = try #require(await w.poll())
+        #expect(p == DownloadProgress(name: "bbb", bytes: 10, total: 300, files: 1))
+        #expect(await w.sawDownload)
+        // Gone for good: still not counted later.
+        dir.set(Self.b + ".incomplete", size: 20, modified: start)
+        #expect(await w.poll() == DownloadProgress(name: "bbb", bytes: 20, total: 300, files: 1))
+    }
+
+    /// Deleted, then downloaded again: counted once, as running.
+    @Test func retryAfterADeletionCountsOnce() async throws {
+        let dir = folder()
+        dir.set(Self.a + ".incomplete", size: 20, modified: start)
+        dir.set(Self.b + ".incomplete", size: 10, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        _ = await w.poll()
+        dir.remove(Self.a + ".incomplete")
+        _ = await w.poll()
+        dir.set(Self.a + ".incomplete", size: 5, modified: start)
+        #expect(await w.poll() == DownloadProgress(name: nil, bytes: 15, total: 400, files: 2))
+    }
+
+    /// Finished, then downloaded again (brew fetched it once more): the
+    /// running file counts, the finished one no longer.
+    @Test func retryAfterARenameCountsOnce() async throws {
+        let dir = folder()
+        dir.set(Self.a + ".incomplete", size: 90, modified: start)
+        dir.set(Self.b + ".incomplete", size: 10, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        _ = await w.poll()
+        dir.remove(Self.a + ".incomplete")
+        dir.set(Self.a, size: 98, modified: start)
+        #expect(await w.poll()?.bytes == 108)
+        dir.remove(Self.a)
+        dir.set(Self.a + ".incomplete", size: 5, modified: start)
+        #expect(await w.poll() == DownloadProgress(name: nil, bytes: 15, total: 400, files: 2))
+    }
+
+    /// One file done, nothing running for a poll, then the next one: the
+    /// first still counts (its real size), so the bar doesn't jump back.
+    @Test func emptyPollBetweenTwoFiles() async throws {
+        let dir = folder()
+        dir.set(Self.a + ".incomplete", size: 60, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll() == DownloadProgress(name: "aaa", bytes: 60, total: 100, files: 1))
+        dir.remove(Self.a + ".incomplete")
+        dir.set(Self.a, size: 98, modified: start)
+        #expect(await w.poll() == nil)
+        dir.set(Self.b + ".incomplete", size: 10, modified: start)
+        #expect(await w.poll() == DownloadProgress(name: "bbb", bytes: 108, total: 398, files: 1))
+    }
+}

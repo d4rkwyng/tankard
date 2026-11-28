@@ -192,6 +192,7 @@ struct DownloadWatcherTests {
         let both = try #require(await w.poll())
         #expect(both == DownloadProgress(name: nil, bytes: 150, total: 400, files: 2))
         dir.rename(a + ".incomplete", a)
+        dir.set(a, size: 100, modified: start) // 0.10: curl wrote the rest before the rename
         dir.set(b + ".incomplete", size: 200, modified: start)
         let one = try #require(await w.poll())
         // a's 100 still count: 300 of 400, not 200 of 300.

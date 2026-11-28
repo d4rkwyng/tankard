@@ -192,9 +192,11 @@ public actor DownloadWatcher {
     private var hinted: [String: Int64?] = [:]
     private var asking: Set<String> = []
     private var totals: [String: Int64?] = [:]
-    /// Files this command downloaded that are done (renamed), with their size.
+    /// Files this command downloaded that are done (renamed), with their
+    /// real size. Keyed by the `.incomplete` name they had.
     private var finished: [String: Int64] = [:]
     private var active: [String: Int64] = [:]
+    private var seen = false
 
     public init(directory: String, reader: DownloadFolderReading = LiveDownloadFolder(),
                 lengths: ContentLengthFetching? = nil, since: Date, urls: [String] = []) {
@@ -228,7 +230,7 @@ public actor DownloadWatcher {
     }
 
     /// Whether any download of this command was seen.
-    public var sawDownload: Bool { !active.isEmpty || !finished.isEmpty }
+    public var sawDownload: Bool { seen }
 
     /// The downloads running now, summed; nil when none is.
     public func poll() -> DownloadProgress? {
@@ -241,12 +243,19 @@ public actor DownloadWatcher {
                   st.modified >= since.addingTimeInterval(-2) else { continue }
             now[f] = (n, st.size)
         }
-        // A file that was growing and is gone was renamed: done (or removed
-        // after a failure; either way it no longer counts as running).
-        for (f, size) in active where now[f] == nil {
-            finished[f] = (totals[f] ?? nil) ?? size
+        // 0.10 (review): a file that was growing and is gone was either
+        // renamed (done: the final name is there, and its real size counts)
+        // or deleted after a failure (nothing counts: its bytes are gone).
+        // Before, it counted with its expected total, so a deleted partial
+        // file read as new bytes (the sheet's speed, a stall cleared).
+        for f in active.keys where now[f] == nil {
+            let done = String(f.dropLast(".incomplete".count))
+            finished[f] = reader.stat(directory + "/" + done)?.size
         }
+        // Downloading again (a retry): it counts as running, not twice.
+        for f in now.keys { finished[f] = nil }
         active = now.mapValues(\.1)
+        if !now.isEmpty { seen = true }
         guard !now.isEmpty else { return nil }
 
         var bytes: Int64 = 0
