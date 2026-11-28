@@ -286,6 +286,9 @@ public actor DownloadWatcher {
     /// Whether any download of this command was seen.
     public var sawDownload: Bool { seen }
 
+    /// How many file records the watcher keeps (for tests).
+    public var trackedPathCount: Int { active.count + finished.count + countedIDs.count }
+
     /// The downloads running now, summed; nil when none is.
     public func poll() -> DownloadProgress? { sample().progress }
 

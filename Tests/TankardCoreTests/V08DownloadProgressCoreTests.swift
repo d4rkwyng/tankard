@@ -28,6 +28,9 @@ final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
     func set(_ name: String, size: Int64, fileID: DownloadFileID?) {
         lock.withLock { files[name] = (size, Date(), nil, fileID) }
     }
+    func set(_ name: String, size: Int64, modified: Date, fileID: DownloadFileID?) {
+        lock.withLock { files[name] = (size, modified, nil, fileID) }
+    }
     func remove(_ name: String) { lock.withLock { _ = files.removeValue(forKey: name) } }
     func rename(_ from: String, _ to: String) {
         lock.withLock {

@@ -63,4 +63,18 @@ struct V094DownloadIdentitySessionTests {
         #expect(r.session.downloadRate(at: r.clock.date) == .stalled)
         #expect(await r.watcher.fallbackCount == 0)
     }
+
+    @Test func newFinalBesideARunningPartialEndsStall() async {
+        let r = await harness.start()
+        defer { r.finish.release() }
+        r.folder.set(Harness.file, size: 20_000_000)
+        await pollUntilStalled(r, expectedBytes: 20_000_000)
+        r.folder.set(Harness.done, size: 25_000_000)
+        await harness.poll(r, at: 6.25)
+
+        #expect(r.session.download?.bytes == 20_000_000)
+        #expect(r.session.download?.files == 1)
+        #expect(r.session.downloadRate(at: r.clock.date) == .measuring(bytesPerSecond: 4_000_000))
+        #expect(await r.watcher.fallbackCount == 0)
+    }
 }
