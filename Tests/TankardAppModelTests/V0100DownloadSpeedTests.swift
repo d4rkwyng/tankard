@@ -330,6 +330,29 @@ struct V0100DownloadSpeedSessionTests {
     nonisolated static let otherFile = String(repeating: "c", count: 64) + "--Other-1.0.zip.incomplete"
 }
 
+/// The CHANGELOG's example is what the formatter says: 2.1 of 2.3 GB at
+/// 4.2 MB/s leaves 200 MB, about 48 s ("about 50 sec left").
+struct V0100ChangelogExampleTests {
+    @Test func changelogExampleMatchesTheFormatter() throws {
+        var speed = DownloadSpeed()
+        let bytes: Int64 = 2_100_000_000
+        for i in 0...40 {
+            let t = Double(i) * 0.25
+            speed.record(bytes: bytes - Int64(4_200_000 * (10 - t)), at: t)
+        }
+        let d = DownloadProgress(name: nil, bytes: bytes, total: 2_300_000_000)
+        let eta = try #require(speed.eta(bytes: d.bytes, total: d.total, at: 10))
+        let us = Locale(identifier: "en_US")
+        let line = "Downloading 10 of 11 · " + d.detail + " · " + DownloadSpeedFormat.speed(speed.speed(at: 10)!, locale: us)
+            + " · " + DownloadSpeedFormat.timeLeftText(eta)
+        #expect(line == "Downloading 10 of 11 · 2.1 of 2.3 GB (91%) · 4.2 MB/s · about 50 sec left")
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let changelog = try String(contentsOf: root.appendingPathComponent("CHANGELOG.md"), encoding: .utf8)
+        let unreleased = try #require(changelog.components(separatedBy: "\n## [").dropFirst().first)
+        #expect(unreleased.contains("\"\(line)\""))
+    }
+}
+
 /// The demo's "slow" download (the screenshot) is steady: polled every
 /// 250 ms it still gets a time left under the stricter stability rule
 /// (round 1 review), and the "stall" one never does.
