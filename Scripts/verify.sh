@@ -30,10 +30,10 @@ JOBS="${VERIFY_JOBS:-4}"
 echo "==> verify.sh: HEAD $SHA  jobs=$JOBS  DEVELOPER_DIR=${DEVELOPER_DIR:-<unset>}"
 
 
-echo "==> [1/4] clean build (swift build --build-tests; .build is not wiped)"
-swift build --build-tests --jobs "$JOBS"
-
-echo "==> [2/4] full suite (Scripts/test.sh)"
+# Scripts/test.sh is the repo's real compile-and-test entry point: under the
+# Command Line Tools it passes the TestingMacros plugin path that a bare
+# `swift build` misses. It builds, then runs the suite. .build is not wiped.
+echo "==> [1-2/4] clean build and full suite (Scripts/test.sh)"
 Scripts/test.sh --jobs "$JOBS"
 
 echo "==> [3/4] timing-test 5x loop"
