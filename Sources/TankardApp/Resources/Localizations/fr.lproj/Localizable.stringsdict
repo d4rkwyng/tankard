@@ -322,6 +322,22 @@
 			<string>%lld vulnérabilités connues (brew vulns) : %@</string>
 		</dict>
 	</dict>
+	<key>%lld minutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld minute</string>
+			<key>other</key>
+			<string>%lld minutes</string>
+		</dict>
+	</dict>
 	<key>%lld packages have no bottle for this Mac and will compile from source, which can take a long time.</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -656,6 +672,134 @@
 			<string>Supprimerait %lld formula</string>
 			<key>other</key>
 			<string>Supprimerait %lld formulae</string>
+		</dict>
+	</dict>
+	<key>about %lld hours and %@ left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld heure et %@ restantes</string>
+			<key>other</key>
+			<string>environ %lld heures et %@ restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld hours left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld heure restante</string>
+			<key>other</key>
+			<string>environ %lld heures restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld hr %lld min left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld h %lld min restantes</string>
+			<key>other</key>
+			<string>environ %lld h %lld min restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld hr left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld h restante</string>
+			<key>other</key>
+			<string>environ %lld h restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld min left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld min restante</string>
+			<key>other</key>
+			<string>environ %lld min restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld minutes left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld minute restante</string>
+			<key>other</key>
+			<string>environ %lld minutes restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld sec left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld s restante</string>
+			<key>other</key>
+			<string>environ %lld s restantes</string>
+		</dict>
+	</dict>
+	<key>about %lld seconds left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>environ %lld seconde restante</string>
+			<key>other</key>
+			<string>environ %lld secondes restantes</string>
 		</dict>
 	</dict>
 	<key>brew printed %lld warnings (%@)</key>

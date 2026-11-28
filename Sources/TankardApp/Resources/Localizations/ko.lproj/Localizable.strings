@@ -118,6 +118,7 @@
 "%lld min" = "%lld분";
 "%lld min %lld s" = "%lld분 %lld초";
 "%lld min ago" = "%lld분 전";
+"%lld minutes" = "%lld분";
 "%lld missing from this Mac" = "이 Mac에 없음 %lld개";
 "%lld new upgrades" = "새 업그레이드 %lld개";
 "%lld newer" = "더 최신 %lld개";
@@ -1343,10 +1344,14 @@
 "Your settings and data in ~/Library are not touched." = "~/Library에 있는 설정과 데이터는 건드리지 않습니다.";
 "a few seconds left" = "몇 초 남음";
 "a symlink to %@: that file is backed up and edited" = "%@에 대한 심볼릭 링크: 해당 파일이 백업된 후 편집됩니다";
+"about %lld hours and %@ left" = "약 %lld시간 %@ 남음";
+"about %lld hours left" = "약 %lld시간 남음";
 "about %lld hr %lld min left" = "약 %lld시간 %lld분 남음";
 "about %lld hr left" = "약 %lld시간 남음";
 "about %lld min left" = "약 %lld분 남음";
+"about %lld minutes left" = "약 %lld분 남음";
 "about %lld sec left" = "약 %lld초 남음";
+"about %lld seconds left" = "약 %lld초 남음";
 "adopted" = "가져옴";
 "and %lld more" = "외 %lld개";
 "and %lld more…" = "외 %lld개…";

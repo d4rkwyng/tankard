@@ -118,6 +118,7 @@
 "%lld min" = "%lld 分钟";
 "%lld min %lld s" = "%lld 分 %lld 秒";
 "%lld min ago" = "%lld 分钟前";
+"%lld minutes" = "%lld 分钟";
 "%lld missing from this Mac" = "%lld 个这台 Mac 上缺失";
 "%lld new upgrades" = "%lld 个新升级";
 "%lld newer" = "%lld 个较新";
@@ -1343,10 +1344,14 @@
 "Your settings and data in ~/Library are not touched." = "你在 ~/Library 中的设置和数据不会被改动。";
 "a few seconds left" = "还剩几秒";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
+"about %lld hours and %@ left" = "约剩 %lld 小时 %@";
+"about %lld hours left" = "约剩 %lld 小时";
 "about %lld hr %lld min left" = "约剩 %lld 小时 %lld 分钟";
 "about %lld hr left" = "约剩 %lld 小时";
 "about %lld min left" = "约剩 %lld 分钟";
+"about %lld minutes left" = "约剩 %lld 分钟";
 "about %lld sec left" = "约剩 %lld 秒";
+"about %lld seconds left" = "约剩 %lld 秒";
 "adopted" = "已接管";
 "and %lld more" = "及另外 %lld 个";
 "and %lld more…" = "以及另外 %lld 项…";

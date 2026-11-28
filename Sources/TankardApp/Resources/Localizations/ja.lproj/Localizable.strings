@@ -118,6 +118,7 @@
 "%lld min" = "%lld分";
 "%lld min %lld s" = "%lld分%lld秒";
 "%lld min ago" = "%lld分前";
+"%lld minutes" = "%lld分";
 "%lld missing from this Mac" = "%lld個がこのMacにありません";
 "%lld new upgrades" = "新しいアップグレード %lld 件";
 "%lld newer" = "%lld個が新しい";
@@ -1343,10 +1344,14 @@
 "Your settings and data in ~/Library are not touched." = "~/Library 内の設定とデータには触れません。";
 "a few seconds left" = "残り数秒";
 "a symlink to %@: that file is backed up and edited" = "%@へのシンボリックリンク: そのファイルがバックアップされ、編集されます";
+"about %lld hours and %@ left" = "残り約%lld時間%@";
+"about %lld hours left" = "残り約%lld時間";
 "about %lld hr %lld min left" = "残り約%lld時間%lld分";
 "about %lld hr left" = "残り約%lld時間";
 "about %lld min left" = "残り約%lld分";
+"about %lld minutes left" = "残り約%lld分";
 "about %lld sec left" = "残り約%lld秒";
+"about %lld seconds left" = "残り約%lld秒";
 "adopted" = "引き継ぎ済み";
 "and %lld more" = "ほか%lld個";
 "and %lld more…" = "他%lld件…";

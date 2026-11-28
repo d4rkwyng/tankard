@@ -298,14 +298,17 @@ public enum DownloadSpeedFormat {
         return .hours(minutes / 60, minutes: minutes % 60)
     }
 
-    /// "about 20 sec left", "about 1 hr 5 min left", "a few seconds left"
+    /// "about 20 sec left", "about 1 hr 5 min left", "a few seconds left".
+    /// 0.10 (review): plural variations (L10n.bundle's stringsdict), so a
+    /// language that agrees with the number says 1 in the singular
+    /// (Spanish "queda alrededor de 1 min", "quedan unos 12 min").
     public static func timeLeftText(_ seconds: TimeInterval) -> String {
         switch timeLeft(seconds) {
         case .fewSeconds: return String(localized: "a few seconds left")
-        case .seconds(let s): return String(localized: "about \(s) sec left")
-        case .minutes(let m): return String(localized: "about \(m) min left")
-        case .hours(let h, 0): return String(localized: "about \(h) hr left")
-        case .hours(let h, let m): return String(localized: "about \(h) hr \(m) min left")
+        case .seconds(let s): return String(localized: "about \(s) sec left", bundle: L10n.bundle)
+        case .minutes(let m): return String(localized: "about \(m) min left", bundle: L10n.bundle)
+        case .hours(let h, 0): return String(localized: "about \(h) hr left", bundle: L10n.bundle)
+        case .hours(let h, let m): return String(localized: "about \(h) hr \(m) min left", bundle: L10n.bundle)
         }
     }
 }

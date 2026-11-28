@@ -179,7 +179,7 @@ struct V0100DownloadSpeedSessionTests {
         #expect(s.isFetching)
         #expect(s.statusLine == "Downloading 0 of 2 · 26.2 of 336.0 MB (7%) · 4.2 MB/s · about 1 min left")
         #expect(s.statusAccessibilityLabel(behindBrewUpdate: false, at: r.clock.date)
-                == "Downloading 0 of 2, 26.2 of 336.0 MB, 7 percent, 4.2 megabytes per second, about 1 min left")
+                == "Downloading 0 of 2, 26.2 of 336.0 MB, 7 percent, 4.2 megabytes per second, about 1 minute left")
         await end(r)
     }
 
@@ -188,7 +188,7 @@ struct V0100DownloadSpeedSessionTests {
         let s = r.session
         await steady(r, to: 6)
         #expect(s.statusAccessibilityLabel(behindBrewUpdate: false, at: r.clock.date)
-                == "Downloading font-inter, 26.2 of 336.0 MB, 7 percent, 4.2 megabytes per second, about 1 min left")
+                == "Downloading font-inter, 26.2 of 336.0 MB, 7 percent, 4.2 megabytes per second, about 1 minute left")
         // Stalled: "Waiting for data…" stays as it is.
         #expect(s.statusAccessibilityLabel(behindBrewUpdate: false, at: Date(timeIntervalSinceReferenceDate: Self.base + 11))
                 == "Downloading font-inter, 26.2 of 336.0 MB, 7 percent, Waiting for data…")

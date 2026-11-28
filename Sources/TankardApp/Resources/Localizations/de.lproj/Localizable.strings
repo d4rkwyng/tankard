@@ -118,6 +118,7 @@
 "%lld min" = "%lld Min.";
 "%lld min %lld s" = "%lld Min. %lld s";
 "%lld min ago" = "vor %lld Min.";
+"%lld minutes" = "%lld Minuten";
 "%lld missing from this Mac" = "%lld fehlen auf diesem Mac";
 "%lld new upgrades" = "%lld neue Upgrades";
 "%lld newer" = "%lld neuer";
@@ -1343,10 +1344,14 @@
 "Your settings and data in ~/Library are not touched." = "Deine Einstellungen und Daten in ~/Library bleiben unberührt.";
 "a few seconds left" = "noch wenige Sekunden";
 "a symlink to %@: that file is backed up and edited" = "ein Symlink auf %@: diese Datei wird gesichert und bearbeitet";
+"about %lld hours and %@ left" = "noch etwa %lld Stunden und %@";
+"about %lld hours left" = "noch etwa %lld Stunden";
 "about %lld hr %lld min left" = "noch etwa %lld Std. %lld Min.";
 "about %lld hr left" = "noch etwa %lld Std.";
 "about %lld min left" = "noch etwa %lld Min.";
+"about %lld minutes left" = "noch etwa %lld Minuten";
 "about %lld sec left" = "noch etwa %lld s";
+"about %lld seconds left" = "noch etwa %lld Sekunden";
 "adopted" = "übernommen";
 "and %lld more" = "und %lld weitere";
 "and %lld more…" = "und %lld weitere…";

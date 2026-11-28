@@ -73,6 +73,22 @@ public enum AccessibilityText {
         }
     }
 
+    /// 0.10 (review): the time left as VoiceOver reads it, the units in
+    /// full words and in the number's plural form ("about 1 minute left",
+    /// "about 20 seconds left", "about 1 hour and 5 minutes left"); the
+    /// visible "min"/"sec" would be read as abbreviations.
+    public static func timeLeft(_ seconds: TimeInterval) -> String {
+        switch DownloadSpeedFormat.timeLeft(seconds) {
+        case .fewSeconds: return String(localized: "a few seconds left")
+        case .seconds(let s): return String(localized: "about \(s) seconds left", bundle: L10n.bundle)
+        case .minutes(let m): return String(localized: "about \(m) minutes left", bundle: L10n.bundle)
+        case .hours(let h, 0): return String(localized: "about \(h) hours left", bundle: L10n.bundle)
+        case .hours(let h, let m):
+            let minutes = String(localized: "\(m) minutes", bundle: L10n.bundle)
+            return String(localized: "about \(h) hours and \(minutes) left", bundle: L10n.bundle)
+        }
+    }
+
     /// The spoken pieces of a status line, read as one sentence: the
     /// visible " · " becomes a comma.
     public static func joined(_ parts: [String]) -> String {

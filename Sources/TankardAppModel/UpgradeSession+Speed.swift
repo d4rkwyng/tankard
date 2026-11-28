@@ -53,7 +53,7 @@ extension UpgradeSession {
     /// 0.10: the status line as VoiceOver reads it. While a download runs:
     /// the same sentence with commas for the dots and the units in words
     /// ("Downloading 10 of 11, 2.1 of 2.3 GB, 91 percent, 4.2 megabytes per
-    /// second, about 1 min left"); otherwise the visible line.
+    /// second, about 1 minute left"); otherwise the visible line.
     public func statusAccessibilityLabel(behindBrewUpdate: Bool, at date: Date) -> String {
         let line = statusLine(behindBrewUpdate: behindBrewUpdate, at: date)
         guard let d = download else { return line }
@@ -75,7 +75,7 @@ extension UpgradeSession {
         case .measuring(let bps): parts.append(AccessibilityText.speed(bps))
         case .rate(let bps, let eta):
             parts.append(AccessibilityText.speed(bps))
-            if let eta { parts.append(DownloadSpeedFormat.timeLeftText(eta)) }
+            if let eta { parts.append(AccessibilityText.timeLeft(eta)) }
         }
         return AccessibilityText.joined(parts)
     }
