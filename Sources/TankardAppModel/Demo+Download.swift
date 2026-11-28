@@ -86,9 +86,9 @@ extension Demo {
         }
 
         /// The one file's file number (any: there is no other file).
-        static let fileID: UInt64 = 1
+        static let fileID = DownloadFileID(device: 1, inode: 1)
 
-        func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
+        func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
             guard path == Self.directory + "/" + Self.file, let start = state.withLock({ $0.startedAt }),
                   let size = size(at: Date()), let grown = grown(at: Date()) else { return nil }
             return (size, start.addingTimeInterval(grown), Self.fileID)

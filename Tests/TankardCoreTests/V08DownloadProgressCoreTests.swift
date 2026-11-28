@@ -10,15 +10,23 @@ import Testing
 /// (the file grew) and a rename keep it, as on disk.
 final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
-    private var files: [String: (Int64, Date, Data?, UInt64)] = [:]
+    private var files: [String: (Int64, Date, Data?, DownloadFileID?)] = [:]
     private var nextID: UInt64 = 1
 
     func set(_ name: String, size: Int64, modified: Date = Date(), data: Data? = nil) {
         lock.withLock {
-            let id = files[name]?.3 ?? nextID
-            if id == nextID { nextID += 1 }
+            let id: DownloadFileID?
+            if let existing = files[name] {
+                id = existing.3
+            } else {
+                id = DownloadFileID(device: 0, inode: nextID)
+                nextID += 1
+            }
             files[name] = (size, modified, data, id)
         }
+    }
+    func set(_ name: String, size: Int64, fileID: DownloadFileID?) {
+        lock.withLock { files[name] = (size, Date(), nil, fileID) }
     }
     func remove(_ name: String) { lock.withLock { _ = files.removeValue(forKey: name) } }
     func rename(_ from: String, _ to: String) {
@@ -28,7 +36,7 @@ final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
     }
 
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let name = (path as NSString).lastPathComponent
         return lock.withLock { files[name].map { ($0.0, $0.1, $0.3) } }
     }
@@ -198,8 +206,8 @@ struct DownloadWatcherTests {
         let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
         let both = try #require(await w.poll())
         #expect(both == DownloadProgress(name: nil, bytes: 150, total: 400, files: 2))
+        dir.set(a + ".incomplete", size: 100, modified: start) // curl wrote the rest before the rename
         dir.rename(a + ".incomplete", a)
-        dir.set(a, size: 100, modified: start) // 0.9.4: curl wrote the rest before the rename
         dir.set(b + ".incomplete", size: 200, modified: start)
         let one = try #require(await w.poll())
         // a's 100 still count: 300 of 400, not 200 of 300.

@@ -10,7 +10,7 @@ import TankardCore
 /// A new name gets a new file number; growing and a rename keep it.
 final class GrowingFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
-    private var files: [String: (Int64, Data?, UInt64)] = [:]
+    private var files: [String: (Int64, Data?, DownloadFileID)] = [:]
     private var nextID: UInt64 = 1
     let modified: Date
 
@@ -18,8 +18,8 @@ final class GrowingFolder: DownloadFolderReading, @unchecked Sendable {
 
     func set(_ name: String, size: Int64, data: Data? = nil) {
         lock.withLock {
-            let id = files[name]?.2 ?? nextID
-            if id == nextID { nextID += 1 }
+            let id = files[name]?.2 ?? DownloadFileID(device: 1, inode: nextID)
+            if files[name] == nil { nextID += 1 }
             files[name] = (size, data, id)
         }
     }
@@ -27,7 +27,7 @@ final class GrowingFolder: DownloadFolderReading, @unchecked Sendable {
         lock.withLock { if let f = files.removeValue(forKey: from) { files[to] = f } }
     }
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let n = (path as NSString).lastPathComponent
         return lock.withLock { files[n].map { ($0.0, modified, $0.2) } }
     }

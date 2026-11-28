@@ -131,13 +131,23 @@ public enum BottleManifestSize {
     }
 }
 
+/// A rename preserves both the device and the inode of a file.
+public struct DownloadFileID: Hashable, Sendable {
+    public var device: UInt64
+    public var inode: UInt64
+
+    public init(device: UInt64, inode: UInt64) {
+        self.device = device
+        self.inode = inode
+    }
+}
+
 /// What the watcher reads from disk (a fake in tests).
 public protocol DownloadFolderReading: Sendable {
     /// File names in `directory` (not paths); empty if it can't be read.
     func files(in directory: String) -> [String]
-    /// Size, modification date and file number (the inode, nil when
-    /// unknown); nil if gone. A rename keeps the file number.
-    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)?
+    /// Size, modification date, and file identity when available. Returns nil if gone.
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)?
     func read(_ path: String) -> Data?
 }
 
@@ -146,10 +156,16 @@ public struct LiveDownloadFolder: DownloadFolderReading {
     public func files(in directory: String) -> [String] {
         (try? FileManager.default.contentsOfDirectory(atPath: directory)) ?? []
     }
-    public func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
+    public func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         guard let a = try? FileManager.default.attributesOfItem(atPath: path),
               let size = (a[.size] as? NSNumber)?.int64Value, let modified = a[.modificationDate] as? Date else { return nil }
-        return (size, modified, (a[.systemFileNumber] as? NSNumber)?.uint64Value)
+        let fileID: DownloadFileID?
+        if let device = a[.systemNumber] as? NSNumber, let inode = a[.systemFileNumber] as? NSNumber {
+            fileID = DownloadFileID(device: device.uint64Value, inode: inode.uint64Value)
+        } else {
+            fileID = nil
+        }
+        return (size, modified, fileID)
     }
     public func read(_ path: String) -> Data? {
         FileManager.default.contents(atPath: path)
@@ -219,12 +235,13 @@ public actor DownloadWatcher {
     private var active: [String: Partial] = [:]
     /// Every name in the folder at the last poll.
     private var listed: Set<String> = []
+    public private(set) var fallbackCount = 0
     private var traffic: Int64 = 0
     private var seen = false
 
     private struct Partial {
         var size: Int64
-        var fileID: UInt64?
+        var fileID: DownloadFileID?
     }
 
     public init(directory: String, reader: DownloadFolderReading = LiveDownloadFolder(),
@@ -339,7 +356,7 @@ public actor DownloadWatcher {
     /// it), or the name wasn't there at the last poll and appears now, as
     /// the partial file goes, at least as large as that was. An old file
     /// of the same name was there before and is another file: never.
-    private func isRename(of last: Partial, to done: String, _ st: (size: Int64, modified: Date, fileID: UInt64?)) -> Bool {
+    private func isRename(of last: Partial, to done: String, _ st: (size: Int64, modified: Date, fileID: DownloadFileID?)) -> Bool {
         if let was = last.fileID, let now = st.fileID, was == now { return true }
         return !listed.contains(done) && st.size >= last.size
     }

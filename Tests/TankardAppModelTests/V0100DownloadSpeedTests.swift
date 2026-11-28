@@ -22,7 +22,7 @@ import TankardCore
 final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
     private var files: [String: Int64] = [:]
-    private var ids: [String: UInt64] = [:]
+    private var ids: [String: DownloadFileID] = [:]
     private var nextID: UInt64 = 1
     private var contents: [String: Data] = [:]
     let modified: Date
@@ -34,7 +34,7 @@ final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
             files[name] = size
             contents[name] = data
             if ids[name] == nil {
-                ids[name] = nextID
+                ids[name] = DownloadFileID(device: 1, inode: nextID)
                 nextID += 1
             }
         }
@@ -54,7 +54,7 @@ final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
         }
     }
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let n = (path as NSString).lastPathComponent
         return lock.withLock { files[n].map { ($0, modified, ids[n]) } }
     }
