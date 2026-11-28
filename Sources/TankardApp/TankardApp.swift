@@ -398,11 +398,13 @@ struct HomebrewCommands: View {
         Button("Upgrade All…") { store.requestUpgradeAllPlan() }
             .keyboardShortcut("u", modifiers: [.command, .shift])
             .disabled(store.upgradable.isEmpty || store.menuActionsBlocked || store.isRefreshing)
-        Button(UpgradeMenu.selectedTitle(store.selectedUpgradeTarget)) {
-            if let p = store.selectedUpgradeTarget { store.requestUpgrade([p]) }
+        // 0.9.4: follows the selection, one row or several.
+        Button(UpgradeMenu.selectedTitle(store.selectedUpgradeTargets)) {
+            let targets = store.selectedUpgradeTargets
+            if !targets.isEmpty { store.requestUpgrade(targets) }
         }
         .keyboardShortcut("u", modifiers: .command)
-        .disabled(store.selectedUpgradeTarget == nil || store.menuActionsBlocked || store.isRefreshing)
+        .disabled(store.selectedUpgradeTargets.isEmpty || store.menuActionsBlocked || store.isRefreshing)
         Divider()
         Button("Scan for Vulnerabilities") { store.scanVulnerabilitiesNow() }
             .disabled(store.insights.scanState == .running || store.report == nil || store.menuActionsBlocked)

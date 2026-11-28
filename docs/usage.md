@@ -91,7 +91,7 @@ More: [The Installed list at a glance](#the-installed-list-at-a-glance).
 ### 4. Upgrade
 
 Click **Upgrade N** at the bottom right of the window to upgrade everything that's ready, or
-select one package and click **Upgrade <name>**. The sheet shows each package, the exact
+select packages (⌘-click to add more) and the same button reads **Upgrade N Selected**. The sheet shows each package, the exact
 command and brew's live output; one failure doesn't stop the rest. Anything that would
 compile from source is shown in a plan first, so you can skip it. **Hide** keeps the run
 going in the background.
@@ -402,8 +402,12 @@ from it only when you open that app's details. On any other Mac it checks nothin
 **Upgrade everything:** click the green **Upgrade N** in the status bar, or **Upgrade All**
 in the menu-bar icon.
 
-**Upgrade one package:** select it and click **Upgrade <name>** in the detail pane, or
-right-click it and choose **Upgrade <name>**.
+**Upgrade some packages:** select one, ⌘-click (or ⇧-click) to add more, and the status
+bar's button reads **Upgrade N Selected** (**Upgrade 1 Selected** for one); it upgrades only
+those. Rows without an upgrade, and pinned ones, don't count. The detail pane still shows
+the last package you clicked. Right-click the selection for **Upgrade N Selected**, or
+press ⌘U. Esc clears the selection, and the button goes back to upgrading everything.
+Right-click a single package and choose **Upgrade <name>** to upgrade just that one.
 
 The upgrade sheet shows each package, the exact command and brew's live output. Packages
 upgrade one at a time; a failure doesn't stop the rest.
@@ -694,7 +698,7 @@ and the ⓘ when those show too. Homebrew 7 lists one as outdated by itself when
 on disk is older than the cask (its own updater fell behind), so `brew upgrade` in Terminal
 replaces it. Tankard, by default, leaves them to their own updater: they still show their
 newer version, but Upgrade All, the counts, notifications and automatic updates leave them
-out. Select one and click **Upgrade** to upgrade it anyway.
+out. Select one and click **Upgrade 1 Selected** to upgrade it anyway.
 
 - **For all apps:** turn on **Settings ▸ Upgrades ▸ Include self-updating apps** to count
   and upgrade them like any other package (and also list the ones only
@@ -834,7 +838,8 @@ A mug in the menu bar with the number of upgrades ready. Click it for:
 
 The panel closes after Open Tankard, Check Now or a click on a package. Click an upgrade to
 open Tankard on it: the Installed tab's Upgrades list, with the search cleared and the
-package selected, so its details show **Upgrade** and any compile warning. A long new
+package selected, so the status bar's button reads **Upgrade 1 Selected** and its details
+show its upgrade command and any compile warning. A long new
 version is always shown whole; the old one is shortened in the middle instead. Click "N upgrades ready" for the Upgrades list, or the finished scan's line
 ("Scanned 11 · found 2") for the Vulnerable list. **Upgrade All** is the only thing the menu
 runs itself.
@@ -970,7 +975,8 @@ machine translations; corrections are welcome.
 - **View:** **Installed** (⌘1), **Discover** (⌘2), **Services** (⌘3).
 - **Homebrew:**
   - **Refresh** (⌘R), **Upgrade All…** (⇧⌘U, shows the plan first), **Upgrade <name>** (⌘U,
-    the package selected in Installed; **Upgrade Package**, grayed out, when none is),
+    the package selected in Installed, or **Upgrade N Selected** for several; **Upgrade
+    Package**, grayed out, when none is),
     **Scan for Vulnerabilities**
   - **Health…**, **History…**
   - **Clean Up…**, **Remove Unused Dependencies…**

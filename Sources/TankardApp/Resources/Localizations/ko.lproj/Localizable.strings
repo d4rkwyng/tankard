@@ -674,6 +674,7 @@
 "No Homebrew cask installs these apps." = "이 앱들을 설치하는 Homebrew cask가 없습니다.";
 "No Homebrew status to work from" = "작업할 Homebrew 상태가 없음";
 "No Intelbrew bottle yet." = "아직 Intelbrew bottle이 없습니다.";
+"No Upgrades Selected" = "선택한 업그레이드 없음";
 "No apps to adopt: everything in Applications is from Homebrew, the App Store or Apple." = "가져올 앱이 없습니다. 응용 프로그램의 모든 항목이 Homebrew, App Store 또는 Apple에서 왔습니다.";
 "No automatic runs yet." = "아직 자동 실행 기록이 없습니다.";
 "No bottle" = "bottle 없음";
@@ -1254,6 +1255,7 @@
 "Upgrade %@…" = "%@ 업그레이드…";
 "Upgrade %lld" = "%lld개 업그레이드";
 "Upgrade %lld (skip %lld)" = "%lld개 업그레이드 (%lld개 건너뜀)";
+"Upgrade %lld Selected" = "선택한 %lld개 업그레이드";
 "Upgrade %lld packages?" = "패키지 %lld개를 업그레이드할까요?";
 "Upgrade %lld without building from source" = "소스 빌드 없이 %lld개 업그레이드";
 "Upgrade All" = "모두 업그레이드";
@@ -1263,12 +1265,14 @@
 "Upgrade Plan" = "업그레이드 계획";
 "Upgrade Tankard now. Automatic updates never upgrade Tankard itself." = "지금 Tankard를 업그레이드합니다. 자동 업데이트는 Tankard 자체를 업그레이드하지 않습니다.";
 "Upgrade again the usual way: compile warnings, pins and skipped versions still apply" = "평소 방식으로 다시 업그레이드: 컴파일 경고, 고정, 건너뛴 버전은 계속 적용됩니다";
+"Upgrade all %lld packages" = "패키지 %lld개 모두 업그레이드";
 "Upgrade available: %@" = "업그레이드 가능: %@";
 "Upgrade builds from source" = "소스에서 빌드하여 업그레이드";
 "Upgrade command" = "업그레이드 명령";
 "Upgrade everything except what would build from source: %@. Shows the plan first." = "소스에서 빌드해야 하는 것을 제외하고 모두 업그레이드: %@. 먼저 계획을 보여 줍니다.";
 "Upgrade finished" = "업그레이드 완료";
 "Upgrade finished with problems" = "업그레이드 완료 (문제 있음)";
+"Upgrade only the %lld selected packages that have a newer version" = "선택한 패키지 중 새 버전이 있는 %lld개만 업그레이드";
 "Upgrade packages automatically" = "패키지 자동 업그레이드";
 "Upgrade ready: %@ → %@" = "업그레이드 준비됨: %@ → %@";
 "Upgrade the %lld packages that have a newer version, one at a time" = "새 버전이 있는 패키지 %lld개를 하나씩 업그레이드";

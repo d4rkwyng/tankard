@@ -626,6 +626,22 @@
 			<string>O Tankard atualizou %lld pacotes</string>
 		</dict>
 	</dict>
+	<key>Upgrade %lld Selected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Atualizar %lld selecionado</string>
+			<key>other</key>
+			<string>Atualizar %lld selecionados</string>
+		</dict>
+	</dict>
 	<key>Upgrade %lld packages?</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -640,6 +656,38 @@
 			<string>Atualizar %lld pacote?</string>
 			<key>other</key>
 			<string>Atualizar %lld pacotes?</string>
+		</dict>
+	</dict>
+	<key>Upgrade all %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Atualizar %lld pacote</string>
+			<key>other</key>
+			<string>Atualizar todos os %lld pacotes</string>
+		</dict>
+	</dict>
+	<key>Upgrade only the %lld selected packages that have a newer version</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>Atualizar só o %lld pacote selecionado que tem versão mais nova</string>
+			<key>other</key>
+			<string>Atualizar só os %lld pacotes selecionados que têm versão mais nova</string>
 		</dict>
 	</dict>
 	<key>Would remove %lld formulae</key>

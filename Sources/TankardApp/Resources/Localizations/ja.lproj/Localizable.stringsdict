@@ -620,6 +620,22 @@
 			<string>Tankardが%lld個のパッケージをアップグレードしました</string>
 		</dict>
 	</dict>
+	<key>Upgrade %lld Selected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>選択した%lld個をアップグレード</string>
+			<key>other</key>
+			<string>選択した%lld個をアップグレード</string>
+		</dict>
+	</dict>
 	<key>Upgrade %lld packages?</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -634,6 +650,38 @@
 			<string>%lld個のパッケージをアップグレードしますか？</string>
 			<key>other</key>
 			<string>%lld個のパッケージをアップグレードしますか？</string>
+		</dict>
+	</dict>
+	<key>Upgrade all %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>%lld個のパッケージをすべてアップグレード</string>
+			<key>other</key>
+			<string>%lld個のパッケージをすべてアップグレード</string>
+		</dict>
+	</dict>
+	<key>Upgrade only the %lld selected packages that have a newer version</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>選択したうち新しいバージョンがある%lld個のパッケージだけをアップグレードします</string>
+			<key>other</key>
+			<string>選択したうち新しいバージョンがある%lld個のパッケージだけをアップグレードします</string>
 		</dict>
 	</dict>
 	<key>Would remove %lld formulae</key>

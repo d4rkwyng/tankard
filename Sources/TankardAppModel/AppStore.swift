@@ -402,8 +402,31 @@ public final class AppStore {
         // new filter hides; the selection goes with it.
         didSet { if filter != oldValue { dropSelectionHiddenByFilter() } }
     }
-    public var search = ""
-    public var selection: Package.ID?
+    /// 0.9.4 (review): the Installed table's column sort (the table binds
+    /// to it), so a multi-selection's fallback primary is the first
+    /// survivor on screen (`tableRows`, MultiSelect.swift).
+    public var tableSortOrder: [KeyPathComparator<Package>] = AppStore.defaultTableSort
+    public var search = "" {
+        // 0.9.4 (review): a search that hides rows of a multi-selection
+        // drops them, so the status bar and ⌘U never upgrade hidden rows.
+        didSet { if search != oldValue { reconcileSelectionWithVisibleRows() } }
+    }
+    /// The primary selection: the package the detail pane shows (0.9.4:
+    /// the last clicked row of a multi-selection). Setting it directly
+    /// selects that one row (`selectedIDs` follows); the table sets both
+    /// through `selectRows` (MultiSelect.swift).
+    public var selection: Package.ID? {
+        didSet {
+            guard !adoptingRowSelection else { return }
+            let ids: Set<Package.ID> = selection.map { [$0] } ?? []
+            if selectedIDs != ids { selectedIDs = ids }
+        }
+    }
+    /// 0.9.4: every selected row in the Installed table (Cmd- and
+    /// Shift-click); it contains `selection` when that is set.
+    public internal(set) var selectedIDs: Set<Package.ID> = []
+    /// 0.9.4: `selectRows` is setting `selection`; `selectedIDs` is already right.
+    @ObservationIgnored var adoptingRowSelection = false
     /// 0.8.3: bumped when something asks the Installed table to scroll its
     /// selection into view (a menu-bar package row; see MenuBarNavigation).
     public internal(set) var revealRequest = 0
@@ -532,6 +555,11 @@ public final class AppStore {
     /// selection not in the list yet (Show in Installed right after an
     /// install) stays: it shows when the read lands.
     func dropSelectionHiddenByFilter() {
+        // 0.9.4: the other rows of a multi-selection the filter hides go too.
+        if selectedIDs.count > 1 {
+            reconcileSelectionWithVisibleRows()
+            return
+        }
         guard let s = selection, let p = packages.first(where: { $0.id == s }), !filter.includes(p) else { return }
         selection = nil
     }
@@ -781,6 +809,10 @@ public final class AppStore {
                 homebrewState = .ready
             }
         }
+        // 0.9.4 (review): a multi-selection keeps only the rows still
+        // shown (removed ones, and ones the filter or search now hides),
+        // in one pass; then a lone selection that is gone, as before.
+        reconcileSelectionWithVisibleRows()
         if let s = selection, !packages.contains(where: { $0.id == s }) { selection = nil }
     }
 

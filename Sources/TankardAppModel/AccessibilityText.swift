@@ -48,5 +48,12 @@ public enum AccessibilityText {
         public static let bottleMenuNotice = "menu.bottle-notice"
         public static let vulnerabilityMenuNotice = "menu.vulnerability-notice"
         public static let refreshProgress = "toolbar.refresh-progress"
+        /// 0.9.4: the Installed package table (UI scripting / XCUITest).
+        public static let packageList = "package-list"
+        /// 0.9.4: the status bar's one Upgrade button.
+        public static let upgradeBar = "upgrade-bar"
+        /// 0.9.4: one Installed row, keyed by `Package.id` (for example
+        /// `package-row.formula:homebrew/core/xz`).
+        public static func packageRow(_ id: String) -> String { "package-row.\(id)" }
     }
 }

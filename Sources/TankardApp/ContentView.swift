@@ -620,7 +620,6 @@ struct PackageTable: View {
     // `State(...)` rather than `@State`: in the macOS 27 SDK `@State` is a
     // macro whose plugin (SwiftUIMacros) ships with Xcode, not the Command
     // Line Tools. The struct itself works the same way everywhere.
-    private let sortState = State(initialValue: [KeyPathComparator(\Package.name, comparator: .localizedStandard)])
     /// 0.8.4: the table shows all its rows (see `firstFill`).
     private let filledState = State(initialValue: false)
     /// 0.8.8: no rows until the table measures none (RowHeightGate).
@@ -642,23 +641,26 @@ struct PackageTable: View {
     /// sure of (a table made with rows kept measuring them).
     static let firstFill = 40
 
-    var rows: [Package] {
-        store.visiblePackages.sorted(using: sortState.wrappedValue)
-    }
+    /// 0.9.4 (review): the store sorts (`tableSortOrder`), so a
+    /// multi-selection's fallback primary is the first survivor on screen.
+    var rows: [Package] { store.tableRows }
 
     private var rowsToken: Int {
         var h = Hasher()
         h.combine(store.selection)
+        // 0.9.4: every selected row is painted (Cmd/Shift-click).
+        h.combine(store.selectedIDs)
         h.combine(rows.map(\.id))
         h.combine(gateState.wrappedValue.ready)
         return h.finalize()
     }
 
     /// The selection, kept while the table holds its rows back (an empty
-    /// table must not clear it).
-    private var selection: Binding<Package.ID?> {
-        Binding(get: { store.selection },
-                set: { v in if gateState.wrappedValue.ready { store.selection = v } })
+    /// table must not clear it). 0.9.4: a set (Cmd- and Shift-click);
+    /// the store keeps the last clicked row as the detail pane's package.
+    private var selection: Binding<Set<Package.ID>> {
+        Binding(get: { store.selectedIDs },
+                set: { v in if gateState.wrappedValue.ready { store.selectRows(v, order: rows.map(\.id)) } })
     }
 
     var body: some View {
@@ -667,7 +669,7 @@ struct PackageTable: View {
         let all = rows
         let staged = filledState.wrappedValue || all.count <= Self.firstFill ? all : Array(all.prefix(Self.firstFill))
         let shown = gateState.wrappedValue.rows(staged)
-        Table(shown, selection: selection, sortOrder: sortState.projectedValue) {
+        Table(shown, selection: selection, sortOrder: $store.tableSortOrder) {
             TableColumn("Package", value: \Package.name, comparator: .localizedStandard) { p in
                 PackageNameCell(store: store, package: p, intelbrew: intelbrew)
             }
@@ -696,6 +698,10 @@ struct PackageTable: View {
         .contextMenu(forSelectionType: Package.ID.self) { ids in
             ContextMenuActions.installed(store: store, ids: ids)
         }
+        // 0.9.4: Esc clears the selection (the table's; a sheet, the plan
+        // and the progress panel keep theirs: see clearSelection).
+        .onExitCommand { store.clearSelection() }
+        .accessibilityIdentifier(AccessibilityText.ID.packageList)
         // One configuration in every theme: changing it makes AppKit drop
         // the visible rows (see TableSelectionStyler). The stripes are
         // painted by the styler, the background is this view's.
@@ -832,6 +838,8 @@ struct PackageNameCell: View {
             TrailingRowMarks(store: store, package: p)
         }
         .frame(maxHeight: PackageRow.content)
+        // 0.9.4: test hook for Cmd-click / Esc scripting; not spoken.
+        .accessibilityIdentifier(AccessibilityText.ID.packageRow(p.id))
     }
 
     /// The width of the name's first NameFit.nameChars characters (the

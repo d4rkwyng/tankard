@@ -34,6 +34,9 @@ public struct MenuItemModel: Equatable, Sendable, Identifiable {
         case unpin
         /// 0.6: `AppStore.setVersionSkipped(p, true/false)`. No brew command.
         case skipVersion(Bool)
+        /// 0.9.4: a multi-selection's Upgrade: `AppStore.requestUpgrade` with
+        /// the selected upgrade targets (the plan when one compiles).
+        case upgradeSelected
     }
 
     /// Stable per menu ("upgrade", "copy-name", ...), for tests and ForEach.
@@ -66,8 +69,9 @@ public enum MenuEntry: Equatable, Sendable {
 }
 
 public enum ContextMenus {
-    /// The Installed table's row menu. The table is single-selection, so
-    /// the menu is always about one package (the row clicked).
+    /// The Installed table's row menu for one package (the row clicked,
+    /// or a selection of one). 0.9.4: several selected rows get
+    /// `installedSelection` instead.
     ///
     /// - busy: a brew run is going (the detail pane disables its buttons too).
     /// - kegPath: the keg or Caskroom folder, only when it exists on disk.
@@ -142,6 +146,19 @@ public enum ContextMenus {
                           systemImage: "arrow.up.left.circle", action: .showDependents, isEnabled: !dependents.isEmpty),
         ]
         return joined([actions, copy, open, related])
+    }
+
+    /// 0.9.4: the menu for a right-click on a multi-selection: Upgrade the
+    /// selected packages that have an upgrade (`targets`; pinned ones and
+    /// rows with none don't count). Off when none of them has one.
+    public static func installedSelection(targets: [Package], busy: Bool) -> [MenuEntry] {
+        let n = targets.count
+        let upgrade = n > 0
+            ? MenuItemModel(id: "upgrade-selected", title: UpgradeMenu.selectionTitle(count: n), systemImage: "arrow.up.circle",
+                            action: .upgradeSelected, isEnabled: !busy)
+            : MenuItemModel(id: "upgrade-selected", title: String(localized: "No Upgrades Selected"), systemImage: "arrow.up.circle",
+                            action: .upgradeSelected, isEnabled: false)
+        return [.item(upgrade)]
     }
 
     /// "Uninstall…", or "Uninstall… (needed by vim, git +2)" when blocked.

@@ -620,6 +620,22 @@
 			<string>Tankard가 패키지 %lld개를 업그레이드함</string>
 		</dict>
 	</dict>
+	<key>Upgrade %lld Selected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>선택한 %lld개 업그레이드</string>
+			<key>other</key>
+			<string>선택한 %lld개 업그레이드</string>
+		</dict>
+	</dict>
 	<key>Upgrade %lld packages?</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -634,6 +650,38 @@
 			<string>패키지 %lld개를 업그레이드할까요?</string>
 			<key>other</key>
 			<string>패키지 %lld개를 업그레이드할까요?</string>
+		</dict>
+	</dict>
+	<key>Upgrade all %lld packages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>패키지 %lld개 모두 업그레이드</string>
+			<key>other</key>
+			<string>패키지 %lld개 모두 업그레이드</string>
+		</dict>
+	</dict>
+	<key>Upgrade only the %lld selected packages that have a newer version</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@n@</string>
+		<key>n</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>one</key>
+			<string>선택한 패키지 중 새 버전이 있는 %lld개만 업그레이드</string>
+			<key>other</key>
+			<string>선택한 패키지 중 새 버전이 있는 %lld개만 업그레이드</string>
 		</dict>
 	</dict>
 	<key>Would remove %lld formulae</key>

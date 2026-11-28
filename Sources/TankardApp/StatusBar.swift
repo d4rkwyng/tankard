@@ -84,29 +84,33 @@ struct StatusBar: View {
                 }
                 .controlSize(.small)
             }
-            let n = store.upgradable.count
+            // 0.9.4: one button for both: every upgrade (the count pill),
+            // or only the selected rows' ("Upgrade N Selected").
+            let button = store.upgradeBarButton
             if let note = store.pinnedUpgradeNote {
                 Label(note, systemImage: "pin").lineLimit(1).help("Pinned packages stay at their version. Unpin one to include it.")
             }
             Button {
-                store.requestUpgrade()
+                store.upgradeFromBar()
             } label: {
                 HStack(spacing: 6) {
                     // 0.8.8 (gauntlet 3, B7): the icons are decoration
                     // (VoiceOver read the check as "selected").
-                    if n == 0 {
+                    if button.isUpToDate {
                         Image(systemName: "checkmark").accessibilityHidden(true)
-                        Text("Up to date")
+                        Text(button.title)
                     } else {
                         Image(systemName: "arrow.up").accessibilityHidden(true)
-                        Text("Upgrade")
-                        ActionCountPill(count: n)
+                        Text(button.title)
+                        if button.showsCountPill { ActionCountPill(count: button.count) }
                     }
                 }
             }
             .buttonStyle(.primaryAction)
-            .disabled(n == 0 || store.windowBrewActionsBlocked || store.isRefreshing)
-            .help(n > 0 && store.windowBrewActionsNote != nil ? store.windowBrewActionsNote! : n == 0 ? String(localized: "Nothing to upgrade") : (n == 1 ? String(localized: "Upgrade the 1 package that has a newer version") : String(localized: "Upgrade the \(n) packages that have a newer version, one at a time")))
+            .disabled(button.isUpToDate || store.windowBrewActionsBlocked || store.isRefreshing)
+            .help(button.help)
+            .accessibilityLabel(Text(button.accessibilityLabel))
+            .accessibilityIdentifier(AccessibilityText.ID.upgradeBar)
         }
         .font(.system(size: 11.5))
         .foregroundStyle(.secondary)

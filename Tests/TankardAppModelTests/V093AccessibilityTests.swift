@@ -172,7 +172,8 @@ struct V093AccessibilityTextTests {
     @Test func identifiersAreDistinctAndNotEmpty() {
         let ids = [AccessibilityText.ID.bottleNotice, AccessibilityText.ID.bottleNoticeShow, AccessibilityText.ID.bottleNoticeReplace,
                    AccessibilityText.ID.bottleNoticeClose, AccessibilityText.ID.bottleMenuNotice,
-                   AccessibilityText.ID.vulnerabilityMenuNotice, AccessibilityText.ID.refreshProgress]
+                   AccessibilityText.ID.vulnerabilityMenuNotice, AccessibilityText.ID.refreshProgress,
+                   AccessibilityText.ID.packageList, AccessibilityText.ID.upgradeBar]
         #expect(ids.allSatisfy { !$0.isEmpty })
         #expect(Set(ids).count == ids.count)
     }
