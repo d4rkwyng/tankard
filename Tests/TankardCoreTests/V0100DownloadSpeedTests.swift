@@ -479,18 +479,14 @@ struct V0100DownloadSpeedNumericTests {
     /// Bounded before it becomes an Int: the largest durations read as
     /// the formatter's longest (whole hours), not a trap.
     @Test func timeLeftOfTheLargestFiniteDuration() throws {
-        guard case .hours(let hours, 0) = DownloadSpeedFormat.timeLeft(.greatestFiniteMagnitude) else {
-            Issue.record("\(DownloadSpeedFormat.timeLeft(.greatestFiniteMagnitude))")
-            return
-        }
-        #expect(hours >= 24)
-        #expect(DownloadSpeedFormat.timeLeft(.infinity) == .hours(hours, minutes: 0))
-        #expect(DownloadSpeedFormat.timeLeft(1e300) == .hours(hours, minutes: 0))
+        #expect(DownloadSpeedFormat.timeLeft(.greatestFiniteMagnitude) == .hours(999, minutes: 0))
+        #expect(DownloadSpeedFormat.timeLeft(.infinity) == .hours(999, minutes: 0))
+        #expect(DownloadSpeedFormat.timeLeft(1e300) == .hours(999, minutes: 0))
         #expect(DownloadSpeedFormat.timeLeft(.nan) == .fewSeconds)
         #expect(DownloadSpeedFormat.timeLeft(-.infinity) == .fewSeconds)
         #expect(DownloadSpeedFormat.timeLeft(-5) == .fewSeconds)
         #expect(DownloadSpeedFormat.timeLeft(0) == .fewSeconds)
-        #expect(DownloadSpeedFormat.timeLeftText(.greatestFiniteMagnitude) == "about \(hours) hr left")
+        #expect(DownloadSpeedFormat.timeLeftText(.greatestFiniteMagnitude) == "about 999 hr left")
         #expect(DownloadSpeedFormat.timeLeftText(.nan) == "a few seconds left")
     }
 }
@@ -690,5 +686,30 @@ struct V0100DownloadWatcherOverflowTests {
         #expect(p.bytes == .max)
         #expect(p.total == nil)
         #expect(p.files == 2)
+    }
+}
+
+// MARK: round 2 review (Sol): a slow link that buffers is steady
+
+struct V0100DownloadSpeedBufferedTests {
+    typealias T = V0100DownloadSpeedTests
+
+    /// 8 KiB every 2 s (4 KiB/s), polled every 250 ms: from 4 s of samples
+    /// on, a speed and a time left at every poll. Before, the 1 s buckets
+    /// alternated between growth and none, so the time left stayed hidden.
+    @Test func eightKilobytesEveryTwoSecondsGetsATimeLeft() throws {
+        let bytes: (TimeInterval) -> Double = { 8192 * ($0 / 2).rounded(.down) }
+        for t in stride(from: 4.0, through: 20, by: T.poll) {
+            var s = DownloadSpeed()
+            T.feed(&s, to: t, bytes)
+            let speed = try #require(s.speed(at: T.t0 + t), "t=\(t)")
+            #expect(speed > 2000 && speed < 6000, "t=\(t): \(speed)")
+            #expect(s.eta(remaining: 1_000_000, at: T.t0 + t) != nil, "t=\(t)")
+        }
+        var s = DownloadSpeed()
+        T.feed(&s, to: 8, bytes)
+        #expect(T.near(s.speed(at: T.t0 + 8), 4096))
+        let eta = try #require(s.eta(remaining: 1_000_000, at: T.t0 + 8))
+        #expect(abs(eta - 1_000_000 / 4096) < 1)
     }
 }

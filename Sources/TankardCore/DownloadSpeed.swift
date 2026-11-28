@@ -20,12 +20,13 @@ public struct DownloadSpeed: Sendable, Equatable {
     public static let stableSpan: TimeInterval = 4
     /// The speed is "stable" when the speed over the newest half of the
     /// window is within this fraction of the speed over the whole window
-    /// (0.4: within +/-40%), and so is each of the newest buckets' speed of
-    /// their mean.
+    /// (0.4: within +/-40%).
     public static let stableTolerance = 0.4
-    /// The newest `stableSpan` is cut into this many buckets of
-    /// `stableSpan / bucketCount` (1 s) for the stability check.
-    public static let bucketCount = 4
+    /// ...and when, within the window, bytes never stopped arriving for
+    /// this long. 3 s: a slow link that delivers in buffered chunks every
+    /// 2 s (8 KiB at 4 KiB/s, Sol's round 2 review) is steady; one that
+    /// bursts every 4 s and sends nothing in between (round 1) is not.
+    public static let longestQuiet: TimeInterval = 3
     /// No new bytes for this long: stalled.
     public static let stallAfter: TimeInterval = 5
     /// A time left longer than this isn't shown (it says nothing useful).
@@ -121,12 +122,15 @@ public struct DownloadSpeed: Sendable, Equatable {
     ///     (until the samples fill the window, "the window" is the part they
     ///     cover). A ramp-up or a slow-down fails this until the window has
     ///     caught up with it;
-    ///  3. the newest `stableSpan` (4 s), cut into `bucketCount` buckets of
-    ///     1 s: every bucket grew, and each bucket's speed is within
-    ///     +/-40% of their mean. Why: the 8 s and 4 s averages of a link
-    ///     that sends a burst every 4 s and nothing in between are equal
-    ///     (Sol's review: 4 MB at 4 s and at 8 s), so 2. alone took it for
-    ///     steady and showed a time left that the next idle seconds belie.
+    ///  3. over the same window, no stretch without growth of
+    ///     `longestQuiet` (3 s) or more: from the window's start to the
+    ///     first growth, between two growths, and from the last growth to
+    ///     `time`. Why: the 8 s and 4 s averages of a link that sends a
+    ///     burst every 4 s and nothing in between are equal (Sol's review:
+    ///     4 MB at 4 s and at 8 s), so 2. alone took it for steady and
+    ///     showed a time left that the next idle seconds belie. Judged over
+    ///     the window, not in 1 s buckets (round 2): those failed a steady
+    ///     slow link whose bytes come in a chunk every 2 s.
     public func isStable(at time: TimeInterval) -> Bool {
         guard let time = queryTime(time), let span = span(at: time), span >= Self.stableSpan,
               let first = samples.first,
@@ -134,15 +138,14 @@ public struct DownloadSpeed: Sendable, Equatable {
         let covered = time - max(time - Self.window, first.time)
         guard let newest = rate(over: covered / 2, endingAt: time),
               abs(newest - whole) <= Self.stableTolerance * whole else { return false }
-        let bucket = Self.stableSpan / Double(Self.bucketCount)
-        var rates: [Double] = []
-        for i in 0..<Self.bucketCount {
-            let end = time - Double(Self.bucketCount - 1 - i) * bucket
-            guard let r = rate(over: bucket, endingAt: end), r > 0 else { return false }
-            rates.append(r)
+        // A growth counts at the sample that shows it.
+        let start = time - covered
+        var quietSince = start
+        for (previous, s) in zip(samples, samples.dropFirst()) where s.time > start && s.bytes > previous.bytes {
+            guard s.time - quietSince < Self.longestQuiet else { return false }
+            quietSince = s.time
         }
-        let mean = rates.reduce(0, +) / Double(rates.count)
-        return rates.allSatisfy { abs($0 - mean) <= Self.stableTolerance * mean }
+        return time - quietSince < Self.longestQuiet
     }
 
     public func isStable(at date: Date) -> Bool { isStable(at: date.timeIntervalSinceReferenceDate) }
