@@ -224,32 +224,21 @@ public actor DownloadWatcher {
     private var hinted: [String: Int64?] = [:]
     private var asking: Set<String> = []
     private var totals: [String: Int64?] = [:]
-    private var finished: [FinishedKey: (name: String, size: Int64)] = [:]
-    private var countedIDs: Set<DownloadFileID> = []
     private let logger = Logger(subsystem: "net.mindtricks.tankard", category: "downloads")
-    /// The partial files of the last poll.
-    private var active: [String: Partial] = [:]
-    /// Every name in the folder at the last poll.
-    private var listed: Set<String> = []
+    /// Each partial file of this command and each final file beside one, by
+    /// file name, as of the last poll.
+    private var observed: [String: Observation] = [:]
     public private(set) var fallbackCount = 0
     private var traffic: Int64 = 0
     private var seen = false
 
-    private enum FinishedKey: Hashable {
-        case id(DownloadFileID)
-        case name(String)
-
-        init(_ id: DownloadFileID?, name: String) {
-            self = id.map(Self.id) ?? .name(name)
-        }
-    }
-
     private typealias FileStat = (size: Int64, modified: Date, fileID: DownloadFileID?)
 
-    private struct Partial {
-        var size: Int64
+    private struct Observation {
         var fileID: DownloadFileID?
-        var finalAtStart: FinishedKey?
+        var size: Int64
+        /// A final file a download of this command finished into: it counts on the bar.
+        var finished = false
     }
 
     public init(directory: String, reader: DownloadFolderReading = LiveDownloadFolder(),
@@ -287,107 +276,108 @@ public actor DownloadWatcher {
     public var sawDownload: Bool { seen }
 
     /// How many file records the watcher keeps (for tests).
-    public var trackedPathCount: Int { active.count + finished.count + countedIDs.count }
+    public var trackedPathCount: Int { observed.count }
 
     /// The downloads running now, summed; nil when none is.
     public func poll() -> DownloadProgress? { sample().progress }
 
+    // Each poll compares every watched path with its last observation:
+    //   - the same file number: the file grew (or was rewritten in place);
+    //     the growth is traffic, never less than zero;
+    //   - a final file first seen together with its partial: there before
+    //     this command (the baseline), no traffic, not on the bar;
+    //   - the file number of the partial that just ended: brew's rename,
+    //     traffic is the growth since the partial's last poll;
+    //   - any other file: new, its whole size is traffic.
+    // A gone path is forgotten, so a file number used again later is a new
+    // file. Within a poll a file number counts once (hard links). When a
+    // side has no file number, name and size decide: a file that shrank is
+    // a new one. Only a partial never seen before must be newer than
+    // `since` - 2 s; other people's stale downloads are older.
+
     /// The downloads running now, summed, and the bytes written so far.
     public func sample() -> DownloadPoll {
-        let names = reader.files(in: directory)
+        let names = reader.files(in: directory).sorted()
         let cutoff = since.addingTimeInterval(-2)
-        var now: [String: (name: BrewDownloadName, file: Partial)] = [:]
-        // Device and inode follow a partial through growth and rename. A replacement
-        // starts at zero, and the final file present at its start is the baseline.
-        // With missing IDs, use the previous listing and observed sizes.
+        let last = observed
+        var now: [String: Observation] = [:]
+        var running: [(path: String, name: BrewDownloadName, file: Observation)] = []
+        var credited: Set<DownloadFileID> = []
+        func credit(_ bytes: Int64, _ id: DownloadFileID?) {
+            if let id, !credited.insert(id).inserted { return }
+            traffic = Self.sum(traffic, bytes)
+        }
         for f in names where f.hasSuffix(".incomplete") {
             guard let n = BrewDownloadName.parse(f), !n.basename.hasSuffix(".bottle_manifest.json"),
-                  let st = reader.stat(directory + "/" + f), st.modified >= cutoff else { continue }
-            let last = active.removeValue(forKey: f)
-            if let last, let growth = continuingGrowth(from: last, to: st) {
-                now[f] = (n, Partial(size: st.size, fileID: st.fileID, finalAtStart: last.finalAtStart))
-                traffic = Self.sum(traffic, growth)
-                continue
+                  let st = reader.stat(directory + "/" + f), last[f] != nil || st.modified >= cutoff else { continue }
+            if let old = last[f], same(old, st) {
+                credit(Self.growth(from: old.size, to: st.size), st.fileID)
+            } else {
+                credit(max(0, st.size), st.fileID)
             }
-            let done = String(f.dropLast(".incomplete".count))
-            let final = reader.stat(directory + "/" + done)
-            if let last, let final { finish(last, at: done, final: final, cutoff: cutoff) }
-            now[f] = (n, Partial(size: st.size, fileID: st.fileID,
-                                 finalAtStart: final.map { FinishedKey($0.fileID, name: done) }))
-            traffic = Self.sum(traffic, max(0, st.size))
+            let file = Observation(fileID: st.fileID, size: st.size)
+            now[f] = file
+            running.append((f, n, file))
         }
-        for (f, last) in active {
-            let done = String(f.dropLast(".incomplete".count))
-            if let final = reader.stat(directory + "/" + done) {
-                finish(last, at: done, final: final, cutoff: cutoff)
+        for f in names where !f.hasSuffix(".incomplete") {
+            let p = f + ".incomplete"
+            guard last[f] != nil || last[p] != nil || now[p] != nil,
+                  let st = reader.stat(directory + "/" + f) else { continue }
+            var file = Observation(fileID: st.fileID, size: st.size, finished: now[p] == nil)
+            if let old = last[f], same(old, st) {
+                credit(Self.growth(from: old.size, to: st.size), st.fileID)
+                file.finished = file.finished && old.finished
+            } else if last[f] == nil, last[p] == nil {
+                file.finished = false
+            } else if now[p] == nil, let ended = last[p], same(ended, st) {
+                credit(Self.growth(from: ended.size, to: st.size), st.fileID)
+            } else {
+                credit(max(0, st.size), st.fileID)
             }
+            now[f] = file
         }
-        finished = finished.filter { now[$0.value.name + ".incomplete"] == nil }
-        active = now.mapValues(\.file)
-        listed = Set(names)
-        if !now.isEmpty { seen = true }
-        guard !now.isEmpty else { return DownloadPoll(progress: nil, traffic: traffic) }
+        observed = now
+        if !running.isEmpty { seen = true }
+        guard !running.isEmpty else { return DownloadPoll(progress: nil, traffic: traffic) }
 
         var bytes: Int64 = 0
         var total: Int64? = 0
         var exact = true
-        func add(_ size: Int64, total t: Int64?) {
-            let (b, over) = bytes.addingReportingOverflow(size)
+        var shown: Set<DownloadFileID> = []
+        func add(_ file: Observation, total t: Int64?) -> Bool {
+            if let id = file.fileID, !shown.insert(id).inserted { return false }
+            let (b, over) = bytes.addingReportingOverflow(file.size)
             if over { exact = false; bytes = .max } else { bytes = b }
-            guard let t, let sum = total else { total = nil; return }
-            let (s, overT) = sum.addingReportingOverflow(t)
-            total = overT ? nil : s
+            if let t, let sum = total {
+                let (s, overT) = sum.addingReportingOverflow(t)
+                total = overT ? nil : s
+            } else {
+                total = nil
+            }
+            return true
         }
-        for (f, (n, file)) in now {
-            add(file.size, total: totalSize(f, n, names: names).map { max($0, file.size) })
+        var files: [BrewDownloadName] = []
+        for (f, n, file) in running where add(file, total: totalSize(f, n, names: names).map { max($0, file.size) }) {
+            files.append(n)
         }
         // Files of this command that finished while others still run keep
         // counting, so the bar doesn't jump back.
-        for file in finished.values { add(file.size, total: file.size) }
+        for file in now.values where file.finished { _ = add(file, total: file.size) }
         if !exact { total = nil }
-        let bottles = now.values.compactMap { $0.name.bottle?.formula }
-        let name = now.count == 1 ? bottles.first : nil
-        return DownloadPoll(progress: DownloadProgress(name: name, bytes: bytes, total: total, files: now.count),
+        let bottles = files.compactMap { $0.bottle?.formula }
+        let name = files.count == 1 ? bottles.first : nil
+        return DownloadPoll(progress: DownloadProgress(name: name, bytes: bytes, total: total, files: files.count),
                             traffic: traffic)
     }
 
-    private func continuingGrowth(from last: Partial, to file: FileStat) -> Int64? {
-        if let oldID = last.fileID, let newID = file.fileID {
-            guard oldID == newID else { return nil }
-        } else {
+    /// Whether `file` is still the observed file: the same file number, or
+    /// without one, a size that didn't shrink.
+    private func same(_ old: Observation, _ file: FileStat) -> Bool {
+        guard let a = old.fileID, let b = file.fileID else {
             recordFallback()
-            if file.size < last.size { return max(0, file.size) }
+            return file.size >= old.size
         }
-        return Self.growth(from: last.size, to: file.size)
-    }
-
-    private func finish(_ last: Partial, at name: String, final: FileStat, cutoff: Date) {
-        let key = FinishedKey(final.fileID, name: name)
-        if let id = final.fileID, countedIDs.contains(id) { return }
-        let written: Int64
-        if let oldID = last.fileID, let finalID = final.fileID {
-            if oldID == finalID {
-                written = Self.growth(from: last.size, to: final.size)
-            } else {
-                guard key != last.finalAtStart, final.modified >= cutoff else { return }
-                if last.finalAtStart == .name(name) {
-                    guard appeared(name, size: final.size, after: last) else { return }
-                }
-                written = max(0, final.size)
-            }
-        } else {
-            guard appeared(name, size: final.size, after: last) else { return }
-            if let id = final.fileID, last.finalAtStart == .id(id) { return }
-            written = Self.growth(from: last.size, to: final.size)
-        }
-        if let id = final.fileID { countedIDs.insert(id) }
-        finished[key] = (name, final.size)
-        traffic = Self.sum(traffic, written)
-    }
-
-    private func appeared(_ name: String, size: Int64, after last: Partial) -> Bool {
-        recordFallback()
-        return !listed.contains(name) && size >= last.size
+        return a == b
     }
 
     private func recordFallback() {
