@@ -178,6 +178,15 @@ struct ContentView: View {
             Divider()
             StatusBar(store: store)
         }
+        // 0.9.4: Esc closes the bottle banner, as its close button does,
+        // unless a sheet, an alert or a popover is in front or text is
+        // being edited (BottleBannerEscape). On the window's content, not
+        // in the banner, so the banner's VoiceOver group stays as it is.
+        .background(BottleBannerEscapeKey(bannerShown: store.bottleNoticeText != nil) { store.dismissBottleNotice() })
+        // 0.9.4: VoiceOver announces the banner when it appears or names a
+        // new formula (its formulae, not only its sentence, which from four
+        // on is just their count), once this window is on screen and key.
+        .background(BottleNoticeAnnouncementKey(notice: store.bottleNoticeAnnouncement))
         .sheet(item: $store.uninstallCandidate) { p in
             UninstallSheet(store: store, package: p).themed(theme)
         }

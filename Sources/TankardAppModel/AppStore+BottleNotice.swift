@@ -67,6 +67,13 @@ extension AppStore {
         return names.isEmpty ? nil : BottleAvailableNotificationDiff.phrase(names)
     }
 
+    /// 0.9.4: the banner for VoiceOver (BottleNoticeAnnouncer): its
+    /// sentence and the ids of the formulae it names, sorted. nil: no banner.
+    public var bottleNoticeAnnouncement: BottleNoticeAnnouncer.Notice? {
+        guard let text = bottleNoticeText else { return nil }
+        return BottleNoticeAnnouncer.Notice(text: text, ids: bottleNoticePackages.map(\.id).sorted())
+    }
+
     /// The banner's close button. The keys were recorded when it appeared;
     /// added again here in case Settings reset them since.
     public func dismissBottleNotice() {
