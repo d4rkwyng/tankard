@@ -6,7 +6,7 @@ import Testing
 // connection "2.1 of 2.3 GB (91%)" barely moves). The tracker gets every
 // time from the test: polls every 250 ms, as the sheet's.
 
-struct V0100DownloadSpeedTests {
+struct DownloadSpeedTests {
     static let poll: TimeInterval = 0.25
     /// An arbitrary start (exact in binary, as every poll time below).
     static let t0: TimeInterval = 1000
@@ -242,7 +242,7 @@ struct V0100DownloadSpeedTests {
     }
 }
 
-struct V0100DownloadSpeedFormatTests {
+struct DownloadSpeedFormatTests {
     static let us = Locale(identifier: "en_US")
 
     static func shown(_ bps: Double, _ locale: Locale = us) -> String {
@@ -310,7 +310,7 @@ struct V0100DownloadSpeedFormatTests {
 /// brew renamed it (done), and not at all when it was deleted (a failure);
 /// a retry counts once. Before, a gone file counted with its expected
 /// total, so a deleted partial file read as new bytes.
-struct V0100DownloadWatcherTests {
+struct DownloadSpeedWatcherTests {
     let start = Date(timeIntervalSince1970: 1_000_000)
     static let a = "\(hashA)--aaa--1.0.sonoma.bottle.tar.gz"
     static let b = "\(hashB)--bbb--2.0.sonoma.bottle.tar.gz"
@@ -398,8 +398,8 @@ struct V0100DownloadWatcherTests {
 
 // MARK: round 1 review (Sol): a burst every 4 s is not a steady speed
 
-struct V0100DownloadSpeedStabilityTests {
-    typealias T = V0100DownloadSpeedTests
+struct DownloadSpeedStabilityTests {
+    typealias T = DownloadSpeedTests
 
     /// 4 MB at t=4 and at t=8, nothing in between, polls every 250 ms: the
     /// 8 s average (1 MB/s) is shown, a time left never is. Before, the
@@ -430,7 +430,7 @@ struct V0100DownloadSpeedStabilityTests {
 
 // MARK: round 1 review (Sol): numeric inputs that used to trap
 
-struct V0100DownloadSpeedNumericTests {
+struct DownloadSpeedNumericTests {
     @Test func etaWithANegativeCountAndTheLargestTotal() {
         let s = DownloadSpeed()
         #expect(s.eta(bytes: -1, total: .max, at: 10) == nil)
@@ -497,8 +497,8 @@ struct V0100DownloadSpeedNumericTests {
 /// between the redraw's scheduling and its rendering). Such a time counts
 /// as the newest sample's: the speed and time left go with the byte count
 /// on screen, never an older reading.
-struct V0100DownloadSpeedQueryTimeTests {
-    typealias T = V0100DownloadSpeedTests
+struct DownloadSpeedQueryTimeTests {
+    typealias T = DownloadSpeedTests
 
     @Test func queryBeforeTheNewestSampleIsClampedToIt() {
         var s = DownloadSpeed()
@@ -520,9 +520,9 @@ struct V0100DownloadSpeedQueryTimeTests {
 /// final name is that partial file, renamed. Before, any file under the
 /// final name counted: an old finished download of the same file read as
 /// a jump of its whole size, and cleared a stall.
-struct V0100DownloadWatcherIdentityTests {
+struct DownloadWatcherIdentityTests {
     let start = Date(timeIntervalSince1970: 1_000_000)
-    typealias W = V0100DownloadWatcherTests
+    typealias W = DownloadSpeedWatcherTests
 
     /// Sol's case: an old 100 MB final A beside a 20 MB partial A and a
     /// stalled 10 MB partial B. Deleting only partial A leaves B's 10 MB,
@@ -577,9 +577,9 @@ struct V0100DownloadWatcherIdentityTests {
 /// The bytes written (`traffic`, what the speed is measured on) are each
 /// file's growth: a deleted file takes its bytes off the bar's count, not
 /// off this one, and an old file is never new bytes.
-struct V0100DownloadWatcherTrafficTests {
+struct DownloadWatcherTrafficTests {
     let start = Date(timeIntervalSince1970: 1_000_000)
-    typealias W = V0100DownloadWatcherTests
+    typealias W = DownloadSpeedWatcherTests
 
     /// B grows 2 MB on the poll that deletes partial A: the bar's bytes
     /// fall (30 to 12 MB), the bytes written grow by B's 2 MB only.
@@ -652,9 +652,9 @@ struct V0100DownloadWatcherTrafficTests {
 /// The watcher's sums are checked: a total that can't be represented is
 /// unknown (nil), and bytes stop at Int64.max. Before, the finished
 /// file's real size was added unchecked and trapped.
-struct V0100DownloadWatcherOverflowTests {
+struct DownloadWatcherOverflowTests {
     let start = Date(timeIntervalSince1970: 1_000_000)
-    typealias W = V0100DownloadWatcherTests
+    typealias W = DownloadSpeedWatcherTests
 
     /// Sol's case: A's total 100, B's Int64.max - 100 (the first poll's
     /// total is Int64.max), then A is renamed at 101 bytes.
@@ -691,8 +691,8 @@ struct V0100DownloadWatcherOverflowTests {
 
 // MARK: round 2 review (Sol): a slow link that buffers is steady
 
-struct V0100DownloadSpeedBufferedTests {
-    typealias T = V0100DownloadSpeedTests
+struct DownloadSpeedBufferedTests {
+    typealias T = DownloadSpeedTests
 
     /// 8 KiB every 2 s (4 KiB/s), polled every 250 ms: from 4 s of samples
     /// on, a speed and a time left at every poll. Before, the 1 s buckets

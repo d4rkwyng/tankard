@@ -2,7 +2,7 @@ import Foundation
 import Testing
 import TankardCore
 
-struct V094DownloadIdentityTests {
+struct DownloadFileIdentityTests {
     private let final = hashA + "--A.zip"
     private var partial: String { final + ".incomplete" }
     private let other = hashB + "--B.zip.incomplete"
@@ -141,7 +141,7 @@ struct V094DownloadIdentityTests {
 /// file (its whole size is new bytes), except the final file that was there
 /// when its partial was first seen (the baseline) and the rename of the
 /// partial that just ended (the growth since its last poll).
-struct V094DownloadPathTests {
+struct DownloadPathObservationTests {
     private let final = hashA + "--A.zip"
     private var partial: String { final + ".incomplete" }
     private let other = hashB + "--B.zip.incomplete"
@@ -343,7 +343,7 @@ struct V094DownloadPathTests {
 /// brew renames a finished file at any moment, also between two reads of
 /// one poll: after the folder was listed, or between the stat of the partial
 /// file and the stat of the final file.
-struct V094DownloadRenameRaceTests {
+struct DownloadRenameRaceTests {
     private let final = hashA + "--A.zip"
     private var partial: String { final + ".incomplete" }
     private let other = hashB + "--B.zip.incomplete"

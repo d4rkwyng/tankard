@@ -4,8 +4,8 @@ import TankardCore
 @testable import TankardAppModel
 
 @MainActor
-struct V094DownloadIdentitySessionTests {
-    private typealias Harness = V0100DownloadSpeedSessionTests
+struct DownloadFileIdentitySessionTests {
+    private typealias Harness = DownloadSpeedSessionTests
     private let harness = Harness()
 
     private func pollUntilStalled(_ r: Harness.Run, expectedBytes: Int64) async {

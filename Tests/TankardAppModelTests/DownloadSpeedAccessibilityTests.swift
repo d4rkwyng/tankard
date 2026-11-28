@@ -168,7 +168,7 @@ private func shippedStrings(_ lang: String) throws -> [String: String] {
 
 // MARK: the words
 
-struct V0100DownloadSpeedAccessibilityTextTests {
+struct DownloadSpeedAccessibilityTextTests {
     static let us = Locale(identifier: "en_US")
 
     @Test func speedIsReadInWords() {
@@ -224,7 +224,7 @@ struct V0100DownloadSpeedAccessibilityTextTests {
 
 // MARK: round 1 review (Sol): the time left agrees with its number
 
-struct V0100TimeLeftPluralTests {
+struct TimeLeftPluralTests {
     /// The visible time left ("about 1 min left") and the spoken one
     /// ("about 1 minute left").
     static let visible = ["about %lld sec left", "about %lld min left", "about %lld hr left", "about %lld hr %lld min left"]
@@ -304,7 +304,7 @@ struct V0100TimeLeftPluralTests {
 
 // MARK: the sheet's status line
 
-struct V0100StatusLineAccessibilityTests {
+struct StatusLineAccessibilityTests {
     static func statusText() throws -> String { try source("UpgradeSheet.swift", from: "struct SessionStatusText: View") }
 
     /// The label and the trait are on the status Text itself, with the

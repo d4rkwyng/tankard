@@ -80,7 +80,7 @@ final class SteppedClock: @unchecked Sendable {
 }
 
 @MainActor
-struct V0100DownloadSpeedSessionTests {
+struct DownloadSpeedSessionTests {
     /// font-inter's download, a bottle: its total comes from the manifest
     /// beside it at once (a cask's would wait on a HEAD request's task).
     nonisolated static let done = String(repeating: "a", count: 64) + "--font-inter--4.1.sonoma.bottle.tar.gz"
@@ -417,7 +417,7 @@ struct V0100DownloadSpeedSessionTests {
 
 /// The CHANGELOG's example is what the formatter says: 2.1 of 2.3 GB at
 /// 4.2 MB/s leaves 200 MB, about 48 s ("about 50 sec left").
-struct V0100ChangelogExampleTests {
+struct ChangelogExampleTests {
     @Test func changelogExampleMatchesTheFormatter() throws {
         var speed = DownloadSpeed()
         let bytes: Int64 = 2_100_000_000
@@ -441,7 +441,7 @@ struct V0100ChangelogExampleTests {
 /// The demo's "slow" download (the screenshot) is steady: polled every
 /// 250 ms it still gets a time left under the stricter stability rule
 /// (round 1 review), and the "stall" one never does.
-struct V0100DemoDownloadTests {
+struct DemoDownloadTests {
     func rate(_ scenario: Demo.DownloadScenario, until: TimeInterval) -> (speed: Double?, eta: TimeInterval?) {
         let fake = Demo.FakeDownload(scenario: scenario)
         let t0 = Date(timeIntervalSinceReferenceDate: 800_000_000)
