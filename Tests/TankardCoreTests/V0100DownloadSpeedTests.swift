@@ -113,9 +113,12 @@ struct V0100DownloadSpeedTests {
     @Test func stallStartsAtFiveSeconds() {
         var s = DownloadSpeed()
         Self.feed(&s, to: 10) { 1_000_000 * $0 }
-        // No growth after 10 s; polls go on.
-        Self.feed(&s, from: 10.25, to: 15) { _ in 10_000_000 }
+        // No growth after 10 s; polls go on. (A time before the newest
+        // sample counts as that sample's, so 4.9 s is asked before the
+        // poll at 5 s.)
+        Self.feed(&s, from: 10.25, to: 14.75) { _ in 10_000_000 }
         #expect(!s.isStalled(at: Self.t0 + 14.9))
+        s.record(bytes: 10_000_000, at: Self.t0 + 15)
         #expect(s.isStalled(at: Self.t0 + 15))
         #expect(s.eta(remaining: 1_000_000, at: Self.t0 + 15) == nil)
         // The speed falls while stalled, and never below 0.
@@ -125,8 +128,9 @@ struct V0100DownloadSpeedTests {
 
     @Test func neverGrowingStallsFromTheFirstSample() {
         var s = DownloadSpeed()
-        Self.feed(&s, to: 5) { _ in 3_000 }
+        Self.feed(&s, to: 4.75) { _ in 3_000 }
         #expect(!s.isStalled(at: Self.t0 + 4.9))
+        s.record(bytes: 3_000, at: Self.t0 + 5)
         #expect(s.isStalled(at: Self.t0 + 5))
     }
 
@@ -210,6 +214,20 @@ struct V0100DownloadSpeedTests {
         // One window of polls, plus the baseline.
         #expect(s.sampleCount <= Int(DownloadSpeed.window / Self.poll) + 2)
         #expect(Self.near(s.speed(at: Self.t0 + 19_999 * Self.poll), 4_000))
+    }
+
+    /// 0.10 (review): a drop (a partial file deleted) restarts the
+    /// average but is not growth: stalled before, stalled after.
+    @Test func aDropKeepsTheStallClock() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 6) { _ in 30_000_000 }
+        #expect(s.isStalled(at: Self.t0 + 6))
+        let restarted = s.record(bytes: 10_000_000, at: Self.t0 + 6.25)
+        #expect(restarted && s.sampleCount == 1)
+        #expect(s.isStalled(at: Self.t0 + 6.25) && s.speed(at: Self.t0 + 6.25) == nil)
+        // New bytes end it.
+        s.record(bytes: 10_100_000, at: Self.t0 + 6.5)
+        #expect(!s.isStalled(at: Self.t0 + 6.5))
     }
 
     @Test func samePollTimeUpdatesInPlace() {
@@ -375,5 +393,127 @@ struct V0100DownloadWatcherTests {
         #expect(await w.poll() == nil)
         dir.set(Self.b + ".incomplete", size: 10, modified: start)
         #expect(await w.poll() == DownloadProgress(name: "bbb", bytes: 108, total: 398, files: 1))
+    }
+}
+
+// MARK: round 1 review (Sol): a burst every 4 s is not a steady speed
+
+struct V0100DownloadSpeedStabilityTests {
+    typealias T = V0100DownloadSpeedTests
+
+    /// 4 MB at t=4 and at t=8, nothing in between, polls every 250 ms: the
+    /// 8 s average (1 MB/s) is shown, a time left never is. Before, the
+    /// newest half (4..8 s) and the whole window (0..8 s) both read 1 MB/s,
+    /// so it passed as steady.
+    @Test func burstEveryFourSecondsGivesASpeedButNoTimeLeft() {
+        var s = DownloadSpeed()
+        let bytes: (TimeInterval) -> Double = { t in 4_000_000 * ((t >= 4 ? 1 : 0) + (t >= 8 ? 1 : 0)) }
+        T.feed(&s, to: 8, bytes)
+        #expect(T.near(s.speed(at: T.t0 + 8), 1_000_000))
+        #expect(!s.isStable(at: T.t0 + 8))
+        #expect(s.eta(remaining: 100_000_000, at: T.t0 + 8) == nil)
+        // At no poll from 4 s to 11.75 s (the next burst would be at 12 s).
+        for t in stride(from: 4.0, through: 11.75, by: T.poll) {
+            #expect(T.etaAfter(bytes, t) == nil, "t=\(t)")
+        }
+    }
+
+    /// A steady 1 MB/s still gets a time left once 4 s of samples exist.
+    @Test func steadyOneMegabyteGetsATimeLeftAfterFourSeconds() {
+        let bytes: (TimeInterval) -> Double = { 1_000_000 * $0 }
+        #expect(T.etaAfter(bytes, 3.75) == nil)
+        let eta = T.etaAfter(bytes, 4)
+        #expect(eta != nil && abs(eta! - 500) < 1)
+        #expect(T.etaAfter(bytes, 10) != nil)
+    }
+}
+
+// MARK: round 1 review (Sol): numeric inputs that used to trap
+
+struct V0100DownloadSpeedNumericTests {
+    @Test func etaWithANegativeCountAndTheLargestTotal() {
+        let s = DownloadSpeed()
+        #expect(s.eta(bytes: -1, total: .max, at: 10) == nil)
+        #expect(s.eta(bytes: .min, total: .max, at: 10) == nil)
+    }
+
+    /// Int64.min is rejected (a negative count is ignored), so Int64.max
+    /// two seconds later is the first sample: no speed, no trap.
+    @Test func smallestThenLargestCount() {
+        var s = DownloadSpeed()
+        s.record(bytes: .min, at: 0)
+        s.record(bytes: .max, at: 2)
+        #expect(s.sampleCount == 1)
+        #expect(s.speed(at: 2) == nil)
+        #expect(s.eta(bytes: 0, total: .max, at: 2) == nil)
+        // Huge but valid counts: Double arithmetic, no trap.
+        s.record(bytes: 0, at: 10) // backwards: starts over
+        s.record(bytes: .max, at: 12)
+        #expect((s.speed(at: 12) ?? 0) > 0)
+        _ = s.isStable(at: 12)
+        _ = s.eta(bytes: 0, total: .max, at: 12)
+    }
+
+    /// A time that isn't finite is ignored by record and gives nothing
+    /// (no speed, no time left, not stalled) when asked.
+    @Test func nonFiniteTimesAreIgnored() {
+        var s = DownloadSpeed()
+        for t in stride(from: 0.0, through: 6, by: 0.25) { s.record(bytes: Int64(t * 1_000_000), at: t) }
+        let before = s
+        for bad in [Double.nan, .infinity, -.infinity] {
+            let restarted = s.record(bytes: 1, at: bad)
+            #expect(!restarted)
+            #expect(s == before)
+            #expect(s.speed(at: bad) == nil)
+            #expect(!s.isStable(at: bad))
+            #expect(!s.isStalled(at: bad))
+            #expect(s.eta(remaining: 1_000_000, at: bad) == nil)
+            #expect(s.eta(bytes: 0, total: 1_000_000, at: bad) == nil)
+        }
+        let negative = s.record(bytes: -1, at: 7)
+        #expect(!negative)
+        #expect(s == before)
+        #expect(s.speed(at: 6) != nil)
+    }
+
+    /// Bounded before it becomes an Int: the largest durations read as
+    /// the formatter's longest (whole hours), not a trap.
+    @Test func timeLeftOfTheLargestFiniteDuration() throws {
+        guard case .hours(let hours, 0) = DownloadSpeedFormat.timeLeft(.greatestFiniteMagnitude) else {
+            Issue.record("\(DownloadSpeedFormat.timeLeft(.greatestFiniteMagnitude))")
+            return
+        }
+        #expect(hours >= 24)
+        #expect(DownloadSpeedFormat.timeLeft(.infinity) == .hours(hours, minutes: 0))
+        #expect(DownloadSpeedFormat.timeLeft(1e300) == .hours(hours, minutes: 0))
+        #expect(DownloadSpeedFormat.timeLeft(.nan) == .fewSeconds)
+        #expect(DownloadSpeedFormat.timeLeft(-.infinity) == .fewSeconds)
+        #expect(DownloadSpeedFormat.timeLeft(-5) == .fewSeconds)
+        #expect(DownloadSpeedFormat.timeLeft(0) == .fewSeconds)
+        #expect(DownloadSpeedFormat.timeLeftText(.greatestFiniteMagnitude) == "about \(hours) hr left")
+        #expect(DownloadSpeedFormat.timeLeftText(.nan) == "a few seconds left")
+    }
+}
+
+// MARK: round 1 review (Sol): a query time before the newest sample
+
+/// The sheet's time can be a moment before the newest poll (a poll lands
+/// between the redraw's scheduling and its rendering). Such a time counts
+/// as the newest sample's: the speed and time left go with the byte count
+/// on screen, never an older reading.
+struct V0100DownloadSpeedQueryTimeTests {
+    typealias T = V0100DownloadSpeedTests
+
+    @Test func queryBeforeTheNewestSampleIsClampedToIt() {
+        var s = DownloadSpeed()
+        T.feed(&s, to: 6) { 4_200_000 * $0 }
+        let newest = T.t0 + 6
+        for early in [T.t0 + 5.9, T.t0 + 3, T.t0 - 100] {
+            #expect(s.speed(at: early) == s.speed(at: newest), "\(early - T.t0)")
+            #expect(s.isStable(at: early) == s.isStable(at: newest))
+            #expect(s.isStalled(at: early) == s.isStalled(at: newest))
+            #expect(s.eta(remaining: 100_000_000, at: early) == s.eta(remaining: 100_000_000, at: newest))
+        }
+        #expect(s.eta(remaining: 100_000_000, at: T.t0 + 3) != nil)
     }
 }

@@ -20,8 +20,12 @@ public struct DownloadSpeed: Sendable, Equatable {
     public static let stableSpan: TimeInterval = 4
     /// The speed is "stable" when the speed over the newest half of the
     /// window is within this fraction of the speed over the whole window
-    /// (0.4: within +/-40%).
+    /// (0.4: within +/-40%), and so is each of the newest buckets' speed of
+    /// their mean.
     public static let stableTolerance = 0.4
+    /// The newest `stableSpan` is cut into this many buckets of
+    /// `stableSpan / bucketCount` (1 s) for the stability check.
+    public static let bucketCount = 4
     /// No new bytes for this long: stalled.
     public static let stallAfter: TimeInterval = 5
     /// A time left longer than this isn't shown (it says nothing useful).
@@ -54,13 +58,19 @@ public struct DownloadSpeed: Sendable, Equatable {
     /// Adds one poll's byte count. A count that goes backwards (a new
     /// download started, a file was removed after a failure) or a time
     /// before the last sample starts over from this sample; then it
-    /// returns true.
+    /// returns true. A drop is not growth: the stall clock keeps running
+    /// across it (a partial file deleted while the rest is stalled still
+    /// reads as stalled). A negative count or a time that isn't finite is
+    /// ignored (returns false, nothing changes).
     @discardableResult
     public mutating func record(bytes: Int64, at time: TimeInterval) -> Bool {
+        guard bytes >= 0, time.isFinite else { return false }
         var restarted = false
         if let last = samples.last {
             if bytes < last.bytes || time < last.time {
+                let grew = time < last.time ? nil : lastGrowth
                 reset()
+                lastGrowth = grew
                 restarted = true
             } else if time == last.time {
                 if bytes > last.bytes { lastGrowth = time }
@@ -72,7 +82,7 @@ public struct DownloadSpeed: Sendable, Equatable {
         }
         if samples.isEmpty {
             startedAt = time
-            lastGrowth = time
+            if lastGrowth == nil { lastGrowth = time }
         }
         samples.append(Sample(time: time, bytes: bytes))
         // Keep one sample at or before the window's start, drop the older ones.
@@ -90,7 +100,7 @@ public struct DownloadSpeed: Sendable, Equatable {
     /// `minimumSpan` of samples exist. Falls toward 0 when bytes stop
     /// arriving (the window slides past the last growth); never negative.
     public func speed(at time: TimeInterval) -> Double? {
-        guard let span = span(at: time), span >= Self.minimumSpan else { return nil }
+        guard let time = queryTime(time), let span = span(at: time), span >= Self.minimumSpan else { return nil }
         return rate(over: Self.window, endingAt: time)
     }
 
@@ -98,25 +108,41 @@ public struct DownloadSpeed: Sendable, Equatable {
 
     /// No growth in the byte count for `stallAfter` seconds or more.
     public func isStalled(at time: TimeInterval) -> Bool {
-        guard let lastGrowth else { return false }
+        guard let time = queryTime(time), let lastGrowth else { return false }
         return time - lastGrowth >= Self.stallAfter
     }
 
     public func isStalled(at date: Date) -> Bool { isStalled(at: date.timeIntervalSinceReferenceDate) }
 
-    /// Whether the speed is steady enough for a time left: at least
-    /// `stableSpan` of samples, and the speed over the newest half of the
-    /// window within `stableTolerance` (+/-40%) of the speed over the whole
-    /// window. Until the samples fill the window, "the window" is the part
-    /// they cover (so its newest half is never the whole of it). A ramp-up,
-    /// a slow-down or a bursty link fails the second test until the window
-    /// has caught up with it.
+    /// Whether the speed is steady enough for a time left:
+    ///  1. at least `stableSpan` of samples;
+    ///  2. the speed over the newest half of the window within
+    ///     `stableTolerance` (+/-40%) of the speed over the whole window
+    ///     (until the samples fill the window, "the window" is the part they
+    ///     cover). A ramp-up or a slow-down fails this until the window has
+    ///     caught up with it;
+    ///  3. the newest `stableSpan` (4 s), cut into `bucketCount` buckets of
+    ///     1 s: every bucket grew, and each bucket's speed is within
+    ///     +/-40% of their mean. Why: the 8 s and 4 s averages of a link
+    ///     that sends a burst every 4 s and nothing in between are equal
+    ///     (Sol's review: 4 MB at 4 s and at 8 s), so 2. alone took it for
+    ///     steady and showed a time left that the next idle seconds belie.
     public func isStable(at time: TimeInterval) -> Bool {
-        guard let span = span(at: time), span >= Self.stableSpan, let first = samples.first,
+        guard let time = queryTime(time), let span = span(at: time), span >= Self.stableSpan,
+              let first = samples.first,
               let whole = rate(over: Self.window, endingAt: time), whole > 0 else { return false }
         let covered = time - max(time - Self.window, first.time)
-        guard let newest = rate(over: covered / 2, endingAt: time) else { return false }
-        return abs(newest - whole) <= Self.stableTolerance * whole
+        guard let newest = rate(over: covered / 2, endingAt: time),
+              abs(newest - whole) <= Self.stableTolerance * whole else { return false }
+        let bucket = Self.stableSpan / Double(Self.bucketCount)
+        var rates: [Double] = []
+        for i in 0..<Self.bucketCount {
+            let end = time - Double(Self.bucketCount - 1 - i) * bucket
+            guard let r = rate(over: bucket, endingAt: end), r > 0 else { return false }
+            rates.append(r)
+        }
+        let mean = rates.reduce(0, +) / Double(rates.count)
+        return rates.allSatisfy { abs($0 - mean) <= Self.stableTolerance * mean }
     }
 
     public func isStable(at date: Date) -> Bool { isStable(at: date.timeIntervalSinceReferenceDate) }
@@ -125,10 +151,10 @@ public struct DownloadSpeed: Sendable, Equatable {
     /// nil when there is nothing left, when stalled, when the speed isn't
     /// stable, or beyond `longestTimeLeft`. Never 0 or negative.
     public func eta(remaining: Int64, at time: TimeInterval) -> TimeInterval? {
-        guard remaining > 0, !isStalled(at: time), isStable(at: time),
-              let speed = speed(at: time), speed > 0 else { return nil }
+        guard remaining > 0, time.isFinite, !isStalled(at: time), isStable(at: time),
+              let speed = speed(at: time), speed > 0, speed.isFinite else { return nil }
         let eta = Double(remaining) / speed
-        guard eta > 0, eta <= Self.longestTimeLeft else { return nil }
+        guard eta.isFinite, eta > 0, eta <= Self.longestTimeLeft else { return nil }
         return eta
     }
 
@@ -137,10 +163,13 @@ public struct DownloadSpeed: Sendable, Equatable {
     }
 
     /// The time left for a download at `bytes` of `total`; nil when the
-    /// total is unknown (or reached), and as `eta(remaining:at:)`.
+    /// total is unknown (or reached), when either count is negative, and
+    /// as `eta(remaining:at:)`.
     public func eta(bytes: Int64, total: Int64?, at time: TimeInterval) -> TimeInterval? {
-        guard let total, bytes < total else { return nil }
-        return eta(remaining: total - bytes, at: time)
+        guard let total, bytes >= 0, total >= 0, bytes < total else { return nil }
+        let (remaining, overflow) = total.subtractingReportingOverflow(bytes)
+        guard !overflow else { return nil }
+        return eta(remaining: remaining, at: time)
     }
 
     public func eta(bytes: Int64, total: Int64?, at date: Date) -> TimeInterval? {
@@ -148,6 +177,16 @@ public struct DownloadSpeed: Sendable, Equatable {
     }
 
     // MARK: inside
+
+    /// The time a question is answered at: nil when it isn't finite; a
+    /// time before the newest sample counts as that sample's time (the
+    /// sheet's redraw date can be a moment older than the newest poll,
+    /// whose byte count is on screen: the rate goes with it).
+    private func queryTime(_ time: TimeInterval) -> TimeInterval? {
+        guard time.isFinite else { return nil }
+        guard let last = samples.last else { return time }
+        return max(time, last.time)
+    }
 
     /// How long the samples cover, up to `time`.
     private func span(at time: TimeInterval) -> TimeInterval? {
@@ -163,7 +202,8 @@ public struct DownloadSpeed: Sendable, Equatable {
         for s in samples.dropFirst() {
             if s.time >= time {
                 let f = s.time > previous.time ? (time - previous.time) / (s.time - previous.time) : 1
-                return Double(previous.bytes) + f * Double(s.bytes - previous.bytes)
+                // In Double: no Int64 difference to overflow.
+                return Double(previous.bytes) + f * (Double(s.bytes) - Double(previous.bytes))
             }
             previous = s
         }
@@ -240,10 +280,17 @@ public enum DownloadSpeedFormat {
         case hours(Int, minutes: Int)
     }
 
-    /// Under `fewSeconds`: a few seconds. Under a minute: 5-second steps.
-    /// Above: whole minutes (1 hr 5 min past an hour).
+    /// The longest time left this formats; anything longer (infinity
+    /// included) reads as this, so the conversion to Int can't trap. The
+    /// tracker hides a time left over 24 hours before it gets here.
+    public static let longestTimeLeft: TimeInterval = 999 * 60 * 60
+
+    /// Under `fewSeconds` (or NaN): a few seconds. Under a minute: 5-second
+    /// steps. Above: whole minutes (1 hr 5 min past an hour), at most
+    /// `longestTimeLeft`.
     public static func timeLeft(_ seconds: TimeInterval) -> TimeLeft {
-        guard seconds.isFinite, seconds >= fewSeconds else { return .fewSeconds }
+        guard !seconds.isNaN, seconds >= fewSeconds else { return .fewSeconds }
+        let seconds = min(seconds, longestTimeLeft)
         let steps = Int((seconds / 5).rounded(.toNearestOrAwayFromZero)) * 5
         if steps < 60 { return .seconds(steps) }
         let minutes = max(1, Int((seconds / 60).rounded(.toNearestOrAwayFromZero)))
