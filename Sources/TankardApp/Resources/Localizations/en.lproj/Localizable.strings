@@ -34,6 +34,7 @@
 "%@ exited %lld:\n%@" = "%@ exited %lld:\n%@";
 "%@ finished with a warning" = "%@ finished with a warning";
 "%@ finished with problems" = "%@ finished with problems";
+"%@ gigabytes per second" = "%@ gigabytes per second";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs.";
@@ -49,7 +50,10 @@
 "%@ is running" = "%@ is running";
 "%@ is there but doesn't run. It said:" = "%@ is there but doesn't run. It said:";
 "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again.";
+"%@ kilobytes per second" = "%@ kilobytes per second";
+"%@ megabytes per second" = "%@ megabytes per second";
 "%@ needs your administrator password" = "%@ needs your administrator password";
+"%@ of %@ %@" = "%@ of %@ %@";
 "%@ of %@ %@ (%lld%%)" = "%@ of %@ %@ (%lld%%)";
 "%@ of %@ bottled" = "%@ of %@ bottled";
 "%@ on disk" = "%@ on disk";
@@ -114,6 +118,7 @@
 "%lld min" = "%lld min";
 "%lld min %lld s" = "%lld min %lld s";
 "%lld min ago" = "%lld min ago";
+"%lld minutes" = "%lld minutes";
 "%lld missing from this Mac" = "%lld missing from this Mac";
 "%lld new upgrades" = "%lld new upgrades";
 "%lld newer" = "%lld newer";
@@ -124,6 +129,7 @@
 "%lld of %lld versions" = "%lld of %lld versions";
 "%lld of them Homebrew can't read" = "%lld of them Homebrew can't read";
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld packages have no bottle for this Mac and will compile from source, which can take a long time.";
+"%lld percent" = "%lld percent";
 "%lld pinned upgrades not included (%@)" = "%lld pinned upgrades not included (%@)";
 "%lld ready-made programs" = "%lld ready-made programs";
 "%lld results for “%@”" = "%lld results for “%@”";
@@ -404,6 +410,7 @@
 "Download" = "Download";
 "Download cache" = "Download cache";
 "Downloaded from the internet" = "Downloaded from the internet";
+"Downloading %@" = "Downloading %@";
 "Downloading %@…" = "Downloading %@…";
 "Downloading %lld of %lld" = "Downloading %lld of %lld";
 "Downloads" = "Downloads";
@@ -479,6 +486,7 @@
 "Full log saved to %@" = "Full log saved to %@";
 "Full scan" = "Full scan";
 "GB" = "GB";
+"GB/s" = "GB/s";
 "General" = "General";
 "GitHub answered HTTP %lld." = "GitHub answered HTTP %lld.";
 "GitHub lists no release of Tankard." = "GitHub lists no release of Tankard.";
@@ -607,6 +615,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Its dependencies stay installed (brew autoremove removes unused ones)";
 "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source.";
 "KB" = "KB";
+"KB/s" = "KB/s";
 "Keep Old Versions" = "Keep Old Versions";
 "Keep Open" = "Keep Open";
 "Keep Running" = "Keep Running";
@@ -642,6 +651,7 @@
 "Look at the last upgrade's results first: click its button at the bottom right of this window." = "Look at the last upgrade's results first: click its button at the bottom right of this window.";
 "Low" = "Low";
 "MB" = "MB";
+"MB/s" = "MB/s";
 "Made by d4rkwyng" = "Made by d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Marked from the cask's pkg artifact. Other casks may still ask for a password.";
 "Matched by app ID" = "Matched by app ID";
@@ -1303,6 +1313,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "Waiting for approval in System Settings → General → Login Items.";
 "Waiting for brew update to finish…" = "Waiting for brew update to finish…";
 "Waiting for brew…" = "Waiting for brew…";
+"Waiting for data…" = "Waiting for data…";
 "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:";
 "Welcome to Tankard" = "Welcome to Tankard";
 "What %@ needs, and what those need in turn" = "What %@ needs, and what those need in turn";
@@ -1331,7 +1342,16 @@
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:";
 "Your PATH finds other tools before Homebrew's" = "Your PATH finds other tools before Homebrew's";
 "Your settings and data in ~/Library are not touched." = "Your settings and data in ~/Library are not touched.";
+"a few seconds left" = "a few seconds left";
 "a symlink to %@: that file is backed up and edited" = "a symlink to %@: that file is backed up and edited";
+"about %lld hours and %@ left" = "about %lld hours and %@ left";
+"about %lld hours left" = "about %lld hours left";
+"about %lld hr %lld min left" = "about %lld hr %lld min left";
+"about %lld hr left" = "about %lld hr left";
+"about %lld min left" = "about %lld min left";
+"about %lld minutes left" = "about %lld minutes left";
+"about %lld sec left" = "about %lld sec left";
+"about %lld seconds left" = "about %lld seconds left";
 "adopted" = "adopted";
 "and %lld more" = "and %lld more";
 "and %lld more…" = "and %lld more…";

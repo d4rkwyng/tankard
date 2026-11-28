@@ -4,6 +4,11 @@ All notable changes to Tankard. The format follows [Keep a Changelog](https://ke
 and Tankard uses [semantic versioning](https://semver.org/). Each release's notes on GitHub
 are its section below (`Scripts/changelog-section.sh`).
 
+## [0.9.4]
+
+### Added
+- **The upgrade sheet shows the download speed and time left.** While brew downloads, the status line adds how fast the data arrives and, once the speed is steady and the size is known, about how long is left: "Downloading 10 of 11 · 2.1 of 2.3 GB (91%) · 4.2 MB/s · about 50 sec left". The speed is an average over the last few seconds, so it follows a slow-down. When no new data has arrived for about 5 seconds, the line says "Waiting for data…" instead, so a stalled download no longer looks like a slow one. VoiceOver reads the line as a sentence ("4.2 megabytes per second") without announcing every change.
+
 ## [0.9.3] - 2026-11-24
 
 ### Fixed

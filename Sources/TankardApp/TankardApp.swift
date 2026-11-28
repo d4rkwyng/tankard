@@ -224,6 +224,13 @@ struct TankardApp: App {
         // macOS 15 with two Electron casks (arm64 demo: Visual Studio Code,
         // LM Studio). Nothing is read from this Mac.
         if options.demo != nil, env["TANKARD_DEMO_ELECTRON"] == "1" { deps.electronGPU = .demo() }
+        // 0.9.4, demo only: TANKARD_DEMO_DOWNLOAD=slow|stall with
+        // TANKARD_DEMO_UPGRADE=1: the upgrade's first download is a fake one
+        // in memory, growing at a set speed (Demo+Download.swift).
+        if options.demo != nil, options.demoUpgrade,
+           let scenario = Demo.DownloadScenario(environmentValue: env["TANKARD_DEMO_DOWNLOAD"]) {
+            Demo.addDownload(scenario, to: &deps)
+        }
         if options.demo != nil, env["TANKARD_UPDATE_BREW"] == "1" {
             deps.selfCaskOverride = AppStore.demoTankardCask(bundlePath: Bundle.main.bundlePath)
         }

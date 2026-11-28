@@ -34,6 +34,7 @@
 "%@ exited %lld:\n%@" = "%@ が終了コード %lld で終了しました:\n%@";
 "%@ finished with a warning" = "%@ 完了 (警告あり)";
 "%@ finished with problems" = "%@ 完了 (問題あり)";
+"%@ gigabytes per second" = "毎秒%@ギガバイト";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が %lld 個の依存関係（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew が依存関係 1 個（%@）とあわせてコンパイルします。古い Mac では時間がかかる場合があります。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ にはこの Mac 用の Intelbrew bottle がないため、brew がコンパイルします。古い Mac では時間がかかる場合があります。";
@@ -49,7 +50,10 @@
 "%@ is running" = "%@ は実行中です";
 "%@ is there but doesn't run. It said:" = "%@ はありますが、実行できません。出力:";
 "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ はまだ信頼されていません。ターミナルで `%@` を実行するか、「Tapを信頼…」をクリックしてから、もう一度お試しください。";
+"%@ kilobytes per second" = "毎秒%@キロバイト";
+"%@ megabytes per second" = "毎秒%@メガバイト";
 "%@ needs your administrator password" = "%@には管理者パスワードが必要です";
+"%@ of %@ %@" = "%@ / %@ %@";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@ / %@ がbottle済み";
 "%@ on disk" = "ディスク上 %@";
@@ -114,6 +118,7 @@
 "%lld min" = "%lld分";
 "%lld min %lld s" = "%lld分%lld秒";
 "%lld min ago" = "%lld分前";
+"%lld minutes" = "%lld分";
 "%lld missing from this Mac" = "%lld個がこのMacにありません";
 "%lld new upgrades" = "新しいアップグレード %lld 件";
 "%lld newer" = "%lld個が新しい";
@@ -124,6 +129,7 @@
 "%lld of %lld versions" = "%lld/%lld バージョン";
 "%lld of them Homebrew can't read" = "うち %lld 個は Homebrew が読み込めません";
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld 個のパッケージはこの Mac 用の bottle がなく、ソースからコンパイルされます。時間がかかる場合があります。";
+"%lld percent" = "%lldパーセント";
 "%lld pinned upgrades not included (%@)" = "%lld件のピン留めされたアップグレードは含まれません(%@)";
 "%lld ready-made programs" = "ビルド済みプログラム%lld個";
 "%lld results for “%@”" = "「%2$@」の結果: %1$lld件";
@@ -404,6 +410,7 @@
 "Download" = "ダウンロード";
 "Download cache" = "ダウンロードキャッシュ";
 "Downloaded from the internet" = "インターネットからダウンロード";
+"Downloading %@" = "%@をダウンロード中";
 "Downloading %@…" = "%@をダウンロード中…";
 "Downloading %lld of %lld" = "ダウンロード中 %lld / %lld";
 "Downloads" = "ダウンロード";
@@ -479,6 +486,7 @@
 "Full log saved to %@" = "完全なログを %@ に保存しました";
 "Full scan" = "フルスキャン";
 "GB" = "GB";
+"GB/s" = "GB/s";
 "General" = "一般";
 "GitHub answered HTTP %lld." = "GitHubの応答: HTTP %lld。";
 "GitHub lists no release of Tankard." = "GitHubにTankardのリリースがありません。";
@@ -607,6 +615,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "依存関係はインストールされたままです(brew autoremove で未使用のものを削除できます)";
 "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "この Tap にはこの Mac 用の bottle がないため、再インストールやアップグレードではソースからビルドします。";
 "KB" = "KB";
+"KB/s" = "KB/s";
 "Keep Old Versions" = "古いバージョンを残す";
 "Keep Open" = "開いたままにする";
 "Keep Running" = "続行";
@@ -642,6 +651,7 @@
 "Look at the last upgrade's results first: click its button at the bottom right of this window." = "先に前回のアップグレードの結果を確認してください。このウインドウの右下にあるボタンをクリックします。";
 "Low" = "低";
 "MB" = "MB";
+"MB/s" = "MB/s";
 "Made by d4rkwyng" = "作者: d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "caskのpkgアーティファクトから判定しています。他のcaskもパスワードを要求する場合があります。";
 "Matched by app ID" = "アプリIDで一致";
@@ -1303,6 +1313,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "システム設定 → 一般 → ログイン項目 での承認を待っています。";
 "Waiting for brew update to finish…" = "brew update の完了を待機中…";
 "Waiting for brew…" = "brewを待機中…";
+"Waiting for data…" = "データを待っています…";
 "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Tankardのダイアログでパスワードを待っています。表示されない場合は、キャンセルしてターミナルで次を実行してください:";
 "Welcome to Tankard" = "Tankardへようこそ";
 "What %@ needs, and what those need in turn" = "%@ が必要とするもの、さらにそれらが必要とするもの";
@@ -1331,7 +1342,16 @@
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Homebrewの設定で別のパスワードプログラムを使っているため、Tankardはここでパスワードを求められません。この手順はターミナルで実行してください:";
 "Your PATH finds other tools before Homebrew's" = "PATHでHomebrewより先に他のツールが見つかります";
 "Your settings and data in ~/Library are not touched." = "~/Library 内の設定とデータには触れません。";
+"a few seconds left" = "残り数秒";
 "a symlink to %@: that file is backed up and edited" = "%@へのシンボリックリンク: そのファイルがバックアップされ、編集されます";
+"about %lld hours and %@ left" = "残り約%lld時間%@";
+"about %lld hours left" = "残り約%lld時間";
+"about %lld hr %lld min left" = "残り約%lld時間%lld分";
+"about %lld hr left" = "残り約%lld時間";
+"about %lld min left" = "残り約%lld分";
+"about %lld minutes left" = "残り約%lld分";
+"about %lld sec left" = "残り約%lld秒";
+"about %lld seconds left" = "残り約%lld秒";
 "adopted" = "引き継ぎ済み";
 "and %lld more" = "ほか%lld個";
 "and %lld more…" = "他%lld件…";

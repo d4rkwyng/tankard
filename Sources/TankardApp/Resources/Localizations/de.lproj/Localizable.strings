@@ -34,6 +34,7 @@
 "%@ exited %lld:\n%@" = "%@ beendet mit %lld:\n%@";
 "%@ finished with a warning" = "%@ mit einer Warnung fertig";
 "%@ finished with problems" = "%@ mit Problemen fertig";
+"%@ gigabytes per second" = "%@ Gigabyte pro Sekunde";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und %lld Abhängigkeiten (%@). Das kann auf älteren Macs lange dauern.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es und 1 Abhängigkeit (%@). Das kann auf älteren Macs lange dauern.";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "Für %@ gibt es keine Intelbrew-Bottle für diesen Mac, daher kompiliert brew es. Das kann auf älteren Macs lange dauern.";
@@ -49,7 +50,10 @@
 "%@ is running" = "%@ läuft";
 "%@ is there but doesn't run. It said:" = "%@ ist vorhanden, läuft aber nicht. Meldung:";
 "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ ist noch nicht vertrauenswürdig. Führe `%@` im Terminal aus oder klicke auf „Tap vertrauen…“ und versuche es dann erneut.";
+"%@ kilobytes per second" = "%@ Kilobyte pro Sekunde";
+"%@ megabytes per second" = "%@ Megabyte pro Sekunde";
 "%@ needs your administrator password" = "%@ braucht dein Admin-Passwort";
+"%@ of %@ %@" = "%@ von %@ %@";
 "%@ of %@ %@ (%lld%%)" = "%@ von %@ %@ (%lld %%)";
 "%@ of %@ bottled" = "%@ von %@ mit Bottle";
 "%@ on disk" = "%@ auf dem Datenträger";
@@ -114,6 +118,7 @@
 "%lld min" = "%lld Min.";
 "%lld min %lld s" = "%lld Min. %lld s";
 "%lld min ago" = "vor %lld Min.";
+"%lld minutes" = "%lld Minuten";
 "%lld missing from this Mac" = "%lld fehlen auf diesem Mac";
 "%lld new upgrades" = "%lld neue Upgrades";
 "%lld newer" = "%lld neuer";
@@ -124,6 +129,7 @@
 "%lld of %lld versions" = "%lld von %lld Versionen";
 "%lld of them Homebrew can't read" = "davon kann Homebrew %lld nicht lesen";
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld Pakete haben keine Bottle für diesen Mac und werden aus dem Quellcode kompiliert, was lange dauern kann.";
+"%lld percent" = "%lld Prozent";
 "%lld pinned upgrades not included (%@)" = "%lld fixierte Upgrades nicht enthalten (%@)";
 "%lld ready-made programs" = "%lld fertige Programme";
 "%lld results for “%@”" = "%lld Ergebnisse für „%@“";
@@ -404,6 +410,7 @@
 "Download" = "Laden";
 "Download cache" = "Download-Cache";
 "Downloaded from the internet" = "Aus dem Internet geladen";
+"Downloading %@" = "Lade %@";
 "Downloading %@…" = "Lade %@…";
 "Downloading %lld of %lld" = "Lade %lld von %lld";
 "Downloads" = "Downloads";
@@ -479,6 +486,7 @@
 "Full log saved to %@" = "Vollständiges Protokoll gespeichert unter %@";
 "Full scan" = "Vollständiger Scan";
 "GB" = "GB";
+"GB/s" = "GB/s";
 "General" = "Allgemein";
 "GitHub answered HTTP %lld." = "GitHub antwortete mit HTTP %lld.";
 "GitHub lists no release of Tankard." = "GitHub führt kein Release von Tankard.";
@@ -607,6 +615,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "Seine Abhängigkeiten bleiben installiert (brew autoremove entfernt ungenutzte)";
 "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "Sein Tap hat keine Bottle für diesen Mac; Neuinstallieren oder Aktualisieren kompiliert es aus dem Quellcode.";
 "KB" = "KB";
+"KB/s" = "KB/s";
 "Keep Old Versions" = "Alte Versionen behalten";
 "Keep Open" = "Offen lassen";
 "Keep Running" = "Weiterlaufen";
@@ -642,6 +651,7 @@
 "Look at the last upgrade's results first: click its button at the bottom right of this window." = "Sieh dir zuerst die Ergebnisse des letzten Upgrades an: Klicke auf seine Taste unten rechts in diesem Fenster.";
 "Low" = "Niedrig";
 "MB" = "MB";
+"MB/s" = "MB/s";
 "Made by d4rkwyng" = "Von d4rkwyng";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "Aus dem pkg-Artefakt des Casks markiert. Andere Casks können dennoch nach einem Passwort fragen.";
 "Matched by app ID" = "Über App-ID erkannt";
@@ -1303,6 +1313,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "Warten auf Freigabe in Systemeinstellungen → Allgemein → Anmeldeobjekte.";
 "Waiting for brew update to finish…" = "Warten auf brew update…";
 "Waiting for brew…" = "Warten auf brew…";
+"Waiting for data…" = "Warte auf Daten…";
 "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "Warte auf dein Passwort im Tankard-Dialog. Nicht zu sehen? Abbrechen und dies im Terminal ausführen:";
 "Welcome to Tankard" = "Willkommen bei Tankard";
 "What %@ needs, and what those need in turn" = "Was %@ braucht und was diese wiederum brauchen";
@@ -1331,7 +1342,16 @@
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "Deine Homebrew-Einstellungen nutzen ein anderes Passwortprogramm, daher kann Tankard hier nicht nach deinem Passwort fragen. Führe diesen Schritt im Terminal aus:";
 "Your PATH finds other tools before Homebrew's" = "Dein PATH findet andere Tools vor denen von Homebrew";
 "Your settings and data in ~/Library are not touched." = "Deine Einstellungen und Daten in ~/Library bleiben unberührt.";
+"a few seconds left" = "noch wenige Sekunden";
 "a symlink to %@: that file is backed up and edited" = "ein Symlink auf %@: diese Datei wird gesichert und bearbeitet";
+"about %lld hours and %@ left" = "noch etwa %lld Stunden und %@";
+"about %lld hours left" = "noch etwa %lld Stunden";
+"about %lld hr %lld min left" = "noch etwa %lld Std. %lld Min.";
+"about %lld hr left" = "noch etwa %lld Std.";
+"about %lld min left" = "noch etwa %lld Min.";
+"about %lld minutes left" = "noch etwa %lld Minuten";
+"about %lld sec left" = "noch etwa %lld s";
+"about %lld seconds left" = "noch etwa %lld Sekunden";
 "adopted" = "übernommen";
 "and %lld more" = "und %lld weitere";
 "and %lld more…" = "und %lld weitere…";

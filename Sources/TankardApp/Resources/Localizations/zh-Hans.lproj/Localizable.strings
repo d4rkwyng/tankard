@@ -34,6 +34,7 @@
 "%@ exited %lld:\n%@" = "%@ 已退出，退出码 %lld：\n%@";
 "%@ finished with a warning" = "%@已完成，但有警告";
 "%@ finished with problems" = "%@已完成，但有问题";
+"%@ gigabytes per second" = "每秒 %@ 千兆字节";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and %lld dependencies (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 %lld 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it and 1 dependency (%@). That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会将它和 1 个依赖项（%@）一起编译。在较旧的 Mac 上这可能需要很长时间。";
 "%@ has no Intelbrew bottle for this Mac, so brew compiles it. That can take a long time on older Macs." = "%@ 没有适用于这台 Mac 的 Intelbrew bottle，因此 brew 会从源码编译。在较旧的 Mac 上这可能需要很长时间。";
@@ -49,7 +50,10 @@
 "%@ is running" = "%@ 正在运行";
 "%@ is there but doesn't run. It said:" = "%@ 存在但无法运行。它的输出：";
 "%@ isn't trusted yet. Run `%@` in Terminal, or click Trust Tap…, then try again." = "%@ 尚未被信任。请在终端中运行 `%@`，或点按“信任 Tap…”，然后重试。";
+"%@ kilobytes per second" = "每秒 %@ 千字节";
+"%@ megabytes per second" = "每秒 %@ 兆字节";
 "%@ needs your administrator password" = "%@ 需要你的管理员密码";
+"%@ of %@ %@" = "%@ / %@ %@";
 "%@ of %@ %@ (%lld%%)" = "%@ / %@ %@（%lld%%）";
 "%@ of %@ bottled" = "%@/%@ 已有 bottle";
 "%@ on disk" = "磁盘上 %@";
@@ -114,6 +118,7 @@
 "%lld min" = "%lld 分钟";
 "%lld min %lld s" = "%lld 分 %lld 秒";
 "%lld min ago" = "%lld 分钟前";
+"%lld minutes" = "%lld 分钟";
 "%lld missing from this Mac" = "%lld 个这台 Mac 上缺失";
 "%lld new upgrades" = "%lld 个新升级";
 "%lld newer" = "%lld 个较新";
@@ -124,6 +129,7 @@
 "%lld of %lld versions" = "%lld / %lld 个版本";
 "%lld of them Homebrew can't read" = "其中 %lld 个 Homebrew 无法读取";
 "%lld packages have no bottle for this Mac and will compile from source, which can take a long time." = "%lld 个软件包没有适用于这台 Mac 的 bottle，将从源码编译，这可能需要很长时间。";
+"%lld percent" = "百分之 %lld";
 "%lld pinned upgrades not included (%@)" = "%lld 个已固定的升级未包含（%@）";
 "%lld ready-made programs" = "%lld 个现成程序";
 "%lld results for “%@”" = "%lld 个“%@”的结果";
@@ -404,6 +410,7 @@
 "Download" = "下载";
 "Download cache" = "下载缓存";
 "Downloaded from the internet" = "从互联网下载";
+"Downloading %@" = "正在下载 %@";
 "Downloading %@…" = "正在下载 %@…";
 "Downloading %lld of %lld" = "正在下载 %lld / %lld";
 "Downloads" = "下载";
@@ -479,6 +486,7 @@
 "Full log saved to %@" = "完整日志已存储到 %@";
 "Full scan" = "完整扫描";
 "GB" = "GB";
+"GB/s" = "GB/s";
 "General" = "通用";
 "GitHub answered HTTP %lld." = "GitHub 返回 HTTP %lld。";
 "GitHub lists no release of Tankard." = "GitHub 上没有 Tankard 的发行版本。";
@@ -607,6 +615,7 @@
 "Its dependencies stay installed (brew autoremove removes unused ones)" = "它的依赖项仍保持安装（brew autoremove 会移除未使用的）";
 "Its tap has no bottle for this Mac, so reinstalling or upgrading builds it from source." = "它的 Tap 没有适用于这台 Mac 的 bottle，因此重新安装或升级都会从源码构建。";
 "KB" = "KB";
+"KB/s" = "KB/s";
 "Keep Old Versions" = "保留旧版本";
 "Keep Open" = "保持打开";
 "Keep Running" = "继续运行";
@@ -642,6 +651,7 @@
 "Look at the last upgrade's results first: click its button at the bottom right of this window." = "请先查看上次升级的结果：点按此窗口右下角的按钮。";
 "Low" = "低";
 "MB" = "MB";
+"MB/s" = "MB/s";
 "Made by d4rkwyng" = "由 d4rkwyng 制作";
 "Marked from the cask's pkg artifact. Other casks may still ask for a password." = "根据 cask 的 pkg 项标记。其他 cask 仍可能要求输入密码。";
 "Matched by app ID" = "按应用 ID 匹配";
@@ -1303,6 +1313,7 @@
 "Waiting for approval in System Settings → General → Login Items." = "正在等待在“系统设置 → 通用 → 登录项”中批准。";
 "Waiting for brew update to finish…" = "正在等待 brew update 完成…";
 "Waiting for brew…" = "正在等待 brew…";
+"Waiting for data…" = "正在等待数据…";
 "Waiting for your password in the Tankard dialog. Don't see it? Cancel it and run this in Terminal:" = "正在 Tankard 对话框中等待你的密码。看不到它？请取消它，然后在“终端”中运行：";
 "Welcome to Tankard" = "欢迎使用 Tankard";
 "What %@ needs, and what those need in turn" = "%@ 需要的内容，以及这些内容又需要的内容";
@@ -1331,7 +1342,16 @@
 "Your Homebrew settings use a different password program, so Tankard can't ask for your password here. Run this step in Terminal:" = "你的 Homebrew 设置使用了其他密码程序，因此 Tankard 无法在这里询问你的密码。请在“终端”中运行此步骤：";
 "Your PATH finds other tools before Homebrew's" = "你的 PATH 会先找到其他工具，而不是 Homebrew 的";
 "Your settings and data in ~/Library are not touched." = "你在 ~/Library 中的设置和数据不会被改动。";
+"a few seconds left" = "还剩几秒";
 "a symlink to %@: that file is backed up and edited" = "指向 %@ 的符号链接：该文件会被备份并编辑";
+"about %lld hours and %@ left" = "约剩 %lld 小时 %@";
+"about %lld hours left" = "约剩 %lld 小时";
+"about %lld hr %lld min left" = "约剩 %lld 小时 %lld 分钟";
+"about %lld hr left" = "约剩 %lld 小时";
+"about %lld min left" = "约剩 %lld 分钟";
+"about %lld minutes left" = "约剩 %lld 分钟";
+"about %lld sec left" = "约剩 %lld 秒";
+"about %lld seconds left" = "约剩 %lld 秒";
 "adopted" = "已接管";
 "and %lld more" = "及另外 %lld 个";
 "and %lld more…" = "以及另外 %lld 项…";

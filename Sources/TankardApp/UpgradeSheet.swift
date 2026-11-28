@@ -22,10 +22,18 @@ struct UpgradeSheet: View {
             .padding(.bottom, 14)
 
             HStack {
-                Text(session.statusLine(behindBrewUpdate: store.sessionWaitsForBrewUpdate))
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                // 0.9.4: while brew downloads, the line carries the speed and
+                // time left, which change with no new bytes (a stall), so
+                // it is redrawn every second then; otherwise as before.
+                // The timeline only triggers the redraw: the time read is
+                // the session's clock, once per render (SessionStatusText).
+                if session.download != nil {
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, tick: context.date)
+                    }
+                } else {
+                    SessionStatusText(session: session, behindBrewUpdate: store.sessionWaitsForBrewUpdate, tick: nil)
+                }
                 Spacer()
                 Text(session.countLine).foregroundStyle(.secondary).monospacedDigit()
             }
@@ -256,6 +264,31 @@ struct UpgradeSheet: View {
         } message: {
             Text(session.stopNowWarning)
         }
+    }
+}
+
+/// The sheet's status line ("Downloading 10 of 11 · 2.1 of 2.3 GB (91%) ·
+/// 4.2 MB/s · about 50 sec left").
+struct SessionStatusText: View {
+    var session: UpgradeSession
+    var behindBrewUpdate: Bool
+    /// The TimelineView's date while a download runs, nil otherwise. Only
+    /// a change of input, so SwiftUI redraws each second; never read as
+    /// the time (0.9.4 review: a poll can land after it, and the newest
+    /// bytes would go with an older rate).
+    var tick: Date?
+
+    var body: some View {
+        // One time per render, for both the visible line and its label.
+        let at = session.now()
+        Text(session.statusLine(behindBrewUpdate: behindBrewUpdate, at: at))
+            .monospacedDigit()
+            .lineLimit(1)
+            .truncationMode(.middle)
+            // 0.9.4: read as a sentence (commas, units in words); VoiceOver
+            // reads it again when asked, nothing is announced each second.
+            .accessibilityLabel(Text(session.statusAccessibilityLabel(behindBrewUpdate: behindBrewUpdate, at: at)))
+            .accessibilityAddTraits(.updatesFrequently)
     }
 }
 

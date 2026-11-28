@@ -7,21 +7,29 @@ import TankardCore
 // download progress"). brew is a fake that grows a fake file in a fake
 // downloads folder, as curl grows <hash>--<name>.incomplete.
 
+/// A new name gets a new file number; growing and a rename keep it.
 final class GrowingFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
-    private var files: [String: (Int64, Data?)] = [:]
+    private var files: [String: (Int64, Data?, DownloadFileID)] = [:]
+    private var nextID: UInt64 = 1
     let modified: Date
 
     init(modified: Date) { self.modified = modified }
 
-    func set(_ name: String, size: Int64, data: Data? = nil) { lock.withLock { files[name] = (size, data) } }
+    func set(_ name: String, size: Int64, data: Data? = nil) {
+        lock.withLock {
+            let id = files[name]?.2 ?? DownloadFileID(device: 1, inode: nextID)
+            if files[name] == nil { nextID += 1 }
+            files[name] = (size, data, id)
+        }
+    }
     func rename(_ from: String, _ to: String) {
         lock.withLock { if let f = files.removeValue(forKey: from) { files[to] = f } }
     }
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let n = (path as NSString).lastPathComponent
-        return lock.withLock { files[n].map { ($0.0, modified) } }
+        return lock.withLock { files[n].map { ($0.0, modified, $0.2) } }
     }
     func read(_ path: String) -> Data? {
         let n = (path as NSString).lastPathComponent
