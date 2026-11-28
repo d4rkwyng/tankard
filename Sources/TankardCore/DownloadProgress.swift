@@ -294,12 +294,40 @@ public actor DownloadWatcher {
     // side has no file number, name and size decide: a file that shrank is
     // a new one. Only a partial never seen before must be newer than
     // `since` - 2 s; other people's stale downloads are older.
+    //
+    // brew renames a finished file at any moment, also between two reads of
+    // one poll. So every poll first reads the listed partial files and then
+    // the final file of each watched path, listed or not, and only then
+    // compares. A final file with the file number of the partial read just
+    // before it is that partial renamed in between, unless the partial is
+    // still there (a hard link).
 
     /// The downloads running now, summed, and the bytes written so far.
     public func sample() -> DownloadPoll {
         let names = reader.files(in: directory).sorted()
         let cutoff = since.addingTimeInterval(-2)
-        let last = observed
+        let suffix = ".incomplete"
+        var last = observed
+        var partials: [String: (name: BrewDownloadName, stat: FileStat)] = [:]
+        for f in names where f.hasSuffix(suffix) {
+            guard let n = BrewDownloadName.parse(f), !n.basename.hasSuffix(".bottle_manifest.json"),
+                  let st = reader.stat(directory + "/" + f), last[f] != nil || st.modified >= cutoff else { continue }
+            partials[f] = (n, st)
+        }
+        var finals: [String: FileStat] = [:]
+        let watched = Set(last.keys).union(partials.keys)
+        for f in Set(watched.map({ $0.hasSuffix(suffix) ? String($0.dropLast(suffix.count)) : $0 })) {
+            guard let st = reader.stat(directory + "/" + f) else { continue }
+            finals[f] = st
+            let p = f + suffix
+            // Without file numbers (nil on both sides) the partial is read again as well.
+            if let partial = partials[p], partial.stat.fileID == st.fileID, reader.stat(directory + "/" + p) == nil {
+                partials[p] = nil
+                // First seen in this poll: it ended having counted nothing yet.
+                if last[p] == nil { last[p] = Observation(fileID: partial.stat.fileID, size: 0) }
+            }
+        }
+
         var now: [String: Observation] = [:]
         var running: [(path: String, name: BrewDownloadName, file: Observation)] = []
         var credited: Set<DownloadFileID> = []
@@ -307,9 +335,8 @@ public actor DownloadWatcher {
             if let id, !credited.insert(id).inserted { return }
             traffic = Self.sum(traffic, bytes)
         }
-        for f in names where f.hasSuffix(".incomplete") {
-            guard let n = BrewDownloadName.parse(f), !n.basename.hasSuffix(".bottle_manifest.json"),
-                  let st = reader.stat(directory + "/" + f), last[f] != nil || st.modified >= cutoff else { continue }
+        for (f, partial) in partials.sorted(by: { $0.key < $1.key }) {
+            let st = partial.stat
             if let old = last[f], same(old, st) {
                 credit(Self.growth(from: old.size, to: st.size), st.fileID)
             } else {
@@ -317,12 +344,10 @@ public actor DownloadWatcher {
             }
             let file = Observation(fileID: st.fileID, size: st.size)
             now[f] = file
-            running.append((f, n, file))
+            running.append((f, partial.name, file))
         }
-        for f in names where !f.hasSuffix(".incomplete") {
-            let p = f + ".incomplete"
-            guard last[f] != nil || last[p] != nil || now[p] != nil,
-                  let st = reader.stat(directory + "/" + f) else { continue }
+        for (f, st) in finals.sorted(by: { $0.key < $1.key }) {
+            let p = f + suffix
             var file = Observation(fileID: st.fileID, size: st.size, finished: now[p] == nil)
             if let old = last[f], same(old, st) {
                 credit(Self.growth(from: old.size, to: st.size), st.fileID)
