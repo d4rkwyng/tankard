@@ -17,10 +17,13 @@ import TankardCore
 // itself is covered by DownloadProgressSessionTests.
 
 /// A downloads folder in memory (as GrowingFolder), from which a file can
-/// also be removed (brew deletes a partial file after a failure).
+/// also be removed (brew deletes a partial file after a failure). A new
+/// name gets a new file number; growing and a rename keep it.
 final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
     private var files: [String: Int64] = [:]
+    private var ids: [String: UInt64] = [:]
+    private var nextID: UInt64 = 1
     private var contents: [String: Data] = [:]
     let modified: Date
 
@@ -30,16 +33,30 @@ final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
         lock.withLock {
             files[name] = size
             contents[name] = data
+            if ids[name] == nil {
+                ids[name] = nextID
+                nextID += 1
+            }
         }
     }
-    func remove(_ name: String) { lock.withLock { _ = files.removeValue(forKey: name) } }
+    func remove(_ name: String) {
+        lock.withLock {
+            _ = files.removeValue(forKey: name)
+            _ = ids.removeValue(forKey: name)
+        }
+    }
     func rename(_ from: String, _ to: String) {
-        lock.withLock { if let f = files.removeValue(forKey: from) { files[to] = f } }
+        lock.withLock {
+            if let f = files.removeValue(forKey: from) {
+                files[to] = f
+                ids[to] = ids.removeValue(forKey: from)
+            }
+        }
     }
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
         let n = (path as NSString).lastPathComponent
-        return lock.withLock { files[n].map { ($0, modified) } }
+        return lock.withLock { files[n].map { ($0, modified, ids[n]) } }
     }
     func read(_ path: String) -> Data? {
         let n = (path as NSString).lastPathComponent
@@ -121,7 +138,7 @@ struct V0100DownloadSpeedSessionTests {
     /// as it is now (what the session's poll loop does every 250 ms).
     func poll(_ r: Run, at t: TimeInterval) async {
         r.clock.set(Self.base + t)
-        r.session.showDownload(await r.watcher.poll())
+        r.session.showDownload(await r.watcher.sample())
     }
 
     /// Moves the clock to `t` seconds and the file to `bytes`, and waits
@@ -325,6 +342,68 @@ struct V0100DownloadSpeedSessionTests {
         #expect(abs(bps - 4_200_000) < 1_000 && eta > 0 && eta < 100)
         #expect(s.statusLine(behindBrewUpdate: false, at: earlier)
                 == "Downloading font-inter… 26.2 of 336.0 MB (7%) · 4.2 MB/s · about 1 min left")
+    }
+
+    // MARK: round 2 review (Sol)
+
+    /// 20 MB of font-inter's file and a stalled 10 MB other file, beside an
+    /// old finished font-inter file of 100 MB. Delete font-inter's partial
+    /// file: 10 MB, still "Waiting for data…". Before, the old file read as
+    /// the partial one renamed: 110 MB, a jump that cleared the stall.
+    @Test func oldFinalFileOfTheSameNameKeepsTheStall() async throws {
+        let r = await start()
+        defer { r.finish.release() }
+        let s = r.session
+        r.folder.set(Self.done, size: 100_000_000)
+        r.folder.set(Self.otherFile, size: 10_000_000)
+        r.folder.set(Self.file, size: 20_000_000)
+        var t: TimeInterval = 0
+        while t <= 6 {
+            await poll(r, at: t)
+            t += 0.5
+        }
+        #expect(s.download?.bytes == 30_000_000)
+        #expect(s.downloadRate(at: r.clock.date) == .stalled)
+        r.folder.remove(Self.file)
+        await poll(r, at: 6.25)
+        await poll(r, at: 6.5)
+        #expect(s.download?.bytes == 10_000_000 && s.download?.files == 1, "\(String(describing: s.download))")
+        #expect(s.downloadRate(at: r.clock.date) == .stalled)
+        #expect(s.statusLine.hasSuffix(" · Waiting for data…"), "\(s.statusLine)")
+        #expect(!s.statusLine.contains("/s"))
+    }
+
+    /// The other file grows 2.1 MB on the poll that deletes font-inter's
+    /// partial file: the line's bytes fall (30 MB to 12.1 MB), but the
+    /// stall is over and the speed is the other file's 2.1 MB over the
+    /// 6.25 s the samples cover. Before, the fall restarted the tracker
+    /// and kept the stall.
+    @Test func growthOnThePollThatDeletesAFileEndsTheStall() async throws {
+        let r = await start()
+        defer { r.finish.release() }
+        let s = r.session
+        r.folder.set(Self.otherFile, size: 10_000_000)
+        r.folder.set(Self.file, size: 20_000_000)
+        var t: TimeInterval = 0
+        while t <= 6 {
+            await poll(r, at: t)
+            t += 0.5
+        }
+        #expect(s.downloadRate(at: r.clock.date) == .stalled)
+        r.folder.remove(Self.file)
+        r.folder.set(Self.otherFile, size: 12_100_000)
+        await poll(r, at: 6.25)
+        #expect(s.download?.bytes == 12_100_000 && s.download?.files == 1)
+        let rate = s.downloadRate(at: r.clock.date)
+        let bps: Double
+        switch rate {
+        case .measuring(let b), .rate(let b, _): bps = b
+        default:
+            Issue.record("\(rate)")
+            return
+        }
+        #expect(abs(bps - 2_100_000 / 6.25) < 1_000, "\(bps)")
+        #expect(s.statusLine.hasSuffix(" · 336 KB/s"), "\(s.statusLine)")
     }
 
     nonisolated static let otherFile = String(repeating: "c", count: 64) + "--Other-1.0.zip.incomplete"

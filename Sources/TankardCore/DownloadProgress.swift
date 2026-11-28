@@ -135,8 +135,9 @@ public enum BottleManifestSize {
 public protocol DownloadFolderReading: Sendable {
     /// File names in `directory` (not paths); empty if it can't be read.
     func files(in directory: String) -> [String]
-    /// Size and modification date, nil if gone.
-    func stat(_ path: String) -> (size: Int64, modified: Date)?
+    /// Size, modification date and file number (the inode, nil when
+    /// unknown); nil if gone. A rename keeps the file number.
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)?
     func read(_ path: String) -> Data?
 }
 
@@ -145,10 +146,10 @@ public struct LiveDownloadFolder: DownloadFolderReading {
     public func files(in directory: String) -> [String] {
         (try? FileManager.default.contentsOfDirectory(atPath: directory)) ?? []
     }
-    public func stat(_ path: String) -> (size: Int64, modified: Date)? {
+    public func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
         guard let a = try? FileManager.default.attributesOfItem(atPath: path),
               let size = (a[.size] as? NSNumber)?.int64Value, let modified = a[.modificationDate] as? Date else { return nil }
-        return (size, modified)
+        return (size, modified, (a[.systemFileNumber] as? NSNumber)?.uint64Value)
     }
     public func read(_ path: String) -> Data? {
         FileManager.default.contents(atPath: path)
@@ -181,6 +182,25 @@ public struct HTTPContentLength: ContentLengthFetching {
     }
 }
 
+/// One poll of the downloads folder.
+public struct DownloadPoll: Equatable, Sendable {
+    /// What the sheet shows; nil when nothing is downloading.
+    public var progress: DownloadProgress?
+    /// The bytes written to this command's files since the watcher
+    /// started: each poll adds each file's growth (a running file's, and
+    /// the rest a renamed one got before its rename). It never falls: a
+    /// deleted file takes its bytes off `progress`, not off this. The
+    /// speed is measured on this count, so a deleted file isn't read as a
+    /// slow-down, nor an old file as new bytes (0.10, review). Stops at
+    /// Int64.max.
+    public var traffic: Int64
+
+    public init(progress: DownloadProgress?, traffic: Int64) {
+        self.progress = progress
+        self.traffic = traffic
+    }
+}
+
 /// Watches brew's downloads folder while one command runs.
 public actor DownloadWatcher {
     public let directory: String
@@ -195,8 +215,17 @@ public actor DownloadWatcher {
     /// Files this command downloaded that are done (renamed), with their
     /// real size. Keyed by the `.incomplete` name they had.
     private var finished: [String: Int64] = [:]
-    private var active: [String: Int64] = [:]
+    /// The partial files of the last poll.
+    private var active: [String: Partial] = [:]
+    /// Every name in the folder at the last poll.
+    private var listed: Set<String> = []
+    private var traffic: Int64 = 0
     private var seen = false
+
+    private struct Partial {
+        var size: Int64
+        var fileID: UInt64?
+    }
 
     public init(directory: String, reader: DownloadFolderReading = LiveDownloadFolder(),
                 lengths: ContentLengthFetching? = nil, since: Date, urls: [String] = []) {
@@ -233,47 +262,99 @@ public actor DownloadWatcher {
     public var sawDownload: Bool { seen }
 
     /// The downloads running now, summed; nil when none is.
-    public func poll() -> DownloadProgress? {
+    public func poll() -> DownloadProgress? { sample().progress }
+
+    /// The downloads running now, summed, and the bytes written so far.
+    public func sample() -> DownloadPoll {
         let names = reader.files(in: directory)
-        var now: [String: (BrewDownloadName, Int64)] = [:]
+        var now: [String: (name: BrewDownloadName, file: Partial)] = [:]
         for f in names where f.hasSuffix(".incomplete") {
             // A bottle manifest is a few KB fetched before the downloads start.
             guard let n = BrewDownloadName.parse(f), !n.basename.hasSuffix(".bottle_manifest.json"),
                   let st = reader.stat(directory + "/" + f),
                   st.modified >= since.addingTimeInterval(-2) else { continue }
-            now[f] = (n, st.size)
+            now[f] = (n, Partial(size: st.size, fileID: st.fileID))
         }
-        // 0.10 (review): a file that was growing and is gone was either
-        // renamed (done: the final name is there, and its real size counts)
-        // or deleted after a failure (nothing counts: its bytes are gone).
-        // Before, it counted with its expected total, so a deleted partial
-        // file read as new bytes (the sheet's speed, a stall cleared).
-        for f in active.keys where now[f] == nil {
+        var written: Int64 = 0
+        for (f, last) in active {
+            if let file = now[f]?.file {
+                written = Self.sum(written, Self.growth(from: last.size, to: file.size))
+                continue
+            }
+            // 0.10 (review): a file that was growing and is gone was either
+            // renamed (done: its real size counts) or deleted after a
+            // failure (nothing counts: its bytes are gone). Before, it
+            // counted with its expected total, so a deleted partial file
+            // read as new bytes (the sheet's speed, a stall cleared).
             let done = String(f.dropLast(".incomplete".count))
-            finished[f] = reader.stat(directory + "/" + done)?.size
+            if let st = reader.stat(directory + "/" + done), isRename(of: last, to: done, st) {
+                finished[f] = st.size
+                written = Self.sum(written, Self.growth(from: last.size, to: st.size))
+            } else {
+                finished[f] = nil
+            }
         }
+        // A file first seen now: all of it is new (on the first poll that
+        // is the baseline the speed starts from).
+        for (f, (_, file)) in now where active[f] == nil { written = Self.sum(written, max(0, file.size)) }
         // Downloading again (a retry): it counts as running, not twice.
         for f in now.keys { finished[f] = nil }
-        active = now.mapValues(\.1)
+        active = now.mapValues(\.file)
+        listed = Set(names)
+        traffic = Self.sum(traffic, written)
         if !now.isEmpty { seen = true }
-        guard !now.isEmpty else { return nil }
+        guard !now.isEmpty else { return DownloadPoll(progress: nil, traffic: traffic) }
 
+        // 0.10 (review): checked sums. A total past Int64.max is unknown;
+        // bytes past it stop there (and the total is unknown too). Before,
+        // a finished file's real size, added to a total already at
+        // Int64.max, trapped.
         var bytes: Int64 = 0
         var total: Int64? = 0
-        for (f, (n, size)) in now {
-            bytes += size
-            let t = totalSize(f, n, names: names)
-            if let t, let sum = total { total = sum + max(t, size) } else { total = nil }
+        var exact = true
+        func add(_ size: Int64, total t: Int64?) {
+            let (b, over) = bytes.addingReportingOverflow(size)
+            if over { exact = false; bytes = .max } else { bytes = b }
+            guard let t, let sum = total else { total = nil; return }
+            let (s, overT) = sum.addingReportingOverflow(t)
+            total = overT ? nil : s
+        }
+        for (f, (n, file)) in now {
+            add(file.size, total: totalSize(f, n, names: names).map { max($0, file.size) })
         }
         // Files of this command that finished while others still run keep
         // counting, so the bar doesn't jump back.
-        for (_, size) in finished {
-            bytes += size
-            total = total.map { $0 + size }
-        }
-        let bottles = now.values.compactMap { $0.0.bottle?.formula }
+        for (_, size) in finished { add(size, total: size) }
+        if !exact { total = nil }
+        let bottles = now.values.compactMap { $0.name.bottle?.formula }
         let name = now.count == 1 ? bottles.first : nil
-        return DownloadProgress(name: name, bytes: bytes, total: total, files: now.count)
+        return DownloadPoll(progress: DownloadProgress(name: name, bytes: bytes, total: total, files: now.count),
+                            traffic: traffic)
+    }
+
+    /// Whether the file under `done` (the final name) is the partial file
+    /// `last` renamed, and not an older download of the same file left in
+    /// the folder (0.10, review: a file under the final name is no proof).
+    /// Either it is the same file (the same file number: a rename keeps
+    /// it), or the name wasn't there at the last poll and appears now, as
+    /// the partial file goes, at least as large as that was. An old file
+    /// of the same name was there before and is another file: never.
+    private func isRename(of last: Partial, to done: String, _ st: (size: Int64, modified: Date, fileID: UInt64?)) -> Bool {
+        if let was = last.fileID, let now = st.fileID, was == now { return true }
+        return !listed.contains(done) && st.size >= last.size
+    }
+
+    /// How much a file grew (0 when it didn't); Int64.max at most.
+    private static func growth(from old: Int64, to new: Int64) -> Int64 {
+        guard new > old else { return 0 }
+        let (d, over) = new.subtractingReportingOverflow(old)
+        return over ? .max : d
+    }
+
+    /// a + b for counts (b >= 0), stopping at Int64.max.
+    private static func sum(_ a: Int64, _ b: Int64) -> Int64 {
+        let (s, over) = a.addingReportingOverflow(b)
+        return over ? .max : s
     }
 
     private func totalSize(_ file: String, _ n: BrewDownloadName, names: [String]) -> Int64? {

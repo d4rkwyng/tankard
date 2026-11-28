@@ -5,13 +5,20 @@ import Testing
 // 0.8: download progress from brew's downloads folder (brew 7.0.14 prints no
 // progress on pipes; see DownloadProgress.swift).
 
-/// A downloads folder in memory: name -> (size, modified, contents).
+/// A downloads folder in memory: name -> (size, modified, contents, file
+/// number). A new name gets a new file number; setting an existing one
+/// (the file grew) and a rename keep it, as on disk.
 final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
     private let lock = NSLock()
-    private var files: [String: (Int64, Date, Data?)] = [:]
+    private var files: [String: (Int64, Date, Data?, UInt64)] = [:]
+    private var nextID: UInt64 = 1
 
     func set(_ name: String, size: Int64, modified: Date = Date(), data: Data? = nil) {
-        lock.withLock { files[name] = (size, modified, data) }
+        lock.withLock {
+            let id = files[name]?.3 ?? nextID
+            if id == nextID { nextID += 1 }
+            files[name] = (size, modified, data, id)
+        }
     }
     func remove(_ name: String) { lock.withLock { _ = files.removeValue(forKey: name) } }
     func rename(_ from: String, _ to: String) {
@@ -21,9 +28,9 @@ final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
     }
 
     func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
-    func stat(_ path: String) -> (size: Int64, modified: Date)? {
+    func stat(_ path: String) -> (size: Int64, modified: Date, fileID: UInt64?)? {
         let name = (path as NSString).lastPathComponent
-        return lock.withLock { files[name].map { ($0.0, $0.1) } }
+        return lock.withLock { files[name].map { ($0.0, $0.1, $0.3) } }
     }
     func read(_ path: String) -> Data? {
         let name = (path as NSString).lastPathComponent

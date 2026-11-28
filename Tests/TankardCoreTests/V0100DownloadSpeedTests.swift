@@ -517,3 +517,178 @@ struct V0100DownloadSpeedQueryTimeTests {
         #expect(s.eta(remaining: 100_000_000, at: T.t0 + 3) != nil)
     }
 }
+
+// MARK: round 2 review (Sol): a final file is not proof of a rename
+
+/// A gone partial file counts as finished only when the file under its
+/// final name is that partial file, renamed. Before, any file under the
+/// final name counted: an old finished download of the same file read as
+/// a jump of its whole size, and cleared a stall.
+struct V0100DownloadWatcherIdentityTests {
+    let start = Date(timeIntervalSince1970: 1_000_000)
+    typealias W = V0100DownloadWatcherTests
+
+    /// Sol's case: an old 100 MB final A beside a 20 MB partial A and a
+    /// stalled 10 MB partial B. Deleting only partial A leaves B's 10 MB,
+    /// not 110 MB.
+    @Test func oldFinalFileOfTheSameNameIsNotCounted() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a, size: 100_000_000, modified: start.addingTimeInterval(-3600))
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        dir.set(W.b + ".incomplete", size: 10_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll()?.bytes == 30_000_000)
+        #expect(await w.poll()?.bytes == 30_000_000)
+        dir.remove(W.a + ".incomplete")
+        let p = try #require(await w.poll())
+        #expect(p.bytes == 10_000_000, "\(p)")
+        #expect(p.files == 1)
+        // Not later either.
+        #expect(await w.poll()?.bytes == 10_000_000)
+    }
+
+    /// A real rename: the partial file goes and the final one appears in
+    /// the same poll, at least as large. Its real size counts.
+    @Test func renameInOnePollCountsTheRealSize() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        dir.set(W.b + ".incomplete", size: 10_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll()?.bytes == 30_000_000)
+        dir.rename(W.a + ".incomplete", W.a)
+        dir.set(W.a, size: 25_000_000, modified: start)
+        let p = try #require(await w.poll())
+        #expect(p.bytes == 35_000_000 && p.files == 1, "\(p)")
+    }
+
+    /// The partial file renamed over an old final file of the same name:
+    /// the name was there before, but the file under it is the renamed
+    /// partial one (the same file number), so it counts.
+    @Test func renameOverAnOldFinalFileCounts() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a, size: 100_000_000, modified: start.addingTimeInterval(-3600))
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        dir.set(W.b + ".incomplete", size: 10_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll()?.bytes == 30_000_000)
+        dir.rename(W.a + ".incomplete", W.a)
+        dir.set(W.a, size: 25_000_000, modified: start)
+        let p = try #require(await w.poll())
+        #expect(p.bytes == 35_000_000 && p.files == 1, "\(p)")
+    }
+}
+
+/// The bytes written (`traffic`, what the speed is measured on) are each
+/// file's growth: a deleted file takes its bytes off the bar's count, not
+/// off this one, and an old file is never new bytes.
+struct V0100DownloadWatcherTrafficTests {
+    let start = Date(timeIntervalSince1970: 1_000_000)
+    typealias W = V0100DownloadWatcherTests
+
+    /// B grows 2 MB on the poll that deletes partial A: the bar's bytes
+    /// fall (30 to 12 MB), the bytes written grow by B's 2 MB only.
+    @Test func growthOnThePollThatDeletesAFile() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        dir.set(W.b + ".incomplete", size: 10_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        let first = await w.sample()
+        #expect(first.progress?.bytes == 30_000_000)
+        #expect(first.traffic == 30_000_000) // the baseline: all of it first seen
+        dir.remove(W.a + ".incomplete")
+        dir.set(W.b + ".incomplete", size: 12_000_000, modified: start)
+        let next = await w.sample()
+        #expect(next.progress?.bytes == 12_000_000 && next.progress?.files == 1)
+        #expect(next.traffic - first.traffic == 2_000_000)
+    }
+
+    /// Sol's case: the old final file adds nothing to the bytes written.
+    @Test func oldFinalFileIsNoTraffic() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a, size: 100_000_000, modified: start.addingTimeInterval(-3600))
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        dir.set(W.b + ".incomplete", size: 10_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        let first = await w.sample()
+        dir.remove(W.a + ".incomplete")
+        let next = await w.sample()
+        #expect(next.progress?.bytes == 10_000_000)
+        #expect(next.traffic == first.traffic)
+    }
+
+    /// A rename: what curl wrote before it (25 - 20 MB) is traffic; the
+    /// bytes written never fall, also when nothing runs.
+    @Test func renameAddsTheRestAndTrafficNeverFalls() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a + ".incomplete", size: 20_000_000, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        let first = await w.sample()
+        dir.rename(W.a + ".incomplete", W.a)
+        dir.set(W.a, size: 25_000_000, modified: start)
+        let done = await w.sample()
+        #expect(done.progress == nil)
+        #expect(done.traffic - first.traffic == 5_000_000)
+        dir.remove(W.a)
+        #expect(await w.sample().traffic == done.traffic)
+    }
+
+    /// On disk, a rename keeps the file number LiveDownloadFolder reads
+    /// (a temporary folder with made-up bytes; not brew's).
+    @Test func liveFolderFileNumberSurvivesARename() throws {
+        let fm = FileManager.default
+        let dir = fm.temporaryDirectory.appendingPathComponent("tankard-test-\(UUID().uuidString)")
+        try fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? fm.removeItem(at: dir) }
+        let partial = dir.appendingPathComponent("x.incomplete").path
+        let final = dir.appendingPathComponent("x").path
+        try Data(repeating: 1, count: 10).write(to: URL(fileURLWithPath: partial))
+        let live = LiveDownloadFolder()
+        let before = try #require(live.stat(partial)?.fileID)
+        try fm.moveItem(atPath: partial, toPath: final)
+        #expect(live.stat(final)?.fileID == before)
+        try Data(repeating: 2, count: 10).write(to: URL(fileURLWithPath: partial))
+        #expect(live.stat(partial)?.fileID != before)
+    }
+}
+
+// MARK: round 2 review (Sol): sums that used to trap
+
+/// The watcher's sums are checked: a total that can't be represented is
+/// unknown (nil), and bytes stop at Int64.max. Before, the finished
+/// file's real size was added unchecked and trapped.
+struct V0100DownloadWatcherOverflowTests {
+    let start = Date(timeIntervalSince1970: 1_000_000)
+    typealias W = V0100DownloadWatcherTests
+
+    /// Sol's case: A's total 100, B's Int64.max - 100 (the first poll's
+    /// total is Int64.max), then A is renamed at 101 bytes.
+    @Test func finishedFileOverTheLargestTotal() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set("\(hashA)--aaa-1.0.bottle_manifest.json", size: 1, modified: start, data: manifestJSON([("1.0.sonoma", 100)]))
+        dir.set("\(hashB)--bbb-2.0.bottle_manifest.json", size: 1, modified: start,
+                data: manifestJSON([("2.0.sonoma", Int64.max - 100)]))
+        dir.set(W.a + ".incomplete", size: 50, modified: start)
+        dir.set(W.b + ".incomplete", size: 10, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        #expect(await w.poll() == DownloadProgress(name: nil, bytes: 60, total: .max, files: 2))
+        dir.rename(W.a + ".incomplete", W.a)
+        dir.set(W.a, size: 101, modified: start)
+        let p = try #require(await w.poll())
+        #expect(p.bytes == 111)
+        #expect(p.total == nil)
+        #expect(p.files == 1)
+    }
+
+    /// Two files whose sizes add up past Int64.max: the bytes stop there,
+    /// the total is unknown.
+    @Test func bytesOverTheLargestCount() async throws {
+        let dir = FakeDownloadFolder()
+        dir.set(W.a + ".incomplete", size: .max / 2 + 1, modified: start)
+        dir.set(W.b + ".incomplete", size: .max / 2 + 1, modified: start)
+        let w = DownloadWatcher(directory: "/d", reader: dir, since: start)
+        let p = try #require(await w.poll())
+        #expect(p.bytes == .max)
+        #expect(p.total == nil)
+        #expect(p.files == 2)
+    }
+}

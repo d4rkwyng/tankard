@@ -1141,7 +1141,7 @@ public final class UpgradeSession: Identifiable {
             let hints = Task { await watcher.addURLs(await m.urlsFor(packages)) }
             defer { hints.cancel() }
             while !Task.isCancelled {
-                let p = await watcher.poll()
+                let p = await watcher.sample()
                 guard !Task.isCancelled, let self else { return }
                 self.showDownload(p)
                 try? await Task.sleep(for: m.interval)
@@ -1152,12 +1152,16 @@ public final class UpgradeSession: Identifiable {
     /// One poll's result. The poll loop above calls this; the 0.10 speed
     /// tests call it directly to deliver each poll themselves (internal,
     /// not public: the app has no other caller).
-    func showDownload(_ p: DownloadProgress?) {
+    func showDownload(_ poll: DownloadPoll) {
+        let p = poll.progress
         if p != nil { downloadObservations += 1 }
         // 0.10: every poll counts, also one with the same bytes (that is
-        // how the speed falls and a stall shows). A count that went
-        // backwards restarts the tracker by itself.
-        if let p { downloadSpeed.record(bytes: p.bytes, at: now()) } else { downloadSpeed.reset() }
+        // how the speed falls and a stall shows). 0.10 (review): the
+        // tracker gets the bytes written (`traffic`), not the bytes shown:
+        // those fall when a partial file is deleted, and a fall restarted
+        // the tracker and kept a stall although another file grew on that
+        // poll. The bar and the line still show `bytes`.
+        if p != nil { downloadSpeed.record(bytes: poll.traffic, at: now()) } else { downloadSpeed.reset() }
         if download != p {
             download = p
             lastActivityAt = now()
