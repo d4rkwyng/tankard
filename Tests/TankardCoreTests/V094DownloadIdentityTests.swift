@@ -339,3 +339,146 @@ struct V094DownloadPathTests {
         #expect(await watcher.fallbackCount > before)
     }
 }
+
+/// brew renames a finished file at any moment, also between two reads of
+/// one poll: after the folder was listed, or between the stat of the partial
+/// file and the stat of the final file.
+struct V094DownloadRenameRaceTests {
+    private let final = hashA + "--A.zip"
+    private var partial: String { final + ".incomplete" }
+    private let other = hashB + "--B.zip.incomplete"
+    private let folder = FakeDownloadFolder()
+    private let watcher: DownloadWatcher
+
+    init() {
+        watcher = DownloadWatcher(directory: "/downloads", reader: folder, since: .distantPast)
+    }
+
+    /// The partial grows to `size` and is renamed, as brew does when done.
+    private func finish(at size: Int64) {
+        folder.set(partial, size: size)
+        folder.rename(partial, final)
+    }
+
+    /// The next listing is taken, and then the download finishes.
+    private func finishAfterTheNextListing(at size: Int64) {
+        folder.afterListing = { [self] names in
+            folder.afterListing = nil
+            finish(at: size)
+            return names
+        }
+    }
+
+    /// The partial is next read at `seen`, and then the download finishes.
+    private func finishAfterTheNextPartialStat(seen: Int64, at size: Int64) {
+        folder.set(partial, size: seen)
+        folder.afterStat = { [self] name in
+            guard name == partial else { return }
+            folder.afterStat = nil
+            finish(at: size)
+        }
+    }
+
+    /// Renamed after the listing, before the stat of the partial file.
+    @Test func renameAfterTheListingIsStillSeen() async {
+        folder.set(partial, size: 20_000_000)
+        folder.set(other, size: 10_000_000)
+        let first = await watcher.sample()
+        #expect(first.progress?.bytes == 30_000_000)
+        finishAfterTheNextListing(at: 25_000_000)
+
+        let next = await watcher.sample()
+        #expect(next.progress?.bytes == 35_000_000)
+        #expect(next.progress?.files == 1)
+        #expect(next.traffic - first.traffic == 5_000_000)
+
+        let following = await watcher.sample()
+        #expect(following.progress?.bytes == 35_000_000)
+        #expect(following.progress?.files == 1)
+        #expect(following.traffic == next.traffic)
+        #expect(await watcher.fallbackCount == 0)
+    }
+
+    /// Renamed between the stat of the partial file (22 MB) and the stat of
+    /// the final file (25 MB): one file, its growth counted once.
+    @Test func renameBetweenTheTwoStatsCountsOnce() async {
+        folder.set(partial, size: 20_000_000)
+        folder.set(other, size: 10_000_000)
+        let first = await watcher.sample()
+        finishAfterTheNextPartialStat(seen: 22_000_000, at: 25_000_000)
+
+        let next = await watcher.sample()
+        #expect(next.progress?.bytes == 35_000_000)
+        #expect(next.progress?.files == 1)
+        #expect(next.traffic - first.traffic == 5_000_000)
+
+        let following = await watcher.sample()
+        #expect(following.progress?.bytes == 35_000_000)
+        #expect(following.progress?.files == 1)
+        #expect(following.traffic == next.traffic)
+        #expect(await watcher.fallbackCount == 0)
+    }
+
+    /// The same between the two stats, for a partial file first seen in this poll.
+    @Test func newPartialRenamedBetweenTheTwoStatsCountsItsWholeSize() async {
+        folder.set(other, size: 10_000_000)
+        let first = await watcher.sample()
+        finishAfterTheNextPartialStat(seen: 22_000_000, at: 25_000_000)
+
+        let next = await watcher.sample()
+        #expect(next.progress?.bytes == 35_000_000)
+        #expect(next.progress?.files == 1)
+        #expect(next.traffic - first.traffic == 25_000_000)
+
+        let following = await watcher.sample()
+        #expect(following.progress?.bytes == 35_000_000)
+        #expect(following.traffic == next.traffic)
+        #expect(await watcher.fallbackCount == 0)
+    }
+
+    /// A finished file that one listing leaves out is still there: it stays
+    /// on the bar and is not new traffic, then or when it is listed again.
+    @Test func finishedFileMissingFromOneListingIsKept() async {
+        folder.set(partial, size: 20_000_000)
+        folder.set(other, size: 10_000_000)
+        _ = await watcher.sample()
+        finish(at: 25_000_000)
+        let done = await watcher.sample()
+        #expect(done.progress?.bytes == 35_000_000)
+        folder.afterListing = { [final] names in names.filter { $0 != final } }
+
+        let glitch = await watcher.sample()
+        #expect(glitch.progress?.bytes == 35_000_000)
+        #expect(glitch.traffic == done.traffic)
+        folder.afterListing = nil
+
+        let listed = await watcher.sample()
+        #expect(listed.progress?.bytes == 35_000_000)
+        #expect(listed.progress?.files == 1)
+        #expect(listed.traffic == done.traffic)
+        #expect(await watcher.trackedPathCount == 2)
+        #expect(await watcher.fallbackCount == 0)
+    }
+
+    /// A finished file that is listed but gone when it is read is forgotten.
+    @Test func finishedFileGoneAfterTheListingIsForgotten() async {
+        folder.set(partial, size: 20_000_000)
+        folder.set(other, size: 10_000_000)
+        _ = await watcher.sample()
+        finish(at: 25_000_000)
+        let done = await watcher.sample()
+        #expect(await watcher.trackedPathCount == 2)
+        folder.afterListing = { [folder, final] names in
+            folder.afterListing = nil
+            folder.remove(final)
+            return names
+        }
+
+        let gone = await watcher.sample()
+        #expect(gone.progress?.bytes == 10_000_000)
+        #expect(gone.progress?.files == 1)
+        #expect(gone.traffic == done.traffic)
+        #expect(await watcher.trackedPathCount == 1)
+        #expect(await watcher.fallbackCount == 0)
+    }
+}

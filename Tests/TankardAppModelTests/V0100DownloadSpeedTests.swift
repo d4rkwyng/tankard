@@ -20,6 +20,8 @@ import TankardCore
 /// also be removed (brew deletes a partial file after a failure). A new
 /// name gets a new file number; growing and a rename keep it.
 final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
+    /// Runs after a listing was taken (a change between two reads of one poll).
+    var afterListing: (@Sendable () -> Void)?
     private let lock = NSLock()
     private var files: [String: Int64] = [:]
     private var ids: [String: DownloadFileID] = [:]
@@ -53,7 +55,11 @@ final class SpeedFolder: DownloadFolderReading, @unchecked Sendable {
             }
         }
     }
-    func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
+    func files(in directory: String) -> [String] {
+        let names = lock.withLock { Array(files.keys) }
+        afterListing?()
+        return names
+    }
     func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let n = (path as NSString).lastPathComponent
         return lock.withLock { files[n].map { ($0, modified, ids[n]) } }

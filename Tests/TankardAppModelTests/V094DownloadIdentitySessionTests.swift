@@ -77,4 +77,26 @@ struct V094DownloadIdentitySessionTests {
         #expect(r.session.downloadRate(at: r.clock.date) == .measuring(bytesPerSecond: 4_000_000))
         #expect(await r.watcher.fallbackCount == 0)
     }
+
+    /// brew renames the finished file after the folder was listed and before
+    /// the partial file is read: the poll still sees the bytes.
+    @Test func renameBetweenTheListingAndTheStatsEndsStall() async {
+        let r = await harness.start()
+        defer { r.finish.release() }
+        r.folder.set(Harness.file, size: 20_000_000)
+        r.folder.set(Harness.otherFile, size: 10_000_000)
+        await pollUntilStalled(r, expectedBytes: 30_000_000)
+        let folder = r.folder
+        folder.afterListing = {
+            folder.afterListing = nil
+            folder.set(Harness.file, size: 25_000_000)
+            folder.rename(Harness.file, Harness.done)
+        }
+        await harness.poll(r, at: 6.25)
+
+        #expect(r.session.download?.bytes == 35_000_000)
+        #expect(r.session.download?.files == 1)
+        #expect(r.session.downloadRate(at: r.clock.date) == .measuring(bytesPerSecond: 800_000))
+        #expect(await r.watcher.fallbackCount == 0)
+    }
 }

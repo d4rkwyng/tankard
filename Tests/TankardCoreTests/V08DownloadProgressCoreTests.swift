@@ -9,6 +9,11 @@ import Testing
 /// number). A new name gets a new file number; setting an existing one
 /// (the file grew) and a rename keep it, as on disk.
 final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
+    /// For a change between two reads of one poll: runs after a listing was
+    /// taken, with its names; what it returns is the listing the caller gets.
+    var afterListing: (@Sendable ([String]) -> [String])?
+    /// Runs after a stat was taken, with the file's name.
+    var afterStat: (@Sendable (String) -> Void)?
     private let lock = NSLock()
     private var files: [String: (Int64, Date, Data?, DownloadFileID?)] = [:]
     private var nextID: UInt64 = 1
@@ -38,10 +43,15 @@ final class FakeDownloadFolder: DownloadFolderReading, @unchecked Sendable {
         }
     }
 
-    func files(in directory: String) -> [String] { lock.withLock { Array(files.keys) } }
+    func files(in directory: String) -> [String] {
+        let names = lock.withLock { Array(files.keys) }
+        return afterListing?(names) ?? names
+    }
     func stat(_ path: String) -> (size: Int64, modified: Date, fileID: DownloadFileID?)? {
         let name = (path as NSString).lastPathComponent
-        return lock.withLock { files[name].map { ($0.0, $0.1, $0.3) } }
+        let found = lock.withLock { files[name].map { ($0.0, $0.1, $0.3) } }
+        afterStat?(name)
+        return found
     }
     func read(_ path: String) -> Data? {
         let name = (path as NSString).lastPathComponent
