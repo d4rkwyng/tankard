@@ -460,6 +460,32 @@ struct DownloadRenameRaceTests {
         #expect(await watcher.fallbackCount == 0)
     }
 
+    /// The first poll after the rename lists neither A name. The watcher
+    /// still has the partial, so it finds the final file: 35 MB shown,
+    /// 5 MB of new traffic, and the next poll adds nothing.
+    @Test func firstPollAfterTheRenameOmitsBothNames() async {
+        folder.set(partial, size: 20_000_000)
+        folder.set(other, size: 10_000_000)
+        let first = await watcher.sample()
+        #expect(first.progress?.bytes == 30_000_000)
+        finish(at: 25_000_000)
+        folder.afterListing = { [self] names in
+            folder.afterListing = nil
+            return names.filter { $0 != final && $0 != partial }
+        }
+
+        let next = await watcher.sample()
+        #expect(next.progress?.bytes == 35_000_000)
+        #expect(next.progress?.files == 1)
+        #expect(next.traffic - first.traffic == 5_000_000)
+
+        let following = await watcher.sample()
+        #expect(following.progress?.bytes == 35_000_000)
+        #expect(following.progress?.files == 1)
+        #expect(following.traffic == next.traffic)
+        #expect(await watcher.fallbackCount == 0)
+    }
+
     /// A finished file that is listed but gone when it is read is forgotten.
     @Test func finishedFileGoneAfterTheListingIsForgotten() async {
         folder.set(partial, size: 20_000_000)
