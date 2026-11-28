@@ -1,0 +1,287 @@
+import Foundation
+import Testing
+@testable import TankardCore
+
+// 0.10: the sheet's download speed and time left (Derek: on a slow
+// connection "2.1 of 2.3 GB (91%)" barely moves). The tracker gets every
+// time from the test: polls every 250 ms, as the sheet's.
+
+struct V0100DownloadSpeedTests {
+    static let poll: TimeInterval = 0.25
+    /// An arbitrary start (exact in binary, as every poll time below).
+    static let t0: TimeInterval = 1000
+
+    /// Feeds `bytes(t)` (t: seconds since t0) at each poll from `from` to `to`.
+    @discardableResult
+    static func feed(_ s: inout DownloadSpeed, from: TimeInterval = 0, to: TimeInterval,
+                     _ bytes: (TimeInterval) -> Double) -> [TimeInterval] {
+        var times: [TimeInterval] = []
+        var t = from
+        while t <= to + 1e-9 {
+            s.record(bytes: Int64(bytes(t)), at: t0 + t)
+            times.append(t)
+            t += poll
+        }
+        return times
+    }
+
+    static func near(_ a: Double?, _ b: Double, within: Double = 0.01) -> Bool {
+        guard let a else { return false }
+        return abs(a - b) <= within * b
+    }
+
+    @Test func steadyRateGivesSpeedAndTimeLeft() throws {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 4_200_000 * $0 }
+        let now = Self.t0 + 10
+        #expect(Self.near(s.speed(at: now), 4_200_000))
+        #expect(s.isStable(at: now))
+        let eta = try #require(s.eta(remaining: 210_000_000, at: now))
+        #expect(abs(eta - 50) < 0.5)
+        #expect(!s.isStalled(at: now))
+    }
+
+    @Test func noSpeedBeforeTwoSeconds() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 1.75) { 4_200_000 * $0 }
+        #expect(s.speed(at: Self.t0 + 1.75) == nil)
+        s.record(bytes: 8_400_000, at: Self.t0 + 2)
+        #expect(Self.near(s.speed(at: Self.t0 + 2), 4_200_000))
+        // A speed, but not yet a time left (under 4 s of samples).
+        #expect(s.eta(remaining: 100_000_000, at: Self.t0 + 2) == nil)
+    }
+
+    /// 100 KB/s for 2 s, then 4 MB/s: the speed shows at once, the time
+    /// left only once the window has caught up (the newest half within 40%).
+    @Test func rampUpGivesNoTimeLeftUntilStable() {
+        var s = DownloadSpeed()
+        let bytes: (TimeInterval) -> Double = { 100_000 * min($0, 2) + 4_000_000 * max(0, $0 - 2) }
+        for t in Self.feed(&s, to: 12, bytes) where t >= 2 {
+            let eta = Self.etaAfter(bytes, t)
+            if t < 7 { #expect(eta == nil, "t=\(t)") }
+            if t >= 8 { #expect(eta != nil, "t=\(t)") }
+        }
+        #expect(Self.near(s.speed(at: Self.t0 + 12), 4_000_000))
+    }
+
+    /// The time left a fresh tracker gives at `t` after `bytes` up to `t`.
+    static func etaAfter(_ bytes: (TimeInterval) -> Double, _ t: TimeInterval) -> TimeInterval? {
+        var s = DownloadSpeed()
+        feed(&s, to: t, bytes)
+        return s.eta(remaining: 500_000_000, at: t0 + t)
+    }
+
+    /// A bursty link: 1 s at 8 MB/s, then 9 s of nothing, over and over.
+    /// Almost never a time left (only when the newest half's speed sweeps
+    /// past the window's), and never right after a burst or mid-gap.
+    @Test func burstyRateGivesNoTimeLeft() {
+        var s = DownloadSpeed()
+        let bytes: (TimeInterval) -> Double = { t in
+            let k = (t / 10).rounded(.down)
+            return 8_000_000 * (k + min(t - k * 10, 1))
+        }
+        var shown = 0, polls = 0
+        var t: TimeInterval = 0
+        while t <= 90 {
+            s.record(bytes: Int64(bytes(t)), at: Self.t0 + t)
+            if t >= 10 {
+                polls += 1
+                if s.eta(remaining: 500_000_000, at: Self.t0 + t) != nil { shown += 1 }
+                if [11, 16, 18, 21, 26, 31].contains(t) { #expect(s.eta(remaining: 500_000_000, at: Self.t0 + t) == nil, "t=\(t)") }
+            }
+            t += Self.poll
+        }
+        #expect(Double(shown) <= 0.05 * Double(polls), "\(shown) of \(polls)")
+    }
+
+    /// 8 MB/s, then 2 MB/s from 10 s: the average moves within the window
+    /// (5 MB/s halfway, 2 MB/s once the window has passed the change), and
+    /// the time left hides while it moves.
+    @Test func slowDownMovesTheAverage() {
+        var s = DownloadSpeed()
+        let bytes: (TimeInterval) -> Double = { 8_000_000 * min($0, 10) + 2_000_000 * max(0, $0 - 10) }
+        Self.feed(&s, to: 20, bytes)
+        #expect(Self.near(s.speed(at: Self.t0 + 20), 2_000_000))
+        #expect(Self.etaAfter(bytes, 10) != nil)
+        #expect(Self.etaAfter(bytes, 15) == nil)
+        #expect(Self.etaAfter(bytes, 19) != nil)
+        var half = DownloadSpeed()
+        Self.feed(&half, to: 14, bytes)
+        #expect(Self.near(half.speed(at: Self.t0 + 14), 5_000_000))
+    }
+
+    @Test func stallStartsAtFiveSeconds() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 1_000_000 * $0 }
+        // No growth after 10 s; polls go on.
+        Self.feed(&s, from: 10.25, to: 15) { _ in 10_000_000 }
+        #expect(!s.isStalled(at: Self.t0 + 14.9))
+        #expect(s.isStalled(at: Self.t0 + 15))
+        #expect(s.eta(remaining: 1_000_000, at: Self.t0 + 15) == nil)
+        // The speed falls while stalled, and never below 0.
+        let speed = s.speed(at: Self.t0 + 15) ?? -1
+        #expect(speed >= 0 && speed < 1_000_000)
+    }
+
+    @Test func neverGrowingStallsFromTheFirstSample() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 5) { _ in 3_000 }
+        #expect(!s.isStalled(at: Self.t0 + 4.9))
+        #expect(s.isStalled(at: Self.t0 + 5))
+    }
+
+    @Test func recoversAfterAStall() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 1_000_000 * $0 }
+        Self.feed(&s, from: 10.25, to: 16) { _ in 10_000_000 }
+        #expect(s.isStalled(at: Self.t0 + 16))
+        s.record(bytes: 10_250_000, at: Self.t0 + 16.25)
+        #expect(!s.isStalled(at: Self.t0 + 16.25))
+        #expect((s.speed(at: Self.t0 + 16.25) ?? 0) > 0)
+        // Steady again: a time left once the window holds the new speed.
+        Self.feed(&s, from: 16.5, to: 26) { 10_000_000 + 1_000_000 * ($0 - 16) }
+        #expect(Self.near(s.speed(at: Self.t0 + 26), 1_000_000))
+        #expect(s.eta(remaining: 30_000_000, at: Self.t0 + 26) != nil)
+    }
+
+    /// A burst more than 8 s ago no longer counts; with no new bytes the
+    /// speed falls to 0 as the window slides past the last growth.
+    @Test func windowSlides() {
+        var s = DownloadSpeed()
+        s.record(bytes: 0, at: Self.t0)
+        s.record(bytes: 100_000_000, at: Self.t0 + 0.25)
+        Self.feed(&s, from: 0.5, to: 20) { 100_000_000 + 1_000_000 * ($0 - 0.25) }
+        #expect(Self.near(s.speed(at: Self.t0 + 20), 1_000_000))
+        // No samples after 20 s: half the window is still growth at 24 s, none at 28 s.
+        #expect(Self.near(s.speed(at: Self.t0 + 24), 500_000))
+        #expect(s.speed(at: Self.t0 + 28) == 0)
+        #expect(s.speed(at: Self.t0 + 40) == 0)
+    }
+
+    @Test func bytesGoingBackwardsResets() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 6) { 2_000_000 * $0 }
+        #expect(s.speed(at: Self.t0 + 6) != nil)
+        let restarted = s.record(bytes: 1_000, at: Self.t0 + 6.25)
+        #expect(restarted)
+        #expect(s.sampleCount == 1)
+        #expect(s.speed(at: Self.t0 + 6.25) == nil)
+        #expect(!s.isStalled(at: Self.t0 + 6.25))
+        // Growing again from the new start: no reset.
+        let again = s.record(bytes: 2_000, at: Self.t0 + 6.5)
+        #expect(!again)
+        s.reset()
+        #expect(s.sampleCount == 0 && s.speed(at: Self.t0 + 7) == nil && !s.isStalled(at: Self.t0 + 100))
+    }
+
+    @Test func unknownTotalGivesNoTimeLeft() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 4_200_000 * $0 }
+        let now = Self.t0 + 10
+        #expect(s.eta(bytes: 42_000_000, total: nil, at: now) == nil)
+        #expect(s.eta(bytes: 42_000_000, total: 42_000_000, at: now) == nil)
+        #expect(s.eta(bytes: 42_000_000, total: 84_000_000, at: now) != nil)
+        #expect(s.speed(at: now) != nil)
+    }
+
+    @Test func timeLeftOverADayIsHidden() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 1_000 * $0 }
+        let now = Self.t0 + 10
+        #expect(s.eta(remaining: 1_000_000_000, at: now) == nil) // ~11.6 days
+        let eta = s.eta(remaining: 86_000_000, at: now)          // ~23.9 h
+        #expect(eta != nil && eta! <= DownloadSpeed.longestTimeLeft)
+    }
+
+    @Test func noZeroOrNegativeTimeLeftAtTheEnd() {
+        var s = DownloadSpeed()
+        Self.feed(&s, to: 10) { 4_200_000 * $0 }
+        let now = Self.t0 + 10
+        #expect(s.eta(remaining: 0, at: now) == nil)
+        #expect(s.eta(remaining: -5, at: now) == nil)
+        let last = s.eta(remaining: 1, at: now)
+        #expect(last != nil && last! > 0)
+        #expect(DownloadSpeedFormat.timeLeftText(last!) == "a few seconds left")
+    }
+
+    @Test func samplesStayBounded() {
+        var s = DownloadSpeed()
+        for i in 0..<20_000 { s.record(bytes: Int64(i) * 1_000, at: Self.t0 + Double(i) * Self.poll) }
+        // One window of polls, plus the baseline.
+        #expect(s.sampleCount <= Int(DownloadSpeed.window / Self.poll) + 2)
+        #expect(Self.near(s.speed(at: Self.t0 + 19_999 * Self.poll), 4_000))
+    }
+
+    @Test func samePollTimeUpdatesInPlace() {
+        var s = DownloadSpeed()
+        s.record(bytes: 0, at: Self.t0)
+        s.record(bytes: 10, at: Self.t0 + 1)
+        s.record(bytes: 20, at: Self.t0 + 1)
+        #expect(s.sampleCount == 2)
+        // A time before the last sample starts over.
+        let backInTime = s.record(bytes: 30, at: Self.t0 + 0.5)
+        #expect(backInTime)
+    }
+}
+
+struct V0100DownloadSpeedFormatTests {
+    static let us = Locale(identifier: "en_US")
+
+    static func shown(_ bps: Double, _ locale: Locale = us) -> String {
+        let p = DownloadSpeedFormat.pieces(bytesPerSecond: bps, locale: locale)
+        return p.number + " " + p.unit.rawValue
+    }
+
+    @Test func speedUnitsAtTheBoundaries() {
+        #expect(Self.shown(0) == "0 KB/s")
+        #expect(Self.shown(999) == "0 KB/s")
+        #expect(Self.shown(1_000) == "1 KB/s")
+        #expect(Self.shown(820_000) == "820 KB/s")
+        #expect(Self.shown(999_499) == "999 KB/s")
+        #expect(Self.shown(999_500) == "1.0 MB/s")
+        #expect(Self.shown(999_999) == "1.0 MB/s")
+        #expect(Self.shown(1_000_000) == "1.0 MB/s")
+        #expect(Self.shown(4_200_000) == "4.2 MB/s")
+        #expect(Self.shown(999_949_999) == "999.9 MB/s")
+        #expect(Self.shown(999_950_000) == "1.0 GB/s")
+        #expect(Self.shown(1.2e9) == "1.2 GB/s")
+        #expect(Self.shown(-5) == "0 KB/s")
+        #expect(Self.shown(.nan) == "0 KB/s")
+    }
+
+    @Test func speedSentence() {
+        #expect(DownloadSpeedFormat.speed(4_200_000, locale: Self.us) == "4.2 MB/s")
+        #expect(DownloadSpeedFormat.speed(820_000, locale: Self.us) == "820 KB/s")
+        #expect(DownloadSpeedFormat.speed(1.2e9, locale: Self.us) == "1.2 GB/s")
+    }
+
+    /// The decimal separator is the locale's, as in DownloadSizeFormat.
+    @Test func speedUsesTheLocale() {
+        let de = Locale(identifier: "de_DE")
+        #expect(DownloadSpeedFormat.pieces(bytesPerSecond: 4_200_000, locale: de).number == "4,2")
+        #expect(DownloadSizeFormat.pieces(4_200_000, scale: 4_200_000, locale: de).number == "4,2")
+        #expect(DownloadSpeedFormat.pieces(bytesPerSecond: 4_200_000, locale: Self.us).number == "4.2")
+    }
+
+    @Test func timeLeftWords() {
+        let words: [(TimeInterval, String)] = [
+            (0.4, "a few seconds left"),
+            (3, "a few seconds left"),
+            (7.9, "a few seconds left"),
+            (8, "about 10 sec left"),
+            (20, "about 20 sec left"),
+            (59, "about 1 min left"),
+            (61, "about 1 min left"),
+            (89, "about 1 min left"),
+            (90, "about 2 min left"),
+            (720, "about 12 min left"),
+            (3599, "about 1 hr left"),
+            (3900, "about 1 hr 5 min left"),
+        ]
+        for (seconds, text) in words {
+            #expect(DownloadSpeedFormat.timeLeftText(seconds) == text, "\(seconds) s")
+        }
+        #expect(DownloadSpeedFormat.timeLeft(22) == .seconds(20))
+        #expect(DownloadSpeedFormat.timeLeft(23) == .seconds(25))
+    }
+}
